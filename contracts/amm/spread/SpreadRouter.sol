@@ -87,7 +87,7 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
         ) {
             return SPREAD_90_DAYS;
         }
-        revert(MiltonErrors.FUNCTION_NOT_SUPPORTED);
+        revert(AmmErrors.FUNCTION_NOT_SUPPORTED);
     }
 
     /// @dev Delegates the current call to `implementation`.

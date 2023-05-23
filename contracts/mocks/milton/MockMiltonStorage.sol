@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.16;
 
-import "../../amm/MiltonStorage.sol";
+import "../../amm/AmmStorage.sol";
 
-contract MockMiltonStorage is MiltonStorage {
-    function getBalance() external view override returns (IporTypes.MiltonBalancesMemory memory) {
+contract MockAmmStorage is AmmStorage {
+    function getBalance() external view override returns (IporTypes.AmmBalancesMemory memory) {
         return
-            IporTypes.MiltonBalancesMemory(
+            IporTypes.AmmBalancesMemory(
                 _balances.totalCollateralPayFixed,
                 _balances.totalCollateralReceiveFixed,
                 0,

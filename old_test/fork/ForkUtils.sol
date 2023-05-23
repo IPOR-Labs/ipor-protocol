@@ -5,7 +5,7 @@ import "forge-std/Test.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "../TestCommons.sol";
 import "contracts/amm/pool/Joseph.sol";
-import "contracts/amm/Milton.sol";
+import "contracts/amm/AmmTreasury.sol";
 import "./IAsset.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
@@ -14,7 +14,7 @@ contract ForkUtils is Test, TestCommons {
         address owner,
         address asset,
         address joseph,
-        address milton
+        address ammTreasury
     ) public {
         address userOne = _getUserAddress(1);
         uint256 assetDecimals = IERC20Metadata(asset).decimals();
@@ -25,18 +25,18 @@ contract ForkUtils is Test, TestCommons {
 
         vm.startPrank(userOne);
         IAsset(asset).approve(joseph, 1_000_000 * 10**assetDecimals);
-        IAsset(asset).approve(milton, 1_000_000 * 10**assetDecimals);
+        IAsset(asset).approve(ammTreasury, 1_000_000 * 10**assetDecimals);
         Joseph(joseph).provideLiquidity(10_000 * 10**assetDecimals);
 
-        uint256 swapPayFixedId = Milton(milton).openSwapPayFixed(10_000 * 10**assetDecimals, 1e18, 100e18);
-        uint256 swapPayReceiveId = Milton(milton).openSwapReceiveFixed(10_000 * 10**assetDecimals, 0, 100e18);
+        uint256 swapPayFixedId = AmmTreasury(ammTreasury).openSwapPayFixed(10_000 * 10**assetDecimals, 1e18, 100e18);
+        uint256 swapPayReceiveId = AmmTreasury(ammTreasury).openSwapReceiveFixed(10_000 * 10**assetDecimals, 0, 100e18);
         vm.stopPrank();
 
         vm.warp(block.timestamp + 60 * 60 * 24 * 7);
 
         vm.startPrank(owner);
-        Milton(milton).closeSwapPayFixed(swapPayFixedId);
-        Milton(milton).closeSwapReceiveFixed(swapPayReceiveId);
+        AmmTreasury(ammTreasury).closeSwapPayFixed(swapPayFixedId);
+        AmmTreasury(ammTreasury).closeSwapReceiveFixed(swapPayReceiveId);
         vm.stopPrank();
 
         vm.prank(owner);

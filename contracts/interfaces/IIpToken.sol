@@ -3,17 +3,17 @@ pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-/// @title Interface of ipToken - Liquidity Pool Token managed by Joseph in IPOR Protocol for a given asset.
+/// @title Interface of ipToken - Liquidity Pool Token managed by Router in IPOR Protocol for a given asset.
 /// For more information refer to the documentation https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/liquidity-provisioning#liquidity-tokens
 interface IIpToken is IERC20 {
     /// @notice Gets the asset / stablecoin address which is assocciated with particular ipToken smart contract instance
     /// @return asset / stablecoin address
     function getAsset() external view returns (address);
 
-    /// @notice Sets Joseph's address. Owner only
-    /// @dev only Joseph can mint or burn ipTokens. Function emits `JosephChanged` event.
-    /// @param newJoseph Joseph's address
-    function setJoseph(address newJoseph) external;
+    /// @notice Sets Router's address. Owner only
+    /// @dev only Router can mint or burn ipTokens. Function emits `RouterChanged` event.
+    /// @param newRouter Router's address
+    function setRouter(address newRouter) external;
 
     /// @notice Creates the ipTokens in the `amount` given and assigns them to the `account`
     /// @dev Emits {Transfer} from ERC20 asset and {Mint} event from ipToken
@@ -37,13 +37,13 @@ interface IIpToken is IERC20 {
     /// @param amount volume of ipTokens burned
     event Burn(address indexed account, uint256 amount);
 
-    /// @notice Emmited when Joseph address is changed by its owner.
-    /// @param changedBy account address that changed Joseph's address
-    /// @param oldJoseph old address of Joseph
-    /// @param newJoseph new address of Joseph
-    event JosephChanged(
+    /// @notice Emmited when Router address is changed by its owner.
+    /// @param changedBy account address that changed Router's address
+    /// @param oldRouter old address of Router
+    /// @param newRouter new address of Router
+    event RouterChanged(
         address indexed changedBy,
-        address indexed oldJoseph,
-        address indexed newJoseph
+        address indexed oldRouter,
+        address indexed newRouter
     );
 }

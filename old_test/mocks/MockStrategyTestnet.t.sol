@@ -3,9 +3,9 @@ pragma solidity 0.8.16;
 
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
-import {StanleyUtils} from "../utils/StanleyUtils.sol";
+import {AssetManagementUtils} from "../utils/AssetManagementUtils.sol";
 import {TestConstants} from "../utils/TestConstants.sol";
-import {MockTestnetStrategy} from "contracts/mocks/stanley/MockTestnetStrategy.sol";
+import {MockTestnetStrategy} from "contracts/mocks/assetManagement/MockTestnetStrategy.sol";
 import {MockTestnetToken} from "contracts/mocks/tokens/MockTestnetToken.sol";
 
 contract MockStrategyTestnetTest is TestCommons, DataUtils {
@@ -18,10 +18,10 @@ contract MockStrategyTestnetTest is TestCommons, DataUtils {
     MockTestnetToken internal _shareToken18Decimals;
     MockTestnetToken internal _shareToken6Decimals;
 
-    function setStrategiesStanley(address stanley) public {
-        _mockStrategyDai.setStanley(stanley);
-        _mockStrategyUsdt.setStanley(stanley);
-        _mockStrategyUsdc.setStanley(stanley);
+    function setStrategiesAssetManagement(address assetManagement) public {
+        _mockStrategyDai.setAssetManagement(assetManagement);
+        _mockStrategyUsdt.setAssetManagement(assetManagement);
+        _mockStrategyUsdc.setAssetManagement(assetManagement);
     }
 
     function approveStrategies() public {
@@ -54,7 +54,7 @@ contract MockStrategyTestnetTest is TestCommons, DataUtils {
         _userThree = _getUserAddress(3);
         _liquidityProvider = _getUserAddress(4);
         _users = usersToArray(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
-        setStrategiesStanley(_admin);
+        setStrategiesAssetManagement(_admin);
         approveStrategies();
         setInitialAmounts();
     }
@@ -176,7 +176,7 @@ contract MockStrategyTestnetTest is TestCommons, DataUtils {
         assertGt(strategyBalanceBefore, strategyBalanceAfter);
     }
 
-    function testShouldNotWithdraw6DecimalsWhenNotStanley() public {
+    function testShouldNotWithdraw6DecimalsWhenNotAssetManagement() public {
         // given
         uint256 depositAmount = TestConstants.USD_10_000_18DEC;
         _mockStrategyUsdc.deposit(depositAmount);
@@ -186,7 +186,7 @@ contract MockStrategyTestnetTest is TestCommons, DataUtils {
         _mockStrategyUsdc.withdraw(depositAmount);
     }
 
-    function testShouldNotWithdraw18DecimalsWhenNotStanley() public {
+    function testShouldNotWithdraw18DecimalsWhenNotAssetManagement() public {
         // given
         uint256 depositAmount = TestConstants.USD_10_000_18DEC;
         _mockStrategyDai.deposit(depositAmount);
@@ -196,7 +196,7 @@ contract MockStrategyTestnetTest is TestCommons, DataUtils {
         _mockStrategyDai.withdraw(depositAmount);
     }
 
-    function testShouldNotDeposit18DecimalsWhenNotStanley() public {
+    function testShouldNotDeposit18DecimalsWhenNotAssetManagement() public {
         // given
         uint256 depositAmount = TestConstants.USD_10_000_18DEC;
         // when
@@ -205,7 +205,7 @@ contract MockStrategyTestnetTest is TestCommons, DataUtils {
         _mockStrategyDai.deposit(depositAmount);
     }
 
-    function testShouldNotDeposit6DecimalsWhenNotStanley() public {
+    function testShouldNotDeposit6DecimalsWhenNotAssetManagement() public {
         // given
         uint256 depositAmount = TestConstants.USD_10_000_18DEC;
         // when

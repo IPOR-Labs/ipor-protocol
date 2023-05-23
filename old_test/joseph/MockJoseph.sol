@@ -2,8 +2,8 @@
 pragma solidity 0.8.16;
 
 import "contracts/libraries/errors/IporErrors.sol";
-import "contracts/libraries/errors/MiltonErrors.sol";
-import "contracts/libraries/errors/JosephErrors.sol";
+import "contracts/libraries/errors/AmmErrors.sol";
+import "contracts/libraries/errors/AmmPoolsErrors.sol";
 import "contracts/libraries/Constants.sol";
 import "contracts/libraries/math/IporMath.sol";
 import "./MockJosephInternal.sol";
@@ -30,13 +30,13 @@ abstract contract MockJoseph is MockJosephInternal {
     }
 
     function _calculateExchangeRate(uint256 calculateTimestamp) internal view returns (uint256) {
-        IMiltonInternal milton = _getMilton();
+        IAmmTreasury ammTreasury = _getAmmTreasury();
 
-        (, , int256 soap) = milton.calculateSoapAtTimestamp(calculateTimestamp);
+        (, , int256 soap) = ammTreasury.calculateSoapAtTimestamp(calculateTimestamp);
 
-        int256 balance = milton.getAccruedBalance().liquidityPool.toInt256() - soap;
+        int256 balance = ammTreasury.getAccruedBalance().liquidityPool.toInt256() - soap;
 
-        require(balance >= 0, MiltonErrors.SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW);
+        require(balance >= 0, AmmErrors.SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW);
 
         uint256 ipTokenTotalSupply = _getIpToken().totalSupply();
 
@@ -48,9 +48,9 @@ abstract contract MockJoseph is MockJosephInternal {
     }
 
     function _checkVaultReservesRatio() internal view returns (uint256) {
-        (uint256 totalBalance, uint256 wadMiltonAssetBalance) = _getIporTotalBalance();
-        require(totalBalance > 0, JosephErrors.STANLEY_BALANCE_IS_EMPTY);
-        return IporMath.division(wadMiltonAssetBalance * Constants.D18, totalBalance);
+        (uint256 totalBalance, uint256 wadAmmTreasuryAssetBalance) = _getIporTotalBalance();
+        require(totalBalance > 0, AmmPoolsErrors.ASSET_MANAGEMENT_BALANCE_IS_EMPTY);
+        return IporMath.division(wadAmmTreasuryAssetBalance * Constants.D18, totalBalance);
     }
 
     function _provideLiquidity(
@@ -59,40 +59,40 @@ abstract contract MockJoseph is MockJosephInternal {
         uint256 timestamp
     ) internal nonReentrant {
         address msgSender = _msgSender();
-        IMiltonInternal milton = _getMilton();
+        IAmmTreasury ammTreasury = _getAmmTreasury();
 
         uint256 exchangeRate = _calculateExchangeRate(timestamp);
 
-        require(exchangeRate > 0, MiltonErrors.LIQUIDITY_POOL_IS_EMPTY);
+        require(exchangeRate > 0, AmmErrors.LIQUIDITY_POOL_IS_EMPTY);
 
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmount, assetDecimals);
 
-        _getMiltonStorage().addLiquidity(
+        _getAmmStorage().addLiquidity(
             msgSender,
             wadAssetAmount,
             _maxLiquidityPoolBalance * Constants.D18,
             _maxLpAccountContribution * Constants.D18
         );
 
-        IERC20Upgradeable(_asset).safeTransferFrom(msgSender, address(milton), assetAmount);
+        IERC20Upgradeable(_asset).safeTransferFrom(msgSender, address(ammTreasury), assetAmount);
 
         uint256 ipTokenAmount = IporMath.division(wadAssetAmount * Constants.D18, exchangeRate);
 
         _getIpToken().mint(msgSender, ipTokenAmount);
 
-        emit ProvideLiquidity(timestamp, msgSender, address(milton), exchangeRate, wadAssetAmount, ipTokenAmount);
+        emit ProvideLiquidity(timestamp, msgSender, address(ammTreasury), exchangeRate, wadAssetAmount, ipTokenAmount);
     }
 
     function _redeem(uint256 ipTokenAmount, uint256 timestamp) internal nonReentrant {
         require(
             ipTokenAmount > 0 && ipTokenAmount <= _getIpToken().balanceOf(_msgSender()),
-            JosephErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW
+            AmmPoolsErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW
         );
-        IMiltonInternal milton = _getMilton();
+        IAmmTreasury ammTreasury = _getAmmTreasury();
 
         uint256 exchangeRate = _calculateExchangeRate(timestamp);
 
-        require(exchangeRate > 0, MiltonErrors.LIQUIDITY_POOL_IS_EMPTY);
+        require(exchangeRate > 0, AmmErrors.LIQUIDITY_POOL_IS_EMPTY);
 
         uint256 wadAssetAmount = IporMath.division(ipTokenAmount * exchangeRate, Constants.D18);
 
@@ -102,7 +102,7 @@ abstract contract MockJoseph is MockJosephInternal {
 
         uint256 wadRedeemAmount = IporMath.convertToWad(redeemAmount, _getDecimals());
 
-        IporTypes.MiltonBalancesMemory memory balance = _getMilton().getAccruedBalance();
+        IporTypes.AmmBalancesMemory memory balance = _getAmmTreasury().getAccruedBalance();
 
         uint256 utilizationRate = _calculateRedeemedUtilizationRate(
             balance.liquidityPool,
@@ -110,17 +110,17 @@ abstract contract MockJoseph is MockJosephInternal {
             wadRedeemAmount
         );
 
-        require(utilizationRate <= _getRedeemLpMaxUtilizationRate(), JosephErrors.REDEEM_LP_UTILIZATION_EXCEEDED);
+        require(utilizationRate <= _getRedeemLpMaxUtilizationRate(), AmmPoolsErrors.REDEEM_LP_UTILIZATION_EXCEEDED);
 
         _getIpToken().burn(_msgSender(), ipTokenAmount);
 
-        _getMiltonStorage().subtractLiquidity(wadRedeemAmount);
+        _getAmmStorage().subtractLiquidity(wadRedeemAmount);
 
-        IERC20Upgradeable(_asset).safeTransferFrom(address(_getMilton()), _msgSender(), redeemAmount);
+        IERC20Upgradeable(_asset).safeTransferFrom(address(_getAmmTreasury()), _msgSender(), redeemAmount);
 
         emit Redeem(
             timestamp,
-            address(milton),
+            address(ammTreasury),
             _msgSender(),
             exchangeRate,
             wadAssetAmount,
@@ -144,18 +144,18 @@ abstract contract MockJoseph is MockJosephInternal {
         }
     }
 
-    /// @notice Emitted when `from` account provides liquidity (ERC20 token supported by IPOR Protocol) to Milton Liquidity Pool
+    /// @notice Emitted when `from` account provides liquidity (ERC20 token supported by IPOR Protocol) to AmmTreasury Liquidity Pool
     event ProvideLiquidity(
         /// @notice moment when liquidity is provided by `from` account
         uint256 timestamp,
         /// @notice address that provides liquidity
         address from,
-        /// @notice Milton's address where liquidity is received
+        /// @notice AmmTreasury's address where liquidity is received
         address to,
         /// @notice current ipToken exchange rate
         /// @dev value represented in 18 decimals
         uint256 exchangeRate,
-        /// @notice amount of asset provided by user to Milton's liquidity pool
+        /// @notice amount of asset provided by user to AmmTreasury's liquidity pool
         /// @dev value represented in 18 decimals
         uint256 assetAmount,
         /// @notice amount of ipToken issued to represent user's share in the liquidity pool.
@@ -167,7 +167,7 @@ abstract contract MockJoseph is MockJosephInternal {
     event Redeem(
         /// @notice moment in which ipTokens were redeemed by `to` account
         uint256 timestamp,
-        /// @notice Milton's address from which underlying asset - ERC20 Tokens, are transferred to `to` account
+        /// @notice AmmTreasury's address from which underlying asset - ERC20 Tokens, are transferred to `to` account
         address from,
         /// @notice account where underlying asset tokens are transferred after redeem
         address to,
@@ -183,7 +183,7 @@ abstract contract MockJoseph is MockJosephInternal {
         /// @notice underlying asset fee deducted when redeeming ipToken.
         /// @dev value represented in 18 decimals
         uint256 redeemFee,
-        /// @notice net asset amount transferred from Milton to `to`/sender's account, reduced by the redeem fee
+        /// @notice net asset amount transferred from AmmTreasury to `to`/sender's account, reduced by the redeem fee
         /// @dev value represented in 18 decimals
         uint256 redeemAmount
     );

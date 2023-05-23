@@ -29,7 +29,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldPauseSmartContractWhenSenderIsAnAdmin() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE1;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -44,7 +44,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldPauseSmartContractSpecificMethods() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE1;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         _iporProtocol.joseph.addAppointedToRebalance(_admin);
@@ -57,11 +57,11 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
         vm.expectRevert("Pausable: paused");
         _iporProtocol.joseph.rebalance();
         vm.expectRevert("Pausable: paused");
-        _iporProtocol.joseph.depositToStanley(123);
+        _iporProtocol.joseph.depositToAssetManagement(123);
         vm.expectRevert("Pausable: paused");
-        _iporProtocol.joseph.withdrawFromStanley(123);
+        _iporProtocol.joseph.withdrawFromAssetManagement(123);
         vm.expectRevert("Pausable: paused");
-        _iporProtocol.joseph.withdrawAllFromStanley();
+        _iporProtocol.joseph.withdrawAllFromAssetManagement();
         vm.expectRevert("Pausable: paused");
         _iporProtocol.joseph.setCharlieTreasury(_userTwo);
         vm.expectRevert("Pausable: paused");
@@ -85,7 +85,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotPauseSmartContractSpecificMethodsWhenPaused() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_liquidityProvider);
@@ -103,7 +103,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.getCharlieTreasuryManager();
         _iporProtocol.joseph.getTreasuryManager();
         _iporProtocol.joseph.getRedeemLpMaxUtilizationRate();
-        _iporProtocol.joseph.getMiltonStanleyBalanceRatio();
+        _iporProtocol.joseph.getAmmTreasuryAssetManagementBalanceRatio();
         _iporProtocol.joseph.getAsset();
         _iporProtocol.joseph.calculateExchangeRate();
         vm.stopPrank();
@@ -111,7 +111,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotPauseSmartContractWhenSenderIsNotAdmin() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -122,7 +122,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldUnpauseSmartContractWhenSenderIsAdmin() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_admin);
@@ -145,7 +145,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotUnPauseSmartContractWhenSenderIsNotAdmin() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_admin);
@@ -159,7 +159,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldTransferOwnershipWhenSimpleCase1() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -175,7 +175,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotTransferOwnershipWhenSenderIsNotCurrentOwner() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -186,7 +186,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotConfirmTransferOwnershipWhenSenderIsNotAppointedOwner() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -201,7 +201,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotConfirmTransferOwnershipTwiceWhenSenderIsNotAppointedOwner() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -218,7 +218,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotTransferOwnershipWhenSenderAlreadyLostOwnership() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_admin);
@@ -234,7 +234,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldHaveRightsToTransferOwnershipWhenSenderStillHasRights() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.startPrank(_admin);
@@ -251,7 +251,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotSendETHToJosephDAI() public payable {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -263,7 +263,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotSendETHToJosephUSDC() public payable {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdcInstance(_cfg);
 
         // when
@@ -275,7 +275,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotSendETHToJosephUSDT() public payable {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         // when
@@ -297,9 +297,9 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
                 false,
                 address(_iporProtocol.asset),
                 address(_iporProtocol.ipToken),
-                address(_iporProtocol.milton),
-                address(_iporProtocol.miltonStorage),
-                address(_iporProtocol.stanley)
+                address(_iporProtocol.ammTreasury),
+                address(_iporProtocol.ammStorage),
+                address(_iporProtocol.assetManagement)
             )
         );
 
@@ -324,9 +324,9 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
                 false,
                 address(_iporProtocol.asset),
                 address(_iporProtocol.ipToken),
-                address(_iporProtocol.milton),
-                address(_iporProtocol.miltonStorage),
-                address(_iporProtocol.stanley)
+                address(_iporProtocol.ammTreasury),
+                address(_iporProtocol.ammStorage),
+                address(_iporProtocol.assetManagement)
             )
         );
 
@@ -351,9 +351,9 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
                 false,
                 address(_iporProtocol.asset),
                 address(_iporProtocol.ipToken),
-                address(_iporProtocol.milton),
-                address(_iporProtocol.miltonStorage),
-                address(_iporProtocol.stanley)
+                address(_iporProtocol.ammTreasury),
+                address(_iporProtocol.ammStorage),
+                address(_iporProtocol.assetManagement)
             )
         );
 
@@ -366,53 +366,53 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
         assertEq(josephUsdtAddress, address(_iporProtocol.asset));
     }
 
-    function testShouldReturnDefaultMiltonStanleyBalanceRatio() public {
+    function testShouldReturnDefaultAmmTreasuryAssetManagementBalanceRatio() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE1;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
         vm.prank(_admin);
-        uint256 ratio = _iporProtocol.joseph.getMiltonStanleyBalanceRatio();
+        uint256 ratio = _iporProtocol.joseph.getAmmTreasuryAssetManagementBalanceRatio();
 
         // then
         assertEq(ratio, 85 * TestConstants.D16);
     }
 
-    function testShouldChangeMiltonStanleyBalanceRatio() public {
+    function testShouldChangeAmmTreasuryAssetManagementBalanceRatio() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE1;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
         vm.startPrank(_admin);
-        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(TestConstants.PERCENTAGE_50_18DEC);
+        _iporProtocol.joseph.setAmmTreasuryAssetManagementBalanceRatio(TestConstants.PERCENTAGE_50_18DEC);
 
         // then
         vm.stopPrank();
-        uint256 ratio = _iporProtocol.joseph.getMiltonStanleyBalanceRatio();
+        uint256 ratio = _iporProtocol.joseph.getAmmTreasuryAssetManagementBalanceRatio();
         assertEq(ratio, TestConstants.PERCENTAGE_50_18DEC);
     }
 
-    function testShouldNotChangeMiltonStanleyBalanceRatioWhenNewRatioIsZero() public {
+    function testShouldNotChangeAmmTreasuryAssetManagementBalanceRatioWhenNewRatioIsZero() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE1;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
         vm.prank(_admin);
         vm.expectRevert("IPOR_409");
-        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(TestConstants.ZERO);
+        _iporProtocol.joseph.setAmmTreasuryAssetManagementBalanceRatio(TestConstants.ZERO);
     }
 
-    function testShouldNotChangeMiltonStanleyBalanceRatioWhenNewRatioIsGreaterThanOne() public {
+    function testShouldNotChangeAmmTreasuryAssetManagementBalanceRatioWhenNewRatioIsGreaterThanOne() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE1;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
         vm.prank(_admin);
         vm.expectRevert("IPOR_409");
-        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(TestConstants.D18);
+        _iporProtocol.joseph.setAmmTreasuryAssetManagementBalanceRatio(TestConstants.D18);
     }
 }

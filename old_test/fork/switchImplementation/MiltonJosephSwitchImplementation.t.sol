@@ -5,70 +5,70 @@ import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 import "../../TestCommons.sol";
-import "./snapshots/MiltonSnapshot.sol";
-import "contracts/amm/Milton.sol";
-import "contracts/amm/MiltonDai.sol";
+import "./snapshots/AmmTreasurySnapshot.sol";
+import "contracts/amm/AmmTreasury.sol";
+import "contracts/amm/AmmTreasuryDai.sol";
 import "contracts/amm/pool/Joseph.sol";
 import "./snapshots/JosephSnapshot.sol";
 import "contracts/amm/pool/JosephDai.sol";
-import "./snapshots/MiltonStorageSnapshot.sol";
-import "./snapshots/StanleySnapshot.sol";
+import "./snapshots/AmmStorageSnapshot.sol";
+import "./snapshots/AssetManagementSnapshot.sol";
 import "../ForkUtils.sol";
-import "contracts/amm/MiltonUsdc.sol";
+import "contracts/amm/AmmTreasuryUsdc.sol";
 import "contracts/amm/pool/JosephUsdc.sol";
-import "contracts/amm/MiltonUsdt.sol";
+import "contracts/amm/AmmTreasuryUsdt.sol";
 import "contracts/amm/pool/JosephUsdt.sol";
 import "../../utils/IporRiskManagementOracleUtils.sol";
 import "../../utils/TestConstants.sol";
 
-contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, IporRiskManagementOracleUtils {
+contract DaiAmmTreasuryJosephSwitchImplementation is Test, TestCommons, ForkUtils, IporRiskManagementOracleUtils {
     address private _dai = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
     address private _usdc = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
     address private _usdt = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
     address private _owner = 0xD92E9F039E4189c342b4067CC61f5d063960D248;
 
-    address private _miltonProxyDai = 0xEd7d74AA7eB1f12F83dA36DFaC1de2257b4e7523;
+    address private _ammTreasuryProxyDai = 0xEd7d74AA7eB1f12F83dA36DFaC1de2257b4e7523;
     address private _josephProxyDai = 0x086d4daab14741b195deE65aFF050ba184B65045;
-    address private _miltonStorageProxyDai = 0xb99f2a02c0851efdD417bd6935d2eFcd23c56e61;
-    address private _stanleyProxyDai = 0xA6aC8B6AF789319A1Db994E25760Eb86F796e2B0;
+    address private _ammStorageProxyDai = 0xb99f2a02c0851efdD417bd6935d2eFcd23c56e61;
+    address private _assetManagementProxyDai = 0xA6aC8B6AF789319A1Db994E25760Eb86F796e2B0;
 
-    address private _miltonProxyUsdc = 0x137000352B4ed784e8fa8815d225c713AB2e7Dc9;
+    address private _ammTreasuryProxyUsdc = 0x137000352B4ed784e8fa8815d225c713AB2e7Dc9;
     address private _josephProxyUsdc = 0xC52569b5A349A7055E9192dBdd271F1Bd8133277;
-    address private _miltonStorageProxyUsdc = 0xB3d1c1aB4D30800162da40eb18B3024154924ba5;
-    address private _stanleyProxyUsdc = 0x7aa7b0B738C2570C2f9F892cB7cA5bB89b9BF260;
+    address private _ammStorageProxyUsdc = 0xB3d1c1aB4D30800162da40eb18B3024154924ba5;
+    address private _assetManagementProxyUsdc = 0x7aa7b0B738C2570C2f9F892cB7cA5bB89b9BF260;
 
-    address private _miltonProxyUsdt = 0x28BC58e600eF718B9E97d294098abecb8c96b687;
+    address private _ammTreasuryProxyUsdt = 0x28BC58e600eF718B9E97d294098abecb8c96b687;
     address private _josephProxyUsdt = 0x33C5A44fd6E76Fc2b50a9187CfeaC336A74324AC;
-    address private _miltonStorageProxyUsdt = 0x364f116352EB95033D73822bA81257B8c1f5B1CE;
-    address private _stanleyProxyUsdt = 0x8e679C1d67Af0CD4b314896856f09ece9E64D6B5;
+    address private _ammStorageProxyUsdt = 0x364f116352EB95033D73822bA81257B8c1f5B1CE;
+    address private _assetManagementProxyUsdt = 0x8e679C1d67Af0CD4b314896856f09ece9E64D6B5;
 
     function setUp() public {}
 
     function testShouldUpgradeDaiImplementation() public {
-        //Get snapshot of milton before switch implementation
-        MiltonSnapshot miltonSnapshotStart = new MiltonSnapshot(_miltonProxyDai);
-        miltonSnapshotStart.snapshot();
+        //Get snapshot of ammTreasury before switch implementation
+        AmmTreasurySnapshot ammTreasurySnapshotStart = new AmmTreasurySnapshot(_ammTreasuryProxyDai);
+        ammTreasurySnapshotStart.snapshot();
 
         JosephSnapshot josephSnapshotStart = new JosephSnapshot(_josephProxyDai);
         josephSnapshotStart.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotStart = new MiltonStorageSnapshot(_miltonStorageProxyDai);
-        miltonStorageSnapshotStart.snapshot();
+        AmmStorageSnapshot ammStorageSnapshotStart = new AmmStorageSnapshot(_ammStorageProxyDai);
+        ammStorageSnapshotStart.snapshot();
 
-        StanleySnapshot stanleySnapshotStart = new StanleySnapshot(_stanleyProxyDai);
-        stanleySnapshotStart.snapshot();
+        AssetManagementSnapshot assetManagementSnapshotStart = new AssetManagementSnapshot(_assetManagementProxyDai);
+        assetManagementSnapshotStart.snapshot();
 
         IIporRiskManagementOracle iporRiskManagementOracle = createRiskManagementOracle(_dai);
 
-        vm.makePersistent(address(miltonSnapshotStart));
+        vm.makePersistent(address(ammTreasurySnapshotStart));
         vm.makePersistent(address(josephSnapshotStart));
-        vm.makePersistent(address(miltonStorageSnapshotStart));
-        vm.makePersistent(address(stanleySnapshotStart));
+        vm.makePersistent(address(ammStorageSnapshotStart));
+        vm.makePersistent(address(assetManagementSnapshotStart));
 
-        //Switch implementation of Milton
-        Milton newMilton = new MiltonDai(address(iporRiskManagementOracle));
+        //Switch implementation of AmmTreasury
+        AmmTreasury newAmmTreasury = new AmmTreasuryDai(address(iporRiskManagementOracle));
         vm.prank(_owner);
-        Milton(_miltonProxyDai).upgradeTo(address(newMilton));
+        AmmTreasury(_ammTreasuryProxyDai).upgradeTo(address(newAmmTreasury));
 
         //switch implementation of Joseph
         Joseph newJoseph = new JosephDai();
@@ -76,64 +76,64 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ip
         Joseph(_josephProxyDai).upgradeTo(address(newJoseph));
 
         //Get snapshot after upgrade
-        MiltonSnapshot miltonSnapshotAfterUpgrade = new MiltonSnapshot(_miltonProxyDai);
-        miltonSnapshotAfterUpgrade.snapshot();
+        AmmTreasurySnapshot ammTreasurySnapshotAfterUpgrade = new AmmTreasurySnapshot(_ammTreasuryProxyDai);
+        ammTreasurySnapshotAfterUpgrade.snapshot();
 
         JosephSnapshot josephSnapshotAfterUpgrade = new JosephSnapshot(_josephProxyDai);
         josephSnapshotAfterUpgrade.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotAfterUpgrade = new MiltonStorageSnapshot(_miltonStorageProxyDai);
-        miltonStorageSnapshotAfterUpgrade.snapshot();
+        AmmStorageSnapshot ammStorageSnapshotAfterUpgrade = new AmmStorageSnapshot(_ammStorageProxyDai);
+        ammStorageSnapshotAfterUpgrade.snapshot();
 
-        StanleySnapshot stanleySnapshotAfterUpgrade = new StanleySnapshot(_stanleyProxyDai);
-        stanleySnapshotAfterUpgrade.snapshot();
+        AssetManagementSnapshot assetManagementSnapshotAfterUpgrade = new AssetManagementSnapshot(_assetManagementProxyDai);
+        assetManagementSnapshotAfterUpgrade.snapshot();
 
-        vm.makePersistent(address(miltonSnapshotAfterUpgrade));
+        vm.makePersistent(address(ammTreasurySnapshotAfterUpgrade));
         vm.makePersistent(address(josephSnapshotAfterUpgrade));
-        vm.makePersistent(address(miltonStorageSnapshotAfterUpgrade));
-        vm.makePersistent(address(stanleySnapshotAfterUpgrade));
+        vm.makePersistent(address(ammStorageSnapshotAfterUpgrade));
+        vm.makePersistent(address(assetManagementSnapshotAfterUpgrade));
 
         //Assert files
-        miltonSnapshotStart.assertMilton(miltonSnapshotStart, miltonSnapshotAfterUpgrade);
+        ammTreasurySnapshotStart.assertAmmTreasury(ammTreasurySnapshotStart, ammTreasurySnapshotAfterUpgrade);
         josephSnapshotStart.assertJoseph(josephSnapshotStart, josephSnapshotAfterUpgrade);
-        miltonStorageSnapshotStart.assertMilton(miltonStorageSnapshotStart, miltonStorageSnapshotAfterUpgrade);
-        stanleySnapshotStart.assertStanley(stanleySnapshotStart, stanleySnapshotAfterUpgrade);
+        ammStorageSnapshotStart.assertAmmTreasury(ammStorageSnapshotStart, ammStorageSnapshotAfterUpgrade);
+        assetManagementSnapshotStart.assertAssetManagement(assetManagementSnapshotStart, assetManagementSnapshotAfterUpgrade);
     }
 
     //TODO: fix test
     function skipTestShouldUpgradeDaiImplementationAndInteract() public {
         uint256 blockNumber = block.number;
-        basicInteractWithAmm(_owner, _dai, _josephProxyDai, _miltonProxyDai);
-        //Get snapshot of milton before switch implementation
-        MiltonSnapshot miltonSnapshotStart = new MiltonSnapshot(_miltonProxyDai);
-        miltonSnapshotStart.snapshot();
+        basicInteractWithAmm(_owner, _dai, _josephProxyDai, _ammTreasuryProxyDai);
+        //Get snapshot of ammTreasury before switch implementation
+        AmmTreasurySnapshot ammTreasurySnapshotStart = new AmmTreasurySnapshot(_ammTreasuryProxyDai);
+        ammTreasurySnapshotStart.snapshot();
 
         JosephSnapshot josephSnapshotStart = new JosephSnapshot(_josephProxyDai);
         josephSnapshotStart.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotStart = new MiltonStorageSnapshot(_miltonStorageProxyDai);
-        miltonStorageSnapshotStart.snapshot();
+        AmmStorageSnapshot ammStorageSnapshotStart = new AmmStorageSnapshot(_ammStorageProxyDai);
+        ammStorageSnapshotStart.snapshot();
 
-        StanleySnapshot stanleySnapshotStart = new StanleySnapshot(_stanleyProxyDai);
-        stanleySnapshotStart.snapshot();
+        AssetManagementSnapshot assetManagementSnapshotStart = new AssetManagementSnapshot(_assetManagementProxyDai);
+        assetManagementSnapshotStart.snapshot();
 
-        vm.makePersistent(address(miltonSnapshotStart));
+        vm.makePersistent(address(ammTreasurySnapshotStart));
         vm.makePersistent(address(josephSnapshotStart));
-        vm.makePersistent(address(miltonStorageSnapshotStart));
-        vm.makePersistent(address(stanleySnapshotStart));
+        vm.makePersistent(address(ammStorageSnapshotStart));
+        vm.makePersistent(address(assetManagementSnapshotStart));
 
         //rollback
         vm.rollFork(blockNumber);
 
-        //Switch implementation of Milton
+        //Switch implementation of AmmTreasury
         IIporRiskManagementOracle iporRiskManagementOracle = createRiskManagementOracle(_dai);
-        Milton newMilton = new MiltonDai(address(iporRiskManagementOracle));
+        AmmTreasury newAmmTreasury = new AmmTreasuryDai(address(iporRiskManagementOracle));
         vm.prank(_owner);
-        Milton(_miltonProxyDai).upgradeTo(address(newMilton));
+        AmmTreasury(_ammTreasuryProxyDai).upgradeTo(address(newAmmTreasury));
 
-        MiltonStorage newMiltonStorage = new MiltonStorage();
+        AmmStorage newAmmStorage = new AmmStorage();
         vm.prank(_owner);
-        MiltonStorage(_miltonStorageProxyDai).upgradeTo(address(newMiltonStorage));
+        AmmStorage(_ammStorageProxyDai).upgradeTo(address(newAmmStorage));
 
         //switch implementation of Joseph
         Joseph newJoseph = new JosephDai();
@@ -142,62 +142,62 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ip
         vm.prank(_owner);
         Joseph(_josephProxyDai).addAppointedToRebalance(_owner);
 
-        basicInteractWithAmm(_owner, _dai, _josephProxyDai, _miltonProxyDai);
+        basicInteractWithAmm(_owner, _dai, _josephProxyDai, _ammTreasuryProxyDai);
 
         //Get snapshot after upgrade
-        MiltonSnapshot miltonSnapshotAfterUpgrade = new MiltonSnapshot(_miltonProxyDai);
-        miltonSnapshotAfterUpgrade.snapshot();
+        AmmTreasurySnapshot ammTreasurySnapshotAfterUpgrade = new AmmTreasurySnapshot(_ammTreasuryProxyDai);
+        ammTreasurySnapshotAfterUpgrade.snapshot();
 
         JosephSnapshot josephSnapshotAfterUpgrade = new JosephSnapshot(_josephProxyDai);
         josephSnapshotAfterUpgrade.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotAfterUpgrade = new MiltonStorageSnapshot(_miltonStorageProxyDai);
-        miltonStorageSnapshotAfterUpgrade.snapshot();
+        AmmStorageSnapshot ammStorageSnapshotAfterUpgrade = new AmmStorageSnapshot(_ammStorageProxyDai);
+        ammStorageSnapshotAfterUpgrade.snapshot();
 
-        StanleySnapshot stanleySnapshotAfterUpgrade = new StanleySnapshot(_stanleyProxyDai);
-        stanleySnapshotAfterUpgrade.snapshot();
+        AssetManagementSnapshot assetManagementSnapshotAfterUpgrade = new AssetManagementSnapshot(_assetManagementProxyDai);
+        assetManagementSnapshotAfterUpgrade.snapshot();
 
-        vm.makePersistent(address(miltonSnapshotAfterUpgrade));
+        vm.makePersistent(address(ammTreasurySnapshotAfterUpgrade));
         vm.makePersistent(address(josephSnapshotAfterUpgrade));
-        vm.makePersistent(address(miltonStorageSnapshotAfterUpgrade));
-        vm.makePersistent(address(stanleySnapshotAfterUpgrade));
+        vm.makePersistent(address(ammStorageSnapshotAfterUpgrade));
+        vm.makePersistent(address(assetManagementSnapshotAfterUpgrade));
 
         //Assert files
-        miltonSnapshotStart.assertMilton(miltonSnapshotStart, miltonSnapshotAfterUpgrade);
+        ammTreasurySnapshotStart.assertAmmTreasury(ammTreasurySnapshotStart, ammTreasurySnapshotAfterUpgrade);
         josephSnapshotStart.assertJoseph(josephSnapshotStart, josephSnapshotAfterUpgrade);
-        miltonStorageSnapshotStart.assertMilton(miltonStorageSnapshotStart, miltonStorageSnapshotAfterUpgrade);
-        stanleySnapshotStart.assertStanley(stanleySnapshotStart, stanleySnapshotAfterUpgrade);
+        ammStorageSnapshotStart.assertAmmTreasury(ammStorageSnapshotStart, ammStorageSnapshotAfterUpgrade);
+        assetManagementSnapshotStart.assertAssetManagement(assetManagementSnapshotStart, assetManagementSnapshotAfterUpgrade);
     }
 
     function testShouldUpgradeUsdcImplementation() public {
-        //Get snapshot of milton before switch implementation
-        MiltonSnapshot miltonSnapshotStart = new MiltonSnapshot(_miltonProxyUsdc);
-        miltonSnapshotStart.snapshot();
+        //Get snapshot of ammTreasury before switch implementation
+        AmmTreasurySnapshot ammTreasurySnapshotStart = new AmmTreasurySnapshot(_ammTreasuryProxyUsdc);
+        ammTreasurySnapshotStart.snapshot();
 
         JosephSnapshot josephSnapshotStart = new JosephSnapshot(_josephProxyUsdc);
         josephSnapshotStart.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotStart = new MiltonStorageSnapshot(_miltonStorageProxyUsdc);
-        miltonStorageSnapshotStart.snapshot();
+        AmmStorageSnapshot ammStorageSnapshotStart = new AmmStorageSnapshot(_ammStorageProxyUsdc);
+        ammStorageSnapshotStart.snapshot();
 
-        StanleySnapshot stanleySnapshotStart = new StanleySnapshot(_stanleyProxyUsdc);
-        stanleySnapshotStart.snapshot();
+        AssetManagementSnapshot assetManagementSnapshotStart = new AssetManagementSnapshot(_assetManagementProxyUsdc);
+        assetManagementSnapshotStart.snapshot();
 
         IIporRiskManagementOracle iporRiskManagementOracle = createRiskManagementOracle(_usdc);
 
-        vm.makePersistent(address(miltonSnapshotStart));
+        vm.makePersistent(address(ammTreasurySnapshotStart));
         vm.makePersistent(address(josephSnapshotStart));
-        vm.makePersistent(address(miltonStorageSnapshotStart));
-        vm.makePersistent(address(stanleySnapshotStart));
+        vm.makePersistent(address(ammStorageSnapshotStart));
+        vm.makePersistent(address(assetManagementSnapshotStart));
 
-        //Switch implementation of Milton
-        Milton newMilton = new MiltonUsdc(address(iporRiskManagementOracle));
+        //Switch implementation of AmmTreasury
+        AmmTreasury newAmmTreasury = new AmmTreasuryUsdc(address(iporRiskManagementOracle));
         vm.prank(_owner);
-        Milton(_miltonProxyUsdc).upgradeTo(address(newMilton));
+        AmmTreasury(_ammTreasuryProxyUsdc).upgradeTo(address(newAmmTreasury));
 
-        MiltonStorage newMiltonStorage = new MiltonStorage();
+        AmmStorage newAmmStorage = new AmmStorage();
         vm.prank(_owner);
-        MiltonStorage(_miltonStorageProxyUsdc).upgradeTo(address(newMiltonStorage));
+        AmmStorage(_ammStorageProxyUsdc).upgradeTo(address(newAmmStorage));
 
         //switch implementation of Joseph
         Joseph newJoseph = new JosephUsdc();
@@ -205,64 +205,64 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ip
         Joseph(_josephProxyUsdc).upgradeTo(address(newJoseph));
 
         //Get snapshot after upgrade
-        MiltonSnapshot miltonSnapshotAfterUpgrade = new MiltonSnapshot(_miltonProxyUsdc);
-        miltonSnapshotAfterUpgrade.snapshot();
+        AmmTreasurySnapshot ammTreasurySnapshotAfterUpgrade = new AmmTreasurySnapshot(_ammTreasuryProxyUsdc);
+        ammTreasurySnapshotAfterUpgrade.snapshot();
 
         JosephSnapshot josephSnapshotAfterUpgrade = new JosephSnapshot(_josephProxyUsdc);
         josephSnapshotAfterUpgrade.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotAfterUpgrade = new MiltonStorageSnapshot(_miltonStorageProxyUsdc);
-        miltonStorageSnapshotAfterUpgrade.snapshot();
+        AmmStorageSnapshot ammStorageSnapshotAfterUpgrade = new AmmStorageSnapshot(_ammStorageProxyUsdc);
+        ammStorageSnapshotAfterUpgrade.snapshot();
 
-        StanleySnapshot stanleySnapshotAfterUpgrade = new StanleySnapshot(_stanleyProxyUsdc);
-        stanleySnapshotAfterUpgrade.snapshot();
+        AssetManagementSnapshot assetManagementSnapshotAfterUpgrade = new AssetManagementSnapshot(_assetManagementProxyUsdc);
+        assetManagementSnapshotAfterUpgrade.snapshot();
 
-        vm.makePersistent(address(miltonSnapshotAfterUpgrade));
+        vm.makePersistent(address(ammTreasurySnapshotAfterUpgrade));
         vm.makePersistent(address(josephSnapshotAfterUpgrade));
-        vm.makePersistent(address(miltonStorageSnapshotAfterUpgrade));
-        vm.makePersistent(address(stanleySnapshotAfterUpgrade));
+        vm.makePersistent(address(ammStorageSnapshotAfterUpgrade));
+        vm.makePersistent(address(assetManagementSnapshotAfterUpgrade));
 
         //Assert files
-        miltonSnapshotStart.assertWithIgnore(miltonSnapshotStart, miltonSnapshotAfterUpgrade);
+        ammTreasurySnapshotStart.assertWithIgnore(ammTreasurySnapshotStart, ammTreasurySnapshotAfterUpgrade);
         josephSnapshotStart.assertJoseph(josephSnapshotStart, josephSnapshotAfterUpgrade);
-        miltonStorageSnapshotStart.assertMilton(miltonStorageSnapshotStart, miltonStorageSnapshotAfterUpgrade);
-        stanleySnapshotStart.assertStanley(stanleySnapshotStart, stanleySnapshotAfterUpgrade);
+        ammStorageSnapshotStart.assertAmmTreasury(ammStorageSnapshotStart, ammStorageSnapshotAfterUpgrade);
+        assetManagementSnapshotStart.assertAssetManagement(assetManagementSnapshotStart, assetManagementSnapshotAfterUpgrade);
     }
 
     // TODO: temporary disabled
     function skipTestShouldUpgradeUsdcImplementationAndInteract() public {
         uint256 blockNumber = block.number;
-        basicInteractWithAmm(_owner, _usdc, _josephProxyUsdc, _miltonProxyUsdc);
-        //Get snapshot of milton before switch implementation
-        MiltonSnapshot miltonSnapshotStart = new MiltonSnapshot(_miltonProxyUsdc);
-        miltonSnapshotStart.snapshot();
+        basicInteractWithAmm(_owner, _usdc, _josephProxyUsdc, _ammTreasuryProxyUsdc);
+        //Get snapshot of ammTreasury before switch implementation
+        AmmTreasurySnapshot ammTreasurySnapshotStart = new AmmTreasurySnapshot(_ammTreasuryProxyUsdc);
+        ammTreasurySnapshotStart.snapshot();
 
         JosephSnapshot josephSnapshotStart = new JosephSnapshot(_josephProxyUsdc);
         josephSnapshotStart.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotStart = new MiltonStorageSnapshot(_miltonStorageProxyUsdc);
-        miltonStorageSnapshotStart.snapshot();
+        AmmStorageSnapshot ammStorageSnapshotStart = new AmmStorageSnapshot(_ammStorageProxyUsdc);
+        ammStorageSnapshotStart.snapshot();
 
-        StanleySnapshot stanleySnapshotStart = new StanleySnapshot(_stanleyProxyUsdc);
-        stanleySnapshotStart.snapshot();
+        AssetManagementSnapshot assetManagementSnapshotStart = new AssetManagementSnapshot(_assetManagementProxyUsdc);
+        assetManagementSnapshotStart.snapshot();
 
-        vm.makePersistent(address(miltonSnapshotStart));
+        vm.makePersistent(address(ammTreasurySnapshotStart));
         vm.makePersistent(address(josephSnapshotStart));
-        vm.makePersistent(address(miltonStorageSnapshotStart));
-        vm.makePersistent(address(stanleySnapshotStart));
+        vm.makePersistent(address(ammStorageSnapshotStart));
+        vm.makePersistent(address(assetManagementSnapshotStart));
 
         //rollback
         vm.rollFork(blockNumber);
 
-        //Switch implementation of Milton
+        //Switch implementation of AmmTreasury
         IIporRiskManagementOracle iporRiskManagementOracle = createRiskManagementOracle(_usdc);
-        Milton newMilton = new MiltonUsdc(address(iporRiskManagementOracle));
+        AmmTreasury newAmmTreasury = new AmmTreasuryUsdc(address(iporRiskManagementOracle));
         vm.prank(_owner);
-        Milton(_miltonProxyUsdc).upgradeTo(address(newMilton));
+        AmmTreasury(_ammTreasuryProxyUsdc).upgradeTo(address(newAmmTreasury));
 
-        MiltonStorage newMiltonStorage = new MiltonStorage();
+        AmmStorage newAmmStorage = new AmmStorage();
         vm.prank(_owner);
-        MiltonStorage(_miltonStorageProxyUsdc).upgradeTo(address(newMiltonStorage));
+        AmmStorage(_ammStorageProxyUsdc).upgradeTo(address(newAmmStorage));
 
         //switch implementation of Joseph
         Joseph newJoseph = new JosephUsdc();
@@ -272,58 +272,58 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ip
         vm.prank(_owner);
         Joseph(_josephProxyUsdc).addAppointedToRebalance(_owner);
 
-        basicInteractWithAmm(_owner, _usdc, _josephProxyUsdc, _miltonProxyUsdc);
+        basicInteractWithAmm(_owner, _usdc, _josephProxyUsdc, _ammTreasuryProxyUsdc);
 
         //Get snapshot after upgrade
-        MiltonSnapshot miltonSnapshotAfterUpgrade = new MiltonSnapshot(_miltonProxyUsdc);
-        miltonSnapshotAfterUpgrade.snapshot();
+        AmmTreasurySnapshot ammTreasurySnapshotAfterUpgrade = new AmmTreasurySnapshot(_ammTreasuryProxyUsdc);
+        ammTreasurySnapshotAfterUpgrade.snapshot();
 
         JosephSnapshot josephSnapshotAfterUpgrade = new JosephSnapshot(_josephProxyUsdc);
         josephSnapshotAfterUpgrade.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotAfterUpgrade = new MiltonStorageSnapshot(_miltonStorageProxyUsdc);
-        miltonStorageSnapshotAfterUpgrade.snapshot();
+        AmmStorageSnapshot ammStorageSnapshotAfterUpgrade = new AmmStorageSnapshot(_ammStorageProxyUsdc);
+        ammStorageSnapshotAfterUpgrade.snapshot();
 
-        StanleySnapshot stanleySnapshotAfterUpgrade = new StanleySnapshot(_stanleyProxyUsdc);
-        stanleySnapshotAfterUpgrade.snapshot();
+        AssetManagementSnapshot assetManagementSnapshotAfterUpgrade = new AssetManagementSnapshot(_assetManagementProxyUsdc);
+        assetManagementSnapshotAfterUpgrade.snapshot();
 
-        vm.makePersistent(address(miltonSnapshotAfterUpgrade));
+        vm.makePersistent(address(ammTreasurySnapshotAfterUpgrade));
         vm.makePersistent(address(josephSnapshotAfterUpgrade));
-        vm.makePersistent(address(miltonStorageSnapshotAfterUpgrade));
-        vm.makePersistent(address(stanleySnapshotAfterUpgrade));
+        vm.makePersistent(address(ammStorageSnapshotAfterUpgrade));
+        vm.makePersistent(address(assetManagementSnapshotAfterUpgrade));
 
         //Assert files
-        miltonSnapshotStart.assertMilton(miltonSnapshotStart, miltonSnapshotAfterUpgrade);
+        ammTreasurySnapshotStart.assertAmmTreasury(ammTreasurySnapshotStart, ammTreasurySnapshotAfterUpgrade);
         josephSnapshotStart.assertJoseph(josephSnapshotStart, josephSnapshotAfterUpgrade);
-        miltonStorageSnapshotStart.assertMilton(miltonStorageSnapshotStart, miltonStorageSnapshotAfterUpgrade);
-        stanleySnapshotStart.assertStanley(stanleySnapshotStart, stanleySnapshotAfterUpgrade);
+        ammStorageSnapshotStart.assertAmmTreasury(ammStorageSnapshotStart, ammStorageSnapshotAfterUpgrade);
+        assetManagementSnapshotStart.assertAssetManagement(assetManagementSnapshotStart, assetManagementSnapshotAfterUpgrade);
     }
 
     function testShouldUpgradeUsdtImplementation() public {
-        //Get snapshot of milton before switch implementation
-        MiltonSnapshot miltonSnapshotStart = new MiltonSnapshot(_miltonProxyUsdt);
-        miltonSnapshotStart.snapshot();
+        //Get snapshot of ammTreasury before switch implementation
+        AmmTreasurySnapshot ammTreasurySnapshotStart = new AmmTreasurySnapshot(_ammTreasuryProxyUsdt);
+        ammTreasurySnapshotStart.snapshot();
 
         JosephSnapshot josephSnapshotStart = new JosephSnapshot(_josephProxyUsdt);
         josephSnapshotStart.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotStart = new MiltonStorageSnapshot(_miltonStorageProxyUsdt);
-        miltonStorageSnapshotStart.snapshot();
+        AmmStorageSnapshot ammStorageSnapshotStart = new AmmStorageSnapshot(_ammStorageProxyUsdt);
+        ammStorageSnapshotStart.snapshot();
 
-        StanleySnapshot stanleySnapshotStart = new StanleySnapshot(_stanleyProxyUsdt);
-        stanleySnapshotStart.snapshot();
+        AssetManagementSnapshot assetManagementSnapshotStart = new AssetManagementSnapshot(_assetManagementProxyUsdt);
+        assetManagementSnapshotStart.snapshot();
 
         IIporRiskManagementOracle iporRiskManagementOracle = createRiskManagementOracle(_usdt);
 
-        vm.makePersistent(address(miltonSnapshotStart));
+        vm.makePersistent(address(ammTreasurySnapshotStart));
         vm.makePersistent(address(josephSnapshotStart));
-        vm.makePersistent(address(miltonStorageSnapshotStart));
-        vm.makePersistent(address(stanleySnapshotStart));
+        vm.makePersistent(address(ammStorageSnapshotStart));
+        vm.makePersistent(address(assetManagementSnapshotStart));
 
-        //Switch implementation of Milton
-        Milton newMilton = new MiltonUsdt(address(iporRiskManagementOracle));
+        //Switch implementation of AmmTreasury
+        AmmTreasury newAmmTreasury = new AmmTreasuryUsdt(address(iporRiskManagementOracle));
         vm.prank(_owner);
-        Milton(_miltonProxyUsdt).upgradeTo(address(newMilton));
+        AmmTreasury(_ammTreasuryProxyUsdt).upgradeTo(address(newAmmTreasury));
 
         //switch implementation of Joseph
         Joseph newJoseph = new JosephUsdt();
@@ -331,64 +331,64 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ip
         Joseph(_josephProxyUsdt).upgradeTo(address(newJoseph));
 
         //Get snapshot after upgrade
-        MiltonSnapshot miltonSnapshotAfterUpgrade = new MiltonSnapshot(_miltonProxyUsdt);
-        miltonSnapshotAfterUpgrade.snapshot();
+        AmmTreasurySnapshot ammTreasurySnapshotAfterUpgrade = new AmmTreasurySnapshot(_ammTreasuryProxyUsdt);
+        ammTreasurySnapshotAfterUpgrade.snapshot();
 
         JosephSnapshot josephSnapshotAfterUpgrade = new JosephSnapshot(_josephProxyUsdt);
         josephSnapshotAfterUpgrade.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotAfterUpgrade = new MiltonStorageSnapshot(_miltonStorageProxyUsdt);
-        miltonStorageSnapshotAfterUpgrade.snapshot();
+        AmmStorageSnapshot ammStorageSnapshotAfterUpgrade = new AmmStorageSnapshot(_ammStorageProxyUsdt);
+        ammStorageSnapshotAfterUpgrade.snapshot();
 
-        StanleySnapshot stanleySnapshotAfterUpgrade = new StanleySnapshot(_stanleyProxyUsdt);
-        stanleySnapshotAfterUpgrade.snapshot();
+        AssetManagementSnapshot assetManagementSnapshotAfterUpgrade = new AssetManagementSnapshot(_assetManagementProxyUsdt);
+        assetManagementSnapshotAfterUpgrade.snapshot();
 
-        vm.makePersistent(address(miltonSnapshotAfterUpgrade));
+        vm.makePersistent(address(ammTreasurySnapshotAfterUpgrade));
         vm.makePersistent(address(josephSnapshotAfterUpgrade));
-        vm.makePersistent(address(miltonStorageSnapshotAfterUpgrade));
-        vm.makePersistent(address(stanleySnapshotAfterUpgrade));
+        vm.makePersistent(address(ammStorageSnapshotAfterUpgrade));
+        vm.makePersistent(address(assetManagementSnapshotAfterUpgrade));
 
         //Assert files
-        miltonSnapshotStart.assertMilton(miltonSnapshotStart, miltonSnapshotAfterUpgrade);
+        ammTreasurySnapshotStart.assertAmmTreasury(ammTreasurySnapshotStart, ammTreasurySnapshotAfterUpgrade);
         josephSnapshotStart.assertJoseph(josephSnapshotStart, josephSnapshotAfterUpgrade);
-        miltonStorageSnapshotStart.assertMilton(miltonStorageSnapshotStart, miltonStorageSnapshotAfterUpgrade);
-        stanleySnapshotStart.assertStanley(stanleySnapshotStart, stanleySnapshotAfterUpgrade);
+        ammStorageSnapshotStart.assertAmmTreasury(ammStorageSnapshotStart, ammStorageSnapshotAfterUpgrade);
+        assetManagementSnapshotStart.assertAssetManagement(assetManagementSnapshotStart, assetManagementSnapshotAfterUpgrade);
     }
 
     //TODO: temporary skipped
     function skipTestShouldUpgradeUsdtImplementationAndInteract() public {
         uint256 blockNumber = block.number;
-        basicInteractWithAmm(_owner, _usdt, _josephProxyUsdt, _miltonProxyUsdt);
-        //Get snapshot of milton before switch implementation
-        MiltonSnapshot miltonSnapshotStart = new MiltonSnapshot(_miltonProxyUsdt);
-        miltonSnapshotStart.snapshot();
+        basicInteractWithAmm(_owner, _usdt, _josephProxyUsdt, _ammTreasuryProxyUsdt);
+        //Get snapshot of ammTreasury before switch implementation
+        AmmTreasurySnapshot ammTreasurySnapshotStart = new AmmTreasurySnapshot(_ammTreasuryProxyUsdt);
+        ammTreasurySnapshotStart.snapshot();
 
         JosephSnapshot josephSnapshotStart = new JosephSnapshot(_josephProxyUsdt);
         josephSnapshotStart.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotStart = new MiltonStorageSnapshot(_miltonStorageProxyUsdt);
-        miltonStorageSnapshotStart.snapshot();
+        AmmStorageSnapshot ammStorageSnapshotStart = new AmmStorageSnapshot(_ammStorageProxyUsdt);
+        ammStorageSnapshotStart.snapshot();
 
-        StanleySnapshot stanleySnapshotStart = new StanleySnapshot(_stanleyProxyUsdt);
-        stanleySnapshotStart.snapshot();
+        AssetManagementSnapshot assetManagementSnapshotStart = new AssetManagementSnapshot(_assetManagementProxyUsdt);
+        assetManagementSnapshotStart.snapshot();
 
-        vm.makePersistent(address(miltonSnapshotStart));
+        vm.makePersistent(address(ammTreasurySnapshotStart));
         vm.makePersistent(address(josephSnapshotStart));
-        vm.makePersistent(address(miltonStorageSnapshotStart));
-        vm.makePersistent(address(stanleySnapshotStart));
+        vm.makePersistent(address(ammStorageSnapshotStart));
+        vm.makePersistent(address(assetManagementSnapshotStart));
 
         //rollback
         vm.rollFork(blockNumber);
 
-        //Switch implementation of Milton
+        //Switch implementation of AmmTreasury
         IIporRiskManagementOracle iporRiskManagementOracle = createRiskManagementOracle(_usdt);
-        Milton newMilton = new MiltonUsdt(address(iporRiskManagementOracle));
+        AmmTreasury newAmmTreasury = new AmmTreasuryUsdt(address(iporRiskManagementOracle));
         vm.prank(_owner);
-        Milton(_miltonProxyUsdt).upgradeTo(address(newMilton));
+        AmmTreasury(_ammTreasuryProxyUsdt).upgradeTo(address(newAmmTreasury));
 
-        MiltonStorage newMiltonStorage = new MiltonStorage();
+        AmmStorage newAmmStorage = new AmmStorage();
         vm.prank(_owner);
-        MiltonStorage(_miltonStorageProxyUsdt).upgradeTo(address(newMiltonStorage));
+        AmmStorage(_ammStorageProxyUsdt).upgradeTo(address(newAmmStorage));
 
         //switch implementation of Joseph
         Joseph newJoseph = new JosephUsdt();
@@ -398,31 +398,31 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ip
         vm.prank(_owner);
         Joseph(_josephProxyUsdt).addAppointedToRebalance(_owner);
 
-        basicInteractWithAmm(_owner, _usdt, _josephProxyUsdt, _miltonProxyUsdt);
+        basicInteractWithAmm(_owner, _usdt, _josephProxyUsdt, _ammTreasuryProxyUsdt);
 
         //Get snapshot after upgrade
-        MiltonSnapshot miltonSnapshotAfterUpgrade = new MiltonSnapshot(_miltonProxyUsdt);
-        miltonSnapshotAfterUpgrade.snapshot();
+        AmmTreasurySnapshot ammTreasurySnapshotAfterUpgrade = new AmmTreasurySnapshot(_ammTreasuryProxyUsdt);
+        ammTreasurySnapshotAfterUpgrade.snapshot();
 
         JosephSnapshot josephSnapshotAfterUpgrade = new JosephSnapshot(_josephProxyUsdt);
         josephSnapshotAfterUpgrade.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotAfterUpgrade = new MiltonStorageSnapshot(_miltonStorageProxyUsdt);
-        miltonStorageSnapshotAfterUpgrade.snapshot();
+        AmmStorageSnapshot ammStorageSnapshotAfterUpgrade = new AmmStorageSnapshot(_ammStorageProxyUsdt);
+        ammStorageSnapshotAfterUpgrade.snapshot();
 
-        StanleySnapshot stanleySnapshotAfterUpgrade = new StanleySnapshot(_stanleyProxyUsdt);
-        stanleySnapshotAfterUpgrade.snapshot();
+        AssetManagementSnapshot assetManagementSnapshotAfterUpgrade = new AssetManagementSnapshot(_assetManagementProxyUsdt);
+        assetManagementSnapshotAfterUpgrade.snapshot();
 
-        vm.makePersistent(address(miltonSnapshotAfterUpgrade));
+        vm.makePersistent(address(ammTreasurySnapshotAfterUpgrade));
         vm.makePersistent(address(josephSnapshotAfterUpgrade));
-        vm.makePersistent(address(miltonStorageSnapshotAfterUpgrade));
-        vm.makePersistent(address(stanleySnapshotAfterUpgrade));
+        vm.makePersistent(address(ammStorageSnapshotAfterUpgrade));
+        vm.makePersistent(address(assetManagementSnapshotAfterUpgrade));
 
         //Assert files
-        miltonSnapshotStart.assertMilton(miltonSnapshotStart, miltonSnapshotAfterUpgrade);
+        ammTreasurySnapshotStart.assertAmmTreasury(ammTreasurySnapshotStart, ammTreasurySnapshotAfterUpgrade);
         josephSnapshotStart.assertJoseph(josephSnapshotStart, josephSnapshotAfterUpgrade);
-        miltonStorageSnapshotStart.assertMilton(miltonStorageSnapshotStart, miltonStorageSnapshotAfterUpgrade);
-        stanleySnapshotStart.assertStanley(stanleySnapshotStart, stanleySnapshotAfterUpgrade);
+        ammStorageSnapshotStart.assertAmmTreasury(ammStorageSnapshotStart, ammStorageSnapshotAfterUpgrade);
+        assetManagementSnapshotStart.assertAssetManagement(assetManagementSnapshotStart, assetManagementSnapshotAfterUpgrade);
     }
 
     function createRiskManagementOracle(address assetAddress) internal returns (IIporRiskManagementOracle) {

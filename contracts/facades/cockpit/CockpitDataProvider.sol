@@ -8,16 +8,11 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../interfaces/types/CockpitTypes.sol";
 import "../../libraries/Constants.sol";
 import "../../interfaces/IIporOracle.sol";
-import "../../interfaces/IMilton.sol";
+import "../../interfaces/IAmmTreasury.sol";
 import "../../interfaces/ICockpitDataProvider.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 
-contract CockpitDataProvider is
-    Initializable,
-    UUPSUpgradeable,
-    IporOwnableUpgradeable,
-    ICockpitDataProvider
-{
+contract CockpitDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeable, ICockpitDataProvider {
     address internal _iporOracle;
     mapping(address => CockpitTypes.AssetConfig) internal _assetConfig;
     address[] internal _assets;
@@ -30,18 +25,14 @@ contract CockpitDataProvider is
     function initialize(
         address iporOracle,
         address[] memory assets,
-        address[] memory miltons,
-        address[] memory josephs,
+        address[] memory ammTreasurys,
         address[] memory ipTokens,
         address[] memory ivTokens
     ) public initializer {
         __Ownable_init();
         __UUPSUpgradeable_init();
         require(iporOracle != address(0), IporErrors.WRONG_ADDRESS);
-        require(
-            assets.length == miltons.length,
-            IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH
-        );
+        require(assets.length == ammTreasurys.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
 
         _iporOracle = iporOracle;
         _assets = assets;
@@ -49,22 +40,16 @@ contract CockpitDataProvider is
         uint256 assetsLength = assets.length;
         for (uint256 i = 0; i != assetsLength; i++) {
             require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
-            require(miltons[i] != address(0), IporErrors.WRONG_ADDRESS);
-            require(josephs[i] != address(0), IporErrors.WRONG_ADDRESS);
+            require(ammTreasurys[i] != address(0), IporErrors.WRONG_ADDRESS);
             require(ipTokens[i] != address(0), IporErrors.WRONG_ADDRESS);
             require(ivTokens[i] != address(0), IporErrors.WRONG_ADDRESS);
 
-            _assetConfig[assets[i]] = CockpitTypes.AssetConfig(
-                miltons[i],
-                josephs[i],
-                ipTokens[i],
-                ivTokens[i]
-            );
+            _assetConfig[assets[i]] = CockpitTypes.AssetConfig(ammTreasurys[i], ipTokens[i], ivTokens[i]);
         }
     }
 
     function getVersion() external pure override returns (uint256) {
-        return 2;
+        return 2_000;
     }
 
     function getIndexes() external view override returns (CockpitTypes.IporFront[] memory) {
@@ -92,16 +77,10 @@ contract CockpitDataProvider is
         return token.balanceOf(_msgSender());
     }
 
-    function getMyAllowanceInMilton(address asset) external view override returns (uint256) {
+    function getMyAllowanceInAmmTreasury(address asset) external view override returns (uint256) {
         CockpitTypes.AssetConfig memory config = _assetConfig[asset];
         IERC20 token = IERC20(asset);
-        return token.allowance(_msgSender(), config.milton);
-    }
-
-    function getMyAllowanceInJoseph(address asset) external view override returns (uint256) {
-        CockpitTypes.AssetConfig memory config = _assetConfig[asset];
-        IERC20 token = IERC20(asset);
-        return token.allowance(_msgSender(), config.joseph);
+        return token.allowance(_msgSender(), config.ammTreasury);
     }
 
     function calculateSpread(address asset)
@@ -110,39 +89,24 @@ contract CockpitDataProvider is
         override
         returns (int256 spreadPayFixed, int256 spreadReceiveFixed)
     {
-//        CockpitTypes.AssetConfig memory config = _assetConfig[asset];
-//        IMilton milton = IMilton(config.milton);
+        //        CockpitTypes.AssetConfig memory config = _assetConfig[asset];
+        //        IAmmTreasury ammTreasury = IAmmTreasury(config.ammTreasury);
 
         //TODO: fix or remove from cockpit.
-//        try milton.calculateSpread() returns (int256 _spreadPayFixed, int256 _spreadReceiveFixed) {
-//            spreadPayFixed = _spreadPayFixed;
-//            spreadReceiveFixed = _spreadReceiveFixed;
-//        } catch {
+        //        try ammTreasury.calculateSpread() returns (int256 _spreadPayFixed, int256 _spreadReceiveFixed) {
+        //            spreadPayFixed = _spreadPayFixed;
+        //            spreadReceiveFixed = _spreadReceiveFixed;
+        //        } catch {
 
-            spreadPayFixed = 999999999999999999999;
-            spreadReceiveFixed = 999999999999999999999;
-//        }
+        spreadPayFixed = 999999999999999999999;
+        spreadReceiveFixed = 999999999999999999999;
+        //        }
     }
 
-    function _createIporFront(address asset)
-        internal
-        view
-        returns (CockpitTypes.IporFront memory iporFront)
-    {
-        (
-            uint256 value,
-            uint256 ibtPrice,
-            uint256 date
-        ) = IIporOracle(_iporOracle).getIndex(asset);
+    function _createIporFront(address asset) internal view returns (CockpitTypes.IporFront memory iporFront) {
+        (uint256 value, uint256 ibtPrice, uint256 date) = IIporOracle(_iporOracle).getIndex(asset);
 
-        iporFront = CockpitTypes.IporFront(
-            IERC20MetadataUpgradeable(asset).symbol(),
-            value,
-            ibtPrice,
-            0,
-            0,
-            date
-        );
+        iporFront = CockpitTypes.IporFront(IERC20MetadataUpgradeable(asset).symbol(), value, ibtPrice, 0, 0, date);
     }
 
     //solhint-disable no-empty-blocks

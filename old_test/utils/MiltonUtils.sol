@@ -3,18 +3,18 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "contracts/interfaces/IMiltonFacadeDataProvider.sol";
-import "contracts/interfaces/IMiltonStorage.sol";
-import "contracts/interfaces/IMiltonInternal.sol";
-import "contracts/facades/MiltonFacadeDataProvider.sol";
-import "contracts/mocks/milton/MockMilton.sol";
+import "contracts/interfaces/IAmmTreasuryFacadeDataProvider.sol";
+import "contracts/interfaces/IAmmStorage.sol";
+import "contracts/interfaces/IAmmTreasury.sol";
+import "contracts/facades/AmmTreasuryFacadeDataProvider.sol";
+import "contracts/mocks/ammTreasury/MockAmmTreasury.sol";
 import "contracts/mocks/spread/MockSpreadModel.sol";
-import "contracts/mocks/milton/MockMilton.sol";
+import "contracts/mocks/ammTreasury/MockAmmTreasury.sol";
 
-contract MiltonUtils is Test {
-    struct ExpectedMiltonBalances {
+contract AmmTreasuryUtils is Test {
+    struct ExpectedAmmTreasuryBalances {
         uint256 expectedPayoffAbs;
-        uint256 expectedMiltonBalance;
+        uint256 expectedAmmTreasuryBalance;
         int256 expectedOpenerUserBalance;
         int256 expectedCloserUserBalance;
         uint256 expectedLiquidityPoolBalance;
@@ -28,103 +28,103 @@ contract MiltonUtils is Test {
         int256 calculateSpreadPayFixedValue,
         int256 calculateSpreadReceiveFixedVaule
     ) public returns (MockSpreadModel) {
-        MockSpreadModel miltonSpreadModel = new MockSpreadModel(
+        MockSpreadModel ammTreasurySpreadModel = new MockSpreadModel(
             calculateQuotePayFixedValue,
             calculateQuoteReceiveFixedValue,
             calculateSpreadPayFixedValue,
             calculateSpreadReceiveFixedVaule
         );
-        return miltonSpreadModel;
+        return ammTreasurySpreadModel;
     }
 
-    function getMiltonFacadeDataProvider(
+    function getAmmTreasuryFacadeDataProvider(
         address iporOracle,
         address[] memory assets,
-        address[] memory miltons,
-        address[] memory miltonStorages,
+        address[] memory ammTreasurys,
+        address[] memory ammStorages,
         address[] memory josephs
-    ) public returns (IMiltonFacadeDataProvider) {
-        MiltonFacadeDataProvider miltonFacadeDataProviderImplementation = new MiltonFacadeDataProvider();
-        ERC1967Proxy miltonFacadeDataProviderProxy = new ERC1967Proxy(
-            address(miltonFacadeDataProviderImplementation),
+    ) public returns (IAmmTreasuryFacadeDataProvider) {
+        AmmTreasuryFacadeDataProvider ammTreasuryFacadeDataProviderImplementation = new AmmTreasuryFacadeDataProvider();
+        ERC1967Proxy ammTreasuryFacadeDataProviderProxy = new ERC1967Proxy(
+            address(ammTreasuryFacadeDataProviderImplementation),
             abi.encodeWithSignature(
                 "initialize(address,address[],address[],address[],address[])",
                 iporOracle,
                 assets,
-                miltons,
-                miltonStorages,
+                ammTreasurys,
+                ammStorages,
                 josephs
             )
         );
-        return IMiltonFacadeDataProvider(address(miltonFacadeDataProviderProxy));
+        return IAmmTreasuryFacadeDataProvider(address(ammTreasuryFacadeDataProviderProxy));
     }
 
-    function prepareMilton(
-        IMiltonInternal milton,
+    function prepareAmmTreasury(
+        IAmmTreasury ammTreasury,
         address joseph,
-        address stanley
+        address assetManagement
     ) public {
-        IMiltonStorage miltonStorage = IMiltonStorage(milton.getMiltonStorage());
-        miltonStorage.setJoseph(joseph);
-        miltonStorage.setMilton(address(milton));
-        milton.setJoseph(joseph);
-        milton.setupMaxAllowanceForAsset(joseph);
-        milton.setupMaxAllowanceForAsset(stanley);
+        IAmmStorage ammStorage = IAmmStorage(ammTreasury.getAmmStorage());
+        ammStorage.setJoseph(joseph);
+        ammStorage.setAmmTreasury(address(ammTreasury));
+        ammTreasury.setJoseph(joseph);
+        ammTreasury.setupMaxAllowanceForAsset(joseph);
+        ammTreasury.setupMaxAllowanceForAsset(assetManagement);
     }
 
-    function getMockCase0MiltonUsdc(
+    function getMockCase0AmmTreasuryUsdc(
         address tokenUsdc,
         address iporOracle,
-        address miltonStorageUsdc,
-        address miltonSpreadModel,
-        address stanleyUsdc,
+        address ammStorageUsdc,
+        address ammTreasurySpreadModel,
+        address assetManagementUsdc,
         address iporRiskManagementOracle
-    ) public returns (MockMilton) {
-        MockMilton mockCase0MiltonUsdcImplementation = new MockMilton(
+    ) public returns (MockAmmTreasury) {
+        MockAmmTreasury mockCase0AmmTreasuryUsdcImplementation = new MockAmmTreasury(
             iporRiskManagementOracle,
-            MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+            MockAmmTreasury.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
             6
         );
-        ERC1967Proxy miltonUsdcProxy = new ERC1967Proxy(
-            address(mockCase0MiltonUsdcImplementation),
+        ERC1967Proxy ammTreasuryUsdcProxy = new ERC1967Proxy(
+            address(mockCase0AmmTreasuryUsdcImplementation),
             abi.encodeWithSignature(
                 "initialize(bool,address,address,address,address,address)",
                 false,
                 tokenUsdc,
                 iporOracle,
-                miltonStorageUsdc,
-                miltonSpreadModel,
-                stanleyUsdc
+                ammStorageUsdc,
+                ammTreasurySpreadModel,
+                assetManagementUsdc
             )
         );
-        return MockMilton(address(miltonUsdcProxy));
+        return MockAmmTreasury(address(ammTreasuryUsdcProxy));
     }
 
-    function getMockCase0MiltonDai(
+    function getMockCase0AmmTreasuryDai(
         address tokenDai,
         address iporOracle,
-        address miltonStorageDai,
-        address miltonSpreadModel,
-        address stanleyDai,
+        address ammStorageDai,
+        address ammTreasurySpreadModel,
+        address assetManagementDai,
         address iporRiskManagementOracle
-    ) public returns (MockMilton) {
-        MockMilton mockCase0MiltonDaiImplementation = new MockMilton(
+    ) public returns (MockAmmTreasury) {
+        MockAmmTreasury mockCase0AmmTreasuryDaiImplementation = new MockAmmTreasury(
             iporRiskManagementOracle,
-            MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+            MockAmmTreasury.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
             18
         );
-        ERC1967Proxy miltonDaiProxy = new ERC1967Proxy(
-            address(mockCase0MiltonDaiImplementation),
+        ERC1967Proxy ammTreasuryDaiProxy = new ERC1967Proxy(
+            address(mockCase0AmmTreasuryDaiImplementation),
             abi.encodeWithSignature(
                 "initialize(bool,address,address,address,address,address)",
                 false,
                 tokenDai,
                 iporOracle,
-                miltonStorageDai,
-                miltonSpreadModel,
-                stanleyDai
+                ammStorageDai,
+                ammTreasurySpreadModel,
+                assetManagementDai
             )
         );
-        return MockMilton(address(miltonDaiProxy));
+        return MockAmmTreasury(address(ammTreasuryDaiProxy));
     }
 }

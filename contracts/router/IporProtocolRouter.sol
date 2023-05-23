@@ -69,9 +69,15 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             _reentrancyStatus = _ENTERED;
             return AMM_OPEN_SWAP_SERVICE_ADDRESS;
         } else if (
-            sig == IAmmCloseSwapService.closeSwapPayFixed.selector ||
-            sig == IAmmCloseSwapService.closeSwapReceiveFixed.selector ||
-            sig == IAmmCloseSwapService.closeSwaps.selector
+            sig == IAmmCloseSwapService.closeSwapPayFixedUsdt.selector ||
+            sig == IAmmCloseSwapService.closeSwapPayFixedUsdc.selector ||
+            sig == IAmmCloseSwapService.closeSwapPayFixedDai.selector ||
+            sig == IAmmCloseSwapService.closeSwapReceiveFixedUsdt.selector ||
+            sig == IAmmCloseSwapService.closeSwapReceiveFixedUsdc.selector ||
+            sig == IAmmCloseSwapService.closeSwapReceiveFixedDai.selector ||
+            sig == IAmmCloseSwapService.closeSwapsUsdt.selector ||
+            sig == IAmmCloseSwapService.closeSwapsUsdc.selector ||
+            sig == IAmmCloseSwapService.closeSwapsDai.selector
         ) {
             _whenNotPaused();
             _nonReentrant();
@@ -80,18 +86,30 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
         } else if (sig == IAmmCloseSwapService.getPoolConfiguration.selector) {
             return AMM_CLOSE_SWAP_SERVICE_ADDRESS;
         } else if (
-            sig == IAmmCloseSwapService.emergencyCloseSwapPayFixed.selector ||
-            sig == IAmmCloseSwapService.emergencyCloseSwapReceiveFixed.selector ||
-            sig == IAmmCloseSwapService.emergencyCloseSwapsPayFixed.selector ||
-            sig == IAmmCloseSwapService.emergencyCloseSwapsReceiveFixed.selector
+            sig == IAmmCloseSwapService.emergencyCloseSwapPayFixedUsdt.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapPayFixedUsdc.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapPayFixedDai.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapReceiveFixedUsdt.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapReceiveFixedUsdc.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapReceiveFixedDai.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapsPayFixedUsdt.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapsPayFixedUsdc.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapsPayFixedDai.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapsReceiveFixedUsdt.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapsReceiveFixedUsdc.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapsReceiveFixedDai.selector
         ) {
             _onlyOwner();
             _nonReentrant();
             _reentrancyStatus = _ENTERED;
             return AMM_CLOSE_SWAP_SERVICE_ADDRESS;
         } else if (
-            sig == IAmmPoolsService.provideLiquidity.selector ||
-            sig == IAmmPoolsService.redeem.selector ||
+            sig == IAmmPoolsService.provideLiquidityUsdt.selector ||
+            sig == IAmmPoolsService.provideLiquidityUsdc.selector ||
+            sig == IAmmPoolsService.provideLiquidityDai.selector ||
+            sig == IAmmPoolsService.redeemUsdt.selector ||
+            sig == IAmmPoolsService.redeemUsdc.selector ||
+            sig == IAmmPoolsService.redeemDai.selector ||
             sig == IAmmPoolsService.rebalance.selector
         ) {
             _whenNotPaused();
@@ -101,16 +119,16 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
         } else if (
             sig == IAmmGovernanceService.addSwapLiquidator.selector ||
             sig == IAmmGovernanceService.removeSwapLiquidator.selector ||
-            sig == IAmmGovernanceService.setAmmPoolsAndAssetManagementRatio.selector ||
-            sig == IAmmGovernanceService.setAmmPoolsMaxLiquidityPoolBalance.selector ||
-            sig == IAmmGovernanceService.setAmmPoolsMaxLpAccountContribution.selector ||
-            sig == IAmmGovernanceService.addAmmPoolsAppointedToRebalance.selector ||
-            sig == IAmmGovernanceService.removeAmmPoolsAppointedToRebalance.selector ||
+            sig == IAmmGovernanceService.setAmmAndAssetManagementRatio.selector ||
+            sig == IAmmGovernanceService.setAmmMaxLiquidityPoolBalance.selector ||
+            sig == IAmmGovernanceService.setAmmMaxLpAccountContribution.selector ||
+            sig == IAmmGovernanceService.addAppointedToRebalanceInAmm.selector ||
+            sig == IAmmGovernanceService.removeAppointedToRebalanceInAmm.selector ||
             sig == IAmmGovernanceService.setAmmPoolsTreasury.selector ||
             sig == IAmmGovernanceService.setAmmPoolsTreasuryManager.selector ||
-            sig == IAmmGovernanceService.setAmmPoolsCharlieTreasury.selector ||
-            sig == IAmmGovernanceService.setAmmPoolsCharlieTreasuryManager.selector ||
-            sig == IAmmGovernanceService.setAmmPoolsAutoRebalanceThreshold.selector ||
+            sig == IAmmGovernanceService.setAmmCharlieTreasury.selector ||
+            sig == IAmmGovernanceService.setAmmCharlieTreasuryManager.selector ||
+            sig == IAmmGovernanceService.setAmmAutoRebalanceThreshold.selector ||
             sig == IAmmGovernanceService.depositToAssetManagement.selector ||
             sig == IAmmGovernanceService.withdrawFromAssetManagement.selector ||
             sig == IAmmGovernanceService.withdrawAllFromAssetManagement.selector
@@ -121,15 +139,15 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             return AMM_GOVERNANCE_SERVICE_ADDRESS;
         } else if (
             sig == IAmmGovernanceService.isSwapLiquidator.selector ||
-            sig == IAmmGovernanceService.getAmmPoolsAndAssetManagementRatio.selector ||
-            sig == IAmmGovernanceService.getAmmPoolsMaxLiquidityPoolBalance.selector ||
-            sig == IAmmGovernanceService.getAmmPoolsMaxLpAccountContribution.selector ||
-            sig == IAmmGovernanceService.isAmmPoolsAppointedToRebalance.selector ||
+            sig == IAmmGovernanceService.getAmmAndAssetManagementRatio.selector ||
+            sig == IAmmGovernanceService.getAmmMaxLiquidityPoolBalance.selector ||
+            sig == IAmmGovernanceService.getAmmMaxLpAccountContribution.selector ||
+            sig == IAmmGovernanceService.isAppointedToRebalanceInAmm.selector ||
             sig == IAmmGovernanceService.getAmmPoolsTreasury.selector ||
             sig == IAmmGovernanceService.getAmmPoolsTreasuryManager.selector ||
-            sig == IAmmGovernanceService.getAmmPoolsCharlieTreasury.selector ||
-            sig == IAmmGovernanceService.getAmmPoolsCharlieTreasuryManager.selector ||
-            sig == IAmmGovernanceService.getAmmPoolsAutoRebalanceThreshold.selector
+            sig == IAmmGovernanceService.getAmmCharlieTreasury.selector ||
+            sig == IAmmGovernanceService.getAmmCharlieTreasuryManager.selector ||
+            sig == IAmmGovernanceService.getAmmAutoRebalanceThreshold.selector
         ) {
             return AMM_GOVERNANCE_SERVICE_ADDRESS;
         } else if (

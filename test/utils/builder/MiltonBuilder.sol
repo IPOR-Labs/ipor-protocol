@@ -42,10 +42,10 @@ contract MiltonBuilder is Test {
         return this;
     }
 
-    function build() public returns (ItfMilton) {
+    function build() public returns (AmmTreasury) {
         vm.startPrank(_owner);
         ERC1967Proxy miltonProxy = _constructProxy(_buildMiltonImplementation());
-        ItfMilton milton = ItfMilton(address(miltonProxy));
+        AmmTreasury milton = AmmTreasury(address(miltonProxy));
         vm.stopPrank();
         delete builderData;
         return milton;
@@ -59,7 +59,7 @@ contract MiltonBuilder is Test {
         require(builderData.iporProtocolRouter != address(0), "iporProtocolRouter is required");
 
         miltonImpl = address(
-            new Milton(
+            new AmmTreasury(
                 builderData.asset,
                 builderData.assetDecimals,
                 builderData.ammStorage,

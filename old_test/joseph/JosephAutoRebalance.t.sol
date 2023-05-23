@@ -24,22 +24,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 210000 * 1e6;
 
-        uint256 expectedMiltonBalance = 242000 * 1e6;
-        uint256 expectedStanleyBalance = 968000 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 242000 * 1e6;
+        uint256 expectedAssetManagementBalance = 968000 * 1e18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -48,22 +48,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e6;
 
-        uint256 expectedMiltonBalance = 230000 * 1e6;
-        uint256 expectedStanleyBalance = 920000 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 230000 * 1e6;
+        uint256 expectedAssetManagementBalance = 920000 * 1e18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -72,22 +72,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 50;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 50000 * 1e6;
 
-        uint256 expectedMiltonBalance = 210000 * 1e6;
-        uint256 expectedStanleyBalance = 840000 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 210000 * 1e6;
+        uint256 expectedAssetManagementBalance = 840000 * 1e18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -96,22 +96,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 850000 * 1e6;
 
-        uint256 expectedMiltonBalance = 370000 * 1e6;
-        uint256 expectedStanleyBalance = 1480000 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 370000 * 1e6;
+        uint256 expectedAssetManagementBalance = 1480000 * 1e18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -120,22 +120,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 150000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e6;
 
-        uint256 expectedMiltonBalance = 172500 * 1e6;
-        uint256 expectedStanleyBalance = 977500 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 172500 * 1e6;
+        uint256 expectedAssetManagementBalance = 977500 * 1e18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -144,22 +144,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 150000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 210000 * 1e6;
 
-        uint256 expectedMiltonBalance = 181500 * 1e6;
-        uint256 expectedStanleyBalance = 1028500 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 181500 * 1e6;
+        uint256 expectedAssetManagementBalance = 1028500 * 1e18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -168,22 +168,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 150000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 850000 * 1e6;
 
-        uint256 expectedMiltonBalance = 277500 * 1e6;
-        uint256 expectedStanleyBalance = 1572500 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 277500 * 1e6;
+        uint256 expectedAssetManagementBalance = 1572500 * 1e18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -192,22 +192,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 250000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e6;
 
-        uint256 expectedMiltonBalance = 287500 * 1e6;
-        uint256 expectedStanleyBalance = 862500 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 287500 * 1e6;
+        uint256 expectedAssetManagementBalance = 862500 * 1e18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -216,22 +216,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 250000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 210000 * 1e6;
 
-        uint256 expectedMiltonBalance = 302500 * 1e6;
-        uint256 expectedStanleyBalance = 907500 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 302500 * 1e6;
+        uint256 expectedAssetManagementBalance = 907500 * 1e18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -240,22 +240,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 250000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 850000 * 1e6;
 
-        uint256 expectedMiltonBalance = 462500 * 1e6;
-        uint256 expectedStanleyBalance = 1387500 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 462500 * 1e6;
+        uint256 expectedAssetManagementBalance = 1387500 * 1e18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -264,22 +264,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 50000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 50000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e6;
 
-        uint256 expectedMiltonBalance = 57500 * 1e6;
-        uint256 expectedStanleyBalance = 1092500 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 57500 * 1e6;
+        uint256 expectedAssetManagementBalance = 1092500 * 1e18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -288,22 +288,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 950000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 950000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e6;
 
-        uint256 expectedMiltonBalance = 350000 * 1e6;
-        uint256 expectedStanleyBalance = 800000 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 350000 * 1e6;
+        uint256 expectedAssetManagementBalance = 800000 * 1e18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -312,22 +312,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 10000000000000000;
-        uint256 miltonInitPool = 3000 * 1e6;
-        uint256 stanleyInitBalance = 0;
+        uint256 ammTreasuryAssetManagementRatio = 10000000000000000;
+        uint256 ammTreasuryInitPool = 3000 * 1e6;
+        uint256 assetManagementInitBalance = 0;
         uint256 userPosition = 100000 * 1e6;
 
-        uint256 expectedMiltonBalance = 1030 * 1e6;
-        uint256 expectedStanleyBalance = 101970 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 1030 * 1e6;
+        uint256 expectedAssetManagementBalance = 101970 * 1e18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -336,22 +336,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 300;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 210000 * 1e6;
 
-        uint256 expectedMiltonBalance = 200000 * 1e6 + userPosition;
-        uint256 expectedStanleyBalance = stanleyInitBalance;
+        uint256 expectedAmmTreasuryBalance = 200000 * 1e6 + userPosition;
+        uint256 expectedAssetManagementBalance = assetManagementInitBalance;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -360,22 +360,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 0;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 210000 * 1e6;
 
-        uint256 expectedMiltonBalance = 200000 * 1e6 + userPosition;
-        uint256 expectedStanleyBalance = stanleyInitBalance;
+        uint256 expectedAmmTreasuryBalance = 200000 * 1e6 + userPosition;
+        uint256 expectedAssetManagementBalance = assetManagementInitBalance;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -384,22 +384,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 210000 * 1e18;
 
-        uint256 expectedMiltonBalance = 242000 * 1e18;
-        uint256 expectedStanleyBalance = 968000 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 242000 * 1e18;
+        uint256 expectedAssetManagementBalance = 968000 * 1e18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -408,22 +408,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e18;
 
-        uint256 expectedMiltonBalance = 230000 * 1e18;
-        uint256 expectedStanleyBalance = 920000 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 230000 * 1e18;
+        uint256 expectedAssetManagementBalance = 920000 * 1e18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -432,22 +432,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 50;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 50000 * 1e18;
 
-        uint256 expectedMiltonBalance = 210000 * 1e18;
-        uint256 expectedStanleyBalance = 840000 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 210000 * 1e18;
+        uint256 expectedAssetManagementBalance = 840000 * 1e18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -456,22 +456,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 850000 * 1e18;
 
-        uint256 expectedMiltonBalance = 370000 * 1e18;
-        uint256 expectedStanleyBalance = 1480000 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 370000 * 1e18;
+        uint256 expectedAssetManagementBalance = 1480000 * 1e18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -480,22 +480,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 150000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e18;
 
-        uint256 expectedMiltonBalance = 172500 * 1e18;
-        uint256 expectedStanleyBalance = 977500 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 172500 * 1e18;
+        uint256 expectedAssetManagementBalance = 977500 * 1e18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -504,22 +504,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 150000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 210000 * 1e18;
 
-        uint256 expectedMiltonBalance = 181500 * 1e18;
-        uint256 expectedStanleyBalance = 1028500 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 181500 * 1e18;
+        uint256 expectedAssetManagementBalance = 1028500 * 1e18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -528,22 +528,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 150000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 850000 * 1e18;
 
-        uint256 expectedMiltonBalance = 277500 * 1e18;
-        uint256 expectedStanleyBalance = 1572500 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 277500 * 1e18;
+        uint256 expectedAssetManagementBalance = 1572500 * 1e18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -552,22 +552,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 250000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e18;
 
-        uint256 expectedMiltonBalance = 287500 * 1e18;
-        uint256 expectedStanleyBalance = 862500 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 287500 * 1e18;
+        uint256 expectedAssetManagementBalance = 862500 * 1e18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -576,22 +576,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 250000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 210000 * 1e18;
 
-        uint256 expectedMiltonBalance = 302500 * 1e18;
-        uint256 expectedStanleyBalance = 907500 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 302500 * 1e18;
+        uint256 expectedAssetManagementBalance = 907500 * 1e18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -600,22 +600,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 250000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 850000 * 1e18;
 
-        uint256 expectedMiltonBalance = 462500 * 1e18;
-        uint256 expectedStanleyBalance = 1387500 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 462500 * 1e18;
+        uint256 expectedAssetManagementBalance = 1387500 * 1e18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -624,22 +624,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 50000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 50000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e18;
 
-        uint256 expectedMiltonBalance = 57500 * 1e18;
-        uint256 expectedStanleyBalance = 1092500 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 57500 * 1e18;
+        uint256 expectedAssetManagementBalance = 1092500 * 1e18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -648,22 +648,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 950000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 950000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e18;
 
-        uint256 expectedMiltonBalance = 350000 * 1e18;
-        uint256 expectedStanleyBalance = 800000 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 350000 * 1e18;
+        uint256 expectedAssetManagementBalance = 800000 * 1e18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -672,22 +672,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 10000000000000000;
-        uint256 miltonInitPool = 3000 * 1e18;
-        uint256 stanleyInitBalance = 0;
+        uint256 ammTreasuryAssetManagementRatio = 10000000000000000;
+        uint256 ammTreasuryInitPool = 3000 * 1e18;
+        uint256 assetManagementInitBalance = 0;
         uint256 userPosition = 100000 * 1e18;
 
-        uint256 expectedMiltonBalance = 1030 * 1e18;
-        uint256 expectedStanleyBalance = 101970 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 1030 * 1e18;
+        uint256 expectedAssetManagementBalance = 101970 * 1e18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -696,22 +696,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 210000 * 1e6;
 
-        uint256 expectedMiltonBalance = 158210 * 1e6;
-        uint256 expectedStanleyBalance = 632840 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 158210 * 1e6;
+        uint256 expectedAssetManagementBalance = 632840 * 1e18;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -720,22 +720,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e6;
 
-        uint256 expectedMiltonBalance = 170150 * 1e6;
-        uint256 expectedStanleyBalance = 680600 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 170150 * 1e6;
+        uint256 expectedAssetManagementBalance = 680600 * 1e18;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -744,22 +744,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 40;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 50000 * 1e6;
 
-        uint256 expectedMiltonBalance = 190050 * 1e6;
-        uint256 expectedStanleyBalance = 760200 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 190050 * 1e6;
+        uint256 expectedAssetManagementBalance = 760200 * 1e18;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -768,22 +768,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 850000 * 1e6;
 
-        uint256 expectedMiltonBalance = 30850 * 1e6;
-        uint256 expectedStanleyBalance = 123400 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 30850 * 1e6;
+        uint256 expectedAssetManagementBalance = 123400 * 1e18;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -792,22 +792,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 150000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e6;
 
-        uint256 expectedMiltonBalance = 1276125 * 1e5;
-        uint256 expectedStanleyBalance = 7231375 * 1e17;
+        uint256 expectedAmmTreasuryBalance = 1276125 * 1e5;
+        uint256 expectedAssetManagementBalance = 7231375 * 1e17;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -816,22 +816,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 150000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 210000 * 1e6;
 
-        uint256 expectedMiltonBalance = 1186575 * 1e5;
-        uint256 expectedStanleyBalance = 6723925 * 1e17;
+        uint256 expectedAmmTreasuryBalance = 1186575 * 1e5;
+        uint256 expectedAssetManagementBalance = 6723925 * 1e17;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -840,22 +840,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 150000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 850000 * 1e6;
 
-        uint256 expectedMiltonBalance = 231375 * 1e5;
-        uint256 expectedStanleyBalance = 1311125 * 1e17;
+        uint256 expectedAmmTreasuryBalance = 231375 * 1e5;
+        uint256 expectedAssetManagementBalance = 1311125 * 1e17;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -864,22 +864,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 250000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e6;
 
-        uint256 expectedMiltonBalance = 2126875 * 1e5;
-        uint256 expectedStanleyBalance = 6380625 * 1e17;
+        uint256 expectedAmmTreasuryBalance = 2126875 * 1e5;
+        uint256 expectedAssetManagementBalance = 6380625 * 1e17;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -888,22 +888,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 250000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 210000 * 1e6;
 
-        uint256 expectedMiltonBalance = 1977625 * 1e5;
-        uint256 expectedStanleyBalance = 5932875 * 1e17;
+        uint256 expectedAmmTreasuryBalance = 1977625 * 1e5;
+        uint256 expectedAssetManagementBalance = 5932875 * 1e17;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -912,22 +912,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 250000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 850000 * 1e6;
 
-        uint256 expectedMiltonBalance = 385625 * 1e5;
-        uint256 expectedStanleyBalance = 1156875 * 1e17;
+        uint256 expectedAmmTreasuryBalance = 385625 * 1e5;
+        uint256 expectedAssetManagementBalance = 1156875 * 1e17;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -936,24 +936,24 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 50000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 50000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e6;
 
-        // will stay because threshold is not achieved and Milton has cash for redeem
+        // will stay because threshold is not achieved and AmmTreasury has cash for redeem
         uint256 redeemFee = 750 * 1e6;
-        uint256 expectedMiltonBalance = 50000 * 1e6 + redeemFee;
-        uint256 expectedStanleyBalance = stanleyInitBalance;
+        uint256 expectedAmmTreasuryBalance = 50000 * 1e6 + redeemFee;
+        uint256 expectedAssetManagementBalance = assetManagementInitBalance;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -962,22 +962,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 950000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 950000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e6;
 
-        uint256 expectedMiltonBalance = 8082125 * 1e5;
-        uint256 expectedStanleyBalance = 425375 * 1e17;
+        uint256 expectedAmmTreasuryBalance = 8082125 * 1e5;
+        uint256 expectedAssetManagementBalance = 425375 * 1e17;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -986,22 +986,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 210000 * 1e18;
 
-        uint256 expectedMiltonBalance = 158210 * 1e18;
-        uint256 expectedStanleyBalance = 632840 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 158210 * 1e18;
+        uint256 expectedAssetManagementBalance = 632840 * 1e18;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -1010,22 +1010,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e18;
 
-        uint256 expectedMiltonBalance = 170150 * 1e18;
-        uint256 expectedStanleyBalance = 680600 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 170150 * 1e18;
+        uint256 expectedAssetManagementBalance = 680600 * 1e18;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -1034,22 +1034,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 40;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 50000 * 1e18;
 
-        uint256 expectedMiltonBalance = 190050 * 1e18;
-        uint256 expectedStanleyBalance = 760200 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 190050 * 1e18;
+        uint256 expectedAssetManagementBalance = 760200 * 1e18;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -1058,22 +1058,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 850000 * 1e18;
 
-        uint256 expectedMiltonBalance = 30850 * 1e18;
-        uint256 expectedStanleyBalance = 123400 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 30850 * 1e18;
+        uint256 expectedAssetManagementBalance = 123400 * 1e18;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -1082,22 +1082,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 150000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e18;
 
-        uint256 expectedMiltonBalance = 1276125 * 1e17;
-        uint256 expectedStanleyBalance = 7231375 * 1e17;
+        uint256 expectedAmmTreasuryBalance = 1276125 * 1e17;
+        uint256 expectedAssetManagementBalance = 7231375 * 1e17;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -1106,22 +1106,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 150000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 210000 * 1e18;
 
-        uint256 expectedMiltonBalance = 1186575 * 1e17;
-        uint256 expectedStanleyBalance = 6723925 * 1e17;
+        uint256 expectedAmmTreasuryBalance = 1186575 * 1e17;
+        uint256 expectedAssetManagementBalance = 6723925 * 1e17;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -1130,22 +1130,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 150000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 850000 * 1e18;
 
-        uint256 expectedMiltonBalance = 231375 * 1e17;
-        uint256 expectedStanleyBalance = 1311125 * 1e17;
+        uint256 expectedAmmTreasuryBalance = 231375 * 1e17;
+        uint256 expectedAssetManagementBalance = 1311125 * 1e17;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -1154,22 +1154,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 250000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e18;
 
-        uint256 expectedMiltonBalance = 2126875 * 1e17;
-        uint256 expectedStanleyBalance = 6380625 * 1e17;
+        uint256 expectedAmmTreasuryBalance = 2126875 * 1e17;
+        uint256 expectedAssetManagementBalance = 6380625 * 1e17;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -1178,22 +1178,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 250000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 210000 * 1e18;
 
-        uint256 expectedMiltonBalance = 1977625 * 1e17;
-        uint256 expectedStanleyBalance = 5932875 * 1e17;
+        uint256 expectedAmmTreasuryBalance = 1977625 * 1e17;
+        uint256 expectedAssetManagementBalance = 5932875 * 1e17;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -1202,22 +1202,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 250000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 850000 * 1e18;
 
-        uint256 expectedMiltonBalance = 385625 * 1e17;
-        uint256 expectedStanleyBalance = 1156875 * 1e17;
+        uint256 expectedAmmTreasuryBalance = 385625 * 1e17;
+        uint256 expectedAssetManagementBalance = 1156875 * 1e17;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -1226,24 +1226,24 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 50000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 50000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e18;
 
-        // will stay because threshold is not achieved and Milton has cash for redeem
+        // will stay because threshold is not achieved and AmmTreasury has cash for redeem
         uint256 redeemFee = 750 * 1e18;
-        uint256 expectedMiltonBalance = 50000 * 1e18 + redeemFee;
-        uint256 expectedStanleyBalance = stanleyInitBalance;
+        uint256 expectedAmmTreasuryBalance = 50000 * 1e18 + redeemFee;
+        uint256 expectedAssetManagementBalance = assetManagementInitBalance;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -1252,22 +1252,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 950000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 950000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e18;
 
-        uint256 expectedMiltonBalance = 8082125 * 1e17;
-        uint256 expectedStanleyBalance = 425375 * 1e17;
+        uint256 expectedAmmTreasuryBalance = 8082125 * 1e17;
+        uint256 expectedAssetManagementBalance = 425375 * 1e17;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -1276,22 +1276,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 10000;
-        uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000000 * 1e18;
-        uint256 stanleyInitBalance = 800000000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 150000000000000000;
+        uint256 ammTreasuryInitPool = 1000000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000000 * 1e18;
         uint256 userPosition = 150000000 * 1e18;
 
-        uint256 expectedMiltonBalance = 1276125000 * 1e17;
-        uint256 expectedStanleyBalance = 7231375000 * 1e17;
+        uint256 expectedAmmTreasuryBalance = 1276125000 * 1e17;
+        uint256 expectedAssetManagementBalance = 7231375000 * 1e17;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
@@ -1300,103 +1300,103 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 50;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e18;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 50000 * 1e18;
 
-        uint256 expectedMiltonBalance = 150250 * 1e18;
-        uint256 expectedStanleyBalance = 800000 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 150250 * 1e18;
+        uint256 expectedAssetManagementBalance = 800000 * 1e18;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
-    function testRedeemAndNOTRebalanceUsdtCaseBelowThresholdMiltonBalanceIsOK() public {
+    function testRedeemAndNOTRebalanceUsdtCaseBelowThresholdAmmTreasuryBalanceIsOK() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 300;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e6;
 
-        uint256 expectedMiltonBalance = 50750 * 1e6;
-        uint256 expectedStanleyBalance = stanleyInitBalance;
+        uint256 expectedAmmTreasuryBalance = 50750 * 1e6;
+        uint256 expectedAssetManagementBalance = assetManagementInitBalance;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
-    function testRedeemAndRebalanceUsdtCaseBelowThresholdButMiltonBalanceTooLow() public {
+    function testRedeemAndRebalanceUsdtCaseBelowThresholdButAmmTreasuryBalanceTooLow() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 300;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 210000 * 1e6;
 
-        uint256 expectedMiltonBalance = 158210 * 1e6;
-        uint256 expectedStanleyBalance = 632840 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 158210 * 1e6;
+        uint256 expectedAssetManagementBalance = 632840 * 1e18;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
-    function testRedeemAndRebalanceUsdtCaseAutoRebalanceThresholdZEROMiltonBalanceTooLow() public {
+    function testRedeemAndRebalanceUsdtCaseAutoRebalanceThresholdZEROAmmTreasuryBalanceTooLow() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 0;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 210000 * 1e6;
 
-        uint256 expectedMiltonBalance = 158210 * 1e6;
-        uint256 expectedStanleyBalance = 632840 * 1e18;
+        uint256 expectedAmmTreasuryBalance = 158210 * 1e6;
+        uint256 expectedAssetManagementBalance = 632840 * 1e18;
 
         uint256 wadUserPosition = userPosition * 1e12;
 
-        deal(address(_iporProtocol.asset), address(_userOne), miltonInitPool);
+        deal(address(_iporProtocol.asset), address(_userOne), ammTreasuryInitPool);
 
-        _iporProtocol.joseph.setAutoRebalanceThreshold(uint32(miltonInitPool + 1000));
+        _iporProtocol.joseph.setAutoRebalanceThreshold(uint32(ammTreasuryInitPool + 1000));
 
         vm.startPrank(address(_userOne));
 
-        _iporProtocol.asset.approve(address(_iporProtocol.joseph), miltonInitPool);
-        _iporProtocol.joseph.provideLiquidity(miltonInitPool);
+        _iporProtocol.asset.approve(address(_iporProtocol.joseph), ammTreasuryInitPool);
+        _iporProtocol.joseph.provideLiquidity(ammTreasuryInitPool);
 
         vm.stopPrank();
         _iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
-        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
+        _iporProtocol.joseph.setAmmTreasuryAssetManagementBalanceRatio(ammTreasuryAssetManagementRatio);
 
         vm.prank(address(_iporProtocol.joseph));
-        _iporProtocol.milton.depositToStanley(stanleyInitBalance);
+        _iporProtocol.ammTreasury.depositToAssetManagement(assetManagementInitBalance);
 
         uint256 exchangeRate = _iporProtocol.joseph.calculateExchangeRate();
 
@@ -1408,51 +1408,51 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol.joseph.redeem(userPositionCalculated);
 
         //then
-        assertEq(_iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)), expectedStanleyBalance);
-        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.milton)), expectedMiltonBalance);
+        assertEq(_iporProtocol.assetManagement.totalBalance(address(_iporProtocol.ammTreasury)), expectedAssetManagementBalance);
+        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)), expectedAmmTreasuryBalance);
     }
 
-    function testRedeemAndNOTRebalanceUsdtCaseAutoRebalanceThresholdZEROMiltonBalanceIsOK() public {
+    function testRedeemAndNOTRebalanceUsdtCaseAutoRebalanceThresholdZEROAmmTreasuryBalanceIsOK() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 0;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 ammTreasuryAssetManagementRatio = 200000000000000000;
+        uint256 ammTreasuryInitPool = 1000000 * 1e6;
+        uint256 assetManagementInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e6;
 
-        uint256 expectedMiltonBalance = 50750 * 1e6;
-        uint256 expectedStanleyBalance = stanleyInitBalance;
+        uint256 expectedAmmTreasuryBalance = 50750 * 1e6;
+        uint256 expectedAssetManagementBalance = assetManagementInitBalance;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
-            miltonStanleyRatio,
-            miltonInitPool,
-            stanleyInitBalance,
+            ammTreasuryAssetManagementRatio,
+            ammTreasuryInitPool,
+            assetManagementInitBalance,
             userPosition,
-            expectedStanleyBalance,
-            expectedMiltonBalance
+            expectedAssetManagementBalance,
+            expectedAmmTreasuryBalance
         );
     }
 
     function _executeProvideLiquidityUsdt(
         uint256 autoRebalanceThreshold,
-        uint256 miltonStanleyRatio,
-        uint256 miltonInitPool,
-        uint256 stanleyInitBalance,
+        uint256 ammTreasuryAssetManagementRatio,
+        uint256 ammTreasuryInitPool,
+        uint256 assetManagementInitBalance,
         uint256 userPosition,
-        uint256 expectedStanleyBalance,
-        uint256 expectedMiltonBalance
+        uint256 expectedAssetManagementBalance,
+        uint256 expectedAmmTreasuryBalance
     ) internal {
         _iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
-        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
+        _iporProtocol.joseph.setAmmTreasuryAssetManagementBalanceRatio(ammTreasuryAssetManagementRatio);
 
-        deal(address(_iporProtocol.asset), address(_iporProtocol.milton), miltonInitPool);
+        deal(address(_iporProtocol.asset), address(_iporProtocol.ammTreasury), ammTreasuryInitPool);
 
-        if (stanleyInitBalance > 0) {
+        if (assetManagementInitBalance > 0) {
             vm.prank(address(_iporProtocol.joseph));
-            _iporProtocol.milton.depositToStanley(stanleyInitBalance);
+            _iporProtocol.ammTreasury.depositToAssetManagement(assetManagementInitBalance);
         }
 
         deal(address(_iporProtocol.asset), address(_userOne), userPosition);
@@ -1466,27 +1466,27 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         //then
 
-        assertEq(_iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)), expectedStanleyBalance);
-        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.milton)), expectedMiltonBalance);
+        assertEq(_iporProtocol.assetManagement.totalBalance(address(_iporProtocol.ammTreasury)), expectedAssetManagementBalance);
+        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)), expectedAmmTreasuryBalance);
     }
 
     function _executeProvideLiquidityDai(
         uint256 autoRebalanceThreshold,
-        uint256 miltonStanleyRatio,
-        uint256 miltonInitPool,
-        uint256 stanleyInitBalance,
+        uint256 ammTreasuryAssetManagementRatio,
+        uint256 ammTreasuryInitPool,
+        uint256 assetManagementInitBalance,
         uint256 userPosition,
-        uint256 expectedStanleyBalance,
-        uint256 expectedMiltonBalance
+        uint256 expectedAssetManagementBalance,
+        uint256 expectedAmmTreasuryBalance
     ) internal {
         _iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
-        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
+        _iporProtocol.joseph.setAmmTreasuryAssetManagementBalanceRatio(ammTreasuryAssetManagementRatio);
 
-        deal(address(_iporProtocol.asset), address(_iporProtocol.milton), miltonInitPool);
+        deal(address(_iporProtocol.asset), address(_iporProtocol.ammTreasury), ammTreasuryInitPool);
 
-        if (stanleyInitBalance > 0) {
+        if (assetManagementInitBalance > 0) {
             vm.prank(address(_iporProtocol.joseph));
-            _iporProtocol.milton.depositToStanley(stanleyInitBalance);
+            _iporProtocol.ammTreasury.depositToAssetManagement(assetManagementInitBalance);
         }
 
         deal(address(_iporProtocol.asset), address(_userOne), userPosition);
@@ -1500,36 +1500,36 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         //then
 
-        assertEq(_iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)), expectedStanleyBalance);
-        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.milton)), expectedMiltonBalance);
+        assertEq(_iporProtocol.assetManagement.totalBalance(address(_iporProtocol.ammTreasury)), expectedAssetManagementBalance);
+        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)), expectedAmmTreasuryBalance);
     }
 
     function _executeRedeemUsdt(
         uint256 autoRebalanceThreshold,
-        uint256 miltonStanleyRatio,
-        uint256 miltonInitPool,
-        uint256 stanleyInitBalance,
+        uint256 ammTreasuryAssetManagementRatio,
+        uint256 ammTreasuryInitPool,
+        uint256 assetManagementInitBalance,
         uint256 userPosition,
-        uint256 expectedStanleyBalance,
-        uint256 expectedMiltonBalance
+        uint256 expectedAssetManagementBalance,
+        uint256 expectedAmmTreasuryBalance
     ) internal {
         uint256 wadUserPosition = userPosition * 1e12;
 
-        deal(address(_iporProtocol.asset), address(_userOne), miltonInitPool);
+        deal(address(_iporProtocol.asset), address(_userOne), ammTreasuryInitPool);
 
-        _iporProtocol.joseph.setAutoRebalanceThreshold(uint32(miltonInitPool + 1000));
+        _iporProtocol.joseph.setAutoRebalanceThreshold(uint32(ammTreasuryInitPool + 1000));
 
         vm.startPrank(address(_userOne));
 
-        _iporProtocol.asset.approve(address(_iporProtocol.joseph), miltonInitPool);
-        _iporProtocol.joseph.provideLiquidity(miltonInitPool);
+        _iporProtocol.asset.approve(address(_iporProtocol.joseph), ammTreasuryInitPool);
+        _iporProtocol.joseph.provideLiquidity(ammTreasuryInitPool);
 
         vm.stopPrank();
         _iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
-        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
+        _iporProtocol.joseph.setAmmTreasuryAssetManagementBalanceRatio(ammTreasuryAssetManagementRatio);
 
         vm.prank(address(_iporProtocol.joseph));
-        _iporProtocol.milton.depositToStanley(stanleyInitBalance);
+        _iporProtocol.ammTreasury.depositToAssetManagement(assetManagementInitBalance);
 
         uint256 exchangeRate = _iporProtocol.joseph.calculateExchangeRate();
 
@@ -1540,37 +1540,37 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol.joseph.redeem(userPositionCalculated);
 
         //then
-        assertEq(_iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)), expectedStanleyBalance);
-        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.milton)), expectedMiltonBalance);
+        assertEq(_iporProtocol.assetManagement.totalBalance(address(_iporProtocol.ammTreasury)), expectedAssetManagementBalance);
+        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)), expectedAmmTreasuryBalance);
     }
 
     function _executeRedeemDai(
         uint256 autoRebalanceThreshold,
-        uint256 miltonStanleyRatio,
-        uint256 miltonInitPool,
-        uint256 stanleyInitBalance,
+        uint256 ammTreasuryAssetManagementRatio,
+        uint256 ammTreasuryInitPool,
+        uint256 assetManagementInitBalance,
         uint256 userPosition,
-        uint256 expectedStanleyBalance,
-        uint256 expectedMiltonBalance
+        uint256 expectedAssetManagementBalance,
+        uint256 expectedAmmTreasuryBalance
     ) internal {
         uint256 wadUserPosition = userPosition;
 
-        deal(address(_iporProtocol.asset), address(_userOne), miltonInitPool);
+        deal(address(_iporProtocol.asset), address(_userOne), ammTreasuryInitPool);
 
-        _iporProtocol.joseph.setAutoRebalanceThreshold(uint32(miltonInitPool + 1000));
+        _iporProtocol.joseph.setAutoRebalanceThreshold(uint32(ammTreasuryInitPool + 1000));
 
         vm.startPrank(address(_userOne));
 
-        _iporProtocol.asset.approve(address(_iporProtocol.joseph), miltonInitPool);
-        _iporProtocol.joseph.provideLiquidity(miltonInitPool);
+        _iporProtocol.asset.approve(address(_iporProtocol.joseph), ammTreasuryInitPool);
+        _iporProtocol.joseph.provideLiquidity(ammTreasuryInitPool);
 
         vm.stopPrank();
 
         _iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
-        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
+        _iporProtocol.joseph.setAmmTreasuryAssetManagementBalanceRatio(ammTreasuryAssetManagementRatio);
 
         vm.prank(address(_iporProtocol.joseph));
-        _iporProtocol.milton.depositToStanley(stanleyInitBalance);
+        _iporProtocol.ammTreasury.depositToAssetManagement(assetManagementInitBalance);
 
         uint256 exchangeRate = _iporProtocol.joseph.calculateExchangeRate();
         uint256 userPositionCalculated = IporMath.division(wadUserPosition * Constants.D18, exchangeRate);
@@ -1580,7 +1580,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol.joseph.redeem(userPositionCalculated);
 
         //then
-        assertEq(_iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)), expectedStanleyBalance);
-        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.milton)), expectedMiltonBalance);
+        assertEq(_iporProtocol.assetManagement.totalBalance(address(_iporProtocol.ammTreasury)), expectedAssetManagementBalance);
+        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)), expectedAmmTreasuryBalance);
     }
 }

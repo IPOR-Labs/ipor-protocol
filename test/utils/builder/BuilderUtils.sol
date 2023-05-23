@@ -6,11 +6,10 @@ import "../../../contracts/tokens/IvToken.sol";
 import "../../../contracts/itf/ItfIporOracle.sol";
 import "../../../contracts/oracles/IporRiskManagementOracle.sol";
 import "../../../contracts/mocks/MockIporWeighted.sol";
-import "../../../contracts/amm/MiltonStorage.sol";
-import "../../../contracts/itf/ItfStanley.sol";
-import "../../../contracts/itf/ItfMilton.sol";
+import "../../../contracts/amm/AmmStorage.sol";
+import "../../../contracts/itf/ItfAssetManagement.sol";
+import "../../../contracts/itf/ItfAmmTreasury.sol";
 import "../../amm/mocks/MockSpreadRouter.sol";
-
 contract BuilderUtils {
     struct IporProtocol {
         MockTestnetToken asset;
@@ -19,10 +18,10 @@ contract BuilderUtils {
         ItfIporOracle iporOracle;
         IporRiskManagementOracle iporRiskManagementOracle;
         MockIporWeighted iporWeighted;
-        MiltonStorage miltonStorage;
+        AmmStorage ammStorage;
         MockSpreadRouter spreadRouter;
-        ItfStanley stanley;
-        ItfMilton milton;
+        ItfAssetManagement assetManagement;
+        ItfAmmTreasury ammTreasury;
     }
 
     enum IporOracleInitialParamsTestCase {
@@ -99,7 +98,7 @@ contract BuilderUtils {
         CASE6
     }
 
-    enum MiltonTestCase {
+    enum AmmTreasuryTestCase {
         DEFAULT,
         CASE0,
         CASE1,

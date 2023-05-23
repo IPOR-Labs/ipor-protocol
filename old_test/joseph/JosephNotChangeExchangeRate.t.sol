@@ -36,7 +36,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidity18Decimals() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE1;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -50,7 +50,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(180 * TestConstants.D18);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             180 * TestConstants.D18,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -73,7 +73,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems18Decimals() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE1;
         _cfg.josephImplementation = address(new ItfJoseph(18, true));
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -88,7 +88,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(180 * TestConstants.D18);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             180 * TestConstants.D18,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -113,7 +113,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems6DecimalsCase1() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE1;
         _cfg.josephImplementation = address(new ItfJoseph(6, true));
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -128,7 +128,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(180 * TestConstants.N1__0_6DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             180 * TestConstants.N1__0_6DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -153,7 +153,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems6DecimalsCase2() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE1;
         _cfg.josephImplementation = address(new ItfJoseph(6, true));
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -168,7 +168,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(180 * TestConstants.N1__0_6DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             180 * TestConstants.N1__0_6DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -178,7 +178,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
 
         //Redeemed amount represented in 18 decimals after conversion to 6 decimals makes rounding up
         //and then user takes a little bit more stable,
-        //so balance in Milton is little bit lower and finally exchange rate is little bit lower.
+        //so balance in AmmTreasury is little bit lower and finally exchange rate is little bit lower.
 
         // when
         vm.startPrank(_userThree);
@@ -197,7 +197,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems6DecimalsCase3() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE1;
         _cfg.josephImplementation = address(new ItfJoseph(6, true));
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -212,7 +212,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(180 * TestConstants.N1__0_6DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             180 * TestConstants.N1__0_6DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -222,7 +222,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
 
         //Redeemed amount represented in 18 decimals after conversion to 6 decimals makes rounding down
         //and then user takes a little bit less stable,
-        //so balance in Milton is little bit higher and finally exchange rate is little bit higher .
+        //so balance in AmmTreasury is little bit higher and finally exchange rate is little bit higher .
 
         // when
         vm.startPrank(_userThree);

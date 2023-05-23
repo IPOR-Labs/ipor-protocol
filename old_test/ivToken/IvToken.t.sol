@@ -28,7 +28,7 @@ contract IvTokenTest is Test, TestCommons {
         // when
         // then
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
-        _ivToken.setStanley(address(0x6B175474E89094C44Da98b954EedeAC495271d0F)); // random address
+        _ivToken.setAssetManagement(address(0x6B175474E89094C44Da98b954EedeAC495271d0F)); // random address
     }
 
     function testShouldIvTokenContain18Decimals() public {

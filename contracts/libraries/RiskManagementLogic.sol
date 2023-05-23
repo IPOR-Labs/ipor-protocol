@@ -5,11 +5,11 @@ import "@openzeppelin/contracts/utils/Address.sol";
 
 import "../libraries/Constants.sol";
 import "../libraries/math/IporMath.sol";
-import "../interfaces/IMiltonStorage.sol";
+import "../interfaces/IAmmStorage.sol";
 import "../interfaces/IIporRiskManagementOracle.sol";
-import "../interfaces/IStanley.sol";
+import "../interfaces/IAssetManagement.sol";
 import "../governance/AmmConfigurationManager.sol";
-import "../amm/libraries/types/AmmMiltonTypes.sol";
+import "../amm/libraries/types/AmmInternalTypes.sol";
 
 library RiskManagementLogic {
     using Address for address;
@@ -29,10 +29,10 @@ library RiskManagementLogic {
         uint256 duration,
         SpreadQuoteContext memory spreadQuoteCtx
     ) internal returns (uint256) {
-        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IMiltonStorage(spreadQuoteCtx.ammStorage)
+        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(spreadQuoteCtx.ammStorage)
             .getBalancesForOpenSwap();
 
-        AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators = getRiskIndicators(
+        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = getRiskIndicators(
             spreadQuoteCtx.asset,
             direction,
             duration,
@@ -70,7 +70,7 @@ library RiskManagementLogic {
         uint256 liquidityPool,
         uint256 cfgMinLeverage,
         address cfgIporRiskManagementOracle
-    ) internal view returns (AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators) {
+    ) internal view returns (AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators) {
         uint256 maxNotionalPerLeg;
         uint256 maxUtilizationRate;
 

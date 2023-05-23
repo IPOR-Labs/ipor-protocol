@@ -37,7 +37,7 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
 
     function testShouldCalculateExchangeRateWhenLiquidityPoolBalanceAndIpTokenTotalSupplyIsZero() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -51,7 +51,7 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_liquidityProvider);
@@ -68,7 +68,7 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_liquidityProvider);
@@ -85,17 +85,17 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.provideLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        _iporProtocol.miltonStorage.setJoseph(_userOne);
+        _iporProtocol.ammStorage.setJoseph(_userOne);
         vm.prank(_userOne);
-        _iporProtocol.miltonStorage.subtractLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
-        _iporProtocol.miltonStorage.setJoseph(address(_iporProtocol.joseph));
+        _iporProtocol.ammStorage.subtractLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
+        _iporProtocol.ammStorage.setJoseph(address(_iporProtocol.joseph));
 
         // when
         uint256 actualExchangeRate = _iporProtocol.joseph.itfCalculateExchangeRate(block.timestamp);
@@ -106,7 +106,7 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
 
     function testShouldCalculateExchangeRateWhenExchangeRateIsGreaterThan1And18Decimals() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -121,7 +121,7 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
 
         // open position to have something in the pool
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             40 * TestConstants.D18,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -138,7 +138,7 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -149,18 +149,18 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
         );
 
         //BEGIN HACK - provide liquidity without mint ipToken
-        _iporProtocol.miltonStorage.setJoseph(_admin);
-        _iporProtocol.miltonStorage.addLiquidity(
+        _iporProtocol.ammStorage.setJoseph(_admin);
+        _iporProtocol.ammStorage.addLiquidity(
             _liquidityProvider,
             TestConstants.USD_2_000_18DEC,
             TestConstants.USD_20_000_000_18DEC,
             TestConstants.USD_10_000_000_18DEC
         );
-        _iporProtocol.asset.transfer(address(_iporProtocol.milton), TestConstants.USD_2_000_18DEC);
-        _iporProtocol.miltonStorage.setJoseph(address(_iporProtocol.joseph));
+        _iporProtocol.asset.transfer(address(_iporProtocol.ammTreasury), TestConstants.USD_2_000_18DEC);
+        _iporProtocol.ammStorage.setJoseph(address(_iporProtocol.joseph));
         //END HACK - provide liquidity without mint ipToken
 
-        IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
+        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammTreasury.getAccruedBalance();
 
         // when
         uint256 actualExchangeRate = _iporProtocol.joseph.itfCalculateExchangeRate(block.timestamp);
@@ -173,7 +173,7 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
 
     function testShouldCalculateExchangeRateWhenExchangeRateIsGreaterThan1And6Decimals() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -188,7 +188,7 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
 
         // open position to have something in the pool
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             40 * TestConstants.N1__0_6DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC

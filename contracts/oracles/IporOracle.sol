@@ -68,7 +68,7 @@ contract IporOracle is
     }
 
     function getVersion() external pure virtual override returns (uint256) {
-        return 3;
+        return 2_000;
     }
 
     function getIndex(address asset)

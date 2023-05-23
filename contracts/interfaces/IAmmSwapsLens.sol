@@ -39,12 +39,12 @@ interface IAmmSwapsLens {
         uint256 state;
     }
 
-    /// @notice Gets the list of active Pay Fixed Receive Floating swaps in Milton for a given asset and address
+    /// @notice Gets the list of active Pay Fixed Receive Floating swaps in AmmTreasury for a given asset and address
     /// @param asset asset / stablecoin address
     /// @param account account address for which list of swaps is scoped
     /// @param offset offset for paging
     /// @param chunkSize page size for paging
-    /// @return totalCount total number of active Pay Fixed swaps in Milton
+    /// @return totalCount total number of active Pay Fixed swaps in AmmTreasury
     /// @return swaps list of active swaps for a given filter
     function getSwapsPayFixed(
         address asset,
@@ -53,12 +53,12 @@ interface IAmmSwapsLens {
         uint256 chunkSize
     ) external view returns (uint256 totalCount, IporSwap[] memory swaps);
 
-    /// @notice Gets the list of active Receive Fixed Pay Floating Swaps in Milton for a given asset and address
+    /// @notice Gets the list of active Receive Fixed Pay Floating Swaps in AmmTreasury for a given asset and address
     /// @param asset asset / stablecoin address
     /// @param account account address for which list of swaps is scoped
     /// @param offset offset for paging
     /// @param chunkSize page size for paging
-    /// @return totalCount total number of Receive Fixed swaps in Milton
+    /// @return totalCount total number of Receive Fixed swaps in AmmTreasury
     /// @return swaps list of active swaps for a given filter
     function getSwapsReceiveFixed(
         address asset,
@@ -71,7 +71,7 @@ interface IAmmSwapsLens {
     /// @param asset asset address
     /// @param offset offset for paging
     /// @param chunkSize page size for paging
-    /// @return totalCount total number of sender's active swaps in Milton
+    /// @return totalCount total number of sender's active swaps in AmmTreasury
     /// @return swaps list of active sender's swaps
     function getSwaps(
         address asset,

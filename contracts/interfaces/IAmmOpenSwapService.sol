@@ -2,7 +2,7 @@
 pragma solidity 0.8.16;
 
 import "../interfaces/types/AmmTypes.sol";
-import "../interfaces/types/MiltonTypes.sol";
+import "../interfaces/types/AmmTypes.sol";
 
 /// @title Interface of the service that allows to open new swaps.
 interface IAmmOpenSwapService {
@@ -15,7 +15,7 @@ interface IAmmOpenSwapService {
         /// @notice underlying asset
         address asset,
         /// @notice swap direction
-        MiltonTypes.SwapDirection direction,
+        AmmTypes.SwapDirection direction,
         /// @notice money structure related with this swap
         AmmTypes.OpenSwapMoney money,
         /// @notice the moment when swap was opened
@@ -23,7 +23,7 @@ interface IAmmOpenSwapService {
         /// @notice the moment when swap will achieve maturity
         uint256 endTimestamp,
         /// @notice attributes taken from IPOR Index indicators.
-        MiltonTypes.IporSwapIndicator indicator
+        AmmTypes.IporSwapIndicator indicator
     );
 
     struct PoolConfiguration {
@@ -35,7 +35,6 @@ interface IAmmOpenSwapService {
         uint256 maxSwapCollateralAmount;
         uint256 liquidationDepositAmount;
         uint256 minLeverage;
-        uint256 maxLeverage;
         uint256 openingFeeRate;
         uint256 openingFeeTreasuryPortionRate;
     }

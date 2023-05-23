@@ -3,7 +3,7 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
-import "contracts/mocks/stanley/MockIporOwnableUpgradeable.sol";
+import "contracts/mocks/assetManagement/MockIporOwnableUpgradeable.sol";
 import "contracts/libraries/errors/IporErrors.sol";
 
 contract IporOwnableUpgradeableTest is Test, TestCommons {

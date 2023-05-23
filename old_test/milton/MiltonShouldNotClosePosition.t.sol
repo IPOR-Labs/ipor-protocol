@@ -7,7 +7,7 @@ import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
 import "contracts/mocks/spread/MockSpreadModel.sol";
 
-contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
+contract AmmTreasuryShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
     BuilderUtils.IporProtocol internal _iporProtocol;
 
@@ -29,12 +29,12 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         );
     }
 
-    function testShouldNotClosePositionPayFixedDAIWhenNotOwnerAndMiltonLostAndUserEarnedLessThanCollateralBeforeMaturity()
+    function testShouldNotClosePositionPayFixedDAIWhenNotOwnerAndAmmTreasuryLostAndUserEarnedLessThanCollateralBeforeMaturity()
         public
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
 
@@ -51,7 +51,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -73,15 +73,15 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_331");
         vm.prank(_userThree);
-        _iporProtocol.milton.itfCloseSwapPayFixed(1, endTimestamp);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(1, endTimestamp);
     }
 
-    function testShouldNotClosePositionPayFixedDAIWhenNotOwnerAndMiltonLostAndUserEarnedLessThanCollateral7HoursBeforeMaturity()
+    function testShouldNotClosePositionPayFixedDAIWhenNotOwnerAndAmmTreasuryLostAndUserEarnedLessThanCollateral7HoursBeforeMaturity()
         public
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
 
@@ -98,7 +98,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -120,15 +120,15 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_331");
         vm.prank(_userThree);
-        _iporProtocol.milton.itfCloseSwapPayFixed(1, endTimestamp);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(1, endTimestamp);
     }
 
-    function testShouldNotClosePositionPayFixedDAIWhenNotOwnerAndMiltonEarnedAndUserLostLessThanCollateralBeforeMaturity()
+    function testShouldNotClosePositionPayFixedDAIWhenNotOwnerAndAmmTreasuryEarnedAndUserLostLessThanCollateralBeforeMaturity()
         public
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_121_18DEC);
 
@@ -145,7 +145,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_121_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -167,15 +167,15 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_331");
         vm.prank(_userThree);
-        _iporProtocol.milton.itfCloseSwapPayFixed(1, endTimestamp);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(1, endTimestamp);
     }
 
-    function testShouldNotClosePositionReceiveFixedDAIWhenNotOwnerAndMiltonLostAndUserEarnedLessThanCollateralBeforeMaturity()
+    function testShouldNotClosePositionReceiveFixedDAIWhenNotOwnerAndAmmTreasuryLostAndUserEarnedLessThanCollateralBeforeMaturity()
         public
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_119_18DEC);
 
@@ -192,7 +192,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -214,15 +214,15 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_331");
         vm.prank(_userThree);
-        _iporProtocol.milton.itfCloseSwapReceiveFixed(1, endTimestamp);
+        _iporProtocol.ammTreasury.itfCloseSwapReceiveFixed(1, endTimestamp);
     }
 
-    function testShouldNotClosePositionReceiveFixedDAIWhenNotOwnerAndMiltonLostAndUserEarnedLessThanCollateral7HoursBeforeMaturity()
+    function testShouldNotClosePositionReceiveFixedDAIWhenNotOwnerAndAmmTreasuryLostAndUserEarnedLessThanCollateral7HoursBeforeMaturity()
         public
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_119_18DEC);
 
@@ -239,7 +239,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -261,15 +261,15 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_331");
         vm.prank(_userThree);
-        _iporProtocol.milton.itfCloseSwapReceiveFixed(1, endTimestamp);
+        _iporProtocol.ammTreasury.itfCloseSwapReceiveFixed(1, endTimestamp);
     }
 
-    function testShouldNotClosePositionReceiveFixedDAIWhenNotOwnerAndMiltonEarnedAndUserLostLessThanCollateralBeforeMaturity()
+    function testShouldNotClosePositionReceiveFixedDAIWhenNotOwnerAndAmmTreasuryEarnedAndUserLostLessThanCollateralBeforeMaturity()
         public
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
 
@@ -286,7 +286,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -308,13 +308,13 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_331");
         vm.prank(_userThree);
-        _iporProtocol.milton.itfCloseSwapReceiveFixed(1, endTimestamp);
+        _iporProtocol.ammTreasury.itfCloseSwapReceiveFixed(1, endTimestamp);
     }
 
     function testShouldNotClosePositionPayFixedWhenIncorrectSwapId() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
 
@@ -331,7 +331,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -340,13 +340,13 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_306");
         vm.prank(_userThree);
-        _iporProtocol.milton.itfCloseSwapPayFixed(TestConstants.ZERO, endTimestamp);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(TestConstants.ZERO, endTimestamp);
     }
 
     function testShouldNotClosePositionPayFixedWhenIncorrectStatus() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
 
@@ -363,34 +363,34 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(2 * TestConstants.USD_28_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
+        _iporProtocol.ammTreasury.itfOpenSwapPayFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
 
-        _iporProtocol.milton.addSwapLiquidator(_userThree);
+        _iporProtocol.ammTreasury.addSwapLiquidator(_userThree);
 
         // when
         vm.startPrank(_userThree);
-        _iporProtocol.milton.itfCloseSwapPayFixed(1, endTimestamp);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(1, endTimestamp);
         vm.expectRevert("IPOR_307");
-        _iporProtocol.milton.itfCloseSwapPayFixed(1, endTimestamp);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(1, endTimestamp);
         vm.stopPrank();
     }
 
     function testShouldNotClosePositionReceiveFixedWhenIncorrectStatus() public {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
 
@@ -407,35 +407,35 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(2 * TestConstants.USD_28_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
+        _iporProtocol.ammTreasury.itfOpenSwapReceiveFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
         );
 
-        _iporProtocol.milton.addSwapLiquidator(_userThree);
+        _iporProtocol.ammTreasury.addSwapLiquidator(_userThree);
 
         // when
         vm.startPrank(_userThree);
-        _iporProtocol.milton.itfCloseSwapReceiveFixed(1, endTimestamp);
+        _iporProtocol.ammTreasury.itfCloseSwapReceiveFixed(1, endTimestamp);
 
         vm.expectRevert("IPOR_307");
-        _iporProtocol.milton.itfCloseSwapReceiveFixed(1, endTimestamp);
+        _iporProtocol.ammTreasury.itfCloseSwapReceiveFixed(1, endTimestamp);
         vm.stopPrank();
     }
 
     function testShouldNotClosepositionWhenSwapDoesNotExist() public {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        //        _cfg.miltonImplementation = address(new _iporProtocol.milton());
+        //        _cfg.ammTreasuryImplementation = address(new _iporProtocol.ammTreasury());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
@@ -443,13 +443,13 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_306");
         vm.prank(_userThree);
-        _iporProtocol.milton.itfCloseSwapPayFixed(TestConstants.ZERO, endTimestamp);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(TestConstants.ZERO, endTimestamp);
     }
 
     function testShouldNotClosePositionPayFixedSingleIdFunctionDAIWhenContractIsPaused() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
 
@@ -459,7 +459,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_1_000_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -476,18 +476,18 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.prank(_admin);
-        _iporProtocol.milton.pause();
+        _iporProtocol.ammTreasury.pause();
 
         // then
         vm.expectRevert("Pausable: paused");
         vm.prank(_userTwo);
-        _iporProtocol.milton.closeSwapPayFixed(1);
+        _iporProtocol.ammTreasury.closeSwapPayFixed(1);
     }
 
     function testShouldNotClosePositionsPayFixedMultipleIdsFunctionDAIWhenContractIsPaused() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
 
@@ -499,7 +499,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
 
         for (uint256 i = 0; i < swapsToCreate; i++) {
             vm.prank(_userTwo);
-            _iporProtocol.milton.openSwapPayFixed(
+            _iporProtocol.ammTreasury.openSwapPayFixed(
                 TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
                 9 * TestConstants.D17,
                 TestConstants.LEVERAGE_18DEC
@@ -522,18 +522,18 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.prank(_admin);
-        _iporProtocol.milton.pause();
+        _iporProtocol.ammTreasury.pause();
 
         // then
         vm.expectRevert("Pausable: paused");
         vm.prank(_userTwo);
-        _iporProtocol.milton.closeSwaps(payFixedSwapIds, receiveFixedSwapIds);
+        _iporProtocol.ammTreasury.closeSwaps(payFixedSwapIds, receiveFixedSwapIds);
     }
 
     function testShouldNotClosePositionReceiveFixedSingleIdFunctionDAIWhenContractIsPaused() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
 
@@ -543,7 +543,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_1_000_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.ZERO,
             TestConstants.LEVERAGE_18DEC
@@ -560,18 +560,18 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.prank(_admin);
-        _iporProtocol.milton.pause();
+        _iporProtocol.ammTreasury.pause();
 
         // then
         vm.expectRevert("Pausable: paused");
         vm.prank(_userTwo);
-        _iporProtocol.milton.closeSwapReceiveFixed(1);
+        _iporProtocol.ammTreasury.closeSwapReceiveFixed(1);
     }
 
     function testShouldNotClosePositionsReceiveFixedMultipleIdsFunctionDAIWhenContractIsPaused() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
 
@@ -583,7 +583,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
 
         for (uint256 i = 0; i < swapsToCreate; i++) {
             vm.prank(_userTwo);
-            _iporProtocol.milton.openSwapReceiveFixed(
+            _iporProtocol.ammTreasury.openSwapReceiveFixed(
                 TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
                 TestConstants.ZERO,
                 TestConstants.LEVERAGE_18DEC
@@ -606,18 +606,18 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.prank(_admin);
-        _iporProtocol.milton.pause();
+        _iporProtocol.ammTreasury.pause();
 
         // then
         vm.expectRevert("Pausable: paused");
         vm.prank(_userTwo);
-        _iporProtocol.milton.closeSwaps(payFixedSwapIds, receiveFixedSwapIds);
+        _iporProtocol.ammTreasury.closeSwaps(payFixedSwapIds, receiveFixedSwapIds);
     }
 
     function testShouldNotClosePositionsPayFixedMultipleIdsWithEmergencyFunctionWhenContractIsPaused() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
 
@@ -629,7 +629,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
 
         for (uint256 i = 0; i < swapsToCreate; i++) {
             vm.prank(_userTwo);
-            _iporProtocol.milton.openSwapPayFixed(
+            _iporProtocol.ammTreasury.openSwapPayFixed(
                 TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
                 9 * TestConstants.D17,
                 TestConstants.LEVERAGE_18DEC
@@ -649,18 +649,18 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.prank(_admin);
-        _iporProtocol.milton.pause();
+        _iporProtocol.ammTreasury.pause();
 
         // then
         vm.expectRevert("Ownable: caller is not the owner");
         vm.prank(_userTwo);
-        _iporProtocol.milton.emergencyCloseSwapsPayFixed(payFixedSwapIds);
+        _iporProtocol.ammTreasury.emergencyCloseSwapsPayFixed(payFixedSwapIds);
     }
 
     function testShouldNotClosePositionPayFixedSingleIdWithEmergencyFunctionWhenContractIsPaused() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
 
@@ -670,7 +670,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_1_000_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -686,18 +686,18 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.prank(_admin);
-        _iporProtocol.milton.pause();
+        _iporProtocol.ammTreasury.pause();
 
         // then
         vm.expectRevert("Ownable: caller is not the owner");
         vm.prank(_userTwo);
-        _iporProtocol.milton.emergencyCloseSwapPayFixed(1);
+        _iporProtocol.ammTreasury.emergencyCloseSwapPayFixed(1);
     }
 
     function testShouldNotClosePositionsReceiveFixedMultipleIdsWithEmergencyFunctionWhenContractIsPaused() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
 
@@ -709,7 +709,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsReceiveFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             1,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -728,18 +728,18 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.prank(_admin);
-        _iporProtocol.milton.pause();
+        _iporProtocol.ammTreasury.pause();
 
         // then
         vm.expectRevert("Ownable: caller is not the owner");
         vm.prank(_userTwo);
-        _iporProtocol.milton.emergencyCloseSwapsReceiveFixed(receiveFixedSwapIds);
+        _iporProtocol.ammTreasury.emergencyCloseSwapsReceiveFixed(receiveFixedSwapIds);
     }
 
     function testShouldNotClosePositionReceiveFixedSingleIdWithEmergencyFunctionWhenContractIsPaused() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
 
@@ -749,7 +749,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_1_000_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.ZERO,
             TestConstants.LEVERAGE_18DEC
@@ -766,12 +766,12 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.prank(_admin);
-        _iporProtocol.milton.pause();
+        _iporProtocol.ammTreasury.pause();
 
         // then
         vm.expectRevert("Ownable: caller is not the owner");
         vm.prank(_userTwo);
-        _iporProtocol.milton.emergencyCloseSwapReceiveFixed(1);
+        _iporProtocol.ammTreasury.emergencyCloseSwapReceiveFixed(1);
     }
 
     function testShouldNotClosePositionsByOwnerPayFixedMultipleIdsFunctionWithEmergencyFunctionWhenContractIsNotPaused()
@@ -779,7 +779,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
 
@@ -791,7 +791,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
 
         for (uint256 i = 0; i < swapsToCreate; i++) {
             vm.prank(_userTwo);
-            _iporProtocol.milton.openSwapPayFixed(
+            _iporProtocol.ammTreasury.openSwapPayFixed(
                 TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
                 9 * TestConstants.D17,
                 TestConstants.LEVERAGE_18DEC
@@ -812,7 +812,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("Pausable: not paused");
         vm.prank(_admin);
-        _iporProtocol.milton.emergencyCloseSwapsPayFixed(payFixedSwapIds);
+        _iporProtocol.ammTreasury.emergencyCloseSwapsPayFixed(payFixedSwapIds);
     }
 
     function testShouldNotClosePositionByOwnerPayFixedSingleIdFunctionWithEmergencyFunctionWhenContractIsNotPaused()
@@ -820,7 +820,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
 
@@ -830,7 +830,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_1_000_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -848,7 +848,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("Pausable: not paused");
         vm.prank(_admin);
-        _iporProtocol.milton.emergencyCloseSwapPayFixed(1);
+        _iporProtocol.ammTreasury.emergencyCloseSwapPayFixed(1);
     }
 
     function testShouldNotClosePositionsReceiveFixedByOwnerMultipleIdsFunctionWithEmergencyFunctionWhenContractIsNotPaused()
@@ -856,7 +856,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
 
@@ -866,7 +866,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
             _users,
             _iporProtocol.asset,
             address(_iporProtocol.joseph),
-            address(_iporProtocol.milton)
+            address(_iporProtocol.ammTreasury)
         );
 
         vm.prank(_liquidityProvider);
@@ -874,7 +874,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
 
         for (uint256 i = 0; i < swapsToCreate; i++) {
             vm.prank(_userTwo);
-            _iporProtocol.milton.openSwapReceiveFixed(
+            _iporProtocol.ammTreasury.openSwapReceiveFixed(
                 TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
                 TestConstants.ZERO,
                 TestConstants.LEVERAGE_18DEC
@@ -895,7 +895,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("Pausable: not paused");
         vm.prank(_admin);
-        _iporProtocol.milton.emergencyCloseSwapsReceiveFixed(receiveFixedSwapIds);
+        _iporProtocol.ammTreasury.emergencyCloseSwapsReceiveFixed(receiveFixedSwapIds);
     }
 
     function testShouldNotClosePositionReceiveFixedByOwnerSingleIdFunctionWithEmergencyFunctionWhenContractIsNotPaused()
@@ -903,7 +903,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
 
@@ -913,7 +913,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_1_000_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.ZERO,
             TestConstants.LEVERAGE_18DEC
@@ -931,13 +931,13 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("Pausable: not paused");
         vm.prank(_admin);
-        _iporProtocol.milton.emergencyCloseSwapReceiveFixed(1);
+        _iporProtocol.ammTreasury.emergencyCloseSwapReceiveFixed(1);
     }
 
-    function testShouldNotClosePositionDAIWhenERC20AmountExceedsMiltonBalanceOnDAIToken() public {
+    function testShouldNotClosePositionDAIWhenERC20AmountExceedsAmmTreasuryBalanceOnDAIToken() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
 
@@ -954,7 +954,7 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -973,14 +973,14 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         );
         vm.stopPrank();
 
-        deal(address(_iporProtocol.asset), address(_iporProtocol.milton), 6044629100000000000000000);
-        uint256 miltonDaiBalanceAfterOpen = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
-        vm.prank(address(_iporProtocol.milton));
-        _iporProtocol.asset.transfer(_admin, miltonDaiBalanceAfterOpen);
+        deal(address(_iporProtocol.asset), address(_iporProtocol.ammTreasury), 6044629100000000000000000);
+        uint256 ammTreasuryDaiBalanceAfterOpen = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
+        vm.prank(address(_iporProtocol.ammTreasury));
+        _iporProtocol.asset.transfer(_admin, ammTreasuryDaiBalanceAfterOpen);
 
         // when
         vm.expectRevert("ERC20: transfer amount exceeds balance");
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfCloseSwapPayFixed(1, endTimestamp);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(1, endTimestamp);
     }
 }

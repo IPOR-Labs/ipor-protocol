@@ -3,16 +3,16 @@ pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-/// @title Interface of IvToken, which is IPOR Vault Token managed by Stanley in IPOR Protocol for a given asset.
+/// @title Interface of IvToken, which is IPOR Vault Token managed by AssetManagement in IPOR Protocol for a given asset.
 interface IIvToken is IERC20 {
     /// @notice Gets asset / stablecoin address which is assocciated with this IvToken smart contract instance
     /// @return asset / stablecoin address
     function getAsset() external view returns (address);
 
-    /// @notice Sets Stanley address by Owner
-    /// @dev only Stanley can mind or burn IV Tokens. Emits {StanleyChanged} event.
-    /// @param newStanley Stanley address
-    function setStanley(address newStanley) external;
+    /// @notice Sets AssetManagement address by Owner
+    /// @dev only AssetManagement can mind or burn IV Tokens. Emits {AssetManagementChanged} event.
+    /// @param newAssetManagement AssetManagement address
+    function setAssetManagement(address newAssetManagement) external;
 
     /// @notice Creates ivTokens in the given `amount`  and assigns them to the `account`
     /// @dev Emits {Transfer} from ERC20 asset and {Mint} event from ivToken
@@ -36,13 +36,13 @@ interface IIvToken is IERC20 {
     /// @param amount of ivTokens being burned
     event Burn(address indexed account, uint256 amount);
 
-    /// @notice Emmited when Stanley's address is changed by the owner.
-    /// @param changedBy account address of entity that has changed Stanley's address
-    /// @param oldStanley Stanley's old address
-    /// @param newStanley Stanley's new address
-    event StanleyChanged(
+    /// @notice Emmited when AssetManagement's address is changed by the owner.
+    /// @param changedBy account address of entity that has changed AssetManagement's address
+    /// @param oldAssetManagement AssetManagement's old address
+    /// @param newAssetManagement AssetManagement's new address
+    event AssetManagementChanged(
         address indexed changedBy,
-        address indexed oldStanley,
-        address indexed newStanley
+        address indexed oldAssetManagement,
+        address indexed newAssetManagement
     );
 }

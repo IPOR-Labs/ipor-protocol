@@ -4,18 +4,17 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "../libraries/Constants.sol";
 import "../libraries/errors/IporErrors.sol";
-import "../libraries/errors/MiltonErrors.sol";
-import "../libraries/errors/JosephErrors.sol";
+import "../libraries/errors/AmmErrors.sol";
+import "../libraries/errors/AmmPoolsErrors.sol";
 import "../libraries/math/IporMath.sol";
 import "../libraries/AssetManagementLogic.sol";
 import "../libraries/AmmLib.sol";
 import "../interfaces/types/IporTypes.sol";
 import "../interfaces/types/AmmTypes.sol";
 import "../interfaces/IIpToken.sol";
-import "../interfaces/IMilton.sol";
-import "../interfaces/IMiltonInternal.sol";
+import "../interfaces/IAmmTreasury.sol";
 import "../interfaces/IAmmPoolsService.sol";
-import "../interfaces/IMiltonStorage.sol";
+import "../interfaces/IAmmStorage.sol";
 import "../governance/AmmConfigurationManager.sol";
 
 contract AmmPoolsService is IAmmPoolsService {
@@ -126,11 +125,72 @@ contract AmmPoolsService is IAmmPoolsService {
         return _getPoolConfiguration(asset);
     }
 
-    function provideLiquidity(
+    function provideLiquidityUsdt(address onBehalfOf, uint256 assetAmount) external override {
+        _provideLiquidity(_usdt, onBehalfOf, assetAmount);
+    }
+
+    function provideLiquidityUsdc(address onBehalfOf, uint256 assetAmount) external override {
+        _provideLiquidity(_usdc, onBehalfOf, assetAmount);
+    }
+
+    function provideLiquidityDai(address onBehalfOf, uint256 assetAmount) external override {
+        _provideLiquidity(_dai, onBehalfOf, assetAmount);
+    }
+
+    function redeemUsdt(address onBehalfOf, uint256 ipTokenAmount) external override {
+        _redeem(_usdt, onBehalfOf, ipTokenAmount);
+    }
+
+    function redeemUsdc(address onBehalfOf, uint256 ipTokenAmount) external override {
+        _redeem(_usdc, onBehalfOf, ipTokenAmount);
+    }
+
+    function redeemDai(address onBehalfOf, uint256 ipTokenAmount) external override {
+        _redeem(_dai, onBehalfOf, ipTokenAmount);
+    }
+
+    function rebalance(address asset) external override {
+        require(
+            AmmConfigurationManager.isAppointedToRebalanceInAmm(asset, msg.sender),
+            AmmPoolsErrors.CALLER_NOT_APPOINTED_TO_REBALANCE
+        );
+
+        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+
+        uint256 wadAmmTreasuryAssetBalance = IporMath.convertToWad(
+            IERC20Upgradeable(poolCfg.asset).balanceOf(poolCfg.ammTreasury),
+            poolCfg.decimals
+        );
+
+        uint256 totalBalance = wadAmmTreasuryAssetBalance +
+            IAssetManagement(poolCfg.assetManagement).totalBalance(poolCfg.ammTreasury);
+
+        require(totalBalance > 0, AmmPoolsErrors.ASSET_MANAGEMENT_BALANCE_IS_EMPTY);
+
+        uint256 ratio = IporMath.division(wadAmmTreasuryAssetBalance * Constants.D18, totalBalance);
+
+        uint256 ammTreasuryAssetManagementBalanceRatio = AmmConfigurationManager.getAmmAndAssetManagementRatio(poolCfg.asset);
+
+        if (ratio > ammTreasuryAssetManagementBalanceRatio) {
+            uint256 assetAmount = wadAmmTreasuryAssetBalance -
+                IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, Constants.D18);
+            if (assetAmount > 0) {
+                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagement(assetAmount);
+            }
+        } else {
+            uint256 assetAmount = IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, Constants.D18) -
+                wadAmmTreasuryAssetBalance;
+            if (assetAmount > 0) {
+                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagement(assetAmount);
+            }
+        }
+    }
+
+    function _provideLiquidity(
         address asset,
         address onBehalfOf,
         uint256 assetAmount
-    ) external override {
+    ) internal {
         PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
         AmmTypes.AmmPoolCoreModel memory model;
 
@@ -140,19 +200,19 @@ contract AmmPoolsService is IAmmPoolsService {
         model.assetManagement = poolCfg.assetManagement;
         model.iporOracle = _iporOracle;
 
-        IporTypes.MiltonBalancesMemory memory balance = model.getAccruedBalance();
+        IporTypes.AmmBalancesMemory memory balance = model.getAccruedBalance();
 
         uint256 exchangeRate = model.getExchangeRate(balance.liquidityPool);
 
-        require(exchangeRate > 0, MiltonErrors.LIQUIDITY_POOL_IS_EMPTY);
+        require(exchangeRate > 0, AmmErrors.LIQUIDITY_POOL_IS_EMPTY);
 
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmount, poolCfg.decimals);
 
-        IMiltonStorage(poolCfg.ammStorage).addLiquidity(
+        IAmmStorage(poolCfg.ammStorage).addLiquidity(
             onBehalfOf,
             wadAssetAmount,
-            AmmConfigurationManager.getAmmPoolsMaxLiquidityPoolBalance(poolCfg.asset) * Constants.D18,
-            AmmConfigurationManager.getAmmPoolsMaxLpAccountContribution(poolCfg.asset) * Constants.D18
+            AmmConfigurationManager.getAmmMaxLiquidityPoolBalance(poolCfg.asset) * Constants.D18,
+            AmmConfigurationManager.getAmmMaxLpAccountContribution(poolCfg.asset) * Constants.D18
         );
 
         IERC20Upgradeable(poolCfg.asset).safeTransferFrom(msg.sender, poolCfg.ammTreasury, assetAmount);
@@ -174,16 +234,16 @@ contract AmmPoolsService is IAmmPoolsService {
         );
     }
 
-    function redeem(
+    function _redeem(
         address asset,
         address onBehalfOf,
         uint256 ipTokenAmount
-    ) external override {
+    ) internal {
         PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         require(
             ipTokenAmount > 0 && ipTokenAmount <= IIpToken(poolCfg.ipToken).balanceOf(msg.sender),
-            JosephErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW
+            AmmPoolsErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW
         );
 
         AmmTypes.AmmPoolCoreModel memory model;
@@ -194,11 +254,11 @@ contract AmmPoolsService is IAmmPoolsService {
         model.assetManagement = poolCfg.assetManagement;
         model.iporOracle = _iporOracle;
 
-        IporTypes.MiltonBalancesMemory memory balance = model.getAccruedBalance();
+        IporTypes.AmmBalancesMemory memory balance = model.getAccruedBalance();
 
         uint256 exchangeRate = model.getExchangeRate(balance.liquidityPool);
 
-        require(exchangeRate > 0, MiltonErrors.LIQUIDITY_POOL_IS_EMPTY);
+        require(exchangeRate > 0, AmmErrors.LIQUIDITY_POOL_IS_EMPTY);
 
         AmmTypes.RedeemMoney memory redeemMoney = _calculateRedeemMoney(
             poolCfg.decimals,
@@ -214,7 +274,7 @@ contract AmmPoolsService is IAmmPoolsService {
 
         require(
             wadAmmTreasuryErc20Balance + balance.vault > redeemMoney.wadRedeemAmount,
-            JosephErrors.INSUFFICIENT_ERC20_BALANCE
+            AmmPoolsErrors.INSUFFICIENT_ERC20_BALANCE
         );
 
         _rebalanceIfNeededBeforeRedeem(poolCfg, wadAmmTreasuryErc20Balance, balance.vault, redeemMoney.wadRedeemAmount);
@@ -225,12 +285,12 @@ contract AmmPoolsService is IAmmPoolsService {
                 balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
                 redeemMoney.wadRedeemAmount
             ) <= poolCfg.redeemLpMaxUtilizationRate,
-            JosephErrors.REDEEM_LP_UTILIZATION_EXCEEDED
+            AmmPoolsErrors.REDEEM_LP_UTILIZATION_EXCEEDED
         );
 
         IIpToken(poolCfg.ipToken).burn(msg.sender, ipTokenAmount);
 
-        IMiltonStorage(poolCfg.ammStorage).subtractLiquidity(redeemMoney.wadRedeemAmount);
+        IAmmStorage(poolCfg.ammStorage).subtractLiquidity(redeemMoney.wadRedeemAmount);
 
         IERC20Upgradeable(asset).safeTransferFrom(poolCfg.ammTreasury, onBehalfOf, redeemMoney.redeemAmount);
 
@@ -244,43 +304,6 @@ contract AmmPoolsService is IAmmPoolsService {
             redeemMoney.wadRedeemFee,
             redeemMoney.wadRedeemAmount
         );
-    }
-
-    function rebalance(address asset) external override {
-        require(
-            AmmConfigurationManager.isAmmPoolsAppointedToRebalance(asset, msg.sender),
-            JosephErrors.CALLER_NOT_APPOINTED_TO_REBALANCE
-        );
-
-        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
-
-        uint256 wadAmmTreasuryAssetBalance = IporMath.convertToWad(
-            IERC20Upgradeable(poolCfg.asset).balanceOf(poolCfg.ammTreasury),
-            poolCfg.decimals
-        );
-
-        uint256 totalBalance = wadAmmTreasuryAssetBalance +
-            IStanley(poolCfg.assetManagement).totalBalance(poolCfg.ammTreasury);
-
-        require(totalBalance > 0, JosephErrors.STANLEY_BALANCE_IS_EMPTY);
-
-        uint256 ratio = IporMath.division(wadAmmTreasuryAssetBalance * Constants.D18, totalBalance);
-
-        uint256 miltonStanleyBalanceRatio = AmmConfigurationManager.getAmmPoolsAndAssetManagementRatio(poolCfg.asset);
-
-        if (ratio > miltonStanleyBalanceRatio) {
-            uint256 assetAmount = wadAmmTreasuryAssetBalance -
-                IporMath.division(miltonStanleyBalanceRatio * totalBalance, Constants.D18);
-            if (assetAmount > 0) {
-                IMiltonInternal(poolCfg.ammTreasury).depositToStanley(assetAmount);
-            }
-        } else {
-            uint256 assetAmount = IporMath.division(miltonStanleyBalanceRatio * totalBalance, Constants.D18) -
-                wadAmmTreasuryAssetBalance;
-            if (assetAmount > 0) {
-                IMiltonInternal(poolCfg.ammTreasury).withdrawFromStanley(assetAmount);
-            }
-        }
     }
 
     function _getPoolConfiguration(address asset) internal view returns (PoolConfiguration memory) {
@@ -353,7 +376,7 @@ contract AmmPoolsService is IAmmPoolsService {
         uint256 vaultBalance,
         uint256 wadOperationAmount
     ) internal {
-        uint256 autoRebalanceThreshold = AmmConfigurationManager.getAmmPoolsAutoRebalanceThreshold(poolCfg.asset) *
+        uint256 autoRebalanceThreshold = AmmConfigurationManager.getAmmAutoRebalanceThreshold(poolCfg.asset) *
             Constants.D21;
 
         if (autoRebalanceThreshold > 0 && wadOperationAmount >= autoRebalanceThreshold) {
@@ -367,21 +390,21 @@ contract AmmPoolsService is IAmmPoolsService {
             );
 
             if (rebalanceAmount > 0) {
-                IMiltonInternal(poolCfg.ammTreasury).depositToStanley(rebalanceAmount.toUint256());
+                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagement(rebalanceAmount.toUint256());
             }
         }
     }
 
     /// @notice Calculate rebalance amount for provide liquidity
     /// @param asset Asset address (pool context)
-    /// @param wadAmmTreasuryErc20BalanceAfterDeposit Milton erc20 balance in wad, Notice: this is balance after provide liquidity operation!
-    /// @param vaultBalance Vault balance in wad, Stanley's accrued balance.
+    /// @param wadAmmTreasuryErc20BalanceAfterDeposit AmmTreasury erc20 balance in wad, Notice: this is balance after provide liquidity operation!
+    /// @param vaultBalance Vault balance in wad, AssetManagement's accrued balance.
     function _calculateRebalanceAmountAfterProvideLiquidity(
         address asset,
         uint256 wadAmmTreasuryErc20BalanceAfterDeposit,
         uint256 vaultBalance
     ) internal view returns (int256) {
-        uint256 ratio = AmmConfigurationManager.getAmmPoolsAndAssetManagementRatio(asset);
+        uint256 ratio = AmmConfigurationManager.getAmmAndAssetManagementRatio(asset);
         return
             IporMath.divisionInt(
                 (wadAmmTreasuryErc20BalanceAfterDeposit + vaultBalance).toInt256() *
@@ -396,7 +419,7 @@ contract AmmPoolsService is IAmmPoolsService {
         uint256 vaultBalance,
         uint256 wadOperationAmount
     ) internal {
-        uint256 autoRebalanceThreshold = AmmConfigurationManager.getAmmPoolsAutoRebalanceThreshold(poolCfg.asset) *
+        uint256 autoRebalanceThreshold = AmmConfigurationManager.getAmmAutoRebalanceThreshold(poolCfg.asset) *
             Constants.D21;
 
         if (
@@ -411,7 +434,7 @@ contract AmmPoolsService is IAmmPoolsService {
             );
 
             if (rebalanceAmount < 0) {
-                IMiltonInternal(poolCfg.ammTreasury).withdrawFromStanley((-rebalanceAmount).toUint256());
+                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagement((-rebalanceAmount).toUint256());
             }
         }
     }

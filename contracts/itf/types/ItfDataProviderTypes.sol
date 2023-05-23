@@ -14,7 +14,7 @@ library ItfDataProviderTypes {
         uint256 accruedExponentialWeightedMovingVariance;
     }
 
-    struct ItfMiltonStorageData {
+    struct ItfAmmStorageData {
         uint256 totalCollateralPayFixed;
         uint256 totalCollateralReceiveFixed;
         uint256 liquidityPool;
@@ -30,6 +30,6 @@ library ItfDataProviderTypes {
         uint256 timestamp;
         address asset;
         ItfIporOracleData itfIporOracleData;
-        ItfMiltonStorageData itfMiltonStorageData;
+        ItfAmmStorageData itfAmmStorageData;
     }
 }

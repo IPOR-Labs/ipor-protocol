@@ -61,10 +61,6 @@ IPOR smart contracts
 
 Coverage reports available in `coverage` folder.
 
-#### How to run tests inside specific file with coverage for mainnet fork?
-
-`export FORK_ENABLED=true; npx hardhat coverage --testfiles "test/vault/mainnet-fork/stanley-aave-dai.ts"`
-
 Notice! `npx hardhat coverage` not includes coverage from tests in mainnet fork, this test coverage should be executed separately on every file.
 
 #### How to run tests for specific file?
