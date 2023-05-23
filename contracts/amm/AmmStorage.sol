@@ -50,7 +50,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     }
 
     function getVersion() external pure virtual override returns (uint256) {
-        return 2;
+        return 2_000;
     }
 
     function getLastSwapId() external view override returns (uint256) {

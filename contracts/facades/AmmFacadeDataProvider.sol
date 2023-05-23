@@ -57,7 +57,7 @@ contract AmmTreasuryFacadeDataProvider is
     }
 
     function getVersion() external pure override returns (uint256) {
-        return 2;
+        return 2_000;
     }
 
     function getConfiguration() external view override returns (AmmFacadeTypes.AssetConfiguration[] memory) {

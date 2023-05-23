@@ -15,7 +15,7 @@ contract MockStrategy is IStrategy {
     address private _treasuryManager;
 
     function getVersion() external pure override returns (uint256) {
-        return 1;
+        return 2_000;
     }
 
     function deposit(uint256 amount) external override returns (uint256 depositedAmount) {
