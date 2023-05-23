@@ -113,14 +113,8 @@ contract SoapIndicatorLogicTest is Test, DataUtils {
 
     function testShouldCalculateInterestDeltaWhenSimpleCase1And18Decimals() public {
         // given
-        uint256 expectedQuasiInterestDelta = 3456000000 * TestConstants.D18 * TestConstants.D18 * TestConstants.D18;
+        uint256 expectedQuasiInterestDelta = 3465485810918569921042080000 * TestConstants.D18 * TestConstants.D18;
         AmmMiltonStorageTypes.SoapIndicatorsMemory memory soapIndicators;
-        soapIndicators.quasiHypotheticalInterestCumulative =
-            500 *
-            TestConstants.D18 *
-            TestConstants.D18 *
-            TestConstants.D18 *
-            TestConstants.YEAR_IN_SECONDS;
         soapIndicators.totalNotional = 20000 * TestConstants.D18_128UINT;
         soapIndicators.totalIbtQuantity = 100 * TestConstants.D18_128UINT;
         soapIndicators.averageInterestRate = 8 * TestConstants.D16_64UINT;
@@ -156,8 +150,7 @@ contract SoapIndicatorLogicTest is Test, DataUtils {
 
     function testShouldCalculateHypotheticalInterestDeltaWhenSimpleCase1And18Decimals() public {
         // given
-        uint256 expectedQuasiHypotheticalInterestTotal = 19224000000 *
-            TestConstants.D18 *
+        uint256 expectedQuasiHypotheticalInterestTotal = 19233485810918569921042080000 *
             TestConstants.D18 *
             TestConstants.D18;
         AmmMiltonStorageTypes.SoapIndicatorsMemory memory soapIndicators;
@@ -253,8 +246,7 @@ contract SoapIndicatorLogicTest is Test, DataUtils {
             rebalanceBalancesSecond.totalIbtQuantity;
         expectedBalances.expectedAverageInterestRate = TestConstants.PERCENTAGE_7_18DEC;
         expectedBalances.expectedQuasiHypotheticalInterestCumulative =
-            1080000000 *
-            TestConstants.D18 *
+            1081851427967433167235888000 *
             TestConstants.D18 *
             TestConstants.D18;
         // when
@@ -366,8 +358,7 @@ contract SoapIndicatorLogicTest is Test, DataUtils {
         expectedBalances.expectedTotalIbtQuantity = 95 * TestConstants.D18;
         expectedBalances.expectedAverageInterestRate = averageInterestRateAfterFirstOpen;
         expectedBalances.expectedQuasiHypotheticalInterestCumulative =
-            2160000000 *
-            TestConstants.D18 *
+            2172742799915578789495152000 *
             TestConstants.D18 *
             TestConstants.D18;
         AmmMiltonStorageTypes.SoapIndicatorsMemory memory soapIndicatorsAfterOpenSecond = SoapIndicatorLogic

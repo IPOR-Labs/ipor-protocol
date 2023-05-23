@@ -79,9 +79,7 @@ contract InterestRatesTest is Test {
         uint256 oneHundred = 100 * D18;
 
         assertEq(
-            oneHundred.calculateContinuousCompoundInterestUsingRatePeriodMultiplication(
-                IporMath.division(8e16 * 25 days, 365 days)
-            ),
+            oneHundred.calculateContinuousCompoundInterestUsingRatePeriodMultiplication(8e16 * 25 days),
             549449170934577930
         );
     }
