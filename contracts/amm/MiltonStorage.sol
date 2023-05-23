@@ -58,6 +58,17 @@ contract MiltonStorage is
         __UUPSUpgradeable_init();
     }
 
+    function postUpgrade() public onlyOwner {
+        _soapIndicatorsPayFixed.hypotheticalInterestCumulative = IporMath.division(
+            _soapIndicatorsPayFixed.hypotheticalInterestCumulative,
+            Constants.WAD_P2_YEAR_IN_SECONDS
+        );
+        _soapIndicatorsReceiveFixed.hypotheticalInterestCumulative = IporMath.division(
+            _soapIndicatorsReceiveFixed.hypotheticalInterestCumulative,
+            Constants.WAD_P2_YEAR_IN_SECONDS
+        );
+    }
+
     function getVersion() external pure virtual override returns (uint256) {
         return 2;
     }
