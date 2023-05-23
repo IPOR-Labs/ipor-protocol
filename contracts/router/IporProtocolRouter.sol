@@ -29,6 +29,31 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
     }
 
     constructor(DeployedContracts memory deployedContracts) {
+        require(
+            deployedContracts.ammCloseSwapServiceAddress != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " AMM_CLOSE_SWAP_SERVICE_ADDRESS")
+        );
+
+        require(
+            deployedContracts.ammOpenSwapServiceAddress != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " AMM_OPEN_SWAP_SERVICE_ADDRESS")
+        );
+
+        require(
+            deployedContracts.ammPoolsServiceAddress != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " AMM_POOLS_SERVICE_ADDRESS")
+        );
+
+        require(
+            deployedContracts.ammSwapsLens != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " AMM_SWAPS_LENS")
+        );
+
+        require(
+            deployedContracts.ammGovernanceServiceAddress != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " AMM_GOVERNANCE_SERVICE_ADDRESS")
+        );
+
         AMM_SWAPS_LENS = deployedContracts.ammSwapsLens;
         AMM_OPEN_SWAP_SERVICE_ADDRESS = deployedContracts.ammOpenSwapServiceAddress;
         AMM_CLOSE_SWAP_SERVICE_ADDRESS = deployedContracts.ammCloseSwapServiceAddress;
@@ -217,7 +242,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
 
     function initialize(bool paused) external initializer {
         __UUPSUpgradeable_init();
-        //        _owner = msg.sender;
+        OwnerManager.transferOwnership(msg.sender);
 
         if (paused) {
             _pause();

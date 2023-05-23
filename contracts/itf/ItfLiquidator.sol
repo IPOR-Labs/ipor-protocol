@@ -2,17 +2,16 @@
 pragma solidity 0.8.16;
 import "../interfaces/IAmmStorage.sol";
 import "./types/ItfAmmTreasuryTypes.sol";
-import "./ItfAmmTreasury.sol";
 import "../libraries/errors/AmmErrors.sol";
 
 contract ItfLiquidator {
 
-    ItfAmmTreasury private _ammTreasury;
-    IAmmStorage private _ammStorage;
+//    ItfAmmTreasury private _ammTreasury;
+//    IAmmStorage private _ammStorage;
 
     constructor(address ammTreasuryAddress, address ammStorage) {
-        _ammTreasury = ItfAmmTreasury(ammTreasuryAddress);
-        _ammStorage = IAmmStorage(ammStorage);
+//        _ammTreasury = ItfAmmTreasury(ammTreasuryAddress);
+//        _ammStorage = IAmmStorage(ammStorage);
     }
 //
 //    function itfLiquidate(

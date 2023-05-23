@@ -7,9 +7,10 @@ import "../../../contracts/itf/ItfIporOracle.sol";
 import "../../../contracts/oracles/IporRiskManagementOracle.sol";
 import "../../../contracts/mocks/MockIporWeighted.sol";
 import "../../../contracts/amm/AmmStorage.sol";
+import "../../../contracts/amm/AmmTreasury.sol";
+import "../../../contracts/amm/spread/SpreadRouter.sol";
 import "../../../contracts/itf/ItfAssetManagement.sol";
-import "../../../contracts/itf/ItfAmmTreasury.sol";
-import "../../amm/mocks/MockSpreadRouter.sol";
+import "../../mocks/MockSpreadXDays.sol";
 contract BuilderUtils {
     struct IporProtocol {
         MockTestnetToken asset;
@@ -19,9 +20,9 @@ contract BuilderUtils {
         IporRiskManagementOracle iporRiskManagementOracle;
         MockIporWeighted iporWeighted;
         AmmStorage ammStorage;
-        MockSpreadRouter spreadRouter;
+        SpreadRouter spreadRouter;
         ItfAssetManagement assetManagement;
-        ItfAmmTreasury ammTreasury;
+        AmmTreasury ammTreasury;
     }
 
     enum IporOracleInitialParamsTestCase {

@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "./BuilderUtils.sol";
 import "forge-std/Test.sol";
 
-contract MiltonBuilder is Test {
+contract AmmTreasuryBuilder is Test {
     struct BuilderData {
         address asset;
         uint256 assetDecimals;
@@ -22,23 +22,24 @@ contract MiltonBuilder is Test {
         _owner = owner;
     }
 
-    function withAsset(address asset) public returns (MiltonBuilder) {
+    function withAsset(address asset) public returns (AmmTreasuryBuilder) {
         builderData.asset = asset;
+        builderData.assetDecimals = IERC20Metadata(asset).decimals();
         return this;
     }
 
-    function withAssetDecimals(uint256 assetDecimals) public returns (MiltonBuilder) {
-        builderData.assetDecimals = assetDecimals;
-        return this;
-    }
-
-    function withAmmStorage(address ammStorage) public returns (MiltonBuilder) {
+    function withAmmStorage(address ammStorage) public returns (AmmTreasuryBuilder) {
         builderData.ammStorage = ammStorage;
         return this;
     }
 
-    function withAssetManagement(address assetManagement) public returns (MiltonBuilder) {
+    function withAssetManagement(address assetManagement) public returns (AmmTreasuryBuilder) {
         builderData.assetManagement = assetManagement;
+        return this;
+    }
+
+    function withIporProtocolRouter(address iporProtocolRouter) public returns (AmmTreasuryBuilder) {
+        builderData.iporProtocolRouter = iporProtocolRouter;
         return this;
     }
 
