@@ -113,14 +113,8 @@ contract SoapIndicatorLogicTest is Test, DataUtils {
 
     function testShouldCalculateInterestDeltaWhenSimpleCase1And18Decimals() public {
         // given
-        uint256 expectedQuasiInterestDelta = 3456000000 * TestConstants.D18 * TestConstants.D18 * TestConstants.D18;
+        uint256 expectedQuasiInterestDelta = 109889834186915586030;
         StorageInternalTypes.SoapIndicatorsMemory memory soapIndicators;
-        soapIndicators.hypotheticalInterestCumulative =
-            500 *
-            TestConstants.D18 *
-            TestConstants.D18 *
-            TestConstants.D18 *
-            TestConstants.YEAR_IN_SECONDS;
         soapIndicators.totalNotional = 20000 * TestConstants.D18_128UINT;
         soapIndicators.totalIbtQuantity = 100 * TestConstants.D18_128UINT;
         soapIndicators.averageInterestRate = 8 * TestConstants.D16_64UINT;
@@ -156,7 +150,9 @@ contract SoapIndicatorLogicTest is Test, DataUtils {
 
     function testShouldCalculateHypotheticalInterestDeltaWhenSimpleCase1And18Decimals() public {
         // given
-        uint256 expectedQuasiHypotheticalInterestTotal = 612637080041588475681;oapIndicators;
+        uint256 expectedQuasiHypotheticalInterestTotal = 612637080041588475681;
+        StorageInternalTypes.SoapIndicatorsMemory memory soapIndicators;
+        soapIndicators.hypotheticalInterestCumulative = 500 * TestConstants.D18;
         soapIndicators.totalNotional = 20000 * TestConstants.D18_128UINT;
         soapIndicators.totalIbtQuantity = 100 * TestConstants.D18_128UINT;
         soapIndicators.averageInterestRate = 8 * TestConstants.D16_64UINT;

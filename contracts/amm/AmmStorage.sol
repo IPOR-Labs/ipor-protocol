@@ -5,10 +5,8 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "../interfaces/types/AmmStorageTypes.sol";
 import "../libraries/Constants.sol";
 import "../libraries/PaginationUtils.sol";
-import "../interfaces/types/AmmStorageTypes.sol";
 import "../interfaces/IAmmStorage.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/types/StorageInternalTypes.sol";
@@ -250,8 +248,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             int256 soap
         )
     {
-        AmmMiltonStorageTypes.SoapIndicatorsMemory memory spf = AmmMiltonStorageTypes
-        .SoapIndicatorsMemory(
+        StorageInternalTypes.SoapIndicatorsMemory memory spf = StorageInternalTypes.SoapIndicatorsMemory(
             _soapIndicatorsPayFixed.hypotheticalInterestCumulative,
             _soapIndicatorsPayFixed.totalNotional,
             _soapIndicatorsPayFixed.totalIbtQuantity,
@@ -260,8 +257,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         );
         int256 _soapPayFixed = spf.calculateSoapPayFixed(calculateTimestamp, ibtPrice);
 
-        AmmMiltonStorageTypes.SoapIndicatorsMemory memory srf = AmmMiltonStorageTypes
-        .SoapIndicatorsMemory(
+        StorageInternalTypes.SoapIndicatorsMemory memory srf = StorageInternalTypes.SoapIndicatorsMemory(
             _soapIndicatorsReceiveFixed.hypotheticalInterestCumulative,
             _soapIndicatorsReceiveFixed.totalNotional,
             _soapIndicatorsReceiveFixed.totalIbtQuantity,
@@ -502,14 +498,13 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         view
         returns (int256 soapPayFixed)
     {
-        StorageInternalTypes.SoapIndicatorsMemory memory spf = AmmMiltonStorageTypes
-            .SoapIndicatorsMemory(
-                _soapIndicatorsPayFixed.hypotheticalInterestCumulative,
-                _soapIndicatorsPayFixed.totalNotional,
-                _soapIndicatorsPayFixed.totalIbtQuantity,
-                _soapIndicatorsPayFixed.averageInterestRate,
-                _soapIndicatorsPayFixed.rebalanceTimestamp
-            );
+        StorageInternalTypes.SoapIndicatorsMemory memory spf = StorageInternalTypes.SoapIndicatorsMemory(
+            _soapIndicatorsPayFixed.hypotheticalInterestCumulative,
+            _soapIndicatorsPayFixed.totalNotional,
+            _soapIndicatorsPayFixed.totalIbtQuantity,
+            _soapIndicatorsPayFixed.averageInterestRate,
+            _soapIndicatorsPayFixed.rebalanceTimestamp
+        );
         soapPayFixed = spf.calculateSoapPayFixed(calculateTimestamp, ibtPrice);
     }
 
@@ -518,14 +513,13 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         view
         returns (int256 soapReceiveFixed)
     {
-        StorageInternalTypes.SoapIndicatorsMemory memory srf = AmmMiltonStorageTypes
-            .SoapIndicatorsMemory(
-                _soapIndicatorsReceiveFixed.hypotheticalInterestCumulative,
-                _soapIndicatorsReceiveFixed.totalNotional,
-                _soapIndicatorsReceiveFixed.totalIbtQuantity,
-                _soapIndicatorsReceiveFixed.averageInterestRate,
-                _soapIndicatorsReceiveFixed.rebalanceTimestamp
-            );
+        StorageInternalTypes.SoapIndicatorsMemory memory srf = StorageInternalTypes.SoapIndicatorsMemory(
+            _soapIndicatorsReceiveFixed.hypotheticalInterestCumulative,
+            _soapIndicatorsReceiveFixed.totalNotional,
+            _soapIndicatorsReceiveFixed.totalIbtQuantity,
+            _soapIndicatorsReceiveFixed.averageInterestRate,
+            _soapIndicatorsReceiveFixed.rebalanceTimestamp
+        );
         soapReceiveFixed = srf.calculateSoapReceiveFixed(calculateTimestamp, ibtPrice);
     }
 
@@ -677,14 +671,13 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         uint256 fixedInterestRate,
         uint256 ibtQuantity
     ) internal {
-        StorageInternalTypes.SoapIndicatorsMemory memory pf = AmmMiltonStorageTypes
-            .SoapIndicatorsMemory(
-                _soapIndicatorsPayFixed.hypotheticalInterestCumulative,
-                _soapIndicatorsPayFixed.totalNotional,
-                _soapIndicatorsPayFixed.totalIbtQuantity,
-                _soapIndicatorsPayFixed.averageInterestRate,
-                _soapIndicatorsPayFixed.rebalanceTimestamp
-            );
+        StorageInternalTypes.SoapIndicatorsMemory memory pf = StorageInternalTypes.SoapIndicatorsMemory(
+            _soapIndicatorsPayFixed.hypotheticalInterestCumulative,
+            _soapIndicatorsPayFixed.totalNotional,
+            _soapIndicatorsPayFixed.totalIbtQuantity,
+            _soapIndicatorsPayFixed.averageInterestRate,
+            _soapIndicatorsPayFixed.rebalanceTimestamp
+        );
 
         pf.rebalanceWhenOpenSwap(openTimestamp, notional, fixedInterestRate, ibtQuantity);
 

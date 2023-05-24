@@ -84,7 +84,7 @@ library SoapIndicatorLogic {
                 swapFixedInterestRate
             );
 
-            uint256 hypotheticalInterestTotal = currentHypoteticalInterestTotal - quasiInterestPaidOut;
+            uint256 hypotheticalInterestTotal = currentHypoteticalInterestTotal - interestPaidOut;
 
             si.rebalanceTimestamp = rebalanceTimestamp;
             si.hypotheticalInterestCumulative = hypotheticalInterestTotal;

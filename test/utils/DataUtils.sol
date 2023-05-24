@@ -3,7 +3,7 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../utils/TestConstants.sol";
-import "contracts/amm/MiltonStorage.sol";
+import "contracts/amm/AmmStorage.sol";
 import "contracts/libraries/Constants.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "contracts/tokens/IpToken.sol";
@@ -26,10 +26,6 @@ contract DataUtils is Test {
 
     function getTokenDai() public returns (MockTestnetToken) {
         return new MockTestnetToken("Mocked DAI", "DAI", TestConstants.TOTAL_SUPPLY_18_DECIMALS, 18);
-    }
-
-    function prepareIpToken(IpToken ipToken, address joseph) public {
-        ipToken.setJoseph(joseph);
     }
 
     function getIpTokenUsdt(address tokenUsdt) public returns (IpToken) {
