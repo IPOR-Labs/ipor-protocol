@@ -20,7 +20,7 @@ interface IAmmStorage {
     /// @return last swap ID, integer
     function getLastSwapId() external view returns (uint256);
 
-    function getLastOpenSwap(AmmTypes.SwapDuration duration, uint256 direction) external view returns (AmmInternalTypes.OpenSwapItem memory);
+    function getLastOpenedSwap(AmmTypes.SwapDuration duration, uint256 direction) external view returns (AmmInternalTypes.OpenSwapItem memory);
 
     /// @notice Gets balance struct
     /// @dev Balance contains:

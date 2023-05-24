@@ -48,7 +48,7 @@ contract SimpleTest is TestCommons {
         );
         uint256 cfgIporPublicationFee = 1e18;
 
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_28,
             0
         );
@@ -59,7 +59,7 @@ contract SimpleTest is TestCommons {
 
         // then
 
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_28,
             0
         );
@@ -89,7 +89,7 @@ contract SimpleTest is TestCommons {
         );
         uint256 cfgIporPublicationFee = 1e18;
 
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_28,
             0
         );
@@ -102,7 +102,7 @@ contract SimpleTest is TestCommons {
 
         // then
 
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_28,
             0
         );
@@ -131,7 +131,7 @@ contract SimpleTest is TestCommons {
         );
         uint256 cfgIporPublicationFee = 1e18;
 
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_28,
             1
         );
@@ -142,7 +142,7 @@ contract SimpleTest is TestCommons {
 
         // then
 
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_28,
             1
         );
@@ -171,7 +171,7 @@ contract SimpleTest is TestCommons {
         );
         uint256 cfgIporPublicationFee = 1e18;
 
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_28,
             1
         );
@@ -184,7 +184,7 @@ contract SimpleTest is TestCommons {
 
         // then
 
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_28,
             1
         );
@@ -225,11 +225,11 @@ contract SimpleTest is TestCommons {
         );
         uint256 cfgIporPublicationFee = 1e18;
 
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore28 = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore28 = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_28,
             1
         );
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore60 = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore60 = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_60,
             1
         );
@@ -242,11 +242,11 @@ contract SimpleTest is TestCommons {
 
         // then
 
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter28 = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter28 = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_28,
             1
         );
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter60 = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter60 = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_60,
             1
         );
@@ -280,7 +280,7 @@ contract SimpleTest is TestCommons {
         _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
         vm.stopPrank();
 
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_28,
             0
         );
@@ -305,7 +305,7 @@ contract SimpleTest is TestCommons {
 
         // then
 
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_28,
             0
         );
@@ -340,7 +340,7 @@ contract SimpleTest is TestCommons {
         _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
         vm.stopPrank();
 
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_28,
             0
         );
@@ -365,7 +365,7 @@ contract SimpleTest is TestCommons {
 
         // then
 
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_28,
             0
         );
@@ -399,7 +399,7 @@ contract SimpleTest is TestCommons {
         _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
         vm.stopPrank();
 
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_28,
             0
         );
@@ -424,7 +424,7 @@ contract SimpleTest is TestCommons {
 
         // then
 
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_28,
             0
         );
@@ -459,7 +459,7 @@ contract SimpleTest is TestCommons {
         _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
         vm.stopPrank();
 
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_28,
             1
         );
@@ -484,7 +484,7 @@ contract SimpleTest is TestCommons {
 
         // then
 
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_28,
             1
         );
@@ -519,7 +519,7 @@ contract SimpleTest is TestCommons {
         _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
         vm.stopPrank();
 
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_28,
             1
         );
@@ -544,7 +544,7 @@ contract SimpleTest is TestCommons {
 
         // then
 
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_28,
             1
         );
@@ -579,7 +579,7 @@ contract SimpleTest is TestCommons {
         _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
         vm.stopPrank();
 
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_28,
             1
         );
@@ -604,7 +604,7 @@ contract SimpleTest is TestCommons {
 
         // then
 
-        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenSwap(
+        AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenedSwap(
             AmmTypes.SwapDuration.DAYS_28,
             1
         );

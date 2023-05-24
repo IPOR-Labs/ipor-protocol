@@ -63,7 +63,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         return _lastSwapId;
     }
 
-    function getLastOpenSwap(AmmTypes.SwapDuration duration, uint256 direction)
+    function getLastOpenedSwap(AmmTypes.SwapDuration duration, uint256 direction)
         external
         view
         override
@@ -336,7 +336,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             newSwap.fixedInterestRate,
             newSwap.ibtQuantity
         );
-        _addNewOpenSwapPayFixed(newSwap.duration, id, newSwap.openTimestamp);
+        _updateLastOpenedSwapWhenOpenPayFixed(newSwap.duration, id, newSwap.openTimestamp);
         return id;
     }
 
@@ -359,7 +359,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             newSwap.fixedInterestRate,
             newSwap.ibtQuantity
         );
-        _addNewOpenSwapReceiveFixed(newSwap.duration, id, newSwap.openTimestamp);
+        _updateLastOpenedSwapWhenOpenReceiveFixed(newSwap.duration, id, newSwap.openTimestamp);
         return id;
     }
 
@@ -371,7 +371,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _updateSwapsWhenClosePayFixed(iporSwap);
         _updateBalancesWhenCloseSwapPayFixed(iporSwap, payoff);
         _updateSoapIndicatorsWhenCloseSwapPayFixed(iporSwap, closingTimestamp);
-        _removeOpenSwapPayFixed(AmmTypes.SwapDuration(iporSwap.duration), iporSwap.id);
+        _updateLastOpenedSwapWhenClosePayFixed(AmmTypes.SwapDuration(iporSwap.duration), iporSwap.id);
     }
 
     function updateStorageWhenCloseSwapReceiveFixed(
@@ -382,7 +382,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _updateSwapsWhenCloseReceiveFixed(iporSwap);
         _updateBalancesWhenCloseSwapReceiveFixed(iporSwap, payoff);
         _updateSoapIndicatorsWhenCloseSwapReceiveFixed(iporSwap, closingTimestamp);
-        _removeOpenSwapReceiveFixed(AmmTypes.SwapDuration(iporSwap.duration), iporSwap.id);
+        _updateLastOpenedSwapWhenCloseReceiveFixed(AmmTypes.SwapDuration(iporSwap.duration), iporSwap.id);
     }
 
     function updateStorageWhenWithdrawFromAssetManagement(uint256 withdrawnAmount, uint256 vaultBalance)
@@ -795,7 +795,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         );
     }
 
-    function _addNewOpenSwapPayFixed(
+    function _updateLastOpenedSwapWhenOpenPayFixed(
         AmmTypes.SwapDuration duration,
         uint256 swapId,
         uint256 openTimestamp
@@ -811,7 +811,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _openSwapsPayFixed[duration].swaps[headSwapId].nextSwapId = swapId.toUint32();
     }
 
-    function _removeOpenSwapPayFixed(AmmTypes.SwapDuration duration, uint256 swapId) internal {
+    function _updateLastOpenedSwapWhenClosePayFixed(AmmTypes.SwapDuration duration, uint256 swapId) internal {
         uint32 headSwapId = _openSwapsPayFixed[duration].headSwapId;
         AmmInternalTypes.OpenSwapItem memory swap = _openSwapsPayFixed[duration].swaps[swapId.toUint32()];
         if (swapId.toUint32() == headSwapId) {
@@ -831,7 +831,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         }
     }
 
-    function _addNewOpenSwapReceiveFixed(
+    function _updateLastOpenedSwapWhenOpenReceiveFixed(
         AmmTypes.SwapDuration duration,
         uint256 swapId,
         uint256 openTimestamp
@@ -847,7 +847,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _openSwapsReceiveFixed[duration].swaps[headSwapId].nextSwapId = swapId.toUint32();
     }
 
-    function _removeOpenSwapReceiveFixed(AmmTypes.SwapDuration duration, uint256 swapId) internal {
+    function _updateLastOpenedSwapWhenCloseReceiveFixed(AmmTypes.SwapDuration duration, uint256 swapId) internal {
         uint32 headSwapId = _openSwapsReceiveFixed[duration].headSwapId;
         AmmInternalTypes.OpenSwapItem memory swap = _openSwapsReceiveFixed[duration].swaps[swapId.toUint32()];
         if (swapId.toUint32() == headSwapId) {
