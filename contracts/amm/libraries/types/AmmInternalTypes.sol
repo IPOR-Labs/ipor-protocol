@@ -36,4 +36,16 @@ library AmmInternalTypes {
         uint256 maxLeveragePerLeg;
         int256 spread;
     }
+
+    struct OpenSwapItem {
+        uint32 swapId;
+        uint32 nextSwapId;
+        uint32 previousSwapId;
+        uint32 openSwapTimestamp;
+    }
+
+    struct OpenSwapList {
+        uint32 headSwapId;
+        mapping(uint32 => OpenSwapItem) swaps;
+    }
 }

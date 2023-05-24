@@ -13,14 +13,17 @@ import "../interfaces/IAmmStorage.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/types/StorageInternalTypes.sol";
 import "./libraries/SoapIndicatorLogic.sol";
+import "./libraries/types/AmmInternalTypes.sol";
 
 //@dev all stored valuse related with money are in 18 decimals.
 contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, IporOwnableUpgradeable, IAmmStorage {
     using SafeCast for uint256;
     using SoapIndicatorLogic for StorageInternalTypes.SoapIndicatorsMemory;
 
+    address private immutable IPOR_PROTOCOL_ROUTER;
     uint32 private _lastSwapId;
-    address private _iporProtocolRouter;
+    /// @dev DEPRECATED
+    address public iporProtocolRouter;
 
     /// @dev DEPRECATED
     address public josephDeprecated;
@@ -32,14 +35,17 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     StorageInternalTypes.IporSwapContainer internal _swapsReceiveFixed;
 
     mapping(address => uint128) private _liquidityPoolAccountContribution;
+    mapping(AmmTypes.SwapDuration => AmmInternalTypes.OpenSwapList) private _openedSwapsPayFixed;
+    mapping(AmmTypes.SwapDuration => AmmInternalTypes.OpenSwapList) private _openedSwapsReceiveFixed;
 
     modifier onlyRouter() {
-        require(_msgSender() == _iporProtocolRouter, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
+        require(_msgSender() == IPOR_PROTOCOL_ROUTER, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
         _;
     }
 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
+    constructor(address iporProtocolRouter) {
+        IPOR_PROTOCOL_ROUTER = iporProtocolRouter;
         _disableInitializers();
     }
 
@@ -57,8 +63,20 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         return _lastSwapId;
     }
 
+    function getLastOpenedSwap(AmmTypes.SwapDuration duration, uint256 direction)
+        external
+        view
+        override
+        returns (AmmInternalTypes.OpenSwapItem memory)
+    {
+        return
+            direction == 0
+                ? _openedSwapsPayFixed[duration].swaps[_openedSwapsPayFixed[duration].headSwapId]
+                : _openedSwapsReceiveFixed[duration].swaps[_openedSwapsReceiveFixed[duration].headSwapId];
+    }
+
     function getIporProtocolRouter() external view returns (address) {
-        return _iporProtocolRouter;
+        return IPOR_PROTOCOL_ROUTER;
     }
 
     function getBalance() external view virtual override returns (IporTypes.AmmBalancesMemory memory) {
@@ -318,6 +336,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             newSwap.fixedInterestRate,
             newSwap.ibtQuantity
         );
+        _updateOpenedSwapWhenOpenPayFixed(newSwap.duration, id, newSwap.openTimestamp);
         return id;
     }
 
@@ -340,6 +359,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             newSwap.fixedInterestRate,
             newSwap.ibtQuantity
         );
+        _updateOpenedSwapWhenOpenReceiveFixed(newSwap.duration, id, newSwap.openTimestamp);
         return id;
     }
 
@@ -351,6 +371,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _updateSwapsWhenClosePayFixed(iporSwap);
         _updateBalancesWhenCloseSwapPayFixed(iporSwap, payoff);
         _updateSoapIndicatorsWhenCloseSwapPayFixed(iporSwap, closingTimestamp);
+        _updateOpenedSwapWhenClosePayFixed(AmmTypes.SwapDuration(iporSwap.duration), iporSwap.id);
     }
 
     function updateStorageWhenCloseSwapReceiveFixed(
@@ -361,6 +382,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _updateSwapsWhenCloseReceiveFixed(iporSwap);
         _updateBalancesWhenCloseSwapReceiveFixed(iporSwap, payoff);
         _updateSoapIndicatorsWhenCloseSwapReceiveFixed(iporSwap, closingTimestamp);
+        _updateOpenedSwapWhenCloseReceiveFixed(AmmTypes.SwapDuration(iporSwap.duration), iporSwap.id);
     }
 
     function updateStorageWhenWithdrawFromAssetManagement(uint256 withdrawnAmount, uint256 vaultBalance)
@@ -419,13 +441,6 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         balance = balance - transferredAmount;
 
         _balances.treasury = balance.toUint128();
-    }
-
-    function setAmmTreasury(address newAmmTreasury) external override onlyOwner {
-        require(newAmmTreasury != address(0), IporErrors.WRONG_ADDRESS);
-        address oldAmmTreasury = _iporProtocolRouter;
-        _iporProtocolRouter = newAmmTreasury;
-        emit AmmTreasuryChanged(_msgSender(), oldAmmTreasury, newAmmTreasury);
     }
 
     function pause() external override onlyOwner {
@@ -778,6 +793,84 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             rf.averageInterestRate.toUint64(),
             rf.rebalanceTimestamp.toUint32()
         );
+    }
+
+    function _updateOpenedSwapWhenOpenPayFixed(
+        AmmTypes.SwapDuration duration,
+        uint256 swapId,
+        uint256 openTimestamp
+    ) internal {
+        uint32 headSwapId = _openedSwapsPayFixed[duration].headSwapId;
+        _openedSwapsPayFixed[duration].swaps[swapId.toUint32()] = AmmInternalTypes.OpenSwapItem(
+            swapId.toUint32(),
+            0,
+            headSwapId,
+            openTimestamp.toUint32()
+        );
+        _openedSwapsPayFixed[duration].headSwapId = swapId.toUint32();
+        _openedSwapsPayFixed[duration].swaps[headSwapId].nextSwapId = swapId.toUint32();
+    }
+
+    function _updateOpenedSwapWhenClosePayFixed(AmmTypes.SwapDuration duration, uint256 swapId) internal {
+        uint32 headSwapId = _openedSwapsPayFixed[duration].headSwapId;
+        AmmInternalTypes.OpenSwapItem memory swap = _openedSwapsPayFixed[duration].swaps[swapId.toUint32()];
+        if(swap.openSwapTimestamp == 0) {
+            return;
+        }
+        if (swapId.toUint32() == headSwapId) {
+            AmmInternalTypes.OpenSwapItem memory swapPrev = _openedSwapsPayFixed[duration].swaps[swap.previousSwapId];
+            swapPrev.nextSwapId = 0;
+            _openedSwapsPayFixed[duration].headSwapId = swapPrev.swapId;
+            _openedSwapsPayFixed[duration].swaps[swapPrev.swapId] = swapPrev;
+            delete _openedSwapsPayFixed[duration].swaps[swapId.toUint32()];
+        } else {
+            AmmInternalTypes.OpenSwapItem memory swapPrev = _openedSwapsPayFixed[duration].swaps[swap.previousSwapId];
+            AmmInternalTypes.OpenSwapItem memory swapNext = _openedSwapsPayFixed[duration].swaps[swap.nextSwapId];
+            swapPrev.nextSwapId = swapNext.swapId;
+            swapNext.previousSwapId = swapPrev.swapId;
+            _openedSwapsPayFixed[duration].swaps[swap.previousSwapId] = swapPrev;
+            _openedSwapsPayFixed[duration].swaps[swap.nextSwapId] = swapNext;
+            delete _openedSwapsPayFixed[duration].swaps[swapId.toUint32()];
+        }
+    }
+
+    function _updateOpenedSwapWhenOpenReceiveFixed(
+        AmmTypes.SwapDuration duration,
+        uint256 swapId,
+        uint256 openTimestamp
+    ) internal {
+        uint32 headSwapId = _openedSwapsReceiveFixed[duration].headSwapId;
+        _openedSwapsReceiveFixed[duration].swaps[swapId.toUint32()] = AmmInternalTypes.OpenSwapItem(
+            swapId.toUint32(),
+            0,
+            headSwapId,
+            openTimestamp.toUint32()
+        );
+        _openedSwapsReceiveFixed[duration].headSwapId = swapId.toUint32();
+        _openedSwapsReceiveFixed[duration].swaps[headSwapId].nextSwapId = swapId.toUint32();
+    }
+
+    function _updateOpenedSwapWhenCloseReceiveFixed(AmmTypes.SwapDuration duration, uint256 swapId) internal {
+        uint32 headSwapId = _openedSwapsReceiveFixed[duration].headSwapId;
+        AmmInternalTypes.OpenSwapItem memory swap = _openedSwapsReceiveFixed[duration].swaps[swapId.toUint32()];
+        if(swap.openSwapTimestamp == 0) {
+            return;
+        }
+        if (swapId.toUint32() == headSwapId) {
+            AmmInternalTypes.OpenSwapItem memory swapPrev = _openedSwapsReceiveFixed[duration].swaps[swap.previousSwapId];
+            swapPrev.nextSwapId = 0;
+            _openedSwapsReceiveFixed[duration].headSwapId = swapPrev.swapId;
+            _openedSwapsReceiveFixed[duration].swaps[swapPrev.swapId] = swapPrev;
+            delete _openedSwapsReceiveFixed[duration].swaps[swapId.toUint32()];
+        } else {
+            AmmInternalTypes.OpenSwapItem memory swapPrev = _openedSwapsReceiveFixed[duration].swaps[swap.previousSwapId];
+            AmmInternalTypes.OpenSwapItem memory swapNext = _openedSwapsReceiveFixed[duration].swaps[swap.nextSwapId];
+            swapPrev.nextSwapId = swapNext.swapId;
+            swapNext.previousSwapId = swapPrev.swapId;
+            _openedSwapsReceiveFixed[duration].swaps[swap.previousSwapId] = swapPrev;
+            _openedSwapsReceiveFixed[duration].swaps[swap.nextSwapId] = swapNext;
+            delete _openedSwapsReceiveFixed[duration].swaps[swapId.toUint32()];
+        }
     }
 
     //solhint-disable no-empty-blocks
