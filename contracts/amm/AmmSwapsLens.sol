@@ -150,7 +150,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         uint256 direction,
         uint256 duration
     ) external view override returns (AmmFacadeTypes.AssetConfiguration memory) {
-        AmmOpenSwapTypes.OpenSwapPoolConfiguration memory openSwapPoolCfg = IAmmOpenSwapService(_router)
+        IAmmOpenSwapService.PoolConfiguration memory openSwapPoolCfg = IAmmOpenSwapService(_router)
             .getPoolConfiguration(asset);
 
         (, , uint256 maxUtilizationRate, int256 spread) = IIporRiskManagementOracle(_router).getOpenSwapParameters(

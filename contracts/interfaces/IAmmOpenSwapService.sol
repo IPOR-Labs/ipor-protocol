@@ -2,7 +2,7 @@
 pragma solidity 0.8.16;
 
 import "../interfaces/types/AmmTypes.sol";
-import "../interfaces/types/AmmOpenSwapTypes.sol";
+import "../interfaces/types/AmmTypes.sol";
 
 /// @title Interface of the service that allows to open new swaps.
 interface IAmmOpenSwapService {
@@ -26,7 +26,20 @@ interface IAmmOpenSwapService {
         AmmTypes.IporSwapIndicator indicator
     );
 
-    function getPoolConfiguration(address asset) external view returns (AmmOpenSwapTypes.OpenSwapPoolConfiguration memory);
+    struct PoolConfiguration {
+        address asset;
+        uint256 decimals;
+        address ammStorage;
+        address ammTreasury;
+        uint256 iporPublicationFee;
+        uint256 maxSwapCollateralAmount;
+        uint256 liquidationDepositAmount;
+        uint256 minLeverage;
+        uint256 openingFeeRate;
+        uint256 openingFeeTreasuryPortionRate;
+    }
+
+    function getPoolConfiguration(address asset) external view returns (PoolConfiguration memory);
 
     /// @notice Open new swap pay fixed receive floating with maturity in 28 days for asset USDT.
     /// @param onBehalfOf address of the account on behalf of which this swap is opened.
