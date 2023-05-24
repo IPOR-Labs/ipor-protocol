@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "../../libraries/errors/MiltonErrors.sol";
+import "../../libraries/errors/AmmErrors.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
 import "../../libraries/math/InterestRates.sol";
-import "./types/AmmMiltonStorageTypes.sol";
+import "./types/StorageInternalTypes.sol";
 
 library SoapIndicatorLogic {
     using SafeCast for uint256;
     using InterestRates for uint256;
 
     function calculateSoapPayFixed(
-        AmmMiltonStorageTypes.SoapIndicatorsMemory memory si,
+        StorageInternalTypes.SoapIndicatorsMemory memory si,
         uint256 calculateTimestamp,
         uint256 ibtPrice
     ) internal pure returns (int256) {
@@ -22,7 +22,7 @@ library SoapIndicatorLogic {
     }
 
     function calculateSoapReceiveFixed(
-        AmmMiltonStorageTypes.SoapIndicatorsMemory memory si,
+        StorageInternalTypes.SoapIndicatorsMemory memory si,
         uint256 calculateTimestamp,
         uint256 ibtPrice
     ) internal pure returns (int256) {
@@ -32,12 +32,12 @@ library SoapIndicatorLogic {
     }
 
     function rebalanceWhenOpenSwap(
-        AmmMiltonStorageTypes.SoapIndicatorsMemory memory si,
+        StorageInternalTypes.SoapIndicatorsMemory memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) internal pure returns (AmmMiltonStorageTypes.SoapIndicatorsMemory memory) {
+    ) internal pure returns (StorageInternalTypes.SoapIndicatorsMemory memory) {
         uint256 averageInterestRate = calculateAverageInterestRateWhenOpenSwap(
             si.totalNotional,
             si.averageInterestRate,
@@ -57,13 +57,13 @@ library SoapIndicatorLogic {
     }
 
     function rebalanceWhenCloseSwap(
-        AmmMiltonStorageTypes.SoapIndicatorsMemory memory si,
+        StorageInternalTypes.SoapIndicatorsMemory memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) internal pure returns (AmmMiltonStorageTypes.SoapIndicatorsMemory memory) {
+    ) internal pure returns (StorageInternalTypes.SoapIndicatorsMemory memory) {
         uint256 newAverageInterestRate = calculateAverageInterestRateWhenCloseSwap(
             si.totalNotional,
             si.averageInterestRate,
@@ -84,7 +84,7 @@ library SoapIndicatorLogic {
                 swapFixedInterestRate
             );
 
-            uint256 hypotheticalInterestTotal = currentHypoteticalInterestTotal - interestPaidOut;
+            uint256 hypotheticalInterestTotal = currentHypoteticalInterestTotal - quasiInterestPaidOut;
 
             si.rebalanceTimestamp = rebalanceTimestamp;
             si.hypotheticalInterestCumulative = hypotheticalInterestTotal;
@@ -109,10 +109,7 @@ library SoapIndicatorLogic {
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate
     ) internal pure returns (uint256) {
-        require(
-            calculateTimestamp >= derivativeOpenTimestamp,
-            MiltonErrors.CALC_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP
-        );
+        require(calculateTimestamp >= derivativeOpenTimestamp, AmmErrors.CALC_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP);
         return
             derivativeNotional.calculateContinuousCompoundInterestUsingRatePeriodMultiplication(
                 swapFixedInterestRate * (calculateTimestamp - derivativeOpenTimestamp)
@@ -120,7 +117,7 @@ library SoapIndicatorLogic {
     }
 
     function calculateHyphoteticalInterestTotal(
-        AmmMiltonStorageTypes.SoapIndicatorsMemory memory si,
+        StorageInternalTypes.SoapIndicatorsMemory memory si,
         uint256 calculateTimestamp
     ) internal pure returns (uint256) {
         return
@@ -141,7 +138,7 @@ library SoapIndicatorLogic {
     ) internal pure returns (uint256) {
         require(
             calculateTimestamp >= lastRebalanceTimestamp,
-            MiltonErrors.CALC_TIMESTAMP_LOWER_THAN_SOAP_REBALANCE_TIMESTAMP
+            AmmErrors.CALC_TIMESTAMP_LOWER_THAN_SOAP_REBALANCE_TIMESTAMP
         );
         return
             totalNotional.calculateContinuousCompoundInterestUsingRatePeriodMultiplication(
@@ -168,7 +165,7 @@ library SoapIndicatorLogic {
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate
     ) internal pure returns (uint256) {
-        require(derivativeNotional <= totalNotional, MiltonErrors.SWAP_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL);
+        require(derivativeNotional <= totalNotional, AmmErrors.SWAP_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL);
         if (derivativeNotional == totalNotional) {
             return 0;
         } else {

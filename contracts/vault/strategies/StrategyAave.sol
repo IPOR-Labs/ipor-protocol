@@ -9,7 +9,7 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../../libraries/errors/StanleyErrors.sol";
+import "../../libraries/errors/AssetManagementErrors.sol";
 import "../../libraries/math/IporMath.sol";
 import "../../interfaces/IStrategyAave.sol";
 import "../../security/IporOwnableUpgradeable.sol";
@@ -108,7 +108,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         external
         override
         whenNotPaused
-        onlyStanley
+        onlyAssetManagement
         returns (uint256 depositedAmount)
     {
         address asset = _asset;
@@ -127,14 +127,14 @@ contract StrategyAave is StrategyCore, IStrategyAave {
 
     /**
      * @dev withdraw from _aave lending.
-     * @notice withdraw can only done by Stanley.
+     * @notice withdraw can only done by AssetManagement.
      * @param wadAmount amount to withdraw from _aave lending.
      */
     function withdraw(uint256 wadAmount)
         external
         override
         whenNotPaused
-        onlyStanley
+        onlyAssetManagement
         returns (uint256 withdrawnAmount)
     {
         address asset = _asset;
@@ -145,7 +145,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
 
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
 
-        //Transfer assets from Aave directly to msgSender which is Stanley
+        //Transfer assets from Aave directly to msgSender which is AssetManagement
         uint256 withdrawnAmountAave = AaveLendingPoolV2(lendingPoolAddress).withdraw(
             asset,
             amount,
@@ -161,7 +161,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
 
      */
     function beforeClaim() external override whenNotPaused nonReentrant {
-        require(_treasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
+        require(_treasury != address(0), AssetManagementErrors.INCORRECT_TREASURY_ADDRESS);
         address[] memory shareTokens = new address[](1);
         shareTokens[0] = _shareToken;
         _aaveIncentive.claimRewards(shareTokens, type(uint256).max, address(this));
@@ -178,7 +178,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
     function doClaim() external override whenNotPaused nonReentrant {
         address treasury = _treasury;
 
-        require(treasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
+        require(treasury != address(0), AssetManagementErrors.INCORRECT_TREASURY_ADDRESS);
 
         uint256 cooldownStartTimestamp = _stakedAaveInterface.stakersCooldowns(address(this));
         uint256 cooldownSeconds = _stakedAaveInterface.COOLDOWN_SECONDS();

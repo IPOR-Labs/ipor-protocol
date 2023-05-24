@@ -22,7 +22,7 @@ contract IvTokenBurnTest is Test, TestCommons {
         _userTwo = _getUserAddress(2);
     }
 
-	function testShouldNotBurnIvTokenWhenNotStanley () public {
+	function testShouldNotBurnIvTokenWhenNotAssetManagement () public {
 		// given
 		// when
 		vm.expectRevert(abi.encodePacked("IPOR_501"));
@@ -32,7 +32,7 @@ contract IvTokenBurnTest is Test, TestCommons {
 	function testShouldNotBurnIvTokenWhenAmountIsZero() public {
 		// given
 		address mockIporVaultAddress = _userOne;
-		_ivToken.setStanley(mockIporVaultAddress);
+		_ivToken.setAssetManagement(mockIporVaultAddress);
 		// when
 		vm.prank(_userOne);
 		// then
@@ -43,7 +43,7 @@ contract IvTokenBurnTest is Test, TestCommons {
 	function testShouldNotBurnIvTokenWhenZeroAddress() public {
 		// given
 		address mockIporVaultAddress = _userOne;
-		_ivToken.setStanley(mockIporVaultAddress);
+		_ivToken.setAssetManagement(mockIporVaultAddress);
 		// when
 		vm.prank(_userOne);
 		vm.expectRevert(abi.encodePacked("ERC20: burn from the zero address"));
@@ -53,7 +53,7 @@ contract IvTokenBurnTest is Test, TestCommons {
 	function testShouldNotBurnWhenAmountExceedsBalance() public {
 		// given
 		address mockIporVaultAddress = _userOne;
-		_ivToken.setStanley(mockIporVaultAddress);
+		_ivToken.setAssetManagement(mockIporVaultAddress);
 		vm.prank(_userOne);
 		_ivToken.mint(_userOne, Constants.D18);
 		// when
@@ -65,7 +65,7 @@ contract IvTokenBurnTest is Test, TestCommons {
 	function testShouldBurnTokens() public {
 		// given
 		address mockIporVaultAddress = _userOne;
-		_ivToken.setStanley(mockIporVaultAddress);
+		_ivToken.setAssetManagement(mockIporVaultAddress);
 		uint256 amount = Constants.D18;
 		vm.prank(_userOne);
 		_ivToken.mint(_userOne, Constants.D18);
@@ -85,7 +85,7 @@ contract IvTokenBurnTest is Test, TestCommons {
 	function testShouldEmitBurnEvent() public {
 		// given
 		address mockIporVaultAddress = _admin;
-		_ivToken.setStanley(mockIporVaultAddress);
+		_ivToken.setAssetManagement(mockIporVaultAddress);
 		uint256 amount = Constants.D18;
 		// when
 		_ivToken.mint(_userOne, amount);

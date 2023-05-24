@@ -20,7 +20,7 @@ contract JosephSnapshot is Script, Test {
     uint256 public josephVersion;
     uint256 public josephRedeemFeeRate;
     uint256 public josephRedeemLpMaxUtilizationRate;
-    uint256 public josephMiltonStanleyBalanceRatio;
+    uint256 public josephAmmTreasuryAssetManagementBalanceRatio;
     uint256 public josephMaxLiquidityPoolBalance;
     uint256 public josephMaxLpAccountContribution;
     uint256 public josephExchangeRate;
@@ -44,7 +44,7 @@ contract JosephSnapshot is Script, Test {
         josephVersion = joseph.getVersion();
         josephRedeemFeeRate = joseph.getRedeemFeeRate();
         josephRedeemLpMaxUtilizationRate = joseph.getRedeemLpMaxUtilizationRate();
-        josephMiltonStanleyBalanceRatio = joseph.getMiltonStanleyBalanceRatio();
+        josephAmmTreasuryAssetManagementBalanceRatio = joseph.getAmmTreasuryAssetManagementBalanceRatio();
         josephMaxLiquidityPoolBalance = joseph.getMaxLiquidityPoolBalance();
         josephMaxLpAccountContribution = joseph.getMaxLpAccountContribution();
         josephExchangeRate = joseph.calculateExchangeRate();
@@ -69,7 +69,7 @@ contract JosephSnapshot is Script, Test {
         vm.serializeUint(josephJson, "josephVersion", josephVersion);
         vm.serializeUint(josephJson, "josephRedeemFeeRate", josephRedeemFeeRate);
         vm.serializeUint(josephJson, "josephRedeemLpMaxUtilizationRate", josephRedeemLpMaxUtilizationRate);
-        vm.serializeUint(josephJson, "josephMiltonStanleyBalanceRatio", josephMiltonStanleyBalanceRatio);
+        vm.serializeUint(josephJson, "josephAmmTreasuryAssetManagementBalanceRatio", josephAmmTreasuryAssetManagementBalanceRatio);
         vm.serializeUint(josephJson, "josephMaxLiquidityPoolBalance", josephMaxLiquidityPoolBalance);
         vm.serializeUint(josephJson, "josephMaxLpAccountContribution", josephMaxLpAccountContribution);
         vm.serializeUint(josephJson, "josephExchangeRate", josephExchangeRate);
@@ -96,7 +96,7 @@ contract JosephSnapshot is Script, Test {
             josephSnapshot1.josephRedeemLpMaxUtilizationRate(),
             josephSnapshot2.josephRedeemLpMaxUtilizationRate()
         );
-        assertEq(josephSnapshot1.josephMiltonStanleyBalanceRatio(), josephSnapshot2.josephMiltonStanleyBalanceRatio());
+        assertEq(josephSnapshot1.josephAmmTreasuryAssetManagementBalanceRatio(), josephSnapshot2.josephAmmTreasuryAssetManagementBalanceRatio());
         assertEq(josephSnapshot1.josephMaxLiquidityPoolBalance(), josephSnapshot2.josephMaxLiquidityPoolBalance());
         assertEq(josephSnapshot1.josephMaxLpAccountContribution(), josephSnapshot2.josephMaxLpAccountContribution());
         assertEq(josephSnapshot1.josephExchangeRate(), josephSnapshot2.josephExchangeRate());

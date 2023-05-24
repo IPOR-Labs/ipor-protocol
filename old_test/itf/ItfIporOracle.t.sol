@@ -11,7 +11,7 @@ contract ItfIporOracleTest is TestCommons, DataUtils {
     MockTestnetToken internal _usdtMockedToken;
     MockTestnetToken internal _usdcMockedToken;
     MockTestnetToken internal _daiMockedToken;
-    MockSpreadModel internal _miltonSpreadModel;
+    MockSpreadModel internal _ammTreasurySpreadModel;
     ItfIporOracle internal _iporOracle;
     address[] internal _assets;
 
@@ -20,7 +20,7 @@ contract ItfIporOracleTest is TestCommons, DataUtils {
         _usdtMockedToken = getTokenUsdt();
         _usdcMockedToken = getTokenUsdc();
         _assets = [address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken)];
-        _miltonSpreadModel = prepareMockSpreadModel(
+        _ammTreasurySpreadModel = prepareMockSpreadModel(
             TestConstants.ZERO,
             TestConstants.ZERO,
             TestConstants.ZERO_INT,

@@ -6,9 +6,9 @@ import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
 
-import "contracts/amm/MiltonStorage.sol";
+import "contracts/amm/AmmStorage.sol";
 
-contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
+contract AmmTreasuryUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
     BuilderUtils.IporProtocol internal _iporProtocol;
 
@@ -29,7 +29,7 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -47,7 +47,7 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -58,7 +58,7 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -76,7 +76,7 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -87,7 +87,7 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE6;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE6;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -104,7 +104,7 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -115,7 +115,7 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE6;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE6;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -133,7 +133,7 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -144,7 +144,7 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -161,7 +161,7 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             14000 * TestConstants.D18,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -172,7 +172,7 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE6;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE6;
         _cfg.iporRiskManagementOracleInitialParamsTestCase = BuilderUtils
             .IporRiskManagementOracleInitialParamsTestCase
             .CASE5;
@@ -192,7 +192,7 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -203,7 +203,7 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -220,7 +220,7 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             14000 * TestConstants.D18,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -231,7 +231,7 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE6;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE6;
         _cfg.iporRiskManagementOracleInitialParamsTestCase = BuilderUtils
             .IporRiskManagementOracleInitialParamsTestCase
             .CASE5;
@@ -251,7 +251,7 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC

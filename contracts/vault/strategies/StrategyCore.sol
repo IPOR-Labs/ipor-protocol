@@ -6,7 +6,7 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../../libraries/errors/IporErrors.sol";
-import "../../libraries/errors/StanleyErrors.sol";
+import "../../libraries/errors/AssetManagementErrors.sol";
 
 import "../../security/IporOwnableUpgradeable.sol";
 import "../../security/PauseManager.sol";
@@ -22,12 +22,12 @@ abstract contract StrategyCore is
 {
     address internal _asset;
     address internal _shareToken;
-    address internal _stanley;
+    address internal _assetManagement;
     address internal _treasury;
     address internal _treasuryManager;
 
-    modifier onlyStanley() {
-        require(_msgSender() == _stanley, StanleyErrors.CALLER_NOT_STANLEY);
+    modifier onlyAssetManagement() {
+        require(_msgSender() == _assetManagement, AssetManagementErrors.CALLER_NOT_ASSET_MANAGEMENT);
         _;
     }
 
@@ -37,12 +37,12 @@ abstract contract StrategyCore is
     }
 
     modifier onlyTreasuryManager() {
-        require(_msgSender() == _treasuryManager, StanleyErrors.CALLER_NOT_TREASURY_MANAGER);
+        require(_msgSender() == _treasuryManager, AssetManagementErrors.CALLER_NOT_TREASURY_MANAGER);
         _;
     }
 
     function getVersion() external pure override returns (uint256) {
-        return 2;
+        return 2_000;
     }
 
     function getAsset() external view override returns (address) {
@@ -56,15 +56,15 @@ abstract contract StrategyCore is
         return _shareToken;
     }
 
-    function getStanley() external view override returns (address) {
-        return _stanley;
+    function getAssetManagement() external view override returns (address) {
+        return _assetManagement;
     }
 
-    function setStanley(address newStanley) external whenNotPaused onlyOwner {
-        require(newStanley != address(0), IporErrors.WRONG_ADDRESS);
-        address oldStanley = _stanley;
-        _stanley = newStanley;
-        emit StanleyChanged(_msgSender(), oldStanley, newStanley);
+    function setAssetManagement(address newAssetManagement) external whenNotPaused onlyOwner {
+        require(newAssetManagement != address(0), IporErrors.WRONG_ADDRESS);
+        address oldAssetManagement = _assetManagement;
+        _assetManagement = newAssetManagement;
+        emit AssetManagementChanged(_msgSender(), oldAssetManagement, newAssetManagement);
     }
 
     function getTreasuryManager() external view override returns (address) {
@@ -83,7 +83,7 @@ abstract contract StrategyCore is
     }
 
     function setTreasury(address newTreasury) external whenNotPaused onlyTreasuryManager {
-        require(newTreasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
+        require(newTreasury != address(0), AssetManagementErrors.INCORRECT_TREASURY_ADDRESS);
         address oldTreasury = _treasury;
         _treasury = newTreasury;
         emit TreasuryChanged(_msgSender(), oldTreasury, newTreasury);

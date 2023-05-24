@@ -3,18 +3,18 @@ pragma solidity 0.8.16;
 
 import "../../../TestCommons.sol";
 import {DataUtils} from "../../../utils/DataUtils.sol";
-import {StanleyUtils} from "../../../utils/StanleyUtils.sol";
+import {AssetManagementUtils} from "../../../utils/AssetManagementUtils.sol";
 import {TestConstants} from "../../../utils/TestConstants.sol";
 import "contracts/vault/strategies/StrategyAave.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "contracts/mocks/tokens/AAVEMockedToken.sol";
-import "contracts/mocks/stanley/aave/aTokens/MockAUsdt.sol";
-import "contracts/mocks/stanley/aave/aTokens/MockAUsdc.sol";
-import "contracts/mocks/stanley/aave/aTokens/MockADai.sol";
-import "contracts/mocks/stanley/aave/MockLendingPoolAave.sol";
-import "contracts/mocks/stanley/aave/MockProviderAave.sol";
-import "contracts/mocks/stanley/aave/MockStakedAave.sol";
-import "contracts/mocks/stanley/aave/MockAaveIncentivesController.sol";
+import "contracts/mocks/assetManagement/aave/aTokens/MockAUsdt.sol";
+import "contracts/mocks/assetManagement/aave/aTokens/MockAUsdc.sol";
+import "contracts/mocks/assetManagement/aave/aTokens/MockADai.sol";
+import "contracts/mocks/assetManagement/aave/MockLendingPoolAave.sol";
+import "contracts/mocks/assetManagement/aave/MockProviderAave.sol";
+import "contracts/mocks/assetManagement/aave/MockStakedAave.sol";
+import "contracts/mocks/assetManagement/aave/MockAaveIncentivesController.sol";
 
 contract AaveStrategyTest is TestCommons, DataUtils {
     MockTestnetToken internal _usdtMockedToken;
@@ -30,7 +30,7 @@ contract AaveStrategyTest is TestCommons, DataUtils {
     MockAaveIncentivesController internal _mockAaveIncentivesController;
     StrategyAave internal _strategyAaveDai;
 
-    event StanleyChanged(address changedBy, address oldStanley, address newStanley);
+    event AssetManagementChanged(address changedBy, address oldAssetManagement, address newAssetManagement);
 
     event DoBeforeClaim(address indexed executedBy, address[] shareTokens);
 
@@ -78,23 +78,23 @@ contract AaveStrategyTest is TestCommons, DataUtils {
         _strategyAaveDai.setTreasury(_userTwo);
     }
 
-    function testShouldBeAbleToSetupStanley() public {
+    function testShouldBeAbleToSetupAssetManagement() public {
         // given
-        address newStanleyAddress = _userTwo; // random address
-        address oldStanleyAddress = _strategyAaveDai.getStanley();
+        address newAssetManagementAddress = _userTwo; // random address
+        address oldAssetManagementAddress = _strategyAaveDai.getAssetManagement();
         // when
         vm.expectEmit(true, true, true, true);
-        emit StanleyChanged(_admin, oldStanleyAddress, newStanleyAddress);
-        _strategyAaveDai.setStanley(newStanleyAddress);
+        emit AssetManagementChanged(_admin, oldAssetManagementAddress, newAssetManagementAddress);
+        _strategyAaveDai.setAssetManagement(newAssetManagementAddress);
     }
 
-    function testShouldNotBeAbleToSetupStanleyWhenNonOwnerWantsToSetupNewAddress() public {
+    function testShouldNotBeAbleToSetupAssetManagementWhenNonOwnerWantsToSetupNewAddress() public {
         // given
-        address newStanleyAddress = _userTwo;
+        address newAssetManagementAddress = _userTwo;
         // when
         vm.expectRevert("Ownable: caller is not the owner");
         vm.prank(_userOne);
-        _strategyAaveDai.setStanley(newStanleyAddress);
+        _strategyAaveDai.setAssetManagement(newAssetManagementAddress);
     }
 
     function testShouldNotBeAbleToSetupTreasuryAaveStrategy() public {

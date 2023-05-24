@@ -34,7 +34,7 @@ contract IporOracleFacadeDataProvider is
     }
 
     function getVersion() external pure override returns (uint256) {
-        return 2;
+        return 2_000;
     }
 
     function getIndexes()

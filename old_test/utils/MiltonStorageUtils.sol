@@ -5,24 +5,24 @@ import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../utils/TestConstants.sol";
-import "contracts/interfaces/IMiltonStorage.sol";
-import "contracts/amm/MiltonStorage.sol";
+import "contracts/interfaces/IAmmStorage.sol";
+import "contracts/amm/AmmStorage.sol";
 import "contracts/interfaces/types/AmmTypes.sol";
 
-contract MiltonStorageUtils is Test {
-    struct MiltonStorages {
-        MiltonStorage miltonStorageUsdt;
-        MiltonStorage miltonStorageUsdc;
-        MiltonStorage miltonStorageDai;
+contract AmmStorageUtils is Test {
+    struct AmmStorages {
+        AmmStorage ammStorageUsdt;
+        AmmStorage ammStorageUsdc;
+        AmmStorage ammStorageDai;
     }
 
-    function getMiltonStorage() public returns (MiltonStorage) {
-        MiltonStorage miltonStorageImplementation = new MiltonStorage();
-        ERC1967Proxy miltonStorageProxy = new ERC1967Proxy(
-            address(miltonStorageImplementation),
+    function getAmmStorage() public returns (AmmStorage) {
+        AmmStorage ammStorageImplementation = new AmmStorage();
+        ERC1967Proxy ammStorageProxy = new ERC1967Proxy(
+            address(ammStorageImplementation),
             abi.encodeWithSignature("initialize()", "")
         );
-        return MiltonStorage(address(miltonStorageProxy));
+        return AmmStorage(address(ammStorageProxy));
     }
 
     function prepareSwapPayFixedStruct18DecSimpleCase1(address buyer) public view returns (AmmTypes.NewSwap memory) {

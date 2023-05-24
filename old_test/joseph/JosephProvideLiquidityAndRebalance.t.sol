@@ -21,13 +21,13 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 10;
-        uint256 miltonStanleyRatio = 150000000000000000;
+        uint256 ammTreasuryAssetManagementRatio = 150000000000000000;
         uint256 userPosition = 500000 * 1e6;
 
         vm.warp(100);
 
         _iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
-        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
+        _iporProtocol.joseph.setAmmTreasuryAssetManagementBalanceRatio(ammTreasuryAssetManagementRatio);
 
         deal(address(_iporProtocol.asset), address(_userOne), userPosition);
 
@@ -36,10 +36,10 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol.joseph.provideLiquidity(userPosition);
         vm.stopPrank();
 
-        uint256 stanleyBalanceBefore = _iporProtocol.stanley.totalBalance(
-            address(_iporProtocol.milton)
+        uint256 assetManagementBalanceBefore = _iporProtocol.assetManagement.totalBalance(
+            address(_iporProtocol.ammTreasury)
         );
-        uint256 miltonBalanceBefore = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
+        uint256 ammTreasuryBalanceBefore = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
 
         _iporProtocol.joseph.addAppointedToRebalance(address(this));
 
@@ -48,10 +48,10 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         //then
         assertEq(
-            _iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)),
-            stanleyBalanceBefore
+            _iporProtocol.assetManagement.totalBalance(address(_iporProtocol.ammTreasury)),
+            assetManagementBalanceBefore
         );
-        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.milton)), miltonBalanceBefore);
+        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)), ammTreasuryBalanceBefore);
     }
 
     function testProvideLiquidityAndRebalanceDifferentTimestamp() public {
@@ -59,13 +59,13 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 10;
-        uint256 miltonStanleyRatio = 150000000000000000;
+        uint256 ammTreasuryAssetManagementRatio = 150000000000000000;
         uint256 userPosition = 500000 * 1e6;
 
         vm.warp(100);
 
         _iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
-        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
+        _iporProtocol.joseph.setAmmTreasuryAssetManagementBalanceRatio(ammTreasuryAssetManagementRatio);
 
         deal(address(_iporProtocol.asset), address(_userOne), userPosition);
 
@@ -74,10 +74,10 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol.joseph.provideLiquidity(userPosition);
         vm.stopPrank();
 
-        uint256 stanleyBalanceBefore = _iporProtocol.stanley.totalBalance(
-            address(_iporProtocol.milton)
+        uint256 assetManagementBalanceBefore = _iporProtocol.assetManagement.totalBalance(
+            address(_iporProtocol.ammTreasury)
         );
-        uint256 miltonBalanceBefore = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
+        uint256 ammTreasuryBalanceBefore = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
 
         _iporProtocol.joseph.addAppointedToRebalance(address(this));
 
@@ -87,10 +87,10 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         //then
         assertTrue(
-            _iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)) != stanleyBalanceBefore
+            _iporProtocol.assetManagement.totalBalance(address(_iporProtocol.ammTreasury)) != assetManagementBalanceBefore
         );
         assertTrue(
-            _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)) != miltonBalanceBefore
+            _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)) != ammTreasuryBalanceBefore
         );
     }
 
@@ -99,16 +99,16 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 10;
-        uint256 miltonStanleyRatio = 150000000000000000;
+        uint256 ammTreasuryAssetManagementRatio = 150000000000000000;
         uint256 userPosition = 500000 * 1e6;
 
-        uint256 expectedMiltonBalance = 150000000000;
-        uint256 expectedStanleyBalance = 850000000000000000000000;
+        uint256 expectedAmmTreasuryBalance = 150000000000;
+        uint256 expectedAssetManagementBalance = 850000000000000000000000;
 
         vm.warp(100);
 
         _iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
-        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
+        _iporProtocol.joseph.setAmmTreasuryAssetManagementBalanceRatio(ammTreasuryAssetManagementRatio);
 
         deal(address(_iporProtocol.asset), address(_userOne), 2 * userPosition);
 
@@ -126,10 +126,10 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         //then
         assertEq(
-            _iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)),
-            expectedStanleyBalance
+            _iporProtocol.assetManagement.totalBalance(address(_iporProtocol.ammTreasury)),
+            expectedAssetManagementBalance
         );
-        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.milton)), expectedMiltonBalance);
+        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)), expectedAmmTreasuryBalance);
     }
 
     function testRebalanceAndProvideLiquidityDifferentTimestamp() public {
@@ -137,16 +137,16 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 10;
-        uint256 miltonStanleyRatio = 150000000000000000;
+        uint256 ammTreasuryAssetManagementRatio = 150000000000000000;
         uint256 userPosition = 500000 * 1e6;
 
-        uint256 expectedMiltonBalance = 150000000354;
-        uint256 expectedStanleyBalance = 850000002004415777544508;
+        uint256 expectedAmmTreasuryBalance = 150000000354;
+        uint256 expectedAssetManagementBalance = 850000002004415777544508;
 
         vm.warp(100);
 
         _iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
-        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
+        _iporProtocol.joseph.setAmmTreasuryAssetManagementBalanceRatio(ammTreasuryAssetManagementRatio);
 
         deal(address(_iporProtocol.asset), address(_userOne), 2 * userPosition);
 
@@ -165,9 +165,9 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         //then
         assertEq(
-            _iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)),
-            expectedStanleyBalance
+            _iporProtocol.assetManagement.totalBalance(address(_iporProtocol.ammTreasury)),
+            expectedAssetManagementBalance
         );
-        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.milton)), expectedMiltonBalance);
+        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)), expectedAmmTreasuryBalance);
     }
 }

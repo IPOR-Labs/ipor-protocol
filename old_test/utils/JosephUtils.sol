@@ -21,7 +21,7 @@ contract JosephUtils is Test {
     }
 
     struct ExpectedJosephBalances {
-        uint256 expectedMiltonBalance;
+        uint256 expectedAmmTreasuryBalance;
         uint256 expectedIpTokenBalance;
         uint256 expectedTokenBalance;
         uint256 expectedLiquidityPoolBalance;
@@ -35,9 +35,9 @@ contract JosephUtils is Test {
     function getMockCase0JosephUsdc(
         address tokenUsdc,
         address ipTokenUsdc,
-        address miltonUsdc,
-        address miltonStorageUsdc,
-        address stanleyUsdc
+        address ammTreasuryUsdc,
+        address ammStorageUsdc,
+        address assetManagementUsdc
     ) public returns (ItfJoseph) {
         ItfJoseph josephUsdcImplementation = new ItfJoseph(6, true);
         ERC1967Proxy josephProxy = new ERC1967Proxy(
@@ -47,9 +47,9 @@ contract JosephUtils is Test {
                 false,
                 tokenUsdc,
                 ipTokenUsdc,
-                miltonUsdc,
-                miltonStorageUsdc,
-                stanleyUsdc
+                ammTreasuryUsdc,
+                ammStorageUsdc,
+                assetManagementUsdc
             )
         );
         return ItfJoseph(address(josephProxy));
@@ -58,9 +58,9 @@ contract JosephUtils is Test {
     function getMockCase0JosephDai(
         address tokenDai,
         address ipTokenDai,
-        address miltonDai,
-        address miltonStorageDai,
-        address stanleyDai
+        address ammTreasuryDai,
+        address ammStorageDai,
+        address assetManagementDai
     ) public returns (ItfJoseph) {
         ItfJoseph josephDaiImplementation = new ItfJoseph(18, true);
         ERC1967Proxy josephProxy = new ERC1967Proxy(
@@ -70,9 +70,9 @@ contract JosephUtils is Test {
                 false,
                 tokenDai,
                 ipTokenDai,
-                miltonDai,
-                miltonStorageDai,
-                stanleyDai
+                ammTreasuryDai,
+                ammStorageDai,
+                assetManagementDai
             )
         );
         return ItfJoseph(address(josephProxy));

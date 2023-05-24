@@ -3,11 +3,11 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "contracts/security/PauseManager.sol";
-import "contracts/vault/StanleyUsdc.sol";
+import "contracts/vault/AssetManagementUsdc.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "contracts/tokens/IvToken.sol";
-import "contracts/mocks/stanley/MockTestnetStrategy.sol";
+import "contracts/mocks/assetManagement/MockTestnetStrategy.sol";
 import "contracts/vault/strategies/StrategyAave.sol";
 import "contracts/vault/strategies/StrategyCompound.sol";
 

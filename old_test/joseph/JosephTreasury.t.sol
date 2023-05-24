@@ -5,8 +5,8 @@ import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import "../utils/TestConstants.sol";
 import "contracts/mocks/spread/MockSpreadModel.sol";
-import "contracts/interfaces/types/MiltonStorageTypes.sol";
-import "contracts/amm/MiltonStorage.sol";
+import "contracts/interfaces/types/AmmStorageTypes.sol";
+import "contracts/amm/AmmStorage.sol";
 
 contract JosephTreasuryTest is TestCommons, DataUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
@@ -36,7 +36,7 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
 
     function testShouldNotTransferPublicationFeToCharlieTreasuryWhenCallerIsNotPublicationFeeTransferer() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -47,7 +47,7 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
 
     function testShouldNotTransferPublicationFeToCharlieTreasuryWhenCharlieTreasuryAddressIsIncorrect() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_admin);
@@ -60,15 +60,15 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
 
     function testShouldTransferPublicationFeeToCharlieTreasurySimpleCase1() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 transferredAmount = 100;
         uint256 expectedERC20BalanceCharlieTreasury = TestConstants.USER_SUPPLY_10MLN_18DEC + transferredAmount;
-        uint256 expectedERC20BalanceMilton = TestConstants.USD_28_000_18DEC +
+        uint256 expectedERC20BalanceAmmTreasury = TestConstants.USD_28_000_18DEC +
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC -
             transferredAmount;
-        uint256 expectedPublicationFeeBalanceMilton = TestConstants.USD_10_18DEC - transferredAmount;
+        uint256 expectedPublicationFeeBalanceAmmTreasury = TestConstants.USD_10_18DEC - transferredAmount;
         vm.prank(_userOne);
         _iporProtocol.iporOracle.itfUpdateIndex(
             address(_iporProtocol.asset),
@@ -79,7 +79,7 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.USD_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -95,19 +95,19 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
         _iporProtocol.joseph.transferToCharlieTreasury(transferredAmount);
 
         // then
-        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.miltonStorage.getExtendedBalance();
+        AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
         uint256 actualERC20BalanceCharlieTreasury = _iporProtocol.asset.balanceOf(_userOne);
-        uint256 actualERC20BalanceMilton = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
-        uint256 actualPublicationFeeBalanceMilton = balance.iporPublicationFee;
+        uint256 actualERC20BalanceAmmTreasury = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
+        uint256 actualPublicationFeeBalanceAmmTreasury = balance.iporPublicationFee;
 
         assertEq(actualERC20BalanceCharlieTreasury, expectedERC20BalanceCharlieTreasury);
-        assertEq(actualERC20BalanceMilton, expectedERC20BalanceMilton);
-        assertEq(actualPublicationFeeBalanceMilton, expectedPublicationFeeBalanceMilton);
+        assertEq(actualERC20BalanceAmmTreasury, expectedERC20BalanceAmmTreasury);
+        assertEq(actualPublicationFeeBalanceAmmTreasury, expectedPublicationFeeBalanceAmmTreasury);
     }
 
     function testShouldNotTransferToTreasuryWhenCallerIsNotTreasuryTransferer() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         // when
         vm.expectRevert("IPOR_404");
@@ -117,7 +117,7 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
 
     function testShouldNotTransferPublicationFeeToCharlieTreasuryWhenTreasuryManagerAddressIsIncorrect() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         vm.prank(_admin);
         _iporProtocol.joseph.setTreasuryManager(_userThree);
@@ -130,13 +130,13 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
 
     function testShouldTransferTreasuryToTreasuryTreasurerWhenSimpleCase1() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE4;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE4;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 transferredAmount = 100;
         uint256 expectedERC20BalanceTreasury = TestConstants.USER_SUPPLY_10MLN_18DEC + transferredAmount;
-        uint256 expectedERC20BalanceMilton = TestConstants.USD_28_000_18DEC +
+        uint256 expectedERC20BalanceAmmTreasury = TestConstants.USD_28_000_18DEC +
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC -
             transferredAmount;
         uint256 expectedTreasuryBalance = 114696891674244800;
@@ -152,7 +152,7 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
 
         vm.prank(_userTwo);
 
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.USD_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -167,12 +167,12 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
         vm.prank(_userThree);
         _iporProtocol.joseph.transferToTreasury(transferredAmount);
         // then
-        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.miltonStorage.getExtendedBalance();
+        AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
         uint256 actualERC20BalanceTreasury = _iporProtocol.asset.balanceOf(_userOne);
-        uint256 actualERC20BalanceMilton = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
+        uint256 actualERC20BalanceAmmTreasury = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
 
         assertEq(actualERC20BalanceTreasury, expectedERC20BalanceTreasury);
-        assertEq(actualERC20BalanceMilton, expectedERC20BalanceMilton);
+        assertEq(actualERC20BalanceAmmTreasury, expectedERC20BalanceAmmTreasury);
         assertEq(balance.treasury, expectedTreasuryBalance);
     }
 }

@@ -6,14 +6,14 @@ import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import "../utils/TestConstants.sol";
 import "contracts/mocks/spread/MockSpreadModel.sol";
-import "contracts/interfaces/types/MiltonTypes.sol";
+import "contracts/interfaces/types/AmmTypes.sol";
 import "contracts/interfaces/types/AmmTypes.sol";
 
-contract MiltonEventsTest is Test, TestCommons, DataUtils {
+contract AmmTreasuryEventsTest is Test, TestCommons, DataUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
     BuilderUtils.IporProtocol internal _iporProtocol;
 
-    MockSpreadModel internal _miltonSpreadModel;
+    MockSpreadModel internal _ammTreasurySpreadModel;
 
     /// @notice Emmited when trader opens new swap.
     /// @notice swap ID.
@@ -24,7 +24,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         /// @notice underlying asset
         address asset,
         /// @notice swap direction
-        MiltonTypes.SwapDirection direction,
+        AmmTypes.SwapDirection direction,
         /// @notice money structure related with this swap
         AmmTypes.OpenSwapMoney money,
         /// @notice the moment when swap was opened
@@ -32,7 +32,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         /// @notice the moment when swap will achieve maturity
         uint256 endTimestamp,
         /// @notice attributes taken from IPOR Index indicators.
-        MiltonTypes.IporSwapIndicator indicator
+        AmmTypes.IporSwapIndicator indicator
     );
 
     /// @notice Emmited when trader closes Swap.
@@ -45,20 +45,20 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         uint256 closeTimestamp,
         /// @notice account that liquidated the swap
         address liquidator,
-        /// @notice asset amount after closing swap that has been transferred from Milton to the Buyer. Value represented in 18 decimals.
+        /// @notice asset amount after closing swap that has been transferred from AmmTreasury to the Buyer. Value represented in 18 decimals.
         uint256 transferredToBuyer,
-        /// @notice asset amount after closing swap that has been transferred from Milton to the Liquidator. Value represented in 18 decimals.
+        /// @notice asset amount after closing swap that has been transferred from AmmTreasury to the Liquidator. Value represented in 18 decimals.
         uint256 transferredToLiquidator
     );
 
-    event MiltonSpreadModelChanged(
+    event AmmTreasurySpreadModelChanged(
         address indexed changedBy,
-        address indexed oldMiltonSpreadModel,
-        address indexed newMiltonSpreadModel
+        address indexed oldAmmTreasurySpreadModel,
+        address indexed newAmmTreasurySpreadModel
     );
 
     function setUp() public {
-        _miltonSpreadModel = prepareMockSpreadModel(
+        _ammTreasurySpreadModel = prepareMockSpreadModel(
             TestConstants.ZERO,
             TestConstants.ZERO,
             TestConstants.ZERO_INT,
@@ -77,7 +77,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenOpenPayFixedSwap18Decimals() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -100,7 +100,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             1, // swapId
             _userTwo, // buyer
             address(_iporProtocol.asset), // asset
-            MiltonTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, // direction
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, // direction
             AmmTypes.OpenSwapMoney({
                 totalAmount: TestConstants.USD_10_000_18DEC, // totalAmount
                 collateral: TestConstants.TC_COLLATERAL_18DEC, // collateral
@@ -112,7 +112,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             }), // money
             block.timestamp, // openTimestamp
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
-            MiltonTypes.IporSwapIndicator({
+            AmmTypes.IporSwapIndicator({
                 iporIndexValue: TestConstants.PERCENTAGE_3_18DEC, // iporIndexValue
                 ibtPrice: 1 * TestConstants.D18, // ibtPrice
                 ibtQuantity: TestConstants.TC_NOTIONAL_18DEC, // ibtQuantity
@@ -120,7 +120,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             }) // indicator
         );
 
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.USD_10_000_18DEC, // totalAmount
             TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
             TestConstants.LEVERAGE_18DEC // leverage, LEVERAGE_18DEC
@@ -129,7 +129,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenOpenReceiveFixedSwap18Decimals() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -152,7 +152,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             1, // swapId
             _userTwo, // buyer
             address(_iporProtocol.asset), // asset
-            MiltonTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, // direction
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, // direction
             AmmTypes.OpenSwapMoney({
                 totalAmount: TestConstants.USD_10_000_18DEC, // totalAmount
                 collateral: TestConstants.TC_COLLATERAL_18DEC, // collateral
@@ -164,7 +164,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             }), // money
             block.timestamp, // openTimestamp
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
-            MiltonTypes.IporSwapIndicator({
+            AmmTypes.IporSwapIndicator({
                 iporIndexValue: TestConstants.PERCENTAGE_3_18DEC, // iporIndexValue
                 ibtPrice: 1 * TestConstants.D18, // ibtPrice
                 ibtQuantity: TestConstants.TC_NOTIONAL_18DEC, // ibtQuantity
@@ -172,7 +172,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             }) // indicator
         );
 
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             TestConstants.USD_10_000_18DEC, // totalAmount
             TestConstants.PERCENTAGE_1_18DEC, // acceptableFixedInterestRate, 1%
             TestConstants.LEVERAGE_18DEC // leverage
@@ -181,7 +181,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenOpenPayFixedSwap6Decimals() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -204,7 +204,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             1, // swapId
             _userTwo, // buyer
             address(_iporProtocol.asset), // asset
-            MiltonTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, // direction
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, // direction
             AmmTypes.OpenSwapMoney({
                 totalAmount: TestConstants.USD_10_000_18DEC, // totalAmount
                 collateral: TestConstants.TC_COLLATERAL_18DEC, // collateral
@@ -216,7 +216,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             }), // money
             block.timestamp, // openTimestamp
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
-            MiltonTypes.IporSwapIndicator({
+            AmmTypes.IporSwapIndicator({
                 iporIndexValue: TestConstants.PERCENTAGE_3_18DEC, // iporIndexValue
                 ibtPrice: 1 * TestConstants.D18, // ibtPrice
                 ibtQuantity: TestConstants.TC_NOTIONAL_18DEC, // ibtQuantity
@@ -224,7 +224,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             }) // indicator
         );
 
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.USD_10_000_6DEC, // totalAmount
             TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
             TestConstants.LEVERAGE_18DEC // leverage
@@ -233,7 +233,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenOpenReceiveFixedSwap6Decimals() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -256,7 +256,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             1, // swapId
             _userTwo, // buyer
             address(_iporProtocol.asset), // asset
-            MiltonTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, // direction
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, // direction
             AmmTypes.OpenSwapMoney({
                 totalAmount: TestConstants.USD_10_000_18DEC, // totalAmount
                 collateral: TestConstants.TC_COLLATERAL_18DEC, // collateral
@@ -268,7 +268,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             }), // money
             block.timestamp, // openTimestamp
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
-            MiltonTypes.IporSwapIndicator({
+            AmmTypes.IporSwapIndicator({
                 iporIndexValue: TestConstants.PERCENTAGE_3_18DEC, // iporIndexValue
                 ibtPrice: 1 * TestConstants.D18, // ibtPrice
                 ibtQuantity: TestConstants.TC_NOTIONAL_18DEC, // ibtQuantity
@@ -276,7 +276,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             }) // indicator
         );
 
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             TestConstants.USD_10_000_6DEC, // totalAmount
             TestConstants.PERCENTAGE_1_18DEC, // acceptableFixedInterestRate, 1%
             TestConstants.LEVERAGE_18DEC // leverage
@@ -285,7 +285,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenClosePayFixedSwap18Decimals() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -303,7 +303,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC); // TestConstants.USD_28_000_18DEC
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.USD_10_000_18DEC, // totalAmount
             TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
             TestConstants.LEVERAGE_18DEC // leverage
@@ -327,7 +327,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             TestConstants.ZERO // transferredToLiquidator
         );
 
-        _iporProtocol.milton.itfCloseSwapPayFixed(
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(
             1, // swapId
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
         );
@@ -335,7 +335,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenClosePayFixedSwap6DecimalsAndTakerClosedSwap() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -353,7 +353,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_6DEC); // USD_28_000_6DEC
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.USD_10_000_6DEC, // totalAmount, USD_10_000_6DEC
             TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
             TestConstants.LEVERAGE_18DEC // leverage
@@ -377,7 +377,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             TestConstants.ZERO // transferredToLiquidator
         );
 
-        _iporProtocol.milton.itfCloseSwapPayFixed(
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(
             1, // swapId
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
         );
@@ -385,13 +385,13 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenClosePayFixedSwap6DecimalsAndNotTakerClosedSwap() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
 
-        _iporProtocol.milton.addSwapLiquidator(_userThree);
+        _iporProtocol.ammTreasury.addSwapLiquidator(_userThree);
 
         // when
         vm.prank(_userOne);
@@ -405,7 +405,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_6DEC); // USD_28_000_6DEC
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.USD_10_000_6DEC, // totalAmount, USD_10_000_6DEC
             TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
             TestConstants.LEVERAGE_18DEC // leverage, LEVERAGE_18DEC
@@ -428,25 +428,25 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             19935412124000000000000, // transferredToBuyer
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC // transferredToLiquidator
         );
-        _iporProtocol.milton.itfCloseSwapPayFixed(
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(
             1, // swapId
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
         );
     }
 
-    function testShouldEmitMiltonSpreadModelChanged() public {
+    function testShouldEmitAmmTreasurySpreadModelChanged() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        address oldMiltonSpreadModel = _iporProtocol.milton.getMiltonSpreadModel();
-        address newMiltonSpreadModel = address(_userThree);
+        address oldAmmTreasurySpreadModel = _iporProtocol.ammTreasury.getAmmTreasurySpreadModel();
+        address newAmmTreasurySpreadModel = address(_userThree);
 
         // then
         vm.expectEmit(true, true, true, true);
-        emit MiltonSpreadModelChanged(_admin, oldMiltonSpreadModel, newMiltonSpreadModel);
+        emit AmmTreasurySpreadModelChanged(_admin, oldAmmTreasurySpreadModel, newAmmTreasurySpreadModel);
         // when
-        _iporProtocol.milton.setMiltonSpreadModel(newMiltonSpreadModel);
+        _iporProtocol.ammTreasury.setAmmTreasurySpreadModel(newAmmTreasurySpreadModel);
     }
 }
