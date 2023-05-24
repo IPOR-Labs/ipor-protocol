@@ -3,10 +3,10 @@ pragma solidity 0.8.16;
 
 import "../TestCommons.sol";
 import "../../test/utils/TestConstants.sol";
-import "contracts/itf/ItfMiltonSpreadModelDai.sol";
+import "contracts/itf/ItfAmmTreasurySpreadModelDai.sol";
 
-contract ItfMiltonSpreadModelTest is TestCommons {
-    ItfMiltonSpreadModelDai internal _iftMiltonSpreadModelDai;
+contract ItfAmmTreasurySpreadModelTest is TestCommons {
+    ItfAmmTreasurySpreadModelDai internal _iftAmmTreasurySpreadModelDai;
 
     struct SpreadModelParams {
         int256 payFixedRegionOneBase;
@@ -24,34 +24,34 @@ contract ItfMiltonSpreadModelTest is TestCommons {
     }
 
     function setUp() public {
-        _iftMiltonSpreadModelDai = new ItfMiltonSpreadModelDai();
+        _iftAmmTreasurySpreadModelDai = new ItfAmmTreasurySpreadModelDai();
     }
 
     function testShouldCheckIfSetupMethodWorksForDAI() public {
         // given
         SpreadModelParams memory spreadModelParamsBefore;
-        spreadModelParamsBefore.payFixedRegionOneBase = _iftMiltonSpreadModelDai.getPayFixedRegionOneBase();
-        spreadModelParamsBefore.payFixedRegionOneSlopeForVolatility = _iftMiltonSpreadModelDai
+        spreadModelParamsBefore.payFixedRegionOneBase = _iftAmmTreasurySpreadModelDai.getPayFixedRegionOneBase();
+        spreadModelParamsBefore.payFixedRegionOneSlopeForVolatility = _iftAmmTreasurySpreadModelDai
             .getPayFixedRegionOneSlopeForVolatility();
-        spreadModelParamsBefore.payFixedRegionOneSlopeForMeanReversion = _iftMiltonSpreadModelDai
+        spreadModelParamsBefore.payFixedRegionOneSlopeForMeanReversion = _iftAmmTreasurySpreadModelDai
             .getPayFixedRegionOneSlopeForMeanReversion();
-        spreadModelParamsBefore.payFixedRegionTwoBase = _iftMiltonSpreadModelDai.getPayFixedRegionTwoBase();
-        spreadModelParamsBefore.payFixedRegionTwoSlopeForVolatility = _iftMiltonSpreadModelDai
+        spreadModelParamsBefore.payFixedRegionTwoBase = _iftAmmTreasurySpreadModelDai.getPayFixedRegionTwoBase();
+        spreadModelParamsBefore.payFixedRegionTwoSlopeForVolatility = _iftAmmTreasurySpreadModelDai
             .getPayFixedRegionTwoSlopeForVolatility();
-        spreadModelParamsBefore.payFixedRegionTwoSlopeForMeanReversion = _iftMiltonSpreadModelDai
+        spreadModelParamsBefore.payFixedRegionTwoSlopeForMeanReversion = _iftAmmTreasurySpreadModelDai
             .getPayFixedRegionTwoSlopeForMeanReversion();
-        spreadModelParamsBefore.receiveFixedRegionOneBase = _iftMiltonSpreadModelDai.getReceiveFixedRegionOneBase();
-        spreadModelParamsBefore.receiveFixedRegionOneSlopeForVolatility = _iftMiltonSpreadModelDai
+        spreadModelParamsBefore.receiveFixedRegionOneBase = _iftAmmTreasurySpreadModelDai.getReceiveFixedRegionOneBase();
+        spreadModelParamsBefore.receiveFixedRegionOneSlopeForVolatility = _iftAmmTreasurySpreadModelDai
             .getReceiveFixedRegionOneSlopeForVolatility();
-        spreadModelParamsBefore.receiveFixedRegionOneSlopeForMeanReversion = _iftMiltonSpreadModelDai
+        spreadModelParamsBefore.receiveFixedRegionOneSlopeForMeanReversion = _iftAmmTreasurySpreadModelDai
             .getReceiveFixedRegionOneSlopeForMeanReversion();
-        spreadModelParamsBefore.receiveFixedRegionTwoBase = _iftMiltonSpreadModelDai.getReceiveFixedRegionTwoBase();
-        spreadModelParamsBefore.receiveFixedRegionTwoSlopeForVolatility = _iftMiltonSpreadModelDai
+        spreadModelParamsBefore.receiveFixedRegionTwoBase = _iftAmmTreasurySpreadModelDai.getReceiveFixedRegionTwoBase();
+        spreadModelParamsBefore.receiveFixedRegionTwoSlopeForVolatility = _iftAmmTreasurySpreadModelDai
             .getReceiveFixedRegionTwoSlopeForVolatility();
-        spreadModelParamsBefore.receiveFixedRegionTwoSlopeForMeanReversion = _iftMiltonSpreadModelDai
+        spreadModelParamsBefore.receiveFixedRegionTwoSlopeForMeanReversion = _iftAmmTreasurySpreadModelDai
             .getReceiveFixedRegionTwoSlopeForMeanReversion();
         // when
-        _iftMiltonSpreadModelDai.setupModelParams(
+        _iftAmmTreasurySpreadModelDai.setupModelParams(
             TestConstants.D16_INT,
             TestConstants.D16_INT,
             TestConstants.D16_INT,
@@ -67,25 +67,25 @@ contract ItfMiltonSpreadModelTest is TestCommons {
         );
         // then
         SpreadModelParams memory spreadModelParamsAfter;
-        spreadModelParamsAfter.payFixedRegionOneBase = _iftMiltonSpreadModelDai.getPayFixedRegionOneBase();
-        spreadModelParamsAfter.payFixedRegionOneSlopeForVolatility = _iftMiltonSpreadModelDai
+        spreadModelParamsAfter.payFixedRegionOneBase = _iftAmmTreasurySpreadModelDai.getPayFixedRegionOneBase();
+        spreadModelParamsAfter.payFixedRegionOneSlopeForVolatility = _iftAmmTreasurySpreadModelDai
             .getPayFixedRegionOneSlopeForVolatility();
-        spreadModelParamsAfter.payFixedRegionOneSlopeForMeanReversion = _iftMiltonSpreadModelDai
+        spreadModelParamsAfter.payFixedRegionOneSlopeForMeanReversion = _iftAmmTreasurySpreadModelDai
             .getPayFixedRegionOneSlopeForMeanReversion();
-        spreadModelParamsAfter.payFixedRegionTwoBase = _iftMiltonSpreadModelDai.getPayFixedRegionTwoBase();
-        spreadModelParamsAfter.payFixedRegionTwoSlopeForVolatility = _iftMiltonSpreadModelDai
+        spreadModelParamsAfter.payFixedRegionTwoBase = _iftAmmTreasurySpreadModelDai.getPayFixedRegionTwoBase();
+        spreadModelParamsAfter.payFixedRegionTwoSlopeForVolatility = _iftAmmTreasurySpreadModelDai
             .getPayFixedRegionTwoSlopeForVolatility();
-        spreadModelParamsAfter.payFixedRegionTwoSlopeForMeanReversion = _iftMiltonSpreadModelDai
+        spreadModelParamsAfter.payFixedRegionTwoSlopeForMeanReversion = _iftAmmTreasurySpreadModelDai
             .getPayFixedRegionTwoSlopeForMeanReversion();
-        spreadModelParamsAfter.receiveFixedRegionOneBase = _iftMiltonSpreadModelDai.getReceiveFixedRegionOneBase();
-        spreadModelParamsAfter.receiveFixedRegionOneSlopeForVolatility = _iftMiltonSpreadModelDai
+        spreadModelParamsAfter.receiveFixedRegionOneBase = _iftAmmTreasurySpreadModelDai.getReceiveFixedRegionOneBase();
+        spreadModelParamsAfter.receiveFixedRegionOneSlopeForVolatility = _iftAmmTreasurySpreadModelDai
             .getReceiveFixedRegionOneSlopeForVolatility();
-        spreadModelParamsAfter.receiveFixedRegionOneSlopeForMeanReversion = _iftMiltonSpreadModelDai
+        spreadModelParamsAfter.receiveFixedRegionOneSlopeForMeanReversion = _iftAmmTreasurySpreadModelDai
             .getReceiveFixedRegionOneSlopeForMeanReversion();
-        spreadModelParamsAfter.receiveFixedRegionTwoBase = _iftMiltonSpreadModelDai.getReceiveFixedRegionTwoBase();
-        spreadModelParamsAfter.receiveFixedRegionTwoSlopeForVolatility = _iftMiltonSpreadModelDai
+        spreadModelParamsAfter.receiveFixedRegionTwoBase = _iftAmmTreasurySpreadModelDai.getReceiveFixedRegionTwoBase();
+        spreadModelParamsAfter.receiveFixedRegionTwoSlopeForVolatility = _iftAmmTreasurySpreadModelDai
             .getReceiveFixedRegionTwoSlopeForVolatility();
-        spreadModelParamsAfter.receiveFixedRegionTwoSlopeForMeanReversion = _iftMiltonSpreadModelDai
+        spreadModelParamsAfter.receiveFixedRegionTwoSlopeForMeanReversion = _iftAmmTreasurySpreadModelDai
             .getReceiveFixedRegionTwoSlopeForMeanReversion();
         assertTrue(spreadModelParamsBefore.payFixedRegionOneBase != TestConstants.D16_INT);
         assertTrue(spreadModelParamsBefore.payFixedRegionOneSlopeForVolatility != TestConstants.D16_INT);
@@ -116,28 +116,28 @@ contract ItfMiltonSpreadModelTest is TestCommons {
     function testShouldSetupParamsToZeroDAI() public {
         // given
         SpreadModelParams memory spreadModelParamsBefore;
-        spreadModelParamsBefore.payFixedRegionOneBase = _iftMiltonSpreadModelDai.getPayFixedRegionOneBase();
-        spreadModelParamsBefore.payFixedRegionOneSlopeForVolatility = _iftMiltonSpreadModelDai
+        spreadModelParamsBefore.payFixedRegionOneBase = _iftAmmTreasurySpreadModelDai.getPayFixedRegionOneBase();
+        spreadModelParamsBefore.payFixedRegionOneSlopeForVolatility = _iftAmmTreasurySpreadModelDai
             .getPayFixedRegionOneSlopeForVolatility();
-        spreadModelParamsBefore.payFixedRegionOneSlopeForMeanReversion = _iftMiltonSpreadModelDai
+        spreadModelParamsBefore.payFixedRegionOneSlopeForMeanReversion = _iftAmmTreasurySpreadModelDai
             .getPayFixedRegionOneSlopeForMeanReversion();
-        spreadModelParamsBefore.payFixedRegionTwoBase = _iftMiltonSpreadModelDai.getPayFixedRegionTwoBase();
-        spreadModelParamsBefore.payFixedRegionTwoSlopeForVolatility = _iftMiltonSpreadModelDai
+        spreadModelParamsBefore.payFixedRegionTwoBase = _iftAmmTreasurySpreadModelDai.getPayFixedRegionTwoBase();
+        spreadModelParamsBefore.payFixedRegionTwoSlopeForVolatility = _iftAmmTreasurySpreadModelDai
             .getPayFixedRegionTwoSlopeForVolatility();
-        spreadModelParamsBefore.payFixedRegionTwoSlopeForMeanReversion = _iftMiltonSpreadModelDai
+        spreadModelParamsBefore.payFixedRegionTwoSlopeForMeanReversion = _iftAmmTreasurySpreadModelDai
             .getPayFixedRegionTwoSlopeForMeanReversion();
-        spreadModelParamsBefore.receiveFixedRegionOneBase = _iftMiltonSpreadModelDai.getReceiveFixedRegionOneBase();
-        spreadModelParamsBefore.receiveFixedRegionOneSlopeForVolatility = _iftMiltonSpreadModelDai
+        spreadModelParamsBefore.receiveFixedRegionOneBase = _iftAmmTreasurySpreadModelDai.getReceiveFixedRegionOneBase();
+        spreadModelParamsBefore.receiveFixedRegionOneSlopeForVolatility = _iftAmmTreasurySpreadModelDai
             .getReceiveFixedRegionOneSlopeForVolatility();
-        spreadModelParamsBefore.receiveFixedRegionOneSlopeForMeanReversion = _iftMiltonSpreadModelDai
+        spreadModelParamsBefore.receiveFixedRegionOneSlopeForMeanReversion = _iftAmmTreasurySpreadModelDai
             .getReceiveFixedRegionOneSlopeForMeanReversion();
-        spreadModelParamsBefore.receiveFixedRegionTwoBase = _iftMiltonSpreadModelDai.getReceiveFixedRegionTwoBase();
-        spreadModelParamsBefore.receiveFixedRegionTwoSlopeForVolatility = _iftMiltonSpreadModelDai
+        spreadModelParamsBefore.receiveFixedRegionTwoBase = _iftAmmTreasurySpreadModelDai.getReceiveFixedRegionTwoBase();
+        spreadModelParamsBefore.receiveFixedRegionTwoSlopeForVolatility = _iftAmmTreasurySpreadModelDai
             .getReceiveFixedRegionTwoSlopeForVolatility();
-        spreadModelParamsBefore.receiveFixedRegionTwoSlopeForMeanReversion = _iftMiltonSpreadModelDai
+        spreadModelParamsBefore.receiveFixedRegionTwoSlopeForMeanReversion = _iftAmmTreasurySpreadModelDai
             .getReceiveFixedRegionTwoSlopeForMeanReversion();
         // when
-        _iftMiltonSpreadModelDai.setupModelParams(
+        _iftAmmTreasurySpreadModelDai.setupModelParams(
             TestConstants.ZERO_INT,
             TestConstants.ZERO_INT,
             TestConstants.ZERO_INT,
@@ -153,25 +153,25 @@ contract ItfMiltonSpreadModelTest is TestCommons {
         );
         // then
         SpreadModelParams memory spreadModelParamsAfter;
-        spreadModelParamsAfter.payFixedRegionOneBase = _iftMiltonSpreadModelDai.getPayFixedRegionOneBase();
-        spreadModelParamsAfter.payFixedRegionOneSlopeForVolatility = _iftMiltonSpreadModelDai
+        spreadModelParamsAfter.payFixedRegionOneBase = _iftAmmTreasurySpreadModelDai.getPayFixedRegionOneBase();
+        spreadModelParamsAfter.payFixedRegionOneSlopeForVolatility = _iftAmmTreasurySpreadModelDai
             .getPayFixedRegionOneSlopeForVolatility();
-        spreadModelParamsAfter.payFixedRegionOneSlopeForMeanReversion = _iftMiltonSpreadModelDai
+        spreadModelParamsAfter.payFixedRegionOneSlopeForMeanReversion = _iftAmmTreasurySpreadModelDai
             .getPayFixedRegionOneSlopeForMeanReversion();
-        spreadModelParamsAfter.payFixedRegionTwoBase = _iftMiltonSpreadModelDai.getPayFixedRegionTwoBase();
-        spreadModelParamsAfter.payFixedRegionTwoSlopeForVolatility = _iftMiltonSpreadModelDai
+        spreadModelParamsAfter.payFixedRegionTwoBase = _iftAmmTreasurySpreadModelDai.getPayFixedRegionTwoBase();
+        spreadModelParamsAfter.payFixedRegionTwoSlopeForVolatility = _iftAmmTreasurySpreadModelDai
             .getPayFixedRegionTwoSlopeForVolatility();
-        spreadModelParamsAfter.payFixedRegionTwoSlopeForMeanReversion = _iftMiltonSpreadModelDai
+        spreadModelParamsAfter.payFixedRegionTwoSlopeForMeanReversion = _iftAmmTreasurySpreadModelDai
             .getPayFixedRegionTwoSlopeForMeanReversion();
-        spreadModelParamsAfter.receiveFixedRegionOneBase = _iftMiltonSpreadModelDai.getReceiveFixedRegionOneBase();
-        spreadModelParamsAfter.receiveFixedRegionOneSlopeForVolatility = _iftMiltonSpreadModelDai
+        spreadModelParamsAfter.receiveFixedRegionOneBase = _iftAmmTreasurySpreadModelDai.getReceiveFixedRegionOneBase();
+        spreadModelParamsAfter.receiveFixedRegionOneSlopeForVolatility = _iftAmmTreasurySpreadModelDai
             .getReceiveFixedRegionOneSlopeForVolatility();
-        spreadModelParamsAfter.receiveFixedRegionOneSlopeForMeanReversion = _iftMiltonSpreadModelDai
+        spreadModelParamsAfter.receiveFixedRegionOneSlopeForMeanReversion = _iftAmmTreasurySpreadModelDai
             .getReceiveFixedRegionOneSlopeForMeanReversion();
-        spreadModelParamsAfter.receiveFixedRegionTwoBase = _iftMiltonSpreadModelDai.getReceiveFixedRegionTwoBase();
-        spreadModelParamsAfter.receiveFixedRegionTwoSlopeForVolatility = _iftMiltonSpreadModelDai
+        spreadModelParamsAfter.receiveFixedRegionTwoBase = _iftAmmTreasurySpreadModelDai.getReceiveFixedRegionTwoBase();
+        spreadModelParamsAfter.receiveFixedRegionTwoSlopeForVolatility = _iftAmmTreasurySpreadModelDai
             .getReceiveFixedRegionTwoSlopeForVolatility();
-        spreadModelParamsAfter.receiveFixedRegionTwoSlopeForMeanReversion = _iftMiltonSpreadModelDai
+        spreadModelParamsAfter.receiveFixedRegionTwoSlopeForMeanReversion = _iftAmmTreasurySpreadModelDai
             .getReceiveFixedRegionTwoSlopeForMeanReversion();
         assertTrue(spreadModelParamsBefore.payFixedRegionOneBase != TestConstants.ZERO_INT);
         assertTrue(spreadModelParamsBefore.payFixedRegionOneSlopeForVolatility != TestConstants.ZERO_INT);

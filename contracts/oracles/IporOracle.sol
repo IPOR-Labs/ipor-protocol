@@ -89,7 +89,7 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     }
 
     function getVersion() external pure virtual override returns (uint256) {
-        return 4;
+        return 2_000;
     }
 
     function getConfiguration()

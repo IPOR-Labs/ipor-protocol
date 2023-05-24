@@ -3,21 +3,21 @@ pragma solidity 0.8.16;
 
 import "../../../TestCommons.sol";
 import {DataUtils} from "../../../utils/DataUtils.sol";
-import {StanleyUtils} from "../../../utils/StanleyUtils.sol";
+import {AssetManagementUtils} from "../../../utils/AssetManagementUtils.sol";
 import "../../../utils/TestConstants.sol";
-import "contracts/amm/MiltonStorage.sol";
+import "contracts/amm/AmmStorage.sol";
 import "contracts/itf/ItfIporOracle.sol";
 import "contracts/tokens/IpToken.sol";
 import "contracts/vault/strategies/StrategyAave.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "contracts/mocks/tokens/AAVEMockedToken.sol";
-import "contracts/mocks/stanley/aave/aTokens/MockAUsdt.sol";
-import "contracts/mocks/stanley/aave/aTokens/MockAUsdc.sol";
-import "contracts/mocks/stanley/aave/aTokens/MockADai.sol";
-import "contracts/mocks/stanley/aave/MockLendingPoolAave.sol";
-import "contracts/mocks/stanley/aave/MockProviderAave.sol";
-import "contracts/mocks/stanley/aave/MockStakedAave.sol";
-import "contracts/mocks/stanley/aave/MockAaveIncentivesController.sol";
+import "contracts/mocks/assetManagement/aave/aTokens/MockAUsdt.sol";
+import "contracts/mocks/assetManagement/aave/aTokens/MockAUsdc.sol";
+import "contracts/mocks/assetManagement/aave/aTokens/MockADai.sol";
+import "contracts/mocks/assetManagement/aave/MockLendingPoolAave.sol";
+import "contracts/mocks/assetManagement/aave/MockProviderAave.sol";
+import "contracts/mocks/assetManagement/aave/MockStakedAave.sol";
+import "contracts/mocks/assetManagement/aave/MockAaveIncentivesController.sol";
 
 contract AavePausableTest is TestCommons, DataUtils {
     MockTestnetToken internal _usdtMockedToken;
@@ -136,7 +136,7 @@ contract AavePausableTest is TestCommons, DataUtils {
         vm.expectRevert("Pausable: paused");
         _strategyAave.doClaim();
         vm.expectRevert("Pausable: paused");
-        _strategyAave.setStanley(_userTwo);
+        _strategyAave.setAssetManagement(_userTwo);
         vm.expectRevert("Pausable: paused");
         _strategyAave.setTreasuryManager(_userTwo);
         vm.expectRevert("Pausable: paused");

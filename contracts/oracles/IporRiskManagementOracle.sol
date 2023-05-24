@@ -97,7 +97,7 @@ contract IporRiskManagementOracle is
     }
 
     function getVersion() external pure virtual override returns (uint256) {
-        return 1;
+        return 2_000;
     }
 
     function getOpenSwapParameters(

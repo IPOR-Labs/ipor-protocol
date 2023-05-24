@@ -1,28 +1,28 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 
-import "contracts/itf/ItfMilton.sol";
-import "contracts/itf/ItfMilton6D.sol";
-import "contracts/itf/ItfMilton18D.sol";
+import "contracts/itf/ItfAmmTreasury.sol";
+import "contracts/itf/ItfAmmTreasury6D.sol";
+import "contracts/itf/ItfAmmTreasury18D.sol";
 
-import "contracts/mocks/milton/MockMilton.sol";
+import "contracts/mocks/ammTreasury/MockAmmTreasury.sol";
 
 import "./BuilderUtils.sol";
-import "contracts/itf/ItfMilton18D.sol";
+import "contracts/itf/ItfAmmTreasury18D.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "forge-std/Test.sol";
-import "contracts/mocks/milton/MockMilton.sol";
+import "contracts/mocks/ammTreasury/MockAmmTreasury.sol";
 
-contract MiltonBuilder is Test {
+contract AmmTreasuryBuilder is Test {
     struct BuilderData {
-        BuilderUtils.MiltonTestCase testCase;
+        BuilderUtils.AmmTreasuryTestCase testCase;
         BuilderUtils.AssetType assetType;
         address asset;
         address iporOracle;
         address iporRiskManagementOracle;
-        address miltonStorage;
+        address ammStorage;
         address spreadModel;
-        address stanley;
+        address assetManagement;
     }
 
     BuilderData private builderData;
@@ -33,67 +33,67 @@ contract MiltonBuilder is Test {
         _owner = owner;
     }
 
-    function withTestCase(BuilderUtils.MiltonTestCase testCase) public returns (MiltonBuilder) {
+    function withTestCase(BuilderUtils.AmmTreasuryTestCase testCase) public returns (AmmTreasuryBuilder) {
         builderData.testCase = testCase;
         return this;
     }
 
-    function withAssetType(BuilderUtils.AssetType assetType) public returns (MiltonBuilder) {
+    function withAssetType(BuilderUtils.AssetType assetType) public returns (AmmTreasuryBuilder) {
         builderData.assetType = assetType;
         return this;
     }
 
-    function withAsset(address asset) public returns (MiltonBuilder) {
+    function withAsset(address asset) public returns (AmmTreasuryBuilder) {
         builderData.asset = asset;
         return this;
     }
 
-    function withIporOracle(address iporOracle) public returns (MiltonBuilder) {
+    function withIporOracle(address iporOracle) public returns (AmmTreasuryBuilder) {
         builderData.iporOracle = iporOracle;
         return this;
     }
 
-    function withIporRiskManagementOracle(address iporRiskManagementOracle) public returns (MiltonBuilder) {
+    function withIporRiskManagementOracle(address iporRiskManagementOracle) public returns (AmmTreasuryBuilder) {
         builderData.iporRiskManagementOracle = iporRiskManagementOracle;
         return this;
     }
 
-    function withMiltonStorage(address miltonStorage) public returns (MiltonBuilder) {
-        builderData.miltonStorage = miltonStorage;
+    function withAmmStorage(address ammStorage) public returns (AmmTreasuryBuilder) {
+        builderData.ammStorage = ammStorage;
         return this;
     }
 
-    function withSpreadModel(address spreadModel) public returns (MiltonBuilder) {
+    function withSpreadModel(address spreadModel) public returns (AmmTreasuryBuilder) {
         builderData.spreadModel = spreadModel;
         return this;
     }
 
-    function withStanley(address stanley) public returns (MiltonBuilder) {
-        builderData.stanley = stanley;
+    function withAssetManagement(address assetManagement) public returns (AmmTreasuryBuilder) {
+        builderData.assetManagement = assetManagement;
         return this;
     }
 
-    function build() public returns (ItfMilton) {
+    function build() public returns (ItfAmmTreasury) {
         vm.startPrank(_owner);
-        ERC1967Proxy miltonProxy = _constructProxy(_buildMiltonImplementation());
-        ItfMilton milton = ItfMilton(address(miltonProxy));
+        ERC1967Proxy ammTreasuryProxy = _constructProxy(_buildAmmTreasuryImplementation());
+        ItfAmmTreasury ammTreasury = ItfAmmTreasury(address(ammTreasuryProxy));
         vm.stopPrank();
         delete builderData;
-        return milton;
+        return ammTreasury;
     }
 
-    function _buildMiltonImplementation() internal returns (address miltonImpl) {
+    function _buildAmmTreasuryImplementation() internal returns (address ammTreasuryImpl) {
         if (builderData.assetType == BuilderUtils.AssetType.DAI) {
-            miltonImpl = address(
-                _constructMiltonDaiImplementation(builderData.testCase, builderData.iporRiskManagementOracle)
+            ammTreasuryImpl = address(
+                _constructAmmTreasuryDaiImplementation(builderData.testCase, builderData.iporRiskManagementOracle)
             );
         } else if (builderData.assetType == BuilderUtils.AssetType.USDT) {
-            miltonImpl = address(
-                _constructMiltonUsdtImplementation(builderData.testCase, builderData.iporRiskManagementOracle)
+            ammTreasuryImpl = address(
+                _constructAmmTreasuryUsdtImplementation(builderData.testCase, builderData.iporRiskManagementOracle)
             );
         } else if (builderData.assetType == BuilderUtils.AssetType.USDC) {
-            miltonImpl = address(
-                _constructMiltonUsdcImplementation(builderData.testCase, builderData.iporRiskManagementOracle)
+            ammTreasuryImpl = address(
+                _constructAmmTreasuryUsdcImplementation(builderData.testCase, builderData.iporRiskManagementOracle)
             );
         } else {
             revert("Unsupported asset type");
@@ -103,9 +103,9 @@ contract MiltonBuilder is Test {
     function _constructProxy(address impl) internal returns (ERC1967Proxy proxy) {
         require(builderData.asset != address(0), "Asset address is required");
         require(builderData.iporOracle != address(0), "IporOracle address is required");
-        require(builderData.miltonStorage != address(0), "MiltonStorage address is required");
+        require(builderData.ammStorage != address(0), "AmmStorage address is required");
         require(builderData.spreadModel != address(0), "SpreadModel address is required");
-        require(builderData.stanley != address(0), "Stanley address is required");
+        require(builderData.assetManagement != address(0), "AssetManagement address is required");
 
         proxy = new ERC1967Proxy(
             impl,
@@ -114,82 +114,82 @@ contract MiltonBuilder is Test {
                 false,
                 builderData.asset,
                 builderData.iporOracle,
-                builderData.miltonStorage,
+                builderData.ammStorage,
                 builderData.spreadModel,
-                builderData.stanley
+                builderData.assetManagement
             )
         );
     }
 
-    function _constructMiltonDaiImplementation(BuilderUtils.MiltonTestCase testCase, address iporRiskManagementOracle)
+    function _constructAmmTreasuryDaiImplementation(BuilderUtils.AmmTreasuryTestCase testCase, address iporRiskManagementOracle)
         internal
-        returns (ItfMilton)
+        returns (ItfAmmTreasury)
     {
         require(iporRiskManagementOracle != address(0), "iporRiskManagementOracle is required");
 
-        if (testCase == BuilderUtils.MiltonTestCase.DEFAULT) {
-            return new ItfMilton18D(iporRiskManagementOracle);
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE0) {
+        if (testCase == BuilderUtils.AmmTreasuryTestCase.DEFAULT) {
+            return new ItfAmmTreasury18D(iporRiskManagementOracle);
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE0) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
                     18
                 );
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE1) {
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE1) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 600000000000000000, 0, 10 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 600000000000000000, 0, 10 * 1e18, 20, 10 * 1e18),
                     18
                 );
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE2) {
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE2) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
                     18
                 );
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE3) {
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE3) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
                     18
                 );
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE4) {
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE4) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 3e14, 50000000000000000, 10 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 3e14, 50000000000000000, 10 * 1e18, 20, 10 * 1e18),
                     18
                 );
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE5) {
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE5) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 3e14, 25000000000000000, 10 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 3e14, 25000000000000000, 10 * 1e18, 20, 10 * 1e18),
                     18
                 );
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE6) {
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE6) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
                     18
                 );
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE7) {
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE7) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
                     18
                 );
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE8) {
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE8) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 3e14, 0, 100000 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 3e14, 0, 100000 * 1e18, 20, 10 * 1e18),
                     18
                 );
         } else {
@@ -197,60 +197,60 @@ contract MiltonBuilder is Test {
         }
     }
 
-    function _constructMiltonUsdtImplementation(BuilderUtils.MiltonTestCase testCase, address iporRiskManagementOracle)
+    function _constructAmmTreasuryUsdtImplementation(BuilderUtils.AmmTreasuryTestCase testCase, address iporRiskManagementOracle)
         internal
-        returns (ItfMilton)
+        returns (ItfAmmTreasury)
     {
         require(iporRiskManagementOracle != address(0), "iporRiskManagementOracle is required");
-        if (testCase == BuilderUtils.MiltonTestCase.DEFAULT) {
-            return new ItfMilton6D(iporRiskManagementOracle);
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE0) {
+        if (testCase == BuilderUtils.AmmTreasuryTestCase.DEFAULT) {
+            return new ItfAmmTreasury6D(iporRiskManagementOracle);
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE0) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
                     6
                 );
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE1) {
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE1) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 600000000000000000, 0, 10 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 600000000000000000, 0, 10 * 1e18, 20, 10 * 1e18),
                     6
                 );
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE2) {
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE2) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
                     6
                 );
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE3) {
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE3) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
                     6
                 );
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE4) {
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE4) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 3e14, 50000000000000000, 10 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 3e14, 50000000000000000, 10 * 1e18, 20, 10 * 1e18),
                     6
                 );
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE5) {
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE5) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 3e14, 25000000000000000, 10 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 3e14, 25000000000000000, 10 * 1e18, 20, 10 * 1e18),
                     6
                 );
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE6) {
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE6) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
                     6
                 );
         } else {
@@ -258,60 +258,60 @@ contract MiltonBuilder is Test {
         }
     }
 
-    function _constructMiltonUsdcImplementation(BuilderUtils.MiltonTestCase testCase, address iporRiskManagementOracle)
+    function _constructAmmTreasuryUsdcImplementation(BuilderUtils.AmmTreasuryTestCase testCase, address iporRiskManagementOracle)
         internal
-        returns (ItfMilton)
+        returns (ItfAmmTreasury)
     {
         require(iporRiskManagementOracle != address(0), "iporRiskManagementOracle is required");
-        if (testCase == BuilderUtils.MiltonTestCase.DEFAULT) {
-            return new ItfMilton6D(iporRiskManagementOracle);
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE0) {
+        if (testCase == BuilderUtils.AmmTreasuryTestCase.DEFAULT) {
+            return new ItfAmmTreasury6D(iporRiskManagementOracle);
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE0) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
                     6
                 );
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE1) {
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE1) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 600000000000000000, 0, 10 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 600000000000000000, 0, 10 * 1e18, 20, 10 * 1e18),
                     6
                 );
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE2) {
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE2) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
                     6
                 );
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE3) {
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE3) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
                     6
                 );
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE4) {
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE4) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 3e14, 50000000000000000, 10 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 3e14, 50000000000000000, 10 * 1e18, 20, 10 * 1e18),
                     6
                 );
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE5) {
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE5) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 3e14, 25000000000000000, 10 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 3e14, 25000000000000000, 10 * 1e18, 20, 10 * 1e18),
                     6
                 );
-        } else if (testCase == BuilderUtils.MiltonTestCase.CASE6) {
+        } else if (testCase == BuilderUtils.AmmTreasuryTestCase.CASE6) {
             return
-                new MockMilton(
+                new MockAmmTreasury(
                     iporRiskManagementOracle,
-                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    MockAmmTreasury.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
                     6
                 );
         } else {

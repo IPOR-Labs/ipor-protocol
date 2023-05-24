@@ -3,16 +3,16 @@ pragma solidity 0.8.16;
 
 import "../../../TestCommons.sol";
 import {DataUtils} from "../../../utils/DataUtils.sol";
-import {StanleyUtils} from "../../../utils/StanleyUtils.sol";
+import {AssetManagementUtils} from "../../../utils/AssetManagementUtils.sol";
 import "../../../utils/TestConstants.sol";
-import "contracts/amm/MiltonStorage.sol";
+import "contracts/amm/AmmStorage.sol";
 import "contracts/itf/ItfIporOracle.sol";
 import "contracts/tokens/IpToken.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "contracts/mocks/tokens/MockedCOMPToken.sol";
-import "contracts/mocks/stanley/compound/MockWhitePaper.sol";
-import "contracts/mocks/stanley/compound/MockCToken.sol";
-import "contracts/mocks/stanley/compound/MockComptroller.sol";
+import "contracts/mocks/assetManagement/compound/MockWhitePaper.sol";
+import "contracts/mocks/assetManagement/compound/MockCToken.sol";
+import "contracts/mocks/assetManagement/compound/MockComptroller.sol";
 import "contracts/vault/strategies/StrategyCompound.sol";
 
 contract CompoundPausableTest is TestCommons, DataUtils {
@@ -115,7 +115,7 @@ contract CompoundPausableTest is TestCommons, DataUtils {
         vm.expectRevert("Pausable: paused");
         _strategyCompound.doClaim();
         vm.expectRevert("Pausable: paused");
-        _strategyCompound.setStanley(_userTwo);
+        _strategyCompound.setAssetManagement(_userTwo);
         vm.expectRevert("Pausable: paused");
         _strategyCompound.setTreasuryManager(_userTwo);
         vm.expectRevert("Pausable: paused");

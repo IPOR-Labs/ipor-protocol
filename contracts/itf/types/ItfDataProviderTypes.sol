@@ -3,25 +3,6 @@ pragma solidity 0.8.16;
 
 /// @title Structs used in comunication ItfDataProvider with Itf Application
 library ItfDataProviderTypes {
-    struct ItfMiltonData {
-        uint256 maxSwapCollateralAmount;
-        uint256 maxLpUtilizationRate;
-        uint256 maxLpUtilizationRatePayFixed;
-        uint256 maxLpUtilizationRateReceiveFixed;
-        uint256 openingFeeRate;
-        uint256 openingFeeTreasuryPortionRate;
-        uint256 iporPublicationFee;
-        uint256 liquidationDepositAmount;
-        uint256 wadLiquidationDepositAmount;
-        uint256 maxLeveragePayFixed;
-        uint256 maxLeverageReceiveFixed;
-        uint256 minLeverage;
-        int256 spreadPayFixed;
-        int256 spreadReceiveFixed;
-        int256 soapPayFixed;
-        int256 soapReceiveFixed;
-        int256 soap;
-    }
 
     struct ItfIporOracleData {
         uint256 indexValue;
@@ -33,7 +14,7 @@ library ItfDataProviderTypes {
         uint256 accruedExponentialWeightedMovingVariance;
     }
 
-    struct ItfMiltonStorageData {
+    struct ItfAmmStorageData {
         uint256 totalCollateralPayFixed;
         uint256 totalCollateralReceiveFixed;
         uint256 liquidityPool;
@@ -44,28 +25,11 @@ library ItfDataProviderTypes {
         uint256 totalNotionalReceiveFixed;
     }
 
-    struct ItfMiltonSpreadModelData {
-        int256 payFixedRegionOneBase;
-        int256 payFixedRegionOneSlopeForVolatility;
-        int256 payFixedRegionOneSlopeForMeanReversion;
-        int256 payFixedRegionTwoBase;
-        int256 payFixedRegionTwoSlopeForVolatility;
-        int256 payFixedRegionTwoSlopeForMeanReversion;
-        int256 receiveFixedRegionOneBase;
-        int256 receiveFixedRegionOneSlopeForVolatility;
-        int256 receiveFixedRegionOneSlopeForMeanReversion;
-        int256 receiveFixedRegionTwoBase;
-        int256 receiveFixedRegionTwoSlopeForVolatility;
-        int256 receiveFixedRegionTwoSlopeForMeanReversion;
-    }
-
     struct ItfAmmData {
         uint256 blockNumber;
         uint256 timestamp;
         address asset;
-        ItfMiltonData itfMiltonData;
         ItfIporOracleData itfIporOracleData;
-        ItfMiltonStorageData itfMiltonStorageData;
-        ItfMiltonSpreadModelData itfMiltonSpreadModelData;
+        ItfAmmStorageData itfAmmStorageData;
     }
 }

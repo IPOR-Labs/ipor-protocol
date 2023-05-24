@@ -4,19 +4,19 @@ pragma solidity 0.8.16;
 import {TestCommons} from "../../../TestCommons.sol";
 import {DataUtils} from "../../../utils/DataUtils.sol";
 import {TestConstants} from "../../../utils/TestConstants.sol";
-import {MockStrategy} from "contracts/mocks/stanley/MockStrategy.sol";
-import {StanleyDai} from "contracts/vault/StanleyDai.sol";
+import {MockStrategy} from "contracts/mocks/assetManagement/MockStrategy.sol";
+import {AssetManagementDai} from "contracts/vault/AssetManagementDai.sol";
 import {MockTestnetToken} from "contracts/mocks/tokens/MockTestnetToken.sol";
 import {IvToken} from "contracts/tokens/IvToken.sol";
 
-contract StanleySetStrategyTest is TestCommons, DataUtils {
+contract AssetManagementSetStrategyTest is TestCommons, DataUtils {
     MockStrategy internal _strategyAaveDai;
     MockStrategy internal _strategyCompoundDai;
     MockTestnetToken internal _daiMockedToken;
     MockTestnetToken internal _usdtMockedToken;
     MockTestnetToken internal _aDai;
     MockTestnetToken internal _cDai;
-    StanleyDai internal _stanleyDai;
+    AssetManagementDai internal _assetManagementDai;
     IvToken internal _ivTokenDai;
 
     event StrategyChanged(address changedBy, address oldStrategy, address newStrategy, address newShareToken);
@@ -33,7 +33,7 @@ contract StanleySetStrategyTest is TestCommons, DataUtils {
         _strategyCompoundDai = new MockStrategy();
         _strategyCompoundDai.setAsset(address(_daiMockedToken));
         _strategyCompoundDai.setShareToken(address(_cDai));
-        _stanleyDai = getStanleyDai(
+        _assetManagementDai = getAssetManagementDai(
             address(_daiMockedToken),
             address(_ivTokenDai),
             address(_strategyAaveDai),
@@ -45,8 +45,8 @@ contract StanleySetStrategyTest is TestCommons, DataUtils {
         _userThree = _getUserAddress(3);
         _liquidityProvider = _getUserAddress(4);
         _users = usersToArray(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
-        _stanleyDai.setMilton(_admin);
-        _ivTokenDai.setStanley(address(_stanleyDai));
+        _assetManagementDai.setAmmTreasury(_admin);
+        _ivTokenDai.setAssetManagement(address(_assetManagementDai));
     }
 
     function testShouldSetupAaveStrategy() public {
@@ -60,7 +60,7 @@ contract StanleySetStrategyTest is TestCommons, DataUtils {
         // when
         vm.expectEmit(true, true, true, true);
         emit StrategyChanged(_admin, address(_strategyAaveDai), address(newStrategyAaveDai), address(_aDai));
-        _stanleyDai.setStrategyAave(address(newStrategyAaveDai));
+        _assetManagementDai.setStrategyAave(address(newStrategyAaveDai));
         // then
         uint256 newStrategyBalanceAfter = newStrategyAaveDai.balanceOf();
         assertEq(newStrategyBalanceBefore, newStrategyBalanceAfter);
@@ -76,7 +76,7 @@ contract StanleySetStrategyTest is TestCommons, DataUtils {
         // when
         vm.expectEmit(true, true, true, true);
         emit StrategyChanged(_admin, address(_strategyAaveDai), address(newStrategyAaveDai), address(_aDai));
-        _stanleyDai.setStrategyAave(address(newStrategyAaveDai));
+        _assetManagementDai.setStrategyAave(address(newStrategyAaveDai));
         // then
         uint256 oldStrategyBalanceAfter = _strategyAaveDai.balanceOf();
         uint256 newStrategyBalanceAfter = newStrategyAaveDai.balanceOf();
@@ -84,7 +84,7 @@ contract StanleySetStrategyTest is TestCommons, DataUtils {
         assertEq(oldStrategyBalanceAfter, TestConstants.ZERO);
         assertEq(newStrategyBalanceBefore, TestConstants.ZERO);
         assertEq(newStrategyBalanceAfter, TestConstants.ZERO);
-        assertEq(address(_stanleyDai.getStrategyAave()), address(newStrategyAaveDai));
+        assertEq(address(_assetManagementDai.getStrategyAave()), address(newStrategyAaveDai));
     }
 
     function testShouldNotSetupNewStrategyAaveWhenUnderlyingTokenDoesNotMatch() public {
@@ -94,14 +94,14 @@ contract StanleySetStrategyTest is TestCommons, DataUtils {
         newStrategyAaveDai.setAsset(address(_usdtMockedToken));
         // when
         vm.expectRevert("IPOR_500");
-        _stanleyDai.setStrategyAave(address(newStrategyAaveDai));
+        _assetManagementDai.setStrategyAave(address(newStrategyAaveDai));
     }
 
     function testShouldNotSetupNewStrategyAaveWhenZeroAddress() public {
         // given
         // when
         vm.expectRevert("IPOR_000");
-        _stanleyDai.setStrategyAave(address(0));
+        _assetManagementDai.setStrategyAave(address(0));
     }
 
     function testShouldSetupCompoundStrategy() public {
@@ -115,7 +115,7 @@ contract StanleySetStrategyTest is TestCommons, DataUtils {
         // when
         vm.expectEmit(true, true, true, true);
         emit StrategyChanged(_admin, address(_strategyCompoundDai), address(newStrategyCompoundDai), address(_cDai));
-        _stanleyDai.setStrategyCompound(address(newStrategyCompoundDai));
+        _assetManagementDai.setStrategyCompound(address(newStrategyCompoundDai));
         // then
         uint256 newStrategyBalanceAfter = newStrategyCompoundDai.balanceOf();
         assertEq(newStrategyBalanceBefore, newStrategyBalanceAfter);
@@ -128,13 +128,13 @@ contract StanleySetStrategyTest is TestCommons, DataUtils {
         newStrategyCompoundDai.setAsset(address(_usdtMockedToken));
         // when
         vm.expectRevert("IPOR_500");
-        _stanleyDai.setStrategyCompound(address(newStrategyCompoundDai));
+        _assetManagementDai.setStrategyCompound(address(newStrategyCompoundDai));
     }
 
     function testShouldNotSetupNewStrategyCompoundWhenZeroAddress() public {
         // given
         // when
         vm.expectRevert("IPOR_000");
-        _stanleyDai.setStrategyCompound(address(0));
+        _assetManagementDai.setStrategyCompound(address(0));
     }
 }

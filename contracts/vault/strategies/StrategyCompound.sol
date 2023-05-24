@@ -74,7 +74,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         apr = ratePerDay365 - Constants.D18;
     }
 
-    /// @notice Gets Stanley Compound Strategy's asset amount in Compound Protocol.
+    /// @notice Gets AssetManagement Compound Strategy's asset amount in Compound Protocol.
     /// @dev Explanation decimals inside implementation
     /// In Compound exchangeRateStored is calculated in following way:
     /// uint exchangeRate = cashPlusBorrowsMinusReserves * expScale / _totalSupply;
@@ -82,7 +82,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
     /// Asset decimals = 18, then exchangeRate decimals := 18 + 18 - 8 = 28 and balanceOf decimals := 28 + 8 - 18 = 18 decimals.
     /// Asset decimals = 6, then exchangeRate decimals := 6 + 18 - 8 = 16 and balanceOf decimals := 16 + 8 - 6 = 18 decimals.
     /// In both cases we have 18 decimals which is number of decimals supported in IPOR Protocol.
-    /// @return uint256 Stanley Strategy's asset amount in Compound represented in 18 decimals
+    /// @return uint256 AssetManagement Strategy's asset amount in Compound represented in 18 decimals
     function balanceOf() external view override returns (uint256) {
         CErc20 shareToken = CErc20(_shareToken);
 
@@ -96,14 +96,14 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
 
     /**
      * @dev Deposit into compound lending.
-     * @notice deposit can only done by Stanley .
+     * @notice deposit can only done by AssetManagement .
      * @param wadAmount amount to deposit in compound lending, amount represented in 18 decimals
      */
     function deposit(uint256 wadAmount)
         external
         override
         whenNotPaused
-        onlyStanley
+        onlyAssetManagement
         returns (uint256 depositedAmount)
     {
         address asset = _asset;
@@ -116,14 +116,14 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
 
     /**
      * @dev withdraw from compound lending.
-     * @notice withdraw can only done by Stanley.
+     * @notice withdraw can only done by AssetManagement.
      * @param wadAmount candidate amount to withdraw from compound lending, amount represented in 18 decimals
      */
     function withdraw(uint256 wadAmount)
         external
         override
         whenNotPaused
-        onlyStanley
+        onlyAssetManagement
         returns (uint256 withdrawnAmount)
     {
         address asset = _asset;
@@ -137,11 +137,11 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
             IporMath.division(amount * Constants.D18, shareToken.exchangeRateStored())
         );
 
-        require(redeemStatus == 0, StanleyErrors.SHARED_TOKEN_REDEEM_ERROR);
+        require(redeemStatus == 0, AssetManagementErrors.SHARED_TOKEN_REDEEM_ERROR);
 
         uint256 withdrawnAmountCompound = IERC20Upgradeable(asset).balanceOf(address(this));
 
-        // Transfer all assets from Strategy to Stanley
+        // Transfer all assets from Strategy to AssetManagement
         IERC20Upgradeable(asset).safeTransfer(_msgSender(), withdrawnAmountCompound);
 
         withdrawnAmount = IporMath.convertToWad(withdrawnAmountCompound, assetDecimals);

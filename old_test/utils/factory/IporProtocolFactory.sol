@@ -10,10 +10,10 @@ import "../builder/AssetBuilder.sol";
 import "../builder/IpTokenBuilder.sol";
 import "../builder/IvTokenBuilder.sol";
 import "../builder/IporWeightedBuilder.sol";
-import "../builder/MiltonStorageBuilder.sol";
+import "../builder/AmmStorageBuilder.sol";
 import "../builder/MockSpreadBuilder.sol";
-import "../builder/StanleyBuilder.sol";
-import "../builder/MiltonBuilder.sol";
+import "../builder/AssetManagementBuilder.sol";
+import "../builder/AmmTreasuryBuilder.sol";
 import "../builder/JosephBuilder.sol";
 import "./IporOracleFactory.sol";
 import "./IporRiskManagementOracleFactory.sol";
@@ -32,21 +32,21 @@ contract IporProtocolFactory is Test {
         address iporRiskManagementOracleUpdater;
         BuilderUtils.IporOracleInitialParamsTestCase iporOracleInitialParamsTestCase;
         BuilderUtils.IporRiskManagementOracleInitialParamsTestCase iporRiskManagementOracleInitialParamsTestCase;
-        BuilderUtils.MiltonTestCase miltonUsdtTestCase;
-        BuilderUtils.MiltonTestCase miltonUsdcTestCase;
-        BuilderUtils.MiltonTestCase miltonDaiTestCase;
+        BuilderUtils.AmmTreasuryTestCase ammTreasuryUsdtTestCase;
+        BuilderUtils.AmmTreasuryTestCase ammTreasuryUsdcTestCase;
+        BuilderUtils.AmmTreasuryTestCase ammTreasuryDaiTestCase;
     }
 
     struct IporProtocolConfig {
         address iporOracleUpdater;
         address iporRiskManagementOracleUpdater;
-        BuilderUtils.MiltonTestCase miltonTestCase;
+        BuilderUtils.AmmTreasuryTestCase ammTreasuryTestCase;
         BuilderUtils.IporOracleInitialParamsTestCase iporOracleInitialParamsTestCase;
         BuilderUtils.IporRiskManagementOracleInitialParamsTestCase iporRiskManagementOracleInitialParamsTestCase;
         address[] approvalsForUsers;
         address josephImplementation;
         address spreadImplementation;
-        address stanleyImplementation;
+        address assetManagementImplementation;
     }
 
     IporOracleFactory internal _iporOracleFactory;
@@ -56,10 +56,10 @@ contract IporProtocolFactory is Test {
     IpTokenBuilder internal _ipTokenBuilder;
     IvTokenBuilder internal _ivTokenBuilder;
     IporWeightedBuilder internal _iporWeightedBuilder;
-    MiltonStorageBuilder internal _miltonStorageBuilder;
+    AmmStorageBuilder internal _ammStorageBuilder;
     MockSpreadBuilder internal _spreadBuilder;
-    StanleyBuilder internal _stanleyBuilder;
-    MiltonBuilder internal _miltonBuilder;
+    AssetManagementBuilder internal _assetManagementBuilder;
+    AmmTreasuryBuilder internal _ammTreasuryBuilder;
     JosephBuilder internal _josephBuilder;
 
     MockTestnetToken internal _usdt;
@@ -76,10 +76,10 @@ contract IporProtocolFactory is Test {
         _ipTokenBuilder = new IpTokenBuilder(owner);
         _ivTokenBuilder = new IvTokenBuilder(owner);
         _iporWeightedBuilder = new IporWeightedBuilder(owner);
-        _miltonStorageBuilder = new MiltonStorageBuilder(owner);
+        _ammStorageBuilder = new AmmStorageBuilder(owner);
         _spreadBuilder = new MockSpreadBuilder(owner);
-        _stanleyBuilder = new StanleyBuilder(owner);
-        _miltonBuilder = new MiltonBuilder(owner);
+        _assetManagementBuilder = new AssetManagementBuilder(owner);
+        _ammTreasuryBuilder = new AmmTreasuryBuilder(owner);
         _josephBuilder = new JosephBuilder(owner);
         _owner = owner;
     }
@@ -120,47 +120,47 @@ contract IporProtocolFactory is Test {
 
         MockIporWeighted iporWeighted = _iporWeightedBuilder.withIporOracle(address(iporOracle)).build();
 
-        MiltonStorage miltonStorage = _miltonStorageBuilder.build();
+        AmmStorage ammStorage = _ammStorageBuilder.build();
 
         MockSpreadModel spreadModel = _spreadBuilder.build();
 
-        ItfStanley stanley = _stanleyBuilder
+        ItfAssetManagement assetManagement = _assetManagementBuilder
             .withAssetType(BuilderUtils.AssetType.USDT)
             .withAsset(address(_usdt))
             .withIvToken(address(ivToken))
             .build();
 
-        ItfMilton milton = _miltonBuilder
+        ItfAmmTreasury ammTreasury = _ammTreasuryBuilder
             .withAssetType(BuilderUtils.AssetType.USDT)
             .withAsset(address(_usdt))
             .withIporOracle(address(iporOracle))
-            .withMiltonStorage(address(miltonStorage))
-            .withStanley(address(stanley))
+            .withAmmStorage(address(ammStorage))
+            .withAssetManagement(address(assetManagement))
             .withSpreadModel(address(spreadModel))
             .withIporRiskManagementOracle(address(iporRiskManagementOracle))
-            .withTestCase(cfg.miltonUsdtTestCase)
+            .withTestCase(cfg.ammTreasuryUsdtTestCase)
             .build();
 
         ItfJoseph joseph = _josephBuilder
             .withAssetType(BuilderUtils.AssetType.USDT)
             .withAsset(address(_usdt))
             .withIpToken(address(ipToken))
-            .withMiltonStorage(address(miltonStorage))
-            .withMilton(address(milton))
-            .withStanley(address(stanley))
+            .withAmmStorage(address(ammStorage))
+            .withAmmTreasury(address(ammTreasury))
+            .withAssetManagement(address(assetManagement))
             .build();
 
         vm.startPrank(address(_owner));
         iporOracle.setIporAlgorithmFacade(address(iporWeighted));
-        ivToken.setStanley(address(stanley));
-        miltonStorage.setMilton(address(milton));
-        stanley.setMilton(address(milton));
-        milton.setupMaxAllowanceForAsset(address(stanley));
+        ivToken.setAssetManagement(address(assetManagement));
+        ammStorage.setAmmTreasury(address(ammTreasury));
+        assetManagement.setAmmTreasury(address(ammTreasury));
+        ammTreasury.setupMaxAllowanceForAsset(address(assetManagement));
 
         ipToken.setJoseph(address(joseph));
-        miltonStorage.setJoseph(address(joseph));
-        milton.setJoseph(address(joseph));
-        milton.setupMaxAllowanceForAsset(address(joseph));
+        ammStorage.setJoseph(address(joseph));
+        ammTreasury.setJoseph(address(joseph));
+        ammTreasury.setupMaxAllowanceForAsset(address(joseph));
 
         joseph.setMaxLiquidityPoolBalance(1000000000);
         joseph.setMaxLpAccountContribution(1000000000);
@@ -174,56 +174,56 @@ contract IporProtocolFactory is Test {
             iporOracle: iporOracle,
             iporRiskManagementOracle: iporRiskManagementOracle,
             iporWeighted: iporWeighted,
-            miltonStorage: miltonStorage,
+            ammStorage: ammStorage,
             spreadModel: spreadModel,
-            stanley: stanley,
-            milton: milton,
+            assetManagement: assetManagement,
+            ammTreasury: ammTreasury,
             joseph: joseph
         });
 
         ipToken = _ipTokenBuilder.withName("IP USDC").withSymbol("ipUSDC").withAsset(address(_usdc)).build();
         ivToken = _ivTokenBuilder.withName("IV USDC").withSymbol("ivUSDC").withAsset(address(_usdc)).build();
         iporWeighted = _iporWeightedBuilder.withIporOracle(address(iporOracle)).build();
-        miltonStorage = _miltonStorageBuilder.build();
+        ammStorage = _ammStorageBuilder.build();
         spreadModel = _spreadBuilder.build();
 
-        stanley = _stanleyBuilder
+        assetManagement = _assetManagementBuilder
             .withAssetType(BuilderUtils.AssetType.USDC)
             .withAsset(address(_usdc))
             .withIvToken(address(ivToken))
             .build();
 
-        milton = _miltonBuilder
+        ammTreasury = _ammTreasuryBuilder
             .withAssetType(BuilderUtils.AssetType.USDC)
             .withAsset(address(_usdc))
             .withIporOracle(address(iporOracle))
-            .withMiltonStorage(address(miltonStorage))
-            .withStanley(address(stanley))
+            .withAmmStorage(address(ammStorage))
+            .withAssetManagement(address(assetManagement))
             .withSpreadModel(address(spreadModel))
             .withIporRiskManagementOracle(address(iporRiskManagementOracle))
-            .withTestCase(cfg.miltonUsdcTestCase)
+            .withTestCase(cfg.ammTreasuryUsdcTestCase)
             .build();
 
         joseph = _josephBuilder
             .withAssetType(BuilderUtils.AssetType.USDC)
             .withAsset(address(_usdc))
             .withIpToken(address(ipToken))
-            .withMiltonStorage(address(miltonStorage))
-            .withMilton(address(milton))
-            .withStanley(address(stanley))
+            .withAmmStorage(address(ammStorage))
+            .withAmmTreasury(address(ammTreasury))
+            .withAssetManagement(address(assetManagement))
             .build();
 
         vm.startPrank(address(_owner));
         iporOracle.setIporAlgorithmFacade(address(iporWeighted));
-        ivToken.setStanley(address(stanley));
-        miltonStorage.setMilton(address(milton));
-        stanley.setMilton(address(milton));
-        milton.setupMaxAllowanceForAsset(address(stanley));
+        ivToken.setAssetManagement(address(assetManagement));
+        ammStorage.setAmmTreasury(address(ammTreasury));
+        assetManagement.setAmmTreasury(address(ammTreasury));
+        ammTreasury.setupMaxAllowanceForAsset(address(assetManagement));
 
         ipToken.setJoseph(address(joseph));
-        miltonStorage.setJoseph(address(joseph));
-        milton.setJoseph(address(joseph));
-        milton.setupMaxAllowanceForAsset(address(joseph));
+        ammStorage.setJoseph(address(joseph));
+        ammTreasury.setJoseph(address(joseph));
+        ammTreasury.setupMaxAllowanceForAsset(address(joseph));
 
         joseph.setMaxLiquidityPoolBalance(1000000000);
         joseph.setMaxLpAccountContribution(1000000000);
@@ -237,56 +237,56 @@ contract IporProtocolFactory is Test {
             iporOracle: iporOracle,
             iporRiskManagementOracle: iporRiskManagementOracle,
             iporWeighted: iporWeighted,
-            miltonStorage: miltonStorage,
+            ammStorage: ammStorage,
             spreadModel: spreadModel,
-            stanley: stanley,
-            milton: milton,
+            assetManagement: assetManagement,
+            ammTreasury: ammTreasury,
             joseph: joseph
         });
 
         ipToken = _ipTokenBuilder.withName("IP DAI").withSymbol("ipDAI").withAsset(address(_dai)).build();
         ivToken = _ivTokenBuilder.withName("IV DAI").withSymbol("ivDAI").withAsset(address(_dai)).build();
         iporWeighted = _iporWeightedBuilder.withIporOracle(address(iporOracle)).build();
-        miltonStorage = _miltonStorageBuilder.build();
+        ammStorage = _ammStorageBuilder.build();
         spreadModel = _spreadBuilder.build();
 
-        stanley = _stanleyBuilder
+        assetManagement = _assetManagementBuilder
             .withAssetType(BuilderUtils.AssetType.DAI)
             .withAsset(address(_dai))
             .withIvToken(address(ivToken))
             .build();
 
-        milton = _miltonBuilder
+        ammTreasury = _ammTreasuryBuilder
             .withAssetType(BuilderUtils.AssetType.DAI)
             .withAsset(address(_dai))
             .withIporOracle(address(iporOracle))
-            .withMiltonStorage(address(miltonStorage))
-            .withStanley(address(stanley))
+            .withAmmStorage(address(ammStorage))
+            .withAssetManagement(address(assetManagement))
             .withSpreadModel(address(spreadModel))
             .withIporRiskManagementOracle(address(iporRiskManagementOracle))
-            .withTestCase(cfg.miltonDaiTestCase)
+            .withTestCase(cfg.ammTreasuryDaiTestCase)
             .build();
 
         joseph = _josephBuilder
             .withAssetType(BuilderUtils.AssetType.DAI)
             .withAsset(address(_dai))
             .withIpToken(address(ipToken))
-            .withMiltonStorage(address(miltonStorage))
-            .withMilton(address(milton))
-            .withStanley(address(stanley))
+            .withAmmStorage(address(ammStorage))
+            .withAmmTreasury(address(ammTreasury))
+            .withAssetManagement(address(assetManagement))
             .build();
 
         vm.startPrank(address(_owner));
         iporOracle.setIporAlgorithmFacade(address(iporWeighted));
-        ivToken.setStanley(address(stanley));
-        miltonStorage.setMilton(address(milton));
-        stanley.setMilton(address(milton));
-        milton.setupMaxAllowanceForAsset(address(stanley));
+        ivToken.setAssetManagement(address(assetManagement));
+        ammStorage.setAmmTreasury(address(ammTreasury));
+        assetManagement.setAmmTreasury(address(ammTreasury));
+        ammTreasury.setupMaxAllowanceForAsset(address(assetManagement));
 
         ipToken.setJoseph(address(joseph));
-        miltonStorage.setJoseph(address(joseph));
-        milton.setJoseph(address(joseph));
-        milton.setupMaxAllowanceForAsset(address(joseph));
+        ammStorage.setJoseph(address(joseph));
+        ammTreasury.setJoseph(address(joseph));
+        ammTreasury.setupMaxAllowanceForAsset(address(joseph));
 
         joseph.setMaxLiquidityPoolBalance(1000000000);
         joseph.setMaxLpAccountContribution(1000000000);
@@ -300,10 +300,10 @@ contract IporProtocolFactory is Test {
             iporOracle: iporOracle,
             iporRiskManagementOracle: iporRiskManagementOracle,
             iporWeighted: iporWeighted,
-            miltonStorage: miltonStorage,
+            ammStorage: ammStorage,
             spreadModel: spreadModel,
-            stanley: stanley,
-            milton: milton,
+            assetManagement: assetManagement,
+            ammTreasury: ammTreasury,
             joseph: joseph
         });
     }
@@ -336,49 +336,49 @@ contract IporProtocolFactory is Test {
 
         MockIporWeighted iporWeighted = _iporWeightedBuilder.withIporOracle(address(iporOracle)).build();
 
-        MiltonStorage miltonStorage = _miltonStorageBuilder.build();
+        AmmStorage ammStorage = _ammStorageBuilder.build();
 
         MockSpreadModel spreadModel = _spreadBuilder.withSpreadImplementation(cfg.spreadImplementation).build();
 
-        ItfStanley stanley = _stanleyBuilder
+        ItfAssetManagement assetManagement = _assetManagementBuilder
             .withAssetType(BuilderUtils.AssetType.DAI)
             .withAsset(address(dai))
             .withIvToken(address(ivToken))
-            .withStanleyImplementation(cfg.stanleyImplementation)
+            .withAssetManagementImplementation(cfg.assetManagementImplementation)
             .build();
 
-        ItfMilton milton = _miltonBuilder
+        ItfAmmTreasury ammTreasury = _ammTreasuryBuilder
             .withAssetType(BuilderUtils.AssetType.DAI)
             .withAsset(address(dai))
             .withIporOracle(address(iporOracle))
-            .withMiltonStorage(address(miltonStorage))
-            .withStanley(address(stanley))
+            .withAmmStorage(address(ammStorage))
+            .withAssetManagement(address(assetManagement))
             .withSpreadModel(address(spreadModel))
             .withIporRiskManagementOracle(address(iporRiskManagementOracle))
-            .withTestCase(cfg.miltonTestCase)
+            .withTestCase(cfg.ammTreasuryTestCase)
             .build();
 
         ItfJoseph joseph = _josephBuilder
             .withAssetType(BuilderUtils.AssetType.DAI)
             .withAsset(address(dai))
             .withIpToken(address(ipToken))
-            .withMiltonStorage(address(miltonStorage))
-            .withMilton(address(milton))
-            .withStanley(address(stanley))
+            .withAmmStorage(address(ammStorage))
+            .withAmmTreasury(address(ammTreasury))
+            .withAssetManagement(address(assetManagement))
             .withJosephImplementation(cfg.josephImplementation)
             .build();
 
         vm.startPrank(address(_owner));
         iporOracle.setIporAlgorithmFacade(address(iporWeighted));
-        ivToken.setStanley(address(stanley));
-        miltonStorage.setMilton(address(milton));
-        stanley.setMilton(address(milton));
-        milton.setupMaxAllowanceForAsset(address(stanley));
+        ivToken.setAssetManagement(address(assetManagement));
+        ammStorage.setAmmTreasury(address(ammTreasury));
+        assetManagement.setAmmTreasury(address(ammTreasury));
+        ammTreasury.setupMaxAllowanceForAsset(address(assetManagement));
 
         ipToken.setJoseph(address(joseph));
-        miltonStorage.setJoseph(address(joseph));
-        milton.setJoseph(address(joseph));
-        milton.setupMaxAllowanceForAsset(address(joseph));
+        ammStorage.setJoseph(address(joseph));
+        ammTreasury.setJoseph(address(joseph));
+        ammTreasury.setupMaxAllowanceForAsset(address(joseph));
 
         joseph.setMaxLiquidityPoolBalance(1000000000);
         joseph.setMaxLpAccountContribution(1000000000);
@@ -392,10 +392,10 @@ contract IporProtocolFactory is Test {
             iporOracle: iporOracle,
             iporRiskManagementOracle: iporRiskManagementOracle,
             iporWeighted: iporWeighted,
-            miltonStorage: miltonStorage,
+            ammStorage: ammStorage,
             spreadModel: spreadModel,
-            stanley: stanley,
-            milton: milton,
+            assetManagement: assetManagement,
+            ammTreasury: ammTreasury,
             joseph: joseph
         });
 
@@ -433,49 +433,49 @@ contract IporProtocolFactory is Test {
 
         MockIporWeighted iporWeighted = _iporWeightedBuilder.withIporOracle(address(iporOracle)).build();
 
-        MiltonStorage miltonStorage = _miltonStorageBuilder.build();
+        AmmStorage ammStorage = _ammStorageBuilder.build();
 
         MockSpreadModel spreadModel = _spreadBuilder.withSpreadImplementation(cfg.spreadImplementation).build();
 
-        ItfStanley stanley = _stanleyBuilder
+        ItfAssetManagement assetManagement = _assetManagementBuilder
             .withAssetType(BuilderUtils.AssetType.USDT)
             .withAsset(address(usdt))
             .withIvToken(address(ivToken))
-            .withStanleyImplementation(cfg.stanleyImplementation)
+            .withAssetManagementImplementation(cfg.assetManagementImplementation)
             .build();
 
-        ItfMilton milton = _miltonBuilder
+        ItfAmmTreasury ammTreasury = _ammTreasuryBuilder
             .withAssetType(BuilderUtils.AssetType.USDT)
             .withAsset(address(usdt))
             .withIporOracle(address(iporOracle))
-            .withMiltonStorage(address(miltonStorage))
-            .withStanley(address(stanley))
+            .withAmmStorage(address(ammStorage))
+            .withAssetManagement(address(assetManagement))
             .withSpreadModel(address(spreadModel))
             .withIporRiskManagementOracle(address(iporRiskManagementOracle))
-            .withTestCase(cfg.miltonTestCase)
+            .withTestCase(cfg.ammTreasuryTestCase)
             .build();
 
         ItfJoseph joseph = _josephBuilder
             .withAssetType(BuilderUtils.AssetType.USDT)
             .withAsset(address(usdt))
             .withIpToken(address(ipToken))
-            .withMiltonStorage(address(miltonStorage))
-            .withMilton(address(milton))
-            .withStanley(address(stanley))
+            .withAmmStorage(address(ammStorage))
+            .withAmmTreasury(address(ammTreasury))
+            .withAssetManagement(address(assetManagement))
             .withJosephImplementation(cfg.josephImplementation)
             .build();
 
         vm.startPrank(address(_owner));
         iporOracle.setIporAlgorithmFacade(address(iporWeighted));
-        ivToken.setStanley(address(stanley));
-        miltonStorage.setMilton(address(milton));
-        stanley.setMilton(address(milton));
-        milton.setupMaxAllowanceForAsset(address(stanley));
+        ivToken.setAssetManagement(address(assetManagement));
+        ammStorage.setAmmTreasury(address(ammTreasury));
+        assetManagement.setAmmTreasury(address(ammTreasury));
+        ammTreasury.setupMaxAllowanceForAsset(address(assetManagement));
 
         ipToken.setJoseph(address(joseph));
-        miltonStorage.setJoseph(address(joseph));
-        milton.setJoseph(address(joseph));
-        milton.setupMaxAllowanceForAsset(address(joseph));
+        ammStorage.setJoseph(address(joseph));
+        ammTreasury.setJoseph(address(joseph));
+        ammTreasury.setupMaxAllowanceForAsset(address(joseph));
 
         joseph.setMaxLiquidityPoolBalance(1000000000);
         joseph.setMaxLpAccountContribution(1000000000);
@@ -489,10 +489,10 @@ contract IporProtocolFactory is Test {
             iporOracle: iporOracle,
             iporRiskManagementOracle: iporRiskManagementOracle,
             iporWeighted: iporWeighted,
-            miltonStorage: miltonStorage,
+            ammStorage: ammStorage,
             spreadModel: spreadModel,
-            stanley: stanley,
-            milton: milton,
+            assetManagement: assetManagement,
+            ammTreasury: ammTreasury,
             joseph: joseph
         });
 
@@ -530,49 +530,49 @@ contract IporProtocolFactory is Test {
 
         MockIporWeighted iporWeighted = _iporWeightedBuilder.withIporOracle(address(iporOracle)).build();
 
-        MiltonStorage miltonStorage = _miltonStorageBuilder.build();
+        AmmStorage ammStorage = _ammStorageBuilder.build();
 
         MockSpreadModel spreadModel = _spreadBuilder.withSpreadImplementation(cfg.spreadImplementation).build();
 
-        ItfStanley stanley = _stanleyBuilder
+        ItfAssetManagement assetManagement = _assetManagementBuilder
             .withAssetType(BuilderUtils.AssetType.USDC)
             .withAsset(address(usdc))
             .withIvToken(address(ivToken))
-            .withStanleyImplementation(cfg.stanleyImplementation)
+            .withAssetManagementImplementation(cfg.assetManagementImplementation)
             .build();
 
-        ItfMilton milton = _miltonBuilder
+        ItfAmmTreasury ammTreasury = _ammTreasuryBuilder
             .withAssetType(BuilderUtils.AssetType.USDC)
             .withAsset(address(usdc))
             .withIporOracle(address(iporOracle))
-            .withMiltonStorage(address(miltonStorage))
-            .withStanley(address(stanley))
+            .withAmmStorage(address(ammStorage))
+            .withAssetManagement(address(assetManagement))
             .withSpreadModel(address(spreadModel))
             .withIporRiskManagementOracle(address(iporRiskManagementOracle))
-            .withTestCase(cfg.miltonTestCase)
+            .withTestCase(cfg.ammTreasuryTestCase)
             .build();
 
         ItfJoseph joseph = _josephBuilder
             .withAssetType(BuilderUtils.AssetType.USDC)
             .withAsset(address(usdc))
             .withIpToken(address(ipToken))
-            .withMiltonStorage(address(miltonStorage))
-            .withMilton(address(milton))
-            .withStanley(address(stanley))
+            .withAmmStorage(address(ammStorage))
+            .withAmmTreasury(address(ammTreasury))
+            .withAssetManagement(address(assetManagement))
             .withJosephImplementation(cfg.josephImplementation)
             .build();
 
         vm.startPrank(address(_owner));
         iporOracle.setIporAlgorithmFacade(address(iporWeighted));
-        ivToken.setStanley(address(stanley));
-        miltonStorage.setMilton(address(milton));
-        stanley.setMilton(address(milton));
-        milton.setupMaxAllowanceForAsset(address(stanley));
+        ivToken.setAssetManagement(address(assetManagement));
+        ammStorage.setAmmTreasury(address(ammTreasury));
+        assetManagement.setAmmTreasury(address(ammTreasury));
+        ammTreasury.setupMaxAllowanceForAsset(address(assetManagement));
 
         ipToken.setJoseph(address(joseph));
-        miltonStorage.setJoseph(address(joseph));
-        milton.setJoseph(address(joseph));
-        milton.setupMaxAllowanceForAsset(address(joseph));
+        ammStorage.setJoseph(address(joseph));
+        ammTreasury.setJoseph(address(joseph));
+        ammTreasury.setupMaxAllowanceForAsset(address(joseph));
 
         joseph.setMaxLiquidityPoolBalance(1000000000);
         joseph.setMaxLpAccountContribution(1000000000);
@@ -586,10 +586,10 @@ contract IporProtocolFactory is Test {
             iporOracle: iporOracle,
             iporRiskManagementOracle: iporRiskManagementOracle,
             iporWeighted: iporWeighted,
-            miltonStorage: miltonStorage,
+            ammStorage: ammStorage,
             spreadModel: spreadModel,
-            stanley: stanley,
-            milton: milton,
+            assetManagement: assetManagement,
+            ammTreasury: ammTreasury,
             joseph: joseph
         });
 
@@ -607,7 +607,7 @@ contract IporProtocolFactory is Test {
             for (uint256 i = 0; i < cfg.approvalsForUsers.length; ++i) {
                 vm.startPrank(cfg.approvalsForUsers[i]);
                 iporProtocol.asset.approve(address(iporProtocol.joseph), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
-                iporProtocol.asset.approve(address(iporProtocol.milton), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
+                iporProtocol.asset.approve(address(iporProtocol.ammTreasury), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
                 vm.stopPrank();
                 deal(address(iporProtocol.asset), cfg.approvalsForUsers[i], TestConstants.USER_SUPPLY_10MLN_18DEC);
             }
@@ -615,7 +615,7 @@ contract IporProtocolFactory is Test {
             for (uint256 i = 0; i < cfg.approvalsForUsers.length; ++i) {
                 vm.startPrank(cfg.approvalsForUsers[i]);
                 iporProtocol.asset.approve(address(iporProtocol.joseph), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
-                iporProtocol.asset.approve(address(iporProtocol.milton), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
+                iporProtocol.asset.approve(address(iporProtocol.ammTreasury), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
                 vm.stopPrank();
                 deal(address(iporProtocol.asset), cfg.approvalsForUsers[i], TestConstants.USER_SUPPLY_10MLN_6DEC);
             }

@@ -38,7 +38,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotRedeemWhenLiquidityPoolUtilizationAlreadyExceededAndPayFixed() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -52,19 +52,19 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(60000 * TestConstants.D18);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             27000 * TestConstants.D18,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
 
         //BEGIN HACK - subtract liquidity without  burn ipToken
-        _iporProtocol.miltonStorage.setJoseph(_admin);
-        _iporProtocol.miltonStorage.subtractLiquidity(45000 * TestConstants.D18);
-        _iporProtocol.miltonStorage.setJoseph(address(_iporProtocol.joseph));
+        _iporProtocol.ammStorage.setJoseph(_admin);
+        _iporProtocol.ammStorage.subtractLiquidity(45000 * TestConstants.D18);
+        _iporProtocol.ammStorage.setJoseph(address(_iporProtocol.joseph));
         //END HACK - subtract liquidity without  burn ipToken
 
-        IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
+        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammTreasury.getAccruedBalance();
 
         uint256 actualCollateral = balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed;
         uint256 actualLiquidityPoolBalance = balance.liquidityPool;
@@ -78,7 +78,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotRedeemWhenLiquidityPoolUtilizationAlreadyExceededAndReceiveFixed() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -92,19 +92,19 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(60000 * TestConstants.D18);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             27000 * TestConstants.D18,
             TestConstants.D16,
             TestConstants.LEVERAGE_18DEC
         );
 
         //BEGIN HACK - subtract liquidity without  burn ipToken
-        _iporProtocol.miltonStorage.setJoseph(_admin);
-        _iporProtocol.miltonStorage.subtractLiquidity(45000 * TestConstants.D18);
-        _iporProtocol.miltonStorage.setJoseph(address(_iporProtocol.joseph));
+        _iporProtocol.ammStorage.setJoseph(_admin);
+        _iporProtocol.ammStorage.subtractLiquidity(45000 * TestConstants.D18);
+        _iporProtocol.ammStorage.setJoseph(address(_iporProtocol.joseph));
         //END HACK - subtract liquidity without  burn ipToken
 
-        IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
+        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammTreasury.getAccruedBalance();
 
         uint256 actualCollateral = balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed;
         uint256 actualLiquidityPoolBalance = balance.liquidityPool;
@@ -118,7 +118,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotRedeemWhenLiquidityPoolUtilizationExceededAndPayFixed() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -132,13 +132,13 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(60000 * TestConstants.D18);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             27000 * TestConstants.D18,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
 
-        IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
+        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammTreasury.getAccruedBalance();
 
         uint256 actualCollateral = balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed;
         uint256 actualLiquidityPoolBalance = balance.liquidityPool;
@@ -152,7 +152,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotRedeemWhenLiquidityPoolUtilizationExceededAndReceiveFixed() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -166,13 +166,13 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(60000 * TestConstants.D18);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             27000 * TestConstants.D18,
             TestConstants.D16,
             TestConstants.LEVERAGE_18DEC
         );
 
-        IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
+        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammTreasury.getAccruedBalance();
 
         uint256 actualCollateral = balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed;
         uint256 actualLiquidityPoolBalance = balance.liquidityPool;
@@ -186,16 +186,16 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotRedeemIpTokensBecauseOfEmptyLiquidityPool() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_10_000_18DEC, block.timestamp);
-        _iporProtocol.miltonStorage.setJoseph(_userOne);
+        _iporProtocol.ammStorage.setJoseph(_userOne);
 
         vm.prank(_userOne);
-        _iporProtocol.miltonStorage.subtractLiquidity(TestConstants.USD_10_000_18DEC);
-        _iporProtocol.miltonStorage.setJoseph(address(_iporProtocol.joseph));
+        _iporProtocol.ammStorage.subtractLiquidity(TestConstants.USD_10_000_18DEC);
+        _iporProtocol.ammStorage.setJoseph(address(_iporProtocol.joseph));
 
         // when
         vm.prank(_liquidityProvider);
@@ -205,7 +205,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotRedeemIpTokensBecauseOfEmptyLiquidityPoolAfterRedeemLiquidity() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.josephImplementation = address(new ItfJoseph(18, true));
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -220,7 +220,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotRedeemIpTokensBecauseRedeemAmountIsTooLow() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.josephImplementation = address(new ItfJoseph(18, true));
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 

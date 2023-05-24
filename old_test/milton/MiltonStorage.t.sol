@@ -5,19 +5,19 @@ import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
-import "contracts/amm/MiltonStorage.sol";
+import "contracts/amm/AmmStorage.sol";
 import "contracts/mocks/spread/MockSpreadModel.sol";
 import "contracts/interfaces/types/AmmTypes.sol";
-import "contracts/interfaces/types/MiltonStorageTypes.sol";
+import "contracts/interfaces/types/AmmStorageTypes.sol";
 import "contracts/interfaces/types/IporTypes.sol";
 
-contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
+contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
     BuilderUtils.IporProtocol internal _iporProtocol;
 
-    MiltonStorageBuilder _miltonStorageBuilder;
+    AmmStorageBuilder _ammStorageBuilder;
 
-    address internal _miltonStorageAddress;
+    address internal _ammStorageAddress;
 
     function setUp() public {
         _admin = address(this);
@@ -25,7 +25,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         _userTwo = _getUserAddress(2);
         _userThree = _getUserAddress(3);
         _liquidityProvider = _getUserAddress(4);
-        _miltonStorageAddress = _getUserAddress(5);
+        _ammStorageAddress = _getUserAddress(5);
         _users = usersToArray(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
 
         _cfg.approvalsForUsers = _users;
@@ -41,108 +41,108 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             )
         );
 
-        _miltonStorageBuilder = new MiltonStorageBuilder(
+        _ammStorageBuilder = new AmmStorageBuilder(
             address(this)
         );
     }
 
     function testShouldTransferOwnershipSimpleCase1() public {
         // given
-        MiltonStorage miltonStorage = _miltonStorageBuilder.build();
+        AmmStorage ammStorage = _ammStorageBuilder.build();
 
         // when
-        miltonStorage.transferOwnership(_userTwo);
+        ammStorage.transferOwnership(_userTwo);
 
         vm.prank(_userTwo);
-        miltonStorage.confirmTransferOwnership();
+        ammStorage.confirmTransferOwnership();
 
         // then
         vm.prank(_userOne);
-        address newOwner = miltonStorage.owner();
+        address newOwner = ammStorage.owner();
         assertEq(_userTwo, newOwner);
     }
 
     function testShouldNotTransferOwnershipWhenSenderIsNotCurrentOwner() public {
         // given
-        MiltonStorage miltonStorage = _miltonStorageBuilder.build();
+        AmmStorage ammStorage = _ammStorageBuilder.build();
 
         // when
         vm.expectRevert("Ownable: caller is not the owner");
 
         vm.prank(_userThree);
-        miltonStorage.transferOwnership(_userTwo);
+        ammStorage.transferOwnership(_userTwo);
     }
 
     function testShouldNotConfirmTransferOwnershipWhenSenderNotAppointedOwner() public {
         // given
-        MiltonStorage miltonStorage = _miltonStorageBuilder.build();
+        AmmStorage ammStorage = _ammStorageBuilder.build();
 
         // when
-        miltonStorage.transferOwnership(_userTwo);
+        ammStorage.transferOwnership(_userTwo);
 
         // then
         vm.expectRevert("IPOR_007");
 
         vm.prank(_userThree);
-        miltonStorage.confirmTransferOwnership();
+        ammStorage.confirmTransferOwnership();
     }
 
     function testShouldNotConfirmTransferOwnershipTwiceWhenSenderNotAppointedOwner() public {
         // given
-        MiltonStorage miltonStorage = _miltonStorageBuilder.build();
+        AmmStorage ammStorage = _ammStorageBuilder.build();
 
         // when
-        miltonStorage.transferOwnership(_userTwo);
+        ammStorage.transferOwnership(_userTwo);
 
         vm.prank(_userTwo);
-        miltonStorage.confirmTransferOwnership();
+        ammStorage.confirmTransferOwnership();
         vm.expectRevert("IPOR_007");
 
         vm.prank(_userThree);
-        miltonStorage.confirmTransferOwnership();
+        ammStorage.confirmTransferOwnership();
     }
 
     function testShouldNotTransferOwnershipWhenSenderAlreadyLostOwnership() public {
         // given
-        MiltonStorage miltonStorage = _miltonStorageBuilder.build();
+        AmmStorage ammStorage = _ammStorageBuilder.build();
 
         // when
-        miltonStorage.transferOwnership(_userTwo);
+        ammStorage.transferOwnership(_userTwo);
 
         vm.prank(_userTwo);
-        miltonStorage.confirmTransferOwnership();
+        ammStorage.confirmTransferOwnership();
 
         vm.expectRevert("Ownable: caller is not the owner");
-        miltonStorage.transferOwnership(_userThree);
+        ammStorage.transferOwnership(_userThree);
     }
 
     function testShouldHaveRightsToTransferOwnershipWhenSenderStillHasRights() public {
         // given
-        MiltonStorage miltonStorage = _miltonStorageBuilder.build();
-        miltonStorage.transferOwnership(_userTwo);
+        AmmStorage ammStorage = _ammStorageBuilder.build();
+        ammStorage.transferOwnership(_userTwo);
 
         // when
-        miltonStorage.transferOwnership(_userTwo);
+        ammStorage.transferOwnership(_userTwo);
 
         // then
-        address actualOwner = miltonStorage.owner();
+        address actualOwner = ammStorage.owner();
         assertEq(actualOwner, _admin);
     }
 
-    function testShouldUpdateMiltonStorageWhenOpenPositionAndCallerHasRightsToUpdate() public {
+    function testShouldUpdateAmmStorageWhenOpenPositionAndCallerHasRightsToUpdate() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+       _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        _iporProtocol.miltonStorage.setMilton(_miltonStorageAddress);
+        _iporProtocol.ammStorage.setAmmTreasury(_ammStorageAddress);
 
         AmmTypes.NewSwap memory newSwap = prepareSwapPayFixedStruct18DecSimpleCase1(_userTwo);
-        uint256 iporPublicationFee = _iporProtocol.milton.getIporPublicationFee();
+        uint256 iporPublicationFee = _iporProtocol.ammTreasury.getIporPublicationFee();
 
         // when
-        vm.prank(_miltonStorageAddress);
-        uint256 swapId = _iporProtocol.miltonStorage.updateStorageWhenOpenSwapPayFixed(
+        vm.prank(_ammStorageAddress);
+        uint256 swapId = _iporProtocol.ammStorage.updateStorageWhenOpenSwapPayFixed(
             newSwap,
             iporPublicationFee
         );
@@ -151,34 +151,34 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         assertEq(swapId, 1);
     }
 
-    function testShouldNotUpdateMiltonStorageWhenOpenPositionAndCallerDoesNotHaveRightsToUpdate()
+    function testShouldNotUpdateAmmStorageWhenOpenPositionAndCallerDoesNotHaveRightsToUpdate()
         public
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+       _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        _iporProtocol.miltonStorage.setMilton(_miltonStorageAddress);
+        _iporProtocol.ammStorage.setAmmTreasury(_ammStorageAddress);
 
         AmmTypes.NewSwap memory newSwap = prepareSwapPayFixedStruct18DecSimpleCase1(_userTwo);
-        uint256 iporPublicationFee = _iporProtocol.milton.getIporPublicationFee();
+        uint256 iporPublicationFee = _iporProtocol.ammTreasury.getIporPublicationFee();
 
         // when
         vm.expectRevert("IPOR_008");
         vm.prank(_userThree);
-        _iporProtocol.miltonStorage.updateStorageWhenOpenSwapPayFixed(newSwap, iporPublicationFee);
+        _iporProtocol.ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, iporPublicationFee);
     }
 
     function testShouldNotAddLiquidityWhenAssetAmountIsZero() public {
         //given
-        MiltonStorage miltonStorage = _miltonStorageBuilder.build();
-        miltonStorage.setJoseph(_liquidityProvider);
+        AmmStorage ammStorage = _ammStorageBuilder.build();
+        ammStorage.setJoseph(_liquidityProvider);
 
         // when
         vm.expectRevert("IPOR_328");
         vm.prank(_liquidityProvider);
-        miltonStorage.addLiquidity(
+        ammStorage.addLiquidity(
             _liquidityProvider,
             TestConstants.ZERO,
             TestConstants.USD_10_000_000_18DEC,
@@ -190,56 +190,56 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        MiltonStorage miltonStorage = _miltonStorageBuilder.build();
-        miltonStorage.setJoseph(_liquidityProvider);
+        AmmStorage ammStorage = _ammStorageBuilder.build();
+        ammStorage.setJoseph(_liquidityProvider);
 
         // when
         vm.expectRevert("IPOR_330");
         vm.prank(_liquidityProvider);
-        miltonStorage.updateStorageWhenTransferToTreasury(TestConstants.D18 * TestConstants.D18);
+        ammStorage.updateStorageWhenTransferToTreasury(TestConstants.D18 * TestConstants.D18);
     }
 
     function testShouldNotUpdateStorageWhenVaultBalanceIsLowerThanDepositAmount() public {
         //given
-        MiltonStorage miltonStorage = _miltonStorageBuilder.build();
-        miltonStorage.setMilton(_miltonStorageAddress);
+        AmmStorage ammStorage = _ammStorageBuilder.build();
+        ammStorage.setAmmTreasury(_ammStorageAddress);
 
         // when
         vm.expectRevert("IPOR_329");
-        vm.prank(_miltonStorageAddress);
-        miltonStorage.updateStorageWhenDepositToStanley(TestConstants.D18, TestConstants.ZERO);
+        vm.prank(_ammStorageAddress);
+        ammStorage.updateStorageWhenDepositToAssetManagement(TestConstants.D18, TestConstants.ZERO);
     }
 
     function testShouldNotUpdateStorageWhenTransferredAmountToCharliesGreaterThanBalacer() public {
         //given
-        MiltonStorage miltonStorage = _miltonStorageBuilder.build();
-        miltonStorage.setJoseph(_liquidityProvider);
+        AmmStorage ammStorage = _ammStorageBuilder.build();
+        ammStorage.setJoseph(_liquidityProvider);
 
         // when
         vm.expectRevert("IPOR_326");
         vm.prank(_liquidityProvider);
-        miltonStorage.updateStorageWhenTransferToCharlieTreasury(
+        ammStorage.updateStorageWhenTransferToCharlieTreasury(
             TestConstants.D18 * TestConstants.D18
         );
     }
 
     function testShouldNotUpdateStorageWhenSendZero() public {
         //given
-        MiltonStorage miltonStorage = _miltonStorageBuilder.build();
-        miltonStorage.setJoseph(_liquidityProvider);
+        AmmStorage ammStorage = _ammStorageBuilder.build();
+        ammStorage.setJoseph(_liquidityProvider);
 
         // when
         vm.expectRevert("IPOR_006");
         vm.prank(_liquidityProvider);
-        miltonStorage.updateStorageWhenTransferToCharlieTreasury(TestConstants.ZERO);
+        ammStorage.updateStorageWhenTransferToCharlieTreasury(TestConstants.ZERO);
     }
 
-    function testShouldUpdateMiltonStorageWhenClosePositionAndCallerHasRightsToUpdateDAI18Decimals()
+    function testShouldUpdateAmmStorageWhenClosePositionAndCallerHasRightsToUpdateDAI18Decimals()
         public
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+       _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -253,34 +253,34 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
 
-        _iporProtocol.miltonStorage.setMilton(_miltonStorageAddress);
+        _iporProtocol.ammStorage.setAmmTreasury(_ammStorageAddress);
 
-        vm.prank(address(_iporProtocol.milton));
+        vm.prank(address(_iporProtocol.ammTreasury));
         IporTypes.IporSwapMemory memory derivativeItem = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapPayFixed(1);
 
         // when
-        vm.prank(_miltonStorageAddress);
-        _iporProtocol.miltonStorage.updateStorageWhenCloseSwapPayFixed(
+        vm.prank(_ammStorageAddress);
+        _iporProtocol.ammStorage.updateStorageWhenCloseSwapPayFixed(
             derivativeItem,
             10 * TestConstants.D18_INT,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
     }
 
-    function testShouldUpdateMiltonStorageWhenClosePositionAndCallerHasRightsToUpdateUSDT6Decimals()
+    function testShouldUpdateAmmStorageWhenClosePositionAndCallerHasRightsToUpdateUSDT6Decimals()
         public
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -294,34 +294,34 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_6DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
 
-        _iporProtocol.miltonStorage.setMilton(_miltonStorageAddress);
+        _iporProtocol.ammStorage.setAmmTreasury(_ammStorageAddress);
 
-        vm.prank(address(_iporProtocol.milton));
+        vm.prank(address(_iporProtocol.ammTreasury));
         IporTypes.IporSwapMemory memory derivativeItem = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapPayFixed(1);
 
         // when
-        vm.prank(_miltonStorageAddress);
-        _iporProtocol.miltonStorage.updateStorageWhenCloseSwapPayFixed(
+        vm.prank(_ammStorageAddress);
+        _iporProtocol.ammStorage.updateStorageWhenCloseSwapPayFixed(
             derivativeItem,
             10 * TestConstants.D18_INT,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
     }
 
-    function testShouldNotUpdateMiltonStorageWhenClosePositionAndCallerDoesNotHaveRightsToUpdate()
+    function testShouldNotUpdateAmmStorageWhenClosePositionAndCallerDoesNotHaveRightsToUpdate()
         public
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+       _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -335,21 +335,21 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
 
-        _iporProtocol.miltonStorage.setMilton(_miltonStorageAddress);
+        _iporProtocol.ammStorage.setAmmTreasury(_ammStorageAddress);
         IporTypes.IporSwapMemory memory derivativeItem = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapPayFixed(1);
 
         // when
         vm.expectRevert("IPOR_008");
         vm.prank(_userThree);
-        _iporProtocol.miltonStorage.updateStorageWhenCloseSwapPayFixed(
+        _iporProtocol.ammStorage.updateStorageWhenCloseSwapPayFixed(
             derivativeItem,
             10 * TestConstants.D18_INT,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
@@ -359,7 +359,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     function testGetSwapsPayFixedShouldFailWhenPageSizeIsEqualToZero() public {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -375,7 +375,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_009");
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapsPayFixed(_userTwo, TestConstants.ZERO, TestConstants.ZERO);
 
         // then
@@ -387,7 +387,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -402,7 +402,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapsPayFixed(_userTwo, TestConstants.ZERO, 10);
 
         // then
@@ -415,7 +415,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -430,7 +430,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapsPayFixed(_userTwo, 10, 10);
 
         // then
@@ -443,7 +443,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -458,7 +458,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsPayFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             11,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
@@ -466,7 +466,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapsPayFixed(_userTwo, TestConstants.ZERO, 10);
 
         // then
@@ -479,7 +479,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -494,7 +494,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsPayFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             22,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
@@ -502,7 +502,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapsPayFixed(_userTwo, 10, 10);
 
         // then
@@ -515,7 +515,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -530,7 +530,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsPayFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             22,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
@@ -538,7 +538,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapsPayFixed(_userTwo, 20, 10);
 
         // then
@@ -551,7 +551,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -566,7 +566,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsPayFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             20,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
@@ -574,7 +574,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapsPayFixed(_userTwo, 20, 10);
 
         // then
@@ -585,7 +585,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     function testGetSwapsReceiveFixedShouldFailWhenPageSizeIsEqualToZero() public {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -600,7 +600,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsReceiveFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             0,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
@@ -609,7 +609,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_009");
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapsReceiveFixed(_userTwo, TestConstants.ZERO, TestConstants.ZERO);
 
         // then
@@ -622,7 +622,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -637,7 +637,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsReceiveFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             0,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
@@ -645,7 +645,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapsReceiveFixed(_userTwo, TestConstants.ZERO, 10);
 
         // then
@@ -658,7 +658,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -673,7 +673,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapsReceiveFixed(_userTwo, 10, 10);
 
         // then
@@ -686,7 +686,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -701,7 +701,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsReceiveFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             11,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
@@ -709,7 +709,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapsReceiveFixed(_userTwo, 10, 10);
 
         // then
@@ -722,7 +722,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -737,7 +737,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsReceiveFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             22,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
@@ -745,7 +745,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapsReceiveFixed(_userTwo, 10, 10);
 
         // then
@@ -758,7 +758,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -773,7 +773,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsReceiveFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             22,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
@@ -781,7 +781,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapsReceiveFixed(_userTwo, 20, 10);
 
         // then
@@ -794,7 +794,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -809,7 +809,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsReceiveFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             20,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
@@ -817,7 +817,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapsReceiveFixed(_userTwo, 20, 10);
 
         // then
@@ -828,7 +828,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     function testGetSwapIdsPayFixedShouldFailWhenPageSizeIsEqualToZero() public {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -843,7 +843,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.expectRevert("IPOR_009");
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.miltonStorage.getSwapPayFixedIds(
+        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.ammStorage.getSwapPayFixedIds(
             _userTwo,
             0,
             0
@@ -859,7 +859,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -873,7 +873,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
 
         // when
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.miltonStorage.getSwapPayFixedIds(
+        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.ammStorage.getSwapPayFixedIds(
             _userTwo,
             TestConstants.ZERO,
             10
@@ -889,7 +889,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -903,7 +903,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
 
         // when
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.miltonStorage.getSwapPayFixedIds(
+        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.ammStorage.getSwapPayFixedIds(
             _userTwo,
             10,
             10
@@ -919,7 +919,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -934,14 +934,14 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsPayFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             11,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
         );
 
         // when
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.miltonStorage.getSwapPayFixedIds(
+        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.ammStorage.getSwapPayFixedIds(
             _userTwo,
             TestConstants.ZERO,
             10
@@ -957,7 +957,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -972,14 +972,14 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsPayFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             22,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
         );
 
         // when
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.miltonStorage.getSwapPayFixedIds(
+        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.ammStorage.getSwapPayFixedIds(
             _userTwo,
             10,
             10
@@ -995,7 +995,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -1010,14 +1010,14 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsPayFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             22,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
         );
 
         // when
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.miltonStorage.getSwapPayFixedIds(
+        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.ammStorage.getSwapPayFixedIds(
             _userTwo,
             20,
             10
@@ -1033,7 +1033,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -1048,14 +1048,14 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsPayFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             20,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
         );
 
         // when
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.miltonStorage.getSwapPayFixedIds(
+        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.ammStorage.getSwapPayFixedIds(
             _userTwo,
             20,
             10
@@ -1069,7 +1069,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     function testGetSwapIdsReceiveFixedShouldFailWhenPageSizeIsEqualToZero() public {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -1085,7 +1085,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_009");
         (uint256 totalCount, uint256[] memory ids) = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapReceiveFixedIds(_userTwo, TestConstants.ZERO, TestConstants.ZERO);
 
         // then
@@ -1098,7 +1098,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -1113,7 +1113,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         (uint256 totalCount, uint256[] memory ids) = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapReceiveFixedIds(_userTwo, TestConstants.ZERO, 10);
 
         // then
@@ -1126,7 +1126,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -1141,7 +1141,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         (uint256 totalCount, uint256[] memory ids) = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapReceiveFixedIds(_userTwo, 10, 10);
 
         // then
@@ -1154,7 +1154,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -1169,7 +1169,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsReceiveFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             11,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
@@ -1177,7 +1177,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         (uint256 totalCount, uint256[] memory ids) = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapReceiveFixedIds(_userTwo, 10, 10);
 
         // then
@@ -1190,7 +1190,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -1205,7 +1205,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsReceiveFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             22,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
@@ -1213,7 +1213,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         (uint256 totalCount, uint256[] memory ids) = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapReceiveFixedIds(_userTwo, 10, 10);
 
         // then
@@ -1226,7 +1226,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -1241,7 +1241,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsReceiveFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             22,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
@@ -1249,7 +1249,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         (uint256 totalCount, uint256[] memory ids) = _iporProtocol
-            .miltonStorage
+            .ammStorage
             .getSwapReceiveFixedIds(_userTwo, 20, 10);
 
         // then
@@ -1260,7 +1260,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     function testGetSwapIdsShouldFailWhenPageSizeIsEqualToZero() public {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -1276,8 +1276,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_009");
 
-        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol
-            .miltonStorage
+        (uint256 totalCount, AmmStorageTypes.IporSwapId[] memory ids) = _iporProtocol
+            .ammStorage
             .getSwapIds(_userTwo, TestConstants.ZERO, TestConstants.ZERO);
 
         // then
@@ -1290,7 +1290,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -1304,8 +1304,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
 
         // when
-        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol
-            .miltonStorage
+        (uint256 totalCount, AmmStorageTypes.IporSwapId[] memory ids) = _iporProtocol
+            .ammStorage
             .getSwapIds(_userTwo, TestConstants.ZERO, 10);
 
         // then
@@ -1318,7 +1318,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -1332,8 +1332,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
 
         // when
-        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol
-            .miltonStorage
+        (uint256 totalCount, AmmStorageTypes.IporSwapId[] memory ids) = _iporProtocol
+            .ammStorage
             .getSwapIds(_userTwo, 10, 10);
 
         // then
@@ -1346,7 +1346,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -1361,15 +1361,15 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsPayFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             5,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
         );
 
         // when
-        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol
-            .miltonStorage
+        (uint256 totalCount, AmmStorageTypes.IporSwapId[] memory ids) = _iporProtocol
+            .ammStorage
             .getSwapIds(_userTwo, TestConstants.ZERO, 10);
 
         // then
@@ -1382,7 +1382,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -1397,15 +1397,15 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsReceiveFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             5,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
         );
 
         // when
-        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol
-            .miltonStorage
+        (uint256 totalCount, AmmStorageTypes.IporSwapId[] memory ids) = _iporProtocol
+            .ammStorage
             .getSwapIds(_userTwo, TestConstants.ZERO, 10);
 
         // then
@@ -1418,7 +1418,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -1433,22 +1433,22 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsPayFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             3,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
         );
         iterateOpenSwapsReceiveFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             3,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
         );
 
         // when
-        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol
-            .miltonStorage
+        (uint256 totalCount, AmmStorageTypes.IporSwapId[] memory ids) = _iporProtocol
+            .ammStorage
             .getSwapIds(_userTwo, TestConstants.ZERO, 10);
 
         // then
@@ -1461,7 +1461,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -1476,22 +1476,22 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsPayFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             9,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
         );
         iterateOpenSwapsReceiveFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             12,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
         );
 
         // when
-        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol
-            .miltonStorage
+        (uint256 totalCount, AmmStorageTypes.IporSwapId[] memory ids) = _iporProtocol
+            .ammStorage
             .getSwapIds(_userTwo, TestConstants.ZERO, 10);
 
         // then
@@ -1504,7 +1504,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     {
         //given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -1519,22 +1519,22 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         iterateOpenSwapsPayFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             9,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
         );
         iterateOpenSwapsReceiveFixed(
             _userTwo,
-            _iporProtocol.milton,
+            _iporProtocol.ammTreasury,
             12,
             TestConstants.USD_100_6DEC,
             TestConstants.LEVERAGE_18DEC
         );
 
         // when
-        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol
-            .miltonStorage
+        (uint256 totalCount, AmmStorageTypes.IporSwapId[] memory ids) = _iporProtocol
+            .ammStorage
             .getSwapIds(_userTwo, 80, 10);
 
         // then

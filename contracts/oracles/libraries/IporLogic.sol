@@ -3,7 +3,7 @@ pragma solidity 0.8.16;
 
 import "../../libraries/Constants.sol";
 import "../../libraries/errors/IporOracleErrors.sol";
-import "../../libraries/errors/MiltonErrors.sol";
+import "../../libraries/errors/AmmErrors.sol";
 import "../../interfaces/types/IporOracleTypes.sol";
 import "../../libraries/math/IporMath.sol";
 

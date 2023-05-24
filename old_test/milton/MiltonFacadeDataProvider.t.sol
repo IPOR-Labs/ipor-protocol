@@ -2,14 +2,14 @@
 pragma solidity 0.8.16;
 
 import "../TestCommons.sol";
-import "contracts/interfaces/types/MiltonFacadeTypes.sol";
+import "contracts/interfaces/types/AmmFacadeTypes.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
-import "contracts/interfaces/IMiltonFacadeDataProvider.sol";
+import "contracts/interfaces/IAmmTreasuryFacadeDataProvider.sol";
 import "../utils/builder/BuilderUtils.sol";
 
-contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
+contract AmmTreasuryFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
     IporProtocolFactory.AmmConfig private _ammCfg;
 
@@ -26,14 +26,14 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
 
         _ammCfg.iporOracleUpdater = _userOne;
         _ammCfg.iporRiskManagementOracleUpdater = _userOne;
-        _ammCfg.miltonDaiTestCase = BuilderUtils.MiltonTestCase.CASE0;
-        _ammCfg.miltonUsdtTestCase = BuilderUtils.MiltonTestCase.CASE0;
-        _ammCfg.miltonUsdcTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _ammCfg.ammTreasuryDaiTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
+        _ammCfg.ammTreasuryUsdtTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
+        _ammCfg.ammTreasuryUsdcTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
     }
 
-    function prepareMiltonFacadeDataProvider(IporProtocolFactory.Amm memory amm)
+    function prepareAmmTreasuryFacadeDataProvider(IporProtocolFactory.Amm memory amm)
         public
-        returns (IMiltonFacadeDataProvider)
+        returns (IAmmTreasuryFacadeDataProvider)
     {
         _iporProtocolFactory.setupUsers(_cfg, amm.usdt);
         _iporProtocolFactory.setupUsers(_cfg, amm.usdc);
@@ -44,29 +44,29 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         assets[1] = address(amm.usdt.asset);
         assets[2] = address(amm.usdc.asset);
 
-        address[] memory miltons = new address[](3);
-        miltons[0] = address(amm.dai.milton);
-        miltons[1] = address(amm.usdt.milton);
-        miltons[2] = address(amm.usdc.milton);
+        address[] memory ammTreasurys = new address[](3);
+        ammTreasurys[0] = address(amm.dai.ammTreasury);
+        ammTreasurys[1] = address(amm.usdt.ammTreasury);
+        ammTreasurys[2] = address(amm.usdc.ammTreasury);
 
-        address[] memory miltonStorages = new address[](3);
-        miltonStorages[0] = address(amm.dai.miltonStorage);
-        miltonStorages[1] = address(amm.usdt.miltonStorage);
-        miltonStorages[2] = address(amm.usdc.miltonStorage);
+        address[] memory ammStorages = new address[](3);
+        ammStorages[0] = address(amm.dai.ammStorage);
+        ammStorages[1] = address(amm.usdt.ammStorage);
+        ammStorages[2] = address(amm.usdc.ammStorage);
 
         address[] memory josephs = new address[](3);
         josephs[0] = address(amm.dai.joseph);
         josephs[1] = address(amm.usdt.joseph);
         josephs[2] = address(amm.usdc.joseph);
 
-        IMiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProvider(
+        IAmmTreasuryFacadeDataProvider ammTreasuryFacadeDataProvider = getAmmTreasuryFacadeDataProvider(
             address(amm.iporOracle),
             assets,
-            miltons,
-            miltonStorages,
+            ammTreasurys,
+            ammStorages,
             josephs
         );
-        return miltonFacadeDataProvider;
+        return ammTreasuryFacadeDataProvider;
     }
 
     function testShouldListConfigurationUsdtUsdcDai() public {
@@ -78,7 +78,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
 
         IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
 
-        IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
+        IAmmTreasuryFacadeDataProvider ammTreasuryFacadeDataProvider = prepareAmmTreasuryFacadeDataProvider(amm);
 
         amm.usdt.spreadModel.setCalculateQuotePayFixed(0);
         amm.usdc.spreadModel.setCalculateQuotePayFixed(0);
@@ -108,7 +108,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         vm.stopPrank();
 
         // when
-        MiltonFacadeTypes.AssetConfiguration[] memory assetConfigurations = miltonFacadeDataProvider.getConfiguration();
+        AmmFacadeTypes.AssetConfiguration[] memory assetConfigurations = ammTreasuryFacadeDataProvider.getConfiguration();
         // then
         for (uint256 i; i < assetConfigurations.length; ++i) {
             assertEq(TestConstants.LEVERAGE_18DEC, assetConfigurations[i].minLeverage);
@@ -132,7 +132,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         //given
         IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
 
-        IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
+        IAmmTreasuryFacadeDataProvider ammTreasuryFacadeDataProvider = prepareAmmTreasuryFacadeDataProvider(amm);
 
         amm.usdt.spreadModel.setCalculateSpreadPayFixed(6 * TestConstants.D16_INT);
         amm.usdc.spreadModel.setCalculateSpreadPayFixed(6 * TestConstants.D16_INT);
@@ -152,33 +152,33 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.startPrank(_userTwo);
-        amm.usdt.milton.openSwapPayFixed(
+        amm.usdt.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
-        amm.usdc.milton.openSwapPayFixed(
+        amm.usdc.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
-        amm.dai.milton.openSwapPayFixed(
+        amm.dai.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
 
-//        (uint256 totalCountUsdt, MiltonFacadeTypes.IporSwap[] memory swapsUsdt) = miltonFacadeDataProvider.getMySwaps(
+//        (uint256 totalCountUsdt, AmmFacadeTypes.IporSwap[] memory swapsUsdt) = ammTreasuryFacadeDataProvider.getMySwaps(
 //            address(amm.usdt.asset),
 //            TestConstants.ZERO,
 //            50
 //        );
-//        (uint256 totalCountUsdc, MiltonFacadeTypes.IporSwap[] memory swapsUsdc) = miltonFacadeDataProvider.getMySwaps(
+//        (uint256 totalCountUsdc, AmmFacadeTypes.IporSwap[] memory swapsUsdc) = ammTreasuryFacadeDataProvider.getMySwaps(
 //            address(amm.usdc.asset),
 //            TestConstants.ZERO,
 //            50
 //        );
-//        (uint256 totalCountDai, MiltonFacadeTypes.IporSwap[] memory swapsDai) = miltonFacadeDataProvider.getMySwaps(
+//        (uint256 totalCountDai, AmmFacadeTypes.IporSwap[] memory swapsDai) = ammTreasuryFacadeDataProvider.getMySwaps(
 //            address(amm.dai.asset),
 //            TestConstants.ZERO,
 //            50
@@ -202,7 +202,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
     function testShouldFailWhenPageSizeIsZero() public {
         //given
         IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
-        IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
+        IAmmTreasuryFacadeDataProvider ammTreasuryFacadeDataProvider = prepareAmmTreasuryFacadeDataProvider(amm);
         vm.prank(_userOne);
         amm.iporOracle.itfUpdateIndex(address(amm.dai.asset), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
@@ -211,7 +211,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.prank(_userTwo);
 //        vm.expectRevert(abi.encodePacked("IPOR_009"));
-//        (uint256 totalCountDai, MiltonFacadeTypes.IporSwap[] memory swapsDai) = miltonFacadeDataProvider.getMySwaps(
+//        (uint256 totalCountDai, AmmFacadeTypes.IporSwap[] memory swapsDai) = ammTreasuryFacadeDataProvider.getMySwaps(
 //            address(amm.dai.asset),
 //            0,
 //            0
@@ -225,7 +225,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
     function testShouldFailWhenPageSizeIsGreaterThanFifty() public {
         //given
         IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
-        IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
+        IAmmTreasuryFacadeDataProvider ammTreasuryFacadeDataProvider = prepareAmmTreasuryFacadeDataProvider(amm);
         vm.prank(_userOne);
         amm.iporOracle.itfUpdateIndex(address(amm.dai.asset), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
@@ -234,7 +234,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.prank(_userTwo);
 //        vm.expectRevert(abi.encodePacked("IPOR_010"));
-//        (uint256 totalCountDai, MiltonFacadeTypes.IporSwap[] memory swapsDai) = miltonFacadeDataProvider.getMySwaps(
+//        (uint256 totalCountDai, AmmFacadeTypes.IporSwap[] memory swapsDai) = ammTreasuryFacadeDataProvider.getMySwaps(
 //            address(amm.dai.asset),
 //            0,
 //            51
@@ -248,14 +248,14 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
     function testShouldReceiveEmptyListOfSwaps() public {
         //given
         IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
-        IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
+        IAmmTreasuryFacadeDataProvider ammTreasuryFacadeDataProvider = prepareAmmTreasuryFacadeDataProvider(amm);
         vm.prank(_userOne);
         amm.iporOracle.itfUpdateIndex(address(amm.dai.asset), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
         amm.dai.joseph.provideLiquidity(TestConstants.USD_50_000_18DEC);
         vm.prank(_userTwo);
         // when
-//        (uint256 totalCountDai, MiltonFacadeTypes.IporSwap[] memory swapsDai) = miltonFacadeDataProvider.getMySwaps(
+//        (uint256 totalCountDai, AmmFacadeTypes.IporSwap[] memory swapsDai) = ammTreasuryFacadeDataProvider.getMySwaps(
 //            address(amm.dai.asset),
 //            0,
 //            10
@@ -269,14 +269,14 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
     function testShouldReceiveEmptyListOfSwapsWhenUserPassesNonZeroOffsetAndDoesNotHaveAnySwap() public {
         //given
         IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
-        IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
+        IAmmTreasuryFacadeDataProvider ammTreasuryFacadeDataProvider = prepareAmmTreasuryFacadeDataProvider(amm);
         vm.prank(_userOne);
         amm.iporOracle.itfUpdateIndex(address(amm.dai.asset), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
         amm.dai.joseph.provideLiquidity(TestConstants.USD_50_000_18DEC);
         // when
         vm.prank(_userTwo);
-//        (uint256 totalCountDai, MiltonFacadeTypes.IporSwap[] memory swapsDai) = miltonFacadeDataProvider.getMySwaps(
+//        (uint256 totalCountDai, AmmFacadeTypes.IporSwap[] memory swapsDai) = ammTreasuryFacadeDataProvider.getMySwaps(
 //            address(amm.dai.asset),
 //            10,
 //            10
@@ -290,7 +290,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
     function testShouldReceiveLimitedSwapArray() public {
         //given
         IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
-        IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
+        IAmmTreasuryFacadeDataProvider ammTreasuryFacadeDataProvider = prepareAmmTreasuryFacadeDataProvider(amm);
 
         amm.usdt.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
         amm.usdt.spreadModel.setCalculateQuoteReceiveFixed(20000047708334227);
@@ -304,7 +304,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         amm.dai.joseph.provideLiquidity(TestConstants.USD_50_000_18DEC);
         iterateOpenSwapsPayFixed(
             _userTwo,
-            amm.dai.milton,
+            amm.dai.ammTreasury,
             11,
             TestConstants.USD_100_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -312,7 +312,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.prank(_userTwo);
-//        (uint256 totalCountDai, MiltonFacadeTypes.IporSwap[] memory swapsDai) = miltonFacadeDataProvider.getMySwaps(
+//        (uint256 totalCountDai, AmmFacadeTypes.IporSwap[] memory swapsDai) = ammTreasuryFacadeDataProvider.getMySwaps(
 //            address(amm.dai.asset),
 //            0,
 //            10
@@ -325,7 +325,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
     function testShouldReceiveLimitedSwapArrayWithOffset() public {
         //given
         IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
-        IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
+        IAmmTreasuryFacadeDataProvider ammTreasuryFacadeDataProvider = prepareAmmTreasuryFacadeDataProvider(amm);
 
         amm.usdt.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
         amm.usdt.spreadModel.setCalculateQuoteReceiveFixed(20000023854167113);
@@ -339,7 +339,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         amm.dai.joseph.provideLiquidity(TestConstants.USD_50_000_18DEC);
         iterateOpenSwapsPayFixed(
             _userTwo,
-            amm.dai.milton,
+            amm.dai.ammTreasury,
             22,
             TestConstants.USD_100_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -347,7 +347,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.prank(_userTwo);
-//        (uint256 totalCountDai, MiltonFacadeTypes.IporSwap[] memory swapsDai) = miltonFacadeDataProvider.getMySwaps(
+//        (uint256 totalCountDai, AmmFacadeTypes.IporSwap[] memory swapsDai) = ammTreasuryFacadeDataProvider.getMySwaps(
 //            address(amm.dai.asset),
 //            10,
 //            10
@@ -360,7 +360,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
     function testShouldReceiveRestOfSwapsOnly() public {
         //given
         IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
-        IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
+        IAmmTreasuryFacadeDataProvider ammTreasuryFacadeDataProvider = prepareAmmTreasuryFacadeDataProvider(amm);
 
         amm.usdt.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
         amm.usdt.spreadModel.setCalculateQuoteReceiveFixed(20000023854167113);
@@ -374,14 +374,14 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         amm.dai.joseph.provideLiquidity(TestConstants.USD_50_000_18DEC);
         iterateOpenSwapsPayFixed(
             _userTwo,
-            amm.dai.milton,
+            amm.dai.ammTreasury,
             22,
             TestConstants.USD_100_18DEC,
             TestConstants.LEVERAGE_18DEC
         );
         // when
         vm.prank(_userTwo);
-//        (uint256 totalCountDai, MiltonFacadeTypes.IporSwap[] memory swapsDai) = miltonFacadeDataProvider.getMySwaps(
+//        (uint256 totalCountDai, AmmFacadeTypes.IporSwap[] memory swapsDai) = ammTreasuryFacadeDataProvider.getMySwaps(
 //            address(amm.dai.asset),
 //            20,
 //            10
@@ -394,7 +394,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
     function testShouldReceiveEmptyListOfSwapsWhenOffsetIsEqualToNumberOfSwaps() public {
         //given
         IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
-        IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
+        IAmmTreasuryFacadeDataProvider ammTreasuryFacadeDataProvider = prepareAmmTreasuryFacadeDataProvider(amm);
 
         amm.usdt.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
         amm.usdt.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
@@ -408,7 +408,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         amm.dai.joseph.provideLiquidity(TestConstants.USD_50_000_18DEC);
         iterateOpenSwapsPayFixed(
             _userTwo,
-            amm.dai.milton,
+            amm.dai.ammTreasury,
             20,
             TestConstants.USD_100_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -416,7 +416,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.prank(_userTwo);
-//        (uint256 totalCountDai, MiltonFacadeTypes.IporSwap[] memory swapsDai) = miltonFacadeDataProvider.getMySwaps(
+//        (uint256 totalCountDai, AmmFacadeTypes.IporSwap[] memory swapsDai) = ammTreasuryFacadeDataProvider.getMySwaps(
 //            address(amm.dai.asset),
 //            20,
 //            10

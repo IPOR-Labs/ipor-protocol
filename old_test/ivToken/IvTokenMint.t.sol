@@ -22,7 +22,7 @@ contract IvTokenMintTest is Test, TestCommons {
         _userTwo = _getUserAddress(2);
     }
 
-    function testShouldNotMintIvTokenWhenNotStanley() public {
+    function testShouldNotMintIvTokenWhenNotAssetManagement() public {
         // given
         // when
         vm.expectRevert(abi.encodePacked("IPOR_501"));
@@ -32,7 +32,7 @@ contract IvTokenMintTest is Test, TestCommons {
     function testShouldNotMintIvTokenWhenAmountIsZero() public {
         // given
         address mockIporVaultAddress = _admin;
-        _ivToken.setStanley(mockIporVaultAddress);
+        _ivToken.setAssetManagement(mockIporVaultAddress);
         // when
         vm.expectRevert(abi.encodePacked("IPOR_503"));
         _ivToken.mint(_userOne, 0);
@@ -41,7 +41,7 @@ contract IvTokenMintTest is Test, TestCommons {
     function testShouldNotMintIvTokenWhenZeroAddress() public {
         // given
         address mockIporVaultAddress = _userOne;
-        _ivToken.setStanley(mockIporVaultAddress);
+        _ivToken.setAssetManagement(mockIporVaultAddress);
         // when
         vm.prank(_userOne);
         vm.expectRevert(abi.encodePacked("ERC20: mint to the zero address"));
@@ -51,7 +51,7 @@ contract IvTokenMintTest is Test, TestCommons {
     function testShouldMintNewTokens() public {
         // given
         address mockIporVaultAddress = _userOne;
-        _ivToken.setStanley(mockIporVaultAddress);
+        _ivToken.setAssetManagement(mockIporVaultAddress);
         uint256 amount = Constants.D18;
         // when
         vm.prank(_userOne);
@@ -65,7 +65,7 @@ contract IvTokenMintTest is Test, TestCommons {
     function testShouldEmitMintEvent() public {
         // given
         address mockIporVaultAddress = _admin;
-        _ivToken.setStanley(mockIporVaultAddress);
+        _ivToken.setAssetManagement(mockIporVaultAddress);
         uint256 amount = Constants.D18;
         uint256 balanceBefore = _ivToken.balanceOf(_userOne);
         // when

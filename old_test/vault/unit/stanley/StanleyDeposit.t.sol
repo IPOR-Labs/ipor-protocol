@@ -6,26 +6,26 @@ import {DataUtils} from "../../../utils/DataUtils.sol";
 import {TestConstants} from "../../../utils/TestConstants.sol";
 import {StrategyAave} from "contracts/vault/strategies/StrategyAave.sol";
 import {StrategyCompound} from "contracts/vault/strategies/StrategyCompound.sol";
-import {StanleyDai} from "contracts/vault/StanleyDai.sol";
+import {AssetManagementDai} from "contracts/vault/AssetManagementDai.sol";
 import {MockTestnetToken} from "contracts/mocks/tokens/MockTestnetToken.sol";
-import {MockADAI} from "contracts/mocks/stanley/aave/MockADAI.sol";
-import {MockCToken} from "contracts/mocks/stanley/compound/MockCToken.sol";
+import {MockADAI} from "contracts/mocks/assetManagement/aave/MockADAI.sol";
+import {MockCToken} from "contracts/mocks/assetManagement/compound/MockCToken.sol";
 import {AAVEMockedToken} from "contracts/mocks/tokens/AAVEMockedToken.sol";
-import {MockComptroller} from "contracts/mocks/stanley/compound/MockComptroller.sol";
+import {MockComptroller} from "contracts/mocks/assetManagement/compound/MockComptroller.sol";
 import {MockedCOMPToken} from "contracts/mocks/tokens/MockedCOMPToken.sol";
-import {MockWhitePaper} from "contracts/mocks/stanley/compound/MockWhitePaper.sol";
-import {MockAaveLendingPoolProvider} from "contracts/mocks/stanley/aave/MockAaveLendingPoolProvider.sol";
-import {MockAaveLendingPoolCore} from "contracts/mocks/stanley/aave/MockAaveLendingPoolCore.sol";
-import {MockAaveLendingPoolV2} from "contracts/mocks/stanley/aave/MockAaveLendingPoolV2.sol";
-import {AaveInterestRateMockStrategyV2} from "contracts/mocks/stanley/aave/MockAaveInterestRateStrategyV2.sol";
-import {MockAaveStableDebtToken} from "contracts/mocks/stanley/aave/MockAaveStableDebtToken.sol";
-import {MockAaveVariableDebtToken} from "contracts/mocks/stanley/aave/MockAaveVariableDebtToken.sol";
-import {MockProviderAave} from "contracts/mocks/stanley/aave/MockProviderAave.sol";
-import {MockStakedAave} from "contracts/mocks/stanley/aave/MockStakedAave.sol";
-import {MockAaveIncentivesController} from "contracts/mocks/stanley/aave/MockAaveIncentivesController.sol";
+import {MockWhitePaper} from "contracts/mocks/assetManagement/compound/MockWhitePaper.sol";
+import {MockAaveLendingPoolProvider} from "contracts/mocks/assetManagement/aave/MockAaveLendingPoolProvider.sol";
+import {MockAaveLendingPoolCore} from "contracts/mocks/assetManagement/aave/MockAaveLendingPoolCore.sol";
+import {MockAaveLendingPoolV2} from "contracts/mocks/assetManagement/aave/MockAaveLendingPoolV2.sol";
+import {AaveInterestRateMockStrategyV2} from "contracts/mocks/assetManagement/aave/MockAaveInterestRateStrategyV2.sol";
+import {MockAaveStableDebtToken} from "contracts/mocks/assetManagement/aave/MockAaveStableDebtToken.sol";
+import {MockAaveVariableDebtToken} from "contracts/mocks/assetManagement/aave/MockAaveVariableDebtToken.sol";
+import {MockProviderAave} from "contracts/mocks/assetManagement/aave/MockProviderAave.sol";
+import {MockStakedAave} from "contracts/mocks/assetManagement/aave/MockStakedAave.sol";
+import {MockAaveIncentivesController} from "contracts/mocks/assetManagement/aave/MockAaveIncentivesController.sol";
 import {IvToken} from "contracts/tokens/IvToken.sol";
 
-contract StanleyDepositTest is TestCommons, DataUtils {
+contract AssetManagementDepositTest is TestCommons, DataUtils {
     MockTestnetToken internal _daiMockedToken;
     MockTestnetToken internal _usdtMockedToken;
     MockTestnetToken internal _usdcMockedToken;
@@ -48,7 +48,7 @@ contract StanleyDepositTest is TestCommons, DataUtils {
     MockAaveIncentivesController internal _mockAaveIncentivesController;
     StrategyAave internal _strategyAaveDai;
     StrategyCompound internal _strategyCompoundDai;
-    StanleyDai internal _stanleyDai;
+    AssetManagementDai internal _assetManagementDai;
     IvToken internal _ivTokenDai;
 
     function _setupAave() internal {
@@ -79,20 +79,20 @@ contract StanleyDepositTest is TestCommons, DataUtils {
         _strategyCompoundDai.setTreasury(_userTwo);
     }
 
-    function _setupStanley() internal {
-        _strategyCompoundDai.setStanley(address(_stanleyDai));
-        _strategyAaveDai.setStanley(address(_stanleyDai));
-        _ivTokenDai.setStanley(address(_stanleyDai));
-        _stanleyDai.setMilton(_admin);
+    function _setupAssetManagement() internal {
+        _strategyCompoundDai.setAssetManagement(address(_assetManagementDai));
+        _strategyAaveDai.setAssetManagement(address(_assetManagementDai));
+        _ivTokenDai.setAssetManagement(address(_assetManagementDai));
+        _assetManagementDai.setAmmTreasury(_admin);
     }
 
-    function _mintTokensForTwoUsersAndApproveStanley() internal {
+    function _mintTokensForTwoUsersAndApproveAssetManagement() internal {
         _daiMockedToken.mint(_userOne, TestConstants.USD_10_000_18DEC);
         _daiMockedToken.mint(_userTwo, TestConstants.USD_10_000_18DEC);
         vm.prank(_userOne);
-        _daiMockedToken.approve(address(_stanleyDai), TestConstants.USD_10_000_18DEC);
+        _daiMockedToken.approve(address(_assetManagementDai), TestConstants.USD_10_000_18DEC);
         vm.prank(_userTwo);
-        _daiMockedToken.approve(address(_stanleyDai), TestConstants.USD_10_000_18DEC);
+        _daiMockedToken.approve(address(_assetManagementDai), TestConstants.USD_10_000_18DEC);
     }
 
     function setUp() public {
@@ -153,13 +153,13 @@ contract StanleyDepositTest is TestCommons, DataUtils {
 
         _setupStrategies();
 
-        _stanleyDai = getStanleyDai(
+        _assetManagementDai = getAssetManagementDai(
             address(_daiMockedToken),
             address(_ivTokenDai),
             address(_strategyAaveDai),
             address(_strategyCompoundDai)
         );
-        _setupStanley();
+        _setupAssetManagement();
     }
 
     function testShouldChangeAaveAPR() public {
@@ -187,13 +187,13 @@ contract StanleyDepositTest is TestCommons, DataUtils {
     function testShouldAcceptDepositAndTransferTokensIntoAave() public {
         // given
         _lendingPoolAave.setCurrentLiquidityRate((TestConstants.RAY_UINT128 / 100) * 10);
-        _daiMockedToken.approve(address(_stanleyDai), TestConstants.USD_10_000_18DEC);
+        _daiMockedToken.approve(address(_assetManagementDai), TestConstants.USD_10_000_18DEC);
         // when
-        _stanleyDai.deposit(TestConstants.USD_10_18DEC);
+        _assetManagementDai.deposit(TestConstants.USD_10_18DEC);
         // then
         uint256 aaveBalance = _strategyAaveDai.balanceOf();
         uint256 userIvTokenBalance = _ivTokenDai.balanceOf(_admin);
-        uint256 iporVaultBalance = _daiMockedToken.balanceOf(address(_stanleyDai));
+        uint256 iporVaultBalance = _daiMockedToken.balanceOf(address(_assetManagementDai));
         assertEq(aaveBalance, TestConstants.USD_10_18DEC);
         assertEq(userIvTokenBalance, TestConstants.USD_10_18DEC);
         assertEq(iporVaultBalance, TestConstants.ZERO);
@@ -201,13 +201,13 @@ contract StanleyDepositTest is TestCommons, DataUtils {
 
     function testShouldAcceptDepositAndTransferTokensIntoCompound() public {
         // given
-        _daiMockedToken.approve(address(_stanleyDai), TestConstants.USD_10_000_18DEC);
+        _daiMockedToken.approve(address(_assetManagementDai), TestConstants.USD_10_000_18DEC);
         // when
-        _stanleyDai.deposit(TestConstants.USD_10_18DEC);
+        _assetManagementDai.deposit(TestConstants.USD_10_18DEC);
         // then
         uint256 compoundBalance = _strategyCompoundDai.balanceOf();
         uint256 userIvTokenBalance = _ivTokenDai.balanceOf(_admin);
-        uint256 iporVaultBalance = _daiMockedToken.balanceOf(address(_stanleyDai));
+        uint256 iporVaultBalance = _daiMockedToken.balanceOf(address(_assetManagementDai));
         assertEq(compoundBalance, TestConstants.USD_10_18DEC);
         assertEq(userIvTokenBalance, TestConstants.USD_10_18DEC);
         assertEq(iporVaultBalance, TestConstants.ZERO);
@@ -216,14 +216,14 @@ contract StanleyDepositTest is TestCommons, DataUtils {
     function testShouldAcceptDepositsAndTransferTokensIntoAaveTwoTimesWhenOneUserMakesDeposits() public {
         // given
         _lendingPoolAave.setCurrentLiquidityRate((TestConstants.RAY_UINT128 / 100) * 10);
-        _daiMockedToken.approve(address(_stanleyDai), TestConstants.USD_10_000_18DEC);
+        _daiMockedToken.approve(address(_assetManagementDai), TestConstants.USD_10_000_18DEC);
         // when
-        _stanleyDai.deposit(TestConstants.USD_10_18DEC);
-        _stanleyDai.deposit(TestConstants.USD_10_18DEC);
+        _assetManagementDai.deposit(TestConstants.USD_10_18DEC);
+        _assetManagementDai.deposit(TestConstants.USD_10_18DEC);
         // then
         uint256 aaveBalance = _strategyAaveDai.balanceOf();
         uint256 userIvTokenBalance = _ivTokenDai.balanceOf(_admin);
-        uint256 iporVaultBalance = _daiMockedToken.balanceOf(address(_stanleyDai));
+        uint256 iporVaultBalance = _daiMockedToken.balanceOf(address(_assetManagementDai));
         assertEq(aaveBalance, TestConstants.USD_20_18DEC);
         assertEq(userIvTokenBalance, TestConstants.USD_20_18DEC);
         assertEq(iporVaultBalance, TestConstants.ZERO);
@@ -231,14 +231,14 @@ contract StanleyDepositTest is TestCommons, DataUtils {
 
     function testShouldAcceptDepositsAndTransferTokensIntoCompoundTwoTimesWhenOneUserMakesDeposits() public {
         // given
-        _daiMockedToken.approve(address(_stanleyDai), TestConstants.USD_10_000_18DEC);
+        _daiMockedToken.approve(address(_assetManagementDai), TestConstants.USD_10_000_18DEC);
         // when
-        _stanleyDai.deposit(TestConstants.USD_10_18DEC);
-        _stanleyDai.deposit(TestConstants.USD_10_18DEC);
+        _assetManagementDai.deposit(TestConstants.USD_10_18DEC);
+        _assetManagementDai.deposit(TestConstants.USD_10_18DEC);
         // then
         uint256 compoundBalance = _strategyCompoundDai.balanceOf();
         uint256 userIvTokenBalance = _ivTokenDai.balanceOf(_admin);
-        uint256 iporVaultBalance = _daiMockedToken.balanceOf(address(_stanleyDai));
+        uint256 iporVaultBalance = _daiMockedToken.balanceOf(address(_assetManagementDai));
         assertEq(compoundBalance, 19999999999999999999);
         assertEq(userIvTokenBalance, TestConstants.USD_20_18DEC);
         assertEq(iporVaultBalance, TestConstants.ZERO);
@@ -247,16 +247,16 @@ contract StanleyDepositTest is TestCommons, DataUtils {
     function testShouldAcceptDepositsAndTransferTokensFirstIntoAaveSecondIntoCompoundWhenOneUserMakesDeposits() public {
         // given
         _lendingPoolAave.setCurrentLiquidityRate((TestConstants.RAY_UINT128 / 100) * 10);
-        _daiMockedToken.approve(address(_stanleyDai), TestConstants.USD_10_000_18DEC);
+        _daiMockedToken.approve(address(_assetManagementDai), TestConstants.USD_10_000_18DEC);
         // when
-        _stanleyDai.deposit(TestConstants.USD_10_18DEC); // into aave
+        _assetManagementDai.deposit(TestConstants.USD_10_18DEC); // into aave
         _lendingPoolAave.setCurrentLiquidityRate(TestConstants.RAY_UINT128 / 100);
-        _stanleyDai.deposit(TestConstants.USD_20_18DEC); // into compound
+        _assetManagementDai.deposit(TestConstants.USD_20_18DEC); // into compound
         // then
         uint256 aaveBalance = _strategyAaveDai.balanceOf();
         uint256 compoundBalance = _strategyCompoundDai.balanceOf();
         uint256 userIvTokenBalance = _ivTokenDai.balanceOf(_admin);
-        uint256 iporVaultBalance = _daiMockedToken.balanceOf(address(_stanleyDai));
+        uint256 iporVaultBalance = _daiMockedToken.balanceOf(address(_assetManagementDai));
         assertEq(aaveBalance, TestConstants.USD_10_18DEC);
         assertEq(compoundBalance, TestConstants.USD_20_18DEC);
         assertEq(userIvTokenBalance, 30 * TestConstants.D18);
@@ -265,16 +265,16 @@ contract StanleyDepositTest is TestCommons, DataUtils {
 
     function testShouldAcceptDepositsAndTransferTokensFirstIntoCompoundSecondIntoAaveWhenOneUserMakesDeposits() public {
         // given
-        _daiMockedToken.approve(address(_stanleyDai), TestConstants.USD_10_000_18DEC);
+        _daiMockedToken.approve(address(_assetManagementDai), TestConstants.USD_10_000_18DEC);
         // when
-        _stanleyDai.deposit(TestConstants.USD_10_18DEC); // into compound
+        _assetManagementDai.deposit(TestConstants.USD_10_18DEC); // into compound
         _lendingPoolAave.setCurrentLiquidityRate((TestConstants.RAY_UINT128 / 100) * 10);
-        _stanleyDai.deposit(TestConstants.USD_20_18DEC); // into aave
+        _assetManagementDai.deposit(TestConstants.USD_20_18DEC); // into aave
         // then
         uint256 aaveBalance = _strategyAaveDai.balanceOf();
         uint256 compoundBalance = _strategyCompoundDai.balanceOf();
         uint256 userIvTokenBalance = _ivTokenDai.balanceOf(_admin);
-        uint256 iporVaultBalance = _daiMockedToken.balanceOf(address(_stanleyDai));
+        uint256 iporVaultBalance = _daiMockedToken.balanceOf(address(_assetManagementDai));
         assertEq(aaveBalance, TestConstants.USD_20_18DEC);
         assertEq(compoundBalance, TestConstants.USD_10_18DEC);
         assertEq(userIvTokenBalance, 30 * TestConstants.D18);
@@ -283,20 +283,20 @@ contract StanleyDepositTest is TestCommons, DataUtils {
 
     function testShouldTwoDifferentUsersDepositIntoAave() public {
         // given
-        _mintTokensForTwoUsersAndApproveStanley();
+        _mintTokensForTwoUsersAndApproveAssetManagement();
         _lendingPoolAave.setCurrentLiquidityRate((TestConstants.RAY_UINT128 / 100) * 10);
         // when
-        _stanleyDai.setMilton(_userOne);
+        _assetManagementDai.setAmmTreasury(_userOne);
         vm.prank(_userOne);
-        _stanleyDai.deposit(TestConstants.USD_10_18DEC);
-        _stanleyDai.setMilton(_userTwo);
+        _assetManagementDai.deposit(TestConstants.USD_10_18DEC);
+        _assetManagementDai.setAmmTreasury(_userTwo);
         vm.prank(_userTwo);
-        _stanleyDai.deposit(TestConstants.USD_20_18DEC);
+        _assetManagementDai.deposit(TestConstants.USD_20_18DEC);
         // then
         uint256 aaveBalance = _strategyAaveDai.balanceOf();
         uint256 userOneIvTokenBalance = _ivTokenDai.balanceOf(_userOne);
         uint256 userTwoIvTokenBalance = _ivTokenDai.balanceOf(_userTwo);
-        uint256 iporVaultBalance = _daiMockedToken.balanceOf(address(_stanleyDai));
+        uint256 iporVaultBalance = _daiMockedToken.balanceOf(address(_assetManagementDai));
         assertEq(aaveBalance, 30 * TestConstants.D18);
         assertEq(userOneIvTokenBalance, TestConstants.USD_10_18DEC);
         assertEq(userTwoIvTokenBalance, TestConstants.USD_20_18DEC);
@@ -305,19 +305,19 @@ contract StanleyDepositTest is TestCommons, DataUtils {
 
     function testShouldTwoDifferentUsersDepositIntoCompound() public {
         // given
-        _mintTokensForTwoUsersAndApproveStanley();
+        _mintTokensForTwoUsersAndApproveAssetManagement();
         // when
-        _stanleyDai.setMilton(_userOne);
+        _assetManagementDai.setAmmTreasury(_userOne);
         vm.prank(_userOne);
-        _stanleyDai.deposit(TestConstants.USD_10_18DEC);
-        _stanleyDai.setMilton(_userTwo);
+        _assetManagementDai.deposit(TestConstants.USD_10_18DEC);
+        _assetManagementDai.setAmmTreasury(_userTwo);
         vm.prank(_userTwo);
-        _stanleyDai.deposit(TestConstants.USD_20_18DEC);
+        _assetManagementDai.deposit(TestConstants.USD_20_18DEC);
         // then
         uint256 compoundBalance = _strategyCompoundDai.balanceOf();
         uint256 userOneIvTokenBalance = _ivTokenDai.balanceOf(_userOne);
         uint256 userTwoIvTokenBalance = _ivTokenDai.balanceOf(_userTwo);
-        uint256 iporVaultBalance = _daiMockedToken.balanceOf(address(_stanleyDai));
+        uint256 iporVaultBalance = _daiMockedToken.balanceOf(address(_assetManagementDai));
         assertEq(compoundBalance, 30 * TestConstants.D18);
         assertEq(userOneIvTokenBalance, TestConstants.USD_10_18DEC);
         assertEq(userTwoIvTokenBalance, TestConstants.USD_20_18DEC);
@@ -326,21 +326,21 @@ contract StanleyDepositTest is TestCommons, DataUtils {
 
     function testShouldFirstUserDepositIntoCompoundSecondIntoAave() public {
         // given
-        _mintTokensForTwoUsersAndApproveStanley();
+        _mintTokensForTwoUsersAndApproveAssetManagement();
         // when
-        _stanleyDai.setMilton(_userOne);
+        _assetManagementDai.setAmmTreasury(_userOne);
         vm.prank(_userOne);
-        _stanleyDai.deposit(TestConstants.USD_10_18DEC);
-        _stanleyDai.setMilton(_userTwo);
+        _assetManagementDai.deposit(TestConstants.USD_10_18DEC);
+        _assetManagementDai.setAmmTreasury(_userTwo);
         _lendingPoolAave.setCurrentLiquidityRate((TestConstants.RAY_UINT128 / 100) * 10);
         vm.prank(_userTwo);
-        _stanleyDai.deposit(TestConstants.USD_20_18DEC);
+        _assetManagementDai.deposit(TestConstants.USD_20_18DEC);
         // then
         uint256 aaveBalance = _strategyAaveDai.balanceOf();
         uint256 compoundBalance = _strategyCompoundDai.balanceOf();
         uint256 userOneIvTokenBalance = _ivTokenDai.balanceOf(_userOne);
         uint256 userTwoIvTokenBalance = _ivTokenDai.balanceOf(_userTwo);
-        uint256 iporVaultBalance = _daiMockedToken.balanceOf(address(_stanleyDai));
+        uint256 iporVaultBalance = _daiMockedToken.balanceOf(address(_assetManagementDai));
         assertEq(aaveBalance, TestConstants.USD_20_18DEC);
         assertEq(compoundBalance, TestConstants.USD_10_18DEC);
         assertEq(userOneIvTokenBalance, TestConstants.USD_10_18DEC);
@@ -348,51 +348,51 @@ contract StanleyDepositTest is TestCommons, DataUtils {
         assertEq(iporVaultBalance, TestConstants.ZERO);
     }
 
-    function testShouldNotDepositWhenIsNotMilton() public {
+    function testShouldNotDepositWhenIsNotAmmTreasury() public {
         // given
         _daiMockedToken.mint(_userOne, TestConstants.USD_10_000_18DEC);
         vm.prank(_userOne);
-        _daiMockedToken.approve(address(_stanleyDai), TestConstants.USD_10_000_18DEC);
+        _daiMockedToken.approve(address(_assetManagementDai), TestConstants.USD_10_000_18DEC);
         // when
         vm.expectRevert("IPOR_008");
         vm.prank(_userOne);
-        _stanleyDai.deposit(TestConstants.USD_10_18DEC);
+        _assetManagementDai.deposit(TestConstants.USD_10_18DEC);
     }
 
     function testShouldNotDepositWhenUserTriesToDepositZero() public {
         // given
         _daiMockedToken.mint(_userOne, TestConstants.USD_10_000_18DEC);
         vm.prank(_userOne);
-        _daiMockedToken.approve(address(_stanleyDai), TestConstants.USD_10_000_18DEC);
-        _stanleyDai.setMilton(_userOne);
+        _daiMockedToken.approve(address(_assetManagementDai), TestConstants.USD_10_000_18DEC);
+        _assetManagementDai.setAmmTreasury(_userOne);
         // when
         vm.expectRevert("IPOR_004");
         vm.prank(_userOne);
-        _stanleyDai.deposit(TestConstants.ZERO);
+        _assetManagementDai.deposit(TestConstants.ZERO);
     }
 
     function testShouldCalculateExchangeRate() public {
         // given
-        _mintTokensForTwoUsersAndApproveStanley();
-        _stanleyDai.setMilton(_userOne);
+        _mintTokensForTwoUsersAndApproveAssetManagement();
+        _assetManagementDai.setAmmTreasury(_userOne);
         vm.prank(_userOne);
-        _stanleyDai.deposit(TestConstants.USD_10_18DEC);
-        _stanleyDai.setMilton(_userTwo);
+        _assetManagementDai.deposit(TestConstants.USD_10_18DEC);
+        _assetManagementDai.setAmmTreasury(_userTwo);
         _lendingPoolAave.setCurrentLiquidityRate((TestConstants.RAY_UINT128 / 100) * 10);
         vm.prank(_userTwo);
-        _stanleyDai.deposit(TestConstants.USD_20_18DEC);
+        _assetManagementDai.deposit(TestConstants.USD_20_18DEC);
         // when
-        uint256 exchangeRate = _stanleyDai.calculateExchangeRate();
+        uint256 exchangeRate = _assetManagementDai.calculateExchangeRate();
         // then
         assertEq(exchangeRate, TestConstants.D18);
     }
 
     function testShouldMigrateAllAssetsFromCompoundToAave() public {
-        _daiMockedToken.approve(address(_stanleyDai), TestConstants.USD_10_000_18DEC);
-        _stanleyDai.deposit(TestConstants.USD_10_18DEC); // into Compound
+        _daiMockedToken.approve(address(_assetManagementDai), TestConstants.USD_10_000_18DEC);
+        _assetManagementDai.deposit(TestConstants.USD_10_18DEC); // into Compound
         _lendingPoolAave.setCurrentLiquidityRate((TestConstants.RAY_UINT128 / 100) * 10);
         // when
-        _stanleyDai.migrateAssetToStrategyWithMaxApr();
+        _assetManagementDai.migrateAssetToStrategyWithMaxApr();
         // then
         uint256 compoundBalance = _strategyCompoundDai.balanceOf();
         uint256 aaveBalance = _strategyAaveDai.balanceOf();
@@ -404,11 +404,11 @@ contract StanleyDepositTest is TestCommons, DataUtils {
 
     function testShouldMigrateAllAssetsFromAaveToCompound() public {
         _lendingPoolAave.setCurrentLiquidityRate((TestConstants.RAY_UINT128 / 100) * 10);
-        _daiMockedToken.approve(address(_stanleyDai), TestConstants.USD_10_000_18DEC);
-        _stanleyDai.deposit(TestConstants.USD_10_18DEC); // into Aave
+        _daiMockedToken.approve(address(_assetManagementDai), TestConstants.USD_10_000_18DEC);
+        _assetManagementDai.deposit(TestConstants.USD_10_18DEC); // into Aave
         _lendingPoolAave.setCurrentLiquidityRate(TestConstants.RAY_UINT128 / 100);
         // when
-        _stanleyDai.migrateAssetToStrategyWithMaxApr();
+        _assetManagementDai.migrateAssetToStrategyWithMaxApr();
         // then
         uint256 compoundBalance = _strategyCompoundDai.balanceOf();
         uint256 aaveBalance = _strategyAaveDai.balanceOf();

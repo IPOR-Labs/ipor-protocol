@@ -4,15 +4,15 @@ pragma solidity 0.8.16;
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
 import "contracts/libraries/Constants.sol";
-import "contracts/mocks/spread/MockBaseMiltonSpreadModelDai.sol";
+import "contracts/mocks/spread/MockBaseAmmTreasurySpreadModelDai.sol";
 import "contracts/interfaces/types/IporTypes.sol";
 
-contract MiltonSpreadPayFixedTest is Test, TestCommons {
-    MockBaseMiltonSpreadModelDai internal _miltonSpread;
+contract AmmTreasurySpreadPayFixedTest is Test, TestCommons {
+    MockBaseAmmTreasurySpreadModelDai internal _ammTreasurySpread;
     address internal _userOne;
 
     function setUp() public {
-        _miltonSpread = new MockBaseMiltonSpreadModelDai();
+        _ammTreasurySpread = new MockBaseAmmTreasurySpreadModelDai();
         _userOne = _getUserAddress(1);
     }
 
@@ -27,7 +27,7 @@ contract MiltonSpreadPayFixedTest is Test, TestCommons {
             1 * 10**16, // exponentialMovingAverage: 1%
             15 * 10**15 // exponentialWeightedMovingVariance: 0.15%
         );
-        IporTypes.MiltonBalancesMemory memory accruedBalance = IporTypes.MiltonBalancesMemory(
+        IporTypes.AmmBalancesMemory memory accruedBalance = IporTypes.AmmBalancesMemory(
             10000 * Constants.D18 + swapCollateral, // totalCollateralPayFixed
             13000 * Constants.D18, // totalCollateralReceiveFixed
             liquidityPoolBalance + openingFee, // liquidityPool
@@ -36,7 +36,7 @@ contract MiltonSpreadPayFixedTest is Test, TestCommons {
         uint256 expectedQuoteValue = 4630250241405252731;
         // when
         vm.prank(_userOne);
-        uint256 actualQuotedValue = _miltonSpread.calculateQuotePayFixed(accruedIpor, accruedBalance);
+        uint256 actualQuotedValue = _ammTreasurySpread.calculateQuotePayFixed(accruedIpor, accruedBalance);
         // then
         assertEq(actualQuotedValue, expectedQuoteValue);
         assertLe(accruedIpor.indexValue, actualQuotedValue);
@@ -53,7 +53,7 @@ contract MiltonSpreadPayFixedTest is Test, TestCommons {
             1 * 10**16, // exponentialMovingAverage: 1%
             15 * 10**15 // exponentialWeightedMovingVariance: 0.15%
         );
-        IporTypes.MiltonBalancesMemory memory accruedBalance = IporTypes.MiltonBalancesMemory(
+        IporTypes.AmmBalancesMemory memory accruedBalance = IporTypes.AmmBalancesMemory(
             10000 * Constants.D18 + swapCollateral, // totalCollateralPayFixed
             13000 * Constants.D18, // totalCollateralReceiveFixed
             liquidityPoolBalance + openingFee, // liquidityPool
@@ -62,7 +62,7 @@ contract MiltonSpreadPayFixedTest is Test, TestCommons {
         uint256 expectedQuoteValue = 4520250241405252731;
         // when
         vm.prank(_userOne);
-        uint256 actualQuotedValue = _miltonSpread.calculateQuotePayFixed(accruedIpor, accruedBalance);
+        uint256 actualQuotedValue = _ammTreasurySpread.calculateQuotePayFixed(accruedIpor, accruedBalance);
         // then
         assertEq(actualQuotedValue, expectedQuoteValue);
     }

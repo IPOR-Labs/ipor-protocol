@@ -13,50 +13,50 @@ contract VaultDaiCompoundTest is Test {
         _user = vm.rememberKey(2);
     }
 
-    function testShouldDepositToStanleyDai() public {
+    function testShouldDepositToAssetManagementDai() public {
         // given
         uint256 amount = 1_000 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
         amm.overrideAaveStrategyWithZeroApr(_admin);
-        deal(amm.dai(), address(amm.milton()), amount);
+        deal(amm.dai(), address(amm.ammTreasury()), amount);
 
-        uint256 miltonTotalBalanceOnStanleyBefore = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceOnAssetManagementBefore = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
 
         // when
         vm.startPrank(_admin);
-        amm.joseph().depositToStanley(amount);
+        amm.joseph().depositToAssetManagement(amount);
         vm.stopPrank();
 
         // then
-        uint256 miltonTotalBalanceStanleyAfter = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceAssetManagementAfter = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
         assertGt(
-            miltonTotalBalanceStanleyAfter,
-            miltonTotalBalanceOnStanleyBefore,
-            "miltonTotalBalanceStanleyAfter > miltonTotalBalanceOnStanleyBefore"
+            ammTreasuryTotalBalanceAssetManagementAfter,
+            ammTreasuryTotalBalanceOnAssetManagementBefore,
+            "ammTreasuryTotalBalanceAssetManagementAfter > ammTreasuryTotalBalanceOnAssetManagementBefore"
         );
     }
 
-    function testShouldBeAbleToWithdrawFromStanleyDai() public {
+    function testShouldBeAbleToWithdrawFromAssetManagementDai() public {
         // given
         uint256 amount = 1_000 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
         amm.overrideAaveStrategyWithZeroApr(_admin);
-        deal(amm.dai(), address(amm.milton()), amount);
+        deal(amm.dai(), address(amm.ammTreasury()), amount);
         vm.startPrank(_admin);
-        amm.joseph().depositToStanley(amount);
+        amm.joseph().depositToAssetManagement(amount);
 
-        uint256 miltonTotalBalanceOnStanleyBefore = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceOnAssetManagementBefore = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
 
         // when
         vm.roll(block.number + 1);
-        amm.joseph().withdrawFromStanley(amount);
+        amm.joseph().withdrawFromAssetManagement(amount);
 
         // then
-        uint256 miltonTotalBalanceStanleyAfter = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceAssetManagementAfter = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
         assertLt(
-            miltonTotalBalanceStanleyAfter,
-            miltonTotalBalanceOnStanleyBefore,
-            "miltonTotalBalanceStanleyAfter < miltonTotalBalanceOnStanleyBefore"
+            ammTreasuryTotalBalanceAssetManagementAfter,
+            ammTreasuryTotalBalanceOnAssetManagementBefore,
+            "ammTreasuryTotalBalanceAssetManagementAfter < ammTreasuryTotalBalanceOnAssetManagementBefore"
         );
     }
 
@@ -72,20 +72,20 @@ contract VaultDaiCompoundTest is Test {
         amm.strategyAave().pause();
         amm.strategyCompound().pause();
 
-        deal(amm.dai(), address(amm.milton()), amount);
+        deal(amm.dai(), address(amm.ammTreasury()), amount);
 
-        uint256 miltonTotalBalanceOnStanleyBefore = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceOnAssetManagementBefore = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
 
         // when
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        joseph.depositToStanley(amount);
+        joseph.depositToAssetManagement(amount);
 
         // then
-        uint256 miltonTotalBalanceStanleyAfter = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceAssetManagementAfter = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
         assertLt(
-            miltonTotalBalanceStanleyAfter,
-            miltonTotalBalanceOnStanleyBefore + amount,
-            "miltonTotalBalanceStanleyAfter < miltonTotalBalanceOnStanleyBefore + amount"
+            ammTreasuryTotalBalanceAssetManagementAfter,
+            ammTreasuryTotalBalanceOnAssetManagementBefore + amount,
+            "ammTreasuryTotalBalanceAssetManagementAfter < ammTreasuryTotalBalanceOnAssetManagementBefore + amount"
         );
     }
 
@@ -95,82 +95,82 @@ contract VaultDaiCompoundTest is Test {
         DaiAmm amm = new DaiAmm(_admin);
         Joseph joseph = amm.joseph();
         amm.overrideAaveStrategyWithZeroApr(_admin);
-        deal(amm.dai(), address(amm.milton()), amount);
+        deal(amm.dai(), address(amm.ammTreasury()), amount);
         vm.startPrank(_admin);
-        amm.joseph().depositToStanley(amount);
+        amm.joseph().depositToAssetManagement(amount);
         vm.roll(block.number + 1);
         amm.strategyAave().addPauseGuardian(_admin);
         amm.strategyCompound().addPauseGuardian(_admin);
         amm.strategyAave().pause();
         amm.strategyCompound().pause();
 
-        uint256 miltonTotalBalanceOnStanleyBefore = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceOnAssetManagementBefore = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
 
         // when
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        joseph.withdrawFromStanley(amount);
+        joseph.withdrawFromAssetManagement(amount);
 
         // then
-        uint256 miltonTotalBalanceStanleyAfter = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceAssetManagementAfter = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
         assertEq(
-            miltonTotalBalanceStanleyAfter,
-            miltonTotalBalanceOnStanleyBefore,
-            "miltonTotalBalanceStanleyAfter == miltonTotalBalanceOnStanleyBefore"
+            ammTreasuryTotalBalanceAssetManagementAfter,
+            ammTreasuryTotalBalanceOnAssetManagementBefore,
+            "ammTreasuryTotalBalanceAssetManagementAfter == ammTreasuryTotalBalanceOnAssetManagementBefore"
         );
     }
 
-    function testShouldNotBeAbleDepositWhenStanleyIsPausedDai() public {
+    function testShouldNotBeAbleDepositWhenAssetManagementIsPausedDai() public {
         // given
         uint256 amount = 1_000 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
         Joseph joseph = amm.joseph();
         amm.overrideAaveStrategyWithZeroApr(_admin);
         vm.startPrank(_admin);
-        amm.stanley().addPauseGuardian(_admin);
-        amm.stanley().pause();
+        amm.assetManagement().addPauseGuardian(_admin);
+        amm.assetManagement().pause();
 
-        deal(amm.dai(), address(amm.milton()), amount);
+        deal(amm.dai(), address(amm.ammTreasury()), amount);
 
-        uint256 miltonTotalBalanceOnStanleyBefore = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceOnAssetManagementBefore = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
 
         // when
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        joseph.depositToStanley(amount);
+        joseph.depositToAssetManagement(amount);
 
         // then
-        uint256 miltonTotalBalanceStanleyAfter = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceAssetManagementAfter = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
         assertLt(
-            miltonTotalBalanceStanleyAfter,
-            miltonTotalBalanceOnStanleyBefore + amount,
-            "miltonTotalBalanceStanleyAfter, miltonTotalBalanceOnStanleyBefore + amount"
+            ammTreasuryTotalBalanceAssetManagementAfter,
+            ammTreasuryTotalBalanceOnAssetManagementBefore + amount,
+            "ammTreasuryTotalBalanceAssetManagementAfter, ammTreasuryTotalBalanceOnAssetManagementBefore + amount"
         );
     }
 
-    function testShouldNotBeAbleWithdrawWhenStanleyIsPausedDai() public {
+    function testShouldNotBeAbleWithdrawWhenAssetManagementIsPausedDai() public {
         // given
         uint256 amount = 1_000 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
         Joseph joseph = amm.joseph();
         amm.overrideAaveStrategyWithZeroApr(_admin);
-        deal(amm.dai(), address(amm.milton()), amount);
+        deal(amm.dai(), address(amm.ammTreasury()), amount);
         vm.startPrank(_admin);
-        amm.joseph().depositToStanley(amount);
+        amm.joseph().depositToAssetManagement(amount);
         vm.roll(block.number + 1);
-        amm.stanley().addPauseGuardian(_admin);
-        amm.stanley().pause();
+        amm.assetManagement().addPauseGuardian(_admin);
+        amm.assetManagement().pause();
 
-        uint256 miltonTotalBalanceOnStanleyBefore = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceOnAssetManagementBefore = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
 
         // when
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        joseph.withdrawFromStanley(amount);
+        joseph.withdrawFromAssetManagement(amount);
 
         // then
-        uint256 miltonTotalBalanceStanleyAfter = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceAssetManagementAfter = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
         assertEq(
-            miltonTotalBalanceStanleyAfter,
-            miltonTotalBalanceOnStanleyBefore,
-            "miltonTotalBalanceStanleyAfter == miltonTotalBalanceOnStanleyBefore"
+            ammTreasuryTotalBalanceAssetManagementAfter,
+            ammTreasuryTotalBalanceOnAssetManagementBefore,
+            "ammTreasuryTotalBalanceAssetManagementAfter == ammTreasuryTotalBalanceOnAssetManagementBefore"
         );
     }
 }
