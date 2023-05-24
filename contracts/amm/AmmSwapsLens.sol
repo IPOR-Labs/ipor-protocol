@@ -8,41 +8,71 @@ import "../interfaces/IAmmSwapsLens.sol";
 import "./libraries/IporSwapLogic.sol";
 import "../libraries/AmmLib.sol";
 import "../interfaces/types/AmmTypes.sol";
+import "../interfaces/types/AmmFacadeTypes.sol";
+import "../interfaces/IAmmOpenSwapService.sol";
+import "../interfaces/IIporRiskManagementOracle.sol";
+import "../interfaces/IAmmTreasury.sol";
+import "./libraries/types/AmmInternalTypes.sol";
+import "../libraries/RiskManagementLogic.sol";
 
 contract AmmSwapsLens is IAmmSwapsLens {
     using IporSwapLogic for IporTypes.IporSwapMemory;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
 
     address internal immutable _usdcAsset;
-    IAmmStorage internal immutable _usdcAmmStorage;
+    address internal immutable _usdcAmmStorage;
+    address internal immutable _usdcAmmTreasury;
 
     address internal immutable _usdtAsset;
-    IAmmStorage internal immutable _usdtAmmStorage;
+    address internal immutable _usdtAmmStorage;
+    address internal immutable _usdtAmmTreasury;
 
     address internal immutable _daiAsset;
-    IAmmStorage internal immutable _daiAmmStorage;
+    address internal immutable _daiAmmStorage;
+    address internal immutable _daiAmmTreasury;
 
     IIporOracle internal immutable _iporOracle;
 
+    address internal immutable _router;
+
+    address internal immutable _riskManagementOracle;
+
     constructor(
-        address usdcAsset,
-        IAmmStorage usdcAmmStorage,
-        address usdtAsset,
-        IAmmStorage usdtAmmStorage,
-        address daiAsset,
-        IAmmStorage daiAmmStorage,
-        IIporOracle iporOracle
+        SwapLensConfiguration memory usdcCfg,
+        SwapLensConfiguration memory usdtCfg,
+        SwapLensConfiguration memory daiCfg,
+        IIporOracle iporOracle,
+        address riskManagementOracle,
+        address router
     ) {
-        _usdcAsset = usdcAsset;
-        _usdcAmmStorage = usdcAmmStorage;
+        require(address(usdcCfg.asset) != address(0), "USDC asset address cannot be 0");
+        require(address(usdcCfg.ammStorage) != address(0), "USDC ammStorage address cannot be 0");
+        require(address(usdcCfg.ammTreasury) != address(0), "USDC ammTreasury address cannot be 0");
+        require(address(usdtCfg.asset) != address(0), "USDT asset address cannot be 0");
+        require(address(usdtCfg.ammStorage) != address(0), "USDT ammStorage address cannot be 0");
+        require(address(usdtCfg.ammTreasury) != address(0), "USDT ammTreasury address cannot be 0");
+        require(address(daiCfg.asset) != address(0), "DAI asset address cannot be 0");
+        require(address(daiCfg.ammStorage) != address(0), "DAI ammStorage address cannot be 0");
+        require(address(daiCfg.ammTreasury) != address(0), "DAI ammTreasury address cannot be 0");
+        require(address(iporOracle) != address(0), "iporOracle address cannot be 0");
+        require(riskManagementOracle != address(0), "riskManagementOracle address cannot be 0");
+        require(router != address(0), "router address cannot be 0");
 
-        _usdtAsset = usdtAsset;
-        _usdtAmmStorage = usdtAmmStorage;
+        _usdcAsset = usdcCfg.asset;
+        _usdcAmmStorage = usdcCfg.ammStorage;
+        _usdcAmmTreasury = usdcCfg.ammTreasury;
 
-        _daiAsset = daiAsset;
-        _daiAmmStorage = daiAmmStorage;
+        _usdtAsset = usdtCfg.asset;
+        _usdtAmmStorage = usdtCfg.ammStorage;
+        _usdtAmmTreasury = usdtCfg.ammTreasury;
+
+        _daiAsset = daiCfg.asset;
+        _daiAmmStorage = daiCfg.ammStorage;
+        _daiAmmTreasury = daiCfg.ammTreasury;
 
         _iporOracle = iporOracle;
+        _riskManagementOracle = riskManagementOracle;
+        _router = router;
     }
 
     function getSwapsPayFixed(
@@ -112,6 +142,59 @@ contract AmmSwapsLens is IAmmSwapsLens {
         ammCoreModel.ammStorage = address(ammStorage);
         ammCoreModel.iporOracle = address(_iporOracle);
         (soapPayFixed, soapReceiveFixed, soap) = ammCoreModel.getSOAP();
+    }
+
+    function getBalancesForOpenSwap(address asset)
+        external
+        view
+        returns (IporTypes.AmmBalancesForOpenSwapMemory memory)
+    {
+        IAmmStorage ammStorage = _getAmmStorage(asset);
+        return ammStorage.getBalancesForOpenSwap();
+    }
+
+    function getConfiguration(
+        address asset,
+        uint256 direction,
+        uint256 duration
+    ) external view override returns (AmmFacadeTypes.AssetConfiguration memory) {
+        AmmOpenSwapTypes.OpenSwapPoolConfiguration memory openSwapPoolCfg = IAmmOpenSwapService(_router)
+            .getPoolConfiguration(asset);
+
+        (, , uint256 maxUtilizationRate, int256 spread) = IIporRiskManagementOracle(_router).getOpenSwapParameters(
+            asset,
+            direction,
+            duration
+        );
+
+        IporTypes.AmmBalancesForOpenSwapMemory memory balances = IAmmStorage(openSwapPoolCfg.ammStorage)
+            .getBalancesForOpenSwap();
+
+        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = RiskManagementLogic.getRiskIndicators(
+            asset,
+            direction,
+            duration,
+            balances.liquidityPool,
+            openSwapPoolCfg.minLeverage,
+            _riskManagementOracle
+        );
+
+        uint256 maxLiquidityPoolBalance = AmmConfigurationManager.getAmmMaxLiquidityPoolBalance(asset);
+        uint256 maxLpAccountContribution = AmmConfigurationManager.getAmmMaxLpAccountContribution(asset);
+
+        return
+            AmmFacadeTypes.AssetConfiguration(
+                asset, // asset
+                openSwapPoolCfg.minLeverage,
+                riskIndicators.maxLeveragePerLeg,
+                openSwapPoolCfg.openingFeeRate,
+                openSwapPoolCfg.iporPublicationFee,
+                openSwapPoolCfg.liquidationDepositAmount,
+                spread,
+                maxUtilizationRate,
+                maxLiquidityPoolBalance,
+                maxLpAccountContribution
+            );
     }
 
     function _mapSwapsPayFixed(
@@ -190,37 +273,27 @@ contract AmmSwapsLens is IAmmSwapsLens {
 
     function _getAmmStorage(address asset) internal view returns (IAmmStorage ammStorage) {
         if (asset == _usdcAsset) {
-            return _usdcAmmStorage;
+            return IAmmStorage(_usdcAmmStorage);
         } else if (asset == _usdtAsset) {
-            return _usdtAmmStorage;
+            return IAmmStorage(_usdtAmmStorage);
         } else if (asset == _daiAsset) {
-            return _daiAmmStorage;
+            return IAmmStorage(_daiAmmStorage);
         } else {
             revert("Unsupported asset");
         }
     }
 
-    function getConfiguration()
-        public
-        pure
-        returns (
-            address usdcAsset,
-            address usdcAmmStorage,
-            address usdtAsset,
-            address usdtAmmStorage,
-            address daiAsset,
-            address daiAmmStorage,
-            address iporOracle
-        )
-    {
-        return (
-            usdcAsset,
-            address(usdcAmmStorage),
-            usdtAsset,
-            address(usdtAmmStorage),
-            daiAsset,
-            address(daiAmmStorage),
-            address(iporOracle)
-        );
+    function _getSwapLensConfiguration(address asset) internal view returns (SwapLensConfiguration memory) {
+        if (asset == _usdtAsset) {
+            return
+                SwapLensConfiguration({asset: _usdtAsset, ammStorage: _usdtAmmStorage, ammTreasury: _usdtAmmTreasury});
+        } else if (asset == _usdcAsset) {
+            return
+                SwapLensConfiguration({asset: _usdcAsset, ammStorage: _usdcAmmStorage, ammTreasury: _usdcAmmTreasury});
+        } else if (asset == _daiAsset) {
+            return SwapLensConfiguration({asset: _daiAsset, ammStorage: _daiAmmStorage, ammTreasury: _daiAmmTreasury});
+        } else {
+            revert("SwapLensConfiguration: asset not supported");
+        }
     }
 }
