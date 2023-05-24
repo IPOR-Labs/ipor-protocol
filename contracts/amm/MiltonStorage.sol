@@ -61,11 +61,11 @@ contract MiltonStorage is
     function postUpgrade() public onlyOwner {
         _soapIndicatorsPayFixed.hypotheticalInterestCumulative = IporMath.division(
             _soapIndicatorsPayFixed.hypotheticalInterestCumulative,
-            Constants.WAD_P2_YEAR_IN_SECONDS
+            Constants.D18 * Constants.D18 * Constants.YEAR_IN_SECONDS
         );
         _soapIndicatorsReceiveFixed.hypotheticalInterestCumulative = IporMath.division(
             _soapIndicatorsReceiveFixed.hypotheticalInterestCumulative,
-            Constants.WAD_P2_YEAR_IN_SECONDS
+            Constants.D18 * Constants.D18 * Constants.YEAR_IN_SECONDS
         );
     }
 

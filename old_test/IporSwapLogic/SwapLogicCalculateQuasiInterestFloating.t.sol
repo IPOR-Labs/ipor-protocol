@@ -17,7 +17,7 @@ contract IporSwapLogicCalculateQuasiInterestFloating is TestCommons, DataUtils {
         // given
         // when
         uint256 quasiIFloating =
-            _iporSwapLogic.calculateQuasiInterestFloating(987030000000000000000, 100 * TestConstants.D18);
+            _iporSwapLogic.calculateInterestFloating(987030000000000000000, 100 * TestConstants.D18);
         // then
         assertEq(quasiIFloating, 3112697808000000000000000000000000000000000000000);
     }
@@ -26,7 +26,7 @@ contract IporSwapLogicCalculateQuasiInterestFloating is TestCommons, DataUtils {
         // given
         // when
         uint256 quasiIFloating =
-            _iporSwapLogic.calculateQuasiInterestFloating(987030000000000000000, 150 * TestConstants.D18);
+            _iporSwapLogic.calculateInterestFloating(987030000000000000000, 150 * TestConstants.D18);
         // then
         assertEq(quasiIFloating, 4669046712000000000000000000000000000000000000000);
     }
@@ -34,7 +34,7 @@ contract IporSwapLogicCalculateQuasiInterestFloating is TestCommons, DataUtils {
     function testShouldCalculateInterestFloatingCase3() public {
         // given
         // when
-        uint256 quasiIFloating = _iporSwapLogic.calculateQuasiInterestFloating(987030000, 100 * TestConstants.D18);
+        uint256 quasiIFloating = _iporSwapLogic.calculateInterestFloating(987030000, 100 * TestConstants.D18);
         // then
         assertEq(quasiIFloating, 3112697808000000000000000000000000000);
     }
@@ -43,7 +43,7 @@ contract IporSwapLogicCalculateQuasiInterestFloating is TestCommons, DataUtils {
         // given
         // when
         uint256 quasiIFloating =
-            _iporSwapLogic.calculateQuasiInterestFloating(987030000, 150 * TestConstants.N1__0_6DEC);
+            _iporSwapLogic.calculateInterestFloating(987030000, 150 * TestConstants.N1__0_6DEC);
         // then
         assertEq(quasiIFloating, 4669046712000000000000000);
     }

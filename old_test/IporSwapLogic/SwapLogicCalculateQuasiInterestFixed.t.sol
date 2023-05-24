@@ -17,7 +17,7 @@ contract IporSwapLogicCalculateQuasiInterestFixed is TestCommons, DataUtils {
         // given
         // when
         uint256 quasiIFixed =
-            _iporSwapLogic.calculateQuasiInterestFixed(98703 * TestConstants.D18, TestConstants.PERCENTAGE_4_18DEC, 0);
+            _iporSwapLogic.calculateInterestFixed(98703 * TestConstants.D18, TestConstants.PERCENTAGE_4_18DEC, 0);
         // then
         assertEq(quasiIFixed, 3112697808000000000000000000000000000000000000000);
     }
@@ -25,7 +25,7 @@ contract IporSwapLogicCalculateQuasiInterestFixed is TestCommons, DataUtils {
     function testShouldCalculateInterestFixedCase2() public {
         // given
         // when
-        uint256 quasiIFixed = _iporSwapLogic.calculateQuasiInterestFixed(
+        uint256 quasiIFixed = _iporSwapLogic.calculateInterestFixed(
             98703 * TestConstants.D18, TestConstants.PERCENTAGE_4_18DEC, TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS
         );
         // then
@@ -35,7 +35,7 @@ contract IporSwapLogicCalculateQuasiInterestFixed is TestCommons, DataUtils {
     function testShouldCalculateInterestFixedCase3() public {
         // given
         // when
-        uint256 quasiIFixed = _iporSwapLogic.calculateQuasiInterestFixed(
+        uint256 quasiIFixed = _iporSwapLogic.calculateInterestFixed(
             98703 * TestConstants.D18, TestConstants.PERCENTAGE_4_18DEC, TestConstants.YEAR_IN_SECONDS
         );
         // then

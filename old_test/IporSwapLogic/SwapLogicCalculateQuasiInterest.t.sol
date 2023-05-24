@@ -32,7 +32,7 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
             1 // state
         );
         // when
-        (uint256 quasiIFixed, uint256 quasiIFloating) = _iporSwapLogic.calculateQuasiInterest(
+        (uint256 quasiIFixed, uint256 quasiIFloating) = _iporSwapLogic.calculateInterest(
             swap, swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 125 * TestConstants.D18
         );
         // then
@@ -56,7 +56,7 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
             1 // state
         );
         // when
-        (uint256 quasiIFixed, uint256 quasiIFloating) = _iporSwapLogic.calculateQuasiInterest(
+        (uint256 quasiIFixed, uint256 quasiIFloating) = _iporSwapLogic.calculateInterest(
             swap, swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS * 4, 120 * TestConstants.D18
         );
         // then
@@ -80,7 +80,7 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
             1 // state
         );
         // when
-        (uint256 quasiIFixed, uint256 quasiIFloating) = _iporSwapLogic.calculateQuasiInterest(
+        (uint256 quasiIFixed, uint256 quasiIFloating) = _iporSwapLogic.calculateInterest(
             swap, swap.openTimestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, 1 * TestConstants.D18
         );
         // then
@@ -105,8 +105,8 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
 		);
 		// when
 		vm.expectRevert("IPOR_319");
-		_iporSwapLogic.calculateQuasiInterest(
-			swap, 
+		_iporSwapLogic.calculateInterest(
+			swap,
 			swap.openTimestamp - TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
 			1 * TestConstants.D18
 		);
@@ -129,7 +129,7 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
         );
         // when
         (uint256 quasiIFixed, uint256 quasiIFloating) =
-            _iporSwapLogic.calculateQuasiInterest(swap, swap.openTimestamp, 125 * TestConstants.D18);
+            _iporSwapLogic.calculateInterest(swap, swap.openTimestamp, 125 * TestConstants.D18);
         // then
         assertEq(quasiIFixed, 3112697808000000000000000000000000000000000000000);
         assertEq(quasiIFloating, 3890872260000000000000000000000000000000000000000);
@@ -151,7 +151,7 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
             1 // state
         );
         // when
-        (uint256 quasiIFixed, uint256 quasiIFloating) = _iporSwapLogic.calculateQuasiInterest(
+        (uint256 quasiIFixed, uint256 quasiIFloating) = _iporSwapLogic.calculateInterest(
             swap, swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 100 * TestConstants.D18
         );
         // then
@@ -175,7 +175,7 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
             1 // state
         );
         // when
-        (uint256 quasiIFixed, uint256 quasiIFloating) = _iporSwapLogic.calculateQuasiInterest(
+        (uint256 quasiIFixed, uint256 quasiIFloating) = _iporSwapLogic.calculateInterest(
             swap, swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 125 * TestConstants.D18
         );
         // then
@@ -199,7 +199,7 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
             1 // state
         );
         // when
-        (uint256 quasiIFixed, uint256 quasiIFloating) = _iporSwapLogic.calculateQuasiInterest(
+        (uint256 quasiIFixed, uint256 quasiIFloating) = _iporSwapLogic.calculateInterest(
             swap, swap.openTimestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS, 125 * TestConstants.D18
         );
         // then
@@ -223,7 +223,7 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
             1 // state
         );
         // when
-        (uint256 quasiIFixed, uint256 quasiIFloating) = _iporSwapLogic.calculateQuasiInterest(
+        (uint256 quasiIFixed, uint256 quasiIFloating) = _iporSwapLogic.calculateInterest(
             swap, swap.openTimestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS, 125 * TestConstants.D18
         );
         // then
