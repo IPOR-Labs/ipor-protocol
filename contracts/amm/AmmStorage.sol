@@ -371,7 +371,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _updateSwapsWhenClosePayFixed(iporSwap);
         _updateBalancesWhenCloseSwapPayFixed(iporSwap, payoff);
         _updateSoapIndicatorsWhenCloseSwapPayFixed(iporSwap, closingTimestamp);
-        _updateLastOpenedSwapWhenClosePayFixed(AmmTypes.SwapDuration(iporSwap.duration), iporSwap.id);
+        _updateOpenedSwapWhenClosePayFixed(AmmTypes.SwapDuration(iporSwap.duration), iporSwap.id);
     }
 
     function updateStorageWhenCloseSwapReceiveFixed(
@@ -811,7 +811,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _openedSwapsPayFixed[duration].swaps[headSwapId].nextSwapId = swapId.toUint32();
     }
 
-    function _updateLastOpenedSwapWhenClosePayFixed(AmmTypes.SwapDuration duration, uint256 swapId) internal {
+    function _updateOpenedSwapWhenClosePayFixed(AmmTypes.SwapDuration duration, uint256 swapId) internal {
         uint32 headSwapId = _openedSwapsPayFixed[duration].headSwapId;
         AmmInternalTypes.OpenSwapItem memory swap = _openedSwapsPayFixed[duration].swaps[swapId.toUint32()];
         if(swap.openSwapTimestamp == 0) {
