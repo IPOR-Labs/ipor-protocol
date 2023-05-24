@@ -46,6 +46,7 @@ interface IAmmSwapsLens {
         address asset;
         /// @notice Address of the AMM (Automated Market Maker) storage contract
         address ammStorage;
+        /// @notice Address of the AMM Treasury contract
         address ammTreasury;
     }
 
@@ -107,5 +108,12 @@ interface IAmmSwapsLens {
             int256 soap
         );
 
+    /**
+     * @dev Returns the asset configuration details for a given asset, direction and duration.
+     * @param asset The address of the asset.
+     * @param direction The direction of the swap (0 for pay fixed, 1 for receive fixed).
+     * @param duration The duration of the swap
+     * @return The asset configuration details.
+     */
     function getConfiguration(address asset, uint256 direction, uint256 duration) external view returns (AmmFacadeTypes.AssetConfiguration memory);
 }
