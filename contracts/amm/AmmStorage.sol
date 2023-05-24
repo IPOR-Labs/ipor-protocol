@@ -815,7 +815,6 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     function _removeOpenSwapPayFixed(AmmTypes.SwapDuration duration, uint256 swapId) internal {
         uint32 headSwapId = _openSwapsPayFixed[duration].headSwapId;
         AmmInternalTypes.OpenSwapItem memory swap = _openSwapsPayFixed[duration].swaps[swapId.toUint32()];
-        AmmInternalTypes.OpenSwapItem memory swapPrev;
         if (swapId.toUint32() == headSwapId) {
             AmmInternalTypes.OpenSwapItem memory swapPrev = _openSwapsPayFixed[duration].swaps[swap.previousSwapId];
             swapPrev.nextSwapId = 0;
@@ -852,7 +851,6 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     function _removeOpenSwapReceiveFixed(AmmTypes.SwapDuration duration, uint256 swapId) internal {
         uint32 headSwapId = _openSwapsReceiveFixed[duration].headSwapId;
         AmmInternalTypes.OpenSwapItem memory swap = _openSwapsReceiveFixed[duration].swaps[swapId.toUint32()];
-        AmmInternalTypes.OpenSwapItem memory swapPrev;
         if (swapId.toUint32() == headSwapId) {
             AmmInternalTypes.OpenSwapItem memory swapPrev = _openSwapsReceiveFixed[duration].swaps[swap.previousSwapId];
             swapPrev.nextSwapId = 0;
