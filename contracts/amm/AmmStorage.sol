@@ -421,11 +421,11 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _balances.treasury = balance.toUint128();
     }
 
-    function setAmmTreasury(address newAmmTreasury) external override onlyOwner {
-        require(newAmmTreasury != address(0), IporErrors.WRONG_ADDRESS);
-        address oldAmmTreasury = _iporProtocolRouter;
-        _iporProtocolRouter = newAmmTreasury;
-        emit AmmTreasuryChanged(_msgSender(), oldAmmTreasury, newAmmTreasury);
+    function setRouter(address newRouter) external override onlyOwner {
+        require(newRouter != address(0), IporErrors.WRONG_ADDRESS);
+//        address oldAmmTreasury = _iporProtocolRouter;
+        _iporProtocolRouter = newRouter;
+//        emit AmmTreasuryChanged(_msgSender(), oldAmmTreasury, newAmmTreasury);
     }
 
     function pause() external override onlyOwner {

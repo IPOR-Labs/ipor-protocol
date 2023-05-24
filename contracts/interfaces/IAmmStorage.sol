@@ -224,8 +224,8 @@ interface IAmmStorage {
     function updateStorageWhenTransferToTreasury(uint256 transferredAmount) external;
 
     /// @notice Sets AMM Treasury's address. Function is only available to the smart contract Owner.
-    /// @param ammTreasury AMMTreasury's address
-    function setAmmTreasury(address ammTreasury) external;
+    /// @param newRouter AMMTreasury's address
+    function setRouter(address newRouter) external;
 
     /// @notice Pauses current smart contract, it can be executed only by the Owner
     /// @dev Emits {Paused} event from Amm Treasury.

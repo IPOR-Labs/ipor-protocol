@@ -22,25 +22,25 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
 
     struct DeployedContracts {
         address ammSwapsLens;
-        address ammOpenSwapServiceAddress;
-        address ammCloseSwapServiceAddress;
-        address ammPoolsServiceAddress;
-        address ammGovernanceServiceAddress;
+        address ammOpenSwapService;
+        address ammCloseSwapService;
+        address ammPoolsService;
+        address ammGovernanceService;
     }
 
     constructor(DeployedContracts memory deployedContracts) {
         require(
-            deployedContracts.ammCloseSwapServiceAddress != address(0),
+            deployedContracts.ammCloseSwapService != address(0),
             string.concat(IporErrors.WRONG_ADDRESS, " AMM_CLOSE_SWAP_SERVICE_ADDRESS")
         );
 
         require(
-            deployedContracts.ammOpenSwapServiceAddress != address(0),
+            deployedContracts.ammOpenSwapService != address(0),
             string.concat(IporErrors.WRONG_ADDRESS, " AMM_OPEN_SWAP_SERVICE_ADDRESS")
         );
 
         require(
-            deployedContracts.ammPoolsServiceAddress != address(0),
+            deployedContracts.ammPoolsService != address(0),
             string.concat(IporErrors.WRONG_ADDRESS, " AMM_POOLS_SERVICE_ADDRESS")
         );
 
@@ -50,15 +50,15 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
         );
 
         require(
-            deployedContracts.ammGovernanceServiceAddress != address(0),
+            deployedContracts.ammGovernanceService != address(0),
             string.concat(IporErrors.WRONG_ADDRESS, " AMM_GOVERNANCE_SERVICE_ADDRESS")
         );
 
         AMM_SWAPS_LENS = deployedContracts.ammSwapsLens;
-        AMM_OPEN_SWAP_SERVICE_ADDRESS = deployedContracts.ammOpenSwapServiceAddress;
-        AMM_CLOSE_SWAP_SERVICE_ADDRESS = deployedContracts.ammCloseSwapServiceAddress;
-        AMM_POOLS_SERVICE_ADDRESS = deployedContracts.ammPoolsServiceAddress;
-        AMM_GOVERNANCE_SERVICE_ADDRESS = deployedContracts.ammGovernanceServiceAddress;
+        AMM_OPEN_SWAP_SERVICE_ADDRESS = deployedContracts.ammOpenSwapService;
+        AMM_CLOSE_SWAP_SERVICE_ADDRESS = deployedContracts.ammCloseSwapService;
+        AMM_POOLS_SERVICE_ADDRESS = deployedContracts.ammPoolsService;
+        AMM_GOVERNANCE_SERVICE_ADDRESS = deployedContracts.ammGovernanceService;
         _disableInitializers();
     }
 

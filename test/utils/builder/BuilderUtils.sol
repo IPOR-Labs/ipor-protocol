@@ -10,9 +10,16 @@ import "../../../contracts/amm/AmmStorage.sol";
 import "../../../contracts/amm/AmmTreasury.sol";
 import "../../../contracts/amm/spread/SpreadRouter.sol";
 import "../../../contracts/itf/ItfAssetManagement.sol";
+import "../../../contracts/router/IporProtocolRouter.sol";
 import "../../mocks/MockSpreadXDays.sol";
+
 contract BuilderUtils {
     struct IporProtocol {
+        IporProtocolRouter router;
+        IAmmPoolsService ammPoolsService;
+        IAmmOpenSwapService ammOpenSwapService;
+        IAmmCloseSwapService ammCloseSwapService;
+        IAmmGovernanceService ammGovernanceService;
         MockTestnetToken asset;
         IpToken ipToken;
         IvToken ivToken;
@@ -98,7 +105,15 @@ contract BuilderUtils {
         /// @dev Max notional 1 000 000
         CASE6
     }
+    enum AmmOpenSwapServiceTestCase {
+        DEFAULT,
+        CASE1
+    }
 
+    enum AmmCloseSwapServiceTestCase {
+        DEFAULT,
+        CASE1
+    }
     enum AmmTreasuryTestCase {
         DEFAULT,
         CASE0,
@@ -114,7 +129,15 @@ contract BuilderUtils {
 
     enum Spread28DaysTestCase {
         DEFAULT,
-        CASE1
+        /// @dev Pay Fixed Quote Value 0%
+        /// @dev Receive Fixed Quote Value 0%
+        CASE0,
+        /// @dev Pay Fixed Quote Value 4%
+        /// @dev Receive Fixed Quote Value 0%
+        CASE1,
+        /// @dev Pay Fixed Quote Value 0%
+        /// @dev Receive Fixed Quote Value 2%
+        CASE2
     }
 
     enum Spread60DaysTestCase {

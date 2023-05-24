@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
-
+import "forge-std/console2.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../../libraries/errors/AmmErrors.sol";
 import "../../interfaces/types/IporTypes.sol";
@@ -26,14 +26,20 @@ library IporSwapLogic {
         uint256 openingFeeRate
     )
         internal
-        pure
+        view //todo: pure
         returns (
             uint256 collateral,
             uint256 notional,
             uint256 openingFee
         )
     {
+        console2.log("totalAmount", totalAmount);
+        console2.log("liquidationDepositAmount", liquidationDepositAmount);
+        console2.log("iporPublicationFeeAmount", iporPublicationFeeAmount);
+
         uint256 availableAmount = totalAmount - liquidationDepositAmount - iporPublicationFeeAmount;
+
+        console2.log("availableAmount", availableAmount);
 
         collateral = IporMath.division(
             availableAmount * Constants.D18,
@@ -42,14 +48,18 @@ library IporSwapLogic {
         );
         notional = IporMath.division(leverage * collateral, Constants.D18);
         openingFee = availableAmount - collateral;
+        console2.log("openingFee", openingFee);
     }
 
-    function getTimeToMaturityInDays(AmmTypes.SwapDuration duration) internal pure returns (uint256) {
+    function getTimeToMaturityInDays(AmmTypes.SwapDuration duration) internal view returns (uint256) {//TODO: pure
         if (duration == AmmTypes.SwapDuration.DAYS_28) {
+            console2.log("duration 28");
             return 28;
         } else if (duration == AmmTypes.SwapDuration.DAYS_60) {
+            console2.log("duration 60");
             return 60;
         } else if (duration == AmmTypes.SwapDuration.DAYS_90) {
+            console2.log("duration 90");
             return 90;
         } else {
             revert(AmmErrors.UNSUPPORTED_SWAP_DURATION);

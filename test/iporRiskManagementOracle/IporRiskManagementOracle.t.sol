@@ -95,7 +95,7 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
         // given
         uint256 version = _iporRiskManagementOracle.getVersion();
         // then
-        assertEq(version, 1);
+        assertEq(version, 2_000);
     }
 
     function testShouldPauseSCWhenSenderIsAdmin() public {

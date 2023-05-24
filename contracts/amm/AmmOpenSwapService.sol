@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.16;
 
+import "forge-std/console2.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
@@ -138,7 +139,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         _spreadRouter = spreadRouter;
     }
 
-    function getPoolConfiguration(address asset) external override view returns (PoolConfiguration memory) {
+    function getPoolConfiguration(address asset) external view override returns (PoolConfiguration memory) {
         return _getPoolConfiguration(asset);
     }
 
@@ -478,6 +479,8 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             ctx.poolCfg
         );
 
+
+
         IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(ctx.poolCfg.ammStorage)
             .getBalancesForOpenSwap();
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
@@ -533,6 +536,8 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             IporMath.division(bosStruct.notional * Constants.D18, bosStruct.accruedIpor.ibtPrice),
             quoteValue
         );
+
+        console2.log("indicator.quoteValue =", quoteValue);
 
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(
             ctx.onBehalfOf,
@@ -686,12 +691,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         );
 
         uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, poolCfg.decimals);
-        uint256 liquidationDepositAmountWad = IporMath.convertToWad(poolCfg.liquidationDepositAmount, poolCfg.decimals);
+        uint256 liquidationDepositAmountWad = poolCfg.liquidationDepositAmount * Constants.D18;
 
         require(
             wadTotalAmount > liquidationDepositAmountWad + poolCfg.iporPublicationFee,
             AmmErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
+        console2.log("poolCfg.openingFeeRate=", poolCfg.openingFeeRate);
 
         (uint256 collateral, uint256 notional, uint256 openingFeeAmount) = IporSwapLogic.calculateSwapAmount(
             duration,
@@ -738,12 +744,11 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         uint256 cfgMinLeverage
     ) internal view virtual returns (AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators) {
         uint256 maxNotionalPerLeg;
-        uint256 maxUtilizationRate;
 
         (
             maxNotionalPerLeg,
             riskIndicators.maxUtilizationRatePerLeg,
-            maxUtilizationRate,
+            riskIndicators.maxUtilizationRate,
             riskIndicators.spread
         ) = IIporRiskManagementOracle(_iporRiskManagementOracle).getOpenSwapParameters(
             asset,
@@ -823,7 +828,8 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         uint256 maxUtilizationRate,
         uint256 maxUtilizationRatePerLeg,
         uint256 cfgMinLeverage
-    ) internal pure {
+    ) internal view {
+        //TODO: pure
         uint256 utilizationRate;
         uint256 utilizationRatePerLeg;
 

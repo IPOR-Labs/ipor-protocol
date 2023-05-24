@@ -14,7 +14,7 @@ contract MockIporSwapLogic {
         uint256 openingFeeRate
     )
         public
-        pure
+        view//todo: pure
         returns (
             uint256 collateral,
             uint256 notional,

@@ -9,9 +9,11 @@ import "../../../contracts/amm/spread/SpreadRouter.sol";
 import "../../../contracts/amm/spread/Spread28Days.sol";
 import "../../../contracts/amm/spread/Spread60Days.sol";
 import "../../../contracts/amm/spread/Spread90Days.sol";
+import "../../../contracts/amm/spread/SpreadStorageLens.sol";
 
 contract SpreadRouterBuilder is Test {
     struct BuilderData {
+        address iporRouter;
         address dai;
         address usdc;
         address usdt;
@@ -26,6 +28,11 @@ contract SpreadRouterBuilder is Test {
 
     constructor(address owner) {
         _owner = owner;
+    }
+
+    function withIporRouter(address iporRouter) public returns (SpreadRouterBuilder) {
+        builderData.iporRouter = iporRouter;
+        return this;
     }
 
     function withDai(address dai) public returns (SpreadRouterBuilder) {
@@ -78,6 +85,8 @@ contract SpreadRouterBuilder is Test {
 
     function _buildImplementation() internal returns (address impl) {
         SpreadRouter.DeployedContracts memory deployedContracts;
+        deployedContracts.ammAddress = builderData.iporRouter;
+        deployedContracts.storageLens = address(new SpreadStorageLens());
         deployedContracts.spread28Days = _buildSpread28Days();
         deployedContracts.spread60Days = _buildSpread60Days();
         deployedContracts.spread90Days = _buildSpread90Days();
@@ -88,8 +97,12 @@ contract SpreadRouterBuilder is Test {
     function _buildSpread28Days() internal returns (address spread) {
         if (builderData.spread28DaysTestCase == BuilderUtils.Spread28DaysTestCase.DEFAULT) {
             return address(new Spread28Days(builderData.dai, builderData.usdc, builderData.usdt));
+        } else if (builderData.spread28DaysTestCase == BuilderUtils.Spread28DaysTestCase.CASE0) {
+            return address(new MockSpreadXDays(TestConstants.ZERO, TestConstants.ZERO));
         } else if (builderData.spread28DaysTestCase == BuilderUtils.Spread28DaysTestCase.CASE1) {
-            return address(new MockSpreadXDays(TestConstants.PERCENTAGE_6_18DEC, TestConstants.PERCENTAGE_4_18DEC));
+            return address(new MockSpreadXDays(TestConstants.PERCENTAGE_4_18DEC, TestConstants.ZERO));
+        } else if (builderData.spread28DaysTestCase == BuilderUtils.Spread28DaysTestCase.CASE2) {
+            return address(new MockSpreadXDays(TestConstants.ZERO, TestConstants.PERCENTAGE_2_18DEC));
         }
 
         return address(new Spread28Days(builderData.dai, builderData.usdc, builderData.usdt));

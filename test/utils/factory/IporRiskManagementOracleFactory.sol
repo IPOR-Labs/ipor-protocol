@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
+import "forge-std/console2.sol";
 import "forge-std/Test.sol";
 import "../TestConstants.sol";
 import "../builder/IporRiskManagementOracleBuilder.sol";
@@ -19,9 +20,9 @@ contract IporRiskManagementOracleFactory is Test {
         address updater,
         BuilderUtils.IporRiskManagementOracleInitialParamsTestCase initialParams
     ) public returns (IporRiskManagementOracle) {
-        IporRiskManagementOracleTypes.RiskIndicators memory riskIndicators = _constructIndicatorsBasedOnInitialParamTestCase(
-            initialParams
-        );
+        IporRiskManagementOracleTypes.RiskIndicators
+            memory riskIndicators = _constructIndicatorsBasedOnInitialParamTestCase(initialParams);
+
         IporRiskManagementOracleTypes.BaseSpreads memory baseSpreads = _constructSpreadsBasedOnInitialParamTestCase(
             initialParams
         );
@@ -40,7 +41,8 @@ contract IporRiskManagementOracleFactory is Test {
 
     function _constructIndicatorsBasedOnInitialParamTestCase(
         BuilderUtils.IporRiskManagementOracleInitialParamsTestCase initialParamsTestCase
-    ) internal pure returns (IporRiskManagementOracleTypes.RiskIndicators memory riskIndicators) {
+    ) internal view returns (IporRiskManagementOracleTypes.RiskIndicators memory riskIndicators) {
+        //TODO: pure
         uint64 maxNotionalPayFixed = TestConstants.RMO_NOTIONAL_1B;
         uint64 maxNotionalReceiveFixed = TestConstants.RMO_NOTIONAL_1B;
         uint16 maxUtilizationRatePayFixed = TestConstants.RMO_UTILIZATION_RATE_48_PER;
