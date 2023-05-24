@@ -2,7 +2,6 @@
 pragma solidity 0.8.16;
 
 import "./types/IporTypes.sol";
-import "./types/AmmFacadeTypes.sol";
 
 interface IAmmPoolsLens {
 

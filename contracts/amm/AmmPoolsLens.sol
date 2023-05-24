@@ -5,8 +5,6 @@ import "../libraries/errors/IporErrors.sol";
 import "../libraries/AmmLib.sol";
 import "../interfaces/types/AmmTypes.sol";
 import "../interfaces/IAmmPoolsLens.sol";
-import "../interfaces/IAmmTreasury.sol";
-import "../interfaces/IAmmTreasurySpreadModel.sol";
 
 contract AmmPoolsLens is IAmmPoolsLens {
     using AmmLib for AmmTypes.AmmPoolCoreModel;

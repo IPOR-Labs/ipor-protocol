@@ -1,18 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 
-import "../interfaces/IIporOracle.sol";
-import "../interfaces/IAmmTreasurySpreadModel.sol";
-import "../interfaces/IAmmStorage.sol";
 import "../interfaces/IAmmSwapsLens.sol";
 import "./libraries/IporSwapLogic.sol";
 import "../libraries/AmmLib.sol";
-import "../interfaces/types/AmmTypes.sol";
-import "../interfaces/types/AmmFacadeTypes.sol";
 import "../interfaces/IAmmOpenSwapService.sol";
-import "../interfaces/IIporRiskManagementOracle.sol";
-import "../interfaces/IAmmTreasury.sol";
-import "./libraries/types/AmmInternalTypes.sol";
 import "../libraries/RiskManagementLogic.sol";
 
 contract AmmSwapsLens is IAmmSwapsLens {
