@@ -11,7 +11,9 @@ import "../../interfaces/types/AmmTypes.sol";
 
 library IporSwapLogic {
     using SafeCast for uint256;
+    using SafeCast for int256;
     using InterestRates for uint256;
+    using InterestRates for int256;
 
     /// @param duration swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
     /// @param totalAmount total amount represented in 18 decimals
@@ -90,9 +92,12 @@ library IporSwapLogic {
 
         swapUnwindValue =
             swapPayoffToDate +
-                swap.notional.toInt256() *
+            swap
+                .notional.toInt256()
+                .calculateContinuousCompoundInterestUsingRatePeriodMultiplicationInt(
                     (oppositeLegFixedRate.toInt256() - swap.fixedInterestRate.toInt256()) *
-                    ((endTimestamp - swap.openTimestamp) - (closingTimestamp - swap.openTimestamp)).toInt256() -
+                        ((endTimestamp - swap.openTimestamp) - (closingTimestamp - swap.openTimestamp)).toInt256()
+                ) -
             openingFeeRateForSwapUnwind.toInt256();
     }
 
