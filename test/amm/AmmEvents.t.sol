@@ -118,11 +118,7 @@ contract AmmEventsTest is TestCommons {
 
         // when
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_3_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
@@ -160,259 +156,212 @@ contract AmmEventsTest is TestCommons {
             TestConstants.LEVERAGE_18DEC
         );
     }
-    //
-    //    function testShouldEmitEventWhenOpenPayFixedSwap6Decimals() public {
-    //        // given
-    ////        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-    //
-    //        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-    //
-    //        _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
-    //
-    //        // when
-    //        vm.prank(_userOne);
-    //        _iporProtocol.iporOracle.itfUpdateIndex(
-    //            address(_iporProtocol.asset),
-    //            TestConstants.PERCENTAGE_3_18DEC,
-    //            block.timestamp
-    //        );
-    //
-    //        vm.prank(_liquidityProvider);
-    //        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_6DEC);
-    //
-    //        vm.prank(_userTwo);
-    //        vm.expectEmit(true, true, true, true);
-    //        emit OpenSwap(
-    //            1, // swapId
-    //            _userTwo, // buyer
-    //            address(_iporProtocol.asset), // asset
-    //            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, // direction
-    //            AmmTypes.OpenSwapMoney({
-    //                totalAmount: TestConstants.USD_10_000_18DEC, // totalAmount
-    //                collateral: TestConstants.TC_COLLATERAL_18DEC, // collateral
-    //                notional: TestConstants.TC_NOTIONAL_18DEC, // notional
-    //                openingFeeLPAmount: TestConstants.TC_OPENING_FEE_18DEC, // openingFeeLPAmount
-    //                openingFeeTreasuryAmount: TestConstants.ZERO, // openingFeeTreasuryAmount
-    //                iporPublicationFee: TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC, // iporPublicationFee
-    //                liquidationDepositAmount: TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC // liquidationDepositAmount
-    //            }), // money
-    //            block.timestamp, // openTimestamp
-    //            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
-    //            AmmTypes.IporSwapIndicator({
-    //                iporIndexValue: TestConstants.PERCENTAGE_3_18DEC, // iporIndexValue
-    //                ibtPrice: 1 * TestConstants.D18, // ibtPrice
-    //                ibtQuantity: TestConstants.TC_NOTIONAL_18DEC, // ibtQuantity
-    //                fixedInterestRate: TestConstants.PERCENTAGE_4_18DEC // fixedInterestRate, 4%
-    //            }) // indicator
-    //        );
-    //
-    //        _iporProtocol.ammTreasury.openSwapPayFixed(
-    //            TestConstants.USD_10_000_6DEC, // totalAmount
-    //            TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
-    //            TestConstants.LEVERAGE_18DEC // leverage
-    //        );
-    //    }
-    //
-    //    function testShouldEmitEventWhenOpenReceiveFixedSwap6Decimals() public {
-    //        // given
-    ////        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-    //
-    //        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-    //
-    //        _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
-    //
-    //        // when
-    //        vm.prank(_userOne);
-    //        _iporProtocol.iporOracle.itfUpdateIndex(
-    //            address(_iporProtocol.asset),
-    //            TestConstants.PERCENTAGE_3_18DEC,
-    //            block.timestamp
-    //        );
-    //
-    //        vm.prank(_liquidityProvider);
-    //        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_6DEC); // USD_28_000_6DEC
-    //
-    //        vm.prank(_userTwo);
-    //        vm.expectEmit(true, true, true, true);
-    //        emit OpenSwap(
-    //            1, // swapId
-    //            _userTwo, // buyer
-    //            address(_iporProtocol.asset), // asset
-    //            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, // direction
-    //            AmmTypes.OpenSwapMoney({
-    //                totalAmount: TestConstants.USD_10_000_18DEC, // totalAmount
-    //                collateral: TestConstants.TC_COLLATERAL_18DEC, // collateral
-    //                notional: TestConstants.TC_NOTIONAL_18DEC, // notional
-    //                openingFeeLPAmount: TestConstants.TC_OPENING_FEE_18DEC, // openingFeeLPAmount
-    //                openingFeeTreasuryAmount: TestConstants.ZERO, // openingFeeTreasuryAmount
-    //                iporPublicationFee: TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC, // iporPublicationFee
-    //                liquidationDepositAmount: TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC // liquidationDepositAmount
-    //            }), // money
-    //            block.timestamp, // openTimestamp
-    //            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
-    //            AmmTypes.IporSwapIndicator({
-    //                iporIndexValue: TestConstants.PERCENTAGE_3_18DEC, // iporIndexValue
-    //                ibtPrice: 1 * TestConstants.D18, // ibtPrice
-    //                ibtQuantity: TestConstants.TC_NOTIONAL_18DEC, // ibtQuantity
-    //                fixedInterestRate: TestConstants.PERCENTAGE_2_18DEC // fixedInterestRate, 2%
-    //            }) // indicator
-    //        );
-    //
-    //        _iporProtocol.ammTreasury.openSwapReceiveFixed(
-    //            TestConstants.USD_10_000_6DEC, // totalAmount
-    //            TestConstants.PERCENTAGE_1_18DEC, // acceptableFixedInterestRate, 1%
-    //            TestConstants.LEVERAGE_18DEC // leverage
-    //        );
-    //    }
-    //
-    //    function testShouldEmitEventWhenClosePayFixedSwap18Decimals() public {
-    //        // given
-    ////        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-    //
-    //        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-    //
-    //        _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
-    //
-    //        // when
-    //        vm.prank(_userOne);
-    //        _iporProtocol.iporOracle.itfUpdateIndex(
-    //            address(_iporProtocol.asset),
-    //            TestConstants.PERCENTAGE_5_18DEC,
-    //            block.timestamp
-    //        );
-    //
-    //        vm.prank(_liquidityProvider);
-    //        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC); // TestConstants.USD_28_000_18DEC
-    //
-    //        vm.prank(_userTwo);
-    //        _iporProtocol.ammTreasury.openSwapPayFixed(
-    //            TestConstants.USD_10_000_18DEC, // totalAmount
-    //            TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
-    //            TestConstants.LEVERAGE_18DEC // leverage
-    //        );
-    //
-    //        vm.prank(_userOne);
-    //        _iporProtocol.iporOracle.itfUpdateIndex(
-    //            address(_iporProtocol.asset),
-    //            TestConstants.PERCENTAGE_160_18DEC,
-    //            block.timestamp
-    //        );
-    //
-    //        vm.prank(_userTwo);
-    //        vm.expectEmit(true, true, true, true);
-    //        emit CloseSwap(
-    //            1, // swapId
-    //            address(_iporProtocol.asset), // asset
-    //            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
-    //            _userTwo, // liquidator
-    //            19955412124333030204016, // transferredToBuyer
-    //            TestConstants.ZERO // transferredToLiquidator
-    //        );
-    //
-    //        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(
-    //            1, // swapId
-    //            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
-    //        );
-    //    }
-    //
-    //    function testShouldEmitEventWhenClosePayFixedSwap6DecimalsAndTakerClosedSwap() public {
-    //        // given
-    ////        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-    //
-    //        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-    //
-    //        _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
-    //
-    //        // when
-    //        vm.prank(_userOne);
-    //        _iporProtocol.iporOracle.itfUpdateIndex(
-    //            address(_iporProtocol.asset),
-    //            TestConstants.PERCENTAGE_5_18DEC,
-    //            block.timestamp
-    //        );
-    //
-    //        vm.prank(_liquidityProvider);
-    //        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_6DEC); // USD_28_000_6DEC
-    //
-    //        vm.prank(_userTwo);
-    //        _iporProtocol.ammTreasury.openSwapPayFixed(
-    //            TestConstants.USD_10_000_6DEC, // totalAmount, USD_10_000_6DEC
-    //            TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
-    //            TestConstants.LEVERAGE_18DEC // leverage
-    //        );
-    //
-    //        vm.prank(_userOne);
-    //        _iporProtocol.iporOracle.itfUpdateIndex(
-    //            address(_iporProtocol.asset),
-    //            TestConstants.PERCENTAGE_160_18DEC,
-    //            block.timestamp
-    //        );
-    //
-    //        vm.prank(_userTwo);
-    //        vm.expectEmit(true, true, true, true);
-    //        emit CloseSwap(
-    //            1, // swapId
-    //            address(_iporProtocol.asset), // asset
-    //            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
-    //            _userTwo, // liquidator
-    //            19955412124000000000000, // transferredToBuyer
-    //            TestConstants.ZERO // transferredToLiquidator
-    //        );
-    //
-    //        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(
-    //            1, // swapId
-    //            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
-    //        );
-    //    }
-    //
-    //    function testShouldEmitEventWhenClosePayFixedSwap6DecimalsAndNotTakerClosedSwap() public {
-    //        // given
-    ////        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-    //
-    //        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-    //
-    //        _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
-    //
-    //        _iporProtocol.ammTreasury.addSwapLiquidator(_userThree);
-    //
-    //        // when
-    //        vm.prank(_userOne);
-    //        _iporProtocol.iporOracle.itfUpdateIndex(
-    //            address(_iporProtocol.asset),
-    //            TestConstants.PERCENTAGE_5_18DEC,
-    //            block.timestamp
-    //        );
-    //
-    //        vm.prank(_liquidityProvider);
-    //        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_6DEC); // USD_28_000_6DEC
-    //
-    //        vm.prank(_userTwo);
-    //        _iporProtocol.ammTreasury.openSwapPayFixed(
-    //            TestConstants.USD_10_000_6DEC, // totalAmount, USD_10_000_6DEC
-    //            TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
-    //            TestConstants.LEVERAGE_18DEC // leverage, LEVERAGE_18DEC
-    //        );
-    //
-    //        vm.prank(_userOne);
-    //        _iporProtocol.iporOracle.itfUpdateIndex(
-    //            address(_iporProtocol.asset),
-    //            TestConstants.PERCENTAGE_160_18DEC,
-    //            block.timestamp
-    //        );
-    //
-    //        vm.prank(_userThree);
-    //        vm.expectEmit(true, true, true, true);
-    //        emit CloseSwap(
-    //            1, // swapId
-    //            address(_iporProtocol.asset), // asset
-    //            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
-    //            _userThree, // liquidator
-    //            19935412124000000000000, // transferredToBuyer
-    //            TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC // transferredToLiquidator
-    //        );
-    //        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(
-    //            1, // swapId
-    //            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
-    //        );
-    //    }
+
+    function testShouldEmitEventWhenOpenPayFixedSwap6Decimals() public {
+        // given
+        _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE1;
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+
+        // when
+        vm.prank(_userOne);
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_28_000_6DEC);
+
+        vm.prank(_userTwo);
+        vm.expectEmit(true, true, true, true);
+        emit OpenSwap(
+            1, // swapId
+            _userTwo, // buyer
+            address(_iporProtocol.asset), // asset
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, // direction
+            AmmTypes.OpenSwapMoney({
+                totalAmount: TestConstants.USD_10_000_18DEC, // totalAmount
+                collateral: TestConstants.TC_COLLATERAL_18DEC, // collateral
+                notional: TestConstants.TC_NOTIONAL_18DEC, // notional
+                openingFeeLPAmount: TestConstants.TC_OPENING_FEE_18DEC, // openingFeeLPAmount
+                openingFeeTreasuryAmount: TestConstants.ZERO, // openingFeeTreasuryAmount
+                iporPublicationFee: TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC, // iporPublicationFee
+                liquidationDepositAmount: TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC // liquidationDepositAmount
+            }), // money
+            block.timestamp, // openTimestamp
+            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
+            AmmTypes.IporSwapIndicator({
+                iporIndexValue: TestConstants.PERCENTAGE_3_18DEC, // iporIndexValue
+                ibtPrice: 1 * TestConstants.D18, // ibtPrice
+                ibtQuantity: TestConstants.TC_NOTIONAL_18DEC, // ibtQuantity
+                fixedInterestRate: TestConstants.PERCENTAGE_4_18DEC // fixedInterestRate, 4%
+            }) // indicator
+        );
+
+        _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _userTwo,
+            TestConstants.USD_10_000_6DEC,
+            TestConstants.PERCENTAGE_6_18DEC,
+            TestConstants.LEVERAGE_18DEC
+        );
+    }
+
+    function testShouldEmitEventWhenOpenReceiveFixedSwap6Decimals() public {
+        // given
+        _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE2;
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+
+        // when
+        vm.prank(_userOne);
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_28_000_6DEC);
+
+        vm.prank(_userTwo);
+        vm.expectEmit(true, true, true, true);
+        emit OpenSwap(
+            1, // swapId
+            _userTwo, // buyer
+            address(_iporProtocol.asset), // asset
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, // direction
+            AmmTypes.OpenSwapMoney({
+                totalAmount: TestConstants.USD_10_000_18DEC, // totalAmount
+                collateral: TestConstants.TC_COLLATERAL_18DEC, // collateral
+                notional: TestConstants.TC_NOTIONAL_18DEC, // notional
+                openingFeeLPAmount: TestConstants.TC_OPENING_FEE_18DEC, // openingFeeLPAmount
+                openingFeeTreasuryAmount: TestConstants.ZERO, // openingFeeTreasuryAmount
+                iporPublicationFee: TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC, // iporPublicationFee
+                liquidationDepositAmount: TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC // liquidationDepositAmount
+            }), // money
+            block.timestamp, // openTimestamp
+            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
+            AmmTypes.IporSwapIndicator({
+                iporIndexValue: TestConstants.PERCENTAGE_3_18DEC, // iporIndexValue
+                ibtPrice: 1 * TestConstants.D18, // ibtPrice
+                ibtQuantity: TestConstants.TC_NOTIONAL_18DEC, // ibtQuantity
+                fixedInterestRate: TestConstants.PERCENTAGE_2_18DEC // fixedInterestRate, 2%
+            }) // indicator
+        );
+
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _userTwo,
+            TestConstants.USD_10_000_6DEC,
+            TestConstants.PERCENTAGE_1_18DEC,
+            TestConstants.LEVERAGE_18DEC
+        );
+    }
+
+    function testShouldEmitEventWhenClosePayFixedSwap18Decimals() public {
+        // given
+
+        _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE3;
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
+        // when
+        vm.prank(_userOne);
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
+
+        vm.prank(_userTwo);
+        _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
+            _userTwo,
+            TestConstants.USD_10_000_18DEC,
+            TestConstants.PERCENTAGE_6_18DEC,
+            TestConstants.LEVERAGE_18DEC
+        );
+
+        vm.prank(_userOne);
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_160_18DEC);
+
+        vm.prank(_userTwo);
+        vm.expectEmit(true, true, true, true);
+        emit CloseSwap(
+            1,
+            address(_iporProtocol.asset),
+            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
+            _userTwo,
+            19955412124333030204016,
+            TestConstants.ZERO
+        );
+        vm.warp(block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedDai(_userTwo, 1);
+    }
+
+    function testShouldEmitEventWhenClosePayFixedSwap6DecimalsAndTakerClosedSwap() public {
+        // given
+        _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE3;
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+
+        // when
+        vm.prank(_userOne);
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_28_000_6DEC);
+
+        vm.prank(_userTwo);
+        _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _userTwo,
+            TestConstants.USD_10_000_6DEC,
+            TestConstants.PERCENTAGE_6_18DEC,
+            TestConstants.LEVERAGE_18DEC
+        );
+
+        vm.prank(_userOne);
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_160_18DEC);
+
+        vm.prank(_userTwo);
+        vm.expectEmit(true, true, true, true);
+        emit CloseSwap(
+            1,
+            address(_iporProtocol.asset),
+            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
+            _userTwo,
+            19955412124000000000000,
+            TestConstants.ZERO
+        );
+        vm.warp(block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_userTwo, 1);
+    }
+
+    function testShouldEmitEventWhenClosePayFixedSwap6DecimalsAndNotTakerClosedSwap() public {
+        // given
+        _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE3;
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+
+        _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _userThree);
+
+        // when
+        vm.prank(_userOne);
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_28_000_6DEC);
+
+        vm.prank(_userTwo);
+        _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _userTwo,
+            TestConstants.USD_10_000_6DEC,
+            TestConstants.PERCENTAGE_6_18DEC,
+            TestConstants.LEVERAGE_18DEC
+        );
+
+        vm.prank(_userOne);
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_160_18DEC);
+
+        vm.prank(_userThree);
+        vm.expectEmit(true, true, true, true);
+
+        emit CloseSwap(
+            1,
+            address(_iporProtocol.asset),
+            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
+            _userThree,
+            19935412124000000000000,
+            TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC
+        );
+
+        vm.warp(block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_userThree, 1);
+    }
 }

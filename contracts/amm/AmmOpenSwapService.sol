@@ -537,8 +537,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             quoteValue
         );
 
-        console2.log("indicator.quoteValue =", quoteValue);
-
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(
             ctx.onBehalfOf,
             block.timestamp,
@@ -697,7 +695,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             wadTotalAmount > liquidationDepositAmountWad + poolCfg.iporPublicationFee,
             AmmErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
-        console2.log("poolCfg.openingFeeRate=", poolCfg.openingFeeRate);
 
         (uint256 collateral, uint256 notional, uint256 openingFeeAmount) = IporSwapLogic.calculateSwapAmount(
             duration,
@@ -828,8 +825,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         uint256 maxUtilizationRate,
         uint256 maxUtilizationRatePerLeg,
         uint256 cfgMinLeverage
-    ) internal view {
-        //TODO: pure
+    ) internal pure {
         uint256 utilizationRate;
         uint256 utilizationRatePerLeg;
 

@@ -112,7 +112,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
                 swap.id,
                 swap.buyer,
                 swap.openTimestamp,
-                swap.openTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
+                uint256(swap.duration),
                 swap.idsIndex,
                 swap.collateral,
                 swap.notional,
@@ -131,7 +131,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
                 swap.id,
                 swap.buyer,
                 swap.openTimestamp,
-                swap.openTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
+                uint256(swap.duration),
                 swap.idsIndex,
                 swap.collateral,
                 swap.notional,
@@ -423,9 +423,9 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
     function setRouter(address newRouter) external override onlyOwner {
         require(newRouter != address(0), IporErrors.WRONG_ADDRESS);
-//        address oldAmmTreasury = _iporProtocolRouter;
+        //        address oldAmmTreasury = _iporProtocolRouter;
         _iporProtocolRouter = newRouter;
-//        emit AmmTreasuryChanged(_msgSender(), oldAmmTreasury, newAmmTreasury);
+        //        emit AmmTreasuryChanged(_msgSender(), oldAmmTreasury, newAmmTreasury);
     }
 
     function pause() external override onlyOwner {

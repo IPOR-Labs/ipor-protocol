@@ -28,6 +28,7 @@ import "../../mocks/EmptyImplementation.sol";
 
 contract IporProtocolFactory is Test {
     struct Amm {
+        IporProtocolRouter router;
         ItfIporOracle iporOracle;
         IporRiskManagementOracle iporRiskManagementOracle;
         BuilderUtils.IporProtocol usdt;
@@ -40,6 +41,9 @@ contract IporProtocolFactory is Test {
         address iporRiskManagementOracleUpdater;
         BuilderUtils.IporOracleInitialParamsTestCase iporOracleInitialParamsTestCase;
         BuilderUtils.IporRiskManagementOracleInitialParamsTestCase iporRiskManagementOracleInitialParamsTestCase;
+        BuilderUtils.Spread28DaysTestCase spread28DaysTestCase;
+        BuilderUtils.Spread60DaysTestCase spread60DaysTestCase;
+        BuilderUtils.Spread90DaysTestCase spread90DaysTestCase;
         BuilderUtils.AmmTreasuryTestCase miltonUsdtTestCase;
         BuilderUtils.AmmTreasuryTestCase miltonUsdcTestCase;
         BuilderUtils.AmmTreasuryTestCase miltonDaiTestCase;
@@ -100,18 +104,18 @@ contract IporProtocolFactory is Test {
 
     function getFullInstance(AmmConfig memory cfg) public returns (Amm memory amm) {
         _assetBuilder.withUSDT();
-        _usdt = _assetBuilder.build();
+        amm.usdt.asset = _assetBuilder.build();
 
         _assetBuilder.withUSDC();
-        _usdc = _assetBuilder.build();
+        amm.usdc.asset = _assetBuilder.build();
 
         _assetBuilder.withDAI();
-        _dai = _assetBuilder.build();
+        amm.dai.asset = _assetBuilder.build();
 
         address[] memory assets = new address[](3);
-        assets[0] = address(_dai);
-        assets[1] = address(_usdt);
-        assets[2] = address(_usdc);
+        assets[0] = address(amm.dai.asset);
+        assets[1] = address(amm.usdt.asset);
+        assets[2] = address(amm.usdc.asset);
 
         ItfIporOracle iporOracle = _iporOracleFactory.getInstance(
             assets,
@@ -124,19 +128,48 @@ contract IporProtocolFactory is Test {
             cfg.iporRiskManagementOracleUpdater,
             cfg.iporRiskManagementOracleInitialParamsTestCase
         );
+
+        amm.iporOracle = iporOracle;
+        amm.iporRiskManagementOracle = iporRiskManagementOracle;
+
+        amm.usdt.ipToken = _ipTokenBuilder.withName("IP USDT").withSymbol("ipUSDT").withAsset(address(_usdt)).build();
+        amm.usdt.ivToken = _ivTokenBuilder.withName("IV USDT").withSymbol("ivUSDT").withAsset(address(_usdt)).build();
+        amm.usdt.iporWeighted = _iporWeightedBuilder.withIporOracle(address(iporOracle)).build();
+        amm.usdt.ammStorage = _ammStorageBuilder.build();
+
+        amm.router = _iporProtocolRouterBuilder.buildEmptyProxy();
+
+        _spreadRouterBuilder.withIporRouter(address(amm.router));
+
+        _spreadRouterBuilder.withUsdt(address(amm.usdt.asset));
+        _spreadRouterBuilder.withUsdc(address(amm.usdc.asset));
+        _spreadRouterBuilder.withDai(address(amm.dai.asset));
+
+        _spreadRouterBuilder.withSpread28DaysTestCase(cfg.spread28DaysTestCase);
+        _spreadRouterBuilder.withSpread60DaysTestCase(cfg.spread60DaysTestCase);
+        _spreadRouterBuilder.withSpread90DaysTestCase(cfg.spread90DaysTestCase);
+        //        iporProtocol.spreadRouter = _spreadRouterBuilder.build();
         //
-        //        amm.iporOracle = iporOracle;
-        //        amm.iporRiskManagementOracle = iporRiskManagementOracle;
+        //        amm.usdt.assetManagement = _assetManagementBuilder
+        //            .withAssetType(BuilderUtils.AssetType.USDT)
+        //            .withAsset(address(amm.usdt.asset))
+        //            .withIvToken(address(amm.usdt.ivToken))
+        //            .withAssetManagementImplementation(cfg.assetManagementImplementation)
+        //            .build();
         //
-        //        IpToken ipToken = _ipTokenBuilder.withName("IP USDT").withSymbol("ipUSDT").withAsset(address(_usdt)).build();
+        //        iporProtocol.ammTreasury = _ammTreasuryBuilder
+        //            .withAsset(address(iporProtocol.asset))
+        //            .withAmmStorage(address(iporProtocol.ammStorage))
+        //            .withAssetManagement(address(iporProtocol.assetManagement))
+        //            .withIporProtocolRouter(address(iporProtocol.router))
+        //            .build();
         //
-        //        IvToken ivToken = _ivTokenBuilder.withName("IV USDT").withSymbol("ivUSDT").withAsset(address(_usdt)).build();
-        //
-        //        MockIporWeighted iporWeighted = _iporWeightedBuilder.withIporOracle(address(iporOracle)).build();
-        //
-        //        MiltonStorage ammStorage = _ammStorageBuilder.build();
-        //
-        //        MockSpreadModel spreadModel = _spreadBuilder.build();
+        //        iporProtocol.router = _getUsdtIporProtocolRouterInstance(
+        //            iporProtocol,
+        //            cfg.openSwapServiceTestCase,
+        //            cfg.closeSwapServiceTestCase
+        //        );
+
         //
         //        ItfStanley stanley = _assetManagementBuilder
         //            .withAssetType(BuilderUtils.AssetType.USDT)
@@ -376,7 +409,7 @@ contract IporProtocolFactory is Test {
         iporProtocol.spreadRouter = _spreadRouterBuilder.build();
 
         iporProtocol.assetManagement = _assetManagementBuilder
-            .withAssetType(BuilderUtils.AssetType.DAI)
+            .withAssetType(BuilderUtils.AssetType.USDT)
             .withAsset(address(iporProtocol.asset))
             .withIvToken(address(iporProtocol.ivToken))
             .withAssetManagementImplementation(cfg.assetManagementImplementation)
@@ -477,7 +510,7 @@ contract IporProtocolFactory is Test {
         iporProtocol.spreadRouter = _spreadRouterBuilder.build();
 
         iporProtocol.assetManagement = _assetManagementBuilder
-            .withAssetType(BuilderUtils.AssetType.DAI)
+            .withAssetType(BuilderUtils.AssetType.USDC)
             .withAsset(address(iporProtocol.asset))
             .withIvToken(address(iporProtocol.ivToken))
             .withAssetManagementImplementation(cfg.assetManagementImplementation)
@@ -1065,9 +1098,7 @@ contract IporProtocolFactory is Test {
                 openingFeeRate: 1e16,
                 openingFeeTreasuryPortionRate: 0
             });
-            console2.log("DEFAULT openswap");
         } else if (openSwapServiceTestCase == BuilderUtils.AmmOpenSwapServiceTestCase.CASE1) {
-            console2.log("CASE1 openswap");
             poolCfg = IAmmOpenSwapService.PoolConfiguration({
                 asset: asset,
                 decimals: IERC20MetadataUpgradeable(asset).decimals(),

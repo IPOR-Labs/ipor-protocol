@@ -413,8 +413,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         );
 
         _transferLiquidationDepositAmount(
-            poolCfg.asset,
-            poolCfg.decimals,
+            poolCfg,
             beneficiary,
             payoutForLiquidatorPayFixed + payoutForLiquidatorReceiveFixed
         );
@@ -562,7 +561,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         uint256 payoutForLiquidator;
         (payoutForLiquidator, closedSwaps) = _closeSwapsPayFixed(beneficiary, swapIds, poolCfg);
 
-        _transferLiquidationDepositAmount(asset, poolCfg.decimals, beneficiary, payoutForLiquidator);
+        _transferLiquidationDepositAmount(poolCfg, beneficiary, payoutForLiquidator);
     }
 
     function _closeSwapsReceiveFixedWithTransferLiquidationDeposit(
@@ -575,22 +574,22 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         uint256 payoutForLiquidator;
         (payoutForLiquidator, closedSwaps) = _closeSwapsReceiveFixed(beneficiary, swapIds, poolCfg);
 
-        _transferLiquidationDepositAmount(asset, poolCfg.decimals, beneficiary, payoutForLiquidator);
+        _transferLiquidationDepositAmount(poolCfg, beneficiary, payoutForLiquidator);
     }
 
     /// @notice Transfer sum of all liquidation deposits to liquidator
     /// @param liquidator address of liquidator
     /// @param liquidationDepositAmount liquidation deposit amount, value represented in 18 decimals
     function _transferLiquidationDepositAmount(
-        address asset,
-        uint256 decimals,
+        PoolConfiguration memory poolCfg,
         address liquidator,
         uint256 liquidationDepositAmount
     ) internal {
         if (liquidationDepositAmount > 0) {
-            IERC20Upgradeable(asset).safeTransfer(
+            IERC20Upgradeable(poolCfg.asset).safeTransferFrom(
+                poolCfg.ammTreasury,
                 liquidator,
-                IporMath.convertWadToAssetDecimals(liquidationDepositAmount, decimals)
+                IporMath.convertWadToAssetDecimals(liquidationDepositAmount, poolCfg.decimals)
             );
         }
     }
@@ -717,8 +716,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         require(swapId > 0, AmmErrors.INCORRECT_SWAP_ID);
 
         _transferLiquidationDepositAmount(
-            poolCfg.asset,
-            poolCfg.decimals,
+            poolCfg,
             beneficiary,
             _closeSwapPayFixed(beneficiary, IAmmStorage(poolCfg.ammStorage).getSwapPayFixed(swapId), poolCfg)
         );
@@ -732,8 +730,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         require(swapId > 0, AmmErrors.INCORRECT_SWAP_ID);
 
         _transferLiquidationDepositAmount(
-            poolCfg.asset,
-            poolCfg.decimals,
+            poolCfg,
             beneficiary,
             _closeSwapReceiveFixed(beneficiary, IAmmStorage(poolCfg.ammStorage).getSwapReceiveFixed(swapId), poolCfg)
         );
@@ -837,7 +834,9 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
 
         if (transferAmount > 0) {
             uint256 transferAmountAssetDecimals = IporMath.convertWadToAssetDecimals(transferAmount, poolCfg.decimals);
-            uint256 wadAmmTreasuryErc20BalanceBeforeRedeem = IERC20Upgradeable(poolCfg.asset).balanceOf(poolCfg.ammTreasury);
+            uint256 wadAmmTreasuryErc20BalanceBeforeRedeem = IERC20Upgradeable(poolCfg.asset).balanceOf(
+                poolCfg.ammTreasury
+            );
 
             if (wadAmmTreasuryErc20BalanceBeforeRedeem <= transferAmountAssetDecimals) {
                 AmmTypes.AmmPoolCoreModel memory model;
@@ -860,7 +859,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             }
 
             //transfer from AmmTreasury to Trader
-            IERC20Upgradeable(poolCfg.asset).safeTransfer(buyer, transferAmountAssetDecimals);
+            IERC20Upgradeable(poolCfg.asset).safeTransferFrom(poolCfg.ammTreasury, buyer, transferAmountAssetDecimals);
 
             transferredToBuyer = IporMath.convertToWad(transferAmountAssetDecimals, poolCfg.decimals);
         }
