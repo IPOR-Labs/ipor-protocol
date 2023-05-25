@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 
-import {DataUtils} from "../utils/DataUtils.sol";
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
 import "contracts/mocks/MockIporSwapLogic.sol";
 import "contracts/interfaces/types/IporTypes.sol";
 
-contract IporSwapLogicCalculateSwapPayFixedValue is TestCommons, DataUtils {
+contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons {
     MockIporSwapLogic internal _iporSwapLogic;
 
     function setUp() public {
@@ -30,11 +29,11 @@ contract IporSwapLogicCalculateSwapPayFixedValue is TestCommons, DataUtils {
             1 // state
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePayoffPayFixed(
-            swap, block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, 1 * TestConstants.D18
+        int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(
+            swap, swap.openTimestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, 1 * TestConstants.D18
         );
         // then
-        assertEq(swapValue, -50000000000000000000000);
+        assertEq(swapValue, 50000000000000000000000);
     }
 
     function testShouldCalculateInterestCase2WhenSameTimestampAndIBTPriceIncreasesAnd18Decimals() public {
@@ -53,9 +52,9 @@ contract IporSwapLogicCalculateSwapPayFixedValue is TestCommons, DataUtils {
             1 // state
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePayoffPayFixed(swap, swap.openTimestamp, 125 * TestConstants.D18);
+        int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(swap, swap.openTimestamp, 125 * TestConstants.D18);
         // then
-        assertEq(swapValue, 24675750000000000000000);
+        assertEq(swapValue, -24675750000000000000000);
     }
 
     function testShouldCalculateInterestWhen25DaysLaterIBTPriceHasNotChangedAnd18Decimals() public {
@@ -74,11 +73,11 @@ contract IporSwapLogicCalculateSwapPayFixedValue is TestCommons, DataUtils {
             1 // state
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePayoffPayFixed(
+        int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(
             swap, swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 100 * TestConstants.D18
         );
         // then
-        assertEq(swapValue, -270419178082191780822);
+        assertEq(swapValue, 270419178082191780822);
     }
 
     function testShouldCalculateInterestWhen25DaysLaterIBTPriceHasChangedAnd18Decimals() public {
@@ -97,14 +96,16 @@ contract IporSwapLogicCalculateSwapPayFixedValue is TestCommons, DataUtils {
             1 // state
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePayoffPayFixed(
+        int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(
             swap, swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 125 * TestConstants.D18
         );
         // then
-        assertEq(swapValue, 24405330821917808219178);
+        assertEq(swapValue, -24405330821917808219178);
     }
 
-    function testShouldCalculateInterestWhenHugeIPOR25DaysLaterAndIBTPriceChangedAndUserLosesAnd18Decimals() public {
+    function testShouldCalculateInterestWhenHugeIPOR25DaysLaterAndIBTPriceHasChangedAndUserLosesAnd18Decimals()
+        public
+    {
         // given
         IporTypes.IporSwapMemory memory swap = IporTypes.IporSwapMemory(
             TestConstants.ZERO, // id
@@ -120,11 +121,11 @@ contract IporSwapLogicCalculateSwapPayFixedValue is TestCommons, DataUtils {
             1 // state
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePayoffPayFixed(
+        int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(
             swap, swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 125 * TestConstants.D18
         );
         // then
-        assertEq(swapValue, -67604794520547945205);
+        assertEq(swapValue, 67604794520547945205);
     }
 
     function testShouldCalculateInterestWhen100DaysLaterIBTPriceHasNotChangedAnd18Decimals() public {
@@ -143,11 +144,11 @@ contract IporSwapLogicCalculateSwapPayFixedValue is TestCommons, DataUtils {
             1 // state
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePayoffPayFixed(
+        int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(
             swap, swap.openTimestamp + 4 * TestConstants.PERIOD_25_DAYS_IN_SECONDS, 120 * TestConstants.D18
         );
         // then
-        assertEq(swapValue, 18658923287671232876712);
+        assertEq(swapValue, -18658923287671232876712);
     }
 
     function testShouldCalculateInterestWhen100DaysLaterIBTPriceHasChangedAnd18Decimals() public {
@@ -166,11 +167,11 @@ contract IporSwapLogicCalculateSwapPayFixedValue is TestCommons, DataUtils {
             1 // state
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePayoffPayFixed(
+        int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(
             swap, swap.openTimestamp + 4 * TestConstants.PERIOD_25_DAYS_IN_SECONDS, 120 * TestConstants.D18
         );
         // then
-        assertEq(swapValue, 18658923287671232876712);
+        assertEq(swapValue, -18658923287671232876712);
     }
 
     function testShouldCalculateInterestWhen100DaysLaterIBTPriceHasChangedAnd6Decimals() public {
@@ -189,10 +190,10 @@ contract IporSwapLogicCalculateSwapPayFixedValue is TestCommons, DataUtils {
             1 // state
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePayoffPayFixed(
+        int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(
             swap, swap.openTimestamp + 4 * TestConstants.PERIOD_25_DAYS_IN_SECONDS, 120 * TestConstants.D18
         );
         // then
-        assertEq(swapValue, 18658923287671232876712);
+        assertEq(swapValue, -18658923287671232876712);
     }
 }

@@ -7,12 +7,10 @@ import "contracts/libraries/Constants.sol";
 import "contracts/tokens/IvToken.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
 
-contract IvTokenTest is Test, TestCommons {
+contract IvTokenTest is TestCommons {
     IvToken internal _ivToken;
     MockTestnetToken internal _mockTestnetTokenDai;
-    address internal _admin;
-    address internal _userOne;
-    address internal _userTwo;
+
 
     function setUp() public {
         _ivToken = new IvToken("IvToken", "IVT", address(0x6B175474E89094C44Da98b954EedeAC495271d0F)); // random address

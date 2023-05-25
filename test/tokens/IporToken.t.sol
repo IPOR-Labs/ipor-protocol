@@ -8,7 +8,6 @@ import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
 
 contract IporTokenTest is Test, TestCommons {
-    address internal _admin;
     address internal _dao;
     address internal DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
 

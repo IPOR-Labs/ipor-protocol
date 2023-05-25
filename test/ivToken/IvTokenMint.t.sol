@@ -6,11 +6,9 @@ import "../TestCommons.sol";
 import "contracts/libraries/Constants.sol";
 import "contracts/tokens/IvToken.sol";
 
-contract IvTokenMintTest is Test, TestCommons {
+contract IvTokenMintTest is TestCommons {
     IvToken internal _ivToken;
-    address internal _admin;
-    address internal _userOne;
-    address internal _userTwo;
+
 
     event Mint(address indexed account, uint256 amount);
     event Transfer(address indexed from, address indexed to, uint256 value);
