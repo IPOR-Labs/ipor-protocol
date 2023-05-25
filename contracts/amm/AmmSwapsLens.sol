@@ -37,18 +37,48 @@ contract AmmSwapsLens is IAmmSwapsLens {
         address riskManagementOracle,
         address router
     ) {
-        require(address(usdcCfg.asset) != address(0), "USDC asset address cannot be 0");
-        require(address(usdcCfg.ammStorage) != address(0), "USDC ammStorage address cannot be 0");
-        require(address(usdcCfg.ammTreasury) != address(0), "USDC ammTreasury address cannot be 0");
-        require(address(usdtCfg.asset) != address(0), "USDT asset address cannot be 0");
-        require(address(usdtCfg.ammStorage) != address(0), "USDT ammStorage address cannot be 0");
-        require(address(usdtCfg.ammTreasury) != address(0), "USDT ammTreasury address cannot be 0");
-        require(address(daiCfg.asset) != address(0), "DAI asset address cannot be 0");
-        require(address(daiCfg.ammStorage) != address(0), "DAI ammStorage address cannot be 0");
-        require(address(daiCfg.ammTreasury) != address(0), "DAI ammTreasury address cannot be 0");
-        require(address(iporOracle) != address(0), "iporOracle address cannot be 0");
-        require(riskManagementOracle != address(0), "riskManagementOracle address cannot be 0");
-        require(router != address(0), "router address cannot be 0");
+        require(
+            usdcCfg.asset != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDC asset address cannot be 0")
+        );
+        require(
+            usdcCfg.ammStorage != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDC ammStorage address cannot be 0")
+        );
+        require(
+            usdcCfg.ammTreasury != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDC ammTreasury address cannot be 0")
+        );
+        require(
+            usdtCfg.asset != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDT asset address cannot be 0")
+        );
+        require(
+            usdtCfg.ammStorage != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDT ammStorage address cannot be 0")
+        );
+        require(
+            usdtCfg.ammTreasury != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDT ammTreasury address cannot be 0")
+        );
+        require(daiCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI asset address cannot be 0"));
+        require(
+            daiCfg.ammStorage != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " DAI ammStorage address cannot be 0")
+        );
+        require(
+            daiCfg.ammTreasury != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " DAI ammTreasury address cannot be 0")
+        );
+        require(
+            address(iporOracle) != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " iporOracle address cannot be 0")
+        );
+        require(
+            riskManagementOracle != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " riskManagementOracle address cannot be 0")
+        );
+        require(router != address(0), string.concat(IporErrors.WRONG_ADDRESS, " router address cannot be 0"));
 
         _usdcAsset = usdcCfg.asset;
         _usdcAmmStorage = usdcCfg.ammStorage;
@@ -153,11 +183,8 @@ contract AmmSwapsLens is IAmmSwapsLens {
         IAmmOpenSwapService.PoolConfiguration memory openSwapPoolCfg = IAmmOpenSwapService(_router)
             .getPoolConfiguration(asset);
 
-        (, , uint256 maxUtilizationRate, int256 spread) = IIporRiskManagementOracle(_router).getOpenSwapParameters(
-            asset,
-            direction,
-            duration
-        );
+        (, , uint256 maxUtilizationRate, int256 spread) = IIporRiskManagementOracle(_riskManagementOracle)
+            .getOpenSwapParameters(asset, direction, duration);
 
         IporTypes.AmmBalancesForOpenSwapMemory memory balances = IAmmStorage(openSwapPoolCfg.ammStorage)
             .getBalancesForOpenSwap();
@@ -171,12 +198,9 @@ contract AmmSwapsLens is IAmmSwapsLens {
             _riskManagementOracle
         );
 
-        uint256 maxLiquidityPoolBalance = AmmConfigurationManager.getAmmMaxLiquidityPoolBalance(asset);
-        uint256 maxLpAccountContribution = AmmConfigurationManager.getAmmMaxLpAccountContribution(asset);
-
         return
             AmmFacadeTypes.AssetConfiguration(
-                asset, // asset
+                asset,
                 openSwapPoolCfg.minLeverage,
                 riskIndicators.maxLeveragePerLeg,
                 openSwapPoolCfg.openingFeeRate,
@@ -184,8 +208,8 @@ contract AmmSwapsLens is IAmmSwapsLens {
                 openSwapPoolCfg.liquidationDepositAmount,
                 spread,
                 maxUtilizationRate,
-                maxLiquidityPoolBalance,
-                maxLpAccountContribution
+                AmmConfigurationManager.getAmmMaxLiquidityPoolBalance(asset),
+                AmmConfigurationManager.getAmmMaxLpAccountContribution(asset)
             );
     }
 
