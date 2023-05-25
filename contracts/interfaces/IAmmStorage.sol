@@ -4,6 +4,7 @@ pragma solidity 0.8.16;
 import "./types/IporTypes.sol";
 import "./types/AmmTypes.sol";
 import "./types/AmmStorageTypes.sol";
+import "../amm/libraries/types/AmmInternalTypes.sol";
 
 /// @title Interface for interaction with AmmTreasury Storage smart contract, reposnsible for managing AMM storage.
 interface IAmmStorage {
@@ -18,6 +19,8 @@ interface IAmmStorage {
     /// @dev swap ID is incremented when new position is opened, last swap ID is used in Pay Fixed and Receive Fixed swaps.
     /// @return last swap ID, integer
     function getLastSwapId() external view returns (uint256);
+
+    function getLastOpenedSwap(AmmTypes.SwapDuration duration, uint256 direction) external view returns (AmmInternalTypes.OpenSwapItem memory);
 
     /// @notice Gets balance struct
     /// @dev Balance contains:
@@ -222,10 +225,6 @@ interface IAmmStorage {
     /// @notice Updates the balance when Joseph transfers AmmTreasury's assets to Treasury's multisig wallet. Function is only available to Joseph.
     /// @param transferredAmount asset amount transferred to Treasury's multisig wallet.
     function updateStorageWhenTransferToTreasury(uint256 transferredAmount) external;
-
-    /// @notice Sets AMM Treasury's address. Function is only available to the smart contract Owner.
-    /// @param newRouter AMMTreasury's address
-    function setRouter(address newRouter) external;
 
     /// @notice Pauses current smart contract, it can be executed only by the Owner
     /// @dev Emits {Paused} event from Amm Treasury.
