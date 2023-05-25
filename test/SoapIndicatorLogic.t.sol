@@ -38,12 +38,7 @@ contract SoapIndicatorLogicTest is Test, DataUtils {
         uint256 swapFixedInterestRate = TestConstants.PERCENTAGE_4_18DEC;
         uint256 expectedInterestRate = 66666666666666667;
         StorageInternalTypes.SoapIndicatorsMemory memory soapIndicators;
-        soapIndicators.hypotheticalInterestCumulative =
-            500 *
-            TestConstants.D18 *
-            TestConstants.D18 *
-            TestConstants.D18 *
-            TestConstants.YEAR_IN_SECONDS;
+        soapIndicators.hypotheticalInterestCumulative = 500 * TestConstants.D18;
         soapIndicators.totalNotional = 20000 * TestConstants.D18_128UINT;
         soapIndicators.totalIbtQuantity = 100 * TestConstants.D18_128UINT;
         soapIndicators.averageInterestRate = 8 * TestConstants.D16_64UINT;
@@ -65,12 +60,7 @@ contract SoapIndicatorLogicTest is Test, DataUtils {
         uint256 swapFixedInterestRate = TestConstants.PERCENTAGE_4_18DEC;
         uint256 expectedInterestRate = 12 * TestConstants.D16;
         StorageInternalTypes.SoapIndicatorsMemory memory soapIndicators;
-        soapIndicators.hypotheticalInterestCumulative =
-            500 *
-            TestConstants.D18 *
-            TestConstants.D18 *
-            TestConstants.D18 *
-            TestConstants.YEAR_IN_SECONDS;
+        soapIndicators.hypotheticalInterestCumulative = 500 * TestConstants.D18;
         soapIndicators.totalNotional = 20000 * TestConstants.D18_128UINT;
         soapIndicators.totalIbtQuantity = 100 * TestConstants.D18_128UINT;
         soapIndicators.averageInterestRate = 8 * TestConstants.D16_64UINT;
@@ -91,12 +81,7 @@ contract SoapIndicatorLogicTest is Test, DataUtils {
         uint256 derivativeNotional = 40000 * TestConstants.D18;
         uint256 swapFixedInterestRate = TestConstants.PERCENTAGE_4_18DEC;
         StorageInternalTypes.SoapIndicatorsMemory memory soapIndicators;
-        soapIndicators.hypotheticalInterestCumulative =
-            500 *
-            TestConstants.D18 *
-            TestConstants.D18 *
-            TestConstants.D18 *
-            TestConstants.YEAR_IN_SECONDS;
+        soapIndicators.hypotheticalInterestCumulative = 500 * TestConstants.D18;
         soapIndicators.totalNotional = 20000 * TestConstants.D18_128UINT;
         soapIndicators.totalIbtQuantity = 100 * TestConstants.D18_128UINT;
         soapIndicators.averageInterestRate = 8 * TestConstants.D16_64UINT;
