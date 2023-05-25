@@ -234,6 +234,11 @@ interface IAmmStorage {
     /// @dev Emits {Unpaused} event from AmmTreasury.
     function unpause() external;
 
+    /// @notice Returns the contribution of a specific account to the Liquidity Pool.
+    /// @param account Account address for which to fetch the contribution.
+    /// @return The amount of the account's contribution to the Liquidity Pool, represented in 18 decimals.
+    function getLiquidityPoolAccountContribution(address account) external view returns (uint256);
+
     /// @notice Emitted when AMM Treausury address has changed by the smart contract Owner.
     /// @param changedBy account address that has changed AmmTreasury's address
     /// @param oldAmmTreasury old AmmTreasury's address

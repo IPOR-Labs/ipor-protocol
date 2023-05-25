@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "./AccessControl.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../interfaces/IAmmSwapsLens.sol";
+import "../interfaces/IAmmPoolsLens.sol";
+import "../interfaces/IAssetManagementLens.sol";
 import "../interfaces/IAmmOpenSwapService.sol";
 import "../interfaces/IAmmCloseSwapService.sol";
 import "../interfaces/IAmmPoolsService.sol";
@@ -15,6 +17,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
     using Address for address;
 
     address public immutable AMM_SWAPS_LENS;
+    address public immutable AMM_POOLS_LENS;
+    address public immutable ASSET_MANAGEMENTLENS_LENS;
     address public immutable AMM_OPEN_SWAP_SERVICE_ADDRESS;
     address public immutable AMM_CLOSE_SWAP_SERVICE_ADDRESS;
     address public immutable AMM_POOLS_SERVICE_ADDRESS;
@@ -22,6 +26,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
 
     struct DeployedContracts {
         address ammSwapsLens;
+        address ammPoolsLens;
+        address assetManagementLens;
         address ammOpenSwapServiceAddress;
         address ammCloseSwapServiceAddress;
         address ammPoolsServiceAddress;
@@ -30,6 +36,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
 
     constructor(DeployedContracts memory deployedContracts) {
         AMM_SWAPS_LENS = deployedContracts.ammSwapsLens;
+        AMM_POOLS_LENS = deployedContracts.ammPoolsLens;
+        ASSET_MANAGEMENTLENS_LENS = deployedContracts.assetManagementLens;
         AMM_OPEN_SWAP_SERVICE_ADDRESS = deployedContracts.ammOpenSwapServiceAddress;
         AMM_CLOSE_SWAP_SERVICE_ADDRESS = deployedContracts.ammCloseSwapServiceAddress;
         AMM_POOLS_SERVICE_ADDRESS = deployedContracts.ammPoolsServiceAddress;
@@ -41,9 +49,27 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
         if (
             sig == IAmmSwapsLens.getSwapsPayFixed.selector ||
             sig == IAmmSwapsLens.getSwapsReceiveFixed.selector ||
-            sig == IAmmSwapsLens.getSwaps.selector
+            sig == IAmmSwapsLens.getSwaps.selector ||
+            sig == IAmmSwapsLens.getPayoffPayFixed.selector ||
+            sig == IAmmSwapsLens.getPayoffReceiveFixed.selector ||
+            sig == IAmmSwapsLens.getBalancesForOpenSwap.selector ||
+            sig == IAmmSwapsLens.getSOAP.selector ||
+            sig == IAmmSwapsLens.getConfiguration.selector
         ) {
             return AMM_SWAPS_LENS;
+        } else if (
+            sig == IAmmPoolsLens.getPoolConfiguration.selector ||
+            sig == IAmmPoolsLens.getExchangeRate.selector ||
+            sig == IAmmPoolsLens.getBalance.selector ||
+            sig == IAmmPoolsLens.getLiquidityPoolAccountContribution.selector
+        ) {
+            return AMM_POOLS_LENS;
+        } else if (
+            sig == IAssetManagementLens.balanceOfAmmTreasury.selector ||
+            sig == IAssetManagementLens.aaveBalanceOf.selector ||
+            sig == IAssetManagementLens.compoundBalanceOf.selector
+        ) {
+            return ASSET_MANAGEMENTLENS_LENS;
         } else if (
             sig == IAmmOpenSwapService.openSwapPayFixed28daysUsdt.selector ||
             sig == IAmmOpenSwapService.openSwapPayFixed60daysUsdt.selector ||

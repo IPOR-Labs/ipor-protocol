@@ -2,6 +2,7 @@
 pragma solidity 0.8.16;
 
 import "./types/IporTypes.sol";
+import "./types/AmmFacadeTypes.sol";
 
 interface IAmmSwapsLens {
     /// @notice IPOR Swap structure.
@@ -37,6 +38,16 @@ interface IAmmSwapsLens {
         /// @notice State of the swap
         /// @dev 0 - INACTIVE, 1 - ACTIVE
         uint256 state;
+    }
+
+    /// @notice Lens Configuration structure
+    struct SwapLensConfiguration {
+        /// @notice Asset address
+        address asset;
+        /// @notice Address of the AMM (Automated Market Maker) storage contract
+        address ammStorage;
+        /// @notice Address of the AMM Treasury contract
+        address ammTreasury;
     }
 
     /// @notice Gets the list of active Pay Fixed Receive Floating swaps in AmmTreasury for a given asset and address
@@ -84,6 +95,10 @@ interface IAmmSwapsLens {
 
     function getPayoffReceiveFixed(address asset, uint256 swapId) external view returns (int256 payoff);
 
+    /// @notice Gets the balances required to open a swap.
+    /// @return AmmBalancesForOpenSwapMemory The balances required for opening a swap.
+    function getBalancesForOpenSwap(address asset) external view returns (IporTypes.AmmBalancesForOpenSwapMemory memory);
+
     function getSOAP(address asset)
         external
         view
@@ -92,4 +107,13 @@ interface IAmmSwapsLens {
             int256 soapReceiveFixed,
             int256 soap
         );
+
+    /**
+     * @dev Returns the asset configuration details for a given asset, direction and duration.
+     * @param asset The address of the asset.
+     * @param direction The direction of the swap (0 for pay fixed, 1 for receive fixed).
+     * @param duration The duration of the swap
+     * @return The asset configuration details.
+     */
+    function getConfiguration(address asset, uint256 direction, uint256 duration) external view returns (AmmFacadeTypes.AssetConfiguration memory);
 }

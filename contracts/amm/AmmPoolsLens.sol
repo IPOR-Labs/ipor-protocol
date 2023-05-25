@@ -95,14 +95,24 @@ contract AmmPoolsLens is IAmmPoolsLens {
         _iporOracle = iporOracle;
     }
 
-    function getPoolConfiguration(address asset) external override view returns (PoolConfiguration memory) {
+    function getPoolConfiguration(address asset) external view override returns (PoolConfiguration memory) {
         return _getPoolConfiguration(asset);
     }
 
-    /// @notice Calculates ipToken exchange rate
-    /// @dev exchange rate is a ratio between Liquidity Pool Balance and ipToken total supply
-    /// @return ipToken exchange rate for a specific asset, represented in 18 decimals.
     function getExchangeRate(address asset) external view override returns (uint256) {
+        return _getPoolCoreModel(asset).getExchangeRate();
+    }
+
+    function getBalance(address asset) external view override returns (IporTypes.AmmBalancesMemory memory balance) {
+        return _getPoolCoreModel(asset).getAccruedBalance();
+    }
+
+    function getLiquidityPoolAccountContribution(address asset, address account) external view returns (uint256) {
+        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+        return IAmmStorage(poolCfg.ammStorage).getLiquidityPoolAccountContribution(account);
+    }
+
+    function _getPoolCoreModel(address asset) internal view returns (AmmTypes.AmmPoolCoreModel memory) {
         PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         AmmTypes.AmmPoolCoreModel memory model;
@@ -113,7 +123,7 @@ contract AmmPoolsLens is IAmmPoolsLens {
         model.ammStorage = poolCfg.ammStorage;
         model.iporOracle = _iporOracle;
 
-        return model.getExchangeRate();
+        return model;
     }
 
     function _getPoolConfiguration(address asset) internal view returns (PoolConfiguration memory) {
