@@ -11,6 +11,8 @@ import "../../../contracts/router/IporProtocolRouter.sol";
 contract IporProtocolRouterBuilder is Test {
     struct BuilderData {
         address ammSwapsLens;
+        address ammPoolsLens;
+        address assetManagementLens;
         address ammOpenSwapService;
         address ammCloseSwapService;
         address ammPoolsService;
@@ -27,6 +29,16 @@ contract IporProtocolRouterBuilder is Test {
 
     function withAmmSwapsLens(address ammSwapsLens) public returns (IporProtocolRouterBuilder) {
         builderData.ammSwapsLens = ammSwapsLens;
+        return this;
+    }
+
+    function withAmmPoolsLens(address ammPoolsLens) public returns (IporProtocolRouterBuilder) {
+        builderData.ammPoolsLens = ammPoolsLens;
+        return this;
+    }
+
+    function withAssetManagementLens(address assetManagementLens) public returns (IporProtocolRouterBuilder) {
+        builderData.assetManagementLens = assetManagementLens;
         return this;
     }
 
@@ -65,6 +77,8 @@ contract IporProtocolRouterBuilder is Test {
 
         IporProtocolRouter.DeployedContracts memory deployedContracts = IporProtocolRouter.DeployedContracts({
             ammSwapsLens: builderData.ammSwapsLens,
+            ammPoolsLens: builderData.ammPoolsLens,
+            assetManagementLens: builderData.assetManagementLens,
             ammOpenSwapService: builderData.ammOpenSwapService,
             ammCloseSwapService: builderData.ammCloseSwapService,
             ammPoolsService: builderData.ammPoolsService,
@@ -84,6 +98,8 @@ contract IporProtocolRouterBuilder is Test {
 
         IporProtocolRouter.DeployedContracts memory deployedContracts = IporProtocolRouter.DeployedContracts({
             ammSwapsLens: builderData.ammSwapsLens,
+            ammPoolsLens: builderData.ammPoolsLens,
+            assetManagementLens: builderData.assetManagementLens,
             ammOpenSwapService: builderData.ammOpenSwapService,
             ammCloseSwapService: builderData.ammCloseSwapService,
             ammPoolsService: builderData.ammPoolsService,

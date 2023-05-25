@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "./AccessControl.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../interfaces/IAmmSwapsLens.sol";
+import "../interfaces/IAmmPoolsLens.sol";
+import "../interfaces/IAssetManagementLens.sol";
 import "../interfaces/IAmmOpenSwapService.sol";
 import "../interfaces/IAmmCloseSwapService.sol";
 import "../interfaces/IAmmPoolsService.sol";
@@ -15,6 +17,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
     using Address for address;
 
     address public immutable AMM_SWAPS_LENS;
+    address public immutable AMM_POOLS_LENS;
+    address public immutable ASSET_MANAGEMENT_LENS;
     address public immutable AMM_OPEN_SWAP_SERVICE_ADDRESS;
     address public immutable AMM_CLOSE_SWAP_SERVICE_ADDRESS;
     address public immutable AMM_POOLS_SERVICE_ADDRESS;
@@ -22,6 +26,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
 
     struct DeployedContracts {
         address ammSwapsLens;
+        address ammPoolsLens;
+        address assetManagementLens;
         address ammOpenSwapService;
         address ammCloseSwapService;
         address ammPoolsService;
@@ -30,8 +36,16 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
 
     constructor(DeployedContracts memory deployedContracts) {
         require(
-            deployedContracts.ammCloseSwapService != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " AMM_CLOSE_SWAP_SERVICE_ADDRESS")
+            deployedContracts.ammSwapsLens != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " AMM_SWAPS_LENS")
+        );
+        require(
+            deployedContracts.ammPoolsLens != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " AMM_POOLS_LENS")
+        );
+        require(
+            deployedContracts.assetManagementLens != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " ASSET_MANAGEMENT_LENS")
         );
 
         require(
@@ -40,13 +54,13 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
         );
 
         require(
-            deployedContracts.ammPoolsService != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " AMM_POOLS_SERVICE_ADDRESS")
+            deployedContracts.ammCloseSwapService != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " AMM_CLOSE_SWAP_SERVICE_ADDRESS")
         );
 
         require(
-            deployedContracts.ammSwapsLens != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " AMM_SWAPS_LENS")
+            deployedContracts.ammPoolsService != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " AMM_POOLS_SERVICE_ADDRESS")
         );
 
         require(
@@ -55,6 +69,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
         );
 
         AMM_SWAPS_LENS = deployedContracts.ammSwapsLens;
+        AMM_POOLS_LENS = deployedContracts.ammPoolsLens;
+        ASSET_MANAGEMENT_LENS = deployedContracts.assetManagementLens;
         AMM_OPEN_SWAP_SERVICE_ADDRESS = deployedContracts.ammOpenSwapService;
         AMM_CLOSE_SWAP_SERVICE_ADDRESS = deployedContracts.ammCloseSwapService;
         AMM_POOLS_SERVICE_ADDRESS = deployedContracts.ammPoolsService;
@@ -66,9 +82,27 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
         if (
             sig == IAmmSwapsLens.getSwapsPayFixed.selector ||
             sig == IAmmSwapsLens.getSwapsReceiveFixed.selector ||
-            sig == IAmmSwapsLens.getSwaps.selector
+            sig == IAmmSwapsLens.getSwaps.selector ||
+            sig == IAmmSwapsLens.getPayoffPayFixed.selector ||
+            sig == IAmmSwapsLens.getPayoffReceiveFixed.selector ||
+            sig == IAmmSwapsLens.getBalancesForOpenSwap.selector ||
+            sig == IAmmSwapsLens.getSOAP.selector ||
+            sig == IAmmSwapsLens.getConfiguration.selector
         ) {
             return AMM_SWAPS_LENS;
+        } else if (
+            sig == IAmmPoolsLens.getPoolConfiguration.selector ||
+            sig == IAmmPoolsLens.getExchangeRate.selector ||
+            sig == IAmmPoolsLens.getBalance.selector ||
+            sig == IAmmPoolsLens.getLiquidityPoolAccountContribution.selector
+        ) {
+            return AMM_POOLS_LENS;
+        } else if (
+            sig == IAssetManagementLens.balanceOfAmmTreasury.selector ||
+            sig == IAssetManagementLens.aaveBalanceOf.selector ||
+            sig == IAssetManagementLens.compoundBalanceOf.selector
+        ) {
+            return ASSET_MANAGEMENT_LENS;
         } else if (
             sig == IAmmOpenSwapService.openSwapPayFixed28daysUsdt.selector ||
             sig == IAmmOpenSwapService.openSwapPayFixed60daysUsdt.selector ||
