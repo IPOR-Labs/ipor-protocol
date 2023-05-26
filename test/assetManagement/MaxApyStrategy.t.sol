@@ -1,51 +1,55 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 
-import {TestCommons} from "../../../TestCommons.sol";
-import {DataUtils} from "../../../utils/DataUtils.sol";
-import {TestConstants} from "../../../utils/TestConstants.sol";
+import {TestCommons} from "../TestCommons.sol";
+
 import {IvToken} from "contracts/tokens/IvToken.sol";
 import {MockTestnetToken} from "contracts/mocks/tokens/MockTestnetToken.sol";
-import {MockStrategy} from "contracts/mocks/assetManagement/MockStrategy.sol";
+
 import {ItfAssetManagement18D} from "contracts/itf/ItfAssetManagement18D.sol";
 
-contract AssetManagementMaxApyStrategyTest is TestCommons, DataUtils {
-    MockTestnetToken internal _daiMockedToken;
-    MockTestnetToken internal _usdtMockedToken;
-    MockTestnetToken internal _usdcMockedToken;
-    IvToken internal _ivTokenDai;
+import "../utils/builder/AssetManagementBuilder.sol";
+import "contracts/mocks/stanley/MockStrategy.sol";
+import "../utils/builder/IvTokenBuilder.sol";
+import "../utils/builder/AssetBuilder.sol";
+
+contract AssetManagementMaxApyStrategyTest is TestCommons {
+    AssetBuilder internal _assetBuilder = new AssetBuilder(address(this));
+    IvTokenBuilder internal _ivTokenBuilder = new IvTokenBuilder(address(this));
+    AssetManagementBuilder internal _assetManagementBuilder = new AssetManagementBuilder(address(this));
+
+    ItfAssetManagement internal _assetManagementDai;
     MockStrategy internal _strategyAaveDai;
     MockStrategy internal _strategyCompoundDai;
-    ItfAssetManagement18D internal _assetManagementDai;
-
-    function _setupStrategies() internal {
-        _strategyAaveDai.setAsset(address(_daiMockedToken));
-        _strategyAaveDai.setShareToken(address(_daiMockedToken));
-        _strategyCompoundDai.setAsset(address(_daiMockedToken));
-        _strategyCompoundDai.setShareToken(address(_daiMockedToken));
-    }
 
     function setUp() public {
-        _daiMockedToken = getTokenDai();
-        _usdtMockedToken = getTokenUsdt();
-        _usdcMockedToken = getTokenUsdc();
-        _ivTokenDai = new IvToken("IvToken", "IVT", address(_daiMockedToken));
-        _strategyAaveDai = new MockStrategy();
-        _strategyCompoundDai = new MockStrategy();
-        _setupStrategies();
-        _assetManagementDai = getItfAssetManagementDai(
-            address(_daiMockedToken),
-            address(_ivTokenDai),
-            address(_strategyAaveDai),
-            address(_strategyCompoundDai)
-        );
-        _ivTokenDai.setAssetManagement(address(_assetManagementDai));
         _admin = address(this);
         _userOne = _getUserAddress(1);
         _userTwo = _getUserAddress(2);
         _userThree = _getUserAddress(3);
         _liquidityProvider = _getUserAddress(4);
         _users = usersToArray(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
+
+        _assetBuilder.withDAI();
+        MockTestnetToken asset = _assetBuilder.build();
+
+        IvToken ivToken = _ivTokenBuilder.withName("IV DAI").withSymbol("ivDAI").withAsset(address(asset)).build();
+
+        _strategyAaveDai = new MockStrategy();
+        _strategyAaveDai.setAsset(address(asset));
+        _strategyAaveDai.setShareToken(address(asset));
+
+        _strategyCompoundDai = new MockStrategy();
+        _strategyCompoundDai.setAsset(address(asset));
+        _strategyCompoundDai.setShareToken(address(asset));
+
+        _assetManagementDai = _assetManagementBuilder
+            .withAssetType(BuilderUtils.AssetType.DAI)
+            .withAsset(address(asset))
+            .withIvToken(address(ivToken))
+            .withStrategyAave(address(_strategyAaveDai))
+            .withStrategyCompound(address(_strategyCompoundDai))
+            .build();
     }
 
     function testShouldSelectAaveStrategy() public {
