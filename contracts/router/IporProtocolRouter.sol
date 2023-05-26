@@ -98,7 +98,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             sig == IPowerTokenLens.delegatedToLiquidityMiningBalanceOf.selector ||
             sig == IPowerTokenLens.getActiveCooldown.selector ||
             sig == IPowerTokenLens.getUnstakeWithoutCooldownFee.selector ||
-            sig == IPowerTokenLens.COOL_DOWN_IN_SECONDS.selector
+            sig == IPowerTokenLens.COOL_DOWN_IN_SECONDS.selector ||
+            sig == IPowerTokenLens.calculateExchangeRate.selector
         ) {
             return POWER_TOKEN_SERVICE_ADDRESS;
         } else if (

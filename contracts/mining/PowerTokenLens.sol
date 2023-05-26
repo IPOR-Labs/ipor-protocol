@@ -38,12 +38,7 @@ contract PowerTokenLens is IPowerTokenLens {
         return IPowerTokenV2(POWER_TOKEN).balanceOf(account);
     }
 
-    function delegatedToLiquidityMiningBalanceOf(address account)
-        external
-        view
-        override
-        returns (uint256)
-    {
+    function delegatedToLiquidityMiningBalanceOf(address account) external view override returns (uint256) {
         return IPowerTokenV2(POWER_TOKEN).delegatedToLiquidityMiningBalanceOf(account);
     }
 
@@ -51,19 +46,15 @@ contract PowerTokenLens is IPowerTokenLens {
         return IPowerTokenV2(POWER_TOKEN).getUnstakeWithoutCooldownFee();
     }
 
-    function getActiveCooldown(address account)
-        external
-        view
-        returns (PowerTokenTypes.PwTokenCooldown memory)
-    {
+    function getActiveCooldown(address account) external view returns (PowerTokenTypes.PwTokenCooldown memory) {
         return IPowerTokenV2(POWER_TOKEN).getActiveCooldown(account);
     }
 
-    function COOL_DOWN_IN_SECONDS()
-        external
-        view
-        returns (uint256)
-    {
+    function COOL_DOWN_IN_SECONDS() external view returns (uint256) {
         return IPowerTokenInternalV2(POWER_TOKEN).COOL_DOWN_IN_SECONDS();
+    }
+
+    function calculateExchangeRate() external view returns (uint256) {
+        return IPowerTokenInternalV2(POWER_TOKEN).calculateExchangeRate();
     }
 }

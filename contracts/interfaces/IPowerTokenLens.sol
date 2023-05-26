@@ -45,15 +45,13 @@ interface IPowerTokenLens {
     /// Struct containing information on when the cooldown end and what is the quantity of the Power Tokens locked.
     /// @param account account address that owns Power Tokens in the cooldown
     /// @return Object PowerTokenTypes.PowerTokenCoolDown represents active cool down
-    function getActiveCooldown(address account)
-        external
-        view
-        returns (PowerTokenTypes.PwTokenCooldown memory);
+    function getActiveCooldown(address account) external view returns (PowerTokenTypes.PwTokenCooldown memory);
 
     /// @notice Gets the power token cool down time in seconds.
     /// @return uint256 cool down time in seconds
-    function COOL_DOWN_IN_SECONDS()
-        external
-        view
-        returns (uint256);
+    function COOL_DOWN_IN_SECONDS() external view returns (uint256);
+
+    /// @notice Calculates the internal exchange rate between the Staked Token and total supply of a base amount
+    /// @return Current exchange rate between the Staked Token and the total supply of a base amount, represented with 18 decimals.
+    function calculateExchangeRate() external view returns (uint256);
 }
