@@ -7,7 +7,7 @@ import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
 import "contracts/mocks/MockIporSwapLogic.sol";
 
-contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
+contract IporSwapLogicCalculateInterest is TestCommons, DataUtils {
     MockIporSwapLogic internal _iporSwapLogic;
 
     function setUp() public {

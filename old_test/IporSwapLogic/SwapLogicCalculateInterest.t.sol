@@ -7,7 +7,7 @@ import "../utils/TestConstants.sol";
 import "contracts/mocks/MockIporSwapLogic.sol";
 import "contracts/interfaces/types/IporTypes.sol";
 
-contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
+contract IporSwapLogicCalculateInterest is TestCommons, DataUtils {
     MockIporSwapLogic internal _iporSwapLogic;
 
     function setUp() public {
@@ -32,12 +32,12 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
             1 // state
         );
         // when
-        (uint256 quasiIFixed, uint256 quasiIFloating) = _iporSwapLogic.calculateQuasiInterest(
+        (uint256 iFixed, uint256 iFloating) = _iporSwapLogic.calculateInterest(
             swap, swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 125 * TestConstants.D18
         );
         // then
-        assertEq(quasiIFixed, 3893004244800000000000000000000000000000000000000);
-        assertEq(quasiIFloating, 3890872260000000000000000000000000000000000000000);
+        assertEq(iFixed, 3893004244800000000000000000000000000000000000000);
+        assertEq(iFloating, 3890872260000000000000000000000000000000000000000);
     }
 
     function testShouldCalculateQuasiInterestWhenIBTPriceHasNotChanged100DaysLaterAnd18Decimals() public {
@@ -56,12 +56,12 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
             1 // state
         );
         // when
-        (uint256 quasiIFixed, uint256 quasiIFloating) = _iporSwapLogic.calculateQuasiInterest(
+        (uint256 iFixed, uint256 iFloating) = _iporSwapLogic.calculateInterest(
             swap, swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS * 4, 120 * TestConstants.D18
         );
         // then
-        assertEq(quasiIFixed, 3146809564800000000000000000000000000000000000000);
-        assertEq(quasiIFloating, 3735237369600000000000000000000000000000000000000);
+        assertEq(iFixed, 3146809564800000000000000000000000000000000000000);
+        assertEq(iFloating, 3735237369600000000000000000000000000000000000000);
     }
 
     function testShouldCalculateQuasiInterestCase1() public {
@@ -80,12 +80,12 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
             1 // state
         );
         // when
-        (uint256 quasiIFixed, uint256 quasiIFloating) = _iporSwapLogic.calculateQuasiInterest(
+        (uint256 iFixed, uint256 iFloating) = _iporSwapLogic.calculateInterest(
             swap, swap.openTimestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, 1 * TestConstants.D18
         );
         // then
-        assertEq(quasiIFixed, 3122249099904000000000000000000000000000000000000);
-        assertEq(quasiIFloating, 31126978080000000000000000000000000000000000000);
+        assertEq(iFixed, 3122249099904000000000000000000000000000000000000);
+        assertEq(iFloating, 31126978080000000000000000000000000000000000000);
     }
 
     function testShouldRevertWhenClosingTimestampIsLowerThanOpenTimestamp() public {
@@ -105,8 +105,8 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
 		);
 		// when
 		vm.expectRevert("IPOR_319");
-		_iporSwapLogic.calculateQuasiInterest(
-			swap, 
+		_iporSwapLogic.calculateInterest(
+			swap,
 			swap.openTimestamp - TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
 			1 * TestConstants.D18
 		);
@@ -128,11 +128,11 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
             1 // state
         );
         // when
-        (uint256 quasiIFixed, uint256 quasiIFloating) =
-            _iporSwapLogic.calculateQuasiInterest(swap, swap.openTimestamp, 125 * TestConstants.D18);
+        (uint256 iFixed, uint256 iFloating) =
+            _iporSwapLogic.calculateInterest(swap, swap.openTimestamp, 125 * TestConstants.D18);
         // then
-        assertEq(quasiIFixed, 3112697808000000000000000000000000000000000000000);
-        assertEq(quasiIFloating, 3890872260000000000000000000000000000000000000000);
+        assertEq(iFixed, 3112697808000000000000000000000000000000000000000);
+        assertEq(iFloating, 3890872260000000000000000000000000000000000000000);
     }
 
     function testShouldCalculateQuasiInterestWhenIBTPriceHasNotChanged25DaysLaterAnd18Decimals() public {
@@ -151,12 +151,12 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
             1 // state
         );
         // when
-        (uint256 quasiIFixed, uint256 quasiIFloating) = _iporSwapLogic.calculateQuasiInterest(
+        (uint256 iFixed, uint256 iFloating) = _iporSwapLogic.calculateInterest(
             swap, swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 100 * TestConstants.D18
         );
         // then
-        assertEq(quasiIFixed, 3121225747200000000000000000000000000000000000000);
-        assertEq(quasiIFloating, 3112697808000000000000000000000000000000000000000);
+        assertEq(iFixed, 3121225747200000000000000000000000000000000000000);
+        assertEq(iFloating, 3112697808000000000000000000000000000000000000000);
     }
 
     function testShouldCalculateQuasiInterestWhenIBTPriceHasChanged25DaysLaterAnd18Decimals() public {
@@ -175,12 +175,12 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
             1 // state
         );
         // when
-        (uint256 quasiIFixed, uint256 quasiIFloating) = _iporSwapLogic.calculateQuasiInterest(
+        (uint256 iFixed, uint256 iFloating) = _iporSwapLogic.calculateInterest(
             swap, swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 125 * TestConstants.D18
         );
         // then
-        assertEq(quasiIFixed, 3121225747200000000000000000000000000000000000000);
-        assertEq(quasiIFloating, 3890872260000000000000000000000000000000000000000);
+        assertEq(iFixed, 3121225747200000000000000000000000000000000000000);
+        assertEq(iFloating, 3890872260000000000000000000000000000000000000000);
     }
 
     function testShouldCalculateQuasiInterestWhenIBTPriceHasChanged50DaysLaterAnd18Decimals() public {
@@ -199,12 +199,12 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
             1 // state
         );
         // when
-        (uint256 quasiIFixed, uint256 quasiIFloating) = _iporSwapLogic.calculateQuasiInterest(
+        (uint256 iFixed, uint256 iFloating) = _iporSwapLogic.calculateInterest(
             swap, swap.openTimestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS, 125 * TestConstants.D18
         );
         // then
-        assertEq(quasiIFixed, 3129753686400000000000000000000000000000000000000);
-        assertEq(quasiIFloating, 3890872260000000000000000000000000000000000000000);
+        assertEq(iFixed, 3129753686400000000000000000000000000000000000000);
+        assertEq(iFloating, 3890872260000000000000000000000000000000000000000);
     }
 
     function testShouldCalculateQuasiInterestWhenIBTPriceHasChanged50DaysLaterAnd6Decimals() public {
@@ -223,11 +223,11 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
             1 // state
         );
         // when
-        (uint256 quasiIFixed, uint256 quasiIFloating) = _iporSwapLogic.calculateQuasiInterest(
+        (uint256 iFixed, uint256 iFloating) = _iporSwapLogic.calculateInterest(
             swap, swap.openTimestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS, 125 * TestConstants.D18
         );
         // then
-        assertEq(quasiIFixed, 3129753686400000000000000000000000000000000000000);
-        assertEq(quasiIFloating, 3890872260000000000000000000000000000000000000000);
+        assertEq(iFixed, 3129753686400000000000000000000000000000000000000);
+        assertEq(iFloating, 3890872260000000000000000000000000000000000000000);
     }
 }
