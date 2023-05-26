@@ -30,4 +30,7 @@ interface IAssetManagementLens {
     /// @return uint256 The balance of the account in the Compound protocol.
     function compoundBalanceOf(address asset) external view returns (uint256);
 
+    /// @notice Calculated exchange rate between ivToken and the underlying asset. Asset is specific to AssetManagement's intance (ex. USDC, USDT, DAI, etc.)
+    /// @return Current exchange rate between ivToken and the underlying asset, represented in 18 decimals.
+    function calculateExchangeRate(address asset) external view returns (uint256);
 }
