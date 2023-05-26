@@ -12,6 +12,8 @@ import "../interfaces/IAmmOpenSwapService.sol";
 import "../interfaces/IAmmCloseSwapService.sol";
 import "../interfaces/IAmmPoolsService.sol";
 import "../interfaces/IAmmGovernanceService.sol";
+import "../interfaces/ILiquidityMiningLens.sol";
+import "../interfaces/IPowerTokenLens.sol";
 
 contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
     using Address for address;
@@ -23,6 +25,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
     address public immutable AMM_CLOSE_SWAP_SERVICE_ADDRESS;
     address public immutable AMM_POOLS_SERVICE_ADDRESS;
     address public immutable AMM_GOVERNANCE_SERVICE_ADDRESS;
+    address public immutable LIQUIDITY_MINING_SERVICE_ADDRESS;
+    address public immutable POWER_TOKEN_SERVICE_ADDRESS;
 
     struct DeployedContracts {
         address ammSwapsLens;
@@ -32,6 +36,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
         address ammCloseSwapServiceAddress;
         address ammPoolsServiceAddress;
         address ammGovernanceServiceAddress;
+        address liquidityMiningServiceAddress;
+        address powerTokenServiceAddress;
     }
 
     constructor(DeployedContracts memory deployedContracts) {
@@ -42,6 +48,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
         AMM_CLOSE_SWAP_SERVICE_ADDRESS = deployedContracts.ammCloseSwapServiceAddress;
         AMM_POOLS_SERVICE_ADDRESS = deployedContracts.ammPoolsServiceAddress;
         AMM_GOVERNANCE_SERVICE_ADDRESS = deployedContracts.ammGovernanceServiceAddress;
+        LIQUIDITY_MINING_SERVICE_ADDRESS = deployedContracts.liquidityMiningServiceAddress;
+        POWER_TOKEN_SERVICE_ADDRESS = deployedContracts.powerTokenServiceAddress;
         _disableInitializers();
     }
 
@@ -70,6 +78,29 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             sig == IAssetManagementLens.compoundBalanceOf.selector
         ) {
             return ASSET_MANAGEMENTLENS_LENS;
+        } else if (
+            sig == ILiquidityMiningLens.getLiquidityMiningContractId.selector ||
+            sig == ILiquidityMiningLens.liquidityMiningBalanceOf.selector ||
+            sig == ILiquidityMiningLens.balanceOfDelegatedPwToken.selector ||
+            sig == ILiquidityMiningLens.calculateAccruedRewards.selector ||
+            sig == ILiquidityMiningLens.getAccountIndicators.selector ||
+            sig == ILiquidityMiningLens.getGlobalIndicators.selector ||
+            sig == ILiquidityMiningLens.calculateAccountRewards.selector
+        ) {
+            return LIQUIDITY_MINING_SERVICE_ADDRESS;
+        } else if (
+            sig == IPowerTokenLens.powerTokenName.selector ||
+            sig == IPowerTokenLens.getPowerTokenContractId.selector ||
+            sig == IPowerTokenLens.powerTokenSymbol.selector ||
+            sig == IPowerTokenLens.powerTokenDecimals.selector ||
+            sig == IPowerTokenLens.powerTokenTotalSupply.selector ||
+            sig == IPowerTokenLens.powerTokenBalanceOf.selector ||
+            sig == IPowerTokenLens.delegatedToLiquidityMiningBalanceOf.selector ||
+            sig == IPowerTokenLens.getActiveCooldown.selector ||
+            sig == IPowerTokenLens.getUnstakeWithoutCooldownFee.selector ||
+            sig == IPowerTokenLens.COOL_DOWN_IN_SECONDS.selector
+        ) {
+            return POWER_TOKEN_SERVICE_ADDRESS;
         } else if (
             sig == IAmmOpenSwapService.openSwapPayFixed28daysUsdt.selector ||
             sig == IAmmOpenSwapService.openSwapPayFixed60daysUsdt.selector ||
