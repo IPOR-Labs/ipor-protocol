@@ -19,6 +19,7 @@ jobs:
             PROVIDER_URL: ${{ secrets.PROVIDER_URL }}
         with:
             compile-command: 'compile:hardhat'
+            tests-enabled: false
 
     foundry-tests:
         needs: notify
