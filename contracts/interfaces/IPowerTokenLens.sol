@@ -54,4 +54,8 @@ interface IPowerTokenLens {
     /// @notice Calculates the internal exchange rate between the Staked Token and total supply of a base amount
     /// @return Current exchange rate between the Staked Token and the total supply of a base amount, represented with 18 decimals.
     function calculateExchangeRate() external view returns (uint256);
+
+    /// @notice Gets the total supply base amount
+    /// @return total supply base amount, represented with 18 decimals
+    function totalSupplyBase() external view returns (uint256);
 }

@@ -57,4 +57,8 @@ contract PowerTokenLens is IPowerTokenLens {
     function calculateExchangeRate() external view returns (uint256) {
         return IPowerTokenInternalV2(POWER_TOKEN).calculateExchangeRate();
     }
+
+    function totalSupplyBase() external view returns (uint256) {
+        return IPowerTokenInternalV2(POWER_TOKEN).totalSupplyBase();
+    }
 }
