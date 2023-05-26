@@ -2,6 +2,7 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
+import "forge-std/console2.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";

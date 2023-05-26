@@ -2,10 +2,9 @@
 pragma solidity 0.8.16;
 
 import "../../TestCommons.sol";
-import {DataUtils} from "../../utils/DataUtils.sol";
 import "contracts/mocks/MockIporSwapLogic.sol";
 
-contract IporSwapLogicTest is TestCommons, DataUtils {
+contract IporSwapLogicTest is TestCommons {
     MockIporSwapLogic internal _iporSwapLogic;
 
     function setUp() public {
@@ -24,7 +23,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -55,7 +54,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -86,7 +85,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -115,7 +114,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -146,7 +145,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -177,7 +176,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -208,7 +207,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -239,7 +238,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -270,7 +269,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -301,7 +300,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -332,7 +331,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -363,7 +362,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -394,7 +393,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -425,7 +424,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -456,7 +455,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -487,7 +486,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -518,7 +517,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -549,7 +548,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -578,7 +577,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 0;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -607,7 +606,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -636,7 +635,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 0;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -667,7 +666,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -696,7 +695,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp;
 
@@ -725,7 +724,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp;
 
@@ -754,7 +753,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp;
 
@@ -783,7 +782,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp;
 
@@ -812,7 +811,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp;
 
@@ -841,7 +840,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp;
 
@@ -870,7 +869,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 0;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp;
 
@@ -901,7 +900,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp;
 
@@ -930,7 +929,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 0;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
         uint256 closingTimestamp = swap.openTimestamp;
 
@@ -959,9 +958,9 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
-        uint256 closingTimestamp = swap.endTimestamp;
+        uint256 closingTimestamp = swap.openTimestamp + 28 days;
 
         uint256 hedgingFee = 5 * 1e18;
 
@@ -988,9 +987,9 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
-        uint256 closingTimestamp = swap.endTimestamp;
+        uint256 closingTimestamp = swap.openTimestamp + 28 days;
 
         uint256 hedgingFee = 5 * 1e18;
 
@@ -1017,9 +1016,9 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
-        uint256 closingTimestamp = swap.endTimestamp;
+        uint256 closingTimestamp = swap.openTimestamp + 28 days;
 
         uint256 hedgingFee = 5 * 1e18;
 
@@ -1046,9 +1045,9 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
-        uint256 closingTimestamp = swap.endTimestamp;
+        uint256 closingTimestamp = swap.openTimestamp + 28 days;
 
         uint256 hedgingFee = 5 * 1e18;
 
@@ -1075,9 +1074,9 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
-        uint256 closingTimestamp = swap.endTimestamp;
+        uint256 closingTimestamp = swap.openTimestamp + 28 days;
 
         uint256 hedgingFee = 5 * 1e18;
 
@@ -1104,9 +1103,9 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
-        uint256 closingTimestamp = swap.endTimestamp;
+        uint256 closingTimestamp = swap.openTimestamp + 28 days;
 
         uint256 hedgingFee = 5 * 1e18;
 
@@ -1133,9 +1132,9 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
-        uint256 closingTimestamp = swap.endTimestamp + 2 days;
+        uint256 closingTimestamp = swap.openTimestamp + 30 days;
 
         uint256 hedgingFee = 5 * 1e18;
 
@@ -1163,9 +1162,9 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
-        uint256 closingTimestamp = swap.endTimestamp + 2 days;
+        uint256 closingTimestamp = swap.openTimestamp + 30 days;
 
         uint256 hedgingFee = 5 * 1e18;
 
@@ -1193,9 +1192,9 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
-        uint256 closingTimestamp = swap.endTimestamp + 2 days;
+        uint256 closingTimestamp = swap.openTimestamp + 30 days;
 
         uint256 hedgingFee = 5 * 1e18;
 
@@ -1223,9 +1222,9 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
-        uint256 closingTimestamp = swap.endTimestamp + 2 days;
+        uint256 closingTimestamp = swap.openTimestamp + 30 days;
 
         uint256 hedgingFee = 5 * 1e18;
 
@@ -1253,9 +1252,9 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
-        uint256 closingTimestamp = swap.endTimestamp + 2 days;
+        uint256 closingTimestamp = swap.openTimestamp + 30 days;
 
         uint256 hedgingFee = 5 * 1e18;
 
@@ -1283,9 +1282,9 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.endTimestamp = swap.openTimestamp + 28 days;
+        swap.duration = 0;
 
-        uint256 closingTimestamp = swap.endTimestamp + 2 days;
+        uint256 closingTimestamp = swap.openTimestamp + 30 days;
 
         uint256 hedgingFee = 5 * 1e18;
 

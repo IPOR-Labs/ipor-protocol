@@ -34,7 +34,9 @@ import "../../mocks/EmptyImplementation.sol";
 contract IporProtocolFactory is Test {
     struct Amm {
         IporProtocolRouter router;
+        SpreadRouter spreadRouter;
         ItfIporOracle iporOracle;
+        MockIporWeighted iporWeighted;
         IporRiskManagementOracle iporRiskManagementOracle;
         BuilderUtils.IporProtocol usdt;
         BuilderUtils.IporProtocol usdc;
@@ -49,9 +51,11 @@ contract IporProtocolFactory is Test {
         BuilderUtils.Spread28DaysTestCase spread28DaysTestCase;
         BuilderUtils.Spread60DaysTestCase spread60DaysTestCase;
         BuilderUtils.Spread90DaysTestCase spread90DaysTestCase;
-        BuilderUtils.AmmTreasuryTestCase miltonUsdtTestCase;
-        BuilderUtils.AmmTreasuryTestCase miltonUsdcTestCase;
-        BuilderUtils.AmmTreasuryTestCase miltonDaiTestCase;
+        BuilderUtils.AmmOpenSwapServiceTestCase openSwapServiceTestCase;
+        BuilderUtils.AmmCloseSwapServiceTestCase closeSwapServiceTestCase;
+        address usdtAssetManagementImplementation;
+        address usdcAssetManagementImplementation;
+        address daiAssetManagementImplementation;
     }
 
     struct IporProtocolConfig {
@@ -84,9 +88,6 @@ contract IporProtocolFactory is Test {
     AmmTreasuryBuilder internal _miltonBuilder;
     IporProtocolRouterBuilder internal _iporProtocolRouterBuilder;
 
-    MockTestnetToken internal _usdt;
-    MockTestnetToken internal _usdc;
-    MockTestnetToken internal _dai;
     address internal _fakeContract = address(new EmptyImplementation());
 
     address internal _owner;
@@ -107,259 +108,186 @@ contract IporProtocolFactory is Test {
         _owner = owner;
     }
 
-    //
-    //    function getFullInstance(AmmConfig memory cfg) public returns (Amm memory amm) {
-    //        _assetBuilder.withUSDT();
-    //        amm.usdt.asset = _assetBuilder.build();
-    //
-    //        _assetBuilder.withUSDC();
-    //        amm.usdc.asset = _assetBuilder.build();
-    //
-    //        _assetBuilder.withDAI();
-    //        amm.dai.asset = _assetBuilder.build();
-    //
-    //        address[] memory assets = new address[](3);
-    //        assets[0] = address(amm.dai.asset);
-    //        assets[1] = address(amm.usdt.asset);
-    //        assets[2] = address(amm.usdc.asset);
-    //
-    //        ItfIporOracle iporOracle = _iporOracleFactory.getInstance(
-    //            assets,
-    //            cfg.iporOracleUpdater,
-    //            cfg.iporOracleInitialParamsTestCase
-    //        );
-    //
-    //        IporRiskManagementOracle iporRiskManagementOracle = _iporRiskManagementOracleFactory.getInstance(
-    //            assets,
-    //            cfg.iporRiskManagementOracleUpdater,
-    //            cfg.iporRiskManagementOracleInitialParamsTestCase
-    //        );
-    //
-    //        amm.iporOracle = iporOracle;
-    //        amm.iporRiskManagementOracle = iporRiskManagementOracle;
-    //
-    //        amm.usdt.ipToken = _ipTokenBuilder.withName("IP USDT").withSymbol("ipUSDT").withAsset(address(_usdt)).build();
-    //        amm.usdt.ivToken = _ivTokenBuilder.withName("IV USDT").withSymbol("ivUSDT").withAsset(address(_usdt)).build();
-    //        amm.usdt.iporWeighted = _iporWeightedBuilder.withIporOracle(address(iporOracle)).build();
-    //        amm.usdt.ammStorage = _ammStorageBuilder.build();
-    //
-    //        amm.router = _iporProtocolRouterBuilder.buildEmptyProxy();
-    //
-    //        _spreadRouterBuilder.withIporRouter(address(amm.router));
-    //
-    //        _spreadRouterBuilder.withUsdt(address(amm.usdt.asset));
-    //        _spreadRouterBuilder.withUsdc(address(amm.usdc.asset));
-    //        _spreadRouterBuilder.withDai(address(amm.dai.asset));
-    //
-    //        _spreadRouterBuilder.withSpread28DaysTestCase(cfg.spread28DaysTestCase);
-    //        _spreadRouterBuilder.withSpread60DaysTestCase(cfg.spread60DaysTestCase);
-    //        _spreadRouterBuilder.withSpread90DaysTestCase(cfg.spread90DaysTestCase);
-    //        iporProtocol.spreadRouter = _spreadRouterBuilder.build();
-    //
-    //        amm.usdt.assetManagement = _assetManagementBuilder
-    //            .withAssetType(BuilderUtils.AssetType.USDT)
-    //            .withAsset(address(amm.usdt.asset))
-    //            .withIvToken(address(amm.usdt.ivToken))
-    //            .withAssetManagementImplementation(cfg.assetManagementImplementation)
-    //            .build();
-    //
-    //        iporProtocol.ammTreasury = _ammTreasuryBuilder
-    //            .withAsset(address(iporProtocol.asset))
-    //            .withAmmStorage(address(iporProtocol.ammStorage))
-    //            .withAssetManagement(address(iporProtocol.assetManagement))
-    //            .withIporProtocolRouter(address(iporProtocol.router))
-    //            .build();
-    //
-    //        iporProtocol.router = _getUsdtIporProtocolRouterInstance(
-    //            iporProtocol,
-    //            cfg.openSwapServiceTestCase,
-    //            cfg.closeSwapServiceTestCase
-    //        );
+    function getFullInstance(AmmConfig memory cfg) public returns (Amm memory amm) {
+        amm.router = _iporProtocolRouterBuilder.buildEmptyProxy();
 
-    //
-    //        ItfStanley stanley = _assetManagementBuilder
-    //            .withAssetType(BuilderUtils.AssetType.USDT)
-    //            .withAsset(address(_usdt))
-    //            .withIvToken(address(ivToken))
-    //            .build();
-    //
-    //        ItfMilton milton = _miltonBuilder
-    //            .withAssetType(BuilderUtils.AssetType.USDT)
-    //            .withAsset(address(_usdt))
-    //            .withIporOracle(address(iporOracle))
-    //            .withMiltonStorage(address(ammStorage))
-    //            .withStanley(address(stanley))
-    //            .withSpreadModel(address(spreadModel))
-    //            .withIporRiskManagementOracle(address(iporRiskManagementOracle))
-    //            .withTestCase(cfg.miltonUsdtTestCase)
-    //            .build();
-    //
-    //        ItfJoseph joseph = _josephBuilder
-    //            .withAssetType(BuilderUtils.AssetType.USDT)
-    //            .withAsset(address(_usdt))
-    //            .withIpToken(address(ipToken))
-    //            .withMiltonStorage(address(ammStorage))
-    //            .withMilton(address(milton))
-    //            .withStanley(address(stanley))
-    //            .build();
-    //
-    //        vm.startPrank(address(_owner));
-    //        iporOracle.setIporAlgorithmFacade(address(iporWeighted));
-    //        ivToken.setStanley(address(stanley));
-    //        ammStorage.setMilton(address(milton));
-    //        stanley.setMilton(address(milton));
-    //        milton.setupMaxAllowanceForAsset(address(stanley));
-    //
-    //        ipToken.setJoseph(address(joseph));
-    //        ammStorage.setJoseph(address(joseph));
-    //        milton.setJoseph(address(joseph));
-    //        milton.setupMaxAllowanceForAsset(address(joseph));
-    //
-    //        joseph.setMaxLiquidityPoolBalance(1000000000);
-    //        joseph.setMaxLpAccountContribution(1000000000);
-    //
-    //        vm.stopPrank();
-    //
-    //        amm.usdt = BuilderUtils.IporProtocol({
-    //            asset: _usdt,
-    //            ipToken: ipToken,
-    //            ivToken: ivToken,
-    //            iporOracle: iporOracle,
-    //            iporRiskManagementOracle: iporRiskManagementOracle,
-    //            iporWeighted: iporWeighted,
-    //            ammStorage: ammStorage,
-    //            spreadModel: spreadModel,
-    //            stanley: stanley,
-    //            milton: milton,
-    //            joseph: joseph
-    //        });
-    //
-    //        ipToken = _ipTokenBuilder.withName("IP USDC").withSymbol("ipUSDC").withAsset(address(_usdc)).build();
-    //        ivToken = _ivTokenBuilder.withName("IV USDC").withSymbol("ivUSDC").withAsset(address(_usdc)).build();
-    //        iporWeighted = _iporWeightedBuilder.withIporOracle(address(iporOracle)).build();
-    //        ammStorage = _ammStorageBuilder.build();
-    //        spreadModel = _spreadBuilder.build();
-    //
-    //        stanley = _assetManagementBuilder
-    //            .withAssetType(BuilderUtils.AssetType.USDC)
-    //            .withAsset(address(_usdc))
-    //            .withIvToken(address(ivToken))
-    //            .build();
-    //
-    //        milton = _miltonBuilder
-    //            .withAssetType(BuilderUtils.AssetType.USDC)
-    //            .withAsset(address(_usdc))
-    //            .withIporOracle(address(iporOracle))
-    //            .withMiltonStorage(address(ammStorage))
-    //            .withStanley(address(stanley))
-    //            .withSpreadModel(address(spreadModel))
-    //            .withIporRiskManagementOracle(address(iporRiskManagementOracle))
-    //            .withTestCase(cfg.miltonUsdcTestCase)
-    //            .build();
-    //
-    //        joseph = _josephBuilder
-    //            .withAssetType(BuilderUtils.AssetType.USDC)
-    //            .withAsset(address(_usdc))
-    //            .withIpToken(address(ipToken))
-    //            .withMiltonStorage(address(ammStorage))
-    //            .withMilton(address(milton))
-    //            .withStanley(address(stanley))
-    //            .build();
-    //
-    //        vm.startPrank(address(_owner));
-    //        iporOracle.setIporAlgorithmFacade(address(iporWeighted));
-    //        ivToken.setStanley(address(stanley));
-    //        ammStorage.setMilton(address(milton));
-    //        stanley.setMilton(address(milton));
-    //        milton.setupMaxAllowanceForAsset(address(stanley));
-    //
-    //        ipToken.setJoseph(address(joseph));
-    //        ammStorage.setJoseph(address(joseph));
-    //        milton.setJoseph(address(joseph));
-    //        milton.setupMaxAllowanceForAsset(address(joseph));
-    //
-    //        joseph.setMaxLiquidityPoolBalance(1000000000);
-    //        joseph.setMaxLpAccountContribution(1000000000);
-    //
-    //        vm.stopPrank();
-    //
-    //        amm.usdc = BuilderUtils.IporProtocol({
-    //            asset: _usdc,
-    //            ipToken: ipToken,
-    //            ivToken: ivToken,
-    //            iporOracle: iporOracle,
-    //            iporRiskManagementOracle: iporRiskManagementOracle,
-    //            iporWeighted: iporWeighted,
-    //            ammStorage: ammStorage,
-    //            spreadModel: spreadModel,
-    //            stanley: stanley,
-    //            milton: milton,
-    //            joseph: joseph
-    //        });
-    //
-    //        ipToken = _ipTokenBuilder.withName("IP DAI").withSymbol("ipDAI").withAsset(address(_dai)).build();
-    //        ivToken = _ivTokenBuilder.withName("IV DAI").withSymbol("ivDAI").withAsset(address(_dai)).build();
-    //        iporWeighted = _iporWeightedBuilder.withIporOracle(address(iporOracle)).build();
-    //        ammStorage = _ammStorageBuilder.build();
-    //        spreadModel = _spreadBuilder.build();
-    //
-    //        stanley = _assetManagementBuilder
-    //            .withAssetType(BuilderUtils.AssetType.DAI)
-    //            .withAsset(address(_dai))
-    //            .withIvToken(address(ivToken))
-    //            .build();
-    //
-    //        milton = _miltonBuilder
-    //            .withAssetType(BuilderUtils.AssetType.DAI)
-    //            .withAsset(address(_dai))
-    //            .withIporOracle(address(iporOracle))
-    //            .withMiltonStorage(address(ammStorage))
-    //            .withStanley(address(stanley))
-    //            .withSpreadModel(address(spreadModel))
-    //            .withIporRiskManagementOracle(address(iporRiskManagementOracle))
-    //            .withTestCase(cfg.miltonDaiTestCase)
-    //            .build();
-    //
-    //        joseph = _josephBuilder
-    //            .withAssetType(BuilderUtils.AssetType.DAI)
-    //            .withAsset(address(_dai))
-    //            .withIpToken(address(ipToken))
-    //            .withMiltonStorage(address(ammStorage))
-    //            .withMilton(address(milton))
-    //            .withStanley(address(stanley))
-    //            .build();
-    //
-    //        vm.startPrank(address(_owner));
-    //        iporOracle.setIporAlgorithmFacade(address(iporWeighted));
-    //        ivToken.setStanley(address(stanley));
-    //        ammStorage.setMilton(address(milton));
-    //        stanley.setMilton(address(milton));
-    //        milton.setupMaxAllowanceForAsset(address(stanley));
-    //
-    //        ipToken.setJoseph(address(joseph));
-    //        ammStorage.setJoseph(address(joseph));
-    //        milton.setJoseph(address(joseph));
-    //        milton.setupMaxAllowanceForAsset(address(joseph));
-    //
-    //        joseph.setMaxLiquidityPoolBalance(1000000000);
-    //        joseph.setMaxLpAccountContribution(1000000000);
-    //
-    //        vm.stopPrank();
-    //
-    //        amm.dai = BuilderUtils.IporProtocol({
-    //            asset: _dai,
-    //            ipToken: ipToken,
-    //            ivToken: ivToken,
-    //            iporOracle: iporOracle,
-    //            iporRiskManagementOracle: iporRiskManagementOracle,
-    //            iporWeighted: iporWeighted,
-    //            ammStorage: ammStorage,
-    //            spreadModel: spreadModel,
-    //            stanley: stanley,
-    //            milton: milton,
-    //            joseph: joseph
-    //        });
-    //    }
+        amm.usdt.router = amm.router;
+        amm.usdc.router = amm.router;
+        amm.dai.router = amm.router;
+
+        _assetBuilder.withUSDT();
+        amm.usdt.asset = _assetBuilder.build();
+
+        _assetBuilder.withUSDC();
+        amm.usdc.asset = _assetBuilder.build();
+
+        _assetBuilder.withDAI();
+        amm.dai.asset = _assetBuilder.build();
+
+        address[] memory assets = new address[](3);
+        assets[0] = address(amm.dai.asset);
+        assets[1] = address(amm.usdt.asset);
+        assets[2] = address(amm.usdc.asset);
+
+        amm.iporOracle = _iporOracleFactory.getEmptyInstance(assets, cfg.iporOracleInitialParamsTestCase);
+        amm.usdt.iporOracle = amm.iporOracle;
+        amm.usdc.iporOracle = amm.iporOracle;
+        amm.dai.iporOracle = amm.iporOracle;
+
+        amm.iporWeighted = _iporWeightedBuilder.withIporOracle(address(amm.iporOracle)).build();
+        amm.usdt.iporWeighted = amm.iporWeighted;
+        amm.usdc.iporWeighted = amm.iporWeighted;
+        amm.dai.iporWeighted = amm.iporWeighted;
+
+        _iporOracleFactory.upgrade(
+            address(amm.iporOracle),
+            cfg.iporOracleUpdater,
+            IporOracleFactory.IporOracleConstructorParams({
+                iporAlgorithmFacade: address(amm.iporWeighted),
+                usdt: address(amm.usdt.asset),
+                usdtInitialIbtPrice: 1e18,
+                usdc: address(amm.usdc.asset),
+                usdcInitialIbtPrice: 1e18,
+                dai: address(amm.dai.asset),
+                daiInitialIbtPrice: 1e18
+            })
+        );
+
+        amm.iporRiskManagementOracle = _iporRiskManagementOracleFactory.getInstance(
+            assets,
+            cfg.iporRiskManagementOracleUpdater,
+            cfg.iporRiskManagementOracleInitialParamsTestCase
+        );
+
+        amm.usdt.ipToken = _ipTokenBuilder
+            .withName("IP USDT")
+            .withSymbol("ipUSDT")
+            .withAsset(address(amm.usdt.asset))
+            .build();
+        amm.usdt.ivToken = _ivTokenBuilder
+            .withName("IV USDT")
+            .withSymbol("ivUSDT")
+            .withAsset(address(amm.usdt.asset))
+            .build();
+
+        amm.usdc.ipToken = _ipTokenBuilder
+            .withName("IP USDC")
+            .withSymbol("ipUSDC")
+            .withAsset(address(amm.usdc.asset))
+            .build();
+        amm.usdc.ivToken = _ivTokenBuilder
+            .withName("IV USDC")
+            .withSymbol("ivUSDC")
+            .withAsset(address(amm.usdc.asset))
+            .build();
+
+        amm.dai.ipToken = _ipTokenBuilder
+            .withName("IP DAI")
+            .withSymbol("ipDAI")
+            .withAsset(address(amm.dai.asset))
+            .build();
+        amm.dai.ivToken = _ivTokenBuilder
+            .withName("IV DAI")
+            .withSymbol("ivDAI")
+            .withAsset(address(amm.dai.asset))
+            .build();
+
+        _ammStorageBuilder.withIporProtocolRouter(address(amm.router));
+        amm.usdt.ammStorage = _ammStorageBuilder.build();
+        amm.usdc.ammStorage = _ammStorageBuilder.build();
+        amm.dai.ammStorage = _ammStorageBuilder.build();
+
+        _spreadRouterBuilder.withIporRouter(address(amm.router));
+        _spreadRouterBuilder.withUsdt(address(amm.usdt.asset));
+
+        _spreadRouterBuilder.withUsdc(address(amm.usdc.asset));
+        _spreadRouterBuilder.withDai(address(amm.dai.asset));
+
+        _spreadRouterBuilder.withSpread28DaysTestCase(cfg.spread28DaysTestCase);
+        _spreadRouterBuilder.withSpread60DaysTestCase(cfg.spread60DaysTestCase);
+        _spreadRouterBuilder.withSpread90DaysTestCase(cfg.spread90DaysTestCase);
+
+        amm.spreadRouter = _spreadRouterBuilder.build();
+        amm.usdt.spreadRouter = amm.spreadRouter;
+        amm.usdc.spreadRouter = amm.spreadRouter;
+        amm.dai.spreadRouter = amm.spreadRouter;
+
+        amm.usdt.assetManagement = _assetManagementBuilder
+            .withAssetType(BuilderUtils.AssetType.USDT)
+            .withAsset(address(amm.usdt.asset))
+            .withIvToken(address(amm.usdt.ivToken))
+            .withAssetManagementImplementation(cfg.usdtAssetManagementImplementation)
+            .build();
+
+        amm.usdc.assetManagement = _assetManagementBuilder
+            .withAssetType(BuilderUtils.AssetType.USDC)
+            .withAsset(address(amm.usdc.asset))
+            .withIvToken(address(amm.usdc.ivToken))
+            .withAssetManagementImplementation(cfg.usdcAssetManagementImplementation)
+            .build();
+
+        amm.dai.assetManagement = _assetManagementBuilder
+            .withAssetType(BuilderUtils.AssetType.DAI)
+            .withAsset(address(amm.dai.asset))
+            .withIvToken(address(amm.dai.ivToken))
+            .withAssetManagementImplementation(cfg.daiAssetManagementImplementation)
+            .build();
+
+        amm.usdt.ammTreasury = _ammTreasuryBuilder
+            .withAsset(address(amm.usdt.asset))
+            .withAmmStorage(address(amm.usdt.ammStorage))
+            .withAssetManagement(address(amm.usdt.assetManagement))
+            .withIporProtocolRouter(address(amm.router))
+            .build();
+
+        amm.usdc.ammTreasury = _ammTreasuryBuilder
+            .withAsset(address(amm.usdc.asset))
+            .withAmmStorage(address(amm.usdc.ammStorage))
+            .withAssetManagement(address(amm.usdc.assetManagement))
+            .withIporProtocolRouter(address(amm.router))
+            .build();
+
+        amm.dai.ammTreasury = _ammTreasuryBuilder
+            .withAsset(address(amm.dai.asset))
+            .withAmmStorage(address(amm.dai.ammStorage))
+            .withAssetManagement(address(amm.dai.assetManagement))
+            .withIporProtocolRouter(address(amm.router))
+            .build();
+
+        amm.router = _getFullIporProtocolRouterInstance(amm, cfg.openSwapServiceTestCase, cfg.closeSwapServiceTestCase);
+
+        vm.startPrank(address(_owner));
+
+        amm.usdt.ivToken.setAssetManagement(address(amm.usdt.assetManagement));
+        amm.usdc.ivToken.setAssetManagement(address(amm.usdc.assetManagement));
+        amm.dai.ivToken.setAssetManagement(address(amm.dai.assetManagement));
+
+        amm.usdt.ipToken.setRouter(address(amm.router));
+        amm.usdc.ipToken.setRouter(address(amm.router));
+        amm.dai.ipToken.setRouter(address(amm.router));
+
+        amm.usdt.assetManagement.setAmmTreasury((address(amm.usdt.ammTreasury)));
+        amm.usdc.assetManagement.setAmmTreasury((address(amm.usdc.ammTreasury)));
+        amm.dai.assetManagement.setAmmTreasury((address(amm.dai.ammTreasury)));
+
+        amm.usdt.ammTreasury.setupMaxAllowanceForAsset(address(amm.usdt.assetManagement));
+        amm.usdc.ammTreasury.setupMaxAllowanceForAsset(address(amm.usdc.assetManagement));
+        amm.dai.ammTreasury.setupMaxAllowanceForAsset(address(amm.dai.assetManagement));
+
+        amm.usdt.ammTreasury.setupMaxAllowanceForAsset(address(amm.router));
+        amm.usdc.ammTreasury.setupMaxAllowanceForAsset(address(amm.router));
+        amm.dai.ammTreasury.setupMaxAllowanceForAsset(address(amm.router));
+
+        IAmmGovernanceService(address(amm.router)).setAmmMaxLiquidityPoolBalance(address(amm.usdt.asset), 1000000000);
+        IAmmGovernanceService(address(amm.router)).setAmmMaxLiquidityPoolBalance(address(amm.usdc.asset), 1000000000);
+        IAmmGovernanceService(address(amm.router)).setAmmMaxLiquidityPoolBalance(address(amm.dai.asset), 1000000000);
+
+        IAmmGovernanceService(address(amm.router)).setAmmMaxLpAccountContribution(address(amm.usdt.asset), 1000000000);
+        IAmmGovernanceService(address(amm.router)).setAmmMaxLpAccountContribution(address(amm.usdc.asset), 1000000000);
+        IAmmGovernanceService(address(amm.router)).setAmmMaxLpAccountContribution(address(amm.dai.asset), 1000000000);
+
+        vm.stopPrank();
+    }
 
     function getUsdtInstance(IporProtocolConfig memory cfg)
         public
@@ -688,6 +616,220 @@ contract IporProtocolFactory is Test {
         setupUsers(cfg, iporProtocol);
     }
 
+    function _getFullIporProtocolRouterInstance(
+        Amm memory amm,
+        BuilderUtils.AmmOpenSwapServiceTestCase openSwapServiceTestCase,
+        BuilderUtils.AmmCloseSwapServiceTestCase closeSwapServiceTestCase
+    ) public returns (IporProtocolRouter) {
+        if (address(amm.router) == address(0)) {
+            amm.router = _iporProtocolRouterBuilder.buildEmptyProxy();
+        }
+
+        IporProtocolRouter.DeployedContracts memory deployerContracts;
+
+        deployerContracts.ammSwapsLens = address(
+            new AmmSwapsLens(
+                IAmmSwapsLens.SwapLensConfiguration({
+                    asset: address(amm.usdt.asset),
+                    ammStorage: address(amm.usdt.ammStorage),
+                    ammTreasury: address(amm.usdt.ammTreasury)
+                }),
+                IAmmSwapsLens.SwapLensConfiguration({
+                    asset: address(amm.usdc.asset),
+                    ammStorage: address(amm.usdc.ammStorage),
+                    ammTreasury: address(amm.usdc.ammTreasury)
+                }),
+                IAmmSwapsLens.SwapLensConfiguration({
+                    asset: address(amm.dai.asset),
+                    ammStorage: address(amm.dai.ammStorage),
+                    ammTreasury: address(amm.dai.ammTreasury)
+                }),
+                amm.iporOracle,
+                address(amm.iporRiskManagementOracle),
+                address(amm.router)
+            )
+        );
+
+        deployerContracts.ammPoolsLens = address(
+            new AmmPoolsLens(
+                IAmmPoolsLens.PoolConfiguration({
+                    asset: address(amm.usdt.asset),
+                    decimals: amm.usdt.asset.decimals(),
+                    ipToken: address(amm.usdt.ipToken),
+                    ammStorage: address(amm.usdt.ammStorage),
+                    ammTreasury: address(amm.usdt.ammTreasury),
+                    assetManagement: address(amm.usdt.assetManagement)
+                }),
+                IAmmPoolsLens.PoolConfiguration({
+                    asset: address(amm.usdc.asset),
+                    decimals: amm.usdc.asset.decimals(),
+                    ipToken: address(amm.usdc.ipToken),
+                    ammStorage: address(amm.usdc.ammStorage),
+                    ammTreasury: address(amm.usdc.ammTreasury),
+                    assetManagement: address(amm.usdc.assetManagement)
+                }),
+                IAmmPoolsLens.PoolConfiguration({
+                    asset: address(amm.dai.asset),
+                    decimals: amm.dai.asset.decimals(),
+                    ipToken: address(amm.dai.ipToken),
+                    ammStorage: address(amm.dai.ammStorage),
+                    ammTreasury: address(amm.dai.ammTreasury),
+                    assetManagement: address(amm.dai.assetManagement)
+                }),
+                address(amm.iporOracle)
+            )
+        );
+
+        deployerContracts.assetManagementLens = address(
+            new AssetManagementLens(
+                IAssetManagementLens.AssetManagementConfiguration({
+                    asset: address(amm.usdt.asset),
+                    decimals: amm.usdt.asset.decimals(),
+                    assetManagement: address(amm.usdt.assetManagement),
+                    ammTreasury: address(amm.usdt.ammTreasury)
+                }),
+                IAssetManagementLens.AssetManagementConfiguration({
+                    asset: address(amm.usdc.asset),
+                    decimals: amm.usdc.asset.decimals(),
+                    assetManagement: address(amm.usdc.assetManagement),
+                    ammTreasury: address(amm.usdc.ammTreasury)
+                }),
+                IAssetManagementLens.AssetManagementConfiguration({
+                    asset: address(amm.dai.asset),
+                    decimals: amm.dai.asset.decimals(),
+                    assetManagement: address(amm.dai.assetManagement),
+                    ammTreasury: address(amm.dai.ammTreasury)
+                })
+            )
+        );
+
+        deployerContracts.ammOpenSwapService = address(
+            new AmmOpenSwapService({
+                usdtPoolCfg: _preparePoolCfgForOpenSwapService(
+                    openSwapServiceTestCase,
+                    address(amm.usdt.asset),
+                    address(amm.usdt.ammTreasury),
+                    address(amm.usdt.ammStorage)
+                ),
+                usdcPoolCfg: _preparePoolCfgForOpenSwapService(
+                    openSwapServiceTestCase,
+                    address(amm.usdc.asset),
+                    address(amm.usdc.ammTreasury),
+                    address(amm.usdc.ammStorage)
+                ),
+                daiPoolCfg: _preparePoolCfgForOpenSwapService(
+                    openSwapServiceTestCase,
+                    address(amm.dai.asset),
+                    address(amm.dai.ammTreasury),
+                    address(amm.dai.ammStorage)
+                ),
+                iporOracle: address(amm.iporOracle),
+                iporRiskManagementOracle: address(amm.iporRiskManagementOracle),
+                spreadRouter: address(amm.spreadRouter)
+            })
+        );
+
+        deployerContracts.ammCloseSwapService = address(
+            new AmmCloseSwapService({
+                usdtPoolCfg: _preparePoolCfgForCloseSwapService(
+                    closeSwapServiceTestCase,
+                    address(amm.usdt.asset),
+                    address(amm.usdt.ammTreasury),
+                    address(amm.usdt.ammStorage),
+                    address(amm.usdt.assetManagement)
+                ),
+                usdcPoolCfg: _preparePoolCfgForCloseSwapService(
+                    closeSwapServiceTestCase,
+                    address(amm.usdc.asset),
+                    address(amm.usdc.ammTreasury),
+                    address(amm.usdc.ammStorage),
+                    address(amm.usdc.assetManagement)
+                ),
+                daiPoolCfg: _preparePoolCfgForCloseSwapService(
+                    closeSwapServiceTestCase,
+                    address(amm.dai.asset),
+                    address(amm.dai.ammTreasury),
+                    address(amm.dai.ammStorage),
+                    address(amm.dai.assetManagement)
+                ),
+                iporOracle: address(amm.iporOracle),
+                iporRiskManagementOracle: address(amm.iporRiskManagementOracle),
+                spreadRouter: address(amm.spreadRouter)
+            })
+        );
+
+        deployerContracts.ammPoolsService = address(
+            new AmmPoolsService({
+                usdtPoolCfg: _preparePoolCfgForPoolsService(
+                    address(amm.usdt.asset),
+                    address(amm.usdt.ipToken),
+                    address(amm.usdt.ammTreasury),
+                    address(amm.usdt.ammStorage),
+                    address(amm.usdt.assetManagement)
+                ),
+                usdcPoolCfg: _preparePoolCfgForPoolsService(
+                    address(amm.usdc.asset),
+                    address(amm.usdc.ipToken),
+                    address(amm.usdc.ammTreasury),
+                    address(amm.usdc.ammStorage),
+                    address(amm.usdc.assetManagement)
+                ),
+                daiPoolCfg: _preparePoolCfgForPoolsService(
+                    address(amm.dai.asset),
+                    address(amm.dai.ipToken),
+                    address(amm.dai.ammTreasury),
+                    address(amm.dai.ammStorage),
+                    address(amm.dai.assetManagement)
+                ),
+                iporOracle: address(amm.iporOracle)
+            })
+        );
+
+        deployerContracts.ammGovernanceService = address(
+            new AmmGovernanceService({
+                usdtPoolCfg: _preparePoolCfgForGovernanceService(
+                    address(amm.usdt.asset),
+                    address(amm.usdt.ammTreasury),
+                    address(amm.usdt.ammStorage)
+                ),
+                usdcPoolCfg: _preparePoolCfgForGovernanceService(
+                    address(amm.usdc.asset),
+                    address(amm.usdc.ammTreasury),
+                    address(amm.usdc.ammStorage)
+                ),
+                daiPoolCfg: _preparePoolCfgForGovernanceService(
+                    address(amm.dai.asset),
+                    address(amm.dai.ammTreasury),
+                    address(amm.dai.ammStorage)
+                )
+            })
+        );
+
+        vm.startPrank(address(_owner));
+        IporProtocolRouter(amm.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
+        vm.stopPrank();
+
+        amm.usdt.ammSwapsLens = IAmmSwapsLens(address(amm.router));
+        amm.usdt.ammPoolsService = IAmmPoolsService(address(amm.router));
+        amm.usdt.ammOpenSwapService = IAmmOpenSwapService(address(amm.router));
+        amm.usdt.ammCloseSwapService = IAmmCloseSwapService(address(amm.router));
+        amm.usdt.ammGovernanceService = IAmmGovernanceService(address(amm.router));
+
+        amm.usdc.ammSwapsLens = IAmmSwapsLens(address(amm.router));
+        amm.usdc.ammPoolsService = IAmmPoolsService(address(amm.router));
+        amm.usdc.ammOpenSwapService = IAmmOpenSwapService(address(amm.router));
+        amm.usdc.ammCloseSwapService = IAmmCloseSwapService(address(amm.router));
+        amm.usdc.ammGovernanceService = IAmmGovernanceService(address(amm.router));
+
+        amm.dai.ammSwapsLens = IAmmSwapsLens(address(amm.router));
+        amm.dai.ammPoolsService = IAmmPoolsService(address(amm.router));
+        amm.dai.ammOpenSwapService = IAmmOpenSwapService(address(amm.router));
+        amm.dai.ammCloseSwapService = IAmmCloseSwapService(address(amm.router));
+        amm.dai.ammGovernanceService = IAmmGovernanceService(address(amm.router));
+
+        return IporProtocolRouter(amm.router);
+    }
+
     function _getUsdtIporProtocolRouterInstance(
         BuilderUtils.IporProtocol memory iporProtocol,
         BuilderUtils.AmmOpenSwapServiceTestCase openSwapServiceTestCase,
@@ -839,6 +981,7 @@ contract IporProtocolFactory is Test {
         IporProtocolRouter(iporProtocol.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
         vm.stopPrank();
 
+        iporProtocol.ammSwapsLens = IAmmSwapsLens(address(iporProtocol.router));
         iporProtocol.ammPoolsService = IAmmPoolsService(address(iporProtocol.router));
         iporProtocol.ammOpenSwapService = IAmmOpenSwapService(address(iporProtocol.router));
         iporProtocol.ammCloseSwapService = IAmmCloseSwapService(address(iporProtocol.router));
@@ -998,6 +1141,7 @@ contract IporProtocolFactory is Test {
         IporProtocolRouter(iporProtocol.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
         vm.stopPrank();
 
+        iporProtocol.ammSwapsLens = IAmmSwapsLens(address(iporProtocol.router));
         iporProtocol.ammPoolsService = IAmmPoolsService(address(iporProtocol.router));
         iporProtocol.ammOpenSwapService = IAmmOpenSwapService(address(iporProtocol.router));
         iporProtocol.ammCloseSwapService = IAmmCloseSwapService(address(iporProtocol.router));
@@ -1157,6 +1301,7 @@ contract IporProtocolFactory is Test {
         IporProtocolRouter(iporProtocol.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
         vm.stopPrank();
 
+        iporProtocol.ammSwapsLens = IAmmSwapsLens(address(iporProtocol.router));
         iporProtocol.ammPoolsService = IAmmPoolsService(address(iporProtocol.router));
         iporProtocol.ammOpenSwapService = IAmmOpenSwapService(address(iporProtocol.router));
         iporProtocol.ammCloseSwapService = IAmmCloseSwapService(address(iporProtocol.router));

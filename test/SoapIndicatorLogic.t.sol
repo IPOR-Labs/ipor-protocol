@@ -3,11 +3,10 @@ pragma solidity 0.8.16;
 
 import "./TestCommons.sol";
 import "./utils/TestConstants.sol";
-import {DataUtils} from "./utils/DataUtils.sol";
 import "contracts/amm/libraries/types/StorageInternalTypes.sol";
 import "contracts/amm/libraries/SoapIndicatorLogic.sol";
 
-contract SoapIndicatorLogicTest is TestCommons, DataUtils {
+contract SoapIndicatorLogicTest is TestCommons {
     struct ExpectedBalances {
         uint256 expectedRebalanceTimestamp;
         uint256 expectedTotalNotional;

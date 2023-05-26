@@ -42,10 +42,10 @@ contract IporOracleFactory is Test {
 
         IporOracle iporOracleImpl = new IporOracle(
             constructorParams.iporAlgorithmFacade,
-            constructorParams.usdc,
-            constructorParams.usdcInitialIbtPrice,
             constructorParams.usdt,
             constructorParams.usdtInitialIbtPrice,
+            constructorParams.usdc,
+            constructorParams.usdcInitialIbtPrice,
             constructorParams.dai,
             constructorParams.daiInitialIbtPrice
         );
@@ -81,10 +81,10 @@ contract IporOracleFactory is Test {
     ) public {
         IporOracle iporOracleImpl = new IporOracle(
             constructorParams.iporAlgorithmFacade,
-            constructorParams.usdc,
-            constructorParams.usdcInitialIbtPrice,
             constructorParams.usdt,
             constructorParams.usdtInitialIbtPrice,
+            constructorParams.usdc,
+            constructorParams.usdcInitialIbtPrice,
             constructorParams.dai,
             constructorParams.daiInitialIbtPrice
         );

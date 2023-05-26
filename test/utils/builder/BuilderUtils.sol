@@ -16,6 +16,7 @@ import "../../mocks/MockSpreadXDays.sol";
 contract BuilderUtils {
     struct IporProtocol {
         IporProtocolRouter router;
+        IAmmSwapsLens ammSwapsLens;
         IAmmPoolsService ammPoolsService;
         IAmmOpenSwapService ammOpenSwapService;
         IAmmCloseSwapService ammCloseSwapService;
@@ -140,7 +141,19 @@ contract BuilderUtils {
         CASE2,
         /// @dev Pay Fixed Quote Value 6%
         /// @dev Receive Fixed Quote Value 0%
-        CASE3
+        CASE3,
+        /// @dev Pay Fixed Quote Value 2%
+        /// @dev Receive Fixed Quote Value 0%
+        CASE4,
+        /// @dev Pay Fixed Quote Value 4%
+        /// @dev Receive Fixed Quote Value 2%
+        CASE5,
+        /// @dev Pay Fixed Quote Value in 18 decimals: 41683900567904584
+        /// @dev Receive Fixed Quote Value 0%
+        CASE6,
+        /// @dev Pay Fixed Quote Value 0%
+        /// @dev Receive Fixed Quote Value in 18 decimals: 38877399621396944
+        CASE7
     }
 
     enum Spread60DaysTestCase {
