@@ -10,6 +10,10 @@ library InterestRates {
 
     using SafeCast for uint256;
 
+    /// @notice Adds interest to given value using continuous compounding formula: v2 = value * e^(interestRate * time)
+    /// @param value value to which interest is added, value represented in 18 decimals
+    /// @param interestRatePeriodMultiplication interest rate * time, interest rate in 18 decimals, time in seconds
+    /// @return value with interest, value represented in 18 decimals
     function addContinuousCompoundInterestUsingRatePeriodMultiplication(
         uint256 value,
         uint256 interestRatePeriodMultiplication
@@ -24,6 +28,10 @@ library InterestRates {
         return _toUint256(valueWithInterest);
     }
 
+    /// @notice Adds interest to given value using continuous compounding formula: v2 = value * e^(interestRate * time)
+    /// @param value value to which interest is added, value represented in 18 decimals
+    /// @param interestRatePeriodMultiplication interest rate * time, interest rate in 18 decimals, time in seconds
+    /// @return value with interest, value represented in 18 decimals
     function addContinuousCompoundInterestUsingRatePeriodMultiplicationInt(
         int256 value,
         int256 interestRatePeriodMultiplication
@@ -38,20 +46,28 @@ library InterestRates {
         return _toInt256(valueWithInterest);
     }
 
+    /// @notice Calculates interest to given value using continuous compounding formula: v2 = value * e^(interestRate * time)
+    /// @param value value to which interest is added, value represented in 18 decimals
+    /// @param interestRatePeriodMultiplication interest rate * time, interest rate in 18 decimals, time in seconds
+    /// @return interest, value represented in 18 decimals
     function calculateContinuousCompoundInterestUsingRatePeriodMultiplication(
         uint256 value,
         uint256 interestRatePeriodMultiplication
     ) internal pure returns (uint256) {
         return
-            addContinuousCompoundInterestUsingRatePeriodMultiplication(value, interestRatePeriodMultiplication) - value;
+        addContinuousCompoundInterestUsingRatePeriodMultiplication(value, interestRatePeriodMultiplication) - value;
     }
 
+    /// @notice Calculates interest to given value using continuous compounding formula: v2 = value * e^(interestRate * time)
+    /// @param value value to which interest is added, value represented in 18 decimals
+    /// @param interestRatePeriodMultiplication interest rate * time, interest rate in 18 decimals, time in seconds
+    /// @return interest, value represented in 18 decimals
     function calculateContinuousCompoundInterestUsingRatePeriodMultiplicationInt(
         int256 value,
         int256 interestRatePeriodMultiplication
     ) internal pure returns (int256) {
         return
-            addContinuousCompoundInterestUsingRatePeriodMultiplicationInt(value, interestRatePeriodMultiplication) - value;
+        addContinuousCompoundInterestUsingRatePeriodMultiplicationInt(value, interestRatePeriodMultiplication) - value;
     }
 
     /// @dev Quadruple precision, 128 bits

@@ -6,7 +6,7 @@ import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
 import "contracts/mocks/MockIporSwapLogic.sol";
 
-contract IporSwapLogicCalculateQuasiInterestFloating is TestCommons, DataUtils {
+contract IporSwapLogicCalculateInterestFloating is TestCommons, DataUtils {
     MockIporSwapLogic internal _iporSwapLogic;
 
     function setUp() public {
@@ -16,35 +16,35 @@ contract IporSwapLogicCalculateQuasiInterestFloating is TestCommons, DataUtils {
     function testShouldCalculateInterestFloatingCase1() public {
         // given
         // when
-        uint256 quasiIFloating =
+        uint256 iFloating =
             _iporSwapLogic.calculateInterestFloating(987030000000000000000, 100 * TestConstants.D18);
         // then
-        assertEq(quasiIFloating, 3112697808000000000000000000000000000000000000000);
+        assertEq(iFloating, 3112697808000000000000000000000000000000000000000);
     }
 
     function testShouldCalculateInterestFloatingCase2() public {
         // given
         // when
-        uint256 quasiIFloating =
+        uint256 iFloating =
             _iporSwapLogic.calculateInterestFloating(987030000000000000000, 150 * TestConstants.D18);
         // then
-        assertEq(quasiIFloating, 4669046712000000000000000000000000000000000000000);
+        assertEq(iFloating, 4669046712000000000000000000000000000000000000000);
     }
 
     function testShouldCalculateInterestFloatingCase3() public {
         // given
         // when
-        uint256 quasiIFloating = _iporSwapLogic.calculateInterestFloating(987030000, 100 * TestConstants.D18);
+        uint256 iFloating = _iporSwapLogic.calculateInterestFloating(987030000, 100 * TestConstants.D18);
         // then
-        assertEq(quasiIFloating, 3112697808000000000000000000000000000);
+        assertEq(iFloating, 3112697808000000000000000000000000000);
     }
 
     function testShouldCalculateInterestFloatingCase4() public {
         // given
         // when
-        uint256 quasiIFloating =
+        uint256 iFloating =
             _iporSwapLogic.calculateInterestFloating(987030000, 150 * TestConstants.N1__0_6DEC);
         // then
-        assertEq(quasiIFloating, 4669046712000000000000000);
+        assertEq(iFloating, 4669046712000000000000000);
     }
 }
