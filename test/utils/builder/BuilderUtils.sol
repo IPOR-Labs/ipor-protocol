@@ -18,6 +18,7 @@ contract BuilderUtils {
         IporProtocolRouter router;
         IAmmSwapsLens ammSwapsLens;
         IAmmPoolsService ammPoolsService;
+        IAmmPoolsLens ammPoolsLens;
         IAmmOpenSwapService ammOpenSwapService;
         IAmmCloseSwapService ammCloseSwapService;
         IAmmGovernanceService ammGovernanceService;

@@ -372,6 +372,13 @@ contract IporProtocolFactory is Test {
             cfg.closeSwapServiceTestCase
         );
 
+        iporProtocol.ammSwapsLens = IAmmSwapsLens(address(iporProtocol.router));
+        iporProtocol.ammPoolsService = IAmmPoolsService(address(iporProtocol.router));
+        iporProtocol.ammPoolsLens = IAmmPoolsLens(address(iporProtocol.router));
+        iporProtocol.ammOpenSwapService = IAmmOpenSwapService(address(iporProtocol.router));
+        iporProtocol.ammCloseSwapService = IAmmCloseSwapService(address(iporProtocol.router));
+        iporProtocol.ammGovernanceService = IAmmGovernanceService(address(iporProtocol.router));
+
         vm.startPrank(address(_owner));
 
         iporProtocol.ivToken.setAssetManagement(address(iporProtocol.assetManagement));
@@ -482,6 +489,13 @@ contract IporProtocolFactory is Test {
             cfg.closeSwapServiceTestCase
         );
 
+        iporProtocol.ammSwapsLens = IAmmSwapsLens(address(iporProtocol.router));
+        iporProtocol.ammPoolsService = IAmmPoolsService(address(iporProtocol.router));
+        iporProtocol.ammPoolsLens = IAmmPoolsLens(address(iporProtocol.router));
+        iporProtocol.ammOpenSwapService = IAmmOpenSwapService(address(iporProtocol.router));
+        iporProtocol.ammCloseSwapService = IAmmCloseSwapService(address(iporProtocol.router));
+        iporProtocol.ammGovernanceService = IAmmGovernanceService(address(iporProtocol.router));
+
         vm.startPrank(address(_owner));
 
         iporProtocol.ivToken.setAssetManagement(address(iporProtocol.assetManagement));
@@ -590,6 +604,13 @@ contract IporProtocolFactory is Test {
             cfg.openSwapServiceTestCase,
             cfg.closeSwapServiceTestCase
         );
+
+        iporProtocol.ammSwapsLens = IAmmSwapsLens(address(iporProtocol.router));
+        iporProtocol.ammPoolsService = IAmmPoolsService(address(iporProtocol.router));
+        iporProtocol.ammPoolsLens = IAmmPoolsLens(address(iporProtocol.router));
+        iporProtocol.ammOpenSwapService = IAmmOpenSwapService(address(iporProtocol.router));
+        iporProtocol.ammCloseSwapService = IAmmCloseSwapService(address(iporProtocol.router));
+        iporProtocol.ammGovernanceService = IAmmGovernanceService(address(iporProtocol.router));
 
         vm.startPrank(address(_owner));
 
@@ -811,18 +832,21 @@ contract IporProtocolFactory is Test {
 
         amm.usdt.ammSwapsLens = IAmmSwapsLens(address(amm.router));
         amm.usdt.ammPoolsService = IAmmPoolsService(address(amm.router));
+        amm.usdt.ammPoolsLens = IAmmPoolsLens(address(amm.router));
         amm.usdt.ammOpenSwapService = IAmmOpenSwapService(address(amm.router));
         amm.usdt.ammCloseSwapService = IAmmCloseSwapService(address(amm.router));
         amm.usdt.ammGovernanceService = IAmmGovernanceService(address(amm.router));
 
         amm.usdc.ammSwapsLens = IAmmSwapsLens(address(amm.router));
         amm.usdc.ammPoolsService = IAmmPoolsService(address(amm.router));
+        amm.usdc.ammPoolsLens = IAmmPoolsLens(address(amm.router));
         amm.usdc.ammOpenSwapService = IAmmOpenSwapService(address(amm.router));
         amm.usdc.ammCloseSwapService = IAmmCloseSwapService(address(amm.router));
         amm.usdc.ammGovernanceService = IAmmGovernanceService(address(amm.router));
 
         amm.dai.ammSwapsLens = IAmmSwapsLens(address(amm.router));
         amm.dai.ammPoolsService = IAmmPoolsService(address(amm.router));
+        amm.dai.ammPoolsLens = IAmmPoolsLens(address(amm.router));
         amm.dai.ammOpenSwapService = IAmmOpenSwapService(address(amm.router));
         amm.dai.ammCloseSwapService = IAmmCloseSwapService(address(amm.router));
         amm.dai.ammGovernanceService = IAmmGovernanceService(address(amm.router));
@@ -983,6 +1007,7 @@ contract IporProtocolFactory is Test {
 
         iporProtocol.ammSwapsLens = IAmmSwapsLens(address(iporProtocol.router));
         iporProtocol.ammPoolsService = IAmmPoolsService(address(iporProtocol.router));
+        iporProtocol.ammPoolsLens = IAmmPoolsLens(address(iporProtocol.router));
         iporProtocol.ammOpenSwapService = IAmmOpenSwapService(address(iporProtocol.router));
         iporProtocol.ammCloseSwapService = IAmmCloseSwapService(address(iporProtocol.router));
         iporProtocol.ammGovernanceService = IAmmGovernanceService(address(iporProtocol.router));
@@ -1143,6 +1168,7 @@ contract IporProtocolFactory is Test {
 
         iporProtocol.ammSwapsLens = IAmmSwapsLens(address(iporProtocol.router));
         iporProtocol.ammPoolsService = IAmmPoolsService(address(iporProtocol.router));
+        iporProtocol.ammPoolsLens = IAmmPoolsLens(address(iporProtocol.router));
         iporProtocol.ammOpenSwapService = IAmmOpenSwapService(address(iporProtocol.router));
         iporProtocol.ammCloseSwapService = IAmmCloseSwapService(address(iporProtocol.router));
         iporProtocol.ammGovernanceService = IAmmGovernanceService(address(iporProtocol.router));
@@ -1303,6 +1329,7 @@ contract IporProtocolFactory is Test {
 
         iporProtocol.ammSwapsLens = IAmmSwapsLens(address(iporProtocol.router));
         iporProtocol.ammPoolsService = IAmmPoolsService(address(iporProtocol.router));
+        iporProtocol.ammPoolsLens = IAmmPoolsLens(address(iporProtocol.router));
         iporProtocol.ammOpenSwapService = IAmmOpenSwapService(address(iporProtocol.router));
         iporProtocol.ammCloseSwapService = IAmmCloseSwapService(address(iporProtocol.router));
         iporProtocol.ammGovernanceService = IAmmGovernanceService(address(iporProtocol.router));
