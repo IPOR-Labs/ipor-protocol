@@ -78,7 +78,7 @@ contract IporSwapLogicCalculateSwapPayFixedValue is TestCommons, DataUtils {
             swap, swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 100 * TestConstants.D18
         );
         // then
-        assertEq(swapValue, -270419178082191780822);
+        assertEq(swapValue, -270789953843120398784);
     }
 
     function testShouldCalculateInterestWhen25DaysLaterIBTPriceHasChangedAnd18Decimals() public {
@@ -101,7 +101,7 @@ contract IporSwapLogicCalculateSwapPayFixedValue is TestCommons, DataUtils {
             swap, swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 125 * TestConstants.D18
         );
         // then
-        assertEq(swapValue, 24405330821917808219178);
+        assertEq(swapValue, 24404960046156879601216);
     }
 
     function testShouldCalculateInterestWhenHugeIPOR25DaysLaterAndIBTPriceChangedAndUserLosesAnd18Decimals() public {
@@ -124,7 +124,7 @@ contract IporSwapLogicCalculateSwapPayFixedValue is TestCommons, DataUtils {
             swap, swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 125 * TestConstants.D18
         );
         // then
-        assertEq(swapValue, -67604794520547945205);
+        assertEq(swapValue, -3445246712749083726618);
     }
 
     function testShouldCalculateInterestWhen100DaysLaterIBTPriceHasNotChangedAnd18Decimals() public {
@@ -147,7 +147,7 @@ contract IporSwapLogicCalculateSwapPayFixedValue is TestCommons, DataUtils {
             swap, swap.openTimestamp + 4 * TestConstants.PERIOD_25_DAYS_IN_SECONDS, 120 * TestConstants.D18
         );
         // then
-        assertEq(swapValue, 18658923287671232876712);
+        assertEq(swapValue, 18652974581413050198561);
     }
 
     function testShouldCalculateInterestWhen100DaysLaterIBTPriceHasChangedAnd18Decimals() public {
@@ -170,7 +170,7 @@ contract IporSwapLogicCalculateSwapPayFixedValue is TestCommons, DataUtils {
             swap, swap.openTimestamp + 4 * TestConstants.PERIOD_25_DAYS_IN_SECONDS, 120 * TestConstants.D18
         );
         // then
-        assertEq(swapValue, 18658923287671232876712);
+        assertEq(swapValue, 18652974581413050198561);
     }
 
     function testShouldCalculateInterestWhen100DaysLaterIBTPriceHasChangedAnd6Decimals() public {
@@ -193,6 +193,6 @@ contract IporSwapLogicCalculateSwapPayFixedValue is TestCommons, DataUtils {
             swap, swap.openTimestamp + 4 * TestConstants.PERIOD_25_DAYS_IN_SECONDS, 120 * TestConstants.D18
         );
         // then
-        assertEq(swapValue, 18658923287671232876712);
+        assertEq(swapValue, 18652974581413050198561);
     }
 }

@@ -17,7 +17,7 @@ library SoapIndicatorLogic {
         uint256 ibtPrice
     ) internal pure returns (int256) {
         return
-            (si.totalIbtQuantity * ibtPrice).toInt256() -
+            IporMath.division(si.totalIbtQuantity * ibtPrice, Constants.D18).toInt256() -
             (si.totalNotional + calculateHyphoteticalInterestTotal(si, calculateTimestamp)).toInt256();
     }
 
@@ -28,7 +28,7 @@ library SoapIndicatorLogic {
     ) internal pure returns (int256) {
         return
             (si.totalNotional + calculateHyphoteticalInterestTotal(si, calculateTimestamp)).toInt256() -
-            (si.totalIbtQuantity * ibtPrice).toInt256();
+            IporMath.division(si.totalIbtQuantity * ibtPrice, Constants.D18).toInt256();
     }
 
     function rebalanceWhenOpenSwap(

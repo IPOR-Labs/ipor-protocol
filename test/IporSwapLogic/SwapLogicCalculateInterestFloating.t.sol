@@ -19,7 +19,7 @@ contract IporSwapLogicCalculateInterestFloating is TestCommons, DataUtils {
         uint256 iFloating =
         _iporSwapLogic.calculateInterestFloating(987030000000000000000, 100 * TestConstants.D18);
         // then
-        assertEq(iFloating, 3112697808000000000000000000000000000000000000000);
+        assertEq(iFloating, 98703000000000000000000);
     }
 
     function testShouldCalculateInterestFloatingCase2() public {
@@ -28,7 +28,7 @@ contract IporSwapLogicCalculateInterestFloating is TestCommons, DataUtils {
         uint256 iFloating =
         _iporSwapLogic.calculateInterestFloating(987030000000000000000, 150 * TestConstants.D18);
         // then
-        assertEq(iFloating, 4669046712000000000000000000000000000000000000000);
+        assertEq(iFloating, 148054500000000000000000);
     }
 
     function testShouldCalculateInterestFloatingCase3() public {
@@ -36,7 +36,7 @@ contract IporSwapLogicCalculateInterestFloating is TestCommons, DataUtils {
         // when
         uint256 iFloating = _iporSwapLogic.calculateInterestFloating(987030000, 100 * TestConstants.D18);
         // then
-        assertEq(iFloating, 3112697808000000000000000000000000000);
+        assertEq(iFloating, 98703000000);
     }
 
     function testShouldCalculateInterestFloatingCase4() public {
@@ -45,6 +45,6 @@ contract IporSwapLogicCalculateInterestFloating is TestCommons, DataUtils {
         uint256 iFloating =
         _iporSwapLogic.calculateInterestFloating(987030000, 150 * TestConstants.N1__0_6DEC);
         // then
-        assertEq(iFloating, 4669046712000000000000000);
+        assertEq(iFloating, 0);
     }
 }

@@ -61,7 +61,7 @@ contract AmmSoapTest is TestCommons {
         (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
 
         // then
-        assertEq(soap, 98891381185426862303488618814573137597620);
+        assertEq(soap, TestConstants.ZERO_INT);
     }
 
     function testShouldCalculateSoapDAIPayFixedWhenAddPositionThenCalculateAfter25Days() public {
@@ -88,7 +88,7 @@ contract AmmSoapTest is TestCommons {
             TestConstants.LEVERAGE_18DEC
         );
 
-        int256 expectedSoapBalance = 99094791565313495481762615044310248907591;
+        int256 expectedSoapBalance = -67896394443267281384;
 
         vm.warp(100 + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
 
@@ -119,7 +119,7 @@ contract AmmSoapTest is TestCommons {
             TestConstants.LEVERAGE_18DEC
         );
 
-        int256 expectedSoapBalance = -98891381185426862303488618814573137597620;
+        int256 expectedSoapBalance = -TestConstants.ZERO_INT;
 
         // when
         (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
@@ -134,7 +134,7 @@ contract AmmSoapTest is TestCommons {
         _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE2;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        int256 expectedSoapBalance = -99094791565313495481898361344739549688642;
+        int256 expectedSoapBalance = -67849905986033499667;
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
@@ -326,8 +326,8 @@ contract AmmSoapTest is TestCommons {
         _iporProtocolFactory.setupUsers(_cfg, ammUsdt);
         _iporProtocolFactory.setupUsers(_cfg, ammDai);
 
-        int256 expectedSoapUsdt = 99094791565313495481762615044310248907591;
-        int256 expectedSoapDai = 99094791565313495481762615044310248907591;
+        int256 expectedSoapUsdt = -67896394443267281384;
+        int256 expectedSoapDai = -67896394443267281384;
         uint256 currentTimestamp = block.timestamp;
 
         vm.startPrank(_liquidityProvider);
@@ -373,7 +373,7 @@ contract AmmSoapTest is TestCommons {
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        int256 expectedSoapBalance = -99094791565313495481898361344739549688642;
+        int256 expectedSoapBalance = -67849905986033499667;
 
         uint256 currentTimestamp = block.timestamp;
 
@@ -416,7 +416,7 @@ contract AmmSoapTest is TestCommons {
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        int256 expectedSoapBalance = 99094791565313495481762615044310248907591;
+        int256 expectedSoapBalance = -67896394443267281384;
 
         uint256 currentTimestamp = block.timestamp;
 
@@ -466,7 +466,7 @@ contract AmmSoapTest is TestCommons {
         _iporProtocolFactory.setupUsers(_cfg, ammDai);
 
         int256 expectedSoapUsdt = TestConstants.ZERO_INT;
-        int256 expectedSoapDai = 99094791565313495481762615044310248907591;
+        int256 expectedSoapDai = -67896394443267281384;
 
         uint256 currentTimestamp = block.timestamp;
 
@@ -520,7 +520,7 @@ contract AmmSoapTest is TestCommons {
         _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE1;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        int256 expectedSoapBalance = 107362812403926715009507484054222703876771;
+        int256 expectedSoapBalance = 8200124444169952246361;
 
         uint256 currentTimestamp = block.timestamp;
 
@@ -561,7 +561,7 @@ contract AmmSoapTest is TestCommons {
         _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE1;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
-        int256 expectedSoapBalance = 107362812403926715009507484054222703876771;
+        int256 expectedSoapBalance = 8200124444169952246361;
 
         uint256 currentTimestamp = block.timestamp;
 
@@ -603,8 +603,8 @@ contract AmmSoapTest is TestCommons {
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        int256 expectedSoapBalanceAfter28Days = 107415771505735255669402824740388309250303;
-        int256 expectedSoapBalanceAfter50Days = 107804937294762688260128375973971665611770;
+        int256 expectedSoapBalanceAfter28Days = 8220476754593688748141;
+        int256 expectedSoapBalanceAfter50Days = 8370198235286744877373;
 
         uint256 currentTimestamp = block.timestamp;
 
@@ -651,7 +651,7 @@ contract AmmSoapTest is TestCommons {
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        int256 expectedSoapBalanceAfter50Days = 198393411906759582510003773759762496133541;
+        int256 expectedSoapBalanceAfter50Days = -204015112473123635898;
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, 2 * TestConstants.USD_28_000_18DEC);
 
@@ -694,7 +694,7 @@ contract AmmSoapTest is TestCommons {
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        int256 expectedSoapBalanceAfter50Days = 198393411906759582510003773759762496133541;
+        int256 expectedSoapBalanceAfter50Days = -204015112473123635898;
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, 2 * TestConstants.USD_28_000_18DEC);
 
@@ -775,9 +775,9 @@ contract AmmSoapTest is TestCommons {
         (, , int256 soapAfterUpdateIndex50Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
 
         // then
-        int256 expectedSoapBeforeUpdateIndex = 99298620341446087047535770268684994897410;
-        int256 expectedSoapAfterUpdateIndex25Days = 99298620341446087047535770268684994897410;
-        int256 expectedSoapBalanceAfter50Days = 99298620341446087047535770268684994897410;
+        int256 expectedSoapBeforeUpdateIndex = -136118718029856335219;
+        int256 expectedSoapAfterUpdateIndex25Days = -136118718029856335219;
+        int256 expectedSoapBalanceAfter50Days = -136118718029856335219;
         assertEq(soapBeforeUpdateIndex, expectedSoapBeforeUpdateIndex);
         assertEq(soapAfterUpdateIndex25Days, expectedSoapAfterUpdateIndex25Days);
         assertEq(soapAfterUpdateIndex50Days, expectedSoapBalanceAfter50Days);
@@ -807,7 +807,7 @@ contract AmmSoapTest is TestCommons {
             TestConstants.LEVERAGE_18DEC
         );
 
-        int256 expectedSoap = int256(98891390592902688837555716172821821589185);
+        int256 expectedSoap = TestConstants.ZERO_INT;
 
         // when
         vm.prank(_userOne);
@@ -820,8 +820,7 @@ contract AmmSoapTest is TestCommons {
         );
 
         // then
-        //TODO: fix it
-//        assertLt(soapRightAfterOpenedPayFixedSwap, expectedSoap);
+        assertLt(soapRightAfterOpenedPayFixedSwap, expectedSoap);
     }
 
     function testShouldCalculateSoapWhenDAIPayFixedAnd2xAndWait50Days() public {
@@ -831,7 +830,7 @@ contract AmmSoapTest is TestCommons {
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        int256 expectedSoap50Days = 198393411906759582510003773759762496133541;
+        int256 expectedSoap50Days = -204015112473123635898;
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, 2 * TestConstants.USD_28_000_18DEC);
