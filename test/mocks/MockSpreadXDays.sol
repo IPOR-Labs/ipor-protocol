@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 import "../../contracts/interfaces/types/IporTypes.sol";
-import "forge-std/console2.sol";
 
 contract MockSpreadXDays {
     uint256 internal immutable _payFixedQuoteValue;

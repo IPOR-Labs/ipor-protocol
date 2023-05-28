@@ -21,4 +21,5 @@ library AssetManagementErrors {
 
     // problem with redeem shared token
     string public constant SHARED_TOKEN_REDEEM_ERROR = "IPOR_506";
+
 }

@@ -842,6 +842,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
                 AmmTypes.AmmPoolCoreModel memory model;
 
                 model.ammStorage = poolCfg.ammStorage;
+                model.ammTreasury = poolCfg.ammTreasury;
                 model.assetManagement = poolCfg.assetManagement;
 
                 IporTypes.AmmBalancesMemory memory balance = model.getAccruedBalance();

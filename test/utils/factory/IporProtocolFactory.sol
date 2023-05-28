@@ -111,6 +111,10 @@ contract IporProtocolFactory is Test {
     function getFullInstance(AmmConfig memory cfg) public returns (Amm memory amm) {
         amm.router = _iporProtocolRouterBuilder.buildEmptyProxy();
 
+        amm.usdt.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
+        amm.usdc.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
+        amm.dai.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
+
         amm.usdt.router = amm.router;
         amm.usdc.router = amm.router;
         amm.dai.router = amm.router;
@@ -130,6 +134,7 @@ contract IporProtocolFactory is Test {
         assets[2] = address(amm.usdc.asset);
 
         amm.iporOracle = _iporOracleFactory.getEmptyInstance(assets, cfg.iporOracleInitialParamsTestCase);
+
         amm.usdt.iporOracle = amm.iporOracle;
         amm.usdc.iporOracle = amm.iporOracle;
         amm.dai.iporOracle = amm.iporOracle;
@@ -193,8 +198,13 @@ contract IporProtocolFactory is Test {
             .build();
 
         _ammStorageBuilder.withIporProtocolRouter(address(amm.router));
+        _ammStorageBuilder.withAmmTreasury(address(amm.usdt.ammTreasury));
         amm.usdt.ammStorage = _ammStorageBuilder.build();
+
+        _ammStorageBuilder.withAmmTreasury(address(amm.usdc.ammTreasury));
         amm.usdc.ammStorage = _ammStorageBuilder.build();
+
+        _ammStorageBuilder.withAmmTreasury(address(amm.dai.ammTreasury));
         amm.dai.ammStorage = _ammStorageBuilder.build();
 
         _spreadRouterBuilder.withIporRouter(address(amm.router));
@@ -233,26 +243,29 @@ contract IporProtocolFactory is Test {
             .withAssetManagementImplementation(cfg.daiAssetManagementImplementation)
             .build();
 
-        amm.usdt.ammTreasury = _ammTreasuryBuilder
+        _ammTreasuryBuilder
             .withAsset(address(amm.usdt.asset))
             .withAmmStorage(address(amm.usdt.ammStorage))
             .withAssetManagement(address(amm.usdt.assetManagement))
             .withIporProtocolRouter(address(amm.router))
-            .build();
+            .withAmmTreasuryProxyAddress(address(amm.usdt.ammTreasury))
+            .upgrade();
 
-        amm.usdc.ammTreasury = _ammTreasuryBuilder
+        _ammTreasuryBuilder
             .withAsset(address(amm.usdc.asset))
             .withAmmStorage(address(amm.usdc.ammStorage))
             .withAssetManagement(address(amm.usdc.assetManagement))
             .withIporProtocolRouter(address(amm.router))
-            .build();
+            .withAmmTreasuryProxyAddress(address(amm.usdc.ammTreasury))
+            .upgrade();
 
-        amm.dai.ammTreasury = _ammTreasuryBuilder
+        _ammTreasuryBuilder
             .withAsset(address(amm.dai.asset))
             .withAmmStorage(address(amm.dai.ammStorage))
             .withAssetManagement(address(amm.dai.assetManagement))
             .withIporProtocolRouter(address(amm.router))
-            .build();
+            .withAmmTreasuryProxyAddress(address(amm.dai.ammTreasury))
+            .upgrade();
 
         amm.router = _getFullIporProtocolRouterInstance(amm, cfg.openSwapServiceTestCase, cfg.closeSwapServiceTestCase);
 
@@ -294,6 +307,7 @@ contract IporProtocolFactory is Test {
         returns (BuilderUtils.IporProtocol memory iporProtocol)
     {
         iporProtocol.router = _iporProtocolRouterBuilder.buildEmptyProxy();
+        iporProtocol.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
 
         _assetBuilder.withUSDT();
         iporProtocol.asset = _assetBuilder.build();
@@ -338,6 +352,7 @@ contract IporProtocolFactory is Test {
             .build();
 
         _ammStorageBuilder.withIporProtocolRouter(address(iporProtocol.router));
+        _ammStorageBuilder.withAmmTreasury(address(iporProtocol.ammTreasury));
         iporProtocol.ammStorage = _ammStorageBuilder.build();
 
         _spreadRouterBuilder.withIporRouter(address(iporProtocol.router));
@@ -359,12 +374,13 @@ contract IporProtocolFactory is Test {
             .withAssetManagementImplementation(cfg.assetManagementImplementation)
             .build();
 
-        iporProtocol.ammTreasury = _ammTreasuryBuilder
+        _ammTreasuryBuilder
             .withAsset(address(iporProtocol.asset))
             .withAmmStorage(address(iporProtocol.ammStorage))
             .withAssetManagement(address(iporProtocol.assetManagement))
             .withIporProtocolRouter(address(iporProtocol.router))
-            .build();
+            .withAmmTreasuryProxyAddress(address(iporProtocol.ammTreasury))
+            .upgrade();
 
         iporProtocol.router = _getUsdtIporProtocolRouterInstance(
             iporProtocol,
@@ -409,6 +425,7 @@ contract IporProtocolFactory is Test {
         returns (BuilderUtils.IporProtocol memory iporProtocol)
     {
         iporProtocol.router = _iporProtocolRouterBuilder.buildEmptyProxy();
+        iporProtocol.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
 
         _assetBuilder.withUSDC();
         iporProtocol.asset = _assetBuilder.build();
@@ -455,6 +472,7 @@ contract IporProtocolFactory is Test {
         iporProtocol.iporWeighted = _iporWeightedBuilder.withIporOracle(address(iporProtocol.iporOracle)).build();
 
         _ammStorageBuilder.withIporProtocolRouter(address(iporProtocol.router));
+        _ammStorageBuilder.withAmmTreasury(address(iporProtocol.ammTreasury));
         iporProtocol.ammStorage = _ammStorageBuilder.build();
 
         _spreadRouterBuilder.withIporRouter(address(iporProtocol.router));
@@ -476,12 +494,13 @@ contract IporProtocolFactory is Test {
             .withAssetManagementImplementation(cfg.assetManagementImplementation)
             .build();
 
-        iporProtocol.ammTreasury = _ammTreasuryBuilder
+        _ammTreasuryBuilder
             .withAsset(address(iporProtocol.asset))
             .withAmmStorage(address(iporProtocol.ammStorage))
             .withAssetManagement(address(iporProtocol.assetManagement))
             .withIporProtocolRouter(address(iporProtocol.router))
-            .build();
+            .withAmmTreasuryProxyAddress(address(iporProtocol.ammTreasury))
+            .upgrade();
 
         iporProtocol.router = _getUsdcIporProtocolRouterInstance(
             iporProtocol,
@@ -526,6 +545,7 @@ contract IporProtocolFactory is Test {
         returns (BuilderUtils.IporProtocol memory iporProtocol)
     {
         iporProtocol.router = _iporProtocolRouterBuilder.buildEmptyProxy();
+        iporProtocol.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
 
         _assetBuilder.withDAI();
 
@@ -573,6 +593,7 @@ contract IporProtocolFactory is Test {
         iporProtocol.iporWeighted = _iporWeightedBuilder.withIporOracle(address(iporProtocol.iporOracle)).build();
 
         _ammStorageBuilder.withIporProtocolRouter(address(iporProtocol.router));
+        _ammStorageBuilder.withAmmTreasury(address(iporProtocol.ammTreasury));
         iporProtocol.ammStorage = _ammStorageBuilder.build();
 
         _spreadRouterBuilder.withIporRouter(address(iporProtocol.router));
@@ -592,12 +613,13 @@ contract IporProtocolFactory is Test {
             .withAssetManagementImplementation(cfg.assetManagementImplementation)
             .build();
 
-        iporProtocol.ammTreasury = _ammTreasuryBuilder
+        _ammTreasuryBuilder
             .withAsset(address(iporProtocol.asset))
             .withAmmStorage(address(iporProtocol.ammStorage))
             .withAssetManagement(address(iporProtocol.assetManagement))
             .withIporProtocolRouter(address(iporProtocol.router))
-            .build();
+            .withAmmTreasuryProxyAddress(address(iporProtocol.ammTreasury))
+            .upgrade();
 
         iporProtocol.router = _getDaiIporProtocolRouterInstance(
             iporProtocol,

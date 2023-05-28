@@ -19,12 +19,14 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     using SoapIndicatorLogic for StorageInternalTypes.SoapIndicatorsMemory;
 
     address private immutable IPOR_PROTOCOL_ROUTER;
+    address private immutable AMM_TREASURY;
+
     uint32 private _lastSwapId;
 
-    /// @dev DEPRECATED
-    address public iporProtocolRouter;
+    /// @dev DEPRECATED in V2
+    address public miltonDeprecated;
 
-    /// @dev DEPRECATED
+    /// @dev DEPRECATED in V2
     address public josephDeprecated;
 
     StorageInternalTypes.Balances internal _balances;
@@ -42,9 +44,15 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _;
     }
 
+    modifier onlyAmmTreasury() {
+        require(_msgSender() == AMM_TREASURY, IporErrors.CALLER_NOT_AMM_TREASURY);
+        _;
+    }
+
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address iporProtocolRouterInput) {
+    constructor(address iporProtocolRouterInput, address ammTreasury) {
         IPOR_PROTOCOL_ROUTER = iporProtocolRouterInput;
+        AMM_TREASURY = ammTreasury;
         _disableInitializers();
     }
 
@@ -410,7 +418,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     function updateStorageWhenWithdrawFromAssetManagement(uint256 withdrawnAmount, uint256 vaultBalance)
         external
         override
-        onlyRouter
+        onlyAmmTreasury
     {
         uint256 currentVaultBalance = _balances.vault;
         // We nedd this because for compound if we deposit and withdraw we could get negative intrest based on rounds
@@ -427,7 +435,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     function updateStorageWhenDepositToAssetManagement(uint256 depositAmount, uint256 vaultBalance)
         external
         override
-        onlyRouter
+        onlyAmmTreasury
     {
         require(vaultBalance >= depositAmount, AmmErrors.VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE);
 

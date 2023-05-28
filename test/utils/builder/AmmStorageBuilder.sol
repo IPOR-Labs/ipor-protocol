@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 contract AmmStorageBuilder is Test {
     struct BuilderData {
         address iporProtocolRouter;
+        address ammTreasury;
     }
 
     BuilderData private builderData;
@@ -22,10 +23,17 @@ contract AmmStorageBuilder is Test {
         return this;
     }
 
+    function withAmmTreasury(address ammTreasury) public returns (AmmStorageBuilder) {
+        builderData.ammTreasury = ammTreasury;
+        return this;
+    }
+
     function build() public returns (AmmStorage) {
         require(builderData.iporProtocolRouter != address(0), "iporProtocolRouter is required");
         vm.startPrank(_owner);
-        ERC1967Proxy proxy = _constructProxy(address(new AmmStorage(builderData.iporProtocolRouter)));
+        ERC1967Proxy proxy = _constructProxy(
+            address(new AmmStorage(builderData.iporProtocolRouter, builderData.ammTreasury))
+        );
         AmmStorage ammStorage = AmmStorage(address(proxy));
         vm.stopPrank();
         return ammStorage;
