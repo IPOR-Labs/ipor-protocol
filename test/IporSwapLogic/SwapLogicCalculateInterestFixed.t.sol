@@ -19,7 +19,7 @@ contract IporSwapLogicCalculateInterestFixed is TestCommons, DataUtils {
         uint256 iFixed =
         _iporSwapLogic.calculateInterestFixed(98703 * TestConstants.D18, TestConstants.PERCENTAGE_4_18DEC, 0);
         // then
-        assertEq(iFixed, 3112697808000000000000000000000000000000000000000);
+        assertEq(iFixed, 98703000000000000000000);
     }
 
     function testShouldCalculateInterestFixedCase2() public {
@@ -29,7 +29,7 @@ contract IporSwapLogicCalculateInterestFixed is TestCommons, DataUtils {
             98703 * TestConstants.D18, TestConstants.PERCENTAGE_4_18DEC, TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS
         );
         // then
-        assertEq(iFixed, 3122249099904000000000000000000000000000000000000);
+        assertEq(iFixed, 99006334631564019729172);
     }
 
     function testShouldCalculateInterestFixedCase3() public {
@@ -39,6 +39,6 @@ contract IporSwapLogicCalculateInterestFixed is TestCommons, DataUtils {
             98703 * TestConstants.D18, TestConstants.PERCENTAGE_4_18DEC, TestConstants.YEAR_IN_SECONDS
         );
         // then
-        assertEq(iFixed, 3237205720320000000000000000000000000000000000000);
+        assertEq(iFixed, 102731145845111295248331);
     }
 }
