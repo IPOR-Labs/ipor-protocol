@@ -56,7 +56,10 @@ contract AssetManagementBuilder is Test {
         return this;
     }
 
-    function withAssetManagementImplementation(address assetManagementImplementation) public returns (AssetManagementBuilder) {
+    function withAssetManagementImplementation(address assetManagementImplementation)
+        public
+        returns (AssetManagementBuilder)
+    {
         builderData.assetManagementImplementation = assetManagementImplementation;
         return this;
     }
@@ -65,54 +68,63 @@ contract AssetManagementBuilder is Test {
         require(builderData.asset != address(0), "Asset address is not set");
         require(builderData.ivToken != address(0), "IvToken address is not set");
 
-        StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(_owner);
-        strategyAaveBuilder.withAsset(builderData.asset);
-        strategyAaveBuilder.withShareTokenDai();
-        MockTestnetStrategy strategyAave = strategyAaveBuilder.build();
+        if (builderData.strategyAave == address(0)) {
+            StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(_owner);
+            strategyAaveBuilder.withAsset(builderData.asset);
+            strategyAaveBuilder.withShareTokenDai();
+            MockTestnetStrategy strategyAave = strategyAaveBuilder.build();
+            builderData.strategyAave = address(strategyAave);
+        }
 
-        StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(_owner);
-        strategyCompoundBuilder.withAsset(builderData.asset);
-        strategyCompoundBuilder.withShareTokenDai();
-        MockTestnetStrategy strategyCompound = strategyCompoundBuilder.build();
-
-        builderData.strategyAave = address(strategyAave);
-        builderData.strategyCompound = address(strategyCompound);
+        if (builderData.strategyCompound == address(0)) {
+            StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(_owner);
+            strategyCompoundBuilder.withAsset(builderData.asset);
+            strategyCompoundBuilder.withShareTokenDai();
+            MockTestnetStrategy strategyCompound = strategyCompoundBuilder.build();
+            builderData.strategyCompound = address(strategyCompound);
+        }
     }
 
     function _buildStrategiesUsdt() internal {
         require(builderData.asset != address(0), "Asset address is not set");
         require(builderData.ivToken != address(0), "IvToken address is not set");
 
-        StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(_owner);
-        strategyAaveBuilder.withAsset(builderData.asset);
-        strategyAaveBuilder.withShareTokenUsdt();
-        MockTestnetStrategy strategyAave = strategyAaveBuilder.build();
+        if (builderData.strategyAave == address(0)) {
+            StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(_owner);
+            strategyAaveBuilder.withAsset(builderData.asset);
+            strategyAaveBuilder.withShareTokenUsdt();
+            MockTestnetStrategy strategyAave = strategyAaveBuilder.build();
+            builderData.strategyAave = address(strategyAave);
+        }
 
-        StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(_owner);
-        strategyCompoundBuilder.withAsset(builderData.asset);
-        strategyCompoundBuilder.withShareTokenUsdt();
-        MockTestnetStrategy strategyCompound = strategyCompoundBuilder.build();
-
-        builderData.strategyAave = address(strategyAave);
-        builderData.strategyCompound = address(strategyCompound);
+        if (builderData.strategyCompound == address(0)) {
+            StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(_owner);
+            strategyCompoundBuilder.withAsset(builderData.asset);
+            strategyCompoundBuilder.withShareTokenUsdt();
+            MockTestnetStrategy strategyCompound = strategyCompoundBuilder.build();
+            builderData.strategyCompound = address(strategyCompound);
+        }
     }
 
     function _buildStrategiesUsdc() internal {
         require(builderData.asset != address(0), "Asset address is not set");
         require(builderData.ivToken != address(0), "IvToken address is not set");
 
-        StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(_owner);
-        strategyAaveBuilder.withAsset(builderData.asset);
-        strategyAaveBuilder.withShareTokenUsdt();
-        MockTestnetStrategy strategyAave = strategyAaveBuilder.build();
+        if (builderData.strategyAave == address(0)) {
+            StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(_owner);
+            strategyAaveBuilder.withAsset(builderData.asset);
+            strategyAaveBuilder.withShareTokenUsdc();
+            MockTestnetStrategy strategyAave = strategyAaveBuilder.build();
+            builderData.strategyAave = address(strategyAave);
+        }
 
-        StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(_owner);
-        strategyCompoundBuilder.withAsset(builderData.asset);
-        strategyCompoundBuilder.withShareTokenUsdc();
-        MockTestnetStrategy strategyCompound = strategyCompoundBuilder.build();
-
-        builderData.strategyAave = address(strategyAave);
-        builderData.strategyCompound = address(strategyCompound);
+        if (builderData.strategyCompound == address(0)) {
+            StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(_owner);
+            strategyCompoundBuilder.withAsset(builderData.asset);
+            strategyCompoundBuilder.withShareTokenUsdc();
+            MockTestnetStrategy strategyCompound = strategyCompoundBuilder.build();
+            builderData.strategyCompound = address(strategyCompound);
+        }
     }
 
     function build() public returns (ItfAssetManagement) {
