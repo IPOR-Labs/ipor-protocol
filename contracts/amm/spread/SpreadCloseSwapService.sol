@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 
-import "./SpreadStorageLibs.sol";
-import "./CalculateTimeWeightedNotionalLibs.sol";
-import "contracts/libraries/errors/AmmErrors.sol";
-import "contracts/libraries/errors/IporErrors.sol";
-import "./ISpreadCloseSwapAction.sol";
+import "./ISpreadCloseSwapService.sol";
 import "contracts/amm/libraries/types/AmmInternalTypes.sol";
 import "contracts/interfaces/types/AmmTypes.sol";
 import "contracts/interfaces/IAmmStorage.sol";
+import "contracts/libraries/errors/IporErrors.sol";
+import "contracts/libraries/errors/AmmErrors.sol";
+import "./SpreadStorageLibs.sol";
+import "./CalculateTimeWeightedNotionalLibs.sol";
 
-contract SpreadCloseSwapAction is ISpreadCloseSwapAction {
+contract SpreadCloseSwapService is ISpreadCloseSwapService {
     using SafeCast for uint256;
 
     address internal immutable _DAI;

@@ -11,7 +11,7 @@ import "./ISpread28DaysLens.sol";
 import "./ISpread60DaysLens.sol";
 import "./ISpread90DaysLens.sol";
 import "./ISpreadStorageLens.sol";
-import "./ISpreadCloseSwapAction.sol";
+import "./ISpreadCloseSwapService.sol";
 
 contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
 
@@ -94,7 +94,7 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
             return SPREAD_90_DAYS;
         } else if (sig == ISpreadStorageLens.getTimeWeightedNotional.selector) {
             return STORAGE_LENS;
-        } else if (sig == ISpreadCloseSwapAction.weightedNotionalUpdateOnClose.selector) {
+        } else if (sig == ISpreadCloseSwapService.weightedNotionalUpdateOnClose.selector) {
             return CLOSE_SWAP_ACTION;
         }
         revert(AmmErrors.FUNCTION_NOT_SUPPORTED);

@@ -6,7 +6,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 
-import "contracts/amm/spread/ISpreadCloseSwapAction.sol";
+import "contracts/amm/spread/ISpreadCloseSwapService.sol";
 import "../libraries/math/IporMath.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../security/OwnerManager.sol";
@@ -440,7 +440,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             iporSwap.calculatePayoffPayFixed(closeTimestamp, accruedIpor.ibtPrice),
             accruedIpor.indexValue
         );
-        ISpreadCloseSwapAction(_spreadRouter).weightedNotionalUpdateOnClose(
+        ISpreadCloseSwapService(_spreadRouter).weightedNotionalUpdateOnClose(
             poolCfg.asset,
             0,
             AmmTypes.SwapDuration(iporSwap.duration),
@@ -488,7 +488,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             iporSwap.calculatePayoffReceiveFixed(closeTimestamp, accruedIpor.ibtPrice),
             accruedIpor.indexValue
         );
-        ISpreadCloseSwapAction(_spreadRouter).weightedNotionalUpdateOnClose(
+        ISpreadCloseSwapService(_spreadRouter).weightedNotionalUpdateOnClose(
             poolCfg.asset,
             1,
             AmmTypes.SwapDuration(iporSwap.duration),

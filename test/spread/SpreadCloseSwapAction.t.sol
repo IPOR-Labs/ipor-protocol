@@ -4,11 +4,11 @@ pragma solidity 0.8.16;
 import "../TestCommons.sol";
 import "./SpreadBaseTestUtils.sol";
 import "./SpreadTestSystem.sol";
-import "contracts/amm/spread/ISpreadCloseSwapAction.sol";
+import "contracts/amm/spread/ISpreadCloseSwapService.sol";
 import "contracts/amm/spread/ISpreadStorageLens.sol";
 import "contracts/amm/libraries/types/AmmInternalTypes.sol";
 
-contract SpreadCloseSwapActionTest is SpreadBaseTestUtils {
+contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
     using SafeCast for uint256;
     SpreadTestSystem internal _spreadTestSystem;
     address internal _ammAddress;
@@ -57,7 +57,7 @@ contract SpreadCloseSwapActionTest is SpreadBaseTestUtils {
         // when
         vm.warp(openSwapTimeStamp + 27 days);
         vm.prank(_ammAddress);
-        ISpreadCloseSwapAction(_routerAddress).weightedNotionalUpdateOnClose(
+        ISpreadCloseSwapService(_routerAddress).weightedNotionalUpdateOnClose(
             dai,
             0,
             AmmTypes.SwapDuration.DAYS_28,
@@ -120,7 +120,7 @@ contract SpreadCloseSwapActionTest is SpreadBaseTestUtils {
         // when
         vm.warp(openSwapTimeStamp + 27 days);
         vm.prank(_ammAddress);
-        ISpreadCloseSwapAction(_routerAddress).weightedNotionalUpdateOnClose(
+        ISpreadCloseSwapService(_routerAddress).weightedNotionalUpdateOnClose(
             dai,
             1,
             AmmTypes.SwapDuration.DAYS_28,
@@ -185,7 +185,7 @@ contract SpreadCloseSwapActionTest is SpreadBaseTestUtils {
         // when
         vm.warp(block.timestamp + 10 days);
         vm.prank(_ammAddress);
-        ISpreadCloseSwapAction(_routerAddress).weightedNotionalUpdateOnClose(
+        ISpreadCloseSwapService(_routerAddress).weightedNotionalUpdateOnClose(
             dai,
             0,
             AmmTypes.SwapDuration.DAYS_28,
@@ -251,7 +251,7 @@ contract SpreadCloseSwapActionTest is SpreadBaseTestUtils {
         // when
         vm.warp(block.timestamp + 10 days);
         vm.prank(_ammAddress);
-        ISpreadCloseSwapAction(_routerAddress).weightedNotionalUpdateOnClose(
+        ISpreadCloseSwapService(_routerAddress).weightedNotionalUpdateOnClose(
             dai,
             1,
             AmmTypes.SwapDuration.DAYS_28,
@@ -370,7 +370,7 @@ contract SpreadCloseSwapActionTest is SpreadBaseTestUtils {
         // when
         address ammStorageAddress = _spreadTestSystem.ammStorage();
         vm.prank(_ammAddress);
-        ISpreadCloseSwapAction(_routerAddress).weightedNotionalUpdateOnClose(
+        ISpreadCloseSwapService(_routerAddress).weightedNotionalUpdateOnClose(
             dai,
             1,
             AmmTypes.SwapDuration.DAYS_28,
@@ -506,7 +506,7 @@ contract SpreadCloseSwapActionTest is SpreadBaseTestUtils {
         // when
         address ammStorageAddress = _spreadTestSystem.ammStorage();
         vm.prank(_ammAddress);
-        ISpreadCloseSwapAction(_routerAddress).weightedNotionalUpdateOnClose(
+        ISpreadCloseSwapService(_routerAddress).weightedNotionalUpdateOnClose(
             dai,
             0,
             AmmTypes.SwapDuration.DAYS_28,

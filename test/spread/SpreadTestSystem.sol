@@ -7,7 +7,7 @@ import "contracts/amm/spread/Spread60Days.sol";
 import "contracts/amm/spread/Spread90Days.sol";
 import "contracts/amm/spread/SpreadStorageLens.sol";
 import "contracts/amm/spread/SpreadRouter.sol";
-import "contracts/amm/spread/SpreadCloseSwapAction.sol";
+import "contracts/amm/spread/SpreadCloseSwapService.sol";
 import "contracts/amm/AmmStorage.sol";
 
 contract SpreadTestSystem is TestCommons {
@@ -19,7 +19,7 @@ contract SpreadTestSystem is TestCommons {
     Spread60Days public spread60Days;
     Spread90Days public spread90Days;
     SpreadStorageLens public spreadStorageLens;
-    SpreadCloseSwapAction public spreadCloseSwapAction;
+    SpreadCloseSwapService public spreadCloseSwapAction;
     address public router;
     address public ammStorage;
 
@@ -30,7 +30,7 @@ contract SpreadTestSystem is TestCommons {
         spread28Days = new Spread28Days(address(dai), address(usdc), address(usdt));
         spread60Days = new Spread60Days(address(dai), address(usdc), address(usdt));
         spread90Days = new Spread90Days(address(dai), address(usdc), address(usdt));
-        spreadCloseSwapAction = new SpreadCloseSwapAction(address(dai), address(usdc), address(usdt));
+        spreadCloseSwapAction = new SpreadCloseSwapService(address(dai), address(usdc), address(usdt));
         spreadStorageLens = new SpreadStorageLens();
         SpreadRouter routerImplementation = new SpreadRouter(
             SpreadRouter.DeployedContracts(

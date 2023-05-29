@@ -2,10 +2,10 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
-import "contracts/amm/spread/ISpreadCloseSwapAction.sol";
+import "contracts/amm/spread/ISpreadCloseSwapService.sol";
 import "contracts/libraries/errors/IporErrors.sol";
 
-contract MockSpreadCloseSwapService is ISpreadCloseSwapAction {
+contract MockSpreadCloseSwapService is ISpreadCloseSwapService {
 
     address internal immutable _DAI;
     address internal immutable _USDC;

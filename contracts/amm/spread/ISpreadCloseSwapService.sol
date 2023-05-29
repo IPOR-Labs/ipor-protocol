@@ -5,7 +5,7 @@ import "./SpreadTypes.sol";
 import "../libraries/types/AmmInternalTypes.sol";
 import "../../interfaces/types/AmmTypes.sol";
 
-interface ISpreadCloseSwapAction {
+interface ISpreadCloseSwapService {
     /// @notice Updates the time-weighted notional on swap closure.
     /// @dev Updates the time-weighted notional for the specified asset and maturity based on the swap closure.
     /// @param asset The address of the asset involved in the swap.
