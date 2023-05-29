@@ -24,7 +24,7 @@ interface IAmmPoolsLens {
     /// @notice Retrieves the configuration of a specific asset's pool.
     /// @param asset The address of the asset.
     /// @return PoolConfiguration The pool's configuration.
-    function getPoolConfiguration(address asset) external view returns (PoolConfiguration memory);
+    function getAmmPoolsLensConfiguration(address asset) external view returns (PoolConfiguration memory);
 
     /// @notice Calculates the ipToken exchange rate.
     /// @dev The exchange rate is a ratio between the Liquidity Pool Balance and the ipToken's total supply.

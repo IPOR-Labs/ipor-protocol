@@ -95,7 +95,7 @@ contract AmmPoolsLens is IAmmPoolsLens {
         _iporOracle = iporOracle;
     }
 
-    function getPoolConfiguration(address asset) external view override returns (PoolConfiguration memory) {
+    function getAmmPoolsLensConfiguration(address asset) external view override returns (PoolConfiguration memory) {
         return _getPoolConfiguration(asset);
     }
 

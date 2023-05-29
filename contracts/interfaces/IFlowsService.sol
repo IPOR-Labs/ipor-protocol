@@ -15,7 +15,7 @@ interface IFlowsService {
     /// @param lpTokens An array of LP tokens for which the indicators are to be updated.
     /// @dev This function calls the `updateIndicators` function of the `ILiquidityMiningV2` contract to update the indicators.
     /// @dev Reverts if the `lpTokens` array is empty.
-    function updateIndicators(address account, address[] calldata lpTokens) external;
+    function updateLiquidityMiningIndicators(address account, address[] calldata lpTokens) external;
 
     /// @notice Delegates staked tokens by providing LP tokens and corresponding amounts.
     /// @param lpTokens An array of LP tokens to delegate.

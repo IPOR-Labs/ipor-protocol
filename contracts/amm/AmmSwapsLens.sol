@@ -177,7 +177,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         return ammStorage.getBalancesForOpenSwap();
     }
 
-    function getConfiguration(
+    function getAmmSwapsLensConfiguration(
         address asset,
         uint256 direction,
         uint256 duration

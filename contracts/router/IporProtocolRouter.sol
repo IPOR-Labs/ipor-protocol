@@ -123,11 +123,11 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             sig == IAmmSwapsLens.getPayoffReceiveFixed.selector ||
             sig == IAmmSwapsLens.getBalancesForOpenSwap.selector ||
             sig == IAmmSwapsLens.getSOAP.selector ||
-            sig == IAmmSwapsLens.getConfiguration.selector
+            sig == IAmmSwapsLens.getAmmSwapsLensConfiguration.selector
         ) {
             return AMM_SWAPS_LENS;
         } else if (
-            sig == IAmmPoolsLens.getPoolConfiguration.selector ||
+            sig == IAmmPoolsLens.getAmmPoolsLensConfiguration.selector ||
             sig == IAmmPoolsLens.getIpTokenExchangeRate.selector ||
             sig == IAmmPoolsLens.getIpTokenBalance.selector ||
             sig == IAmmPoolsLens.getLiquidityPoolAccountContribution.selector
@@ -293,7 +293,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             return STAKE_SERVICE_ADDRESS;
         } else if (
             sig == IFlowsService.delegateLpTokensToLiquidityMining.selector ||
-            sig == IFlowsService.updateIndicators.selector ||
+            sig == IFlowsService.updateLiquidityMiningIndicators.selector ||
             sig == IFlowsService.undelegateLpTokensFromLiquidityMining.selector ||
             sig == IFlowsService.claimPowerToken.selector
         ) {

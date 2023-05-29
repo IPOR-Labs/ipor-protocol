@@ -115,5 +115,5 @@ interface IAmmSwapsLens {
      * @param duration The duration of the swap
      * @return The asset configuration details.
      */
-    function getConfiguration(address asset, uint256 direction, uint256 duration) external view returns (AmmFacadeTypes.AssetConfiguration memory);
+    function getAmmSwapsLensConfiguration(address asset, uint256 direction, uint256 duration) external view returns (AmmFacadeTypes.AssetConfiguration memory);
 }
