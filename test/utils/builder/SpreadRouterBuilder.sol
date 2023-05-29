@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "./BuilderUtils.sol";
 import "forge-std/Test.sol";
 import "../../utils/TestConstants.sol";
+import "../../mocks/MockSpreadCloseSwapService.sol";
 import "contracts/amm/spread/SpreadRouter.sol";
 import "contracts/amm/spread/Spread28Days.sol";
 import "contracts/amm/spread/Spread60Days.sol";
@@ -139,9 +140,9 @@ contract SpreadRouterBuilder is Test {
 
         return address(new Spread90Days(builderData.dai, builderData.usdc, builderData.usdt));
     }
-
+// todo closeSwapSpreadService
     function _buildCloseSwapAction() internal returns (address spread) {
-        return address(new SpreadCloseSwapAction(builderData.dai, builderData.usdc, builderData.usdt));
+        return address(new MockSpreadCloseSwapService(builderData.dai, builderData.usdc, builderData.usdt));
     }
 
     function _constructProxy(address impl) internal returns (ERC1967Proxy proxy) {
