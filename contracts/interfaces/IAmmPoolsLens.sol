@@ -30,12 +30,12 @@ interface IAmmPoolsLens {
     /// @dev The exchange rate is a ratio between the Liquidity Pool Balance and the ipToken's total supply.
     /// @param asset The address of the asset.
     /// @return uint256 The ipToken exchange rate for the specific asset, represented in 18 decimals.
-    function getExchangeRate(address asset) external view returns (uint256);
+    function getIpTokenExchangeRate(address asset) external view returns (uint256);
 
     /// @notice Retrieves the AmmTreasury balance for a given asset.
     /// @param asset The address of the asset.
     /// @return IporTypes.AmmBalancesMemory The balance of the AMM Treasury.
-    function getBalance(address asset) external view returns (IporTypes.AmmBalancesMemory memory);
+    function getIpTokenBalance(address asset) external view returns (IporTypes.AmmBalancesMemory memory);
 
     /// @notice Returns the contribution of a specific account to the Liquidity Pool.
     /// @param asset The address of the asset.

@@ -33,7 +33,7 @@ interface IPowerTokenLens {
     /// Tokens are delegated from PowerToken to LiquidityMining smart contract (reponsible for rewards distribution).
     /// @param account account address for which the balance of delegated Power Tokens is checked
     /// @return  Returns the amount of the Power Tokens owned by the `account` and delegated to the LiquidityMining contracts.
-    function delegatedToLiquidityMiningBalanceOf(address account) external view returns (uint256);
+    function delegatedPowerTokensToLiquidityMiningBalanceOf(address account) external view returns (uint256);
 
     /// @notice Gets the rate of the fee from the configuration. This fee is applied when the owner of Power Tokens wants to unstake them immediately.
     /// @dev Fee value represented in as a percentage with 18 decimals
@@ -45,17 +45,17 @@ interface IPowerTokenLens {
     /// Struct containing information on when the cooldown end and what is the quantity of the Power Tokens locked.
     /// @param account account address that owns Power Tokens in the cooldown
     /// @return Object PowerTokenTypes.PowerTokenCoolDown represents active cool down
-    function getActiveCooldown(address account) external view returns (PowerTokenTypes.PwTokenCooldown memory);
+    function getPowerTokenActiveCooldown(address account) external view returns (PowerTokenTypes.PwTokenCooldown memory);
 
     /// @notice Gets the power token cool down time in seconds.
     /// @return uint256 cool down time in seconds
-    function COOL_DOWN_IN_SECONDS() external view returns (uint256);
+    function powerTokenCoolDownTime() external view returns (uint256);
 
     /// @notice Calculates the internal exchange rate between the Staked Token and total supply of a base amount
     /// @return Current exchange rate between the Staked Token and the total supply of a base amount, represented with 18 decimals.
-    function calculateExchangeRate() external view returns (uint256);
+    function calculatePowerTokenExchangeRate() external view returns (uint256);
 
     /// @notice Gets the total supply base amount
     /// @return total supply base amount, represented with 18 decimals
-    function totalSupplyBase() external view returns (uint256);
+    function totalPowerTokenSupplyBase() external view returns (uint256);
 }

@@ -22,7 +22,7 @@ interface ILiquidityMiningLens {
     /// @param account address for which to fetch the information about balance of delegated Power Tokens
     /// @param lpTokens list of lpTokens addresses(lpTokens)
     /// @return balances list of {LiquidityMiningTypes.DelegatedPwTokenBalance} structure, with information how much Power Token is delegated per lpToken address.
-    function balanceOfDelegatedPwToken(address account, address[] memory lpTokens)
+    function balanceOfDelegatedPowerToken(address account, address[] memory lpTokens)
         external
         view
         returns (LiquidityMiningTypes.DelegatedPwTokenBalance[] memory balances);
@@ -30,7 +30,7 @@ interface ILiquidityMiningLens {
     /// @notice Calculates the accrued rewards for the specified LP tokens in the Liquidity Mining contract.
     /// @param lpTokens An array of LP tokens for which the accrued rewards are to be calculated.
     /// @return result An array of `AccruedRewardsResult` structs containing the accrued rewards information for each LP token.
-    function calculateAccruedRewards(address[] calldata lpTokens)
+    function calculateLiquidityMiningAccruedRewards(address[] calldata lpTokens)
         external
         view
         returns (LiquidityMiningTypes.AccruedRewardsResult[] memory result);
@@ -39,7 +39,7 @@ interface ILiquidityMiningLens {
     /// @param account The address of the account for which the rewards are to be calculated.
     /// @param lpTokens An array of LP tokens for which the rewards are to be calculated.
     /// @return An array of `AccountRewardResult` structs containing the rewards information for each LP token.
-    function calculateAccountRewards(address account, address[] calldata lpTokens)
+    function calculateLiquidityMiningAccountRewards(address account, address[] calldata lpTokens)
         external
         view
         returns (LiquidityMiningTypes.AccountRewardResult[] memory);
@@ -47,7 +47,7 @@ interface ILiquidityMiningLens {
     /// @notice Retrieves the global indicators for the specified LP tokens in the Liquidity Mining contract.
     /// @param lpTokens An array of LP tokens for which the global indicators are to be retrieved.
     /// @return An array of `GlobalIndicatorsResult` structs containing the global indicators information for each LP token.
-    function getGlobalIndicators(address[] memory lpTokens)
+    function getLiquidityMiningGlobalIndicators(address[] memory lpTokens)
         external
         view
         returns (LiquidityMiningTypes.GlobalIndicatorsResult[] memory);
@@ -56,7 +56,7 @@ interface ILiquidityMiningLens {
     /// @param account The address of the account for which the account indicators are to be retrieved.
     /// @param lpTokens An array of LP tokens for which the account indicators are to be retrieved.
     /// @return An array of `AccountIndicatorsResult` structs containing the account indicators information for each LP token.
-    function getAccountIndicators(address account, address[] memory lpTokens)
+    function getLiquidityMiningAccountIndicators(address account, address[] memory lpTokens)
         external
         view
         returns (LiquidityMiningTypes.AccountIndicatorsResult[] memory);

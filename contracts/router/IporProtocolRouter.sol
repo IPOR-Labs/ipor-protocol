@@ -75,8 +75,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             return AMM_SWAPS_LENS;
         } else if (
             sig == IAmmPoolsLens.getPoolConfiguration.selector ||
-            sig == IAmmPoolsLens.getExchangeRate.selector ||
-            sig == IAmmPoolsLens.getBalance.selector ||
+            sig == IAmmPoolsLens.getIpTokenExchangeRate.selector ||
+            sig == IAmmPoolsLens.getIpTokenBalance.selector ||
             sig == IAmmPoolsLens.getLiquidityPoolAccountContribution.selector
         ) {
             return AMM_POOLS_LENS;
@@ -84,17 +84,17 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             sig == IAssetManagementLens.balanceOfAmmTreasury.selector ||
             sig == IAssetManagementLens.aaveBalanceOf.selector ||
             sig == IAssetManagementLens.compoundBalanceOf.selector ||
-            sig == IAssetManagementLens.calculateExchangeRate.selector
+            sig == IAssetManagementLens.getIvTokenExchangeRate.selector
         ) {
             return ASSET_MANAGEMENTLENS_LENS;
         } else if (
             sig == ILiquidityMiningLens.getLiquidityMiningContractId.selector ||
             sig == ILiquidityMiningLens.liquidityMiningBalanceOf.selector ||
-            sig == ILiquidityMiningLens.balanceOfDelegatedPwToken.selector ||
-            sig == ILiquidityMiningLens.calculateAccruedRewards.selector ||
-            sig == ILiquidityMiningLens.getAccountIndicators.selector ||
-            sig == ILiquidityMiningLens.getGlobalIndicators.selector ||
-            sig == ILiquidityMiningLens.calculateAccountRewards.selector
+            sig == ILiquidityMiningLens.balanceOfDelegatedPowerToken.selector ||
+            sig == ILiquidityMiningLens.calculateLiquidityMiningAccruedRewards.selector ||
+            sig == ILiquidityMiningLens.getLiquidityMiningAccountIndicators.selector ||
+            sig == ILiquidityMiningLens.getLiquidityMiningGlobalIndicators.selector ||
+            sig == ILiquidityMiningLens.calculateLiquidityMiningAccountRewards.selector
         ) {
             return LIQUIDITY_MINING_LENS_ADDRESS;
         } else if (
@@ -104,12 +104,12 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             sig == IPowerTokenLens.powerTokenDecimals.selector ||
             sig == IPowerTokenLens.powerTokenTotalSupply.selector ||
             sig == IPowerTokenLens.powerTokenBalanceOf.selector ||
-            sig == IPowerTokenLens.delegatedToLiquidityMiningBalanceOf.selector ||
-            sig == IPowerTokenLens.getActiveCooldown.selector ||
+            sig == IPowerTokenLens.delegatedPowerTokensToLiquidityMiningBalanceOf.selector ||
+            sig == IPowerTokenLens.getPowerTokenActiveCooldown.selector ||
             sig == IPowerTokenLens.getUnstakeWithoutCooldownFee.selector ||
-            sig == IPowerTokenLens.COOL_DOWN_IN_SECONDS.selector ||
-            sig == IPowerTokenLens.calculateExchangeRate.selector ||
-            sig == IPowerTokenLens.totalSupplyBase.selector
+            sig == IPowerTokenLens.powerTokenCoolDownTime.selector ||
+            sig == IPowerTokenLens.calculatePowerTokenExchangeRate.selector ||
+            sig == IPowerTokenLens.totalPowerTokenSupplyBase.selector
         ) {
             return POWER_TOKEN_LENS_ADDRESS;
         } else if (

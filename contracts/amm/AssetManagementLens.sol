@@ -88,7 +88,7 @@ contract AssetManagementLens is IAssetManagementLens {
         return IAssetManagement(assetManagementConfiguration.assetManagement).totalBalance(assetManagementConfiguration.ammTreasury);
     }
 
-    function calculateExchangeRate(address asset) external view returns (uint256) {
+    function getIvTokenExchangeRate(address asset) external view returns (uint256) {
         AssetManagementConfiguration memory assetManagementConfiguration = _getAssetManagementConfiguration(asset);
         return IAssetManagement(assetManagementConfiguration.assetManagement).calculateExchangeRate();
     }
