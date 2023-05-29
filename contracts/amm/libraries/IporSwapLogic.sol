@@ -2,7 +2,7 @@
 pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "../../libraries/errors/MiltonErrors.sol";
+import "../../libraries/errors/AmmErrors.sol";
 import "../../interfaces/types/IporTypes.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
@@ -52,7 +52,7 @@ library IporSwapLogic {
         } else if (duration == AmmTypes.SwapDuration.DAYS_90) {
             return 90;
         } else {
-            revert(MiltonErrors.UNSUPPORTED_SWAP_DURATION);
+            revert(AmmErrors.UNSUPPORTED_SWAP_DURATION);
         }
     }
 
@@ -89,14 +89,15 @@ library IporSwapLogic {
         uint256 oppositeLegFixedRate,
         uint256 openingFeeRateForSwapUnwind
     ) internal pure returns (int256 swapUnwindValue) {
-        require(closingTimestamp <= swap.endTimestamp, MiltonErrors.CANNOT_UNWIND_CLOSING_TOO_LATE);
+        uint256 endTimestamp = calculateSwapMaturity(swap);
+        require(closingTimestamp <= endTimestamp, AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE);
 
         swapUnwindValue =
             swapPayoffToDate +
             IporMath.divisionInt(
                 swap.notional.toInt256() *
                     (oppositeLegFixedRate.toInt256() - swap.fixedInterestRate.toInt256()) *
-                    ((swap.endTimestamp - swap.openTimestamp) - (closingTimestamp - swap.openTimestamp)).toInt256(),
+                    ((endTimestamp - swap.openTimestamp) - (closingTimestamp - swap.openTimestamp)).toInt256(),
                 Constants.WAD_YEAR_IN_SECONDS_INT
             ) -
             openingFeeRateForSwapUnwind.toInt256();
@@ -108,7 +109,7 @@ library IporSwapLogic {
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) internal pure returns (uint256 quasiIFixed, uint256 quasiIFloating) {
-        require(closingTimestamp >= swap.openTimestamp, MiltonErrors.CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP);
+        require(closingTimestamp >= swap.openTimestamp, AmmErrors.CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP);
 
         quasiIFixed = calculateQuasiInterestFixed(
             swap.notional,
@@ -153,6 +154,18 @@ library IporSwapLogic {
             } else {
                 return swapValue;
             }
+        }
+    }
+
+    function calculateSwapMaturity(IporTypes.IporSwapMemory memory swap) internal pure returns (uint256) {
+        if (swap.duration == 0) {
+            return swap.openTimestamp + 28 days;
+        } else if (swap.duration == 1) {
+            return swap.openTimestamp + 60 days;
+        } else if (swap.duration == 2) {
+            return swap.openTimestamp + 90 days;
+        } else {
+            revert(AmmErrors.UNSUPPORTED_SWAP_DURATION);
         }
     }
 }
