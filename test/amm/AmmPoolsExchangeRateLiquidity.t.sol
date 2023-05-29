@@ -3,13 +3,12 @@ pragma solidity 0.8.16;
 
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
-import {SwapUtils} from "../utils/SwapUtils.sol";
+import {AmmPoolUtils} from "../utils/AmmPoolUtils.sol";
 import "../utils/TestConstants.sol";
-import "contracts/mocks/spread/MockSpreadModel.sol";
 import "contracts/tokens/IpToken.sol";
 import "contracts/interfaces/types/IporTypes.sol";
 
-contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
+contract AmmPoolsExchangeRateLiquidityTest is TestCommons, DataUtils, AmmPoolUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
     BuilderUtils.IporProtocol internal _iporProtocol;
 
@@ -24,24 +23,14 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
         _cfg.iporRiskManagementOracleUpdater = _userOne;
-
-        _cfg.spreadImplementation = address(
-            new MockSpreadModel(
-                TestConstants.PERCENTAGE_4_18DEC,
-                TestConstants.ZERO,
-                TestConstants.ZERO_INT,
-                TestConstants.ZERO_INT
-            )
-        );
     }
 
     function testShouldCalculateExchangeRateWhenLiquidityPoolBalanceAndIpTokenTotalSupplyIsZero() public {
         // given
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
-        uint256 actualExchangeRate = _iporProtocol.joseph.itfCalculateExchangeRate(block.timestamp);
+        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getExchangeRate(address(_iporProtocol.asset));
 
         // then
         assertEq(actualExchangeRate, TestConstants.D18);
@@ -51,14 +40,13 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_14_000_18DEC);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_14_000_18DEC);
 
         // when
-        uint256 actualExchangeRate = _iporProtocol.joseph.itfCalculateExchangeRate(block.timestamp);
+        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getExchangeRate(address(_iporProtocol.asset));
 
         // then
         assertEq(actualExchangeRate, TestConstants.D18);
@@ -68,14 +56,13 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_14_000_6DEC);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_14_000_6DEC);
 
         // when
-        uint256 actualExchangeRate = _iporProtocol.joseph.itfCalculateExchangeRate(block.timestamp);
+        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getExchangeRate(address(_iporProtocol.asset));
 
         // then
         assertEq(actualExchangeRate, TestConstants.D18);
@@ -85,20 +72,18 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_10_000_18DEC);
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        _iporProtocol.ammStorage.setJoseph(_userOne);
-        vm.prank(_userOne);
+        AmmStorage implementationHack = new AmmStorage(_admin, address(_iporProtocol.ammTreasury));
+        _iporProtocol.ammStorage.upgradeTo(address(implementationHack));
         _iporProtocol.ammStorage.subtractLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
-        _iporProtocol.ammStorage.setJoseph(address(_iporProtocol.joseph));
 
         // when
-        uint256 actualExchangeRate = _iporProtocol.joseph.itfCalculateExchangeRate(block.timestamp);
+        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getExchangeRate(address(_iporProtocol.asset));
 
         // then
         assertEq(actualExchangeRate, TestConstants.ZERO);
@@ -106,50 +91,48 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
 
     function testShouldCalculateExchangeRateWhenExchangeRateIsGreaterThan1And18Decimals() public {
         // given
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
+        _iporProtocol.iporOracle.updateIndex(
             address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_3_18DEC,
-            block.timestamp
+            TestConstants.PERCENTAGE_3_18DEC
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(40 * TestConstants.D18);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, 40 * TestConstants.D18);
 
         // open position to have something in the pool
         vm.prank(_userTwo);
-        _iporProtocol.ammTreasury.openSwapPayFixed(
+        _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
+            _userTwo,
             40 * TestConstants.D18,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
 
         // when
-        uint256 actualExchangeRate = _iporProtocol.joseph.itfCalculateExchangeRate(block.timestamp);
+        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getExchangeRate(address(_iporProtocol.asset));
 
         // then
-        assertEq(actualExchangeRate, 1000057521008863714);
+        assertEq(actualExchangeRate, 1000951604132680805);
     }
 
     function testShouldCalculateExchangeRateWhenLiquidityPoolBalanceIsNotZeroAndIpTokenTotalSupplyIsZeroAnd18Decimals()
         public
     {
         // given
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
+        _iporProtocol.iporOracle.updateIndex(
             address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_3_18DEC,
-            block.timestamp
+            TestConstants.PERCENTAGE_3_18DEC
         );
 
         //BEGIN HACK - provide liquidity without mint ipToken
-        _iporProtocol.ammStorage.setJoseph(_admin);
+        AmmStorage implementationHack = new AmmStorage(_admin, address(_iporProtocol.ammTreasury));
+        _iporProtocol.ammStorage.upgradeTo(address(implementationHack));
         _iporProtocol.ammStorage.addLiquidity(
             _liquidityProvider,
             TestConstants.USD_2_000_18DEC,
@@ -157,13 +140,14 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
             TestConstants.USD_10_000_000_18DEC
         );
         _iporProtocol.asset.transfer(address(_iporProtocol.ammTreasury), TestConstants.USD_2_000_18DEC);
-        _iporProtocol.ammStorage.setJoseph(address(_iporProtocol.joseph));
         //END HACK - provide liquidity without mint ipToken
 
-        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammTreasury.getAccruedBalance();
+        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getBalance(
+            address(_iporProtocol.asset)
+        );
 
         // when
-        uint256 actualExchangeRate = _iporProtocol.joseph.itfCalculateExchangeRate(block.timestamp);
+        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getExchangeRate(address(_iporProtocol.asset));
 
         // then
         assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.ipToken)), TestConstants.ZERO);
@@ -173,31 +157,30 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
 
     function testShouldCalculateExchangeRateWhenExchangeRateIsGreaterThan1And6Decimals() public {
         // given
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
+        _iporProtocol.iporOracle.updateIndex(
             address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_3_18DEC,
-            block.timestamp
+            TestConstants.PERCENTAGE_3_18DEC
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(40 * TestConstants.N1__0_6DEC);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, 40 * TestConstants.N1__0_6DEC);
 
         // open position to have something in the pool
         vm.prank(_userTwo);
-        _iporProtocol.ammTreasury.openSwapPayFixed(
+        _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _userTwo,
             40 * TestConstants.N1__0_6DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
 
         // when
-        uint256 actualExchangeRate = _iporProtocol.joseph.itfCalculateExchangeRate(block.timestamp);
+        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getExchangeRate(address(_iporProtocol.asset));
 
         // then
-        assertEq(actualExchangeRate, 1000057521008863714);
+        assertEq(actualExchangeRate, 1000951604132680805);
     }
 }
