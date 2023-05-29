@@ -94,7 +94,9 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
             return SPREAD_90_DAYS;
         } else if (sig == ISpreadStorageLens.getTimeWeightedNotional.selector) {
             return STORAGE_LENS;
-        } else if (sig == ISpreadCloseSwapService.weightedNotionalUpdateOnClose.selector) {
+        } else if (sig == ISpreadCloseSwapService.timeWeightedNotionalUpdateOnClose.selector) {
+            _onlyIporProtocolRouter();
+            _whenNotPaused();
             return CLOSE_SWAP_ACTION;
         }
         revert(AmmErrors.FUNCTION_NOT_SUPPORTED);

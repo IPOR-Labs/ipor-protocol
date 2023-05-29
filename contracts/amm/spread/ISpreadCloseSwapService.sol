@@ -14,7 +14,7 @@ interface ISpreadCloseSwapService {
     /// @param swapNotional The notional amount of the swap.
     /// @param closedSwap The memory struct containing the swap information.
     /// @param ammStorageAddress The address of the AMM storage.
-    function weightedNotionalUpdateOnClose(
+    function timeWeightedNotionalUpdateOnClose(
         address asset,
         uint256 direction,
         AmmTypes.SwapDuration duration,

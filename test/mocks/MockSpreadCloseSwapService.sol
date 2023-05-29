@@ -24,7 +24,7 @@ contract MockSpreadCloseSwapService is ISpreadCloseSwapService {
         _USDT = usdt;
     }
 
-    function weightedNotionalUpdateOnClose(
+    function timeWeightedNotionalUpdateOnClose(
         address asset,
         uint256 direction,
         AmmTypes.SwapDuration duration,
