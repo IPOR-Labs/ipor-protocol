@@ -3,10 +3,11 @@ pragma solidity 0.8.16;
 import "forge-std/Test.sol";
 import "contracts/interfaces/IPowerTokenLens.sol";
 import "../../mocks/MockPowerTokenLens.sol";
+import "./BuilderUtils.sol";
 
 contract PowerTokenLensBuilder is Test {
 
-    IPowerTokenLens.PowerTokenData private _builderData;
+    BuilderUtils.PowerTokenLensData private _builderData;
 
     address private _owner;
 

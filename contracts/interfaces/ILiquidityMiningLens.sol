@@ -5,10 +5,6 @@ import "./types/LiquidityMiningTypes.sol";
 import "./ILiquidityMiningV2.sol";
 
 interface ILiquidityMiningLens {
-    struct LiquidityMiningData {
-        bytes32 contractId;
-        uint256 balanceOf;
-    }
 
     /// @notice Contract ID. The keccak-256 hash of "io.ipor.LiquidityMining" decreased by 1
     /// @return Returns an ID of the contract

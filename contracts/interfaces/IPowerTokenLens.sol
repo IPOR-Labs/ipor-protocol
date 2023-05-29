@@ -4,22 +4,6 @@ import "./types/PowerTokenTypes.sol";
 
 interface IPowerTokenLens {
 
-    struct PowerTokenData {
-        string name;
-        bytes32 contractId;
-        string symbol;
-        uint8 decimals;
-        uint256 totalSupply;
-        uint256 balanceOf;
-        uint256 delegatedPowerTokensToLiquidityMiningBalanceOf;
-        uint256 getUnstakeWithoutCooldownFee;
-        uint256 unstakeWithoutCooldownFee;
-        PowerTokenTypes.PwTokenCooldown activeCooldown;
-        uint256 coolDownInSeconds;
-        uint256 exchangeRate;
-        uint256 totalSupplyBase;
-    }
-
     /// @notice Gets the name of the Power Token
     /// @return Returns the name of the Power Token.
     function powerTokenName() external view returns (string memory);

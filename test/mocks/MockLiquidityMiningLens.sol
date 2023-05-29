@@ -2,11 +2,12 @@
 pragma solidity 0.8.16;
 
 import "contracts/interfaces/ILiquidityMiningLens.sol";
+import "../utils/builder/BuilderUtils.sol";
 
 contract MockLiquidityMiningLens is ILiquidityMiningLens {
-    LiquidityMiningData private _data;
+    BuilderUtils.LiquidityMiningLensData private _data;
 
-    constructor(LiquidityMiningData memory builderData) {
+    constructor(BuilderUtils.LiquidityMiningLensData memory builderData) {
         _data = builderData;
     }
 

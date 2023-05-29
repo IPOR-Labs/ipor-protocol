@@ -6,7 +6,7 @@ import "../../mocks/MockLiquidityMiningLens.sol";
 
 contract LiquidityMiningLensBuilder is Test {
 
-    ILiquidityMiningLens.LiquidityMiningData private _builderData;
+    BuilderUtils.LiquidityMiningLensData private _builderData;
 
     address private _owner;
 

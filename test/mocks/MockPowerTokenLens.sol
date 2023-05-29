@@ -2,12 +2,12 @@
 pragma solidity 0.8.16;
 
 import "contracts/interfaces/IPowerTokenLens.sol";
+import "../utils/builder/BuilderUtils.sol";
 
 contract MockPowerTokenLens is IPowerTokenLens {
+    BuilderUtils.PowerTokenLensData private _data;
 
-    PowerTokenData private _data;
-
-    constructor (PowerTokenData memory builderData) {
+    constructor(BuilderUtils.PowerTokenLensData memory builderData) {
         _data = builderData;
     }
 
