@@ -5,6 +5,11 @@ import "./types/LiquidityMiningTypes.sol";
 import "./ILiquidityMiningV2.sol";
 
 interface ILiquidityMiningLens {
+    struct LiquidityMiningData {
+        bytes32 contractId;
+        uint256 balanceOf;
+    }
+
     /// @notice Contract ID. The keccak-256 hash of "io.ipor.LiquidityMining" decreased by 1
     /// @return Returns an ID of the contract
     function getLiquidityMiningContractId() external view returns (bytes32);
@@ -13,10 +18,7 @@ interface ILiquidityMiningLens {
     /// @param account The address of the account for which the LP token balance is queried.
     /// @param lpToken The address of the LP token for which the balance is queried.
     /// @return The balance of LP tokens staked by the specified account.
-    function liquidityMiningBalanceOf(address account, address lpToken)
-        external
-        view
-        returns (uint256);
+    function liquidityMiningBalanceOf(address account, address lpToken) external view returns (uint256);
 
     /// @notice It returns the balance of delegated Power Tokens for a given `account` and the list of lpToken addresses.
     /// @param account address for which to fetch the information about balance of delegated Power Tokens

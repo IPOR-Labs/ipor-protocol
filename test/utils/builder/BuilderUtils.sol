@@ -32,6 +32,10 @@ contract BuilderUtils {
         SpreadRouter spreadRouter;
         ItfAssetManagement assetManagement;
         AmmTreasury ammTreasury;
+        ILiquidityMiningLens liquidityMiningLens;
+        IPowerTokenLens powerTokenLens;
+        IFlowsService flowService;
+        IStakeService stakeService;
     }
 
     enum IporOracleInitialParamsTestCase {
