@@ -11,13 +11,15 @@ contract SimpleTest is TestCommons {
     address internal _router;
     address internal _owner;
     address internal _buyer;
+    address internal _ammTreasury;
 
     function setUp() public {
         _owner = _getUserAddress(1);
         _buyer = _getUserAddress(2);
         _router = _getUserAddress(10);
+        _ammTreasury = _getUserAddress(11);
         vm.startPrank(_owner);
-        AmmStorage ammStorageImplementation = new AmmStorage(_router);
+        AmmStorage ammStorageImplementation = new AmmStorage(_router, _ammTreasury);
         ERC1967Proxy proxy = new ERC1967Proxy(
             address(ammStorageImplementation),
             abi.encodeWithSignature("initialize()", "")

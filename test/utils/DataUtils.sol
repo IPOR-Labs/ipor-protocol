@@ -9,12 +9,6 @@ import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "contracts/tokens/IpToken.sol";
 
 contract DataUtils is Test {
-    address internal _admin;
-    address internal _userOne;
-    address internal _userTwo;
-    address internal _userThree;
-    address internal _liquidityProvider;
-    address[] internal _users;
 
     function getTokenUsdt() public returns (MockTestnetToken) {
         return new MockTestnetToken("Mocked USDT", "USDT", TestConstants.TOTAL_SUPPLY_6_DECIMALS, 6);
@@ -68,21 +62,5 @@ contract DataUtils is Test {
             vm.stopPrank();
             deal(address(tokenDai), users[i], TestConstants.USER_SUPPLY_10MLN_18DEC);
         }
-    }
-
-    function usersToArray(
-        address userOne,
-        address userTwo,
-        address userThree,
-        address userFour,
-        address userFive
-    ) public pure returns (address[] memory) {
-        address[] memory users = new address[](5);
-        users[0] = userOne;
-        users[1] = userTwo;
-        users[2] = userThree;
-        users[3] = userFour;
-        users[4] = userFive;
-        return users;
     }
 }

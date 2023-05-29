@@ -19,11 +19,14 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     using SoapIndicatorLogic for StorageInternalTypes.SoapIndicatorsMemory;
 
     address private immutable IPOR_PROTOCOL_ROUTER;
-    uint32 private _lastSwapId;
-    /// @dev DEPRECATED
-    address public iporProtocolRouter;
+    address private immutable AMM_TREASURY;
 
-    /// @dev DEPRECATED
+    uint32 private _lastSwapId;
+
+    /// @dev DEPRECATED in V2
+    address public miltonDeprecated;
+
+    /// @dev DEPRECATED in V2
     address public josephDeprecated;
 
     StorageInternalTypes.Balances internal _balances;
@@ -41,9 +44,15 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _;
     }
 
+    modifier onlyAmmTreasury() {
+        require(_msgSender() == AMM_TREASURY, IporErrors.CALLER_NOT_AMM_TREASURY);
+        _;
+    }
+
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address iporProtocolRouter) {
-        IPOR_PROTOCOL_ROUTER = iporProtocolRouter;
+    constructor(address iporProtocolRouterInput, address ammTreasury) {
+        IPOR_PROTOCOL_ROUTER = iporProtocolRouterInput;
+        AMM_TREASURY = ammTreasury;
         _disableInitializers();
     }
 
@@ -139,7 +148,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
                 swap.id,
                 swap.buyer,
                 swap.openTimestamp,
-                swap.openTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
+                uint256(swap.duration),
                 swap.idsIndex,
                 swap.collateral,
                 swap.notional,
@@ -158,7 +167,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
                 swap.id,
                 swap.buyer,
                 swap.openTimestamp,
-                swap.openTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
+                uint256(swap.duration),
                 swap.idsIndex,
                 swap.collateral,
                 swap.notional,
@@ -409,7 +418,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     function updateStorageWhenWithdrawFromAssetManagement(uint256 withdrawnAmount, uint256 vaultBalance)
         external
         override
-        onlyRouter
+        onlyAmmTreasury
     {
         uint256 currentVaultBalance = _balances.vault;
         // We nedd this because for compound if we deposit and withdraw we could get negative intrest based on rounds
@@ -426,7 +435,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     function updateStorageWhenDepositToAssetManagement(uint256 depositAmount, uint256 vaultBalance)
         external
         override
-        onlyRouter
+        onlyAmmTreasury
     {
         require(vaultBalance >= depositAmount, AmmErrors.VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE);
 
@@ -801,7 +810,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     function _updateOpenedSwapWhenClosePayFixed(AmmTypes.SwapDuration duration, uint256 swapId) internal {
         uint32 headSwapId = _openedSwapsPayFixed[duration].headSwapId;
         AmmInternalTypes.OpenSwapItem memory swap = _openedSwapsPayFixed[duration].swaps[swapId.toUint32()];
-        if(swap.openSwapTimestamp == 0) {
+        if (swap.openSwapTimestamp == 0) {
             return;
         }
         if (swapId.toUint32() == headSwapId) {
@@ -840,17 +849,21 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     function _updateOpenedSwapWhenCloseReceiveFixed(AmmTypes.SwapDuration duration, uint256 swapId) internal {
         uint32 headSwapId = _openedSwapsReceiveFixed[duration].headSwapId;
         AmmInternalTypes.OpenSwapItem memory swap = _openedSwapsReceiveFixed[duration].swaps[swapId.toUint32()];
-        if(swap.openSwapTimestamp == 0) {
+        if (swap.openSwapTimestamp == 0) {
             return;
         }
         if (swapId.toUint32() == headSwapId) {
-            AmmInternalTypes.OpenSwapItem memory swapPrev = _openedSwapsReceiveFixed[duration].swaps[swap.previousSwapId];
+            AmmInternalTypes.OpenSwapItem memory swapPrev = _openedSwapsReceiveFixed[duration].swaps[
+                swap.previousSwapId
+            ];
             swapPrev.nextSwapId = 0;
             _openedSwapsReceiveFixed[duration].headSwapId = swapPrev.swapId;
             _openedSwapsReceiveFixed[duration].swaps[swapPrev.swapId] = swapPrev;
             delete _openedSwapsReceiveFixed[duration].swaps[swapId.toUint32()];
         } else {
-            AmmInternalTypes.OpenSwapItem memory swapPrev = _openedSwapsReceiveFixed[duration].swaps[swap.previousSwapId];
+            AmmInternalTypes.OpenSwapItem memory swapPrev = _openedSwapsReceiveFixed[duration].swaps[
+                swap.previousSwapId
+            ];
             AmmInternalTypes.OpenSwapItem memory swapNext = _openedSwapsReceiveFixed[duration].swaps[swap.nextSwapId];
             swapPrev.nextSwapId = swapNext.swapId;
             swapNext.previousSwapId = swapPrev.swapId;

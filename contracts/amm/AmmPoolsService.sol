@@ -197,6 +197,7 @@ contract AmmPoolsService is IAmmPoolsService {
         model.asset = asset;
         model.ipToken = poolCfg.ipToken;
         model.ammStorage = poolCfg.ammStorage;
+        model.ammTreasury = poolCfg.ammTreasury;
         model.assetManagement = poolCfg.assetManagement;
         model.iporOracle = _iporOracle;
 
@@ -251,6 +252,7 @@ contract AmmPoolsService is IAmmPoolsService {
         model.asset = asset;
         model.ipToken = poolCfg.ipToken;
         model.ammStorage = poolCfg.ammStorage;
+        model.ammTreasury = poolCfg.ammTreasury;
         model.assetManagement = poolCfg.assetManagement;
         model.iporOracle = _iporOracle;
 

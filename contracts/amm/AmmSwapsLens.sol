@@ -11,13 +11,13 @@ contract AmmSwapsLens is IAmmSwapsLens {
     using IporSwapLogic for IporTypes.IporSwapMemory;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
 
-    address internal immutable _usdcAsset;
-    address internal immutable _usdcAmmStorage;
-    address internal immutable _usdcAmmTreasury;
-
     address internal immutable _usdtAsset;
     address internal immutable _usdtAmmStorage;
     address internal immutable _usdtAmmTreasury;
+
+    address internal immutable _usdcAsset;
+    address internal immutable _usdcAmmStorage;
+    address internal immutable _usdcAmmTreasury;
 
     address internal immutable _daiAsset;
     address internal immutable _daiAmmStorage;
@@ -30,25 +30,13 @@ contract AmmSwapsLens is IAmmSwapsLens {
     address internal immutable _riskManagementOracle;
 
     constructor(
-        SwapLensConfiguration memory usdcCfg,
         SwapLensConfiguration memory usdtCfg,
+        SwapLensConfiguration memory usdcCfg,
         SwapLensConfiguration memory daiCfg,
         IIporOracle iporOracle,
         address riskManagementOracle,
         address router
     ) {
-        require(
-            usdcCfg.asset != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC asset address cannot be 0")
-        );
-        require(
-            usdcCfg.ammStorage != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC ammStorage address cannot be 0")
-        );
-        require(
-            usdcCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC ammTreasury address cannot be 0")
-        );
         require(
             usdtCfg.asset != address(0),
             string.concat(IporErrors.WRONG_ADDRESS, " USDT asset address cannot be 0")
@@ -61,6 +49,20 @@ contract AmmSwapsLens is IAmmSwapsLens {
             usdtCfg.ammTreasury != address(0),
             string.concat(IporErrors.WRONG_ADDRESS, " USDT ammTreasury address cannot be 0")
         );
+
+        require(
+            usdcCfg.asset != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDC asset address cannot be 0")
+        );
+        require(
+            usdcCfg.ammStorage != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDC ammStorage address cannot be 0")
+        );
+        require(
+            usdcCfg.ammTreasury != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDC ammTreasury address cannot be 0")
+        );
+
         require(daiCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI asset address cannot be 0"));
         require(
             daiCfg.ammStorage != address(0),
@@ -80,13 +82,13 @@ contract AmmSwapsLens is IAmmSwapsLens {
         );
         require(router != address(0), string.concat(IporErrors.WRONG_ADDRESS, " router address cannot be 0"));
 
-        _usdcAsset = usdcCfg.asset;
-        _usdcAmmStorage = usdcCfg.ammStorage;
-        _usdcAmmTreasury = usdcCfg.ammTreasury;
-
         _usdtAsset = usdtCfg.asset;
         _usdtAmmStorage = usdtCfg.ammStorage;
         _usdtAmmTreasury = usdtCfg.ammTreasury;
+
+        _usdcAsset = usdcCfg.asset;
+        _usdcAmmStorage = usdcCfg.ammStorage;
+        _usdcAmmTreasury = usdcCfg.ammTreasury;
 
         _daiAsset = daiCfg.asset;
         _daiAmmStorage = daiCfg.ammStorage;
@@ -288,10 +290,10 @@ contract AmmSwapsLens is IAmmSwapsLens {
     }
 
     function _getAmmStorage(address asset) internal view returns (IAmmStorage ammStorage) {
-        if (asset == _usdcAsset) {
-            return IAmmStorage(_usdcAmmStorage);
-        } else if (asset == _usdtAsset) {
+        if (asset == _usdtAsset) {
             return IAmmStorage(_usdtAmmStorage);
+        } else if (asset == _usdcAsset) {
+            return IAmmStorage(_usdcAmmStorage);
         } else if (asset == _daiAsset) {
             return IAmmStorage(_daiAmmStorage);
         } else {
