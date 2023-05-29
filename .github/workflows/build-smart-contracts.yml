@@ -20,6 +20,11 @@ on:
         default: compile
         required: false
 
+      tests-enabled:
+        description: "Enable tests"
+        type: boolean
+        default: true
+
 jobs:
   smart-contracts:
     runs-on: ubuntu-latest
@@ -46,3 +51,9 @@ jobs:
 
       - name: Compile
         run: npm run ${{ inputs.compile-command }}
+
+      - name: Tests
+        if: inputs.tests-enabled
+        run: npm run test
+        env:
+          PROVIDER_URL: ${{ secrets.PROVIDER_URL }}
