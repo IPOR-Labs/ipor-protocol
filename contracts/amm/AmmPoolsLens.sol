@@ -121,6 +121,8 @@ contract AmmPoolsLens is IAmmPoolsLens {
         model.assetDecimals = poolCfg.decimals;
         model.ipToken = poolCfg.ipToken;
         model.ammStorage = poolCfg.ammStorage;
+        model.ammTreasury = poolCfg.ammTreasury;
+        model.assetManagement = poolCfg.assetManagement;
         model.iporOracle = _iporOracle;
 
         return model;

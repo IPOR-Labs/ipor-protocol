@@ -32,30 +32,28 @@ contract MockIporSwapLogic {
             );
     }
 
-    function calculateQuasiInterest(
+    function calculateInterest(
         IporTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
-    ) public pure returns (uint256 quasiIFixed, uint256 quasiIFloating) {
-        return IporSwapLogic.calculateQuasiInterest(swap, closingTimestamp, mdIbtPrice);
+    ) public pure returns (uint256 interestFixed, uint256 interestFloating) {
+        return IporSwapLogic.calculateInterest(swap, closingTimestamp, mdIbtPrice);
     }
 
-    //@notice for final value divide by Constants.D18* Constants.YEAR_IN_SECONDS
-    function calculateQuasiInterestFixed(
+    function calculateInterestFixed(
         uint256 notional,
         uint256 swapFixedInterestRate,
         uint256 swapPeriodInSeconds
     ) public pure returns (uint256) {
-        return IporSwapLogic.calculateQuasiInterestFixed(notional, swapFixedInterestRate, swapPeriodInSeconds);
+        return IporSwapLogic.calculateInterestFixed(notional, swapFixedInterestRate, swapPeriodInSeconds);
     }
 
-    //@notice for final value divide by Constants.D18 * Constants.YEAR_IN_SECONDS
-    function calculateQuasiInterestFloating(uint256 ibtQuantity, uint256 ibtCurrentPrice)
+    function calculateInterestFloating(uint256 ibtQuantity, uint256 ibtCurrentPrice)
         public
         pure
         returns (uint256)
     {
-        return IporSwapLogic.calculateQuasiInterestFloating(ibtQuantity, ibtCurrentPrice);
+        return IporSwapLogic.calculateInterestFloating(ibtQuantity, ibtCurrentPrice);
     }
 
     function calculatePayoffPayFixed(

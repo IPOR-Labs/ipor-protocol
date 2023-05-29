@@ -138,7 +138,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         _spreadRouter = spreadRouter;
     }
 
-    function getPoolConfiguration(address asset) external override view returns (PoolConfiguration memory) {
+    function getPoolConfiguration(address asset) external view override returns (PoolConfiguration memory) {
         return _getPoolConfiguration(asset);
     }
 
@@ -478,6 +478,8 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             ctx.poolCfg
         );
 
+
+
         IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(ctx.poolCfg.ammStorage)
             .getBalancesForOpenSwap();
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
@@ -686,7 +688,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         );
 
         uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, poolCfg.decimals);
-        uint256 liquidationDepositAmountWad = IporMath.convertToWad(poolCfg.liquidationDepositAmount, poolCfg.decimals);
+        uint256 liquidationDepositAmountWad = poolCfg.liquidationDepositAmount * Constants.D18;
 
         require(
             wadTotalAmount > liquidationDepositAmountWad + poolCfg.iporPublicationFee,
@@ -738,12 +740,11 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         uint256 cfgMinLeverage
     ) internal view virtual returns (AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators) {
         uint256 maxNotionalPerLeg;
-        uint256 maxUtilizationRate;
 
         (
             maxNotionalPerLeg,
             riskIndicators.maxUtilizationRatePerLeg,
-            maxUtilizationRate,
+            riskIndicators.maxUtilizationRate,
             riskIndicators.spread
         ) = IIporRiskManagementOracle(_iporRiskManagementOracle).getOpenSwapParameters(
             asset,

@@ -3,6 +3,7 @@ pragma solidity 0.8.16;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../libraries/Constants.sol";
 import "../libraries/math/IporMath.sol";
+import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/AmmErrors.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IIporOracle.sol";
@@ -72,9 +73,10 @@ library AmmLib {
         view
         returns (IporTypes.AmmBalancesMemory memory)
     {
+        require(model.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " ammTreasury"));
         IporTypes.AmmBalancesMemory memory accruedBalance = IAmmStorage(model.ammStorage).getBalance();
 
-        uint256 actualVaultBalance = IAssetManagement(model.assetManagement).totalBalance(address(this));
+        uint256 actualVaultBalance = IAssetManagement(model.assetManagement).totalBalance(model.ammTreasury);
 
         int256 liquidityPool = accruedBalance.liquidityPool.toInt256() +
             actualVaultBalance.toInt256() -

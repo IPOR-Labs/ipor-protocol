@@ -4,7 +4,7 @@ pragma solidity 0.8.16;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../libraries/errors/IporErrors.sol";
 
-contract IporOwnable is Ownable {
+abstract contract IporOwnable is Ownable {
     address private _appointedOwner;
 
     event AppointedToTransferOwnership(address indexed appointedOwner);

@@ -4,8 +4,7 @@ pragma solidity 0.8.16;
 import "../../amm/AmmStorage.sol";
 
 contract MockAmmStorage is AmmStorage {
-
-    constructor (address iporProtocolRouter) AmmStorage(iporProtocolRouter) {}
+    constructor(address iporProtocolRouter, address ammTreasury) AmmStorage(iporProtocolRouter, ammTreasury) {}
 
     function getBalance() external view override returns (IporTypes.AmmBalancesMemory memory) {
         return

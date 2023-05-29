@@ -36,4 +36,7 @@ library IporErrors {
 
     /// @notice Request contains invalid method signature, which is not supported by the Ipor Protocol Router
     string public constant ROUTER_INVALID_SIGNATURE = "IPOR_012";
+
+    /// @dev Only AMM Treasury can have access to function
+    string public constant CALLER_NOT_AMM_TREASURY = "IPOR_013";
 }

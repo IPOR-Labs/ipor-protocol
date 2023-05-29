@@ -22,16 +22,16 @@ library OwnerManager {
     function confirmAppointmentToOwnership() internal {
         StorageLib.AppointedOwnerStorage storage appointedOwnerStorage = StorageLib.getAppointedOwner();
         appointedOwnerStorage.appointedOwner = address(0);
-        _transferOwnership(msg.sender);
+        transferOwnership(msg.sender);
     }
 
     function renounceOwnership() internal {
-        _transferOwnership(address(0));
+        transferOwnership(address(0));
         StorageLib.AppointedOwnerStorage storage appointedOwnerStorage = StorageLib.getAppointedOwner();
         appointedOwnerStorage.appointedOwner = address(0);
     }
 
-    function _transferOwnership(address newOwner) private {
+    function transferOwnership(address newOwner) internal {
         StorageLib.OwnerStorage storage ownerStorage = StorageLib.getOwner();
         address oldOwner = address(ownerStorage.owner);
         ownerStorage.owner = newOwner;

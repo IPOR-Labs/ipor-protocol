@@ -40,13 +40,13 @@ contract AmmTreasury is
         address assetManagement,
         address router
     ) {
-        _disableInitializers();
-
         _asset = asset;
         _decimals = decimals;
         _ammStorage = ammStorage;
         _assetManagement = assetManagement;
         _router = router;
+
+        _disableInitializers();
     }
 
     /// @notice Initialize the contract

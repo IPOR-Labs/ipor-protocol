@@ -39,7 +39,7 @@ abstract contract AssetManagement is
     address internal _strategyCompound;
 
     modifier onlyAmmTreasury() {
-        require(_msgSender() == _ammTreasury, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
+        require(_msgSender() == _ammTreasury, IporErrors.CALLER_NOT_AMM_TREASURY);
         _;
     }
 
