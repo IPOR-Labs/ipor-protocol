@@ -5,11 +5,12 @@ import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "./BuilderUtils.sol";
 import "forge-std/Test.sol";
 import "../../utils/TestConstants.sol";
-import "../../../contracts/amm/spread/SpreadRouter.sol";
-import "../../../contracts/amm/spread/Spread28Days.sol";
-import "../../../contracts/amm/spread/Spread60Days.sol";
-import "../../../contracts/amm/spread/Spread90Days.sol";
-import "../../../contracts/amm/spread/SpreadStorageLens.sol";
+import "contracts/amm/spread/SpreadRouter.sol";
+import "contracts/amm/spread/Spread28Days.sol";
+import "contracts/amm/spread/Spread60Days.sol";
+import "contracts/amm/spread/Spread90Days.sol";
+import "contracts/amm/spread/SpreadStorageLens.sol";
+import "contracts/amm/spread/SpreadCloseSwapAction.sol";
 
 contract SpreadRouterBuilder is Test {
     struct BuilderData {
@@ -90,6 +91,7 @@ contract SpreadRouterBuilder is Test {
         deployedContracts.spread28Days = _buildSpread28Days();
         deployedContracts.spread60Days = _buildSpread60Days();
         deployedContracts.spread90Days = _buildSpread90Days();
+        deployedContracts.closeSwapAction = _buildCloseSwapAction();
 
         return address(new SpreadRouter(deployedContracts));
     }
@@ -136,6 +138,10 @@ contract SpreadRouterBuilder is Test {
         }
 
         return address(new Spread90Days(builderData.dai, builderData.usdc, builderData.usdt));
+    }
+
+    function _buildCloseSwapAction() internal returns (address spread) {
+        return address(new SpreadCloseSwapAction(builderData.dai, builderData.usdc, builderData.usdt));
     }
 
     function _constructProxy(address impl) internal returns (ERC1967Proxy proxy) {
