@@ -60,34 +60,6 @@ library AmmConfigurationManager {
         bool status
     );
 
-    event AmmPoolsTreasuryChanged(
-        address indexed changedBy,
-        address indexed asset,
-        address indexed oldTreasury,
-        address newTreasury
-    );
-
-    event AmmPoolsTreasuryManagerChanged(
-        address indexed changedBy,
-        address indexed asset,
-        address indexed oldTreasuryManager,
-        address newTreasuryManager
-    );
-
-    event AmmCharlieTreasuryChanged(
-        address indexed changedBy,
-        address indexed asset,
-        address indexed oldCharlieTreasury,
-        address newCharlieTreasury
-    );
-
-    event AmmCharlieTreasuryManagerChanged(
-        address indexed changedBy,
-        address indexed asset,
-        address indexed oldCharlieTreasuryManager,
-        address newCharlieTreasuryManager
-    );
-
     event AmmAutoRebalanceThresholdChanged(
         address indexed changedBy,
         address indexed asset,
@@ -229,79 +201,6 @@ library AmmConfigurationManager {
             .getAmmPoolsAppointedToRebalanceStorage()
             .value;
         return appointedToRebalance[asset][account];
-    }
-
-    function setAmmPoolsTreasury(address asset, address treasuryWalletAddress) internal {
-        require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(treasuryWalletAddress != address(0), IporErrors.WRONG_ADDRESS);
-
-        mapping(address => address) storage treasury = StorageLib.getAmmPoolsTreasuryStorage().value;
-        address oldTreasury = treasury[asset];
-        treasury[asset] = treasuryWalletAddress;
-
-        emit AmmPoolsTreasuryChanged(msg.sender, asset, oldTreasury, treasuryWalletAddress);
-    }
-
-    function getAmmPoolsTreasury(address asset) internal view returns (address) {
-        mapping(address => address) storage treasury = StorageLib.getAmmPoolsTreasuryStorage().value;
-        return treasury[asset];
-    }
-
-    function setAmmPoolsTreasuryManager(address asset, address treasuryManagerAddress) internal {
-        require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(treasuryManagerAddress != address(0), IporErrors.WRONG_ADDRESS);
-
-        mapping(address => address) storage treasuryManager = StorageLib.getAmmPoolsTreasuryManagerStorage().value;
-        address oldTreasuryManager = treasuryManager[asset];
-        treasuryManager[asset] = treasuryManagerAddress;
-
-        emit AmmPoolsTreasuryManagerChanged(msg.sender, asset, oldTreasuryManager, treasuryManagerAddress);
-    }
-
-    function getAmmPoolsTreasuryManager(address asset) internal view returns (address) {
-        mapping(address => address) storage treasuryManager = StorageLib.getAmmPoolsTreasuryManagerStorage().value;
-        return treasuryManager[asset];
-    }
-
-    function setAmmCharlieTreasury(address asset, address charlieTreasuryAddress) internal {
-        require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(charlieTreasuryAddress != address(0), IporErrors.WRONG_ADDRESS);
-
-        mapping(address => address) storage charlieTreasury = StorageLib.getAmmCharlieTreasuryStorage().value;
-        address oldCharlieTreasury = charlieTreasury[asset];
-        charlieTreasury[asset] = charlieTreasuryAddress;
-
-        emit AmmCharlieTreasuryChanged(msg.sender, asset, oldCharlieTreasury, charlieTreasuryAddress);
-    }
-
-    function getAmmCharlieTreasury(address asset) internal view returns (address) {
-        mapping(address => address) storage charlieTreasury = StorageLib.getAmmCharlieTreasuryStorage().value;
-        return charlieTreasury[asset];
-    }
-
-    function setAmmCharlieTreasuryManager(address asset, address charlieTreasuryManagerAddress) internal {
-        require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(charlieTreasuryManagerAddress != address(0), IporErrors.WRONG_ADDRESS);
-
-        mapping(address => address) storage charlieTreasuryManager = StorageLib
-            .getAmmCharlieTreasuryManagerStorage()
-            .value;
-        address oldCharlieTreasuryManager = charlieTreasuryManager[asset];
-        charlieTreasuryManager[asset] = charlieTreasuryManagerAddress;
-
-        emit AmmCharlieTreasuryManagerChanged(
-            msg.sender,
-            asset,
-            oldCharlieTreasuryManager,
-            charlieTreasuryManagerAddress
-        );
-    }
-
-    function getAmmCharlieTreasuryManager(address asset) internal view returns (address) {
-        mapping(address => address) storage charlieTreasuryManager = StorageLib
-            .getAmmCharlieTreasuryManagerStorage()
-            .value;
-        return charlieTreasuryManager[asset];
     }
 
     function setAmmAutoRebalanceThreshold(address asset, uint256 newAutoRebalanceThreshold) internal {

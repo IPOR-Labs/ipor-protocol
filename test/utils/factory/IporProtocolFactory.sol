@@ -1367,7 +1367,11 @@ contract IporProtocolFactory is Test {
             asset: address(_fakeContract),
             assetDecimals: 0,
             ammStorage: address(_fakeContract),
-            ammTreasury: address(_fakeContract)
+            ammTreasury: address(_fakeContract),
+            ammPoolsTreasury: address(_fakeContract),
+            ammPoolsTreasuryManager: address(_fakeContract),
+            ammCharlieTreasury: address(_fakeContract),
+            ammCharlieTreasuryManager: address(_fakeContract)
         });
     }
 
@@ -1432,7 +1436,11 @@ contract IporProtocolFactory is Test {
             asset: asset,
             assetDecimals: IERC20MetadataUpgradeable(asset).decimals(),
             ammStorage: ammStorage,
-            ammTreasury: ammTreasury
+            ammTreasury: ammTreasury,
+            ammPoolsTreasury: _owner,
+            ammPoolsTreasuryManager: _owner,
+            ammCharlieTreasury: _owner,
+            ammCharlieTreasuryManager: _owner
         });
     }
 

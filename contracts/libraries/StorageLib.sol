@@ -17,10 +17,6 @@ library StorageLib {
         AmmPoolsMaxLiquidityPoolBalance,
         AmmPoolsMaxLpAccountContribution,
         AmmPoolsAppointedToRebalance,
-        AmmPoolsTreasury,
-        AmmPoolsTreasuryManager,
-        AmmPoolsCharlieTreasury,
-        AmmPoolsCharlieTreasuryManager,
         AmmPoolsAutoRebalanceThreshold
     }
 
@@ -62,26 +58,6 @@ library StorageLib {
     /// value - flag to indicate whether account is allowed to rebalance. True - allowed, False - not allowed.
     struct AmmPoolsAppointedToRebalanceStorage {
         mapping(address => mapping(address => bool)) value;
-    }
-
-    /// @dev key - asset address, value - treasury wallet address in the asset pool
-    struct AmmPoolsTreasuryStorage {
-        mapping(address => address) value;
-    }
-
-    /// @dev key - asset address, value - treasury manager address in the asset pool
-    struct AmmPoolsTreasuryManagerStorage {
-        mapping(address => address) value;
-    }
-
-    /// @dev key - asset address, value - charlie treasury wallet address in the asset pool
-    struct AmmPoolsCharlieTreasuryStorage {
-        mapping(address => address) value;
-    }
-
-    /// @dev key - asset address, value - charlie treasury manager address in the asset pool
-    struct AmmPoolsCharlieTreasuryManagerStorage {
-        mapping(address => address) value;
     }
 
     /// @dev key - asset address, value - auto rebalance threshold in the asset pool
@@ -165,38 +141,6 @@ library StorageLib {
         returns (AmmPoolsAppointedToRebalanceStorage storage store)
     {
         uint256 slot = _getStorageSlot(StorageId.AmmPoolsAppointedToRebalance);
-        assembly {
-            store.slot := slot
-        }
-    }
-
-    function getAmmPoolsTreasuryStorage() internal pure returns (AmmPoolsTreasuryStorage storage store) {
-        uint256 slot = _getStorageSlot(StorageId.AmmPoolsTreasury);
-        assembly {
-            store.slot := slot
-        }
-    }
-
-    function getAmmPoolsTreasuryManagerStorage() internal pure returns (AmmPoolsTreasuryManagerStorage storage store) {
-        uint256 slot = _getStorageSlot(StorageId.AmmPoolsTreasuryManager);
-        assembly {
-            store.slot := slot
-        }
-    }
-
-    function getAmmCharlieTreasuryStorage() internal pure returns (AmmPoolsCharlieTreasuryStorage storage store) {
-        uint256 slot = _getStorageSlot(StorageId.AmmPoolsCharlieTreasury);
-        assembly {
-            store.slot := slot
-        }
-    }
-
-    function getAmmCharlieTreasuryManagerStorage()
-        internal
-        pure
-        returns (AmmPoolsCharlieTreasuryManagerStorage storage store)
-    {
-        uint256 slot = _getStorageSlot(StorageId.AmmPoolsCharlieTreasuryManager);
         assembly {
             store.slot := slot
         }

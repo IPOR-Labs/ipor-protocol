@@ -183,10 +183,6 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             sig == IAmmGovernanceService.setAmmMaxLpAccountContribution.selector ||
             sig == IAmmGovernanceService.addAppointedToRebalanceInAmm.selector ||
             sig == IAmmGovernanceService.removeAppointedToRebalanceInAmm.selector ||
-            sig == IAmmGovernanceService.setAmmPoolsTreasury.selector ||
-            sig == IAmmGovernanceService.setAmmPoolsTreasuryManager.selector ||
-            sig == IAmmGovernanceService.setAmmCharlieTreasury.selector ||
-            sig == IAmmGovernanceService.setAmmCharlieTreasuryManager.selector ||
             sig == IAmmGovernanceService.setAmmAutoRebalanceThreshold.selector ||
             sig == IAmmGovernanceService.depositToAssetManagement.selector ||
             sig == IAmmGovernanceService.withdrawFromAssetManagement.selector ||
@@ -202,10 +198,6 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             sig == IAmmGovernanceService.getAmmMaxLiquidityPoolBalance.selector ||
             sig == IAmmGovernanceService.getAmmMaxLpAccountContribution.selector ||
             sig == IAmmGovernanceService.isAppointedToRebalanceInAmm.selector ||
-            sig == IAmmGovernanceService.getAmmPoolsTreasury.selector ||
-            sig == IAmmGovernanceService.getAmmPoolsTreasuryManager.selector ||
-            sig == IAmmGovernanceService.getAmmCharlieTreasury.selector ||
-            sig == IAmmGovernanceService.getAmmCharlieTreasuryManager.selector ||
             sig == IAmmGovernanceService.getAmmAutoRebalanceThreshold.selector
         ) {
             return AMM_GOVERNANCE_SERVICE_ADDRESS;

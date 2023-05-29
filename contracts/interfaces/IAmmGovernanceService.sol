@@ -7,6 +7,10 @@ interface IAmmGovernanceService {
         uint256 assetDecimals;
         address ammStorage;
         address ammTreasury;
+        address ammPoolsTreasury;
+        address ammPoolsTreasuryManager;
+        address ammCharlieTreasury;
+        address ammCharlieTreasuryManager;
     }
 
     function getPoolConfiguration(address asset) external view returns (PoolConfiguration memory);
@@ -48,22 +52,6 @@ interface IAmmGovernanceService {
     function removeAppointedToRebalanceInAmm(address asset, address account) external;
 
     function isAppointedToRebalanceInAmm(address asset, address account) external view returns (bool);
-
-    function setAmmPoolsTreasury(address asset, address newTreasuryWallet) external;
-
-    function getAmmPoolsTreasury(address asset) external view returns (address);
-
-    function setAmmPoolsTreasuryManager(address asset, address newTreasuryManager) external;
-
-    function getAmmPoolsTreasuryManager(address asset) external view returns (address);
-
-    function setAmmCharlieTreasury(address asset, address newCharlieTreasuryWallet) external;
-
-    function getAmmCharlieTreasury(address asset) external view returns (address);
-
-    function setAmmCharlieTreasuryManager(address asset, address newCharlieTreasuryManager) external;
-
-    function getAmmCharlieTreasuryManager(address asset) external view returns (address);
 
     function setAmmAutoRebalanceThreshold(address asset, uint256 newAutoRebalanceThreshold) external;
 
