@@ -3,14 +3,14 @@ pragma solidity 0.8.16;
 
 import "contracts/interfaces/IStakeService.sol";
 
-contract MockStakeService is IStakeService {
-    function stakeLpTokens(
+contract MockPowerTokenStakeService is IPowerTokenStakeService {
+    function stakeLpTokensToLiquidityMining(
         address onBehalfOf,
         address[] calldata lpTokens,
         uint256[] calldata lpTokenAmounts
     ) external {}
 
-    function unstakeLpTokens(
+    function unstakeLpTokensFromLiquidityMining(
         address transferTo,
         address[] calldata lpTokens,
         uint256[] calldata lpTokenAmounts

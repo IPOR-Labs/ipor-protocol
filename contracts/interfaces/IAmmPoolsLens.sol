@@ -35,7 +35,7 @@ interface IAmmPoolsLens {
     /// @notice Retrieves the AmmTreasury balance for a given asset.
     /// @param asset The address of the asset.
     /// @return IporTypes.AmmBalancesMemory The balance of the AMM Treasury.
-    function getIpTokenBalance(address asset) external view returns (IporTypes.AmmBalancesMemory memory);
+    function getAmmBalance(address asset) external view returns (IporTypes.AmmBalancesMemory memory);
 
     /// @notice Returns the contribution of a specific account to the Liquidity Pool.
     /// @param asset The address of the asset.

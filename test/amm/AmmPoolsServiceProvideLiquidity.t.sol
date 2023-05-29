@@ -33,7 +33,7 @@ contract AmmPoolsServiceProvideLiquidity is TestCommons {
         // when
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_14_000_18DEC);
-        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getIpTokenBalance(
+        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getAmmBalance(
             address(_iporProtocol.asset)
         );
 
@@ -51,7 +51,7 @@ contract AmmPoolsServiceProvideLiquidity is TestCommons {
         // when
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_14_000_6DEC);
-        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getIpTokenBalance(
+        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getAmmBalance(
             address(_iporProtocol.asset)
         );
 

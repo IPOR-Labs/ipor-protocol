@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.16;
 
-interface IStakeService {
+interface IPowerTokenStakeService {
     /// @notice Stakes the specified amounts of LP tokens into the LiquidityMining contract.
     /// @dev This function allows the caller to stake their LP tokens on behalf of another address (`onBehalfOf`).
     /// @param onBehalfOf The address on behalf of which the LP tokens are being staked.
@@ -13,7 +13,7 @@ interface IStakeService {
     /// @dev The function transfers the LP tokens from the caller's address to the LiquidityMining contract.
     /// @dev Finally, the function calls the `addLpTokens` function of the LiquidityMining contract to update the staked LP tokens.
     /// @dev Reverts if any of the requirements is not met or if the transfer of LP tokens fails.
-    function stakeLpTokens(
+    function stakeLpTokensToLiquidityMining(
         address onBehalfOf,
         address[] calldata lpTokens,
         uint256[] calldata lpTokenAmounts
@@ -28,7 +28,7 @@ interface IStakeService {
     /// @dev The function calls the `removeLpTokens` function of the LiquidityMining contract to update the unstaked LP tokens.
     /// @dev Finally, the function transfers the unstaked LP tokens from the LiquidityMining contract to the specified address.
     /// @dev Reverts if any of the requirements is not met or if the transfer of LP tokens fails.
-    function unstakeLpTokens(
+    function unstakeLpTokensFromLiquidityMining(
         address transferTo,
         address[] calldata lpTokens,
         uint256[] calldata lpTokenAmounts

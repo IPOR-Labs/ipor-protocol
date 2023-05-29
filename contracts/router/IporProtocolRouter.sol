@@ -14,7 +14,7 @@ import "../interfaces/IAmmPoolsService.sol";
 import "../interfaces/IAmmGovernanceService.sol";
 import "../interfaces/ILiquidityMiningLens.sol";
 import "../interfaces/IPowerTokenLens.sol";
-import "../interfaces/IFlowsService.sol";
+import "../interfaces/IPowerTokenFlowsService.sol";
 import "../interfaces/IStakeService.sol";
 
 contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
@@ -129,7 +129,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
         } else if (
             sig == IAmmPoolsLens.getAmmPoolsLensConfiguration.selector ||
             sig == IAmmPoolsLens.getIpTokenExchangeRate.selector ||
-            sig == IAmmPoolsLens.getIpTokenBalance.selector ||
+            sig == IAmmPoolsLens.getAmmBalance.selector ||
             sig == IAmmPoolsLens.getLiquidityPoolAccountContribution.selector
         ) {
             return AMM_POOLS_LENS;
@@ -279,23 +279,23 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             _reentrancyStatus = _ENTERED;
             return AMM_GOVERNANCE_SERVICE_ADDRESS;
         } else if (
-            sig == IStakeService.stakeLpTokens.selector ||
-            sig == IStakeService.unstakeLpTokens.selector ||
-            sig == IStakeService.stakeProtocolToken.selector ||
-            sig == IStakeService.unstakeProtocolToken.selector ||
-            sig == IStakeService.cooldownPowerToken.selector ||
-            sig == IStakeService.cancelPowerTokenCooldown.selector ||
-            sig == IStakeService.redeemPowerToken.selector
+            sig == IPowerTokenStakeService.stakeLpTokensToLiquidityMining.selector ||
+            sig == IPowerTokenStakeService.unstakeLpTokensFromLiquidityMining.selector ||
+            sig == IPowerTokenStakeService.stakeProtocolToken.selector ||
+            sig == IPowerTokenStakeService.unstakeProtocolToken.selector ||
+            sig == IPowerTokenStakeService.cooldownPowerToken.selector ||
+            sig == IPowerTokenStakeService.cancelPowerTokenCooldown.selector ||
+            sig == IPowerTokenStakeService.redeemPowerToken.selector
         ) {
             _whenNotPaused();
             _nonReentrant();
             _reentrancyStatus = _ENTERED;
             return STAKE_SERVICE_ADDRESS;
         } else if (
-            sig == IFlowsService.delegateLpTokensToLiquidityMining.selector ||
-            sig == IFlowsService.updateLiquidityMiningIndicators.selector ||
-            sig == IFlowsService.undelegateLpTokensFromLiquidityMining.selector ||
-            sig == IFlowsService.claimPowerToken.selector
+            sig == IPowerTokenFlowsService.delegateLpTokensToLiquidityMining.selector ||
+            sig == IPowerTokenFlowsService.updateLiquidityMiningIndicators.selector ||
+            sig == IPowerTokenFlowsService.undelegateLpTokensFromLiquidityMining.selector ||
+            sig == IPowerTokenFlowsService.claimPowerToken.selector
         ) {
             _whenNotPaused();
             _nonReentrant();

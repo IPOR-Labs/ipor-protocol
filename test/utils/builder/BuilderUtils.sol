@@ -34,8 +34,8 @@ contract BuilderUtils {
         AmmTreasury ammTreasury;
         ILiquidityMiningLens liquidityMiningLens;
         IPowerTokenLens powerTokenLens;
-        IFlowsService flowService;
-        IStakeService stakeService;
+        IPowerTokenFlowsService flowService;
+        IPowerTokenStakeService stakeService;
     }
 
     struct LiquidityMiningLensData {

@@ -2,9 +2,9 @@
 pragma solidity 0.8.16;
 import "forge-std/Test.sol";
 import "contracts/interfaces/IStakeService.sol";
-import "../../mocks/MockStakeService.sol";
+import "../../mocks/MockPowerTokenStakeService.sol";
 
-contract StakeServiceBuilder is Test {
+contract PowerTokenStakeServiceBuilder is Test {
 
     address private _owner;
 
@@ -12,9 +12,9 @@ contract StakeServiceBuilder is Test {
         _owner = owner;
     }
 
-    function build() public returns (IStakeService) {
+    function build() public returns (IPowerTokenStakeService) {
         vm.startPrank(_owner);
-        MockStakeService StakeService = new MockStakeService();
+        MockPowerTokenStakeService StakeService = new MockPowerTokenStakeService();
         vm.stopPrank();
         return StakeService;
     }

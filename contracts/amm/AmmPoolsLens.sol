@@ -103,7 +103,7 @@ contract AmmPoolsLens is IAmmPoolsLens {
         return _getPoolCoreModel(asset).getExchangeRate();
     }
 
-    function getIpTokenBalance(address asset) external view override returns (IporTypes.AmmBalancesMemory memory balance) {
+    function getAmmBalance(address asset) external view override returns (IporTypes.AmmBalancesMemory memory balance) {
         return _getPoolCoreModel(asset).getAccruedBalance();
     }
 
