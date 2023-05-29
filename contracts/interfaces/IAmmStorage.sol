@@ -195,7 +195,7 @@ interface IAmmStorage {
         IporTypes.IporSwapMemory memory iporSwap,
         int256 payoff,
         uint256 closingTimestamp
-    ) external;
+    ) external returns (AmmInternalTypes.OpenSwapItem memory closedSwap);
 
     /// @notice Updates structures in the storage: balance, swaps, SOAP indicators when closing Receive-Fixed swap.
     /// Function is only available to AmmTreasury.
@@ -206,7 +206,7 @@ interface IAmmStorage {
         IporTypes.IporSwapMemory memory iporSwap,
         int256 payoff,
         uint256 closingTimestamp
-    ) external;
+    ) external returns (AmmInternalTypes.OpenSwapItem memory closedSwap);
 
     /// @notice Updates the balance when Joseph withdraws AmmTreasury's assets from AssetManagement. Function is only available to AmmTreasury.
     /// @param withdrawnAmount asset amount that was withdrawn from AssetManagement to AmmTreasury by Joseph, represented in 18 decimals.

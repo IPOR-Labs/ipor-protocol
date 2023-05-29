@@ -11,11 +11,11 @@ contract SpreadAccessControl {
     event AppointedToTransferOwnership(address indexed appointedOwner);
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
-    address internal immutable AMM_ADDRESS;
+    address internal immutable IPOR_PROTOCOL_ROUTER;
 
     constructor(address ammAddress) {
         require(ammAddress != address(0), string.concat(IporErrors.WRONG_ADDRESS, " ammAddress"));
-        AMM_ADDRESS = ammAddress;
+        IPOR_PROTOCOL_ROUTER = ammAddress;
     }
 
     /// @dev Throws error if called by any account other than the owner.
@@ -111,8 +111,8 @@ contract SpreadAccessControl {
     }
 
     /// @dev Internal function to check if the sender is the AMM address.
-    function _onlyAmm() internal view {
-        require(msg.sender == AMM_ADDRESS, AmmErrors.SENDER_NOT_AMM);
+    function _onlyIporProtocolRouter() internal view {
+        require(msg.sender == IPOR_PROTOCOL_ROUTER, AmmErrors.SENDER_NOT_AMM);
     }
 
     function _whenNotPaused() internal view {

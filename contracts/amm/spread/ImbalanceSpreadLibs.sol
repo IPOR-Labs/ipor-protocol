@@ -2,7 +2,7 @@
 pragma solidity 0.8.16;
 
 import "contracts/interfaces/types/IporTypes.sol";
-import "./CalculateWeightedNotionalLibs.sol";
+import "./CalculateTimeWeightedNotionalLibs.sol";
 
 library ImbalanceSpreadLibs {
     /// @notice Dto for the Weighted Notional

@@ -4,7 +4,6 @@ pragma solidity 0.8.16;
 import "../../interfaces/types/IporTypes.sol";
 import "./SpreadTypes.sol";
 import "./ISpreadStorageLens.sol";
-import "./CalculateWeightedNotionalLibs.sol";
 import "./SpreadStorageLibs.sol";
 
 contract  SpreadStorageLens is ISpreadStorageLens {

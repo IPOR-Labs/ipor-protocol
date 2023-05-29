@@ -10,12 +10,15 @@ import "./ISpread90Days.sol";
 import "./ISpread28DaysLens.sol";
 import "./ISpread60DaysLens.sol";
 import "./ISpread90DaysLens.sol";
+import "./ISpreadStorageLens.sol";
+import "./ISpreadCloseSwapAction.sol";
 
 contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
 
     address internal immutable SPREAD_28_DAYS;
     address internal immutable SPREAD_60_DAYS;
     address internal immutable SPREAD_90_DAYS;
+    address internal immutable CLOSE_SWAP_ACTION;
     address internal immutable STORAGE_LENS;
 
     struct DeployedContracts {
@@ -24,6 +27,7 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
         address spread60Days;
         address spread90Days;
         address storageLens;
+        address closeSwapAction;
     }
 
     constructor(DeployedContracts memory deployedContracts) SpreadAccessControl(deployedContracts.ammAddress) {
@@ -31,10 +35,12 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
         require(deployedContracts.spread60Days != address(0), string.concat(IporErrors.WRONG_ADDRESS, " spread60Days"));
         require(deployedContracts.spread90Days != address(0), string.concat(IporErrors.WRONG_ADDRESS, " spread90Days"));
         require(deployedContracts.storageLens != address(0), string.concat(IporErrors.WRONG_ADDRESS, " storageLens"));
+        require(deployedContracts.closeSwapAction != address(0), string.concat(IporErrors.WRONG_ADDRESS, " closeSwapAction"));
         SPREAD_28_DAYS = deployedContracts.spread28Days;
         SPREAD_60_DAYS = deployedContracts.spread60Days;
         SPREAD_90_DAYS = deployedContracts.spread90Days;
         STORAGE_LENS = deployedContracts.storageLens;
+        CLOSE_SWAP_ACTION = deployedContracts.closeSwapAction;
 
         _disableInitializers();
     }
@@ -54,21 +60,21 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
             sig == ISpread28Days.calculateQuotePayFixed28Days.selector ||
             sig == ISpread28Days.calculateQuoteReceiveFixed28Days.selector
         ) {
-            _onlyAmm();
+            _onlyIporProtocolRouter();
             _whenNotPaused();
             return SPREAD_28_DAYS;
         } else if (
             sig == ISpread60Days.calculateQuotePayFixed60Days.selector ||
             sig == ISpread60Days.calculateQuoteReceiveFixed60Days.selector
         ) {
-            _onlyAmm();
+            _onlyIporProtocolRouter();
             _whenNotPaused();
             return SPREAD_60_DAYS;
         } else if (
             sig == ISpread90Days.calculateQuotePayFixed90Days.selector ||
             sig == ISpread90Days.calculateQuoteReceiveFixed90Days.selector
         ) {
-            _onlyAmm();
+            _onlyIporProtocolRouter();
             _whenNotPaused();
             return SPREAD_90_DAYS;
         } else if (
@@ -86,6 +92,10 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
             sig == ISpread90DaysLens.calculateReceiveFixed90Days.selector
         ) {
             return SPREAD_90_DAYS;
+        } else if (sig == ISpreadStorageLens.getTimeWeightedNotional.selector) {
+            return STORAGE_LENS;
+        } else if (sig == ISpreadCloseSwapAction.weightedNotionalUpdateOnClose.selector) {
+            return CLOSE_SWAP_ACTION;
         }
         revert(AmmErrors.FUNCTION_NOT_SUPPORTED);
     }

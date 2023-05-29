@@ -7,6 +7,8 @@ import "../../contracts/amm/spread/Spread60Days.sol";
 import "../../contracts/amm/spread/Spread90Days.sol";
 import "../../contracts/amm/spread/SpreadStorageLens.sol";
 import "../../contracts/amm/spread/SpreadRouter.sol";
+import "../../contracts/amm/spread/SpreadCloseSwapAction.sol";
+import "../../contracts/amm/AmmStorage.sol";
 
 contract SpreadTestSystem is TestCommons {
     address public owner;
@@ -17,7 +19,9 @@ contract SpreadTestSystem is TestCommons {
     Spread60Days public spread60Days;
     Spread90Days public spread90Days;
     SpreadStorageLens public spreadStorageLens;
+    SpreadCloseSwapAction public spreadCloseSwapAction;
     address public router;
+    address public ammStorage;
 
     constructor(address ammAddress) {
         (dai, usdc, usdt) = _getStables();
@@ -26,6 +30,7 @@ contract SpreadTestSystem is TestCommons {
         spread28Days = new Spread28Days(address(dai), address(usdc), address(usdt));
         spread60Days = new Spread60Days(address(dai), address(usdc), address(usdt));
         spread90Days = new Spread90Days(address(dai), address(usdc), address(usdt));
+        spreadCloseSwapAction = new SpreadCloseSwapAction(address(dai), address(usdc), address(usdt));
         spreadStorageLens = new SpreadStorageLens();
         SpreadRouter routerImplementation = new SpreadRouter(
             SpreadRouter.DeployedContracts(
@@ -33,11 +38,22 @@ contract SpreadTestSystem is TestCommons {
                 address(spread28Days),
                 address(spread60Days),
                 address(spread90Days),
-                address(spreadStorageLens)
+                address(spreadStorageLens),
+                address(spreadCloseSwapAction)
             )
         );
-        ERC1967Proxy proxy = new ERC1967Proxy(address(routerImplementation), abi.encodeWithSignature("initialize(bool)", false));
+        ERC1967Proxy proxy = new ERC1967Proxy(
+            address(routerImplementation),
+            abi.encodeWithSignature("initialize(bool)", false)
+        );
         router = address(proxy);
+
+        AmmStorage storageImplementation = new AmmStorage(owner);
+        ERC1967Proxy storageProxy = new ERC1967Proxy(
+            address(storageImplementation),
+            abi.encodeWithSignature("initialize()", "")
+        );
+        ammStorage = address(storageProxy);
         vm.stopPrank();
     }
 
