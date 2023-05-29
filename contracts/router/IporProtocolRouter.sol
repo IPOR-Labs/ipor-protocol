@@ -283,19 +283,19 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             sig == IStakeService.unstakeLpTokens.selector ||
             sig == IStakeService.stakeProtocolToken.selector ||
             sig == IStakeService.unstakeProtocolToken.selector ||
-            sig == IStakeService.cooldown.selector ||
-            sig == IStakeService.cancelCooldown.selector ||
-            sig == IStakeService.redeem.selector
+            sig == IStakeService.cooldownPowerToken.selector ||
+            sig == IStakeService.cancelPowerTokenCooldown.selector ||
+            sig == IStakeService.redeemPowerToken.selector
         ) {
             _whenNotPaused();
             _nonReentrant();
             _reentrancyStatus = _ENTERED;
             return STAKE_SERVICE_ADDRESS;
         } else if (
-            sig == IFlowsService.delegate.selector ||
+            sig == IFlowsService.delegateLpTokensToLiquidityMining.selector ||
             sig == IFlowsService.updateIndicators.selector ||
-            sig == IFlowsService.undelegate.selector ||
-            sig == IFlowsService.claim.selector
+            sig == IFlowsService.undelegateLpTokensFromLiquidityMining.selector ||
+            sig == IFlowsService.claimPowerToken.selector
         ) {
             _whenNotPaused();
             _nonReentrant();

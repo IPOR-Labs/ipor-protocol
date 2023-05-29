@@ -57,14 +57,14 @@ interface IStakeService {
     /// @dev The function ensures that the `pwTokenAmount` is greater than zero.
     /// @dev The function calls the `cooldown` function of the PowerToken contract to initiate the cooldown.
     /// @dev Reverts if the `pwTokenAmount` is not greater than zero.
-    function cooldown(uint256 pwTokenAmount) external;
+    function cooldownPowerToken(uint256 pwTokenAmount) external;
 
     /// @notice Cancels the active cooldown for the sender.
     /// @dev The function calls the `cancelCooldown` function of the PowerToken contract to cancel the cooldown.
-    function cancelCooldown() external;
+    function cancelPowerTokenCooldown() external;
 
     /// @notice Redeems Power Tokens and transfers the corresponding Staked Tokens to the specified address.
     /// @dev The function calls the `redeem` function of the PowerToken contract to redeem Power Tokens.
     /// @param transferTo The address to which the Staked Tokens will be transferred.
-    function redeem(address transferTo) external;
+    function redeemPowerToken(address transferTo) external;
 }

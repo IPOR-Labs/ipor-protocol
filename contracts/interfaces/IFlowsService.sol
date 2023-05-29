@@ -8,7 +8,7 @@ interface IFlowsService {
     /// It then adds the staked tokens to the `powerToken` contract and transfers the rewards from the `liquidityMining` contract to the `powerToken` contract.
     /// @dev Reverts if the `lpTokens` array is empty.
     /// @dev Reverts if there are no rewards to claim.
-    function claim(address[] calldata lpTokens) external;
+    function claimPowerToken(address[] calldata lpTokens) external;
 
     /// @notice Updates the indicators for a given account and LP tokens.
     /// @param account The account address for which the indicators are to be updated.
@@ -23,7 +23,7 @@ interface IFlowsService {
     /// @dev This function allows the caller to delegate their staked tokens by providing the LP tokens and their corresponding amounts.
     /// @dev It requires that the length of `lpTokens` is equal to the length of `lpTokenAmounts`.
     /// @dev It reverts if either `lpTokens` or `lpTokenAmounts` arrays are empty.
-    function delegate(address[] calldata lpTokens, uint256[] calldata lpTokenAmounts) external;
+    function delegateLpTokensToLiquidityMining(address[] calldata lpTokens, uint256[] calldata lpTokenAmounts) external;
 
     /// @notice Undelegates staked tokens by providing LP tokens and corresponding amounts.
     /// @param lpTokens An array of LP tokens to undelegate.
@@ -32,5 +32,5 @@ interface IFlowsService {
     /// @dev It requires that the length of `lpTokens` is equal to the length of `lpTokenAmounts`.
     /// @dev It reverts if either `lpTokens` or `lpTokenAmounts` arrays are empty.
     /// @dev It reverts if the total staked token amount to undelegate is not greater than zero.
-    function undelegate(address[] calldata lpTokens, uint256[] calldata lpTokenAmounts) external;
+    function undelegateLpTokensFromLiquidityMining(address[] calldata lpTokens, uint256[] calldata lpTokenAmounts) external;
 }
