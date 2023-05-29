@@ -157,17 +157,17 @@ contract AmmTreasurySnapshot is Script, Test {
         assertEq(
             ammTreasurySnapshot1.ammTreasuryMaxLpUtilizationRate(),
             ammTreasurySnapshot2.ammTreasuryMaxLpUtilizationRate(),
-            "AmmTreasury: Max LP Utilization Rate should be the same"
+            "AmmTreasury: Max LP Collateral Ratio Rate should be the same"
         );
         assertEq(
             ammTreasurySnapshot1.ammTreasuryMaxLpUtilizationRatePayFixed(),
             ammTreasurySnapshot2.ammTreasuryMaxLpUtilizationRatePayFixed(),
-            "AmmTreasury: Max LP Utilization Per Pay Fixed Leg Rate should be the same"
+            "AmmTreasury: Max LP Collateral Ratio Per Pay Fixed Leg Rate should be the same"
         );
         assertEq(
             ammTreasurySnapshot1.ammTreasuryMaxLpUtilizationRateReceiveFixed(),
             ammTreasurySnapshot2.ammTreasuryMaxLpUtilizationRateReceiveFixed(),
-            "AmmTreasury: Max LP Utilization Per Receive Fixed Leg Rate should be the same"
+            "AmmTreasury: Max LP Collateral Ratio Per Receive Fixed Leg Rate should be the same"
         );
         assertEq(
             ammTreasurySnapshot1.ammTreasuryIncomeFeeRate(),
@@ -273,17 +273,17 @@ contract AmmTreasurySnapshot is Script, Test {
         assertEq(
             ammTreasurySnapshot1.ammTreasuryMaxLpUtilizationRate(),
             ammTreasurySnapshot2.ammTreasuryMaxLpUtilizationRate(),
-            "AmmTreasury: Max LP Utilization Rate should be the same"
+            "AmmTreasury: Max LP Collateral Ratio Rate should be the same"
         );
         assertEq(
             ammTreasurySnapshot1.ammTreasuryMaxLpUtilizationRatePayFixed(),
             ammTreasurySnapshot2.ammTreasuryMaxLpUtilizationRatePayFixed(),
-            "AmmTreasury: Max LP Utilization Per Pay Fixed Leg Rate should be the same"
+            "AmmTreasury: Max LP Collateral Ratio Per Pay Fixed Leg Rate should be the same"
         );
         assertEq(
             ammTreasurySnapshot1.ammTreasuryMaxLpUtilizationRateReceiveFixed(),
             ammTreasurySnapshot2.ammTreasuryMaxLpUtilizationRateReceiveFixed(),
-            "AmmTreasury: Max LP Utilization Per Receive Fixed Leg Rate should be the same"
+            "AmmTreasury: Max LP Collateral Ratio Per Receive Fixed Leg Rate should be the same"
         );
         assertEq(
             ammTreasurySnapshot1.ammTreasuryIncomeFeeRate(),

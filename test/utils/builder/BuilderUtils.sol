@@ -78,31 +78,31 @@ contract BuilderUtils {
     }
 
     enum IporRiskManagementOracleInitialParamsTestCase {
-        /// @dev Utilization rate per leg 48%
+        /// @dev Collateral Ratio rate per leg 48%
         /// @dev Max utilization rate 90%
         /// @dev Max notional 1 000 000
         DEFAULT,
-        /// @dev Utilization rate per leg 0%
+        /// @dev Collateral Ratio rate per leg 0%
         /// @dev Max utilization rate 0%
         /// @dev Max notional 1 000 000
         CASE1,
-        /// @dev Utilization rate per leg 20%
+        /// @dev Collateral Ratio rate per leg 20%
         /// @dev Max utilization rate 20%
         /// @dev Max notional 0
         CASE2,
-        /// @dev Utilization rate per leg 20%
+        /// @dev Collateral Ratio rate per leg 20%
         /// @dev Max utilization rate 20%
         /// @dev Max notional max uint64
         CASE3,
-        /// @dev Utilization rate per leg max uint16
+        /// @dev Collateral Ratio rate per leg max uint16
         /// @dev Max utilization rate max uint16
         /// @dev Max notional max uint64
         CASE4,
-        /// @dev Utilization rate per leg 30%
+        /// @dev Collateral Ratio rate per leg 30%
         /// @dev Max utilization rate 80%
         /// @dev Max notional 1 000 000
         CASE5,
-        /// @dev Utilization rate per leg 48%
+        /// @dev Collateral Ratio rate per leg 48%
         /// @dev Max utilization rate 80%
         /// @dev Max notional 1 000 000
         CASE6

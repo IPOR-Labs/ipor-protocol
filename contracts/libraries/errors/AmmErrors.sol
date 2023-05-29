@@ -10,10 +10,10 @@ library AmmErrors {
     /// @notice Liquidity Pool balance is too low, should be equal or higher than 0.
     string public constant LIQUIDITY_POOL_AMOUNT_TOO_LOW = "IPOR_301";
 
-    /// @notice Liquidity Pool Utilization exceeded. Liquidity Pool utilization is higher than configured in AmmTreasury maximum liquidity pool utilization.
+    /// @notice Liquidity Pool Collateral Ratio exceeded. Liquidity Pool utilization is higher than configured in AmmTreasury maximum liquidity pool utilization.
     string public constant LP_UTILIZATION_EXCEEDED = "IPOR_302";
 
-    /// @notice Liquidity Pool Utilization Per Leg exceeded. Liquidity Pool utilization per leg is higher than configured in AmmTreasury maximu liquidity pool utilization per leg.
+    /// @notice Liquidity Pool Collateral Ratio Per Leg exceeded. Liquidity Pool utilization per leg is higher than configured in AmmTreasury maximu liquidity pool utilization per leg.
     string public constant LP_UTILIZATION_PER_LEG_EXCEEDED = "IPOR_303";
 
     /// @notice Liquidity Pool Balance is too high
