@@ -22,7 +22,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
 
     address public immutable AMM_SWAPS_LENS;
     address public immutable AMM_POOLS_LENS;
-    address public immutable ASSET_MANAGEMENTLENS_LENS;
+    address public immutable ASSET_MANAGEMENT_LENS;
     address public immutable AMM_OPEN_SWAP_SERVICE_ADDRESS;
     address public immutable AMM_CLOSE_SWAP_SERVICE_ADDRESS;
     address public immutable AMM_POOLS_SERVICE_ADDRESS;
@@ -36,28 +36,81 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
         address ammSwapsLens;
         address ammPoolsLens;
         address assetManagementLens;
-        address ammOpenSwapServiceAddress;
-        address ammCloseSwapServiceAddress;
-        address ammPoolsServiceAddress;
-        address ammGovernanceServiceAddress;
-        address liquidityMiningLensAddress;
-        address powerTokenLensAddress;
-        address flowServiceAddress;
-        address stakeServiceAddress;
+        address ammOpenSwapService;
+        address ammCloseSwapService;
+        address ammPoolsService;
+        address ammGovernanceService;
+        address liquidityMiningLens;
+        address powerTokenLens;
+        address flowService;
+        address stakeService;
     }
 
     constructor(DeployedContracts memory deployedContracts) {
+        require(
+            deployedContracts.ammSwapsLens != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " AMM_SWAPS_LENS")
+        );
+        require(
+            deployedContracts.ammPoolsLens != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " AMM_POOLS_LENS")
+        );
+        require(
+            deployedContracts.assetManagementLens != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " ASSET_MANAGEMENT_LENS")
+        );
+
+        require(
+            deployedContracts.ammOpenSwapService != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " AMM_OPEN_SWAP_SERVICE_ADDRESS")
+        );
+
+        require(
+            deployedContracts.ammCloseSwapService != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " AMM_CLOSE_SWAP_SERVICE_ADDRESS")
+        );
+
+        require(
+            deployedContracts.ammPoolsService != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " AMM_POOLS_SERVICE_ADDRESS")
+        );
+
+        require(
+            deployedContracts.ammGovernanceService != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " AMM_GOVERNANCE_SERVICE_ADDRESS")
+        );
+
+        require(
+            deployedContracts.liquidityMiningLens != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " LIQUIDITY_MINING_LENS_ADDRESS")
+        );
+
+        require(
+            deployedContracts.powerTokenLens != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " POWER_TOKEN_LENS_ADDRESS")
+        );
+
+        require(
+            deployedContracts.flowService != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " FLOW_SERVICE_ADDRESS")
+        );
+
+        require(
+            deployedContracts.stakeService != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " STAKE_SERVICE_ADDRESS")
+        );
+
         AMM_SWAPS_LENS = deployedContracts.ammSwapsLens;
         AMM_POOLS_LENS = deployedContracts.ammPoolsLens;
-        ASSET_MANAGEMENTLENS_LENS = deployedContracts.assetManagementLens;
-        AMM_OPEN_SWAP_SERVICE_ADDRESS = deployedContracts.ammOpenSwapServiceAddress;
-        AMM_CLOSE_SWAP_SERVICE_ADDRESS = deployedContracts.ammCloseSwapServiceAddress;
-        AMM_POOLS_SERVICE_ADDRESS = deployedContracts.ammPoolsServiceAddress;
-        AMM_GOVERNANCE_SERVICE_ADDRESS = deployedContracts.ammGovernanceServiceAddress;
-        LIQUIDITY_MINING_LENS_ADDRESS = deployedContracts.liquidityMiningLensAddress;
-        POWER_TOKEN_LENS_ADDRESS = deployedContracts.powerTokenLensAddress;
-        FLOW_SERVICE_ADDRESS = deployedContracts.flowServiceAddress;
-        STAKE_SERVICE_ADDRESS = deployedContracts.stakeServiceAddress;
+        ASSET_MANAGEMENT_LENS = deployedContracts.assetManagementLens;
+        AMM_OPEN_SWAP_SERVICE_ADDRESS = deployedContracts.ammOpenSwapService;
+        AMM_CLOSE_SWAP_SERVICE_ADDRESS = deployedContracts.ammCloseSwapService;
+        AMM_POOLS_SERVICE_ADDRESS = deployedContracts.ammPoolsService;
+        AMM_GOVERNANCE_SERVICE_ADDRESS = deployedContracts.ammGovernanceService;
+        LIQUIDITY_MINING_LENS_ADDRESS = deployedContracts.liquidityMiningLens;
+        POWER_TOKEN_LENS_ADDRESS = deployedContracts.powerTokenLens;
+        FLOW_SERVICE_ADDRESS = deployedContracts.flowService;
+        STAKE_SERVICE_ADDRESS = deployedContracts.stakeService;
         _disableInitializers();
     }
 
@@ -86,7 +139,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             sig == IAssetManagementLens.compoundBalanceOf.selector ||
             sig == IAssetManagementLens.getIvTokenExchangeRate.selector
         ) {
-            return ASSET_MANAGEMENTLENS_LENS;
+            return ASSET_MANAGEMENT_LENS;
         } else if (
             sig == ILiquidityMiningLens.getLiquidityMiningContractId.selector ||
             sig == ILiquidityMiningLens.liquidityMiningBalanceOf.selector ||
@@ -308,7 +361,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
 
     function initialize(bool paused) external initializer {
         __UUPSUpgradeable_init();
-        //        _owner = msg.sender;
+        OwnerManager.transferOwnership(msg.sender);
 
         if (paused) {
             _pause();

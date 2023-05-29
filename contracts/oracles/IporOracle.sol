@@ -28,10 +28,10 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     using IporLogic for IporOracleTypes.IPOR;
 
     address internal immutable _iporAlgorithmFacade;
-    address internal immutable _usdc;
-    uint256 internal immutable _usdcInitialIbtPrice;
     address internal immutable _usdt;
     uint256 internal immutable _usdtInitialIbtPrice;
+    address internal immutable _usdc;
+    uint256 internal immutable _usdcInitialIbtPrice;
     address internal immutable _dai;
     uint256 internal immutable _daiInitialIbtPrice;
 
@@ -46,20 +46,20 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address iporAlgorithmFacade,
-        address usdc,
-        uint256 usdcInitialIbtPrice,
         address usdt,
         uint256 usdtInitialIbtPrice,
+        address usdc,
+        uint256 usdcInitialIbtPrice,
         address dai,
         uint256 daiInitialIbtPrice
     ) {
         _disableInitializers();
 
         _iporAlgorithmFacade = iporAlgorithmFacade;
-        _usdc = usdc;
-        _usdcInitialIbtPrice = usdcInitialIbtPrice;
         _usdt = usdt;
         _usdtInitialIbtPrice = usdtInitialIbtPrice;
+        _usdc = usdc;
+        _usdcInitialIbtPrice = usdcInitialIbtPrice;
         _dai = dai;
         _daiInitialIbtPrice = daiInitialIbtPrice;
     }
@@ -97,20 +97,20 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         view
         returns (
             address iporAlgorithmFacade,
-            address usdc,
-            uint256 usdcInitialIbtPrice,
             address usdt,
             uint256 usdtInitialIbtPrice,
+            address usdc,
+            uint256 usdcInitialIbtPrice,
             address dai,
             uint256 daiInitialIbtPrice
         )
     {
         return (
             _iporAlgorithmFacade,
-            _usdc,
-            _usdcInitialIbtPrice,
             _usdt,
             _usdtInitialIbtPrice,
+            _usdc,
+            _usdcInitialIbtPrice,
             _dai,
             _daiInitialIbtPrice
         );

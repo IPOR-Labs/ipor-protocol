@@ -4,8 +4,8 @@ pragma solidity 0.8.16;
 library IporOracleErrors {
     // 200-299- iporOracle
     //@notice Asset address not supported
-    //@dev Address is not supported when quasiIbtPrice < Constants.WAD_YEAR_IN_SECONDS.
-    //When quasiIbtPrice is lower than WAD_YEAR_IN_SECONDS (ibtPrice lower than 1), then we assume that asset is not supported.
+    //@dev Address is not supported when lastUpdateTimestamp == 0.
+    //When lastUpdateTimestamp is equal 0, then we assume that asset is not supported.
     string public constant ASSET_NOT_SUPPORTED = "IPOR_200";
 
     //@notice Cannot add new asset to asset list, because already exists

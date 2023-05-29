@@ -6,7 +6,6 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "../interfaces/types/IporTypes.sol";
 import "./types/ItfDataProviderTypes.sol";
-import "./ItfAmmTreasury.sol";
 import "../amm/AmmStorage.sol";
 import "./ItfIporOracle.sol";
 import "../interfaces/IAmmTreasurySpreadInternal.sol";

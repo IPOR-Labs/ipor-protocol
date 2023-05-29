@@ -73,8 +73,8 @@ library StorageInternalTypes {
     /// @dev Saved to the databse.
     struct SoapIndicators {
         /// @notice Value of interest accrued on a fixed leg of all derivatives for this particular type of swap.
-        /// @dev  Value without division by D36 * Constants.YEAR_IN_SECONDS. Is represented in 18 decimals.
-        uint256 quasiHypotheticalInterestCumulative;
+        /// @dev  Is represented in 18 decimals.
+        uint256 hypotheticalInterestCumulative;
         /// @notice Sum of all swaps' notional amounts for a given leg.
         /// @dev Is represented in 18 decimals.
         uint128 totalNotional;
@@ -92,8 +92,8 @@ library StorageInternalTypes {
     /// @dev Committed to the memory.
     struct SoapIndicatorsMemory {
         /// @notice Value of interest accrued on a fixed leg of all derivatives for this particular type of swap.
-        /// @dev  Value without division by D36 * Constants.YEAR_IN_SECONDS. Is represented in 18 decimals.
-        uint256 quasiHypotheticalInterestCumulative;
+        /// @dev Is represented in 18 decimals.
+        uint256 hypotheticalInterestCumulative;
         /// @notice Sum of all swaps' notional amounts for a given leg.
         /// @dev Is represented in 18 decimals.
         uint256 totalNotional;
