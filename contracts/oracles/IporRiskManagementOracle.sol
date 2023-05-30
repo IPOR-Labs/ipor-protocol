@@ -8,6 +8,7 @@ import "../interfaces/IIporRiskManagementOracle.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/IporRiskManagementOracleStorageTypes.sol";
 import "../libraries/errors/IporRiskManagementOracleErrors.sol";
+import "../libraries/Constants.sol";
 
 /**
  * @title Ipor Risk Management Oracle contract
@@ -136,7 +137,13 @@ contract IporRiskManagementOracle is
     {
         (maxNotionalPerLeg, maxUtilizationRatePerLeg, maxUtilizationRate) = _getRiskIndicatorsPerLeg(asset, direction);
         (spread, fixedRateCap) = _getSpread(asset, direction, duration);
-        return (maxNotionalPerLeg, maxUtilizationRatePerLeg, maxUtilizationRate, spread * 1e12, fixedRateCap * 1e12);
+        return (
+            maxNotionalPerLeg,
+            maxUtilizationRatePerLeg,
+            maxUtilizationRate,
+            spread * Constants.D12_INT,
+            fixedRateCap * Constants.D12
+        );
     }
 
     function _getRiskIndicatorsPerLeg(address asset, uint256 direction)
@@ -277,12 +284,12 @@ contract IporRiskManagementOracle is
         );
         return (
             uint256(baseSpreadsAndFixedRateCaps.lastUpdateTimestamp),
-            int256(baseSpreadsAndFixedRateCaps.spread28dPayFixed) * 1e12, // 1 = 0.01%
-            int256(baseSpreadsAndFixedRateCaps.spread28dReceiveFixed) * 1e12,
-            int256(baseSpreadsAndFixedRateCaps.spread60dPayFixed) * 1e12,
-            int256(baseSpreadsAndFixedRateCaps.spread60dReceiveFixed) * 1e12,
-            int256(baseSpreadsAndFixedRateCaps.spread90dPayFixed) * 1e12,
-            int256(baseSpreadsAndFixedRateCaps.spread90dReceiveFixed) * 1e12
+            int256(baseSpreadsAndFixedRateCaps.spread28dPayFixed) * Constants.D12_INT, // 1 = 0.01%
+            int256(baseSpreadsAndFixedRateCaps.spread28dReceiveFixed) * Constants.D12_INT,
+            int256(baseSpreadsAndFixedRateCaps.spread60dPayFixed) * Constants.D12_INT,
+            int256(baseSpreadsAndFixedRateCaps.spread60dReceiveFixed) * Constants.D12_INT,
+            int256(baseSpreadsAndFixedRateCaps.spread90dPayFixed) * Constants.D12_INT,
+            int256(baseSpreadsAndFixedRateCaps.spread90dReceiveFixed) * Constants.D12_INT
         );
     }
 
@@ -324,12 +331,12 @@ contract IporRiskManagementOracle is
         );
         return (
             uint256(baseSpreadsAndFixedRateCaps.lastUpdateTimestamp),
-            uint256(baseSpreadsAndFixedRateCaps.fixedRateCap28dPayFixed) * 1e12, // 1 = 0.01%
-            uint256(baseSpreadsAndFixedRateCaps.fixedRateCap28dReceiveFixed) * 1e12,
-            uint256(baseSpreadsAndFixedRateCaps.fixedRateCap60dPayFixed) * 1e12,
-            uint256(baseSpreadsAndFixedRateCaps.fixedRateCap60dReceiveFixed) * 1e12,
-            uint256(baseSpreadsAndFixedRateCaps.fixedRateCap90dPayFixed) * 1e12,
-            uint256(baseSpreadsAndFixedRateCaps.fixedRateCap90dReceiveFixed) * 1e12
+            uint256(baseSpreadsAndFixedRateCaps.fixedRateCap28dPayFixed) * Constants.D12, // 1 = 0.01%
+            uint256(baseSpreadsAndFixedRateCaps.fixedRateCap28dReceiveFixed) * Constants.D12,
+            uint256(baseSpreadsAndFixedRateCaps.fixedRateCap60dPayFixed) * Constants.D12,
+            uint256(baseSpreadsAndFixedRateCaps.fixedRateCap60dReceiveFixed) * Constants.D12,
+            uint256(baseSpreadsAndFixedRateCaps.fixedRateCap90dPayFixed) * Constants.D12,
+            uint256(baseSpreadsAndFixedRateCaps.fixedRateCap90dReceiveFixed) * Constants.D12
         );
     }
 
