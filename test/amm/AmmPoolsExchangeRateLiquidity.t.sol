@@ -76,9 +76,9 @@ contract AmmPoolsExchangeRateLiquidityTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_10_000_18DEC);
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        AmmStorage implementationHack = new AmmStorage(_admin, address(_iporProtocol.ammTreasury));
-        _iporProtocol.ammStorage.upgradeTo(address(implementationHack));
+        vm.prank(address(_iporProtocol.router));
         _iporProtocol.ammStorage.subtractLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
+        vm.stopPrank();
 
         // when
         uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getExchangeRate(address(_iporProtocol.asset));
@@ -129,8 +129,7 @@ contract AmmPoolsExchangeRateLiquidityTest is TestCommons {
         );
 
         //BEGIN HACK - provide liquidity without mint ipToken
-        AmmStorage implementationHack = new AmmStorage(_admin, address(_iporProtocol.ammTreasury));
-        _iporProtocol.ammStorage.upgradeTo(address(implementationHack));
+        vm.prank(address(_iporProtocol.router));
         _iporProtocol.ammStorage.addLiquidity(
             _liquidityProvider,
             TestConstants.USD_2_000_18DEC,
@@ -138,6 +137,7 @@ contract AmmPoolsExchangeRateLiquidityTest is TestCommons {
             TestConstants.USD_10_000_000_18DEC
         );
         _iporProtocol.asset.transfer(address(_iporProtocol.ammTreasury), TestConstants.USD_2_000_18DEC);
+        vm.stopPrank();
         //END HACK - provide liquidity without mint ipToken
 
         IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getBalance(

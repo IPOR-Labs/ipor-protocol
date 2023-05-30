@@ -200,9 +200,9 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         );
 
         // BEGIN HACK - subtract liquidity without  burn ipToken
-        AmmStorage implementationHack = new AmmStorage(_admin, address(_iporProtocol.ammTreasury));
-        _iporProtocol.ammStorage.upgradeTo(address(implementationHack));
+        vm.prank(address(_iporProtocol.router));
         _iporProtocol.ammStorage.subtractLiquidity(55000 * TestConstants.D18);
+        vm.stopPrank();
         // END HACK - subtract liquidity without  burn ipToken
 
         vm.prank(_userOne);
@@ -251,9 +251,9 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         );
 
         // BEGIN HACK - subtract liquidity without  burn ipToken
-        AmmStorage implementationHack = new AmmStorage(_admin, address(_iporProtocol.ammTreasury));
-        _iporProtocol.ammStorage.upgradeTo(address(implementationHack));
+        vm.prank(address(_iporProtocol.router));
         _iporProtocol.ammStorage.subtractLiquidity(55000 * TestConstants.D18);
+        vm.stopPrank();
         // END HACK - subtract liquidity without  burn ipToken
 
         vm.prank(_userOne);
@@ -302,9 +302,9 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         );
 
         //BEGIN HACK - subtract liquidity without  burn ipToken. Notice! This affect ipToken price!
-        AmmStorage implementationHack = new AmmStorage(_admin, address(_iporProtocol.ammTreasury));
-        _iporProtocol.ammStorage.upgradeTo(address(implementationHack));
+        vm.prank(address(_iporProtocol.router));
         _iporProtocol.ammStorage.subtractLiquidity(55000 * TestConstants.D18);
+        vm.stopPrank();
         //END HACK - subtract liquidity without  burn ipToken. Notice! This affect ipToken price!
 
         vm.prank(_userOne);
@@ -349,9 +349,9 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         );
 
         //BEGIN HACK - subtract liquidity without  burn ipToken. Notice! This affect ipToken price!
-        AmmStorage implementationHack = new AmmStorage(_admin, address(_iporProtocol.ammTreasury));
-        _iporProtocol.ammStorage.upgradeTo(address(implementationHack));
+        vm.prank(address(_iporProtocol.router));
         _iporProtocol.ammStorage.subtractLiquidity(55000 * TestConstants.D18);
+        vm.stopPrank();
         //END HACK - subtract liquidity without  burn ipToken. Notice! This affect ipToken price!
 
         vm.prank(_userOne);
