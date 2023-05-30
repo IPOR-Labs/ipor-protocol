@@ -41,7 +41,7 @@ on:
 jobs:
   foundry-tests:
     runs-on:
-      group: ipor-protocol
+      group: foundry-build
 
     steps:
       - name: Checkout

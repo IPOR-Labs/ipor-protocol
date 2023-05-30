@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       slack-status-msg-id: ${{ inputs.slack-status-msg-id }}
-      slack-alarm-msg-id: ${{ steps.slack-alarm.outputs.message_id }} 
+      slack-alarm-msg-id: ${{ steps.slack-alarm.outputs.message_id }}
 
     steps:
 
