@@ -198,30 +198,6 @@ contract AmmGovernanceService is IAmmGovernanceService {
         return AmmConfigurationManager.isSwapLiquidator(asset, account);
     }
 
-    function setAmmAndAssetManagementRatio(address asset, uint256 newRatio) external override {
-        AmmConfigurationManager.setAmmAndAssetManagementRatio(asset, newRatio);
-    }
-
-    function getAmmAndAssetManagementRatio(address asset) external view override returns (uint256) {
-        return AmmConfigurationManager.getAmmAndAssetManagementRatio(asset);
-    }
-
-    function setAmmMaxLiquidityPoolBalance(address asset, uint256 newMaxLiquidityPoolBalance) external override {
-        AmmConfigurationManager.setAmmMaxLiquidityPoolBalance(asset, newMaxLiquidityPoolBalance);
-    }
-
-    function getAmmMaxLiquidityPoolBalance(address asset) external view override returns (uint256) {
-        return AmmConfigurationManager.getAmmMaxLiquidityPoolBalance(asset);
-    }
-
-    function setAmmMaxLpAccountContribution(address asset, uint256 newMaxLpAccountContribution) external override {
-        AmmConfigurationManager.setAmmMaxLpAccountContribution(asset, newMaxLpAccountContribution);
-    }
-
-    function getAmmMaxLpAccountContribution(address asset) external view override returns (uint256) {
-        return AmmConfigurationManager.getAmmMaxLpAccountContribution(asset);
-    }
-
     function addAppointedToRebalanceInAmm(address asset, address account) external override {
         AmmConfigurationManager.addAppointedToRebalanceInAmm(asset, account);
     }
@@ -234,12 +210,24 @@ contract AmmGovernanceService is IAmmGovernanceService {
         return AmmConfigurationManager.isAppointedToRebalanceInAmm(asset, account);
     }
 
-    function setAmmAutoRebalanceThreshold(address asset, uint256 newAutoRebalanceThreshold) external override {
-        AmmConfigurationManager.setAmmAutoRebalanceThreshold(asset, newAutoRebalanceThreshold);
+    function setAmmPoolsParams(
+        address asset,
+        uint32 newMaxLiquidityPoolBalance,
+        uint32 newMaxLpAccountContribution,
+        uint32 newAutoRebalanceThresholdInThousands,
+        uint16 newAmmTreasuryAndAssetManagementRatio
+    ) external override {
+        AmmConfigurationManager.setAmmPoolsParams(
+            asset,
+            newMaxLiquidityPoolBalance,
+            newMaxLpAccountContribution,
+            newAutoRebalanceThresholdInThousands,
+            newAmmTreasuryAndAssetManagementRatio
+        );
     }
 
-    function getAmmAutoRebalanceThreshold(address asset) external view override returns (uint256) {
-        return AmmConfigurationManager.getAmmAutoRebalanceThreshold(asset);
+    function getAmmPoolsParams(address asset) external view override returns (StorageLib.AmmPoolsParamsValue memory) {
+        return AmmConfigurationManager.getAmmPoolsParams(asset);
     }
 
     function _getPoolConfiguration(address asset) internal view returns (PoolConfiguration memory) {

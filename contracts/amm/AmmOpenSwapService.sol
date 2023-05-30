@@ -478,8 +478,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             ctx.poolCfg
         );
 
-
-
         IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(ctx.poolCfg.ammStorage)
             .getBalancesForOpenSwap();
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;

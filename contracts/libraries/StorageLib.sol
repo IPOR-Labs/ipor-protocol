@@ -13,11 +13,8 @@ library StorageLib {
         Paused,
         PauseGuardian,
         AmmSwapsLiquidators,
-        AmmPoolsAndAssetManagementRatio,
-        AmmPoolsMaxLiquidityPoolBalance,
-        AmmPoolsMaxLpAccountContribution,
         AmmPoolsAppointedToRebalance,
-        AmmPoolsAutoRebalanceThreshold
+        AmmPoolsParams
     }
 
     struct OwnerStorage {
@@ -39,32 +36,29 @@ library StorageLib {
         mapping(address => mapping(address => bool)) value;
     }
 
-    /// @dev key - asset address, value - ratio in the asset pool
-    struct AmmPoolsAndAssetManagementRatioStorage {
-        mapping(address => uint256) value;
-    }
-
-    /// @dev key - asset address, value - max liquidity pool balance in the asset pool
-    struct AmmPoolsMaxLiquidityPoolBalanceStorage {
-        mapping(address => uint256) value;
-    }
-
-    /// @dev key - asset address, value - max lp account contribution in the asset pool
-    struct AmmPoolsMaxLpAccountContributionStorage {
-        mapping(address => uint256) value;
-    }
-
     /// @dev first key - asset address, second key - account address which is allowed to rebalance in the asset pool,
     /// value - flag to indicate whether account is allowed to rebalance. True - allowed, False - not allowed.
     struct AmmPoolsAppointedToRebalanceStorage {
         mapping(address => mapping(address => bool)) value;
     }
 
-    /// @dev key - asset address, value - auto rebalance threshold in the asset pool
-    /// @dev The threshold for auto-rebalancing the pool. Value represented without decimals.
-    /// Value represents multiplication of 1000.
-    struct AmmPoolsAutoRebalanceThresholdStorage {
-        mapping(address => uint256) value;
+    struct AmmPoolsParamsValue {
+        /// @dev max liquidity pool balance in the asset pool, represented without 18 decimals
+        uint32 maxLiquidityPoolBalance;
+        /// @dev  max lp account contribution in the asset pool, represented without 18 decimals
+        uint32 maxLpAccountContribution;
+        /// @dev The threshold for auto-rebalancing the pool. Value represented without 18 decimals.
+        /// Value represents multiplication of 1000.
+        uint32 autoRebalanceThresholdInThousands;
+        /// @dev asset management ratio, represented without 18 decimals, value represents percentage with 2 decimals
+        /// 65% = 6500, 99,99% = 9999, this is a percentage which stay in Amm Treasury in opposite to Asset Management
+        /// based on AMM Treasury balance (100%).
+        uint16 ammTreasuryAndAssetManagementRatio;
+    }
+
+    /// @dev key - asset address, value - struct AmmOpenSwapParamsValue
+    struct AmmPoolsParamsStorage {
+        mapping(address => AmmPoolsParamsValue) value;
     }
 
     function getOwner() internal pure returns (OwnerStorage storage owner) {
@@ -102,39 +96,6 @@ library StorageLib {
         }
     }
 
-    function getAmmAndAssetManagementRatioStorage()
-        internal
-        pure
-        returns (AmmPoolsAndAssetManagementRatioStorage storage store)
-    {
-        uint256 slot = _getStorageSlot(StorageId.AmmPoolsAndAssetManagementRatio);
-        assembly {
-            store.slot := slot
-        }
-    }
-
-    function getAmmMaxLiquidityPoolBalanceStorage()
-        internal
-        pure
-        returns (AmmPoolsMaxLiquidityPoolBalanceStorage storage store)
-    {
-        uint256 slot = _getStorageSlot(StorageId.AmmPoolsMaxLiquidityPoolBalance);
-        assembly {
-            store.slot := slot
-        }
-    }
-
-    function getAmmMaxLpAccountContributionStorage()
-        internal
-        pure
-        returns (AmmPoolsMaxLpAccountContributionStorage storage store)
-    {
-        uint256 slot = _getStorageSlot(StorageId.AmmPoolsMaxLpAccountContribution);
-        assembly {
-            store.slot := slot
-        }
-    }
-
     function getAmmPoolsAppointedToRebalanceStorage()
         internal
         pure
@@ -146,12 +107,8 @@ library StorageLib {
         }
     }
 
-    function getAmmAutoRebalanceThresholdStorage()
-        internal
-        pure
-        returns (AmmPoolsAutoRebalanceThresholdStorage storage store)
-    {
-        uint256 slot = _getStorageSlot(StorageId.AmmPoolsAutoRebalanceThreshold);
+    function getAmmPoolsParamsStorage() internal pure returns (AmmPoolsParamsStorage storage store) {
+        uint256 slot = _getStorageSlot(StorageId.AmmPoolsParams);
         assembly {
             store.slot := slot
         }

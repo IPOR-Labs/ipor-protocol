@@ -185,6 +185,10 @@ contract AmmSwapsLens is IAmmSwapsLens {
         IAmmOpenSwapService.PoolConfiguration memory openSwapPoolCfg = IAmmOpenSwapService(_router)
             .getPoolConfiguration(asset);
 
+        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
+            openSwapPoolCfg.asset
+        );
+
         (, , uint256 maxUtilizationRate, int256 spread) = IIporRiskManagementOracle(_riskManagementOracle)
             .getOpenSwapParameters(asset, direction, duration);
 
@@ -210,8 +214,8 @@ contract AmmSwapsLens is IAmmSwapsLens {
                 openSwapPoolCfg.liquidationDepositAmount,
                 spread,
                 maxUtilizationRate,
-                AmmConfigurationManager.getAmmMaxLiquidityPoolBalance(asset),
-                AmmConfigurationManager.getAmmMaxLpAccountContribution(asset)
+                ammPoolsParamsCfg.maxLiquidityPoolBalance * Constants.D18,
+                ammPoolsParamsCfg.maxLpAccountContribution * Constants.D18
             );
     }
 
