@@ -2,13 +2,11 @@
 pragma solidity 0.8.16;
 
 import "../TestCommons.sol";
-import {DataUtils} from "../utils/DataUtils.sol";
-import {AmmPoolUtils} from "../utils/AmmPoolUtils.sol";
 import "../utils/TestConstants.sol";
 import "contracts/tokens/IpToken.sol";
 import "contracts/interfaces/types/IporTypes.sol";
 
-contract AmmPoolsExchangeRateLiquidityTest is TestCommons, DataUtils, AmmPoolUtils {
+contract AmmPoolsExchangeRateLiquidityTest is TestCommons {
     IporProtocolFactory.IporProtocolConfig private _cfg;
     BuilderUtils.IporProtocol internal _iporProtocol;
 

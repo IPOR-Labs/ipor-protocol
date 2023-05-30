@@ -2,12 +2,10 @@
 pragma solidity 0.8.16;
 
 import "../TestCommons.sol";
-import {DataUtils} from "../utils/DataUtils.sol";
-import {AmmPoolUtils} from "../utils/AmmPoolUtils.sol";
 import "../utils/TestConstants.sol";
 import "contracts/interfaces/types/IporTypes.sol";
 
-contract AmmPoolsExchangeRateAndSoap is TestCommons, AmmPoolUtils {
+contract AmmPoolsExchangeRateAndSoap is TestCommons {
     IporProtocolFactory.IporProtocolConfig private _cfg;
     BuilderUtils.IporProtocol internal _iporProtocol;
 
@@ -45,12 +43,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons, AmmPoolUtils {
         );
 
         vm.warp(block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
-        (, , int256 soap) = calculateSoap(
-            address(_iporProtocol.asset),
-            _userTwo,
-            _iporProtocol.iporOracle,
-            _iporProtocol.ammStorage
-        );
+        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
 
         IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getBalance(
             address(_iporProtocol.asset)
@@ -89,12 +82,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons, AmmPoolUtils {
         _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
 
         vm.warp(block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
-        (, , int256 soap) = calculateSoap(
-            address(_iporProtocol.asset),
-            _userTwo,
-            _iporProtocol.iporOracle,
-            _iporProtocol.ammStorage
-        );
+        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
 
         IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getBalance(
             address(_iporProtocol.asset)
@@ -133,12 +121,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons, AmmPoolUtils {
         _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_8_18DEC);
 
         vm.warp(block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
-        (, , int256 soap) = calculateSoap(
-            address(_iporProtocol.asset),
-            _userTwo,
-            _iporProtocol.iporOracle,
-            _iporProtocol.ammStorage
-        );
+        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
 
         IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getBalance(
             address(_iporProtocol.asset)
@@ -179,12 +162,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons, AmmPoolUtils {
         _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
 
         vm.warp(block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
-        (, , int256 soap) = calculateSoap(
-            address(_iporProtocol.asset),
-            _userTwo,
-            _iporProtocol.iporOracle,
-            _iporProtocol.ammStorage
-        );
+        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
 
         IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getBalance(
             address(_iporProtocol.asset)
@@ -232,12 +210,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons, AmmPoolUtils {
 
         vm.warp(block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
         // Notice! |SOAP| > Liquidity Pool Balance
-        (, , int256 soap) = calculateSoap(
-            address(_iporProtocol.asset),
-            _userTwo,
-            _iporProtocol.iporOracle,
-            _iporProtocol.ammStorage
-        );
+        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
 
         IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getBalance(
             address(_iporProtocol.asset)
@@ -288,12 +261,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons, AmmPoolUtils {
 
         vm.warp(block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
         // Notice! |SOAP| > Liquidity Pool Balance
-        (, , int256 soap) = calculateSoap(
-            address(_iporProtocol.asset),
-            _userTwo,
-            _iporProtocol.iporOracle,
-            _iporProtocol.ammStorage
-        );
+        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
 
         IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getBalance(
             address(_iporProtocol.asset)
@@ -344,12 +312,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons, AmmPoolUtils {
 
         vm.warp(block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
         // Notice! |SOAP| > Liquidity Pool Balance
-        (, , int256 soap) = calculateSoap(
-            address(_iporProtocol.asset),
-            _userTwo,
-            _iporProtocol.iporOracle,
-            _iporProtocol.ammStorage
-        );
+        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
 
         IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getBalance(
             address(_iporProtocol.asset)
@@ -396,12 +359,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons, AmmPoolUtils {
 
         vm.warp(block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
         // Notice! |SOAP| > Liquidity Pool Balance
-        (, , int256 soap) = calculateSoap(
-            address(_iporProtocol.asset),
-            _userTwo,
-            _iporProtocol.iporOracle,
-            _iporProtocol.ammStorage
-        );
+        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
 
         IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getBalance(
             address(_iporProtocol.asset)
@@ -445,12 +403,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons, AmmPoolUtils {
         vm.prank(_userOne);
         _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_4_5_18DEC);
 
-        (, , int256 initialSoap) = calculateSoap(
-            address(_iporProtocol.asset),
-            _userTwo,
-            _iporProtocol.iporOracle,
-            _iporProtocol.ammStorage
-        );
+        (, , int256 initialSoap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
 
         ExchangeRateAndPayoff memory exchangeRateAndPayoff;
         exchangeRateAndPayoff.initialExchangeRate = _iporProtocol.ammPoolsLens.getExchangeRate(
@@ -458,12 +411,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons, AmmPoolUtils {
         );
 
         vm.warp(block.timestamp + TestConstants.PERIOD_28_DAYS_IN_SECONDS);
-        (, , int256 soapAfter28Days) = calculateSoap(
-            address(_iporProtocol.asset),
-            _userTwo,
-            _iporProtocol.iporOracle,
-            _iporProtocol.ammStorage
-        );
+        (, , int256 soapAfter28Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
         exchangeRateAndPayoff.exchangeRateAfter28Days = _iporProtocol.ammPoolsLens.getExchangeRate(
             address(_iporProtocol.asset)
         );
@@ -471,12 +419,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons, AmmPoolUtils {
         exchangeRateAndPayoff.payoff2After28Days = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 2);
 
         vm.warp(block.timestamp + TestConstants.PERIOD_28_DAYS_IN_SECONDS);
-        (, , int256 soapAfter56DaysBeforeClose) = calculateSoap(
-            address(_iporProtocol.asset),
-            _userTwo,
-            _iporProtocol.iporOracle,
-            _iporProtocol.ammStorage
-        );
+        (, , int256 soapAfter56DaysBeforeClose) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
         exchangeRateAndPayoff.exchangeRateAfter56DaysBeforeClose = _iporProtocol.ammPoolsLens.getExchangeRate(
             address(_iporProtocol.asset)
         );
@@ -493,12 +436,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons, AmmPoolUtils {
         _iporProtocol.ammCloseSwapService.closeSwapPayFixedDai(_userTwo, 2);
 
         // then
-        (, , int256 soapAfter56DaysAfterClose) = calculateSoap(
-            address(_iporProtocol.asset),
-            _userTwo,
-            _iporProtocol.iporOracle,
-            _iporProtocol.ammStorage
-        );
+        (, , int256 soapAfter56DaysAfterClose) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
         IporTypes.AmmBalancesMemory memory liquidityPoolBalanceAfterClose = _iporProtocol.ammPoolsLens.getBalance(
             address(_iporProtocol.asset)
         );
@@ -539,5 +477,15 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons, AmmPoolUtils {
             302966765587628614515481,
             "incorrect SOAP + Liquidity Pool balance before close"
         );
+    }
+
+    struct ExchangeRateAndPayoff {
+        uint256 initialExchangeRate;
+        uint256 exchangeRateAfter28Days;
+        uint256 exchangeRateAfter56DaysBeforeClose;
+        int256 payoff1After28Days;
+        int256 payoff2After28Days;
+        int256 payoff1After56Days;
+        int256 payoff2After56Days;
     }
 }
