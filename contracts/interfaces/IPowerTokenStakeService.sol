@@ -41,7 +41,7 @@ interface IPowerTokenStakeService {
     /// @dev The function calls the `addStakedToken` function of the PowerToken contract to update the staked IPOR tokens.
     /// @dev Finally, the function transfers the IPOR tokens from the sender to the PowerToken contract for staking.
     /// @dev Reverts if any of the requirements is not met or if the transfer of IPOR tokens fails.
-    function stakeProtocolToken(address onBehalfOf, uint256 iporTokenAmount) external;
+    function stakeGovernanceTokenToPowerToken(address onBehalfOf, uint256 iporTokenAmount) external;
 
     /// @notice Unstakes the specified amount of IPOR tokens and transfers them to the specified address.
     /// @param transferTo The address to which the unstaked IPOR tokens will be transferred.
@@ -50,21 +50,21 @@ interface IPowerTokenStakeService {
     /// @dev The function calls the `removeStakedTokenWithFee` function of the PowerToken contract to remove the staked IPOR tokens.
     /// @dev Finally, the function transfers the corresponding staked token amount to the `transferTo` address.
     /// @dev Reverts if the `iporTokenAmount` is not greater than zero, or if the transfer of staked tokens fails.
-    function unstakeProtocolToken(address transferTo, uint256 iporTokenAmount) external;
+    function unstakeGovernanceTokenFromPowerToken(address transferTo, uint256 iporTokenAmount) external;
 
     /// @notice Initiates a cooldown period for the specified amount of Power Tokens.
     /// @param pwTokenAmount The amount of Power Tokens to be put into cooldown, represented with 18 decimals.
     /// @dev The function ensures that the `pwTokenAmount` is greater than zero.
     /// @dev The function calls the `cooldown` function of the PowerToken contract to initiate the cooldown.
     /// @dev Reverts if the `pwTokenAmount` is not greater than zero.
-    function cooldownPowerToken(uint256 pwTokenAmount) external;
+    function pwTokenCooldown(uint256 pwTokenAmount) external;
 
     /// @notice Cancels the active cooldown for the sender.
     /// @dev The function calls the `cancelCooldown` function of the PowerToken contract to cancel the cooldown.
-    function cancelPowerTokenCooldown() external;
+    function pwTokenCancelCooldown() external;
 
     /// @notice Redeems Power Tokens and transfers the corresponding Staked Tokens to the specified address.
     /// @dev The function calls the `redeem` function of the PowerToken contract to redeem Power Tokens.
     /// @param transferTo The address to which the Staked Tokens will be transferred.
-    function redeemPowerToken(address transferTo) external;
+    function redeemPwToken(address transferTo) external;
 }

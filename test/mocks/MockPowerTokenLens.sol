@@ -11,39 +11,23 @@ contract MockPowerTokenLens is IPowerTokenLens {
         _data = builderData;
     }
 
-    function powerTokenName() external view returns (string memory) {
-        return _data.name;
-    }
-
-    function getPowerTokenContractId() external view returns (bytes32) {
-        return _data.contractId;
-    }
-
-    function powerTokenSymbol() external view returns (string memory) {
-        return _data.symbol;
-    }
-
-    function powerTokenDecimals() external view returns (uint8) {
-        return _data.decimals;
-    }
-
-    function powerTokenTotalSupply() external view returns (uint256) {
+    function totalSupplyOfPwToken() external view returns (uint256) {
         return _data.totalSupply;
     }
 
-    function powerTokenBalanceOf(address account) external view returns (uint256) {
+    function balanceOfPwToken(address account) external view returns (uint256) {
         return _data.balanceOf;
     }
 
-    function delegatedPowerTokensToLiquidityMiningBalanceOf(address account) external view returns (uint256) {
+    function balanceOfPwTokenDelegatedToLiquidityMining(address account) external view returns (uint256) {
         return _data.delegatedPowerTokensToLiquidityMiningBalanceOf;
     }
 
-    function getUnstakeWithoutCooldownFee() external view returns (uint256) {
+    function getPwTokenUnstakeFee() external view returns (uint256) {
         return _data.getUnstakeWithoutCooldownFee;
     }
 
-    function getPowerTokenActiveCooldown(address account)
+    function getPwTokensInCooldown(address account)
         external
         view
         returns (PowerTokenTypes.PwTokenCooldown memory)
@@ -51,15 +35,15 @@ contract MockPowerTokenLens is IPowerTokenLens {
         return _data.activeCooldown;
     }
 
-    function powerTokenCoolDownTime() external view returns (uint256) {
+    function getPwTokenCooldownTime() external view returns (uint256) {
         return _data.coolDownInSeconds;
     }
 
-    function calculatePowerTokenExchangeRate() external view returns (uint256) {
+    function getPwTokenExchangeRate() external view returns (uint256) {
         return _data.exchangeRate;
     }
 
-    function totalPowerTokenSupplyBase() external view returns (uint256) {
+    function getPwTokenTotalSupplyBase() external view returns (uint256) {
         return _data.totalSupplyBase;
     }
 }

@@ -134,7 +134,7 @@ contract AmmPoolsServiceProvideLiquidity is TestCommons {
 
         vm.startPrank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_50_000_18DEC);
-        _iporProtocol.ammPoolsService.redeemDai(_liquidityProvider, TestConstants.USD_50_000_18DEC);
+        _iporProtocol.ammPoolsService.redeemFromAmmPoolDai(_liquidityProvider, TestConstants.USD_50_000_18DEC);
 
         // when
         vm.expectRevert("IPOR_305");

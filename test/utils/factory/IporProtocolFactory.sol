@@ -25,7 +25,7 @@ import "contracts/interfaces/IAssetManagementLens.sol";
 import "contracts/interfaces/IPowerTokenLens.sol";
 import "contracts/interfaces/ILiquidityMiningLens.sol";
 import "contracts/interfaces/IPowerTokenFlowsService.sol";
-import "contracts/interfaces/IStakeService.sol";
+import "contracts/interfaces/IPowerTokenStakeService.sol";
 import "contracts/amm/AmmSwapsLens.sol";
 import "contracts/amm/AmmPoolsLens.sol";
 import "contracts/amm/AssetManagementLens.sol";

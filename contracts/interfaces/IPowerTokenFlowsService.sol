@@ -8,14 +8,14 @@ interface IPowerTokenFlowsService {
     /// It then adds the staked tokens to the `powerToken` contract and transfers the rewards from the `liquidityMining` contract to the `powerToken` contract.
     /// @dev Reverts if the `lpTokens` array is empty.
     /// @dev Reverts if there are no rewards to claim.
-    function claimPowerToken(address[] calldata lpTokens) external;
+    function claimRewardsFromLiquidityMining(address[] calldata lpTokens) external;
 
     /// @notice Updates the indicators for a given account and LP tokens.
     /// @param account The account address for which the indicators are to be updated.
     /// @param lpTokens An array of LP tokens for which the indicators are to be updated.
     /// @dev This function calls the `updateIndicators` function of the `ILiquidityMiningV2` contract to update the indicators.
     /// @dev Reverts if the `lpTokens` array is empty.
-    function updateLiquidityMiningIndicators(address account, address[] calldata lpTokens) external;
+    function updateIndicatorsInLiquidityMining(address account, address[] calldata lpTokens) external;
 
     /// @notice Delegates staked tokens by providing LP tokens and corresponding amounts.
     /// @param lpTokens An array of LP tokens to delegate.

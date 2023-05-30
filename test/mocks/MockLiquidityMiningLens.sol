@@ -11,39 +11,35 @@ contract MockLiquidityMiningLens is ILiquidityMiningLens {
         _data = builderData;
     }
 
-    function getLiquidityMiningContractId() external view returns (bytes32) {
-        return _data.contractId;
-    }
-
-    function liquidityMiningBalanceOf(address account, address lpToken) external view returns (uint256) {
+    function balanceOfLpTokensStakedInLiquidityMining(address account, address lpToken) external view returns (uint256) {
         return _data.balanceOf;
     }
 
-    function balanceOfDelegatedPowerToken(address account, address[] memory lpTokens)
+    function balanceOfPowerTokensDelegatedToLiquidityMining(address account, address[] memory lpTokens)
         external
         view
         returns (LiquidityMiningTypes.DelegatedPwTokenBalance[] memory balances)
     {}
 
-    function calculateLiquidityMiningAccruedRewards(address[] calldata lpTokens)
+    function getAccruedRewardsInLiquidityMining(address[] calldata lpTokens)
         external
         view
         returns (LiquidityMiningTypes.AccruedRewardsResult[] memory result)
     {}
 
-    function calculateLiquidityMiningAccountRewards(address account, address[] calldata lpTokens)
+    function getAccountRewardsInLiquidityMining(address account, address[] calldata lpTokens)
         external
         view
         returns (LiquidityMiningTypes.AccountRewardResult[] memory)
     {}
 
-    function getLiquidityMiningGlobalIndicators(address[] memory lpTokens)
+    function getGlobalIndicatorsFromLiquidityMining(address[] memory lpTokens)
         external
         view
         returns (LiquidityMiningTypes.GlobalIndicatorsResult[] memory)
     {}
 
-    function getLiquidityMiningAccountIndicators(address account, address[] memory lpTokens)
+    function getAccountIndicatorsFromLiquidityMining(address account, address[] memory lpTokens)
         external
         view
         returns (LiquidityMiningTypes.AccountIndicatorsResult[] memory)

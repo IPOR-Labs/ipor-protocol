@@ -15,7 +15,7 @@ import "../interfaces/IAmmGovernanceService.sol";
 import "../interfaces/ILiquidityMiningLens.sol";
 import "../interfaces/IPowerTokenLens.sol";
 import "../interfaces/IPowerTokenFlowsService.sol";
-import "../interfaces/IStakeService.sol";
+import "../interfaces/IPowerTokenStakeService.sol";
 
 contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
     using Address for address;
@@ -134,35 +134,30 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
         ) {
             return AMM_POOLS_LENS;
         } else if (
-            sig == IAssetManagementLens.balanceOfAmmTreasury.selector ||
-            sig == IAssetManagementLens.aaveBalanceOf.selector ||
-            sig == IAssetManagementLens.compoundBalanceOf.selector ||
+            sig == IAssetManagementLens.balanceOfAmmTreasuryInAssetManagement.selector ||
+            sig == IAssetManagementLens.aaveBalanceOfInAssetManagement.selector ||
+            sig == IAssetManagementLens.compoundBalanceOfInAssetManagement.selector ||
             sig == IAssetManagementLens.getIvTokenExchangeRate.selector
         ) {
             return ASSET_MANAGEMENT_LENS;
         } else if (
-            sig == ILiquidityMiningLens.getLiquidityMiningContractId.selector ||
-            sig == ILiquidityMiningLens.liquidityMiningBalanceOf.selector ||
-            sig == ILiquidityMiningLens.balanceOfDelegatedPowerToken.selector ||
-            sig == ILiquidityMiningLens.calculateLiquidityMiningAccruedRewards.selector ||
-            sig == ILiquidityMiningLens.getLiquidityMiningAccountIndicators.selector ||
-            sig == ILiquidityMiningLens.getLiquidityMiningGlobalIndicators.selector ||
-            sig == ILiquidityMiningLens.calculateLiquidityMiningAccountRewards.selector
+            sig == ILiquidityMiningLens.balanceOfLpTokensStakedInLiquidityMining.selector ||
+            sig == ILiquidityMiningLens.balanceOfPowerTokensDelegatedToLiquidityMining.selector ||
+            sig == ILiquidityMiningLens.getAccruedRewardsInLiquidityMining.selector ||
+            sig == ILiquidityMiningLens.getAccountIndicatorsFromLiquidityMining.selector ||
+            sig == ILiquidityMiningLens.getGlobalIndicatorsFromLiquidityMining.selector ||
+            sig == ILiquidityMiningLens.getAccountRewardsInLiquidityMining.selector
         ) {
             return LIQUIDITY_MINING_LENS_ADDRESS;
         } else if (
-            sig == IPowerTokenLens.powerTokenName.selector ||
-            sig == IPowerTokenLens.getPowerTokenContractId.selector ||
-            sig == IPowerTokenLens.powerTokenSymbol.selector ||
-            sig == IPowerTokenLens.powerTokenDecimals.selector ||
-            sig == IPowerTokenLens.powerTokenTotalSupply.selector ||
-            sig == IPowerTokenLens.powerTokenBalanceOf.selector ||
-            sig == IPowerTokenLens.delegatedPowerTokensToLiquidityMiningBalanceOf.selector ||
-            sig == IPowerTokenLens.getPowerTokenActiveCooldown.selector ||
-            sig == IPowerTokenLens.getUnstakeWithoutCooldownFee.selector ||
-            sig == IPowerTokenLens.powerTokenCoolDownTime.selector ||
-            sig == IPowerTokenLens.calculatePowerTokenExchangeRate.selector ||
-            sig == IPowerTokenLens.totalPowerTokenSupplyBase.selector
+            sig == IPowerTokenLens.totalSupplyOfPwToken.selector ||
+            sig == IPowerTokenLens.balanceOfPwToken.selector ||
+            sig == IPowerTokenLens.balanceOfPwTokenDelegatedToLiquidityMining.selector ||
+            sig == IPowerTokenLens.getPwTokensInCooldown.selector ||
+            sig == IPowerTokenLens.getPwTokenUnstakeFee.selector ||
+            sig == IPowerTokenLens.getPwTokenCooldownTime.selector ||
+            sig == IPowerTokenLens.getPwTokenExchangeRate.selector ||
+            sig == IPowerTokenLens.getPwTokenTotalSupplyBase.selector
         ) {
             return POWER_TOKEN_LENS_ADDRESS;
         } else if (
@@ -228,10 +223,10 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             sig == IAmmPoolsService.provideLiquidityUsdt.selector ||
             sig == IAmmPoolsService.provideLiquidityUsdc.selector ||
             sig == IAmmPoolsService.provideLiquidityDai.selector ||
-            sig == IAmmPoolsService.redeemUsdt.selector ||
-            sig == IAmmPoolsService.redeemUsdc.selector ||
-            sig == IAmmPoolsService.redeemDai.selector ||
-            sig == IAmmPoolsService.rebalance.selector
+            sig == IAmmPoolsService.redeemFromAmmPoolUsdt.selector ||
+            sig == IAmmPoolsService.redeemFromAmmPoolUsdc.selector ||
+            sig == IAmmPoolsService.redeemFromAmmPoolDai.selector ||
+            sig == IAmmPoolsService.rebalanceBetweenAmmTreasuryAndAssetManagement.selector
         ) {
             _whenNotPaused();
             _nonReentrant();
@@ -281,11 +276,11 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
         } else if (
             sig == IPowerTokenStakeService.stakeLpTokensToLiquidityMining.selector ||
             sig == IPowerTokenStakeService.unstakeLpTokensFromLiquidityMining.selector ||
-            sig == IPowerTokenStakeService.stakeProtocolToken.selector ||
-            sig == IPowerTokenStakeService.unstakeProtocolToken.selector ||
-            sig == IPowerTokenStakeService.cooldownPowerToken.selector ||
-            sig == IPowerTokenStakeService.cancelPowerTokenCooldown.selector ||
-            sig == IPowerTokenStakeService.redeemPowerToken.selector
+            sig == IPowerTokenStakeService.stakeGovernanceTokenToPowerToken.selector ||
+            sig == IPowerTokenStakeService.unstakeGovernanceTokenFromPowerToken.selector ||
+            sig == IPowerTokenStakeService.pwTokenCooldown.selector ||
+            sig == IPowerTokenStakeService.pwTokenCancelCooldown.selector ||
+            sig == IPowerTokenStakeService.redeemPwToken.selector
         ) {
             _whenNotPaused();
             _nonReentrant();
@@ -293,9 +288,9 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             return STAKE_SERVICE_ADDRESS;
         } else if (
             sig == IPowerTokenFlowsService.delegateLpTokensToLiquidityMining.selector ||
-            sig == IPowerTokenFlowsService.updateLiquidityMiningIndicators.selector ||
+            sig == IPowerTokenFlowsService.updateIndicatorsInLiquidityMining.selector ||
             sig == IPowerTokenFlowsService.undelegateLpTokensFromLiquidityMining.selector ||
-            sig == IPowerTokenFlowsService.claimPowerToken.selector
+            sig == IPowerTokenFlowsService.claimRewardsFromLiquidityMining.selector
         ) {
             _whenNotPaused();
             _nonReentrant();

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 import "forge-std/Test.sol";
-import "contracts/interfaces/IStakeService.sol";
+import "contracts/interfaces/IPowerTokenStakeService.sol";
 import "../../mocks/MockPowerTokenStakeService.sol";
 
 contract PowerTokenStakeServiceBuilder is Test {
