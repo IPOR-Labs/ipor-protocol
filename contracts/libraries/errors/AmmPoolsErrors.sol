@@ -22,7 +22,7 @@ library AmmPoolsErrors {
     string public constant CALLER_NOT_PUBLICATION_FEE_TRANSFERER = "IPOR_406";
 
     //@notice Charlie Treasurer address is incorrect
-    string public constant INCORRECT_CHARLIE_TREASURER = "IPOR_407";
+    //string public constant INCORRECT_CHARLIE_TREASURER = "IPOR_407";
 
     string public constant ASSET_MANAGEMENT_BALANCE_IS_EMPTY = "IPOR_408";
 
