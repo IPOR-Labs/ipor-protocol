@@ -18,5 +18,5 @@ library IporOracleErrors {
     string public constant INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP = "IPOR_203";
 
     //@notice Address of algorithm used to calculate IPOR Index is not set
-    string public constant IPOR_ALGORITHM_ADDRESS_NOT_SET = "IPOR_204";
+//    string public constant IPOR_ALGORITHM_ADDRESS_NOT_SET = "IPOR_204";
 }

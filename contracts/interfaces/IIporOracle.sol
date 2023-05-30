@@ -34,22 +34,11 @@ interface IIporOracle {
         view
         returns (IporTypes.AccruedIpor memory accruedIpor);
 
-    /// @notice Gets IporAlgorithm address.
-    function getIporAlgorithmFacade() external view returns (address);
-
     /// @notice Calculates accrued Interest Bearing Token price for a given asset and timestamp.
     /// @param asset underlying / stablecoin address supported by IPOR Protocol.
     /// @param calculateTimestamp time of accrued Interest Bearing Token price calculation
     /// @return accrued IBT price, represented in 18 decimals
-    function calculateAccruedIbtPrice(address asset, uint256 calculateTimestamp)
-        external
-        view
-        returns (uint256);
-
-    /// @notice Updates IPOR Index for a given asset based on value returned from iporAlgorithm.
-    /// @dev Emmits {IporIndexUpdate} event.
-    /// @param asset underlying / stablecoin address supported by IPOR Protocol
-    function updateIndex(address asset) external returns (IporTypes.AccruedIpor memory accruedIpor);
+    function calculateAccruedIbtPrice(address asset, uint256 calculateTimestamp) external view returns (uint256);
 
     /// @notice Updates IPOR Index for a given asset. Function available only for Updater
     /// @dev Emmits {IporIndexUpdate} event.
@@ -79,10 +68,7 @@ interface IIporOracle {
     /// @notice Adds new asset which IPOR Protocol will support. Function available only for Owner.
     /// @param newAsset new asset address
     /// @param updateTimestamp Time for which exponential moving average and exponential weighted moving variance was calculated
-    function addAsset(
-        address newAsset,
-        uint256 updateTimestamp
-    ) external;
+    function addAsset(address newAsset, uint256 updateTimestamp) external;
 
     /// @notice Removes asset which IPOR Protocol will not support. Function available only for Owner.
     /// @param asset  underlying / stablecoin address which current is supported by IPOR Protocol.
@@ -105,12 +91,7 @@ interface IIporOracle {
     /// @param indexValue IPOR Index value represented in 18 decimals
     /// @param quasiIbtPrice quasi Interest Bearing Token price represented in 18 decimals.
     /// @param updateTimestamp moment when IPOR Index was updated.
-    event IporIndexUpdate(
-        address asset,
-        uint256 indexValue,
-        uint256 quasiIbtPrice,
-        uint256 updateTimestamp
-    );
+    event IporIndexUpdate(address asset, uint256 indexValue, uint256 quasiIbtPrice, uint256 updateTimestamp);
 
     /// @notice event emitted when IPOR Index Updater is added by Owner
     /// @param newUpdater new Updater address
@@ -123,22 +104,10 @@ interface IIporOracle {
     /// @notice event emitted when new asset is added by Owner to list of assets supported in IPOR Protocol.
     /// @param newAsset new asset address
     /// @param updateTimestamp update timestamp
-    event IporIndexAddAsset(
-        address newAsset,
-        uint256 updateTimestamp
-    );
+    event IporIndexAddAsset(address newAsset, uint256 updateTimestamp);
 
     /// @notice event emitted when asset is removed by Owner from list of assets supported in IPOR Protocol.
     /// @param asset asset address
     event IporIndexRemoveAsset(address asset);
 
-    /// @notice event emitted when ipor algorithm address is changed
-    /// @param changedBy address of the account that changed the ipor algorithm address
-    /// @param oldIporAlgorithmFacade old ipor algorithm address
-    /// @param newIporAlgorithmFacade new ipor algorithm address
-    event IporAlgorithmFacadeChanged(
-        address indexed changedBy,
-        address indexed oldIporAlgorithmFacade,
-        address indexed newIporAlgorithmFacade
-    );
 }

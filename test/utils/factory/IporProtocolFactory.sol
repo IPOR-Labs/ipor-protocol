@@ -148,7 +148,6 @@ contract IporProtocolFactory is Test {
             address(amm.iporOracle),
             cfg.iporOracleUpdater,
             IporOracleFactory.IporOracleConstructorParams({
-                iporAlgorithmFacade: address(amm.iporWeighted),
                 usdt: address(amm.usdt.asset),
                 usdtInitialIbtPrice: 1e18,
                 usdc: address(amm.usdc.asset),
@@ -323,7 +322,6 @@ contract IporProtocolFactory is Test {
             address(iporProtocol.iporOracle),
             cfg.iporOracleUpdater,
             IporOracleFactory.IporOracleConstructorParams({
-                iporAlgorithmFacade: address(iporProtocol.iporWeighted),
                 usdc: _fakeContract,
                 usdcInitialIbtPrice: 0,
                 usdt: address(iporProtocol.asset),
@@ -441,7 +439,6 @@ contract IporProtocolFactory is Test {
             address(iporProtocol.iporOracle),
             cfg.iporOracleUpdater,
             IporOracleFactory.IporOracleConstructorParams({
-                iporAlgorithmFacade: address(iporProtocol.iporWeighted),
                 usdc: address(iporProtocol.asset),
                 usdcInitialIbtPrice: 1e18,
                 usdt: _fakeContract,
@@ -562,7 +559,6 @@ contract IporProtocolFactory is Test {
             address(iporProtocol.iporOracle),
             cfg.iporOracleUpdater,
             IporOracleFactory.IporOracleConstructorParams({
-                iporAlgorithmFacade: address(iporProtocol.iporWeighted),
                 usdc: _fakeContract,
                 usdcInitialIbtPrice: 0,
                 usdt: _fakeContract,

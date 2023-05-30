@@ -11,7 +11,6 @@ contract IporOracleFactory is Test {
     IporOracleBuilder internal iporOracleBuilder;
 
     struct IporOracleConstructorParams {
-        address iporAlgorithmFacade;
         address usdc;
         uint256 usdcInitialIbtPrice;
         address usdt;
@@ -41,7 +40,6 @@ contract IporOracleFactory is Test {
         iporOracleBuilder.withLastUpdateTimestamps(lastUpdateTimestamps);
 
         IporOracle iporOracleImpl = new IporOracle(
-            constructorParams.iporAlgorithmFacade,
             constructorParams.usdt,
             constructorParams.usdtInitialIbtPrice,
             constructorParams.usdc,
@@ -80,7 +78,6 @@ contract IporOracleFactory is Test {
         IporOracleConstructorParams memory constructorParams
     ) public {
         IporOracle iporOracleImpl = new IporOracle(
-            constructorParams.iporAlgorithmFacade,
             constructorParams.usdt,
             constructorParams.usdtInitialIbtPrice,
             constructorParams.usdc,

@@ -27,7 +27,6 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     using SafeCast for uint256;
     using IporLogic for IporOracleTypes.IPOR;
 
-    address internal immutable _iporAlgorithmFacade;
     address internal immutable _usdt;
     uint256 internal immutable _usdtInitialIbtPrice;
     address internal immutable _usdc;
@@ -45,7 +44,6 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
-        address iporAlgorithmFacade,
         address usdt,
         uint256 usdtInitialIbtPrice,
         address usdc,
@@ -53,15 +51,18 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         address dai,
         uint256 daiInitialIbtPrice
     ) {
-        _disableInitializers();
+        require(usdt != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT"));
+        require(usdc != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC"));
+        require(dai != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI"));
 
-        _iporAlgorithmFacade = iporAlgorithmFacade;
         _usdt = usdt;
         _usdtInitialIbtPrice = usdtInitialIbtPrice;
         _usdc = usdc;
         _usdcInitialIbtPrice = usdcInitialIbtPrice;
         _dai = dai;
         _daiInitialIbtPrice = daiInitialIbtPrice;
+
+        _disableInitializers();
     }
 
     function initialize(address[] memory assets, uint32[] memory updateTimestamps) public initializer {
@@ -96,7 +97,6 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         external
         view
         returns (
-            address iporAlgorithmFacade,
             address usdt,
             uint256 usdtInitialIbtPrice,
             address usdc,
@@ -106,7 +106,6 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         )
     {
         return (
-            _iporAlgorithmFacade,
             _usdt,
             _usdtInitialIbtPrice,
             _usdc,
@@ -153,10 +152,6 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         );
     }
 
-    function getIporAlgorithmFacade() external view override returns (address) {
-        return _iporAlgorithmFacade;
-    }
-
     function calculateAccruedIbtPrice(address asset, uint256 calculateTimestamp)
         external
         view
@@ -168,26 +163,6 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
     function updateIndex(address asset, uint256 indexValue) external override onlyUpdater whenNotPaused {
         _updateIndex(asset, indexValue, block.timestamp);
-    }
-
-    function updateIndex(address asset)
-        external
-        override
-        onlyUpdater
-        whenNotPaused
-        returns (IporTypes.AccruedIpor memory accruedIpor)
-    {
-        IporOracleTypes.IPOR memory ipor = _indexes[asset];
-
-        require(ipor.lastUpdateTimestamp > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
-
-        address iporAlgorithmFacade = _iporAlgorithmFacade;
-
-        require(iporAlgorithmFacade != address(0), IporOracleErrors.IPOR_ALGORITHM_ADDRESS_NOT_SET);
-
-        uint256 newIndexValue = IIporAlgorithm(iporAlgorithmFacade).calculateIpor(asset);
-
-        (accruedIpor.indexValue, accruedIpor.ibtPrice, ) = _updateIndex(asset, newIndexValue, block.timestamp);
     }
 
     function updateIndexes(address[] memory assets, uint256[] memory indexValues)
