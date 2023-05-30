@@ -30,7 +30,7 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
         _USDT = usdt;
     }
 
-    function timeWeightedNotionalUpdateOnClose(
+    function updateTimeWeightedNotionalOnClose(
         address asset,
         uint256 direction,
         AmmTypes.SwapDuration duration,
@@ -44,7 +44,7 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
         }
         uint256 maturity = _getMaturity(duration);
         SpreadStorageLibs.StorageId storageId = _getStorageId(asset, maturity);
-        SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional = SpreadStorageLibs.getWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
             storageId
         );
 
@@ -55,16 +55,16 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
             ? timeWeightedNotional.lastUpdateTimePayFixed
             : timeWeightedNotional.lastUpdateTimeReceiveFixed;
 
-        uint256 timeWaitedNotionalToRemove = CalculateTimeWeightedNotionalLibs.calculateTimeWeightedNotional(
+        uint256 timeWeightedNotionalToRemove = CalculateTimeWeightedNotionalLibs.calculateTimeWeightedNotional(
             swapNotional,
             // @dev timeOfLastUpdate should be greater than closedSwap.openSwapTimestamp
             timeOfLastUpdate - closedSwap.openSwapTimestamp,
             maturity
         );
 
-        uint256 actualTimeWaitedNotionalToSave;
-        if (timeWeightedNotionalAmount > timeWaitedNotionalToRemove) {
-            actualTimeWaitedNotionalToSave = timeWeightedNotionalAmount - timeWaitedNotionalToRemove;
+        uint256 actualTimeWeightedNotionalToSave;
+        if (timeWeightedNotionalAmount > timeWeightedNotionalToRemove) {
+            actualTimeWeightedNotionalToSave = timeWeightedNotionalAmount - timeWeightedNotionalToRemove;
         }
 
         if (closedSwap.nextSwapId == 0) {
@@ -74,21 +74,21 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
             );
             uint256 swapTimePast = block.timestamp - uint256(lastOpenSwap.openSwapTimestamp);
             if (maturity <= swapTimePast) {
-                actualTimeWaitedNotionalToSave = 0;
+                actualTimeWeightedNotionalToSave = 0;
                 swapTimePast = 0;
             }
             if (direction == 0) {
                 timeWeightedNotional.lastUpdateTimePayFixed = lastOpenSwap.openSwapTimestamp;
-                timeWeightedNotional.timeWeightedNotionalPayFixed = (actualTimeWaitedNotionalToSave * maturity) / (maturity - swapTimePast);
+                timeWeightedNotional.timeWeightedNotionalPayFixed = (actualTimeWeightedNotionalToSave * maturity) / (maturity - swapTimePast);
             } else {
                 timeWeightedNotional.lastUpdateTimeReceiveFixed = lastOpenSwap.openSwapTimestamp;
-                timeWeightedNotional.timeWeightedNotionalReceiveFixed =  (actualTimeWaitedNotionalToSave * maturity) / (maturity - swapTimePast);
+                timeWeightedNotional.timeWeightedNotionalReceiveFixed =  (actualTimeWeightedNotionalToSave * maturity) / (maturity - swapTimePast);
             }
         } else {
             if (direction == 0) {
-                timeWeightedNotional.timeWeightedNotionalPayFixed = actualTimeWaitedNotionalToSave;
+                timeWeightedNotional.timeWeightedNotionalPayFixed = actualTimeWeightedNotionalToSave;
             } else {
-                timeWeightedNotional.timeWeightedNotionalReceiveFixed = actualTimeWaitedNotionalToSave;
+                timeWeightedNotional.timeWeightedNotionalReceiveFixed = actualTimeWeightedNotionalToSave;
             }
         }
 

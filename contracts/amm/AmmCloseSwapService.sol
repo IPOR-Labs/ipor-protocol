@@ -440,7 +440,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             iporSwap.calculatePayoffPayFixed(closeTimestamp, accruedIpor.ibtPrice),
             accruedIpor.indexValue
         );
-        ISpreadCloseSwapService(_spreadRouter).timeWeightedNotionalUpdateOnClose(
+        ISpreadCloseSwapService(_spreadRouter).updateTimeWeightedNotionalOnClose(
             poolCfg.asset,
             0,
             AmmTypes.SwapDuration(iporSwap.duration),
@@ -488,7 +488,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             iporSwap.calculatePayoffReceiveFixed(closeTimestamp, accruedIpor.ibtPrice),
             accruedIpor.indexValue
         );
-        ISpreadCloseSwapService(_spreadRouter).timeWeightedNotionalUpdateOnClose(
+        ISpreadCloseSwapService(_spreadRouter).updateTimeWeightedNotionalOnClose(
             poolCfg.asset,
             1,
             AmmTypes.SwapDuration(iporSwap.duration),

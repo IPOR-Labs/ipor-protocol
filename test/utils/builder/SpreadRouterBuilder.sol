@@ -92,7 +92,7 @@ contract SpreadRouterBuilder is Test {
         deployedContracts.spread28Days = _buildSpread28Days();
         deployedContracts.spread60Days = _buildSpread60Days();
         deployedContracts.spread90Days = _buildSpread90Days();
-        deployedContracts.closeSwapAction = _buildCloseSwapAction();
+        deployedContracts.closeSwapService = _buildCloseSwapService();
 
         return address(new SpreadRouter(deployedContracts));
     }
@@ -141,7 +141,7 @@ contract SpreadRouterBuilder is Test {
         return address(new Spread90Days(builderData.dai, builderData.usdc, builderData.usdt));
     }
 // todo closeSwapSpreadService
-    function _buildCloseSwapAction() internal returns (address spread) {
+    function _buildCloseSwapService() internal returns (address spread) {
         return address(new MockSpreadCloseSwapService(builderData.dai, builderData.usdc, builderData.usdt));
     }
 

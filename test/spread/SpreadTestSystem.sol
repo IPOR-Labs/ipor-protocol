@@ -19,7 +19,7 @@ contract SpreadTestSystem is TestCommons {
     Spread60Days public spread60Days;
     Spread90Days public spread90Days;
     SpreadStorageLens public spreadStorageLens;
-    SpreadCloseSwapService public spreadCloseSwapAction;
+    SpreadCloseSwapService public spreadCloseSwapService;
     address public router;
     address public ammStorage;
 
@@ -30,7 +30,7 @@ contract SpreadTestSystem is TestCommons {
         spread28Days = new Spread28Days(address(dai), address(usdc), address(usdt));
         spread60Days = new Spread60Days(address(dai), address(usdc), address(usdt));
         spread90Days = new Spread90Days(address(dai), address(usdc), address(usdt));
-        spreadCloseSwapAction = new SpreadCloseSwapService(address(dai), address(usdc), address(usdt));
+        spreadCloseSwapService = new SpreadCloseSwapService(address(dai), address(usdc), address(usdt));
         spreadStorageLens = new SpreadStorageLens();
         SpreadRouter routerImplementation = new SpreadRouter(
             SpreadRouter.DeployedContracts(
@@ -39,7 +39,7 @@ contract SpreadTestSystem is TestCommons {
                 address(spread60Days),
                 address(spread90Days),
                 address(spreadStorageLens),
-                address(spreadCloseSwapAction)
+                address(spreadCloseSwapService)
             )
         );
         ERC1967Proxy proxy = new ERC1967Proxy(

@@ -18,7 +18,7 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
     address internal immutable SPREAD_28_DAYS;
     address internal immutable SPREAD_60_DAYS;
     address internal immutable SPREAD_90_DAYS;
-    address internal immutable CLOSE_SWAP_ACTION;
+    address internal immutable CLOSE_SWAP_SERVICE;
     address internal immutable STORAGE_LENS;
 
     struct DeployedContracts {
@@ -27,7 +27,7 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
         address spread60Days;
         address spread90Days;
         address storageLens;
-        address closeSwapAction;
+        address closeSwapService;
     }
 
     constructor(DeployedContracts memory deployedContracts) SpreadAccessControl(deployedContracts.ammAddress) {
@@ -35,12 +35,12 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
         require(deployedContracts.spread60Days != address(0), string.concat(IporErrors.WRONG_ADDRESS, " spread60Days"));
         require(deployedContracts.spread90Days != address(0), string.concat(IporErrors.WRONG_ADDRESS, " spread90Days"));
         require(deployedContracts.storageLens != address(0), string.concat(IporErrors.WRONG_ADDRESS, " storageLens"));
-        require(deployedContracts.closeSwapAction != address(0), string.concat(IporErrors.WRONG_ADDRESS, " closeSwapAction"));
+        require(deployedContracts.closeSwapService != address(0), string.concat(IporErrors.WRONG_ADDRESS, " closeSwapService"));
         SPREAD_28_DAYS = deployedContracts.spread28Days;
         SPREAD_60_DAYS = deployedContracts.spread60Days;
         SPREAD_90_DAYS = deployedContracts.spread90Days;
         STORAGE_LENS = deployedContracts.storageLens;
-        CLOSE_SWAP_ACTION = deployedContracts.closeSwapAction;
+        CLOSE_SWAP_SERVICE = deployedContracts.closeSwapService;
 
         _disableInitializers();
     }
@@ -94,10 +94,10 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
             return SPREAD_90_DAYS;
         } else if (sig == ISpreadStorageLens.getTimeWeightedNotional.selector) {
             return STORAGE_LENS;
-        } else if (sig == ISpreadCloseSwapService.timeWeightedNotionalUpdateOnClose.selector) {
+        } else if (sig == ISpreadCloseSwapService.updateTimeWeightedNotionalOnClose.selector) {
             _onlyIporProtocolRouter();
             _whenNotPaused();
-            return CLOSE_SWAP_ACTION;
+            return CLOSE_SWAP_SERVICE;
         }
         revert(AmmErrors.FUNCTION_NOT_SUPPORTED);
     }

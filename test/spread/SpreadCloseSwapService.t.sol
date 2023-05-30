@@ -22,7 +22,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         _owner = _spreadTestSystem.owner();
     }
 
-    function testShouldDecreaseTimeWaitedNotionalToZeroWhenPayFixed() external {
+    function testShouldDecreaseTimeWeightedNotionalToZeroWhenPayFixed() external {
         // given
         address dai = address(_spreadTestSystem.dai());
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
@@ -57,7 +57,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         // when
         vm.warp(openSwapTimeStamp + 27 days);
         vm.prank(_ammAddress);
-        ISpreadCloseSwapService(_routerAddress).timeWeightedNotionalUpdateOnClose(
+        ISpreadCloseSwapService(_routerAddress).updateTimeWeightedNotionalOnClose(
             dai,
             0,
             AmmTypes.SwapDuration.DAYS_28,
@@ -85,7 +85,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         assertTrue(sumAfter == 0, "sumAfter != 0");
     }
 
-    function testShouldDecreaseTimeWaitedNotionalToZeroWhenReceiveFixed() external {
+    function testShouldDecreaseTimeWeightedNotionalToZeroWhenReceiveFixed() external {
         // given
         address dai = address(_spreadTestSystem.dai());
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
@@ -120,7 +120,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         // when
         vm.warp(openSwapTimeStamp + 27 days);
         vm.prank(_ammAddress);
-        ISpreadCloseSwapService(_routerAddress).timeWeightedNotionalUpdateOnClose(
+        ISpreadCloseSwapService(_routerAddress).updateTimeWeightedNotionalOnClose(
             dai,
             1,
             AmmTypes.SwapDuration.DAYS_28,
@@ -148,7 +148,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         assertTrue(sumAfter == 0, "sumAfter != 0");
     }
 
-    function testShouldDecreaseTimeWaitedNotionalWhen2swapsOpensOneCloseWhenPayFixed() external {
+    function testShouldDecreaseTimeWeightedNotionalWhen2swapsOpensOneCloseWhenPayFixed() external {
         // given
         vm.warp(1000 days);
         address dai = address(_spreadTestSystem.dai());
@@ -185,7 +185,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         // when
         vm.warp(block.timestamp + 10 days);
         vm.prank(_ammAddress);
-        ISpreadCloseSwapService(_routerAddress).timeWeightedNotionalUpdateOnClose(
+        ISpreadCloseSwapService(_routerAddress).updateTimeWeightedNotionalOnClose(
             dai,
             0,
             AmmTypes.SwapDuration.DAYS_28,
@@ -214,7 +214,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         assertTrue(sumAfter == 10_000e18, "sumAfter != 10_000e18");
     }
 
-    function testShouldDecreaseTimeWaitedNotionalWhen2swapsOpensOneCloseWhenReceiveFixed() external {
+    function testShouldDecreaseTimeWeightedNotionalWhen2swapsOpensOneCloseWhenReceiveFixed() external {
         // given
         vm.warp(1000 days);
         address dai = address(_spreadTestSystem.dai());
@@ -251,7 +251,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         // when
         vm.warp(block.timestamp + 10 days);
         vm.prank(_ammAddress);
-        ISpreadCloseSwapService(_routerAddress).timeWeightedNotionalUpdateOnClose(
+        ISpreadCloseSwapService(_routerAddress).updateTimeWeightedNotionalOnClose(
             dai,
             1,
             AmmTypes.SwapDuration.DAYS_28,
@@ -280,7 +280,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         assertTrue(sumAfter == 10_000e18, "sumAfter != 10_000e18");
     }
 
-    function testShouldResetTimeWaitedNotionalToPrevStateWhenClosedLastOpenSwapReceiveFixed() external {
+    function testShouldResetTimeWeightedNotionalToPrevStateWhenClosedLastOpenSwapReceiveFixed() external {
         // given
         IAmmStorage ammStorage = IAmmStorage(_spreadTestSystem.ammStorage());
         uint256 cfgIporPublicationFee = 1e18;
@@ -370,7 +370,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         // when
         address ammStorageAddress = _spreadTestSystem.ammStorage();
         vm.prank(_ammAddress);
-        ISpreadCloseSwapService(_routerAddress).timeWeightedNotionalUpdateOnClose(
+        ISpreadCloseSwapService(_routerAddress).updateTimeWeightedNotionalOnClose(
             dai,
             1,
             AmmTypes.SwapDuration.DAYS_28,
@@ -416,7 +416,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         );
     }
 
-    function testShouldResetTimeWaitedNotionalToPrevStateWhenClosedLastOpenSwapPayFixed() external {
+    function testShouldResetTimeWeightedNotionalToPrevStateWhenClosedLastOpenSwapPayFixed() external {
         // given
         IAmmStorage ammStorage = IAmmStorage(_spreadTestSystem.ammStorage());
         uint256 cfgIporPublicationFee = 1e18;
@@ -506,7 +506,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         // when
         address ammStorageAddress = _spreadTestSystem.ammStorage();
         vm.prank(_ammAddress);
-        ISpreadCloseSwapService(_routerAddress).timeWeightedNotionalUpdateOnClose(
+        ISpreadCloseSwapService(_routerAddress).updateTimeWeightedNotionalOnClose(
             dai,
             0,
             AmmTypes.SwapDuration.DAYS_28,
