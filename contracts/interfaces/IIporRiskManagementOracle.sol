@@ -17,15 +17,20 @@ interface IIporRiskManagementOracle {
     /// @return maxUtilizationRatePerLeg maximum utilization rate for given leg
     /// @return maxUtilizationRate maximum utilization rate for both legs
     /// @return spread spread for given direction and duration
-    function getOpenSwapParameters(address asset, uint256 direction, uint256 duration)
-    external
-    view
-    returns (
-        uint256 maxNotionalPerLeg,
-        uint256 maxUtilizationRatePerLeg,
-        uint256 maxUtilizationRate,
-        int256 spread
-    );
+    function getOpenSwapParameters(
+        address asset,
+        uint256 direction,
+        uint256 duration
+    )
+        external
+        view
+        returns (
+            uint256 maxNotionalPerLeg,
+            uint256 maxUtilizationRatePerLeg,
+            uint256 maxUtilizationRate,
+            int256 spread,
+            uint256 fixedRateCap
+        );
 
     /// @notice Gets risk indicators for a given asset. Amounts and rates represented in 18 decimals.
     /// @param asset underlying / stablecoin address supported in Ipor Protocol
@@ -69,6 +74,28 @@ interface IIporRiskManagementOracle {
             int256 spread90dReceiveFixed
         );
 
+    /// @notice Gets fixed rate cap for a given asset. Rates represented in 18 decimals.
+    /// @param asset underlying / stablecoin address supported in Ipor Protocol
+    /// @return lastUpdateTimestamp Last base spreads update done by off-chain service
+    /// @return fixedRateCap28dPayFixed fixed rate cap for 28 days pay fixed swap
+    /// @return fixedRateCap28dReceiveFixed fixed rate cap for 28 days receive fixed swap
+    /// @return fixedRateCap60dPayFixed fixed rate cap for 60 days pay fixed swap
+    /// @return fixedRateCap60dReceiveFixed fixed rate cap for 60 days receive fixed swap
+    /// @return fixedRateCap90dPayFixed fixed rate cap for 90 days pay fixed swap
+    /// @return fixedRateCap90dReceiveFixed fixed rate cap for 90 days receive fixed swap
+    function getFixedRateCaps(address asset)
+        external
+        view
+        returns (
+            uint256 lastUpdateTimestamp,
+            uint256 fixedRateCap28dPayFixed,
+            uint256 fixedRateCap28dReceiveFixed,
+            uint256 fixedRateCap60dPayFixed,
+            uint256 fixedRateCap60dReceiveFixed,
+            uint256 fixedRateCap90dPayFixed,
+            uint256 fixedRateCap90dReceiveFixed
+        );
+
     /// @notice Updates risk indicators for a given asset. Values and rates are not represented in 18 decimals.
     /// @dev Emmits {RiskIndicatorsUpdated} event.
     /// @param asset underlying / stablecoin address supported by IPOR Protocol
@@ -106,39 +133,19 @@ interface IIporRiskManagementOracle {
     /// @notice Updates base spreads for a given asset. Rates are not represented in 18 decimals
     /// @dev Emmits {BaseSpreadsUpdated} event.
     /// @param asset underlying / stablecoin address supported by IPOR Protocol
-    /// @param spread28dPayFixed spread for 28 days pay fixed swap
-    /// @param spread28dReceiveFixed spread for 28 days receive fixed swap
-    /// @param spread60dPayFixed spread for 60 days pay fixed swap
-    /// @param spread60dReceiveFixed spread for 60 days receive fixed swap
-    /// @param spread90dPayFixed spread for 90 days pay fixed swap
-    /// @param spread90dReceiveFixed spread for 90 days receive fixed swap
+    /// @param baseSpreads base spreads for a given asset
     function updateBaseSpreads(
         address asset,
-        int256 spread28dPayFixed,
-        int256 spread28dReceiveFixed,
-        int256 spread60dPayFixed,
-        int256 spread60dReceiveFixed,
-        int256 spread90dPayFixed,
-        int256 spread90dReceiveFixed
+        IporRiskManagementOracleTypes.BaseSpreads calldata baseSpreads
     ) external;
 
     /// @notice Updates base spreads for a multiple assets.
     /// @dev Emmits {BaseSpreadsUpdated} event.
     /// @param asset underlying / stablecoin addresses supported by IPOR Protocol
-    /// @param spread28dPayFixed spread for 28 days pay fixed swap
-    /// @param spread28dReceiveFixed spread for 28 days receive fixed swap
-    /// @param spread60dPayFixed spread for 60 days pay fixed swap
-    /// @param spread60dReceiveFixed spread for 60 days receive fixed swap
-    /// @param spread90dPayFixed spread for 90 days pay fixed swap
-    /// @param spread90dReceiveFixed spread for 90 days receive fixed swap
+    /// @param baseSpreads base spread for each maturities and both legs
     function updateBaseSpreads(
         address[] memory asset,
-        int256[] memory spread28dPayFixed,
-        int256[] memory spread28dReceiveFixed,
-        int256[] memory spread60dPayFixed,
-        int256[] memory spread60dReceiveFixed,
-        int256[] memory spread90dPayFixed,
-        int256[] memory spread90dReceiveFixed
+        IporRiskManagementOracleTypes.BaseSpreads[] calldata baseSpreads
     ) external;
 
     /// @notice Adds asset which IPOR Protocol will support. Function available only for Owner.
@@ -212,6 +219,24 @@ interface IIporRiskManagementOracle {
         int256 baseSpreads60dReceiveFixed,
         int256 baseSpreads90dPayFixed,
         int256 baseSpreads90dReceiveFixed
+    );
+
+    /// @notice event emitted when base spreads are updated. Rates are represented in 18 decimals.
+    /// @param asset underlying / stablecoin address supported by IPOR Protocol
+    /// @param fixedRateCap28dPayFixed fixed rate cap for 28 days pay fixed swap
+    /// @param fixedRateCap28dReceiveFixed fixed rate cap for 28 days receive fixed swap
+    /// @param fixedRateCap60dPayFixed fixed rate cap for 60 days pay fixed swap
+    /// @param fixedRateCap60dReceiveFixed fixed rate cap for 60 days receive fixed swap
+    /// @param fixedRateCap90dPayFixed fixed rate cap for 90 days pay fixed swap
+    /// @param fixedRateCap90dReceiveFixed fixed rate cap for 90 days receive fixed swap
+    event FixedRateCapsUpdated(
+        address indexed asset,
+        uint256 fixedRateCap28dPayFixed,
+        uint256 fixedRateCap28dReceiveFixed,
+        uint256 fixedRateCap60dPayFixed,
+        uint256 fixedRateCap60dReceiveFixed,
+        uint256 fixedRateCap90dPayFixed,
+        uint256 fixedRateCap90dReceiveFixed
     );
 
     /// @notice event emitted when new asset is added
