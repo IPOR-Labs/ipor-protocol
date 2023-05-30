@@ -116,6 +116,12 @@ contract BuilderUtils {
         DEFAULT,
         CASE1
     }
+
+    enum AmmPoolsServiceTestCase {
+        DEFAULT,
+        CASE1
+    }
+
     enum AmmTreasuryTestCase {
         DEFAULT,
         CASE0,

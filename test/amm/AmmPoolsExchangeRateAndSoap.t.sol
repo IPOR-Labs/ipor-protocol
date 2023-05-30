@@ -62,7 +62,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         public
     {
         // given
-        //        _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE1;
+        _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE2;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -94,14 +94,14 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         // then
         assertLt(soap, TestConstants.ZERO_INT);
         assertLt(soap * -1, int256(balance.liquidityPool));
-        assertEq(actualExchangeRate, 1009369072035123743);
+        assertEq(actualExchangeRate, 1012607618867506728);
     }
 
     function testShouldCalculateExchangeRatePayFixedWhenSOAPChangedAndSOAPIsGreaterThanZeroAndSOAPAbsoluteValueIsLowerThanLiquidityPoolBalance()
         public
     {
         // given
-        _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE0;
+        _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE1;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -133,7 +133,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         // then
         assertGt(soap, TestConstants.ZERO_INT);
         assertLt(soap, int256(balance.liquidityPool));
-        assertEq(actualExchangeRate, 978916157484132790);
+        assertEq(actualExchangeRate, 991151961414231077);
     }
 
     function testShouldCalculateExchangeRateReceiveFixedWhenSOAPChangedAndSOAPIsGreaterThanZeroAndSOAPAbsoluteValueIsLowerThanLiquidityPoolBalance()
@@ -181,7 +181,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         public
     {
         // given
-        _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE0;
+        _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE1;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -223,7 +223,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         // then
         assertGt(soap, TestConstants.ZERO_INT);
         assertGt(soap, int256(balance.liquidityPool));
-        assertEq(soap, 9323017188182575735616);
+        assertEq(soap, 8588868952376678505112);
         assertEq(balance.liquidityPool, 5205280043501903214450);
     }
 
@@ -330,7 +330,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         public
     {
         // given
-        _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE4;
+        _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE2;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -368,14 +368,14 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getExchangeRate(address(_iporProtocol.asset));
 
         // then
-        assertEq(actualExchangeRate, 242138287194741316);
-        assertEq(soap, -9323017188182575735616);
+        assertEq(actualExchangeRate, 236024575572848574);
+        assertEq(soap, -8956194490869011225739);
         assertEq(balance.liquidityPool, 5205280043501903214450);
     }
 
     function testShouldCalculateExchangeRatePositionValuesAndSoapWhenTwoPayFixedSwapsAreClosedAfter60Days() public {
         // given
-        _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE0;
+        _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE1;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -415,16 +415,28 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         exchangeRateAndPayoff.exchangeRateAfter28Days = _iporProtocol.ammPoolsLens.getExchangeRate(
             address(_iporProtocol.asset)
         );
-        exchangeRateAndPayoff.payoff1After28Days = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
-        exchangeRateAndPayoff.payoff2After28Days = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 2);
+        exchangeRateAndPayoff.payoff1After28Days = _iporProtocol.ammSwapsLens.getPayoffPayFixed(
+            address(_iporProtocol.asset),
+            1
+        );
+        exchangeRateAndPayoff.payoff2After28Days = _iporProtocol.ammSwapsLens.getPayoffPayFixed(
+            address(_iporProtocol.asset),
+            2
+        );
 
         vm.warp(block.timestamp + TestConstants.PERIOD_28_DAYS_IN_SECONDS);
         (, , int256 soapAfter56DaysBeforeClose) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
         exchangeRateAndPayoff.exchangeRateAfter56DaysBeforeClose = _iporProtocol.ammPoolsLens.getExchangeRate(
             address(_iporProtocol.asset)
         );
-        exchangeRateAndPayoff.payoff1After56Days = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
-        exchangeRateAndPayoff.payoff2After56Days = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 2);
+        exchangeRateAndPayoff.payoff1After56Days = _iporProtocol.ammSwapsLens.getPayoffPayFixed(
+            address(_iporProtocol.asset),
+            1
+        );
+        exchangeRateAndPayoff.payoff2After56Days = _iporProtocol.ammSwapsLens.getPayoffPayFixed(
+            address(_iporProtocol.asset),
+            2
+        );
         IporTypes.AmmBalancesMemory memory liquidityPoolBalanceBeforeClose = _iporProtocol.ammPoolsLens.getBalance(
             address(_iporProtocol.asset)
         );
@@ -448,33 +460,33 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
             1086791317829457364359504,
             "incorrect liquidity pool balance before close"
         );
-        assertEq(soapAfter28Days, 391235825466760853741424, "incorrect SOAP after 28 days");
+        assertEq(soapAfter28Days, 43537371804356688432372, "incorrect SOAP after 28 days");
         assertEq(
             exchangeRateAndPayoff.exchangeRateAfter28Days,
-            695555492362696511,
+            1043253946025100676,
             "incorrect exchange rate after 28 days"
         );
-        assertEq(exchangeRateAndPayoff.payoff1After28Days, 56569341085271317820248, "incorrect payoff1After28Days");
-        assertEq(exchangeRateAndPayoff.payoff2After28Days, 56569341085271317820248, "incorrect payoff2After28Days");
-        assertEq(soapAfter56DaysBeforeClose, 783824552241828749844023, "incorrect SOAP after 56 days before close");
+        assertEq(exchangeRateAndPayoff.payoff1After28Days, 21768685902178344216186, "incorrect payoff1After28Days");
+        assertEq(exchangeRateAndPayoff.payoff2After28Days, 21768685902178344216186, "incorrect payoff2After28Days");
+        assertEq(soapAfter56DaysBeforeClose, 87359096014382786307122, "incorrect SOAP after 56 days before close");
         assertEq(
             exchangeRateAndPayoff.exchangeRateAfter56DaysBeforeClose,
-            302966765587628615,
+            999432221815074578,
             "incorrect exchange rate after 56 days before close"
         );
-        assertEq(exchangeRateAndPayoff.payoff1After56Days, 56569341085271317820248, "incorrect payoff1After56Days");
-        assertEq(exchangeRateAndPayoff.payoff2After56Days, 56569341085271317820248, "incorrect payoff2After56Days");
+        assertEq(exchangeRateAndPayoff.payoff1After56Days, 43679548007191393153560, "incorrect payoff1After56Days");
+        assertEq(exchangeRateAndPayoff.payoff2After56Days, 43679548007191393153560, "incorrect payoff2After56Days");
         assertEq(soapAfter56DaysAfterClose, TestConstants.ZERO_INT, "incorrect SOAP after close");
-        assertEq(exchangeRate56DaysAfterClose, 973652635658914729, "incorrect exchange rate after close");
+        assertEq(exchangeRate56DaysAfterClose, 999432221815074578, "incorrect exchange rate after close");
         assertEq(
             liquidityPoolBalanceAfterClose.liquidityPool,
-            973652635658914728719008,
+            999432221815074578052384,
             "incorrect Liquidity Pool balance after close"
         );
         // SOAP + Liquidity Pool balance before close should be equal to Liquidity Pool balance after close swaps
         assertEq(
             actualSOAPPlusLiquidityPoolBalanceBeforeClose,
-            302966765587628614515481,
+            999432221815074578052382,
             "incorrect SOAP + Liquidity Pool balance before close"
         );
     }
