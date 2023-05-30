@@ -18,7 +18,7 @@ library IporRiskManagementOracleStorageTypes {
         uint32 lastUpdateTimestamp;
     }
 
-    struct BaseSpreadsStorage {
+    struct BaseSpreadsAndFixedRateCapsStorage {
         /// @notice Timestamp of most recent indicators update
         uint32 lastUpdateTimestamp;
         /// @notice spread for 28 days pay fixed swap

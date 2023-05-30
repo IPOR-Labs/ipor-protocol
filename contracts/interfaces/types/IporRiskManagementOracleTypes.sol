@@ -17,8 +17,8 @@ library IporRiskManagementOracleTypes {
         uint256 maxUtilizationRate;
     }
 
-    //@notice Base Spread Structure for a given asset, both legs and all maturities
-    struct BaseSpreads {
+    //@notice Base Spreads And Fixed Rate Caps Structure for a given asset, both legs and all maturities
+    struct BaseSpreadsAndFixedRateCaps {
         /// @notice spread for 28 days pay fixed swap
         int256 spread28dPayFixed;
         /// @notice spread for 28 days receive fixed swap

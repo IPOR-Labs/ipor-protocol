@@ -23,12 +23,11 @@ contract IporRiskManagementOracleFactory is Test {
         IporRiskManagementOracleTypes.RiskIndicators
             memory riskIndicators = _constructIndicatorsBasedOnInitialParamTestCase(initialParams);
 
-        IporRiskManagementOracleTypes.BaseSpreads memory baseSpreads = _constructSpreadsBasedOnInitialParamTestCase(
-            initialParams
-        );
+        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps
+            memory baseSpreadsAndFixedRateCaps = _constructSpreadsBasedOnInitialParamTestCase(initialParams);
 
         for (uint256 i = 0; i < assets.length; i++) {
-            _iporRiskManagementOracleBuilder.withAsset(assets[i], riskIndicators, baseSpreads);
+            _iporRiskManagementOracleBuilder.withAsset(assets[i], riskIndicators, baseSpreadsAndFixedRateCaps);
         }
 
         IporRiskManagementOracle oracle = _iporRiskManagementOracleBuilder.build();
@@ -96,7 +95,7 @@ contract IporRiskManagementOracleFactory is Test {
 
     function _constructSpreadsBasedOnInitialParamTestCase(
         BuilderUtils.IporRiskManagementOracleInitialParamsTestCase initialParamsTestCase
-    ) internal pure returns (IporRiskManagementOracleTypes.BaseSpreads memory baseSpreads) {
+    ) internal pure returns (IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps memory baseSpreads) {
         int24 spread28dPayFixed = TestConstants.RMO_SPREAD_0_1_PER;
         int24 spread28dReceiveFixed = TestConstants.RMO_SPREAD_0_1_PER;
         int24 spread60dPayFixed = TestConstants.RMO_SPREAD_0_1_PER;
@@ -111,7 +110,7 @@ contract IporRiskManagementOracleFactory is Test {
         uint16 fixedRateCap90dReceiveFixed = TestConstants.RMO_FIXED_RATE_CAP_3_5_PER;
 
         return
-            IporRiskManagementOracleTypes.BaseSpreads({
+            IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps({
                 spread28dPayFixed: spread28dPayFixed,
                 spread28dReceiveFixed: spread28dReceiveFixed,
                 spread60dPayFixed: spread60dPayFixed,

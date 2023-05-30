@@ -24,9 +24,9 @@ contract IporRiskManagementOracleUtils is Test {
             maxUtilizationRateReceiveFixed: maxUtilizationRatePerLeg,
             maxUtilizationRate: maxUtilizationRate
         });
-        IporRiskManagementOracleTypes.BaseSpreads[]
-            memory baseSpreadsList = new IporRiskManagementOracleTypes.BaseSpreads[](1);
-        baseSpreadsList[0] = IporRiskManagementOracleTypes.BaseSpreads({
+        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[]
+            memory baseSpreadsList = new IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[](1);
+        baseSpreadsList[0] = IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps({
             spread28dPayFixed: baseSpread,
             spread28dReceiveFixed: baseSpread,
             spread60dPayFixed: baseSpread,
@@ -49,8 +49,8 @@ contract IporRiskManagementOracleUtils is Test {
     ) public returns (IIporRiskManagementOracle) {
         IporRiskManagementOracleTypes.RiskIndicators[]
             memory riskIndicatorsList = new IporRiskManagementOracleTypes.RiskIndicators[](assets.length);
-        IporRiskManagementOracleTypes.BaseSpreads[]
-            memory baseSpreadsList = new IporRiskManagementOracleTypes.BaseSpreads[](assets.length);
+        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[]
+            memory baseSpreadsList = new IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[](assets.length);
 
         for (uint256 i = 0; i < assets.length; i++) {
             riskIndicatorsList[i] = IporRiskManagementOracleTypes.RiskIndicators({
@@ -60,7 +60,7 @@ contract IporRiskManagementOracleUtils is Test {
                 maxUtilizationRateReceiveFixed: maxUtilizationRatePerLeg,
                 maxUtilizationRate: maxUtilizationRate
             });
-            baseSpreadsList[i] = IporRiskManagementOracleTypes.BaseSpreads({
+            baseSpreadsList[i] = IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps({
                 spread28dPayFixed: baseSpread,
                 spread28dReceiveFixed: baseSpread,
                 spread60dPayFixed: baseSpread,
@@ -76,7 +76,7 @@ contract IporRiskManagementOracleUtils is Test {
         address updater,
         address[] memory assets,
         IporRiskManagementOracleTypes.RiskIndicators[] memory riskIndicatorsList,
-        IporRiskManagementOracleTypes.BaseSpreads[] memory baseSpreadsList
+        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[] memory baseSpreadsList
     ) internal returns (IporRiskManagementOracle) {
         IporRiskManagementOracle iporRiskManagementOracleImplementation = new IporRiskManagementOracle();
         ERC1967Proxy iporRiskManagementOracleProxy = new ERC1967Proxy(

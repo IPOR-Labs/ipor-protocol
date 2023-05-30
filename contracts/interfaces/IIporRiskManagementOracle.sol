@@ -130,32 +130,32 @@ interface IIporRiskManagementOracle {
         uint256[] memory maxUtilizationRate
     ) external;
 
-    /// @notice Updates base spreads for a given asset. Rates are not represented in 18 decimals
+    /// @notice Updates base spreads and fixed rate caps for a given asset. Rates are not represented in 18 decimals
     /// @dev Emmits {BaseSpreadsUpdated} event.
     /// @param asset underlying / stablecoin address supported by IPOR Protocol
-    /// @param baseSpreads base spreads for a given asset
-    function updateBaseSpreads(
+    /// @param baseSpreadsAndFixedRateCaps base spreads and fixed rate caps for a given asset
+    function updateBaseSpreadsAndFixedRateCaps(
         address asset,
-        IporRiskManagementOracleTypes.BaseSpreads calldata baseSpreads
+        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps calldata baseSpreadsAndFixedRateCaps
     ) external;
 
-    /// @notice Updates base spreads for a multiple assets.
+    /// @notice Updates base spreads and fixed rate caps for a multiple assets.
     /// @dev Emmits {BaseSpreadsUpdated} event.
     /// @param asset underlying / stablecoin addresses supported by IPOR Protocol
-    /// @param baseSpreads base spread for each maturities and both legs
-    function updateBaseSpreads(
+    /// @param baseSpreadsAndFixedRateCaps base spread and fixed rate cap for each maturities and both legs
+    function updateBaseSpreadsAndFixedRateCaps(
         address[] memory asset,
-        IporRiskManagementOracleTypes.BaseSpreads[] calldata baseSpreads
+        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[] calldata baseSpreadsAndFixedRateCaps
     ) external;
 
     /// @notice Adds asset which IPOR Protocol will support. Function available only for Owner.
     /// @param asset underlying / stablecoin address which will be supported by IPOR Protocol.
     /// @param riskIndicators risk indicators
-    /// @param baseSpreads base spread for each maturities and both legs
+    /// @param baseSpreadsAndFixedRateCaps base spread and fixed rate cap for each maturities and both legs
     function addAsset(
         address asset,
         IporRiskManagementOracleTypes.RiskIndicators calldata riskIndicators,
-        IporRiskManagementOracleTypes.BaseSpreads calldata baseSpreads
+        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps calldata baseSpreadsAndFixedRateCaps
     ) external;
 
     /// @notice Removes asset which IPOR Protocol will not support. Function available only for Owner.
