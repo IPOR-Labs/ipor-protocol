@@ -83,17 +83,14 @@ contract TestnetFaucet is
         uint256 secondsToNextClaim = _couldClaimInSeconds();
         require(
             secondsToNextClaim == 0,
-            string(
-                abi.encodePacked(
-                    MocksErrors.CAN_CLAIM_ONCE_EVERY_24H,
-                    ": ",
-                    Strings.toString(secondsToNextClaim)
-                )
-            )
+            string(abi.encodePacked(MocksErrors.CAN_CLAIM_ONCE_EVERY_24H, ": ", Strings.toString(secondsToNextClaim)))
         );
         uint256 lengthAssets = _assets.length;
-        for (uint256 i; i < lengthAssets; ++i) {
+        for (uint256 i; i != lengthAssets; ) {
             _transfer(_assets[i]);
+            unchecked {
+                ++i;
+            }
         }
         _lastClaim[_msgSender()] = block.timestamp;
     }
@@ -132,10 +129,13 @@ contract TestnetFaucet is
     function addAsset(address asset, uint256 amount) external override onlyOwner {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         uint256 assetsLength = _assets.length;
-        for (uint256 i; i < assetsLength; ++i) {
+        for (uint256 i; i != assetsLength; ) {
             if (_assets[i] == asset) {
                 _amountToTransfer[asset] = amount;
                 return;
+            }
+            unchecked {
+                ++i;
             }
         }
         _assets.push(asset);

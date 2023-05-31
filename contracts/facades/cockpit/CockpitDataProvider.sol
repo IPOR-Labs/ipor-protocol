@@ -38,13 +38,16 @@ contract CockpitDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgra
         _assets = assets;
 
         uint256 assetsLength = assets.length;
-        for (uint256 i = 0; i != assetsLength; i++) {
+        for (uint256 i; i != assetsLength; ) {
             require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
             require(ammTreasurys[i] != address(0), IporErrors.WRONG_ADDRESS);
             require(ipTokens[i] != address(0), IporErrors.WRONG_ADDRESS);
             require(ivTokens[i] != address(0), IporErrors.WRONG_ADDRESS);
 
             _assetConfig[assets[i]] = CockpitTypes.AssetConfig(ammTreasurys[i], ipTokens[i], ivTokens[i]);
+            unchecked {
+                ++i;
+            }
         }
     }
 
@@ -56,8 +59,11 @@ contract CockpitDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgra
         CockpitTypes.IporFront[] memory indexes = new CockpitTypes.IporFront[](_assets.length);
 
         uint256 assetsLength = _assets.length;
-        for (uint256 i = 0; i != assetsLength; i++) {
+        for (uint256 i; i != assetsLength; ) {
             indexes[i] = _createIporFront(_assets[i]);
+            unchecked {
+                ++i;
+            }
         }
         return indexes;
     }

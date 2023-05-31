@@ -524,8 +524,9 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         require(swapIds.length <= poolCfg.liquidationLegLimit, AmmErrors.LIQUIDATION_LEG_LIMIT_EXCEEDED);
 
         closedSwaps = new AmmTypes.IporSwapClosingResult[](swapIds.length);
+        uint256 swapIdsLength = swapIds.length;
 
-        for (uint256 i = 0; i < swapIds.length; i++) {
+        for (uint256 i; i != swapIdsLength; ) {
             uint256 swapId = swapIds[i];
             require(swapId > 0, AmmErrors.INCORRECT_SWAP_ID);
 
@@ -536,6 +537,10 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
                 closedSwaps[i] = AmmTypes.IporSwapClosingResult(swapId, true);
             } else {
                 closedSwaps[i] = AmmTypes.IporSwapClosingResult(swapId, false);
+            }
+
+            unchecked {
+                ++i;
             }
         }
     }
@@ -549,7 +554,9 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
 
         closedSwaps = new AmmTypes.IporSwapClosingResult[](swapIds.length);
 
-        for (uint256 i = 0; i < swapIds.length; i++) {
+        uint256 swapIdsLength = swapIds.length;
+
+        for (uint256 i; i != swapIdsLength; ) {
             uint256 swapId = swapIds[i];
             require(swapId > 0, AmmErrors.INCORRECT_SWAP_ID);
 
@@ -560,6 +567,10 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
                 closedSwaps[i] = AmmTypes.IporSwapClosingResult(swapId, true);
             } else {
                 closedSwaps[i] = AmmTypes.IporSwapClosingResult(swapId, false);
+            }
+
+            unchecked {
+                ++i;
             }
         }
     }

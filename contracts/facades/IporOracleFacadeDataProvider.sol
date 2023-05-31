@@ -48,8 +48,11 @@ contract IporOracleFacadeDataProvider is
         );
 
         uint256 assetLength = _assets.length;
-        for (uint256 i = 0; i != assetLength; i++) {
+        for (uint256 i; i != assetLength;) {
             indexes[i] = _createIporFront(_assets[i]);
+        unchecked {
+            ++i;
+        }
         }
         return indexes;
     }

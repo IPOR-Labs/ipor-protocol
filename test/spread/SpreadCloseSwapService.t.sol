@@ -73,7 +73,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
 
         uint256 sumBefore;
         uint256 sumAfter;
-        for (uint256 i = 0; i < timeWeightedNotionalResponseAfter.length; i++) {
+        for (uint256 i; i != timeWeightedNotionalResponseAfter.length; i++) {
             sumBefore =
                 sumBefore +
                 timeWeightedNotionalResponseBefore[i].timeWeightedNotional.timeWeightedNotionalPayFixed;
@@ -136,7 +136,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
 
         uint256 sumBefore;
         uint256 sumAfter;
-        for (uint256 i = 0; i < timeWeightedNotionalResponseAfter.length; i++) {
+        for (uint256 i; i != timeWeightedNotionalResponseAfter.length; i++) {
             sumBefore =
                 sumBefore +
                 timeWeightedNotionalResponseBefore[i].timeWeightedNotional.timeWeightedNotionalReceiveFixed;
@@ -201,7 +201,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
 
         uint256 sumBefore;
         uint256 sumAfter;
-        for (uint256 i = 0; i < timeWeightedNotionalResponseAfter.length; ++i) {
+        for (uint256 i; i != timeWeightedNotionalResponseAfter.length; ++i) {
             sumBefore =
                 sumBefore +
                 timeWeightedNotionalResponseBefore[i].timeWeightedNotional.timeWeightedNotionalPayFixed;
@@ -267,7 +267,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
 
         uint256 sumBefore;
         uint256 sumAfter;
-        for (uint256 i = 0; i < timeWeightedNotionalResponseAfter.length; ++i) {
+        for (uint256 i; i != timeWeightedNotionalResponseAfter.length; ++i) {
             sumBefore =
                 sumBefore +
                 timeWeightedNotionalResponseBefore[i].timeWeightedNotional.timeWeightedNotionalReceiveFixed;

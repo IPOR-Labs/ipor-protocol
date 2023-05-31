@@ -19,7 +19,7 @@ contract CalculateWeightedNotionalLibsTest is TestCommons {
 
     modifier _parameterizedStorageId() {
         uint256 length = _storageIdEnums.length;
-        for (uint256 i = 0; i < length; ++i) {
+        for (uint256 i; i != length; ++i) {
             _storageIdIterationItem = _storageIdEnums[i];
             _;
         }

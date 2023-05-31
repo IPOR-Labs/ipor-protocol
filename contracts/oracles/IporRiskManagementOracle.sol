@@ -56,7 +56,7 @@ contract IporRiskManagementOracle is
             IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH
         );
 
-        for (uint256 i; i != assetsLength; ++i) {
+        for (uint256 i; i != assetsLength;) {
             require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
             _indicators[assets[i]] = IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage(
                 riskIndicators[i].maxNotionalPayFixed.toUint64(),
@@ -112,6 +112,10 @@ contract IporRiskManagementOracle is
                 baseSpreadsAndFixedRateCaps[i].fixedRateCap90dPayFixed,
                 baseSpreadsAndFixedRateCaps[i].fixedRateCap90dReceiveFixed
             );
+        unchecked {
+            ++i;
+        }
+
         }
     }
 
@@ -376,7 +380,7 @@ contract IporRiskManagementOracle is
             IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH
         );
 
-        for (uint256 i; i != assetsLength; ++i) {
+        for (uint256 i; i != assetsLength;) {
             _updateRiskIndicators(
                 asset[i],
                 maxNotionalPayFixed[i],
@@ -385,6 +389,9 @@ contract IporRiskManagementOracle is
                 maxUtilizationRateReceiveFixed[i],
                 maxUtilizationRate[i]
             );
+        unchecked {
+            ++i;
+        }
         }
     }
 
@@ -434,8 +441,11 @@ contract IporRiskManagementOracle is
 
         require(assetsLength == baseSpreadsAndFixedRateCaps.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
 
-        for (uint256 i; i != assetsLength; ++i) {
+        for (uint256 i; i != assetsLength;) {
             _updateBaseSpreadsAndFixedRateCaps(asset[i], baseSpreadsAndFixedRateCaps[i]);
+        unchecked {
+            ++i;
+        }
         }
     }
 
