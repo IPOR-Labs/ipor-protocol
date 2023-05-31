@@ -18,7 +18,7 @@ library IporRiskManagementOracleStorageTypes {
         uint32 lastUpdateTimestamp;
     }
 
-    struct BaseSpreadsStorage {
+    struct BaseSpreadsAndFixedRateCapsStorage {
         /// @notice Timestamp of most recent indicators update
         uint32 lastUpdateTimestamp;
         /// @notice spread for 28 days pay fixed swap
@@ -33,5 +33,17 @@ library IporRiskManagementOracleStorageTypes {
         int24 spread90dPayFixed;
         /// @notice spread for 90 days receive fixed swap
         int24 spread90dReceiveFixed;
+        /// @notice fixed rate cap for 28 days pay fixed swap
+        uint16 fixedRateCap28dPayFixed;
+        /// @notice fixed rate cap for 28 days receive fixed swap
+        uint16 fixedRateCap28dReceiveFixed;
+        /// @notice fixed rate cap for 60 days pay fixed swap
+        uint16 fixedRateCap60dPayFixed;
+        /// @notice fixed rate cap for 60 days receive fixed swap
+        uint16 fixedRateCap60dReceiveFixed;
+        /// @notice fixed rate cap for 90 days pay fixed swap
+        uint16 fixedRateCap90dPayFixed;
+        /// @notice fixed rate cap for 90 days receive fixed swap
+        uint16 fixedRateCap90dReceiveFixed;
     }
 }

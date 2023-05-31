@@ -262,4 +262,9 @@ library TestConstants {
     int24 public constant RMO_SPREAD_0_25_PER = 2500;
     int24 public constant RMO_SPREAD_0_3_PER = 3000;
     int24 public constant RMO_SPREAD_0_35_PER = 3500;
+    uint16 public constant RMO_FIXED_RATE_CAP_2_0_PER = 20000;
+    uint16 public constant RMO_FIXED_RATE_CAP_3_5_PER = 35000;
+    uint16 public constant RMO_FIXED_RATE_CAP_4_0_PER = 40000;
+    uint16 public constant RMO_FIXED_RATE_CAP_4_1_PER = 41000;
+    uint16 public constant RMO_FIXED_RATE_CAP_4_2_PER = 42000;
 }
