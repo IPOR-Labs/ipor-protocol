@@ -225,8 +225,11 @@ contract AmmSwapsLens is IAmmSwapsLens {
     ) internal view returns (IAmmSwapsLens.IporSwap[] memory swaps) {
         uint256 swapCount = swapIds.length;
         AmmStorageTypes.IporSwapId[] memory swapIdsWithDirection = new AmmStorageTypes.IporSwapId[](swapCount);
-        for (uint256 i; i != swapCount; ++i) {
+        for (uint256 i; i != swapCount;) {
             swapIdsWithDirection[i] = AmmStorageTypes.IporSwapId({id: swapIds[i], direction: 0});
+        unchecked {
+            ++i;
+        }
         }
         return _mapSwaps(asset, ammStorage, swapIdsWithDirection);
     }
@@ -238,8 +241,11 @@ contract AmmSwapsLens is IAmmSwapsLens {
     ) internal view returns (IAmmSwapsLens.IporSwap[] memory swaps) {
         uint256 swapCount = swapIds.length;
         AmmStorageTypes.IporSwapId[] memory swapIdsWithDirection = new AmmStorageTypes.IporSwapId[](swapCount);
-        for (uint256 i; i != swapCount; ++i) {
+        for (uint256 i; i != swapCount;) {
             swapIdsWithDirection[i] = AmmStorageTypes.IporSwapId({id: swapIds[i], direction: 1});
+        unchecked {
+            ++i;
+        }
         }
         return _mapSwaps(asset, ammStorage, swapIdsWithDirection);
     }
@@ -252,7 +258,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         uint256 accruedIbtPrice = _iporOracle.calculateAccruedIbtPrice(asset, block.timestamp);
         uint256 swapCount = swapIds.length;
         IAmmSwapsLens.IporSwap[] memory mappedSwaps = new IAmmSwapsLens.IporSwap[](swapCount);
-        for (uint256 i; i != swapCount; ++i) {
+        for (uint256 i; i != swapCount;) {
             AmmStorageTypes.IporSwapId memory swapId = swapIds[i];
             if (swapId.direction == 0) {
                 IporTypes.IporSwapMemory memory iporSwap = ammStorage.getSwapPayFixed(swapId.id);
@@ -263,6 +269,9 @@ contract AmmSwapsLens is IAmmSwapsLens {
                 int256 swapValue = iporSwap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
                 mappedSwaps[i] = _mapSwap(asset, iporSwap, 1, swapValue);
             }
+        unchecked {
+            ++i;
+        }
         }
         return mappedSwaps;
     }

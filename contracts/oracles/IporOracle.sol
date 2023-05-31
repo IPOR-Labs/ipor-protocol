@@ -72,20 +72,30 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
         uint256 assetsLength = assets.length;
 
-        for (uint256 i; i != assetsLength; ++i) {
+        for (uint256 i; i != assetsLength; ) {
             require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
 
             _indexes[assets[i]] = IporOracleTypes.IPOR(0, 0, updateTimestamps[i]);
+            unchecked {
+                ++i;
+            }
         }
     }
 
     function postUpgrade(address[] memory assets) public onlyOwner {
         uint256 assetsLength = assets.length;
 
-        for (uint256 i; i != assetsLength; ++i) {
+        IporOracleTypes.IPOR memory oldIpor;
+
+        for (uint256 i; i != assetsLength; ) {
             require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
-            IporOracleTypes.IPOR memory oldIpor = _indexes[assets[i]];
+
+            oldIpor = _indexes[assets[i]];
             _indexes[assets[i]] = IporOracleTypes.IPOR(0, oldIpor.indexValue, block.timestamp.toUint32());
+
+            unchecked {
+                ++i;
+            }
         }
     }
 
@@ -105,14 +115,7 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             uint256 daiInitialIbtPrice
         )
     {
-        return (
-            _usdt,
-            _usdtInitialIbtPrice,
-            _usdc,
-            _usdcInitialIbtPrice,
-            _dai,
-            _daiInitialIbtPrice
-        );
+        return (_usdt, _usdtInitialIbtPrice, _usdc, _usdcInitialIbtPrice, _dai, _daiInitialIbtPrice);
     }
 
     function getIndex(address asset)
@@ -219,10 +222,14 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         uint256[] memory indexValues,
         uint256 updateTimestamp
     ) internal {
-        require(assets.length == indexValues.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
+        uint256 assetsLength = assets.length;
+        require(assetsLength == indexValues.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
 
-        for (uint256 i; i != assets.length; ++i) {
+        for (uint256 i; i != assetsLength; ) {
             _updateIndex(assets[i], indexValues[i], updateTimestamp);
+            unchecked {
+                ++i;
+            }
         }
     }
 

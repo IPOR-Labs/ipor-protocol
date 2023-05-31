@@ -106,7 +106,7 @@ contract IporOracleFactory is Test {
             lastUpdateTimestamp = 1;
         }
 
-        for (uint256 i = 0; i < assets.length; i++) {
+        for (uint256 i; i < assets.length; i++) {
             lastUpdateTimestamps[i] = lastUpdateTimestamp;
         }
     }

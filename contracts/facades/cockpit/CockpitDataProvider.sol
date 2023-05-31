@@ -31,20 +31,25 @@ contract CockpitDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgra
     ) public initializer {
         __Ownable_init();
         __UUPSUpgradeable_init();
+
+        uint256 assetsLength = assets.length;
+
         require(iporOracle != address(0), IporErrors.WRONG_ADDRESS);
-        require(assets.length == ammTreasurys.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
+        require(assetsLength == ammTreasurys.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
 
         _iporOracle = iporOracle;
         _assets = assets;
 
-        uint256 assetsLength = assets.length;
-        for (uint256 i = 0; i != assetsLength; i++) {
+        for (uint256 i; i != assetsLength; ) {
             require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
             require(ammTreasurys[i] != address(0), IporErrors.WRONG_ADDRESS);
             require(ipTokens[i] != address(0), IporErrors.WRONG_ADDRESS);
             require(ivTokens[i] != address(0), IporErrors.WRONG_ADDRESS);
 
             _assetConfig[assets[i]] = CockpitTypes.AssetConfig(ammTreasurys[i], ipTokens[i], ivTokens[i]);
+            unchecked {
+                ++i;
+            }
         }
     }
 
@@ -53,11 +58,14 @@ contract CockpitDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgra
     }
 
     function getIndexes() external view override returns (CockpitTypes.IporFront[] memory) {
-        CockpitTypes.IporFront[] memory indexes = new CockpitTypes.IporFront[](_assets.length);
-
         uint256 assetsLength = _assets.length;
-        for (uint256 i = 0; i != assetsLength; i++) {
+        CockpitTypes.IporFront[] memory indexes = new CockpitTypes.IporFront[](assetsLength);
+
+        for (uint256 i; i != assetsLength; ) {
             indexes[i] = _createIporFront(_assets[i]);
+            unchecked {
+                ++i;
+            }
         }
         return indexes;
     }

@@ -212,8 +212,11 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
         ids = new uint256[](resultSetSize);
 
-        for (uint256 i = 0; i != resultSetSize; i++) {
+        for (uint256 i; i != resultSetSize; ) {
             ids[i] = idsRef[offset + i];
+            unchecked {
+                ++i;
+            }
         }
     }
 
@@ -232,8 +235,11 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
         ids = new uint256[](resultSetSize);
 
-        for (uint256 i = 0; i != resultSetSize; i++) {
+        for (uint256 i; i != resultSetSize; ) {
             ids[i] = idsRef[offset + i];
+            unchecked {
+                ++i;
+            }
         }
     }
 
@@ -257,11 +263,14 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
         ids = new AmmStorageTypes.IporSwapId[](resultSetSize);
 
-        for (uint256 i = 0; i != resultSetSize; i++) {
+        for (uint256 i; i != resultSetSize; ) {
             if (offset + i < payFixedLength) {
                 ids[i] = AmmStorageTypes.IporSwapId(payFixedIdsRef[offset + i], 0);
             } else {
                 ids[i] = AmmStorageTypes.IporSwapId(receiveFixedIdsRef[offset + i - payFixedLength], 1);
+            }
+            unchecked {
+                ++i;
             }
         }
     }
@@ -498,7 +507,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         uint256 swapsIdsLength = PaginationUtils.resolveResultSetSize(ids.length, offset, chunkSize);
         IporTypes.IporSwapMemory[] memory derivatives = new IporTypes.IporSwapMemory[](swapsIdsLength);
 
-        for (uint256 i = 0; i != swapsIdsLength; i++) {
+        for (uint256 i; i != swapsIdsLength; ) {
             uint32 id = ids[i + offset];
             StorageInternalTypes.IporSwap storage swap = swaps[id];
             derivatives[i] = IporTypes.IporSwapMemory(
@@ -514,6 +523,9 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
                 swap.liquidationDepositAmount * Constants.D18,
                 uint256(swaps[id].state)
             );
+            unchecked {
+                ++i;
+            }
         }
         return derivatives;
     }

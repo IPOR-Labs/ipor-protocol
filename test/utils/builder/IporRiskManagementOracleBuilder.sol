@@ -53,7 +53,7 @@ contract IporRiskManagementOracleBuilder is Test {
     ) public returns (IporRiskManagementOracleBuilder) {
         address[] memory _oldAssets = _assets;
         _assets = new address[](_assets.length + 1);
-        for (uint256 i = 0; i < _oldAssets.length; i++) {
+        for (uint256 i; i < _oldAssets.length; i++) {
             _assets[i] = _oldAssets[i];
         }
         _assets[_assets.length - 1] = asset;
@@ -79,7 +79,7 @@ contract IporRiskManagementOracleBuilder is Test {
                 _assets.length
             );
 
-        for (uint256 i = 0; i < _assets.length; i++) {
+        for (uint256 i; i < _assets.length; i++) {
             riskIndicators[i] = IporRiskManagementOracleTypes.RiskIndicators({
                 maxNotionalPayFixed: _riskIndicators[_assets[i]].maxNotionalPayFixed,
                 maxNotionalReceiveFixed: _riskIndicators[_assets[i]].maxNotionalReceiveFixed,
