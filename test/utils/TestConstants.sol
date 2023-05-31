@@ -63,7 +63,9 @@ library TestConstants {
     uint256 public constant PERCENTAGE_9_18DEC = 9 * 1e16;
     uint256 public constant PERCENTAGE_10_18DEC = 10 * 1e16;
     uint256 public constant PERCENTAGE_16_18DEC = 16 * 1e16;
+    uint256 public constant PERCENTAGE_49_18DEC = 49 * 1e16;
     uint256 public constant PERCENTAGE_50_18DEC = 50 * 1e16;
+    uint256 public constant PERCENTAGE_51_18DEC = 51 * 1e16;
     uint256 public constant PERCENTAGE_95_18DEC = 95 * 1e16;
     uint256 public constant PERCENTAGE_119_18DEC = 119 * 1e16;
     uint256 public constant PERCENTAGE_120_18DEC = 120 * 1e16;
@@ -260,4 +262,9 @@ library TestConstants {
     int24 public constant RMO_SPREAD_0_25_PER = 2500;
     int24 public constant RMO_SPREAD_0_3_PER = 3000;
     int24 public constant RMO_SPREAD_0_35_PER = 3500;
+    uint16 public constant RMO_FIXED_RATE_CAP_2_0_PER = 20000;
+    uint16 public constant RMO_FIXED_RATE_CAP_3_5_PER = 35000;
+    uint16 public constant RMO_FIXED_RATE_CAP_4_0_PER = 40000;
+    uint16 public constant RMO_FIXED_RATE_CAP_4_1_PER = 41000;
+    uint16 public constant RMO_FIXED_RATE_CAP_4_2_PER = 42000;
 }
