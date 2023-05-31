@@ -28,7 +28,6 @@ pragma solidity 0.8.16;
 //import "../test/utils/Deployer/AssetDeployer.sol";
 //import "../test/utils/Deployer/IpTokenDeployer.sol";
 //import "../test/utils/Deployer/IvTokenDeployer.sol";
-//import "../test/utils/Deployer/IporWeightedDeployer.sol";
 //import "../test/utils/Deployer/AmmStorageDeployer.sol";
 //import "../test/utils/Deployer/AssetManagementDeployer.sol";
 //import "../test/utils/Deployer/SpreadRouterDeployer.sol";
@@ -86,7 +85,6 @@ contract DeployLocal is Script {
         IporProtocolRouter router;
         SpreadRouter spreadRouter;
         IporOracle iporOracle;
-        //        MockIporWeighted iporWeighted;
         IporRiskManagementOracle iporRiskManagementOracle;
         DeployerUtils.IporProtocol usdt;
         DeployerUtils.IporProtocol usdc;
@@ -116,7 +114,6 @@ contract DeployLocal is Script {
     AssetDeployer internal _assetDeployer;
     //    IpTokenDeployer internal _ipTokenDeployer;
     //    IvTokenDeployer internal _ivTokenDeployer;
-    //    IporWeightedDeployer internal _iporWeightedDeployer;
     //    AmmStorageDeployer internal _ammStorageDeployer;
     AmmTreasuryDeployer internal _ammTreasuryDeployer;
     //    SpreadRouterDeployer internal _spreadRouterDeployer;
@@ -162,17 +159,12 @@ contract DeployLocal is Script {
         amm.usdt.iporOracle = amm.iporOracle;
         amm.usdc.iporOracle = amm.iporOracle;
         amm.dai.iporOracle = amm.iporOracle;
-        //
-        //        amm.iporWeighted = _iporWeightedDeployer.withIporOracle(address(amm.iporOracle)).build();
-        //        amm.usdt.iporWeighted = amm.iporWeighted;
-        //        amm.usdc.iporWeighted = amm.iporWeighted;
-        //        amm.dai.iporWeighted = amm.iporWeighted;
+
         //
         //        _iporOracleDeploymentFactory.upgrade(
         //            address(amm.iporOracle),
         //            cfg.iporOracleUpdater,
         //            IporOracleDeploymentFactory.IporOracleConstructorParams({
-        //                iporAlgorithmFacade: address(amm.iporWeighted),
         //                usdt: address(amm.usdt.asset),
         //                usdtInitialIbtPrice: 1e18,
         //                usdc: address(amm.usdc.asset),

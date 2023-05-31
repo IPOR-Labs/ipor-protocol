@@ -24,7 +24,7 @@ contract IporOracleDeploymentFactory {
         address[] memory assets,
         address updater,
         IporOracleConstructorParams memory constructorParams
-    ) public returns (ItfIporOracle) {
+    ) public returns (IporOracle) {
         iporOracleDeployer.withAssets(assets);
 
         uint32[] memory lastUpdateTimestamps = getCurrentTimestamps(assets);
@@ -43,14 +43,14 @@ contract IporOracleDeploymentFactory {
 
         iporOracleDeployer.withIporOracleImplementation(address(iporOracleImpl));
 
-        ItfIporOracle iporOracle = iporOracleDeployer.build();
+        IporOracle iporOracle = iporOracleDeployer.build();
 
         iporOracle.addUpdater(updater);
 
         return iporOracle;
     }
 
-    function getEmptyInstance(address[] memory assets) public returns (ItfIporOracle) {
+    function getEmptyInstance(address[] memory assets) public returns (IporOracle) {
         iporOracleDeployer.withAssets(assets);
         uint32[] memory lastUpdateTimestamps = getCurrentTimestamps(assets);
         iporOracleDeployer.withLastUpdateTimestamps(lastUpdateTimestamps);

@@ -2,7 +2,7 @@
 pragma solidity 0.8.16;
 import "contracts/tokens/IpToken.sol";
 import "contracts/tokens/IvToken.sol";
-import "contracts/itf/ItfIporOracle.sol";
+import "contracts/itf/IporOracle.sol";
 import "contracts/oracles/IporRiskManagementOracle.sol";
 import "contracts/amm/AmmStorage.sol";
 import "contracts/amm/AmmTreasury.sol";
@@ -10,6 +10,7 @@ import "contracts/amm/spread/SpreadRouter.sol";
 import "contracts/itf/ItfAssetManagement.sol";
 import "contracts/router/IporProtocolRouter.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/oracles/IporOracle.sol";
 
 contract DeployerUtils {
     struct IporProtocol {
@@ -23,9 +24,8 @@ contract DeployerUtils {
         MockTestnetToken asset;
         IpToken ipToken;
         IvToken ivToken;
-        ItfIporOracle iporOracle;
+        IporOracle iporOracle;
         IporRiskManagementOracle iporRiskManagementOracle;
-//        MockIporWeighted iporWeighted;
         AmmStorage ammStorage;
         SpreadRouter spreadRouter;
         ItfAssetManagement assetManagement;
@@ -60,7 +60,6 @@ contract DeployerUtils {
     enum IporOracleInitialParamsTestCase {
         /// @dev lastUpdateTimestamp = block.timestamp
         /// @dev exponentialMovingAverage = 3 * 1e16
-        /// @dev exponentialWeightedMovingVariance = 0
         DEFAULT,
         /// @dev lastUpdateTimestamp = 1
         /// @dev exponentialMovingAverage = 1
