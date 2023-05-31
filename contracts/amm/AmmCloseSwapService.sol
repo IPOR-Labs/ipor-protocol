@@ -521,10 +521,10 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         uint256[] memory swapIds,
         PoolConfiguration memory poolCfg
     ) internal returns (uint256 payoutForLiquidator, AmmTypes.IporSwapClosingResult[] memory closedSwaps) {
-        require(swapIds.length <= poolCfg.liquidationLegLimit, AmmErrors.LIQUIDATION_LEG_LIMIT_EXCEEDED);
-
-        closedSwaps = new AmmTypes.IporSwapClosingResult[](swapIds.length);
         uint256 swapIdsLength = swapIds.length;
+        require(swapIdsLength <= poolCfg.liquidationLegLimit, AmmErrors.LIQUIDATION_LEG_LIMIT_EXCEEDED);
+
+        closedSwaps = new AmmTypes.IporSwapClosingResult[](swapIdsLength);
 
         for (uint256 i; i != swapIdsLength; ) {
             uint256 swapId = swapIds[i];
@@ -550,11 +550,10 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         uint256[] memory swapIds,
         PoolConfiguration memory poolCfg
     ) internal returns (uint256 payoutForLiquidator, AmmTypes.IporSwapClosingResult[] memory closedSwaps) {
-        require(swapIds.length <= poolCfg.liquidationLegLimit, AmmErrors.LIQUIDATION_LEG_LIMIT_EXCEEDED);
-
-        closedSwaps = new AmmTypes.IporSwapClosingResult[](swapIds.length);
-
         uint256 swapIdsLength = swapIds.length;
+        require(swapIdsLength <= poolCfg.liquidationLegLimit, AmmErrors.LIQUIDATION_LEG_LIMIT_EXCEEDED);
+
+        closedSwaps = new AmmTypes.IporSwapClosingResult[](swapIdsLength);
 
         for (uint256 i; i != swapIdsLength; ) {
             uint256 swapId = swapIds[i];

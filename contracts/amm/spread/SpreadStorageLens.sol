@@ -6,18 +6,23 @@ import "./SpreadTypes.sol";
 import "./ISpreadStorageLens.sol";
 import "./SpreadStorageLibs.sol";
 
-contract  SpreadStorageLens is ISpreadStorageLens {
+contract SpreadStorageLens is ISpreadStorageLens {
     function getTimeWeightedNotional()
         external
         override
         returns (SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse)
     {
         (SpreadStorageLibs.StorageId[] memory storageIds, string[] memory keys) = SpreadStorageLibs.getAllStorageId();
-
-        timeWeightedNotionalResponse = new SpreadTypes.TimeWeightedNotionalResponse[](storageIds.length);
-        for (uint256 i; i != storageIds.length; ++i) {
-            timeWeightedNotionalResponse[i].timeWeightedNotional = SpreadStorageLibs.getTimeWeightedNotional(storageIds[i]);
+        uint256 storageIdLength = storageIds.length;
+        timeWeightedNotionalResponse = new SpreadTypes.TimeWeightedNotionalResponse[](storageIdLength);
+        for (uint256 i; i != storageIdLength; ) {
+            timeWeightedNotionalResponse[i].timeWeightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
+                storageIds[i]
+            );
             timeWeightedNotionalResponse[i].key = keys[i];
+            unchecked {
+                ++i;
+            }
         }
     }
 }

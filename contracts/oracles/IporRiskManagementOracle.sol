@@ -112,9 +112,9 @@ contract IporRiskManagementOracle is
                 baseSpreadsAndFixedRateCaps[i].fixedRateCap90dPayFixed,
                 baseSpreadsAndFixedRateCaps[i].fixedRateCap90dReceiveFixed
             );
-        unchecked {
-            ++i;
-        }
+            unchecked {
+                ++i;
+            }
 
         }
     }
@@ -443,9 +443,9 @@ contract IporRiskManagementOracle is
 
         for (uint256 i; i != assetsLength;) {
             _updateBaseSpreadsAndFixedRateCaps(asset[i], baseSpreadsAndFixedRateCaps[i]);
-        unchecked {
-            ++i;
-        }
+            unchecked {
+                ++i;
+            }
         }
     }
 

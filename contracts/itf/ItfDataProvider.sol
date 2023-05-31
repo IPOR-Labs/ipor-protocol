@@ -27,8 +27,10 @@ contract ItfDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeab
     ) public initializer {
         __Ownable_init();
         __UUPSUpgradeable_init();
-        uint256 i = 0;
-        for (i; i < assets.length; ) {
+
+        uint256 assetsLength = assets.length;
+
+        for (uint256 i; i != assetsLength; ) {
             _ammStorages[assets[i]] = AmmStorage(ammStorages[i]);
             unchecked {
                 ++i;

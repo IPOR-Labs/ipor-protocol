@@ -218,9 +218,10 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         uint256[] memory indexValues,
         uint256 updateTimestamp
     ) internal {
-        require(assets.length == indexValues.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
+        uint256 assetsLength = assets.length;
+        require(assetsLength == indexValues.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
 
-        for (uint256 i; i != assets.length; ) {
+        for (uint256 i; i != assetsLength; ) {
             _updateIndex(assets[i], indexValues[i], updateTimestamp);
             unchecked {
                 ++i;

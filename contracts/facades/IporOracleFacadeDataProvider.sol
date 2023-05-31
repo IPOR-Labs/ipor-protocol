@@ -37,22 +37,16 @@ contract IporOracleFacadeDataProvider is
         return 2_000;
     }
 
-    function getIndexes()
-        external
-        view
-        override
-        returns (IporOracleFacadeTypes.IporFront[] memory)
-    {
-        IporOracleFacadeTypes.IporFront[] memory indexes = new IporOracleFacadeTypes.IporFront[](
-            _assets.length
-        );
-
+    function getIndexes() external view override returns (IporOracleFacadeTypes.IporFront[] memory) {
         uint256 assetLength = _assets.length;
-        for (uint256 i; i != assetLength;) {
+
+        IporOracleFacadeTypes.IporFront[] memory indexes = new IporOracleFacadeTypes.IporFront[](assetLength);
+
+        for (uint256 i; i != assetLength; ) {
             indexes[i] = _createIporFront(_assets[i]);
-        unchecked {
-            ++i;
-        }
+            unchecked {
+                ++i;
+            }
         }
         return indexes;
     }
@@ -61,13 +55,8 @@ contract IporOracleFacadeDataProvider is
         return _iporOracle;
     }
 
-    function _createIporFront(address asset)
-        internal
-        view
-        returns (IporOracleFacadeTypes.IporFront memory iporFront)
-    {
-        (uint256 value, uint256 ibtPrice, uint256 date) = IIporOracle(_getIporOracle())
-            .getIndex(asset);
+    function _createIporFront(address asset) internal view returns (IporOracleFacadeTypes.IporFront memory iporFront) {
+        (uint256 value, uint256 ibtPrice, uint256 date) = IIporOracle(_getIporOracle()).getIndex(asset);
         iporFront = IporOracleFacadeTypes.IporFront(
             IERC20MetadataUpgradeable(asset).symbol(),
             asset,
