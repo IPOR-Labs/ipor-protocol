@@ -10,9 +10,6 @@ import "./SpreadStorageLibs.sol";
 import "./ISpread28DaysLens.sol";
 import "./OfferedRateCalculationLibs.sol";
 
-import "forge-std/Test.sol";
-
-
 contract Spread28Days is ISpread28Days, ISpread28DaysLens {
     using SafeCast for uint256;
     using SafeCast for int256;
@@ -79,7 +76,6 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         override
         returns (uint256 offeredRate)
     {
-
         offeredRate = OfferedRateCalculationLibs.calculateReceiveFixedOfferedRate(
             spreadInputs.indexValue,
             spreadInputs.baseSpread,

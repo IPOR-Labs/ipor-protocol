@@ -8,6 +8,7 @@ import "./ISpread90Days.sol";
 import "./ISpread90DaysLens.sol";
 import "./ImbalanceSpreadLibs.sol";
 import "./SpreadStorageLibs.sol";
+import "./OfferedRateCalculationLibs.sol";
 
 contract Spread90Days is ISpread90Days, ISpread90DaysLens {
     using SafeCast for uint256;
@@ -33,57 +34,53 @@ contract Spread90Days is ISpread90Days, ISpread90DaysLens {
     function calculateQuotePayFixed90Days(IporTypes.SpreadInputs calldata spreadInputs)
         external
         override
-        returns (uint256 quoteValue)
+        returns (uint256 offeredRate)
     {
-        uint256 imbalanceSpread = _calculateImbalancePayFixedAndUpdateTimeWeightedNotional90Day(spreadInputs);
-
-        int256 intQuoteValue = spreadInputs.indexValue.toInt256() +
-            spreadInputs.baseSpread +
-            imbalanceSpread.toInt256();
-
-        quoteValue = intQuoteValue > 0 ? intQuoteValue.toUint256() : 0;
+        offeredRate = OfferedRateCalculationLibs.calculatePayFixedOfferedRate(
+            spreadInputs.indexValue,
+            spreadInputs.baseSpread,
+            _calculateImbalancePayFixedAndUpdateTimeWeightedNotional90Day(spreadInputs),
+            spreadInputs.cap
+        );
     }
 
     function calculatePayFixed90Days(IporTypes.SpreadInputs calldata spreadInputs)
         external
         override
-        returns (uint256 quoteValue)
+        returns (uint256 offeredRate)
     {
-        uint256 imbalanceSpread = _calculateImbalancePayFixed90Day(spreadInputs);
-
-        int256 intQuoteValue = spreadInputs.indexValue.toInt256() +
-            spreadInputs.baseSpread +
-            imbalanceSpread.toInt256();
-
-        quoteValue = intQuoteValue > 0 ? intQuoteValue.toUint256() : 0;
+        offeredRate = OfferedRateCalculationLibs.calculatePayFixedOfferedRate(
+            spreadInputs.indexValue,
+            spreadInputs.baseSpread,
+            _calculateImbalancePayFixed90Day(spreadInputs),
+            spreadInputs.cap
+        );
     }
 
     function calculateQuoteReceiveFixed90Days(IporTypes.SpreadInputs calldata spreadInputs)
         external
         override
-        returns (uint256 quoteValue)
+        returns (uint256 offeredRate)
     {
-        uint256 imbalanceSpread = _calculateImbalanceReceiveFixedAndUpdateTimeWeightedNotional90Day(spreadInputs);
-
-        int256 intQuoteValueWithIpor = spreadInputs.indexValue.toInt256() +
-            spreadInputs.baseSpread -
-            imbalanceSpread.toInt256();
-
-        quoteValue = intQuoteValueWithIpor > 0 ? intQuoteValueWithIpor.toUint256() : 0;
+        offeredRate = OfferedRateCalculationLibs.calculateReceiveFixedOfferedRate(
+            spreadInputs.indexValue,
+            spreadInputs.baseSpread,
+            _calculateImbalanceReceiveFixedAndUpdateTimeWeightedNotional90Day(spreadInputs),
+            spreadInputs.cap
+        );
     }
 
     function calculateReceiveFixed90Days(IporTypes.SpreadInputs calldata spreadInputs)
         external
         override
-        returns (uint256 quoteValue)
+        returns (uint256 offeredRate)
     {
-        uint256 imbalanceSpread = _calculateImbalanceReceiveFixed90Day(spreadInputs);
-
-        int256 intQuoteValueWithIpor = spreadInputs.indexValue.toInt256() +
-            spreadInputs.baseSpread -
-            imbalanceSpread.toInt256();
-
-        quoteValue = intQuoteValueWithIpor > 0 ? intQuoteValueWithIpor.toUint256() : 0;
+        offeredRate = OfferedRateCalculationLibs.calculateReceiveFixedOfferedRate(
+            spreadInputs.indexValue,
+            spreadInputs.baseSpread,
+            _calculateImbalanceReceiveFixed90Day(spreadInputs),
+            spreadInputs.cap
+        );
     }
 
     function getSupportedAssets() external view returns (address[] memory) {
