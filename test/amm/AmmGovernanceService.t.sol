@@ -2,13 +2,9 @@
 pragma solidity 0.8.16;
 
 import "../TestCommons.sol";
-import {DataUtils} from "../utils/DataUtils.sol";
 import "../utils/TestConstants.sol";
-import "contracts/mocks/spread/MockSpreadModel.sol";
-import "contracts/interfaces/types/AmmStorageTypes.sol";
-import "contracts/amm/AmmStorage.sol";
 
-contract JosephTreasuryTest is TestCommons, DataUtils {
+contract AmmGovernanceServiceTest is TestCommons {
     IporProtocolFactory.IporProtocolConfig private _cfg;
     BuilderUtils.IporProtocol internal _iporProtocol;
 
@@ -23,44 +19,90 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
         _cfg.iporRiskManagementOracleUpdater = _userOne;
+    }
 
-        _cfg.spreadImplementation = address(
-            new MockSpreadModel(
-                TestConstants.PERCENTAGE_4_18DEC,
-                TestConstants.PERCENTAGE_2_18DEC,
-                TestConstants.ZERO_INT,
-                TestConstants.ZERO_INT
-            )
+    function testShouldReturnDefaultAmmTreasuryAssetManagementBalanceRatio() public {
+        // given
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
+        // when
+        vm.prank(_admin);
+        StorageLib.AmmPoolsParamsValue memory ammParams = _iporProtocol.ammGovernanceService.getAmmPoolsParams(
+            address(_iporProtocol.asset)
+        );
+
+        // then
+        assertEq(ammParams.ammTreasuryAndAssetManagementRatio, 8500);
+    }
+
+    function testShouldChangeAmmTreasuryAssetManagementBalanceRatio() public {
+        // given
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
+        // when
+        vm.startPrank(_admin);
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(
+            address(_iporProtocol.asset),
+            1000000000,
+            1000000000,
+            50,
+            5000
+        );
+
+        // then
+        vm.stopPrank();
+        StorageLib.AmmPoolsParamsValue memory ammParams = _iporProtocol.ammGovernanceService.getAmmPoolsParams(
+            address(_iporProtocol.asset)
+        );
+        assertEq(ammParams.ammTreasuryAndAssetManagementRatio, 5000);
+    }
+
+    function testShouldNotChangeAmmTreasuryAssetManagementBalanceRatioWhenNewRatioIsZero() public {
+        // given
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
+        // when
+        vm.prank(_admin);
+        vm.expectRevert("IPOR_409");
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(
+            address(_iporProtocol.asset),
+            1000000000,
+            1000000000,
+            50,
+            0
+        );
+    }
+
+    function testShouldNotChangeAmmTreasuryAssetManagementBalanceRatioWhenNewRatioIsGreaterThanOne() public {
+        // given
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
+        // when
+        vm.prank(_admin);
+        vm.expectRevert("IPOR_409");
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(
+            address(_iporProtocol.asset),
+            1000000000,
+            1000000000,
+            50,
+            10000
         );
     }
 
     function testShouldNotTransferPublicationFeToCharlieTreasuryWhenCallerIsNotPublicationFeeTransferer() public {
         // given
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
         vm.expectRevert("IPOR_406");
         vm.prank(_userThree);
-        _iporProtocol.joseph.transferToCharlieTreasury(100);
-    }
-
-    function testShouldNotTransferPublicationFeToCharlieTreasuryWhenCharlieTreasuryAddressIsIncorrect() public {
-        // given
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-
-        vm.prank(_admin);
-        _iporProtocol.joseph.setCharlieTreasuryManager(_userThree);
-        // when
-        vm.expectRevert("IPOR_407");
-        vm.prank(_userThree);
-        _iporProtocol.joseph.transferToCharlieTreasury(100);
+        _iporProtocol.ammGovernanceService.transferToCharlieTreasury(address(_iporProtocol.asset), 100);
     }
 
     function testShouldTransferPublicationFeeToCharlieTreasurySimpleCase1() public {
         // given
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
+        _cfg.ammCharlieTreasuryManager = _userThree;
+        _cfg.ammCharlieTreasury = _userOne;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 transferredAmount = 100;
@@ -68,31 +110,25 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
         uint256 expectedERC20BalanceAmmTreasury = TestConstants.USD_28_000_18DEC +
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC -
             transferredAmount;
+
         uint256 expectedPublicationFeeBalanceAmmTreasury = TestConstants.USD_10_18DEC - transferredAmount;
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_3_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.ammTreasury.openSwapPayFixed(
+        _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
+            _userTwo,
             TestConstants.USD_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
         );
 
-        vm.startPrank(_admin);
-        _iporProtocol.joseph.setCharlieTreasuryManager(_userThree);
-        _iporProtocol.joseph.setCharlieTreasury(_userOne);
-        vm.stopPrank();
-
         // when
         vm.prank(_userThree);
-        _iporProtocol.joseph.transferToCharlieTreasury(transferredAmount);
+        _iporProtocol.ammGovernanceService.transferToCharlieTreasury(address(_iporProtocol.asset), transferredAmount);
 
         // then
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
@@ -107,30 +143,18 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
 
     function testShouldNotTransferToTreasuryWhenCallerIsNotTreasuryTransferer() public {
         // given
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         // when
         vm.expectRevert("IPOR_404");
         vm.prank(_userThree);
-        _iporProtocol.joseph.transferToTreasury(100);
-    }
-
-    function testShouldNotTransferPublicationFeeToCharlieTreasuryWhenTreasuryManagerAddressIsIncorrect() public {
-        // given
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-        vm.prank(_admin);
-        _iporProtocol.joseph.setTreasuryManager(_userThree);
-
-        // when
-        vm.expectRevert("IPOR_405");
-        vm.prank(_userThree);
-        _iporProtocol.joseph.transferToTreasury(100);
+        _iporProtocol.ammGovernanceService.transferToTreasury(address(_iporProtocol.asset), 100);
     }
 
     function testShouldTransferTreasuryToTreasuryTreasurerWhenSimpleCase1() public {
         // given
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE4;
+        _cfg.ammPoolsTreasuryManager = _userThree;
+        _cfg.ammPoolsTreasury = _userOne;
+        _cfg.openSwapServiceTestCase = BuilderUtils.AmmOpenSwapServiceTestCase.CASE2;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -142,30 +166,23 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
         uint256 expectedTreasuryBalance = 114696891674244800;
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_3_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
 
         vm.prank(_userTwo);
-
-        _iporProtocol.ammTreasury.openSwapPayFixed(
+        _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
+            _userTwo,
             TestConstants.USD_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
         );
 
-        vm.startPrank(_admin);
-        _iporProtocol.joseph.setTreasuryManager(_userThree);
-        _iporProtocol.joseph.setTreasury(_userOne);
-        vm.stopPrank();
-
         // when
         vm.prank(_userThree);
-        _iporProtocol.joseph.transferToTreasury(transferredAmount);
+        _iporProtocol.ammGovernanceService.transferToTreasury(address(_iporProtocol.asset), transferredAmount);
+
         // then
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
         uint256 actualERC20BalanceTreasury = _iporProtocol.asset.balanceOf(_userOne);

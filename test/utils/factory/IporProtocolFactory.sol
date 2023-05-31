@@ -52,6 +52,10 @@ contract IporProtocolFactory is Test {
     }
 
     struct AmmConfig {
+        address ammPoolsTreasury;
+        address ammPoolsTreasuryManager;
+        address ammCharlieTreasury;
+        address ammCharlieTreasuryManager;
         address iporOracleUpdater;
         address iporRiskManagementOracleUpdater;
         BuilderUtils.IporOracleInitialParamsTestCase iporOracleInitialParamsTestCase;
@@ -68,6 +72,10 @@ contract IporProtocolFactory is Test {
     }
 
     struct IporProtocolConfig {
+        address ammPoolsTreasury;
+        address ammPoolsTreasuryManager;
+        address ammCharlieTreasury;
+        address ammCharlieTreasuryManager;
         address iporOracleUpdater;
         address iporRiskManagementOracleUpdater;
         BuilderUtils.AmmOpenSwapServiceTestCase openSwapServiceTestCase;
@@ -284,12 +292,7 @@ contract IporProtocolFactory is Test {
             .withAmmTreasuryProxyAddress(address(amm.dai.ammTreasury))
             .upgrade();
 
-        amm.router = _getFullIporProtocolRouterInstance(
-            amm,
-            cfg.openSwapServiceTestCase,
-            cfg.closeSwapServiceTestCase,
-            cfg.poolsServiceTestCase
-        );
+        amm.router = _getFullIporProtocolRouterInstance(amm, cfg);
 
         vm.startPrank(address(_owner));
 
@@ -313,13 +316,29 @@ contract IporProtocolFactory is Test {
         amm.usdc.ammTreasury.setupMaxAllowanceForAsset(address(amm.router));
         amm.dai.ammTreasury.setupMaxAllowanceForAsset(address(amm.router));
 
-        IAmmGovernanceService(address(amm.router)).setAmmMaxLiquidityPoolBalance(address(amm.usdt.asset), 1000000000);
-        IAmmGovernanceService(address(amm.router)).setAmmMaxLiquidityPoolBalance(address(amm.usdc.asset), 1000000000);
-        IAmmGovernanceService(address(amm.router)).setAmmMaxLiquidityPoolBalance(address(amm.dai.asset), 1000000000);
+        IAmmGovernanceService(address(amm.router)).setAmmPoolsParams(
+            address(amm.usdt.asset),
+            1000000000,
+            1000000000,
+            50,
+            8500
+        );
 
-        IAmmGovernanceService(address(amm.router)).setAmmMaxLpAccountContribution(address(amm.usdt.asset), 1000000000);
-        IAmmGovernanceService(address(amm.router)).setAmmMaxLpAccountContribution(address(amm.usdc.asset), 1000000000);
-        IAmmGovernanceService(address(amm.router)).setAmmMaxLpAccountContribution(address(amm.dai.asset), 1000000000);
+        IAmmGovernanceService(address(amm.router)).setAmmPoolsParams(
+            address(amm.usdc.asset),
+            1000000000,
+            1000000000,
+            50,
+            8500
+        );
+
+        IAmmGovernanceService(address(amm.router)).setAmmPoolsParams(
+            address(amm.dai.asset),
+            1000000000,
+            1000000000,
+            50,
+            8500
+        );
 
         vm.stopPrank();
     }
@@ -403,12 +422,7 @@ contract IporProtocolFactory is Test {
             .withAmmTreasuryProxyAddress(address(iporProtocol.ammTreasury))
             .upgrade();
 
-        iporProtocol.router = _getUsdtIporProtocolRouterInstance(
-            iporProtocol,
-            cfg.openSwapServiceTestCase,
-            cfg.closeSwapServiceTestCase,
-            cfg.poolsServiceTestCase
-        );
+        iporProtocol.router = _getUsdtIporProtocolRouterInstance(iporProtocol, cfg);
 
         iporProtocol.ammSwapsLens = IAmmSwapsLens(address(iporProtocol.router));
         iporProtocol.ammPoolsService = IAmmPoolsService(address(iporProtocol.router));
@@ -427,13 +441,12 @@ contract IporProtocolFactory is Test {
         iporProtocol.ipToken.setRouter(address(iporProtocol.router));
         iporProtocol.ammTreasury.setupMaxAllowanceForAsset(address(iporProtocol.router));
 
-        IAmmGovernanceService(address(iporProtocol.router)).setAmmMaxLiquidityPoolBalance(
+        IAmmGovernanceService(address(iporProtocol.router)).setAmmPoolsParams(
             address(iporProtocol.asset),
-            1000000000
-        );
-        IAmmGovernanceService(address(iporProtocol.router)).setAmmMaxLpAccountContribution(
-            address(iporProtocol.asset),
-            1000000000
+            1000000000,
+            1000000000,
+            50,
+            8500
         );
 
         vm.stopPrank();
@@ -523,12 +536,7 @@ contract IporProtocolFactory is Test {
             .withAmmTreasuryProxyAddress(address(iporProtocol.ammTreasury))
             .upgrade();
 
-        iporProtocol.router = _getUsdcIporProtocolRouterInstance(
-            iporProtocol,
-            cfg.openSwapServiceTestCase,
-            cfg.closeSwapServiceTestCase,
-            cfg.poolsServiceTestCase
-        );
+        iporProtocol.router = _getUsdcIporProtocolRouterInstance(iporProtocol, cfg);
 
         iporProtocol.ammSwapsLens = IAmmSwapsLens(address(iporProtocol.router));
         iporProtocol.ammPoolsService = IAmmPoolsService(address(iporProtocol.router));
@@ -547,13 +555,12 @@ contract IporProtocolFactory is Test {
         iporProtocol.ipToken.setRouter(address(iporProtocol.router));
         iporProtocol.ammTreasury.setupMaxAllowanceForAsset(address(iporProtocol.router));
 
-        IAmmGovernanceService(address(iporProtocol.router)).setAmmMaxLiquidityPoolBalance(
+        IAmmGovernanceService(address(iporProtocol.router)).setAmmPoolsParams(
             address(iporProtocol.asset),
-            1000000000
-        );
-        IAmmGovernanceService(address(iporProtocol.router)).setAmmMaxLpAccountContribution(
-            address(iporProtocol.asset),
-            1000000000
+            1000000000,
+            1000000000,
+            50,
+            8500
         );
 
         vm.stopPrank();
@@ -642,12 +649,7 @@ contract IporProtocolFactory is Test {
             .withAmmTreasuryProxyAddress(address(iporProtocol.ammTreasury))
             .upgrade();
 
-        iporProtocol.router = _getDaiIporProtocolRouterInstance(
-            iporProtocol,
-            cfg.openSwapServiceTestCase,
-            cfg.closeSwapServiceTestCase,
-            cfg.poolsServiceTestCase
-        );
+        iporProtocol.router = _getDaiIporProtocolRouterInstance(iporProtocol, cfg);
 
         iporProtocol.ammSwapsLens = IAmmSwapsLens(address(iporProtocol.router));
         iporProtocol.ammPoolsService = IAmmPoolsService(address(iporProtocol.router));
@@ -666,13 +668,12 @@ contract IporProtocolFactory is Test {
         iporProtocol.ipToken.setRouter(address(iporProtocol.router));
         iporProtocol.ammTreasury.setupMaxAllowanceForAsset(address(iporProtocol.router));
 
-        IAmmGovernanceService(address(iporProtocol.router)).setAmmMaxLiquidityPoolBalance(
+        IAmmGovernanceService(address(iporProtocol.router)).setAmmPoolsParams(
             address(iporProtocol.asset),
-            1000000000
-        );
-        IAmmGovernanceService(address(iporProtocol.router)).setAmmMaxLpAccountContribution(
-            address(iporProtocol.asset),
-            1000000000
+            1000000000,
+            1000000000,
+            50,
+            8500
         );
 
         vm.stopPrank();
@@ -681,12 +682,10 @@ contract IporProtocolFactory is Test {
         setupUsers(cfg, iporProtocol);
     }
 
-    function _getFullIporProtocolRouterInstance(
-        Amm memory amm,
-        BuilderUtils.AmmOpenSwapServiceTestCase openSwapServiceTestCase,
-        BuilderUtils.AmmCloseSwapServiceTestCase closeSwapServiceTestCase,
-        BuilderUtils.AmmPoolsServiceTestCase poolsServiceTestCase
-    ) public returns (IporProtocolRouter) {
+    function _getFullIporProtocolRouterInstance(Amm memory amm, AmmConfig memory cfg)
+        public
+        returns (IporProtocolRouter)
+    {
         if (address(amm.router) == address(0)) {
             amm.router = _iporProtocolRouterBuilder.buildEmptyProxy();
         }
@@ -772,19 +771,19 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammOpenSwapService = address(
             new AmmOpenSwapService({
                 usdtPoolCfg: _preparePoolCfgForOpenSwapService(
-                    openSwapServiceTestCase,
+                    cfg.openSwapServiceTestCase,
                     address(amm.usdt.asset),
                     address(amm.usdt.ammTreasury),
                     address(amm.usdt.ammStorage)
                 ),
                 usdcPoolCfg: _preparePoolCfgForOpenSwapService(
-                    openSwapServiceTestCase,
+                    cfg.openSwapServiceTestCase,
                     address(amm.usdc.asset),
                     address(amm.usdc.ammTreasury),
                     address(amm.usdc.ammStorage)
                 ),
                 daiPoolCfg: _preparePoolCfgForOpenSwapService(
-                    openSwapServiceTestCase,
+                    cfg.openSwapServiceTestCase,
                     address(amm.dai.asset),
                     address(amm.dai.ammTreasury),
                     address(amm.dai.ammStorage)
@@ -798,21 +797,21 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammCloseSwapService = address(
             new AmmCloseSwapService({
                 usdtPoolCfg: _preparePoolCfgForCloseSwapService(
-                    closeSwapServiceTestCase,
+                    cfg.closeSwapServiceTestCase,
                     address(amm.usdt.asset),
                     address(amm.usdt.ammTreasury),
                     address(amm.usdt.ammStorage),
                     address(amm.usdt.assetManagement)
                 ),
                 usdcPoolCfg: _preparePoolCfgForCloseSwapService(
-                    closeSwapServiceTestCase,
+                    cfg.closeSwapServiceTestCase,
                     address(amm.usdc.asset),
                     address(amm.usdc.ammTreasury),
                     address(amm.usdc.ammStorage),
                     address(amm.usdc.assetManagement)
                 ),
                 daiPoolCfg: _preparePoolCfgForCloseSwapService(
-                    closeSwapServiceTestCase,
+                    cfg.closeSwapServiceTestCase,
                     address(amm.dai.asset),
                     address(amm.dai.ammTreasury),
                     address(amm.dai.ammStorage),
@@ -827,7 +826,7 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammPoolsService = address(
             new AmmPoolsService({
                 usdtPoolCfg: _preparePoolCfgForPoolsService(
-                    poolsServiceTestCase,
+                    cfg.poolsServiceTestCase,
                     address(amm.usdt.asset),
                     address(amm.usdt.ipToken),
                     address(amm.usdt.ammTreasury),
@@ -835,7 +834,7 @@ contract IporProtocolFactory is Test {
                     address(amm.usdt.assetManagement)
                 ),
                 usdcPoolCfg: _preparePoolCfgForPoolsService(
-                poolsServiceTestCase,
+                    cfg.poolsServiceTestCase,
                     address(amm.usdc.asset),
                     address(amm.usdc.ipToken),
                     address(amm.usdc.ammTreasury),
@@ -843,7 +842,7 @@ contract IporProtocolFactory is Test {
                     address(amm.usdc.assetManagement)
                 ),
                 daiPoolCfg: _preparePoolCfgForPoolsService(
-                poolsServiceTestCase,
+                    cfg.poolsServiceTestCase,
                     address(amm.dai.asset),
                     address(amm.dai.ipToken),
                     address(amm.dai.ammTreasury),
@@ -859,17 +858,29 @@ contract IporProtocolFactory is Test {
                 usdtPoolCfg: _preparePoolCfgForGovernanceService(
                     address(amm.usdt.asset),
                     address(amm.usdt.ammTreasury),
-                    address(amm.usdt.ammStorage)
+                    address(amm.usdt.ammStorage),
+                    cfg.ammPoolsTreasury,
+                    cfg.ammPoolsTreasuryManager,
+                    cfg.ammCharlieTreasury,
+                    cfg.ammCharlieTreasuryManager
                 ),
                 usdcPoolCfg: _preparePoolCfgForGovernanceService(
                     address(amm.usdc.asset),
                     address(amm.usdc.ammTreasury),
-                    address(amm.usdc.ammStorage)
+                    address(amm.usdc.ammStorage),
+                    cfg.ammPoolsTreasury,
+                    cfg.ammPoolsTreasuryManager,
+                    cfg.ammCharlieTreasury,
+                    cfg.ammCharlieTreasuryManager
                 ),
                 daiPoolCfg: _preparePoolCfgForGovernanceService(
                     address(amm.dai.asset),
                     address(amm.dai.ammTreasury),
-                    address(amm.dai.ammStorage)
+                    address(amm.dai.ammStorage),
+                    cfg.ammPoolsTreasury,
+                    cfg.ammPoolsTreasuryManager,
+                    cfg.ammCharlieTreasury,
+                    cfg.ammCharlieTreasuryManager
                 )
             })
         );
@@ -921,9 +932,7 @@ contract IporProtocolFactory is Test {
 
     function _getUsdtIporProtocolRouterInstance(
         BuilderUtils.IporProtocol memory iporProtocol,
-        BuilderUtils.AmmOpenSwapServiceTestCase openSwapServiceTestCase,
-        BuilderUtils.AmmCloseSwapServiceTestCase closeSwapServiceTestCase,
-        BuilderUtils.AmmPoolsServiceTestCase poolsServiceTestCase
+        IporProtocolConfig memory cfg
     ) public returns (IporProtocolRouter) {
         if (address(iporProtocol.router) == address(0)) {
             iporProtocol.router = _iporProtocolRouterBuilder.buildEmptyProxy();
@@ -1010,7 +1019,7 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammOpenSwapService = address(
             new AmmOpenSwapService({
                 usdtPoolCfg: _preparePoolCfgForOpenSwapService(
-                    openSwapServiceTestCase,
+                    cfg.openSwapServiceTestCase,
                     address(iporProtocol.asset),
                     address(iporProtocol.ammTreasury),
                     address(iporProtocol.ammStorage)
@@ -1026,7 +1035,7 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammCloseSwapService = address(
             new AmmCloseSwapService({
                 usdtPoolCfg: _preparePoolCfgForCloseSwapService(
-                    closeSwapServiceTestCase,
+                    cfg.closeSwapServiceTestCase,
                     address(iporProtocol.asset),
                     address(iporProtocol.ammTreasury),
                     address(iporProtocol.ammStorage),
@@ -1043,7 +1052,7 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammPoolsService = address(
             new AmmPoolsService({
                 usdtPoolCfg: _preparePoolCfgForPoolsService(
-                    poolsServiceTestCase,
+                    cfg.poolsServiceTestCase,
                     address(iporProtocol.asset),
                     address(iporProtocol.ipToken),
                     address(iporProtocol.ammTreasury),
@@ -1061,7 +1070,11 @@ contract IporProtocolFactory is Test {
                 usdtPoolCfg: _preparePoolCfgForGovernanceService(
                     address(iporProtocol.asset),
                     address(iporProtocol.ammTreasury),
-                    address(iporProtocol.ammStorage)
+                    address(iporProtocol.ammStorage),
+                    cfg.ammPoolsTreasury,
+                    cfg.ammPoolsTreasuryManager,
+                    cfg.ammCharlieTreasury,
+                    cfg.ammCharlieTreasuryManager
                 ),
                 usdcPoolCfg: _prepareFakePoolCfgForGovernanceService(),
                 daiPoolCfg: _prepareFakePoolCfgForGovernanceService()
@@ -1093,9 +1106,7 @@ contract IporProtocolFactory is Test {
 
     function _getUsdcIporProtocolRouterInstance(
         BuilderUtils.IporProtocol memory iporProtocol,
-        BuilderUtils.AmmOpenSwapServiceTestCase openSwapServiceTestCase,
-        BuilderUtils.AmmCloseSwapServiceTestCase closeSwapServiceTestCase,
-        BuilderUtils.AmmPoolsServiceTestCase poolsServiceTestCase
+        IporProtocolConfig memory cfg
     ) public returns (IporProtocolRouter) {
         if (address(iporProtocol.router) == address(0)) {
             iporProtocol.router = _iporProtocolRouterBuilder.buildEmptyProxy();
@@ -1183,7 +1194,7 @@ contract IporProtocolFactory is Test {
             new AmmOpenSwapService({
                 usdtPoolCfg: _prepareFakePoolCfgForOpenSwapService(),
                 usdcPoolCfg: _preparePoolCfgForOpenSwapService(
-                    openSwapServiceTestCase,
+                    cfg.openSwapServiceTestCase,
                     address(iporProtocol.asset),
                     address(iporProtocol.ammTreasury),
                     address(iporProtocol.ammStorage)
@@ -1199,7 +1210,7 @@ contract IporProtocolFactory is Test {
             new AmmCloseSwapService({
                 usdtPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
                 usdcPoolCfg: _preparePoolCfgForCloseSwapService(
-                    closeSwapServiceTestCase,
+                    cfg.closeSwapServiceTestCase,
                     address(iporProtocol.asset),
                     address(iporProtocol.ammTreasury),
                     address(iporProtocol.ammStorage),
@@ -1216,7 +1227,7 @@ contract IporProtocolFactory is Test {
             new AmmPoolsService({
                 usdtPoolCfg: _prepareFakePoolCfgForPoolsService(),
                 usdcPoolCfg: _preparePoolCfgForPoolsService(
-                    poolsServiceTestCase,
+                    cfg.poolsServiceTestCase,
                     address(iporProtocol.asset),
                     address(iporProtocol.ipToken),
                     address(iporProtocol.ammTreasury),
@@ -1234,7 +1245,11 @@ contract IporProtocolFactory is Test {
                 usdcPoolCfg: _preparePoolCfgForGovernanceService(
                     address(iporProtocol.asset),
                     address(iporProtocol.ammTreasury),
-                    address(iporProtocol.ammStorage)
+                    address(iporProtocol.ammStorage),
+                    cfg.ammPoolsTreasury,
+                    cfg.ammPoolsTreasuryManager,
+                    cfg.ammCharlieTreasury,
+                    cfg.ammCharlieTreasuryManager
                 ),
                 daiPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
@@ -1265,9 +1280,7 @@ contract IporProtocolFactory is Test {
 
     function _getDaiIporProtocolRouterInstance(
         BuilderUtils.IporProtocol memory iporProtocol,
-        BuilderUtils.AmmOpenSwapServiceTestCase openSwapServiceTestCase,
-        BuilderUtils.AmmCloseSwapServiceTestCase closeSwapServiceTestCase,
-        BuilderUtils.AmmPoolsServiceTestCase poolsServiceTestCase
+        IporProtocolConfig memory cfg
     ) public returns (IporProtocolRouter) {
         if (address(iporProtocol.router) == address(0)) {
             iporProtocol.router = _iporProtocolRouterBuilder.buildEmptyProxy();
@@ -1356,7 +1369,7 @@ contract IporProtocolFactory is Test {
                 usdtPoolCfg: _prepareFakePoolCfgForOpenSwapService(),
                 usdcPoolCfg: _prepareFakePoolCfgForOpenSwapService(),
                 daiPoolCfg: _preparePoolCfgForOpenSwapService(
-                    openSwapServiceTestCase,
+                    cfg.openSwapServiceTestCase,
                     address(iporProtocol.asset),
                     address(iporProtocol.ammTreasury),
                     address(iporProtocol.ammStorage)
@@ -1372,7 +1385,7 @@ contract IporProtocolFactory is Test {
                 usdtPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
                 usdcPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
                 daiPoolCfg: _preparePoolCfgForCloseSwapService(
-                    closeSwapServiceTestCase,
+                    cfg.closeSwapServiceTestCase,
                     address(iporProtocol.asset),
                     address(iporProtocol.ammTreasury),
                     address(iporProtocol.ammStorage),
@@ -1389,7 +1402,7 @@ contract IporProtocolFactory is Test {
                 usdtPoolCfg: _prepareFakePoolCfgForPoolsService(),
                 usdcPoolCfg: _prepareFakePoolCfgForPoolsService(),
                 daiPoolCfg: _preparePoolCfgForPoolsService(
-                    poolsServiceTestCase,
+                    cfg.poolsServiceTestCase,
                     address(iporProtocol.asset),
                     address(iporProtocol.ipToken),
                     address(iporProtocol.ammTreasury),
@@ -1407,7 +1420,11 @@ contract IporProtocolFactory is Test {
                 daiPoolCfg: _preparePoolCfgForGovernanceService(
                     address(iporProtocol.asset),
                     address(iporProtocol.ammTreasury),
-                    address(iporProtocol.ammStorage)
+                    address(iporProtocol.ammStorage),
+                    cfg.ammPoolsTreasury,
+                    cfg.ammPoolsTreasuryManager,
+                    cfg.ammCharlieTreasury,
+                    cfg.ammCharlieTreasuryManager
                 )
             })
         );
@@ -1443,7 +1460,11 @@ contract IporProtocolFactory is Test {
             asset: address(_fakeContract),
             assetDecimals: 0,
             ammStorage: address(_fakeContract),
-            ammTreasury: address(_fakeContract)
+            ammTreasury: address(_fakeContract),
+            ammPoolsTreasury: address(_fakeContract),
+            ammPoolsTreasuryManager: address(_fakeContract),
+            ammCharlieTreasury: address(_fakeContract),
+            ammCharlieTreasuryManager: address(_fakeContract)
         });
     }
 
@@ -1502,13 +1523,21 @@ contract IporProtocolFactory is Test {
     function _preparePoolCfgForGovernanceService(
         address asset,
         address ammTreasury,
-        address ammStorage
+        address ammStorage,
+        address ammPoolsTreasury,
+        address ammPoolsTreasuryManager,
+        address ammCharlieTreasury,
+        address ammCharlieTreasuryManager
     ) internal returns (IAmmGovernanceService.PoolConfiguration memory poolCfg) {
         poolCfg = IAmmGovernanceService.PoolConfiguration({
             asset: asset,
             assetDecimals: IERC20MetadataUpgradeable(asset).decimals(),
             ammStorage: ammStorage,
-            ammTreasury: ammTreasury
+            ammTreasury: ammTreasury,
+            ammPoolsTreasury: ammPoolsTreasury == address(0) ? _owner : ammPoolsTreasury,
+            ammPoolsTreasuryManager: ammPoolsTreasuryManager == address(0) ? _owner : ammPoolsTreasuryManager,
+            ammCharlieTreasury: ammCharlieTreasury == address(0) ? _owner : ammCharlieTreasury,
+            ammCharlieTreasuryManager: ammCharlieTreasuryManager == address(0) ? _owner : ammCharlieTreasuryManager
         });
     }
 
@@ -1618,6 +1647,19 @@ contract IporProtocolFactory is Test {
                 minLeverage: 10 * 1e18,
                 openingFeeRate: 3e14,
                 openingFeeTreasuryPortionRate: 0
+            });
+        } else if (openSwapServiceTestCase == BuilderUtils.AmmOpenSwapServiceTestCase.CASE2) {
+            poolCfg = IAmmOpenSwapService.PoolConfiguration({
+                asset: asset,
+                decimals: IERC20MetadataUpgradeable(asset).decimals(),
+                ammStorage: ammStorage,
+                ammTreasury: ammTreasury,
+                iporPublicationFee: 10 * 1e18,
+                maxSwapCollateralAmount: 100_000 * 1e18,
+                liquidationDepositAmount: 20,
+                minLeverage: 10 * 1e18,
+                openingFeeRate: 3e14,
+                openingFeeTreasuryPortionRate: 5e16
             });
         }
     }

@@ -29,6 +29,14 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         // given
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(
+            address(_iporProtocol.asset),
+            1000000000,
+            1000000000,
+            70,
+            5000
+        );
+
         vm.prank(_userOne);
         _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
 
@@ -64,6 +72,13 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         // given
         _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE2;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(
+            address(_iporProtocol.asset),
+            1000000000,
+            1000000000,
+            70,
+            5000
+        );
 
         vm.prank(_userOne);
         _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
@@ -103,6 +118,13 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         // given
         _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE1;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(
+            address(_iporProtocol.asset),
+            1000000000,
+            1000000000,
+            70,
+            5000
+        );
 
         vm.prank(_userOne);
         _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
@@ -142,8 +164,14 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         // given
         _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE8;
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE2;
-
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(
+            address(_iporProtocol.asset),
+            1000000000,
+            1000000000,
+            70,
+            5000
+        );
 
         vm.prank(_userOne);
         _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_8_18DEC);
@@ -182,8 +210,14 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
     {
         // given
         _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE1;
-
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(
+            address(_iporProtocol.asset),
+            1000000000,
+            1000000000,
+            70,
+            5000
+        );
 
         vm.prank(_userOne);
         _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
@@ -234,8 +268,14 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         // given
         _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE9;
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE3;
-
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(
+            address(_iporProtocol.asset),
+            1000000000,
+            1000000000,
+            70,
+            5000
+        );
 
         vm.prank(_userOne);
         _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_50_18DEC);
@@ -285,8 +325,14 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         // given
         _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE10;
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE3;
-
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(
+            address(_iporProtocol.asset),
+            1000000000,
+            1000000000,
+            70,
+            5000
+        );
 
         vm.prank(_userOne);
         _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_50_18DEC);
@@ -332,8 +378,14 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
     {
         // given
         _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE2;
-
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(
+            address(_iporProtocol.asset),
+            1000000000,
+            1000000000,
+            0,
+            5000
+        );
 
         vm.prank(_userOne);
         _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
@@ -377,8 +429,14 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
     function testShouldCalculateExchangeRatePositionValuesAndSoapWhenTwoPayFixedSwapsAreClosedAfter60Days() public {
         // given
         _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE1;
-
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(
+            address(_iporProtocol.asset),
+            1000000000,
+            1000000000,
+            0,
+            5000
+        );
 
         vm.prank(_userOne);
         _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
@@ -453,7 +511,9 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         IporTypes.AmmBalancesMemory memory liquidityPoolBalanceAfterClose = _iporProtocol.ammPoolsLens.getAmmBalance(
             address(_iporProtocol.asset)
         );
-        uint256 exchangeRate56DaysAfterClose = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(address(_iporProtocol.asset));
+        uint256 exchangeRate56DaysAfterClose = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(
+            address(_iporProtocol.asset)
+        );
         assertEq(initialSoap, TestConstants.ZERO_INT);
         assertEq(exchangeRateAndPayoff.initialExchangeRate, 1086791317829457364, "incorrect initial exchange rate");
         assertEq(

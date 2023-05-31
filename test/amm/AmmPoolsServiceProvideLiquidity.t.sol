@@ -82,8 +82,8 @@ contract AmmPoolsServiceProvideLiquidity is TestCommons {
         // given
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        _iporProtocol.ammGovernanceService.setAmmMaxLiquidityPoolBalance(address(_iporProtocol.asset), 20000);
-        _iporProtocol.ammGovernanceService.setAmmMaxLpAccountContribution(address(_iporProtocol.asset), 15000);
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(address(_iporProtocol.asset), 20000, 15000, 50, 8500);
+
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_15_000_18DEC);
 
@@ -97,8 +97,7 @@ contract AmmPoolsServiceProvideLiquidity is TestCommons {
         // given
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        _iporProtocol.ammGovernanceService.setAmmMaxLiquidityPoolBalance(address(_iporProtocol.asset), 2000000);
-        _iporProtocol.ammGovernanceService.setAmmMaxLpAccountContribution(address(_iporProtocol.asset), 50000);
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(address(_iporProtocol.asset), 2000000, 50000, 50, 8500);
 
         vm.startPrank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_10_000_18DEC);
@@ -113,8 +112,7 @@ contract AmmPoolsServiceProvideLiquidity is TestCommons {
         // given
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        _iporProtocol.ammGovernanceService.setAmmMaxLiquidityPoolBalance(address(_iporProtocol.asset), 2000000);
-        _iporProtocol.ammGovernanceService.setAmmMaxLpAccountContribution(address(_iporProtocol.asset), 50000);
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(address(_iporProtocol.asset), 2000000, 50000, 50, 8500);
 
         vm.startPrank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_50_000_18DEC);
@@ -129,8 +127,7 @@ contract AmmPoolsServiceProvideLiquidity is TestCommons {
         // given
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        _iporProtocol.ammGovernanceService.setAmmMaxLiquidityPoolBalance(address(_iporProtocol.asset), 2000000);
-        _iporProtocol.ammGovernanceService.setAmmMaxLpAccountContribution(address(_iporProtocol.asset), 50000);
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(address(_iporProtocol.asset), 2000000, 50000, 50, 8500);
 
         vm.startPrank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_50_000_18DEC);
@@ -146,8 +143,7 @@ contract AmmPoolsServiceProvideLiquidity is TestCommons {
         // given
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        _iporProtocol.ammGovernanceService.setAmmMaxLiquidityPoolBalance(address(_iporProtocol.asset), 2000000);
-        _iporProtocol.ammGovernanceService.setAmmMaxLpAccountContribution(address(_iporProtocol.asset), 50000);
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(address(_iporProtocol.asset), 2000000, 50000, 50, 8500);
 
         vm.startPrank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_50_000_18DEC);

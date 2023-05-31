@@ -860,11 +860,15 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
 
                 IporTypes.AmmBalancesMemory memory balance = model.getAccruedBalance();
 
+                StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
+                    poolCfg.asset
+                );
+
                 int256 rebalanceAmount = AssetManagementLogic.calculateRebalanceAmountBeforeWithdraw(
-                    poolCfg.asset,
                     wadAmmTreasuryErc20BalanceBeforeRedeem,
                     balance.vault,
-                    transferAmount + liquidationDepositAmount
+                    transferAmount + liquidationDepositAmount,
+                    ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio * Constants.D14
                 );
 
                 if (rebalanceAmount < 0) {

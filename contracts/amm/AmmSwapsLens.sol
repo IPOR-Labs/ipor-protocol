@@ -184,9 +184,12 @@ contract AmmSwapsLens is IAmmSwapsLens {
     ) external view override returns (AmmFacadeTypes.AssetConfiguration memory) {
         IAmmOpenSwapService.PoolConfiguration memory openSwapPoolCfg = IAmmOpenSwapService(_router)
             .getPoolConfiguration(asset);
+        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
+            openSwapPoolCfg.asset
+        );
 
         (, , uint256 maxUtilizationRate, int256 spread,) = IIporRiskManagementOracle(_riskManagementOracle)
-            .getOpenSwapParameters(asset, direction, duration);
+        .getOpenSwapParameters(asset, direction, duration);
 
         IporTypes.AmmBalancesForOpenSwapMemory memory balances = IAmmStorage(openSwapPoolCfg.ammStorage)
             .getBalancesForOpenSwap();
@@ -210,8 +213,8 @@ contract AmmSwapsLens is IAmmSwapsLens {
                 openSwapPoolCfg.liquidationDepositAmount,
                 spread,
                 maxUtilizationRate,
-                AmmConfigurationManager.getAmmMaxLiquidityPoolBalance(asset),
-                AmmConfigurationManager.getAmmMaxLpAccountContribution(asset)
+                ammPoolsParamsCfg.maxLiquidityPoolBalance * Constants.D18,
+                ammPoolsParamsCfg.maxLpAccountContribution * Constants.D18
             );
     }
 

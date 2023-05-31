@@ -134,7 +134,8 @@ contract BuilderUtils {
     }
     enum AmmOpenSwapServiceTestCase {
         DEFAULT,
-        CASE1
+        CASE1,
+        CASE2
     }
 
     enum AmmCloseSwapServiceTestCase {
