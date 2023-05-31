@@ -146,11 +146,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
 
         //Transfer assets from Aave directly to msgSender which is AssetManagement
-        uint256 withdrawnAmountAave = AaveLendingPoolV2(lendingPoolAddress).withdraw(
-            asset,
-            amount,
-            _msgSender()
-        );
+        uint256 withdrawnAmountAave = AaveLendingPoolV2(lendingPoolAddress).withdraw(asset, amount, _msgSender());
 
         withdrawnAmount = IporMath.convertToWad(withdrawnAmountAave, assetDecimals);
     }
@@ -160,7 +156,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
      * @notice Internal method.
 
      */
-    function beforeClaim() external override whenNotPaused nonReentrant {
+    function beforeClaim() external override whenNotPaused nonReentrant onlyOwner {
         require(_treasury != address(0), AssetManagementErrors.INCORRECT_TREASURY_ADDRESS);
         address[] memory shareTokens = new address[](1);
         shareTokens[0] = _shareToken;
@@ -175,7 +171,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         so you have to claim beforeClaim function. 
         when window is open you can call this function to claim _aave
      */
-    function doClaim() external override whenNotPaused nonReentrant {
+    function doClaim() external override whenNotPaused nonReentrant onlyOwner {
         address treasury = _treasury;
 
         require(treasury != address(0), AssetManagementErrors.INCORRECT_TREASURY_ADDRESS);
@@ -191,10 +187,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
             address aave = _aave;
 
             // claim AAVE governace token second after claim stakedAave token
-            _stakedAaveInterface.redeem(
-                address(this),
-                IERC20Upgradeable(_stkAave).balanceOf(address(this))
-            );
+            _stakedAaveInterface.redeem(address(this), IERC20Upgradeable(_stkAave).balanceOf(address(this)));
 
             uint256 balance = IERC20Upgradeable(aave).balanceOf(address(this));
 
