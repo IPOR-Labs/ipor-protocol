@@ -703,7 +703,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
             expectedBalances.expectedPayoffAbs;
         expectedBalances.expectedOpenerUserBalance =
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_6DEC_INT *
-            Constants.D18_INT +
+            1e18 +
             TestConstants.ZERO_INT -
             openerUserLost;
         expectedBalances.expectedCloserUserBalance =
@@ -1163,7 +1163,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         expectedBalances.expectedCloserUserBalance =
             TestConstants.USD_10_000_000_18DEC_INT +
             20 *
-            Constants.D18_INT -
+            1e18 -
             TestConstants.ZERO_INT;
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
@@ -1345,7 +1345,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         expectedBalances.expectedOpenerUserBalance =
             TestConstants.USD_10_000_000_18DEC_INT +
             20 *
-            Constants.D18_INT -
+            1e18 -
             openerUserLost;
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
@@ -2668,7 +2668,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         expectedBalances.expectedCloserUserBalance =
             TestConstants.USD_10_000_000_18DEC_INT +
             20 *
-            Constants.D18_INT -
+            1e18 -
             TestConstants.ZERO_INT;
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
@@ -2765,7 +2765,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         expectedBalances.expectedCloserUserBalance =
             TestConstants.USD_10_000_000_18DEC_INT +
             20 *
-            Constants.D18_INT -
+            1e18 -
             TestConstants.ZERO_INT;
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
@@ -2861,7 +2861,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         expectedBalances.expectedCloserUserBalance =
             TestConstants.USD_10_000_000_18DEC_INT +
             20 *
-            Constants.D18_INT -
+            1e18 -
             TestConstants.ZERO_INT;
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
@@ -2956,7 +2956,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         expectedBalances.expectedCloserUserBalance =
             TestConstants.USD_10_000_000_18DEC_INT +
             20 *
-            Constants.D18_INT -
+            1e18 -
             TestConstants.ZERO_INT;
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +

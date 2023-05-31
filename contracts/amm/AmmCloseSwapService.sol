@@ -658,8 +658,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             );
 
             uint256 swapUnwindOpeningFee = IporMath.division(
-                iporSwap.notional * poolCfg.openingFeeRate * IporMath.division(28 * Constants.D18, 365),
-                Constants.D36
+                iporSwap.notional * poolCfg.openingFeeRate * IporMath.division(28 * 1e18, 365),
+                1e36
             );
 
             swapUnwindValueAndOpeningFee = swapUnwindValue - swapUnwindOpeningFee.toInt256();
@@ -878,7 +878,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
                     wadAmmTreasuryErc20BalanceBeforeRedeem,
                     balance.vault,
                     transferAmount + liquidationDepositAmount,
-                    ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio * Constants.D14
+                    uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) * 1e14
                 );
 
                 if (rebalanceAmount < 0) {

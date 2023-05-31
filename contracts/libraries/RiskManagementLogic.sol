@@ -84,12 +84,12 @@ library RiskManagementLogic {
 
         uint256 maxCollateralPerLeg = IporMath.division(
             liquidityPool * riskIndicators.maxUtilizationRatePerLeg,
-            Constants.D18
+            1e18
         );
 
         if (maxCollateralPerLeg > 0) {
             riskIndicators.maxLeveragePerLeg = _leverageInRange(
-                IporMath.division(maxNotionalPerLeg * Constants.D18, maxCollateralPerLeg),
+                IporMath.division(maxNotionalPerLeg * 1e18, maxCollateralPerLeg),
                 cfgMinLeverage
             );
         } else {
@@ -131,8 +131,8 @@ library RiskManagementLogic {
     }
 
     function _leverageInRange(uint256 leverage, uint256 cfgMinLeverage) private pure returns (uint256) {
-        if (leverage > Constants.LEVERAGE_1000) {
-            return Constants.LEVERAGE_1000;
+        if (leverage > Constants.WAD_LEVERAGE_1000) {
+            return Constants.WAD_LEVERAGE_1000;
         } else if (leverage < cfgMinLeverage) {
             return cfgMinLeverage;
         } else {

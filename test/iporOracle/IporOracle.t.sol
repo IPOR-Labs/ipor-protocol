@@ -25,11 +25,11 @@ contract IporOracleTest is TestCommons {
 
         IporOracle iporOracleImplementation = new IporOracle(
             address(_usdcTestnetToken),
-            Constants.D18,
+            1e18,
             address(_usdtTestnetToken),
-            Constants.D18,
+            1e18,
             address(_daiTestnetToken),
-            Constants.D18
+            1e18
         );
         address[] memory assets = new address[](3);
         assets[0] = address(_daiTestnetToken);
@@ -52,7 +52,7 @@ contract IporOracleTest is TestCommons {
 
     function testShouldCalculateIbtPriceForFixedRate() public {
         uint256 ibtPrice = _iporOracle.calculateAccruedIbtPrice(address(_daiTestnetToken), _blockTimestamp);
-        assertEq(ibtPrice, Constants.D18);
+        assertEq(ibtPrice, 1e18);
         _iporOracle.updateIndex(address(_daiTestnetToken), 3e16);
 
         assertEq(
@@ -85,7 +85,7 @@ contract IporOracleTest is TestCommons {
         // given
         vm.warp(_blockTimestamp);
         uint256 ibtPrice = _iporOracle.calculateAccruedIbtPrice(address(_daiTestnetToken), _blockTimestamp);
-        assertEq(ibtPrice, Constants.D18);
+        assertEq(ibtPrice, 1e18);
         _iporOracle.updateIndex(address(_daiTestnetToken), 3e16);
 
         // when
@@ -102,7 +102,7 @@ contract IporOracleTest is TestCommons {
         // given
         vm.warp(_blockTimestamp);
         uint256 ibtPrice = _iporOracle.calculateAccruedIbtPrice(address(_daiTestnetToken), _blockTimestamp);
-        assertEq(ibtPrice, Constants.D18);
+        assertEq(ibtPrice, 1e18);
         _iporOracle.updateIndex(address(_daiTestnetToken), 3e16);
 
         // when
@@ -121,7 +121,7 @@ contract IporOracleTest is TestCommons {
         // given
         vm.warp(_blockTimestamp);
         uint256 ibtPrice = _iporOracle.calculateAccruedIbtPrice(address(_daiTestnetToken), _blockTimestamp);
-        assertEq(ibtPrice, Constants.D18);
+        assertEq(ibtPrice, 1e18);
         _iporOracle.updateIndex(address(_daiTestnetToken), 3e16);
         vm.warp(_blockTimestamp + 180 days);
 

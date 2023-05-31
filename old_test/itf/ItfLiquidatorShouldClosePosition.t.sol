@@ -1543,7 +1543,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             expectedBalances.expectedPayoffAbs;
         expectedBalances.expectedOpenerUserBalance =
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_6DEC_INT *
-            Constants.D18_INT +
+            1e18 +
             TestConstants.ZERO_INT -
             openerUserLost;
         expectedBalances.expectedCloserUserBalance = TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
@@ -1642,7 +1642,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             expectedBalances.expectedPayoffAbs;
         expectedBalances.expectedOpenerUserBalance =
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_6DEC_INT *
-            Constants.D18_INT +
+            1e18 +
             TestConstants.ZERO_INT -
             openerUserLost;
         expectedBalances.expectedCloserUserBalance = TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
@@ -2251,7 +2251,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             expectedBalances.expectedPayoffAbs;
         expectedBalances.expectedOpenerUserBalance =
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_6DEC_INT *
-            Constants.D18_INT +
+            1e18 +
             TestConstants.ZERO_INT -
             openerUserLost;
         expectedBalances.expectedCloserUserBalance = TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
@@ -2353,7 +2353,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             expectedBalances.expectedPayoffAbs;
         expectedBalances.expectedOpenerUserBalance =
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_6DEC_INT *
-            Constants.D18_INT +
+            1e18 +
             TestConstants.ZERO_INT -
             openerUserLost;
         expectedBalances.expectedCloserUserBalance = TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;

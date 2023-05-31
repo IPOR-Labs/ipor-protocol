@@ -24,7 +24,7 @@ contract IvTokenMintTest is TestCommons {
         // given
         // when
         vm.expectRevert(abi.encodePacked("IPOR_501"));
-        _ivToken.mint(_userOne, Constants.D18);
+        _ivToken.mint(_userOne, 1e18);
     }
 
     function testShouldNotMintIvTokenWhenAmountIsZero() public {
@@ -43,14 +43,14 @@ contract IvTokenMintTest is TestCommons {
         // when
         vm.prank(_userOne);
         vm.expectRevert(abi.encodePacked("ERC20: mint to the zero address"));
-        _ivToken.mint(address(0), Constants.D18);
+        _ivToken.mint(address(0), 1e18);
     }
 
     function testShouldMintNewTokens() public {
         // given
         address mockIporVaultAddress = _userOne;
         _ivToken.setAssetManagement(mockIporVaultAddress);
-        uint256 amount = Constants.D18;
+        uint256 amount = 1e18;
         // when
         vm.prank(_userOne);
         vm.expectEmit(true, true, false, true);
@@ -64,7 +64,7 @@ contract IvTokenMintTest is TestCommons {
         // given
         address mockIporVaultAddress = _admin;
         _ivToken.setAssetManagement(mockIporVaultAddress);
-        uint256 amount = Constants.D18;
+        uint256 amount = 1e18;
         uint256 balanceBefore = _ivToken.balanceOf(_userOne);
         // when
         vm.expectEmit(true, false, false, true);

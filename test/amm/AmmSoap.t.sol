@@ -346,7 +346,7 @@ contract AmmSoapTest is TestCommons {
             _userTwo,
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             9 * TestConstants.D17,
-            10 * Constants.D18
+            10 * 1e18
         );
 
         vm.prank(_userTwo);
@@ -354,7 +354,7 @@ contract AmmSoapTest is TestCommons {
             _userTwo,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            10 * Constants.D18
+            10 * 1e18
         );
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
@@ -721,7 +721,7 @@ contract AmmSoapTest is TestCommons {
             _userTwo,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            10 * Constants.D18
+            10 * 1e18
         );
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);

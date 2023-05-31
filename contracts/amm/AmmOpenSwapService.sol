@@ -530,7 +530,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         AmmTypes.IporSwapIndicator memory indicator = AmmTypes.IporSwapIndicator(
             bosStruct.accruedIpor.indexValue,
             bosStruct.accruedIpor.ibtPrice,
-            IporMath.division(bosStruct.notional * Constants.D18, bosStruct.accruedIpor.ibtPrice),
+            IporMath.division(bosStruct.notional * 1e18, bosStruct.accruedIpor.ibtPrice),
             quoteValue
         );
 
@@ -631,7 +631,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         AmmTypes.IporSwapIndicator memory indicator = AmmTypes.IporSwapIndicator(
             bosStruct.accruedIpor.indexValue,
             bosStruct.accruedIpor.ibtPrice,
-            IporMath.division(bosStruct.notional * Constants.D18, bosStruct.accruedIpor.ibtPrice),
+            IporMath.division(bosStruct.notional * 1e18, bosStruct.accruedIpor.ibtPrice),
             quoteValue
         );
 
@@ -686,7 +686,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         );
 
         uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, poolCfg.decimals);
-        uint256 liquidationDepositAmountWad = poolCfg.liquidationDepositAmount * Constants.D18;
+        uint256 liquidationDepositAmountWad = poolCfg.liquidationDepositAmount * 1e18;
 
         require(
             wadTotalAmount > liquidationDepositAmountWad + poolCfg.iporPublicationFee,
@@ -751,14 +751,11 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             uint256(duration)
         );
 
-        uint256 maxCollateralPerLeg = IporMath.division(
-            liquidityPool * riskIndicators.maxUtilizationRatePerLeg,
-            Constants.D18
-        );
+        uint256 maxCollateralPerLeg = IporMath.division(liquidityPool * riskIndicators.maxUtilizationRatePerLeg, 1e18);
 
         if (maxCollateralPerLeg > 0) {
             riskIndicators.maxLeveragePerLeg = _leverageInRange(
-                IporMath.division(maxNotionalPerLeg * Constants.D18, maxCollateralPerLeg),
+                IporMath.division(maxNotionalPerLeg * 1e18, maxCollateralPerLeg),
                 cfgMinLeverage
             );
         } else {
@@ -767,8 +764,8 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function _leverageInRange(uint256 leverage, uint256 cfgMinLeverage) internal pure returns (uint256) {
-        if (leverage > Constants.LEVERAGE_1000) {
-            return Constants.LEVERAGE_1000;
+        if (leverage > Constants.WAD_LEVERAGE_1000) {
+            return Constants.WAD_LEVERAGE_1000;
         } else if (leverage < cfgMinLeverage) {
             return cfgMinLeverage;
         } else {
@@ -781,7 +778,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         pure
         returns (uint256 liquidityPoolAmount, uint256 treasuryAmount)
     {
-        treasuryAmount = IporMath.division(openingFeeAmount * openingFeeForTreasureRate, Constants.D18);
+        treasuryAmount = IporMath.division(openingFeeAmount * openingFeeForTreasureRate, 1e18);
         liquidityPoolAmount = openingFeeAmount - treasuryAmount;
     }
 
@@ -806,10 +803,10 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                 newSwap.openingFeeLPAmount,
                 newSwap.openingFeeTreasuryAmount,
                 iporPublicationFee,
-                newSwap.liquidationDepositAmount * Constants.D18
+                newSwap.liquidationDepositAmount * 1e18
             ),
             newSwap.openTimestamp,
-            newSwap.openTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
+            newSwap.openTimestamp + IporSwapLogic.getMaturity(newSwap.duration),
             indicator
         );
     }
@@ -828,12 +825,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         uint256 utilizationRatePerLeg;
 
         if (totalLiquidityPoolBalance > 0) {
-            utilizationRate = IporMath.division(totalCollateralBalance * Constants.D18, totalLiquidityPoolBalance);
+            utilizationRate = IporMath.division(totalCollateralBalance * 1e18, totalLiquidityPoolBalance);
 
-            utilizationRatePerLeg = IporMath.division(
-                collateralPerLegBalance * Constants.D18,
-                totalLiquidityPoolBalance
-            );
+            utilizationRatePerLeg = IporMath.division(collateralPerLegBalance * 1e18, totalLiquidityPoolBalance);
         } else {
             utilizationRate = Constants.MAX_VALUE;
             utilizationRatePerLeg = Constants.MAX_VALUE;

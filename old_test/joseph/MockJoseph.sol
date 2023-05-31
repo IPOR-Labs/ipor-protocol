@@ -41,16 +41,16 @@ abstract contract MockJoseph is MockJosephInternal {
         uint256 ipTokenTotalSupply = _getIpToken().totalSupply();
 
         if (ipTokenTotalSupply > 0) {
-            return IporMath.division(balance.toUint256() * Constants.D18, ipTokenTotalSupply);
+            return IporMath.division(balance.toUint256() * 1e18, ipTokenTotalSupply);
         } else {
-            return Constants.D18;
+            return 1e18;
         }
     }
 
     function _checkVaultReservesRatio() internal view returns (uint256) {
         (uint256 totalBalance, uint256 wadAmmTreasuryAssetBalance) = _getIporTotalBalance();
         require(totalBalance > 0, AmmPoolsErrors.ASSET_MANAGEMENT_BALANCE_IS_EMPTY);
-        return IporMath.division(wadAmmTreasuryAssetBalance * Constants.D18, totalBalance);
+        return IporMath.division(wadAmmTreasuryAssetBalance * 1e18, totalBalance);
     }
 
     function _provideLiquidity(
@@ -70,13 +70,13 @@ abstract contract MockJoseph is MockJosephInternal {
         _getAmmStorage().addLiquidity(
             msgSender,
             wadAssetAmount,
-            _maxLiquidityPoolBalance * Constants.D18,
-            _maxLpAccountContribution * Constants.D18
+            _maxLiquidityPoolBalance * 1e18,
+            _maxLpAccountContribution * 1e18
         );
 
         IERC20Upgradeable(_asset).safeTransferFrom(msgSender, address(ammTreasury), assetAmount);
 
-        uint256 ipTokenAmount = IporMath.division(wadAssetAmount * Constants.D18, exchangeRate);
+        uint256 ipTokenAmount = IporMath.division(wadAssetAmount * 1e18, exchangeRate);
 
         _getIpToken().mint(msgSender, ipTokenAmount);
 
@@ -94,9 +94,9 @@ abstract contract MockJoseph is MockJosephInternal {
 
         require(exchangeRate > 0, AmmErrors.LIQUIDITY_POOL_IS_EMPTY);
 
-        uint256 wadAssetAmount = IporMath.division(ipTokenAmount * exchangeRate, Constants.D18);
+        uint256 wadAssetAmount = IporMath.division(ipTokenAmount * exchangeRate, 1e18);
 
-        uint256 wadRedeemFee = IporMath.division(wadAssetAmount * _getRedeemFeeRate(), Constants.D18);
+        uint256 wadRedeemFee = IporMath.division(wadAssetAmount * _getRedeemFeeRate(), 1e18);
 
         uint256 redeemAmount = IporMath.convertWadToAssetDecimals(wadAssetAmount - wadRedeemFee, _getDecimals());
 
@@ -138,7 +138,7 @@ abstract contract MockJoseph is MockJosephInternal {
         uint256 denominator = totalLiquidityPoolBalance - redeemedAmount;
         if (denominator > 0) {
             return
-                IporMath.division(totalCollateralBalance * Constants.D18, totalLiquidityPoolBalance - redeemedAmount);
+                IporMath.division(totalCollateralBalance * 1e18, totalLiquidityPoolBalance - redeemedAmount);
         } else {
             return Constants.MAX_VALUE;
         }

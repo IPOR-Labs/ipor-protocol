@@ -22,8 +22,8 @@ library InterestRates {
             interestRatePeriodMultiplication,
             Constants.YEAR_IN_SECONDS
         );
-        bytes16 floatValue = _toQuadruplePrecision(value, Constants.D18);
-        bytes16 floatIpm = _toQuadruplePrecision(interestRateYearsMultiplication, Constants.D18);
+        bytes16 floatValue = _toQuadruplePrecision(value, 1e18);
+        bytes16 floatIpm = _toQuadruplePrecision(interestRateYearsMultiplication, 1e18);
         bytes16 valueWithInterest = ABDKMathQuad.mul(floatValue, ABDKMathQuad.exp(floatIpm));
         return _toUint256(valueWithInterest);
     }
@@ -40,8 +40,8 @@ library InterestRates {
             interestRatePeriodMultiplication,
             Constants.YEAR_IN_SECONDS.toInt256()
         );
-        bytes16 floatValue = _toQuadruplePrecisionInt(value, Constants.D18_INT);
-        bytes16 floatIpm = _toQuadruplePrecisionInt(interestRateYearsMultiplication, Constants.D18_INT);
+        bytes16 floatValue = _toQuadruplePrecisionInt(value, 1e18);
+        bytes16 floatIpm = _toQuadruplePrecisionInt(interestRateYearsMultiplication, 1e18);
         bytes16 valueWithInterest = ABDKMathQuad.mul(floatValue, ABDKMathQuad.exp(floatIpm));
         return _toInt256(valueWithInterest);
     }
@@ -95,13 +95,13 @@ library InterestRates {
     }
 
     function _toUint256(bytes16 value) private pure returns (uint256) {
-        bytes16 decimals = ABDKMathQuad.fromUInt(Constants.D18);
+        bytes16 decimals = ABDKMathQuad.fromUInt(1e18);
         bytes16 resultD18 = ABDKMathQuad.mul(value, decimals);
         return ABDKMathQuad.toUInt(resultD18);
     }
 
     function _toInt256(bytes16 value) private pure returns (int256) {
-        bytes16 decimals = ABDKMathQuad.fromUInt(Constants.D18);
+        bytes16 decimals = ABDKMathQuad.fromUInt(1e18);
         bytes16 resultD18 = ABDKMathQuad.mul(value, decimals);
         return ABDKMathQuad.toInt(resultD18);
     }

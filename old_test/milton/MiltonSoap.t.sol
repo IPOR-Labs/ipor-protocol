@@ -391,14 +391,14 @@ contract AmmTreasurySoapTest is TestCommons, DataUtils, SwapUtils {
         ammUsdt.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             9 * TestConstants.D17,
-            10 * Constants.D18
+            10 * 1e18
         );
 
         vm.prank(_userTwo);
         ammDai.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            10 * Constants.D18
+            10 * 1e18
         );
 
         (, , int256 soapUsdt) = calculateSoap(_userTwo, endTimestamp, ammUsdt.ammTreasury);
@@ -810,7 +810,7 @@ contract AmmTreasurySoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            10 * Constants.D18
+            10 * 1e18
         );
 
         vm.prank(_userOne);

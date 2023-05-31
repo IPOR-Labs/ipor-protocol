@@ -287,7 +287,7 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         } else if (asset == _dai) {
             return _daiInitialIbtPrice;
         }
-        return Constants.D18;
+        return 1e18;
     }
 
     //solhint-disable no-empty-blocks
