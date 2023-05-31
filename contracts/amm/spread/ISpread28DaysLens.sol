@@ -8,7 +8,7 @@ interface ISpread28DaysLens {
     /// @notice Calculates the quote value for pay fixed 28-day period on the pay-fixed side based on the provided spread inputs.
     /// @param spreadInputs The spread inputs required for the calculation.
     /// @return quoteValue The calculated quote value for the pay-fixed side.
-    function calculatePayFixed28Days(IporTypes.SpreadInputs calldata spreadInputs)
+    function calculateOfferedRatePayFixed28Days(IporTypes.SpreadInputs calldata spreadInputs)
         external
         returns (uint256 quoteValue);
 

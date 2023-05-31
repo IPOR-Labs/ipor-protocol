@@ -31,7 +31,7 @@ contract Spread90Days is ISpread90Days, ISpread90DaysLens {
         _USDT = usdt;
     }
 
-    function calculateQuotePayFixed90Days(IporTypes.SpreadInputs calldata spreadInputs)
+    function calculateAndUpdateOfferedRatePayFixed90Days(IporTypes.SpreadInputs calldata spreadInputs)
         external
         override
         returns (uint256 offeredRate)
@@ -44,7 +44,7 @@ contract Spread90Days is ISpread90Days, ISpread90DaysLens {
         );
     }
 
-    function calculatePayFixed90Days(IporTypes.SpreadInputs calldata spreadInputs)
+    function calculateOfferedRatePayFixed90Days(IporTypes.SpreadInputs calldata spreadInputs)
         external
         override
         returns (uint256 offeredRate)

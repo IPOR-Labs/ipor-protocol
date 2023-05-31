@@ -31,7 +31,7 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         _USDT = usdt;
     }
 
-    function calculateQuotePayFixed28Days(IporTypes.SpreadInputs calldata spreadInputs)
+    function calculateAndUpdateOfferedRatePayFixed28Days(IporTypes.SpreadInputs calldata spreadInputs)
         external
         override
         returns (uint256 offeredRate)
@@ -44,12 +44,11 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         );
     }
 
-    function calculatePayFixed28Days(IporTypes.SpreadInputs calldata spreadInputs)
+    function calculateOfferedRatePayFixed28Days(IporTypes.SpreadInputs calldata spreadInputs)
         external
         override
         returns (uint256 offeredRate)
     {
-
         offeredRate = OfferedRateCalculationLibs.calculatePayFixedOfferedRate(
             spreadInputs.indexValue,
             spreadInputs.baseSpread,

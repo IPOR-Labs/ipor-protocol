@@ -49,7 +49,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
 
         vm.warp(openSwapTimeStamp);
         vm.prank(_ammAddress);
-        uint256 payFixed28Open = ISpread28Days(_routerAddress).calculateQuotePayFixed28Days(spreadInputsOpen);
+        uint256 payFixed28Open = ISpread28Days(_routerAddress).calculateAndUpdateOfferedRatePayFixed28Days(spreadInputsOpen);
 
         SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseBefore = ISpreadStorageLens(
             _routerAddress
@@ -176,10 +176,10 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         );
 
         vm.prank(_ammAddress);
-        ISpread28Days(_routerAddress).calculateQuotePayFixed28Days(spreadInputsOpen);
+        ISpread28Days(_routerAddress).calculateAndUpdateOfferedRatePayFixed28Days(spreadInputsOpen);
 
         vm.prank(_ammAddress);
-        ISpread28Days(_routerAddress).calculateQuotePayFixed28Days(spreadInputsOpen);
+        ISpread28Days(_routerAddress).calculateAndUpdateOfferedRatePayFixed28Days(spreadInputsOpen);
 
         SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseBefore = ISpreadStorageLens(
             _routerAddress
@@ -458,7 +458,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         vm.prank(_owner);
         ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap1, cfgIporPublicationFee);
         vm.prank(_ammAddress);
-        ISpread28Days(_routerAddress).calculateQuotePayFixed28Days(spreadInputsOpen);
+        ISpread28Days(_routerAddress).calculateAndUpdateOfferedRatePayFixed28Days(spreadInputsOpen);
 
         vm.warp(block.timestamp + 5 days);
         AmmTypes.NewSwap memory newSwap2 = AmmTypes.NewSwap(
@@ -476,7 +476,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         vm.prank(_owner);
         ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap2, cfgIporPublicationFee);
         vm.prank(_ammAddress);
-        ISpread28Days(_routerAddress).calculateQuotePayFixed28Days(spreadInputsOpen);
+        ISpread28Days(_routerAddress).calculateAndUpdateOfferedRatePayFixed28Days(spreadInputsOpen);
 
         vm.warp(block.timestamp + 5 days);
         SpreadTypes.TimeWeightedNotionalResponse[]
@@ -496,7 +496,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             AmmTypes.SwapDuration.DAYS_28
         );
         vm.prank(_ammAddress);
-        ISpread28Days(_routerAddress).calculateQuotePayFixed28Days(spreadInputsOpen);
+        ISpread28Days(_routerAddress).calculateAndUpdateOfferedRatePayFixed28Days(spreadInputsOpen);
 
         SpreadTypes.TimeWeightedNotionalResponse[]
             memory timeWeightedNotionalResponseAfterOpenLastSwap = ISpreadStorageLens(_routerAddress)

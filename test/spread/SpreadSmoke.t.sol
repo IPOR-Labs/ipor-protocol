@@ -54,17 +54,17 @@ contract SpreadSmokeTest is TestCommons {
         // given
 
         // then
-        uint256 payFixed28 = ISpread28DaysLens(_routerAddress).calculatePayFixed28Days(spreadInputsPayFixed);
+        uint256 payFixed28 = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(spreadInputsPayFixed);
         uint256 receiveFixed28 = ISpread28DaysLens(_routerAddress).calculateReceiveFixed28Days(
             spreadInputsReceiveFixed
         );
 
-        uint256 payFixed60 = ISpread60DaysLens(_routerAddress).calculatePayFixed60Days(spreadInputsPayFixed);
+        uint256 payFixed60 = ISpread60DaysLens(_routerAddress).calculateOfferedRatePayFixed60Days(spreadInputsPayFixed);
         uint256 receiveFixed60 = ISpread60DaysLens(_routerAddress).calculateReceiveFixed60Days(
             spreadInputsReceiveFixed
         );
 
-        uint256 payFixed90 = ISpread90DaysLens(_routerAddress).calculatePayFixed90Days(spreadInputsPayFixed);
+        uint256 payFixed90 = ISpread90DaysLens(_routerAddress).calculateOfferedRatePayFixed90Days(spreadInputsPayFixed);
         uint256 receiveFixed90 = ISpread90DaysLens(_routerAddress).calculateReceiveFixed90Days(
             spreadInputsReceiveFixed
         );
@@ -96,37 +96,37 @@ contract SpreadSmokeTest is TestCommons {
             cap: 1e15
         });
 
-        uint256 payFixed28Before = ISpread28DaysLens(_routerAddress).calculatePayFixed28Days(spreadInputsPayFixed);
+        uint256 payFixed28Before = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(spreadInputsPayFixed);
         uint256 receiveFixed28Before = ISpread28DaysLens(_routerAddress).calculateReceiveFixed28Days(
             spreadInputsReceiveFixed
         );
 
-        uint256 payFixed60Before = ISpread60DaysLens(_routerAddress).calculatePayFixed60Days(spreadInputsPayFixed);
+        uint256 payFixed60Before = ISpread60DaysLens(_routerAddress).calculateOfferedRatePayFixed60Days(spreadInputsPayFixed);
         uint256 receiveFixed60Before = ISpread60DaysLens(_routerAddress).calculateReceiveFixed60Days(
             spreadInputsReceiveFixed
         );
 
-        uint256 payFixed90Before = ISpread90DaysLens(_routerAddress).calculatePayFixed90Days(spreadInputsPayFixed);
+        uint256 payFixed90Before = ISpread90DaysLens(_routerAddress).calculateOfferedRatePayFixed90Days(spreadInputsPayFixed);
         uint256 receiveFixed90Before = ISpread90DaysLens(_routerAddress).calculateReceiveFixed90Days(
             spreadInputsReceiveFixed
         );
 
         // when
         vm.prank(_ammAddress);
-        uint256 payFixed28Open = ISpread28Days(_routerAddress).calculateQuotePayFixed28Days(spreadInputsOpen);
+        uint256 payFixed28Open = ISpread28Days(_routerAddress).calculateAndUpdateOfferedRatePayFixed28Days(spreadInputsOpen);
 
         // then
-        uint256 payFixed28After = ISpread28DaysLens(_routerAddress).calculatePayFixed28Days(spreadInputsPayFixed);
+        uint256 payFixed28After = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(spreadInputsPayFixed);
         uint256 receiveFixed28After = ISpread28DaysLens(_routerAddress).calculateReceiveFixed28Days(
             spreadInputsReceiveFixed
         );
 
-        uint256 payFixed60After = ISpread60DaysLens(_routerAddress).calculatePayFixed60Days(spreadInputsPayFixed);
+        uint256 payFixed60After = ISpread60DaysLens(_routerAddress).calculateOfferedRatePayFixed60Days(spreadInputsPayFixed);
         uint256 receiveFixed60After = ISpread60DaysLens(_routerAddress).calculateReceiveFixed60Days(
             spreadInputsReceiveFixed
         );
 
-        uint256 payFixed90After = ISpread90DaysLens(_routerAddress).calculatePayFixed90Days(spreadInputsPayFixed);
+        uint256 payFixed90After = ISpread90DaysLens(_routerAddress).calculateOfferedRatePayFixed90Days(spreadInputsPayFixed);
         uint256 receiveFixed90After = ISpread90DaysLens(_routerAddress).calculateReceiveFixed90Days(
             spreadInputsReceiveFixed
         );
@@ -168,37 +168,37 @@ contract SpreadSmokeTest is TestCommons {
             cap: 1e15
         });
 
-        uint256 payFixed28Before = ISpread28DaysLens(_routerAddress).calculatePayFixed28Days(spreadInputsPayFixed);
+        uint256 payFixed28Before = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(spreadInputsPayFixed);
         uint256 receiveFixed28Before = ISpread28DaysLens(_routerAddress).calculateReceiveFixed28Days(
             spreadInputsReceiveFixed
         );
 
-        uint256 payFixed60Before = ISpread60DaysLens(_routerAddress).calculatePayFixed60Days(spreadInputsPayFixed);
+        uint256 payFixed60Before = ISpread60DaysLens(_routerAddress).calculateOfferedRatePayFixed60Days(spreadInputsPayFixed);
         uint256 receiveFixed60Before = ISpread60DaysLens(_routerAddress).calculateReceiveFixed60Days(
             spreadInputsReceiveFixed
         );
 
-        uint256 payFixed90Before = ISpread90DaysLens(_routerAddress).calculatePayFixed90Days(spreadInputsPayFixed);
+        uint256 payFixed90Before = ISpread90DaysLens(_routerAddress).calculateOfferedRatePayFixed90Days(spreadInputsPayFixed);
         uint256 receiveFixed90Before = ISpread90DaysLens(_routerAddress).calculateReceiveFixed90Days(
             spreadInputsReceiveFixed
         );
 
         // when
         vm.prank(_ammAddress);
-        uint256 payFixed60Open = ISpread60Days(_routerAddress).calculateQuotePayFixed60Days(spreadInputsOpen);
+        uint256 payFixed60Open = ISpread60Days(_routerAddress).calculateAndUpdateOfferedRatePayFixed60Days(spreadInputsOpen);
 
         // then
-        uint256 payFixed28After = ISpread28DaysLens(_routerAddress).calculatePayFixed28Days(spreadInputsPayFixed);
+        uint256 payFixed28After = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(spreadInputsPayFixed);
         uint256 receiveFixed28After = ISpread28DaysLens(_routerAddress).calculateReceiveFixed28Days(
             spreadInputsReceiveFixed
         );
 
-        uint256 payFixed60After = ISpread60DaysLens(_routerAddress).calculatePayFixed60Days(spreadInputsPayFixed);
+        uint256 payFixed60After = ISpread60DaysLens(_routerAddress).calculateOfferedRatePayFixed60Days(spreadInputsPayFixed);
         uint256 receiveFixed60After = ISpread60DaysLens(_routerAddress).calculateReceiveFixed60Days(
             spreadInputsReceiveFixed
         );
 
-        uint256 payFixed90After = ISpread90DaysLens(_routerAddress).calculatePayFixed90Days(spreadInputsPayFixed);
+        uint256 payFixed90After = ISpread90DaysLens(_routerAddress).calculateOfferedRatePayFixed90Days(spreadInputsPayFixed);
         uint256 receiveFixed90After = ISpread90DaysLens(_routerAddress).calculateReceiveFixed90Days(
             spreadInputsReceiveFixed
         );
@@ -240,37 +240,37 @@ contract SpreadSmokeTest is TestCommons {
             cap: 1e15
         });
 
-        uint256 payFixed28Before = ISpread28DaysLens(_routerAddress).calculatePayFixed28Days(spreadInputsPayFixed);
+        uint256 payFixed28Before = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(spreadInputsPayFixed);
         uint256 receiveFixed28Before = ISpread28DaysLens(_routerAddress).calculateReceiveFixed28Days(
             spreadInputsReceiveFixed
         );
 
-        uint256 payFixed60Before = ISpread60DaysLens(_routerAddress).calculatePayFixed60Days(spreadInputsPayFixed);
+        uint256 payFixed60Before = ISpread60DaysLens(_routerAddress).calculateOfferedRatePayFixed60Days(spreadInputsPayFixed);
         uint256 receiveFixed60Before = ISpread60DaysLens(_routerAddress).calculateReceiveFixed60Days(
             spreadInputsReceiveFixed
         );
 
-        uint256 payFixed90Before = ISpread90DaysLens(_routerAddress).calculatePayFixed90Days(spreadInputsPayFixed);
+        uint256 payFixed90Before = ISpread90DaysLens(_routerAddress).calculateOfferedRatePayFixed90Days(spreadInputsPayFixed);
         uint256 receiveFixed90Before = ISpread90DaysLens(_routerAddress).calculateReceiveFixed90Days(
             spreadInputsReceiveFixed
         );
 
         // when
         vm.prank(_ammAddress);
-        uint256 payFixed90Open = ISpread90Days(_routerAddress).calculateQuotePayFixed90Days(spreadInputsOpen);
+        uint256 payFixed90Open = ISpread90Days(_routerAddress).calculateAndUpdateOfferedRatePayFixed90Days(spreadInputsOpen);
 
         // then
-        uint256 payFixed28After = ISpread28DaysLens(_routerAddress).calculatePayFixed28Days(spreadInputsPayFixed);
+        uint256 payFixed28After = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(spreadInputsPayFixed);
         uint256 receiveFixed28After = ISpread28DaysLens(_routerAddress).calculateReceiveFixed28Days(
             spreadInputsReceiveFixed
         );
 
-        uint256 payFixed60After = ISpread60DaysLens(_routerAddress).calculatePayFixed60Days(spreadInputsPayFixed);
+        uint256 payFixed60After = ISpread60DaysLens(_routerAddress).calculateOfferedRatePayFixed60Days(spreadInputsPayFixed);
         uint256 receiveFixed60After = ISpread60DaysLens(_routerAddress).calculateReceiveFixed60Days(
             spreadInputsReceiveFixed
         );
 
-        uint256 payFixed90After = ISpread90DaysLens(_routerAddress).calculatePayFixed90Days(spreadInputsPayFixed);
+        uint256 payFixed90After = ISpread90DaysLens(_routerAddress).calculateOfferedRatePayFixed90Days(spreadInputsPayFixed);
         uint256 receiveFixed90After = ISpread90DaysLens(_routerAddress).calculateReceiveFixed90Days(
             spreadInputsReceiveFixed
         );
@@ -312,37 +312,37 @@ contract SpreadSmokeTest is TestCommons {
             cap: 1e15
         });
 
-        uint256 payFixed28Before = ISpread28DaysLens(_routerAddress).calculatePayFixed28Days(spreadInputsPayFixed);
+        uint256 payFixed28Before = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(spreadInputsPayFixed);
         uint256 receiveFixed28Before = ISpread28DaysLens(_routerAddress).calculateReceiveFixed28Days(
             spreadInputsReceiveFixed
         );
 
-        uint256 payFixed60Before = ISpread60DaysLens(_routerAddress).calculatePayFixed60Days(spreadInputsPayFixed);
+        uint256 payFixed60Before = ISpread60DaysLens(_routerAddress).calculateOfferedRatePayFixed60Days(spreadInputsPayFixed);
         uint256 receiveFixed60Before = ISpread60DaysLens(_routerAddress).calculateReceiveFixed60Days(
             spreadInputsReceiveFixed
         );
 
-        uint256 payFixed90Before = ISpread90DaysLens(_routerAddress).calculatePayFixed90Days(spreadInputsPayFixed);
+        uint256 payFixed90Before = ISpread90DaysLens(_routerAddress).calculateOfferedRatePayFixed90Days(spreadInputsPayFixed);
         uint256 receiveFixed90Before = ISpread90DaysLens(_routerAddress).calculateReceiveFixed90Days(
             spreadInputsReceiveFixed
         );
 
         // when
         vm.prank(_ammAddress);
-        uint256 payFixed28Open = ISpread28Days(_routerAddress).calculateQuotePayFixed28Days(spreadInputsOpen);
+        uint256 payFixed28Open = ISpread28Days(_routerAddress).calculateAndUpdateOfferedRatePayFixed28Days(spreadInputsOpen);
 
         // then
-        uint256 payFixed28After = ISpread28DaysLens(_routerAddress).calculatePayFixed28Days(spreadInputsPayFixed);
+        uint256 payFixed28After = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(spreadInputsPayFixed);
         uint256 receiveFixed28After = ISpread28DaysLens(_routerAddress).calculateReceiveFixed28Days(
             spreadInputsReceiveFixed
         );
 
-        uint256 payFixed60After = ISpread60DaysLens(_routerAddress).calculatePayFixed60Days(spreadInputsPayFixed);
+        uint256 payFixed60After = ISpread60DaysLens(_routerAddress).calculateOfferedRatePayFixed60Days(spreadInputsPayFixed);
         uint256 receiveFixed60After = ISpread60DaysLens(_routerAddress).calculateReceiveFixed60Days(
             spreadInputsReceiveFixed
         );
 
-        uint256 payFixed90After = ISpread90DaysLens(_routerAddress).calculatePayFixed90Days(spreadInputsPayFixed);
+        uint256 payFixed90After = ISpread90DaysLens(_routerAddress).calculateOfferedRatePayFixed90Days(spreadInputsPayFixed);
         uint256 receiveFixed90After = ISpread90DaysLens(_routerAddress).calculateReceiveFixed90Days(
             spreadInputsReceiveFixed
         );
@@ -386,17 +386,17 @@ contract SpreadSmokeTest is TestCommons {
             cap: 5e16
         });
 
-        uint256 payFixed28Before = ISpread28DaysLens(_routerAddress).calculatePayFixed28Days(spreadInputsPayFixed);
+        uint256 payFixed28Before = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(spreadInputsPayFixed);
         uint256 receiveFixed28Before = ISpread28DaysLens(_routerAddress).calculateReceiveFixed28Days(
             spreadInputsReceiveFixed
         );
 
-        uint256 payFixed60Before = ISpread60DaysLens(_routerAddress).calculatePayFixed60Days(spreadInputsPayFixed);
+        uint256 payFixed60Before = ISpread60DaysLens(_routerAddress).calculateOfferedRatePayFixed60Days(spreadInputsPayFixed);
         uint256 receiveFixed60Before = ISpread60DaysLens(_routerAddress).calculateReceiveFixed60Days(
             spreadInputsReceiveFixed
         );
 
-        uint256 payFixed90Before = ISpread90DaysLens(_routerAddress).calculatePayFixed90Days(spreadInputsPayFixed);
+        uint256 payFixed90Before = ISpread90DaysLens(_routerAddress).calculateOfferedRatePayFixed90Days(spreadInputsPayFixed);
         uint256 receiveFixed90Before = ISpread90DaysLens(_routerAddress).calculateReceiveFixed90Days(
             spreadInputsReceiveFixed
         );
@@ -406,17 +406,17 @@ contract SpreadSmokeTest is TestCommons {
         uint256 receiveFixed28Open = ISpread28Days(_routerAddress).calculateQuoteReceiveFixed28Days(spreadInputsOpen);
 
         // then
-        uint256 payFixed28After = ISpread28DaysLens(_routerAddress).calculatePayFixed28Days(spreadInputsPayFixed);
+        uint256 payFixed28After = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(spreadInputsPayFixed);
         uint256 receiveFixed28After = ISpread28DaysLens(_routerAddress).calculateReceiveFixed28Days(
             spreadInputsReceiveFixed
         );
 
-        uint256 payFixed60After = ISpread60DaysLens(_routerAddress).calculatePayFixed60Days(spreadInputsPayFixed);
+        uint256 payFixed60After = ISpread60DaysLens(_routerAddress).calculateOfferedRatePayFixed60Days(spreadInputsPayFixed);
         uint256 receiveFixed60After = ISpread60DaysLens(_routerAddress).calculateReceiveFixed60Days(
             spreadInputsReceiveFixed
         );
 
-        uint256 payFixed90After = ISpread90DaysLens(_routerAddress).calculatePayFixed90Days(spreadInputsPayFixed);
+        uint256 payFixed90After = ISpread90DaysLens(_routerAddress).calculateOfferedRatePayFixed90Days(spreadInputsPayFixed);
         uint256 receiveFixed90After = ISpread90DaysLens(_routerAddress).calculateReceiveFixed90Days(
             spreadInputsReceiveFixed
         );
@@ -459,13 +459,13 @@ contract SpreadSmokeTest is TestCommons {
         });
 
 
-        uint256 payFixed28Before = ISpread28DaysLens(_routerAddress).calculatePayFixed28Days(spreadInputsPayFixed);
+        uint256 payFixed28Before = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(spreadInputsPayFixed);
         uint256 receiveFixed28Before = ISpread28DaysLens(_routerAddress).calculateReceiveFixed28Days(spreadInputsReceiveFixed);
 
-        uint256 payFixed60Before = ISpread60DaysLens(_routerAddress).calculatePayFixed60Days(spreadInputsPayFixed);
+        uint256 payFixed60Before = ISpread60DaysLens(_routerAddress).calculateOfferedRatePayFixed60Days(spreadInputsPayFixed);
         uint256 receiveFixed60Before = ISpread60DaysLens(_routerAddress).calculateReceiveFixed60Days(spreadInputsReceiveFixed);
 
-        uint256 payFixed90Before = ISpread90DaysLens(_routerAddress).calculatePayFixed90Days(spreadInputsPayFixed);
+        uint256 payFixed90Before = ISpread90DaysLens(_routerAddress).calculateOfferedRatePayFixed90Days(spreadInputsPayFixed);
         uint256 receiveFixed90Before = ISpread90DaysLens(_routerAddress).calculateReceiveFixed90Days(spreadInputsReceiveFixed);
 
         // when
@@ -473,13 +473,13 @@ contract SpreadSmokeTest is TestCommons {
         uint256 receiveFixed60Open = ISpread60Days(_routerAddress).calculateQuoteReceiveFixed60Days(spreadInputsOpen);
 
         // then
-        uint256 payFixed28After = ISpread28DaysLens(_routerAddress).calculatePayFixed28Days(spreadInputsPayFixed);
+        uint256 payFixed28After = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(spreadInputsPayFixed);
         uint256 receiveFixed28After = ISpread28DaysLens(_routerAddress).calculateReceiveFixed28Days(spreadInputsReceiveFixed);
 
-        uint256 payFixed60After = ISpread60DaysLens(_routerAddress).calculatePayFixed60Days(spreadInputsPayFixed);
+        uint256 payFixed60After = ISpread60DaysLens(_routerAddress).calculateOfferedRatePayFixed60Days(spreadInputsPayFixed);
         uint256 receiveFixed60After = ISpread60DaysLens(_routerAddress).calculateReceiveFixed60Days(spreadInputsReceiveFixed);
 
-        uint256 payFixed90After = ISpread90DaysLens(_routerAddress).calculatePayFixed90Days(spreadInputsPayFixed);
+        uint256 payFixed90After = ISpread90DaysLens(_routerAddress).calculateOfferedRatePayFixed90Days(spreadInputsPayFixed);
         uint256 receiveFixed90After = ISpread90DaysLens(_routerAddress).calculateReceiveFixed90Days(spreadInputsReceiveFixed);
 
         assertEq(payFixed28Before, 1e16, "payFixed28Before should be 1e16");
@@ -520,13 +520,13 @@ contract SpreadSmokeTest is TestCommons {
             cap: 5e16
         });
 
-        uint256 payFixed28Before = ISpread28DaysLens(_routerAddress).calculatePayFixed28Days(spreadInputsPayFixed);
+        uint256 payFixed28Before = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(spreadInputsPayFixed);
         uint256 receiveFixed28Before = ISpread28DaysLens(_routerAddress).calculateReceiveFixed28Days(spreadInputsReceiveFixed);
 
-        uint256 payFixed60Before = ISpread60DaysLens(_routerAddress).calculatePayFixed60Days(spreadInputsPayFixed);
+        uint256 payFixed60Before = ISpread60DaysLens(_routerAddress).calculateOfferedRatePayFixed60Days(spreadInputsPayFixed);
         uint256 receiveFixed60Before = ISpread60DaysLens(_routerAddress).calculateReceiveFixed60Days(spreadInputsReceiveFixed);
 
-        uint256 payFixed90Before = ISpread90DaysLens(_routerAddress).calculatePayFixed90Days(spreadInputsPayFixed);
+        uint256 payFixed90Before = ISpread90DaysLens(_routerAddress).calculateOfferedRatePayFixed90Days(spreadInputsPayFixed);
         uint256 receiveFixed90Before = ISpread90DaysLens(_routerAddress).calculateReceiveFixed90Days(spreadInputsReceiveFixed);
 
         // when
@@ -534,13 +534,13 @@ contract SpreadSmokeTest is TestCommons {
         uint256 receiveFixed90Open = ISpread90Days(_routerAddress).calculateQuoteReceiveFixed90Days(spreadInputsOpen);
 
         // then
-        uint256 payFixed28After = ISpread28DaysLens(_routerAddress).calculatePayFixed28Days(spreadInputsPayFixed);
+        uint256 payFixed28After = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(spreadInputsPayFixed);
         uint256 receiveFixed28After = ISpread28DaysLens(_routerAddress).calculateReceiveFixed28Days(spreadInputsReceiveFixed);
 
-        uint256 payFixed60After = ISpread60DaysLens(_routerAddress).calculatePayFixed60Days(spreadInputsPayFixed);
+        uint256 payFixed60After = ISpread60DaysLens(_routerAddress).calculateOfferedRatePayFixed60Days(spreadInputsPayFixed);
         uint256 receiveFixed60After = ISpread60DaysLens(_routerAddress).calculateReceiveFixed60Days(spreadInputsReceiveFixed);
 
-        uint256 payFixed90After = ISpread90DaysLens(_routerAddress).calculatePayFixed90Days(spreadInputsPayFixed);
+        uint256 payFixed90After = ISpread90DaysLens(_routerAddress).calculateOfferedRatePayFixed90Days(spreadInputsPayFixed);
         uint256 receiveFixed90After = ISpread90DaysLens(_routerAddress).calculateReceiveFixed90Days(spreadInputsReceiveFixed);
 
         assertEq(payFixed28Before, 1e16, "payFixed28Before should be 1e16");

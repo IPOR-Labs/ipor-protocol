@@ -102,13 +102,13 @@ library RiskManagementLogic {
         if (direction == 0) {
             if (duration == AmmTypes.SwapDuration.DAYS_28) {
                 return
-                    "calculatePayFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
+                    "calculateOfferedRatePayFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
             } else if (duration == AmmTypes.SwapDuration.DAYS_60) {
                 return
-                    "calculatePayFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
+                    "calculateOfferedRatePayFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
             } else if (duration == AmmTypes.SwapDuration.DAYS_90) {
                 return
-                    "calculatePayFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
+                    "calculateOfferedRatePayFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
             } else {
                 revert("Invalid duration");
             }
