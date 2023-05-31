@@ -6,7 +6,7 @@ library Constants {
         115792089237316195423570985008687907853269984665640564039457584007913129639935;
 
     uint256 public constant D14 = 1e14;
-    int256 public constant D14_INT = 1e14;
+    int256 public constant D12_INT = 1e12;
     uint256 public constant D18 = 1e18;
     uint256 public constant D21 = 1e21;
     int256 public constant D18_INT = 1e18;
