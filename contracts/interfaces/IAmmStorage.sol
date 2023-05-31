@@ -187,26 +187,31 @@ interface IAmmStorage {
         external
         returns (uint256);
 
-    /// @notice Updates structures in the storage: balance, swaps, SOAP indicators when closing Pay-Fixed swap. Function is only available to AmmTreasury.
-    /// @param iporSwap swap structure {IporTypes.IporSwapMemory}
-    /// @param payoff amount that trader has earned or lost on the swap, represented in 18 decimals, it can be negative.
-    /// @param closingTimestamp moment when the swap was closed
+    /// @notice Updates structures in the storage: balance, swaps, SOAP indicators when closing Pay-Fixed swap.
+    /// @dev This function is only available to AmmTreasury.
+    /// @param iporSwap The swap structure containing IPOR swap information.
+    /// @param payoff The amount that the trader has earned or lost on the swap, represented in 18 decimals.
+    ///              It can be negative.
+    /// @param closingTimestamp The moment when the swap was closed.
+    /// @return closedSwap A memory struct representing the closed swap.
     function updateStorageWhenCloseSwapPayFixed(
         IporTypes.IporSwapMemory memory iporSwap,
         int256 payoff,
         uint256 closingTimestamp
-    ) external;
+    ) external returns (AmmInternalTypes.OpenSwapItem memory closedSwap);
 
-    /// @notice Updates structures in the storage: balance, swaps, SOAP indicators when closing Receive-Fixed swap.
-    /// Function is only available to AmmTreasury.
-    /// @param iporSwap swap structure {IporTypes.IporSwapMemory}
-    /// @param payoff amount that trader has earned or lost, represented in 18 decimals, can be negative.
-    /// @param closingTimestamp moment when swap was closed
+    /// @notice Updates structures in the storage: swaps, balances, SOAP indicators when closing Receive-Fixed swap.
+    /// @dev This function is only available to AmmTreasury.
+    /// @param iporSwap The swap structure containing IPOR swap information.
+    /// @param payoff The amount that the trader has earned or lost on the swap, represented in 18 decimals.
+    ///              It can be negative.
+    /// @param closingTimestamp The moment when the swap was closed.
+    /// @return closedSwap A memory struct representing the closed swap.
     function updateStorageWhenCloseSwapReceiveFixed(
         IporTypes.IporSwapMemory memory iporSwap,
         int256 payoff,
         uint256 closingTimestamp
-    ) external;
+    ) external returns (AmmInternalTypes.OpenSwapItem memory closedSwap);
 
     /// @notice Updates the balance when Joseph withdraws AmmTreasury's assets from AssetManagement. Function is only available to AmmTreasury.
     /// @param withdrawnAmount asset amount that was withdrawn from AssetManagement to AmmTreasury by Joseph, represented in 18 decimals.
