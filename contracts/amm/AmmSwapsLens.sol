@@ -213,8 +213,8 @@ contract AmmSwapsLens is IAmmSwapsLens {
                 openSwapPoolCfg.liquidationDepositAmount,
                 spread,
                 maxUtilizationRate,
-                ammPoolsParamsCfg.maxLiquidityPoolBalance * Constants.D18,
-                ammPoolsParamsCfg.maxLpAccountContribution * Constants.D18
+                uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
+                uint256(ammPoolsParamsCfg.maxLpAccountContribution) * 1e18
             );
     }
 
@@ -289,7 +289,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
                 buyer: swap.buyer,
                 collateral: swap.collateral,
                 notional: swap.notional,
-                leverage: IporMath.division(swap.notional * Constants.D18, swap.collateral),
+                leverage: IporMath.division(swap.notional * 1e18, swap.collateral),
                 direction: direction,
                 ibtQuantity: swap.ibtQuantity,
                 fixedInterestRate: swap.fixedInterestRate,

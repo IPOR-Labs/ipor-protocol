@@ -26,9 +26,9 @@ library AmmLib {
         uint256 ipTokenTotalSupply = IIpToken(model.ipToken).totalSupply();
 
         if (ipTokenTotalSupply > 0) {
-            return IporMath.division(balance.toUint256() * Constants.D18, ipTokenTotalSupply);
+            return IporMath.division(balance.toUint256() * 1e18, ipTokenTotalSupply);
         } else {
-            return Constants.D18;
+            return 1e18;
         }
     }
 
@@ -47,9 +47,9 @@ library AmmLib {
         uint256 ipTokenTotalSupply = IIpToken(model.ipToken).totalSupply();
 
         if (ipTokenTotalSupply > 0) {
-            return IporMath.division(balance.toUint256() * Constants.D18, ipTokenTotalSupply);
+            return IporMath.division(balance.toUint256() * 1e18, ipTokenTotalSupply);
         } else {
-            return Constants.D18;
+            return 1e18;
         }
     }
 

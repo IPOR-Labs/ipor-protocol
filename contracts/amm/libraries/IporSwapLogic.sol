@@ -39,11 +39,11 @@ library IporSwapLogic {
         uint256 availableAmount = totalAmount - liquidationDepositAmount - iporPublicationFeeAmount;
 
         collateral = IporMath.division(
-            availableAmount * Constants.D18,
-            Constants.D18 +
-                IporMath.division(leverage * openingFeeRate * getTimeToMaturityInDays(duration), 365 * Constants.D18)
+            availableAmount * 1e18,
+            1e18 +
+                IporMath.division(leverage * openingFeeRate * getTimeToMaturityInDays(duration), 365 * 1e18)
         );
-        notional = IporMath.division(leverage * collateral, Constants.D18);
+        notional = IporMath.division(leverage * collateral, 1e18);
         openingFee = availableAmount - collateral;
     }
 
@@ -127,7 +127,7 @@ library IporSwapLogic {
 
     function calculateInterestFloating(uint256 ibtQuantity, uint256 ibtCurrentPrice) internal pure returns (uint256) {
         //IBTQ * IBTPtc (IBTPtc - interest bearing token price in time when swap is closed)
-        return IporMath.division(ibtQuantity * ibtCurrentPrice, Constants.D18);
+        return IporMath.division(ibtQuantity * ibtCurrentPrice, 1e18);
     }
 
     function _normalizeSwapValue(uint256 collateral, int256 swapValue) private pure returns (int256) {
@@ -158,5 +158,16 @@ library IporSwapLogic {
         } else {
             revert(AmmErrors.UNSUPPORTED_SWAP_DURATION);
         }
+    }
+
+    function getMaturity(AmmTypes.SwapDuration duration) internal pure returns (uint256) {
+        if (duration == AmmTypes.SwapDuration.DAYS_28) {
+            return 28 days;
+        } else if (duration == AmmTypes.SwapDuration.DAYS_60) {
+            return 60 days;
+        } else if (duration == AmmTypes.SwapDuration.DAYS_90) {
+            return 90 days;
+        }
+        revert(string.concat(AmmErrors.WRONG_MATURITY, " maturity"));
     }
 }

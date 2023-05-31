@@ -49,7 +49,7 @@ contract MockCToken is ERC20, CErc20Mock {
 
     function mint(uint256 amount) external override returns (uint256) {
         require(IERC20(_asset).transferFrom(msg.sender, address(this), amount), "Error during transferFrom");
-        _mint(msg.sender, IporMath.division((amount * Constants.D18), _exchangeRate));
+        _mint(msg.sender, IporMath.division((amount * 1e18), _exchangeRate));
 
         return 0;
     }
@@ -57,7 +57,7 @@ contract MockCToken is ERC20, CErc20Mock {
     function redeem(uint256 amount) external override returns (uint256) {
         _burn(msg.sender, amount);
         require(
-            IERC20(_asset).transfer(msg.sender, IporMath.division(amount * _exchangeRate, Constants.D18)),
+            IERC20(_asset).transfer(msg.sender, IporMath.division(amount * _exchangeRate, 1e18)),
             "Error during transfer"
         );
         return 0;

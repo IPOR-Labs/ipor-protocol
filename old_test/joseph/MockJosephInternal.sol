@@ -162,16 +162,16 @@ abstract contract MockJosephInternal is
 
         require(totalBalance > 0, AmmPoolsErrors.ASSET_MANAGEMENT_BALANCE_IS_EMPTY);
 
-        uint256 ratio = IporMath.division(wadAmmTreasuryAssetBalance * Constants.D18, totalBalance);
+        uint256 ratio = IporMath.division(wadAmmTreasuryAssetBalance * 1e18, totalBalance);
 
         uint256 ammTreasuryAssetManagementBalanceRatio = _ammTreasuryAssetManagementBalanceRatio;
 
         if (ratio > ammTreasuryAssetManagementBalanceRatio) {
             uint256 assetAmount = wadAmmTreasuryAssetBalance -
-                IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, Constants.D18);
+                IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18);
             _getAmmTreasury().depositToAssetManagement(assetAmount);
         } else {
-            uint256 assetAmount = IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, Constants.D18) -
+            uint256 assetAmount = IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18) -
                 wadAmmTreasuryAssetBalance;
             _getAmmTreasury().withdrawFromAssetManagement(assetAmount);
         }
@@ -322,7 +322,7 @@ abstract contract MockJosephInternal is
     }
 
     function _getAutoRebalanceThreshold() internal view returns (uint256) {
-        return _autoRebalanceThresholdInThousands * Constants.D21;
+        return _autoRebalanceThresholdInThousands * 1e21;
     }
 
     function _setAutoRebalanceThreshold(uint256 newAutoRebalanceThresholdInThousands) internal {

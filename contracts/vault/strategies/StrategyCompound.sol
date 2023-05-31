@@ -61,17 +61,17 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
      */
     function getApr() external view override returns (uint256 apr) {
         uint256 cRate = CErc20(_shareToken).supplyRatePerBlock(); // interest % per block
-        uint256 ratePerDay = cRate * _blocksPerDay + Constants.D18;
+        uint256 ratePerDay = cRate * _blocksPerDay + 1e18;
 
-        uint256 ratePerDay4 = IporMath.division(ratePerDay * ratePerDay * ratePerDay * ratePerDay, Constants.D54);
-        uint256 ratePerDay8 = IporMath.division(ratePerDay4 * ratePerDay4, Constants.D18);
-        uint256 ratePerDay32 = IporMath.division(ratePerDay8 * ratePerDay8 * ratePerDay8 * ratePerDay8, Constants.D54);
-        uint256 ratePerDay64 = IporMath.division(ratePerDay32 * ratePerDay32, Constants.D18);
-        uint256 ratePerDay256 = IporMath.division(ratePerDay64 * ratePerDay64 * ratePerDay64 * ratePerDay64, Constants.D54);
-        uint256 ratePerDay360 = IporMath.division(ratePerDay256 * ratePerDay64 * ratePerDay32 * ratePerDay8, Constants.D54);
-        uint256 ratePerDay365 = IporMath.division(ratePerDay360 * ratePerDay4 * ratePerDay, Constants.D36);
+        uint256 ratePerDay4 = IporMath.division(ratePerDay * ratePerDay * ratePerDay * ratePerDay, 1e54);
+        uint256 ratePerDay8 = IporMath.division(ratePerDay4 * ratePerDay4, 1e18);
+        uint256 ratePerDay32 = IporMath.division(ratePerDay8 * ratePerDay8 * ratePerDay8 * ratePerDay8, 1e54);
+        uint256 ratePerDay64 = IporMath.division(ratePerDay32 * ratePerDay32, 1e18);
+        uint256 ratePerDay256 = IporMath.division(ratePerDay64 * ratePerDay64 * ratePerDay64 * ratePerDay64, 1e54);
+        uint256 ratePerDay360 = IporMath.division(ratePerDay256 * ratePerDay64 * ratePerDay32 * ratePerDay8, 1e54);
+        uint256 ratePerDay365 = IporMath.division(ratePerDay360 * ratePerDay4 * ratePerDay, 1e36);
 
-        apr = ratePerDay365 - Constants.D18;
+        apr = ratePerDay365 - 1e18;
     }
 
     /// @notice Gets AssetManagement Compound Strategy's asset amount in Compound Protocol.
@@ -134,7 +134,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
 
         // Transfer assets from Compound to Strategy
         uint256 redeemStatus = shareToken.redeem(
-            IporMath.division(amount * Constants.D18, shareToken.exchangeRateStored())
+            IporMath.division(amount * 1e18, shareToken.exchangeRateStored())
         );
 
         require(redeemStatus == 0, AssetManagementErrors.SHARED_TOKEN_REDEEM_ERROR);

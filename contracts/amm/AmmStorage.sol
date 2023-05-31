@@ -6,10 +6,11 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../interfaces/types/AmmStorageTypes.sol";
+import "../interfaces/IAmmStorage.sol";
 import "../libraries/Constants.sol";
 import "../libraries/PaginationUtils.sol";
-import "../interfaces/IAmmStorage.sol";
 import "../security/IporOwnableUpgradeable.sol";
+import "contracts/amm/libraries/IporSwapLogic.sol";
 import "./libraries/types/StorageInternalTypes.sol";
 import "./libraries/SoapIndicatorLogic.sol";
 import "./libraries/types/AmmInternalTypes.sol";
@@ -66,11 +67,11 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     function postUpgrade() public onlyOwner {
         _soapIndicatorsPayFixed.hypotheticalInterestCumulative = IporMath.division(
             _soapIndicatorsPayFixed.hypotheticalInterestCumulative,
-            Constants.D18 * Constants.D18 * Constants.YEAR_IN_SECONDS
+            1e36 * Constants.YEAR_IN_SECONDS
         );
         _soapIndicatorsReceiveFixed.hypotheticalInterestCumulative = IporMath.division(
             _soapIndicatorsReceiveFixed.hypotheticalInterestCumulative,
-            Constants.D18 * Constants.D18 * Constants.YEAR_IN_SECONDS
+            1e36 * Constants.YEAR_IN_SECONDS
         );
     }
 
@@ -155,7 +156,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
                 swap.notional,
                 swap.ibtQuantity,
                 swap.fixedInterestRate,
-                swap.liquidationDepositAmount * Constants.D18,
+                uint256(swap.liquidationDepositAmount) * 1e18,
                 uint256(swap.state)
             );
     }
@@ -174,7 +175,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
                 swap.notional,
                 swap.ibtQuantity,
                 swap.fixedInterestRate,
-                swap.liquidationDepositAmount * Constants.D18,
+                uint256(swap.liquidationDepositAmount) * 1e18,
                 uint256(swap.state)
             );
     }
@@ -514,13 +515,13 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
                 swap.id,
                 swap.buyer,
                 swap.openTimestamp,
-                swap.openTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
+                swap.openTimestamp + IporSwapLogic.getMaturity(AmmTypes.SwapDuration(swap.duration)),
                 swap.idsIndex,
                 swap.collateral,
                 swap.notional,
                 swap.ibtQuantity,
                 swap.fixedInterestRate,
-                swap.liquidationDepositAmount * Constants.D18,
+                uint256(swap.liquidationDepositAmount) * 1e18,
                 uint256(swaps[id].state)
             );
             unchecked {
