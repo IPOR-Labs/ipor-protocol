@@ -14,7 +14,7 @@ interface IAmmGovernanceService {
         address ammCharlieTreasuryManager;
     }
 
-    function getPoolConfiguration(address asset) external view returns (PoolConfiguration memory);
+    function getAmmGovernanceServicePoolConfiguration(address asset) external view returns (PoolConfiguration memory);
 
     function depositToAssetManagement(address asset, uint256 assetAmount) external;
 

@@ -78,7 +78,8 @@ library RiskManagementLogic {
             maxNotionalPerLeg,
             riskIndicators.maxUtilizationRatePerLeg,
             maxUtilizationRate,
-            riskIndicators.spread
+            riskIndicators.spread,
+            riskIndicators.fixedRateCap
         ) = IIporRiskManagementOracle(cfgIporRiskManagementOracle).getOpenSwapParameters(asset, direction, duration);
 
         uint256 maxCollateralPerLeg = IporMath.division(

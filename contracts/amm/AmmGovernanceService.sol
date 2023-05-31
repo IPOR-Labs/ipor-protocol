@@ -136,7 +136,7 @@ contract AmmGovernanceService is IAmmGovernanceService {
         _daiAmmCharlieTreasuryManager = daiPoolCfg.ammCharlieTreasuryManager;
     }
 
-    function getPoolConfiguration(address asset) external view override returns (PoolConfiguration memory) {
+    function getAmmGovernanceServicePoolConfiguration(address asset) external view override returns (PoolConfiguration memory) {
         return _getPoolConfiguration(asset);
     }
 

@@ -59,7 +59,7 @@ interface IAmmPoolsService {
         uint256 redeemAmount
     );
 
-    function getPoolConfiguration(address asset) external view returns (PoolConfiguration memory);
+    function getAmmPoolServiceConfiguration(address asset) external view returns (PoolConfiguration memory);
 
     /// @notice Function invoked to provide asset to Liquidity Pool in amount `assetValue`
     /// @dev Emits {ProvideLiquidity} event and transfers ERC20 tokens from sender to AmmTreasury,
@@ -76,11 +76,11 @@ interface IAmmPoolsService {
     /// @dev Emits {Redeem} event, emits {Transfer} event from ERC20 asset, emits {Burn} event from ipToken.
     /// Transfers asser ERC20 tokens from AmmTreasury to sender based on current exchange rate.
     /// @param ipTokenAmount redeem amount, represented in 18 decimals.
-    function redeemUsdt(address onBehalfOf, uint256 ipTokenAmount) external;
+    function redeemFromAmmPoolUsdt(address onBehalfOf, uint256 ipTokenAmount) external;
 
-    function redeemUsdc(address onBehalfOf, uint256 ipTokenAmount) external;
+    function redeemFromAmmPoolUsdc(address onBehalfOf, uint256 ipTokenAmount) external;
 
-    function redeemDai(address onBehalfOf, uint256 ipTokenAmount) external;
+    function redeemFromAmmPoolDai(address onBehalfOf, uint256 ipTokenAmount) external;
 
     /// @notice Rebalances ERC20 balance between AmmTreasury and AssetManagement, based on configuration
     /// `_AMM_TREASURY_ASSET_MANAGEMENT_BALANCE_RATIO` part of AmmTreasury balance is transferred to AssetManagement or vice versa.
@@ -88,5 +88,5 @@ interface IAmmPoolsService {
     /// @dev Emits {Deposit} or {Withdraw} event from AssetManagement depends on current asset balance on AmmTreasury and AssetManagement.
     /// @dev Emits {Mint} or {Burn} event from ivToken depends on current asset balance on AmmTreasury and AssetManagement.
     /// @dev Emits {Transfer} from ERC20 asset.
-    function rebalance(address asset) external;
+    function rebalanceBetweenAmmTreasuryAndAssetManagement(address asset) external;
 }
