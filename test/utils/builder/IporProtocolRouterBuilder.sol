@@ -17,6 +17,10 @@ contract IporProtocolRouterBuilder is Test {
         address ammCloseSwapService;
         address ammPoolsService;
         address ammGovernanceService;
+        address liquidityMiningLens;
+        address powerTokenLens;
+        address flowService;
+        address stakeService;
     }
 
     BuilderData private builderData;
@@ -82,7 +86,11 @@ contract IporProtocolRouterBuilder is Test {
             ammOpenSwapService: builderData.ammOpenSwapService,
             ammCloseSwapService: builderData.ammCloseSwapService,
             ammPoolsService: builderData.ammPoolsService,
-            ammGovernanceService: builderData.ammGovernanceService
+            ammGovernanceService: builderData.ammGovernanceService,
+            liquidityMiningLens: builderData.liquidityMiningLens,
+            powerTokenLens: builderData.powerTokenLens,
+            flowService: builderData.flowService,
+            stakeService: builderData.stakeService
         });
 
         ERC1967Proxy proxy = _constructProxy(address(new IporProtocolRouter(deployedContracts)));
@@ -103,7 +111,11 @@ contract IporProtocolRouterBuilder is Test {
             ammOpenSwapService: builderData.ammOpenSwapService,
             ammCloseSwapService: builderData.ammCloseSwapService,
             ammPoolsService: builderData.ammPoolsService,
-            ammGovernanceService: builderData.ammGovernanceService
+            ammGovernanceService: builderData.ammGovernanceService,
+            liquidityMiningLens: builderData.liquidityMiningLens,
+            powerTokenLens: builderData.powerTokenLens,
+            flowService: builderData.flowService,
+            stakeService: builderData.stakeService
         });
 
         IporProtocolRouter router = IporProtocolRouter(routerAddress);

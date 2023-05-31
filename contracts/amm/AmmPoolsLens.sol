@@ -95,15 +95,15 @@ contract AmmPoolsLens is IAmmPoolsLens {
         _iporOracle = iporOracle;
     }
 
-    function getPoolConfiguration(address asset) external view override returns (PoolConfiguration memory) {
+    function getAmmPoolsLensConfiguration(address asset) external view override returns (PoolConfiguration memory) {
         return _getPoolConfiguration(asset);
     }
 
-    function getExchangeRate(address asset) external view override returns (uint256) {
+    function getIpTokenExchangeRate(address asset) external view override returns (uint256) {
         return _getPoolCoreModel(asset).getExchangeRate();
     }
 
-    function getBalance(address asset) external view override returns (IporTypes.AmmBalancesMemory memory balance) {
+    function getAmmBalance(address asset) external view override returns (IporTypes.AmmBalancesMemory memory balance) {
         return _getPoolCoreModel(asset).getAccruedBalance();
     }
 

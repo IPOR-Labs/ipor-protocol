@@ -35,6 +35,7 @@ library AmmInternalTypes {
         uint256 maxUtilizationRatePerLeg;
         uint256 maxLeveragePerLeg;
         int256 spread;
+        uint256 fixedRateCap;
     }
 
     struct OpenSwapItem {

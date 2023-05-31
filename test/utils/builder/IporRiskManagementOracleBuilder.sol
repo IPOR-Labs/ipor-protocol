@@ -8,10 +8,9 @@ import "./BuilderUtils.sol";
 import "../../../contracts/interfaces/types/IporRiskManagementOracleTypes.sol";
 
 contract IporRiskManagementOracleBuilder is Test {
-
     address[] private _assets;
     mapping(address => IporRiskManagementOracleTypes.RiskIndicators) private _riskIndicators;
-    mapping(address => IporRiskManagementOracleTypes.BaseSpreads) private _baseSpreads;
+    mapping(address => IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps) private _baseSpreads;
 
     address private _owner;
 
@@ -20,30 +19,37 @@ contract IporRiskManagementOracleBuilder is Test {
     }
 
     function withAssetAndDefaultIndicators(address asset) public returns (IporRiskManagementOracleBuilder) {
-        return withAsset(
-            asset,
-            IporRiskManagementOracleTypes.RiskIndicators({
-                maxNotionalPayFixed: TestConstants.RMO_NOTIONAL_1B,
-                maxNotionalReceiveFixed: TestConstants.RMO_NOTIONAL_1B,
-                maxUtilizationRatePayFixed: TestConstants.RMO_UTILIZATION_RATE_48_PER,
-                maxUtilizationRateReceiveFixed: TestConstants.RMO_UTILIZATION_RATE_48_PER,
-                maxUtilizationRate: TestConstants.RMO_UTILIZATION_RATE_90_PER
-            }),
-            IporRiskManagementOracleTypes.BaseSpreads({
-                spread28dPayFixed: TestConstants.RMO_SPREAD_0_1_PER,
-                spread28dReceiveFixed: TestConstants.RMO_SPREAD_0_1_PER,
-                spread60dPayFixed: TestConstants.RMO_SPREAD_0_1_PER,
-                spread60dReceiveFixed: TestConstants.RMO_SPREAD_0_1_PER,
-                spread90dPayFixed: TestConstants.RMO_SPREAD_0_1_PER,
-                spread90dReceiveFixed: TestConstants.RMO_SPREAD_0_1_PER
-            })
-        );
+        return
+            withAsset(
+                asset,
+                IporRiskManagementOracleTypes.RiskIndicators({
+                    maxNotionalPayFixed: TestConstants.RMO_NOTIONAL_1B,
+                    maxNotionalReceiveFixed: TestConstants.RMO_NOTIONAL_1B,
+                    maxUtilizationRatePayFixed: TestConstants.RMO_UTILIZATION_RATE_48_PER,
+                    maxUtilizationRateReceiveFixed: TestConstants.RMO_UTILIZATION_RATE_48_PER,
+                    maxUtilizationRate: TestConstants.RMO_UTILIZATION_RATE_90_PER
+                }),
+                IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps({
+                    spread28dPayFixed: TestConstants.RMO_SPREAD_0_1_PER,
+                    spread28dReceiveFixed: TestConstants.RMO_SPREAD_0_1_PER,
+                    spread60dPayFixed: TestConstants.RMO_SPREAD_0_1_PER,
+                    spread60dReceiveFixed: TestConstants.RMO_SPREAD_0_1_PER,
+                    spread90dPayFixed: TestConstants.RMO_SPREAD_0_1_PER,
+                    spread90dReceiveFixed: TestConstants.RMO_SPREAD_0_1_PER,
+                    fixedRateCap28dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_2_0_PER,
+                    fixedRateCap28dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_3_5_PER,
+                    fixedRateCap60dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_2_0_PER,
+                    fixedRateCap60dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_3_5_PER,
+                    fixedRateCap90dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_2_0_PER,
+                    fixedRateCap90dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_3_5_PER
+                })
+            );
     }
 
     function withAsset(
         address asset,
         IporRiskManagementOracleTypes.RiskIndicators memory riskIndicators,
-        IporRiskManagementOracleTypes.BaseSpreads memory baseSpreads
+        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps memory baseSpreads
     ) public returns (IporRiskManagementOracleBuilder) {
         address[] memory _oldAssets = _assets;
         _assets = new address[](_assets.length + 1);
@@ -68,8 +74,10 @@ contract IporRiskManagementOracleBuilder is Test {
     function _constructProxy(address impl) internal returns (ERC1967Proxy proxy) {
         IporRiskManagementOracleTypes.RiskIndicators[]
             memory riskIndicators = new IporRiskManagementOracleTypes.RiskIndicators[](_assets.length);
-        IporRiskManagementOracleTypes.BaseSpreads[]
-            memory baseSpreads = new IporRiskManagementOracleTypes.BaseSpreads[](_assets.length);
+        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[]
+            memory baseSpreadsAndFixedRateCaps = new IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[](
+                _assets.length
+            );
 
         for (uint256 i = 0; i < _assets.length; i++) {
             riskIndicators[i] = IporRiskManagementOracleTypes.RiskIndicators({
@@ -79,23 +87,29 @@ contract IporRiskManagementOracleBuilder is Test {
                 maxUtilizationRateReceiveFixed: _riskIndicators[_assets[i]].maxUtilizationRateReceiveFixed,
                 maxUtilizationRate: _riskIndicators[_assets[i]].maxUtilizationRate
             });
-            baseSpreads[i] = IporRiskManagementOracleTypes.BaseSpreads({
+            baseSpreadsAndFixedRateCaps[i] = IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps({
                 spread28dPayFixed: _baseSpreads[_assets[i]].spread28dPayFixed,
                 spread28dReceiveFixed: _baseSpreads[_assets[i]].spread28dReceiveFixed,
                 spread60dPayFixed: _baseSpreads[_assets[i]].spread60dPayFixed,
                 spread60dReceiveFixed: _baseSpreads[_assets[i]].spread60dReceiveFixed,
                 spread90dPayFixed: _baseSpreads[_assets[i]].spread90dPayFixed,
-                spread90dReceiveFixed: _baseSpreads[_assets[i]].spread90dReceiveFixed
+                spread90dReceiveFixed: _baseSpreads[_assets[i]].spread90dReceiveFixed,
+                fixedRateCap28dPayFixed: _baseSpreads[_assets[i]].fixedRateCap28dPayFixed,
+                fixedRateCap28dReceiveFixed: _baseSpreads[_assets[i]].fixedRateCap28dReceiveFixed,
+                fixedRateCap60dPayFixed: _baseSpreads[_assets[i]].fixedRateCap60dPayFixed,
+                fixedRateCap60dReceiveFixed: _baseSpreads[_assets[i]].fixedRateCap60dReceiveFixed,
+                fixedRateCap90dPayFixed: _baseSpreads[_assets[i]].fixedRateCap90dPayFixed,
+                fixedRateCap90dReceiveFixed: _baseSpreads[_assets[i]].fixedRateCap90dReceiveFixed
             });
         }
 
         proxy = new ERC1967Proxy(
             address(impl),
             abi.encodeWithSignature(
-                "initialize(address[],(uint256,uint256,uint256,uint256,uint256)[],(int256,int256,int256,int256,int256,int256)[])",
+                "initialize(address[],(uint256,uint256,uint256,uint256,uint256)[],(int256,int256,int256,int256,int256,int256,uint256,uint256,uint256,uint256,uint256,uint256)[])",
                 _assets,
                 riskIndicators,
-                baseSpreads
+                baseSpreadsAndFixedRateCaps
             )
         );
     }
