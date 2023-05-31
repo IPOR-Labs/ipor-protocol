@@ -1400,7 +1400,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 exchangeRate = _iporProtocol.joseph.calculateExchangeRate();
 
-        uint256 userPositionCalculated = IporMath.division(wadUserPosition * Constants.D18, exchangeRate);
+        uint256 userPositionCalculated = IporMath.division(wadUserPosition * 1e18, exchangeRate);
 
         vm.prank(address(_userOne));
 
@@ -1533,7 +1533,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 exchangeRate = _iporProtocol.joseph.calculateExchangeRate();
 
-        uint256 userPositionCalculated = IporMath.division(wadUserPosition * Constants.D18, exchangeRate);
+        uint256 userPositionCalculated = IporMath.division(wadUserPosition * 1e18, exchangeRate);
 
         //when
         vm.prank(address(_userOne));
@@ -1573,7 +1573,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol.ammTreasury.depositToAssetManagement(assetManagementInitBalance);
 
         uint256 exchangeRate = _iporProtocol.joseph.calculateExchangeRate();
-        uint256 userPositionCalculated = IporMath.division(wadUserPosition * Constants.D18, exchangeRate);
+        uint256 userPositionCalculated = IporMath.division(wadUserPosition * 1e18, exchangeRate);
 
         //when
         vm.prank(address(_userOne));

@@ -14,7 +14,7 @@ contract IvTokenTest is TestCommons {
 
     function setUp() public {
         _ivToken = new IvToken("IvToken", "IVT", address(0x6B175474E89094C44Da98b954EedeAC495271d0F)); // random address
-        _mockTestnetTokenDai = new MockTestnetToken("Mocked DAI", "DAI", Constants.D18, 18);
+        _mockTestnetTokenDai = new MockTestnetToken("Mocked DAI", "DAI", 1e18, 18);
         _admin = address(this);
         _userOne = _getUserAddress(1);
         _userTwo = _getUserAddress(2);

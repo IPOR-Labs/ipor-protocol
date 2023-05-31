@@ -67,7 +67,7 @@ contract MockCaseBaseAssetManagement is IAssetManagement {
     }
 
     function withdraw(uint256 wadAssetAmount) external override returns (uint256 withdrawnAmount, uint256 balance) {
-        uint256 wadFinalAssetAmount = IporMath.division(wadAssetAmount * _withdrawRate(), Constants.D18);
+        uint256 wadFinalAssetAmount = IporMath.division(wadAssetAmount * _withdrawRate(), 1e18);
         if (wadFinalAssetAmount > _balance[msg.sender]) {
             return (0, _balance[msg.sender]);
         }

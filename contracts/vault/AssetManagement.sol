@@ -141,7 +141,7 @@ abstract contract AssetManagement is
             uint256 assetBalanceCompoundStrategy
         ) = _calcExchangeRate(IStrategy(strategyAaveAddr), IStrategy(strategyCompoundAddr));
 
-        uint256 ivTokenAmount = IporMath.division(amount * Constants.D18, exchangeRate);
+        uint256 ivTokenAmount = IporMath.division(amount * 1e18, exchangeRate);
 
         IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(this), assetAmount);
 
@@ -341,7 +341,7 @@ abstract contract AssetManagement is
         IStrategy strategyAave = IStrategy(_strategyAave);
         IStrategy strategyCompound = IStrategy(_strategyCompound);
         (, uint256 exchangeRate, , ) = _calcExchangeRate(strategyAave, strategyCompound);
-        return IporMath.division(_ivToken.balanceOf(who) * exchangeRate, Constants.D18);
+        return IporMath.division(_ivToken.balanceOf(who) * exchangeRate, 1e18);
     }
 
     function _setStrategy(address oldStrategyAddress, address newStrategyAddress)
@@ -421,12 +421,12 @@ abstract contract AssetManagement is
             /// @dev after withdraw balance could change which influence on exchange rate
             /// so exchange rate have to be calculated again
             if (totalBalanceWithWithdrawnAmount == 0 || ivTokenTotalSupply == 0) {
-                exchangeRate = Constants.D18;
+                exchangeRate = 1e18;
             } else {
-                exchangeRate = IporMath.division(totalBalanceWithWithdrawnAmount * Constants.D18, ivTokenTotalSupply);
+                exchangeRate = IporMath.division(totalBalanceWithWithdrawnAmount * 1e18, ivTokenTotalSupply);
             }
 
-            ivTokenWithdrawnAmount = IporMath.division(withdrawnAmount * Constants.D18, exchangeRate);
+            ivTokenWithdrawnAmount = IporMath.division(withdrawnAmount * 1e18, exchangeRate);
 
             emit Withdraw(
                 block.timestamp,
@@ -457,9 +457,9 @@ abstract contract AssetManagement is
         ivTokenTotalSupply = _ivToken.totalSupply();
 
         if (totalAssetBalance == 0 || ivTokenTotalSupply == 0) {
-            exchangeRate = Constants.D18;
+            exchangeRate = 1e18;
         } else {
-            exchangeRate = IporMath.division(totalAssetBalance * Constants.D18, ivTokenTotalSupply);
+            exchangeRate = IporMath.division(totalAssetBalance * 1e18, ivTokenTotalSupply);
         }
     }
 

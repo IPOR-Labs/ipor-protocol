@@ -20,6 +20,7 @@ import "../governance/AmmConfigurationManager.sol";
 contract AmmPoolsService is IAmmPoolsService {
     using SafeCast for int256;
     using SafeCast for uint256;
+    using SafeCast for uint32;
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
 
@@ -171,22 +172,20 @@ contract AmmPoolsService is IAmmPoolsService {
 
         require(totalBalance > 0, AmmPoolsErrors.ASSET_MANAGEMENT_BALANCE_IS_EMPTY);
 
-        uint256 ratio = IporMath.division(wadAmmTreasuryAssetBalance * Constants.D18, totalBalance);
+        uint256 ratio = IporMath.division(wadAmmTreasuryAssetBalance * 1e18, totalBalance);
 
-        uint256 ammTreasuryAssetManagementBalanceRatio = ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio *
-            Constants.D14;
+        uint256 ammTreasuryAssetManagementBalanceRatio = uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) *
+            1e14;
 
         if (ratio > ammTreasuryAssetManagementBalanceRatio) {
             uint256 assetAmount = wadAmmTreasuryAssetBalance -
-                IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, Constants.D18);
+                IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18);
             if (assetAmount > 0) {
                 IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagement(assetAmount);
             }
         } else {
-            uint256 assetAmount = IporMath.division(
-                ammTreasuryAssetManagementBalanceRatio * totalBalance,
-                Constants.D18
-            ) - wadAmmTreasuryAssetBalance;
+            uint256 assetAmount = IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18) -
+                wadAmmTreasuryAssetBalance;
             if (assetAmount > 0) {
                 IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagement(assetAmount);
             }
@@ -222,13 +221,13 @@ contract AmmPoolsService is IAmmPoolsService {
         IAmmStorage(poolCfg.ammStorage).addLiquidity(
             onBehalfOf,
             wadAssetAmount,
-            ammPoolsParamsCfg.maxLiquidityPoolBalance * Constants.D18,
-            ammPoolsParamsCfg.maxLpAccountContribution * Constants.D18
+            uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
+            uint256(ammPoolsParamsCfg.maxLpAccountContribution) * 1e18
         );
 
         IERC20Upgradeable(poolCfg.asset).safeTransferFrom(msg.sender, poolCfg.ammTreasury, assetAmount);
 
-        uint256 ipTokenAmount = IporMath.division(wadAssetAmount * Constants.D18, exchangeRate);
+        uint256 ipTokenAmount = IporMath.division(wadAssetAmount * 1e18, exchangeRate);
 
         IIpToken(poolCfg.ipToken).mint(onBehalfOf, ipTokenAmount);
 
@@ -370,8 +369,8 @@ contract AmmPoolsService is IAmmPoolsService {
         uint256 exchangeRate,
         uint256 cfgRedeemFeeRate
     ) internal view returns (AmmTypes.RedeemMoney memory redeemMoney) {
-        uint256 wadAssetAmount = IporMath.division(ipTokenAmount * exchangeRate, Constants.D18);
-        uint256 wadRedeemFee = IporMath.division(wadAssetAmount * cfgRedeemFeeRate, Constants.D18);
+        uint256 wadAssetAmount = IporMath.division(ipTokenAmount * exchangeRate, 1e18);
+        uint256 wadRedeemFee = IporMath.division(wadAssetAmount * cfgRedeemFeeRate, 1e18);
         uint256 redeemAmount = IporMath.convertWadToAssetDecimals(wadAssetAmount - wadRedeemFee, assetDecimals);
 
         return
@@ -389,7 +388,7 @@ contract AmmPoolsService is IAmmPoolsService {
         uint256 vaultBalance,
         uint256 wadOperationAmount
     ) internal {
-        uint256 autoRebalanceThreshold = ammPoolsParamsCfg.autoRebalanceThresholdInThousands * Constants.D21;
+        uint256 autoRebalanceThreshold = uint256(ammPoolsParamsCfg.autoRebalanceThresholdInThousands) * 1e21;
 
         if (autoRebalanceThreshold > 0 && wadOperationAmount >= autoRebalanceThreshold) {
             int256 rebalanceAmount = _calculateRebalanceAmountAfterProvideLiquidity(
@@ -399,7 +398,7 @@ contract AmmPoolsService is IAmmPoolsService {
                     poolCfg.decimals
                 ),
                 vaultBalance,
-                ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio * Constants.D14
+                uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) * 1e14
             );
 
             if (rebalanceAmount > 0) {
@@ -421,8 +420,8 @@ contract AmmPoolsService is IAmmPoolsService {
         return
             IporMath.divisionInt(
                 (wadAmmTreasuryErc20BalanceAfterDeposit + vaultBalance).toInt256() *
-                    (Constants.D18_INT - wadAmmTreasuryAndAssetManagementRatio.toInt256()),
-                Constants.D18_INT
+                    (1e18 - wadAmmTreasuryAndAssetManagementRatio.toInt256()),
+                1e18
             ) - vaultBalance.toInt256();
     }
 
@@ -436,7 +435,7 @@ contract AmmPoolsService is IAmmPoolsService {
             poolCfg.asset
         );
 
-        uint256 autoRebalanceThreshold = ammPoolsParamsCfg.autoRebalanceThresholdInThousands * Constants.D21;
+        uint256 autoRebalanceThreshold = uint256(ammPoolsParamsCfg.autoRebalanceThresholdInThousands) * 1e21;
 
         if (
             wadOperationAmount > wadAmmTreasuryErc20Balance ||
@@ -446,7 +445,7 @@ contract AmmPoolsService is IAmmPoolsService {
                 wadAmmTreasuryErc20Balance,
                 vaultBalance,
                 wadOperationAmount,
-                ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio * Constants.D14
+                uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) * 1e14
             );
 
             if (rebalanceAmount < 0) {
@@ -462,8 +461,7 @@ contract AmmPoolsService is IAmmPoolsService {
     ) internal pure returns (uint256) {
         uint256 denominator = totalLiquidityPoolBalance - redeemedAmount;
         if (denominator > 0) {
-            return
-                IporMath.division(totalCollateralBalance * Constants.D18, totalLiquidityPoolBalance - redeemedAmount);
+            return IporMath.division(totalCollateralBalance * 1e18, totalLiquidityPoolBalance - redeemedAmount);
         } else {
             return Constants.MAX_VALUE;
         }

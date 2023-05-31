@@ -6,6 +6,7 @@ import "contracts/interfaces/types/AmmTypes.sol";
 import "contracts/interfaces/IAmmStorage.sol";
 import "contracts/libraries/errors/IporErrors.sol";
 import "contracts/libraries/errors/AmmErrors.sol";
+import "contracts/amm/libraries/IporSwapLogic.sol";
 import "./ISpreadCloseSwapService.sol";
 import "./SpreadStorageLibs.sol";
 import "./CalculateTimeWeightedNotionalLibs.sol";
@@ -42,7 +43,7 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
         if (closedSwap.openSwapTimestamp == 0) {
             return;
         }
-        uint256 maturity = _getMaturity(duration);
+        uint256 maturity = IporSwapLogic.getMaturity(duration);
         SpreadStorageLibs.StorageId storageId = _getStorageId(asset, maturity);
         SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
             storageId
@@ -79,10 +80,14 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
             }
             if (direction == 0) {
                 timeWeightedNotional.lastUpdateTimePayFixed = lastOpenSwap.openSwapTimestamp;
-                timeWeightedNotional.timeWeightedNotionalPayFixed = (actualTimeWeightedNotionalToSave * maturity) / (maturity - swapTimePast);
+                timeWeightedNotional.timeWeightedNotionalPayFixed =
+                    (actualTimeWeightedNotionalToSave * maturity) /
+                    (maturity - swapTimePast);
             } else {
                 timeWeightedNotional.lastUpdateTimeReceiveFixed = lastOpenSwap.openSwapTimestamp;
-                timeWeightedNotional.timeWeightedNotionalReceiveFixed =  (actualTimeWeightedNotionalToSave * maturity) / (maturity - swapTimePast);
+                timeWeightedNotional.timeWeightedNotionalReceiveFixed =
+                    (actualTimeWeightedNotionalToSave * maturity) /
+                    (maturity - swapTimePast);
             }
         } else {
             if (direction == 0) {
@@ -126,16 +131,5 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
         if (uint256(storageId) == 0) {
             revert(string.concat(AmmErrors.WRONG_MATURITY, " maturity"));
         }
-    }
-
-    function _getMaturity(AmmTypes.SwapDuration duration) private pure returns (uint256) {
-        if (duration == AmmTypes.SwapDuration.DAYS_28) {
-            return 28 days;
-        } else if (duration == AmmTypes.SwapDuration.DAYS_60) {
-            return 60 days;
-        } else if (duration == AmmTypes.SwapDuration.DAYS_90) {
-            return 90 days;
-        }
-        revert(string.concat(AmmErrors.WRONG_MATURITY, " maturity"));
     }
 }

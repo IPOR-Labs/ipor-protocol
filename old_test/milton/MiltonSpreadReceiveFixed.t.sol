@@ -18,9 +18,9 @@ contract AmmTreasurySpreadReceiveFixedTest is Test, TestCommons {
 
 	function testShouldCalculateQuoteValueReceiveFixedSpreadPremiumsNegativeAndAbsoluteValueSpreadPremiumLowerThanIporIndexAndEMAGreaterThanQuoteValue() public {
 		// given
-		uint256 liquidityPoolBalance = 15000 * Constants.D18;
-		uint256 swapCollateral = 10000 * Constants.D18;
-		uint256 openingFee = 20 * Constants.D18;
+		uint256 liquidityPoolBalance = 15000 * 1e18;
+		uint256 swapCollateral = 10000 * 1e18;
+		uint256 openingFee = 20 * 1e18;
 		IporTypes.AccruedIpor memory accruedIpor = IporTypes.AccruedIpor(
 			3 * 10**16, // indexValue: 3%
 			1 * 10**18, // ibtPrice: 1
@@ -28,8 +28,8 @@ contract AmmTreasurySpreadReceiveFixedTest is Test, TestCommons {
 			1 * 10**13 // exponentialWeightedMovingVariance: 0.00001%
 		);
 		IporTypes.AmmBalancesMemory memory accruedBalance = IporTypes.AmmBalancesMemory(
-			10000 * Constants.D18 + swapCollateral, // totalCollateralPayFixed 
-			13000 * Constants.D18, // totalCollateralReceiveFixed
+			10000 * 1e18 + swapCollateral, // totalCollateralPayFixed
+			13000 * 1e18, // totalCollateralReceiveFixed
 			liquidityPoolBalance + openingFee, // liquidityPool
 			0 // vault
 		);
@@ -45,9 +45,9 @@ contract AmmTreasurySpreadReceiveFixedTest is Test, TestCommons {
 
 	function testShouldCalculateQuoteValueReceiveFixedSpreadPremiumsNegativeAndAbsoluteValueSpreadPremiumGreaterIporIndexAndNormalEmvarAndQuoteLowerThanZero() public{
 		// given
-		uint256 liquidityPoolBalance = 15000 * Constants.D18;
-		uint256 swapCollateral = 10000 * Constants.D18;
-		uint256 openingFee = 20 * Constants.D18;
+		uint256 liquidityPoolBalance = 15000 * 1e18;
+		uint256 swapCollateral = 10000 * 1e18;
+		uint256 openingFee = 20 * 1e18;
 		IporTypes.AccruedIpor memory accruedIpor = IporTypes.AccruedIpor(
 			9 * 10**16, // indexValue: 9%
 			1 * 10**18, // ibtPrice: 1
@@ -55,8 +55,8 @@ contract AmmTreasurySpreadReceiveFixedTest is Test, TestCommons {
 			1 * 10**12 // exponentialWeightedMovingVariance: 0.000001%
 		);
 		IporTypes.AmmBalancesMemory memory accruedBalance = IporTypes.AmmBalancesMemory(
-			10000 * Constants.D18 + swapCollateral, // totalCollateralPayFixed 
-			13000 * Constants.D18, // totalCollateralReceiveFixed
+			10000 * 1e18 + swapCollateral, // totalCollateralPayFixed
+			13000 * 1e18, // totalCollateralReceiveFixed
 			liquidityPoolBalance + openingFee, // liquidityPool
 			0 // vault
 		);
@@ -72,9 +72,9 @@ contract AmmTreasurySpreadReceiveFixedTest is Test, TestCommons {
 
 	function testShouldCalculateQuoteValueReceiveFixedSpreadPremiumsNegativeAndAbsoluteValueSpreadPremiumGreaterThanIporIndex() public {
 		// given
-		uint256 liquidityPoolBalance = 15000 * Constants.D18;
-		uint256 swapCollateral = 10000 * Constants.D18;
-		uint256 openingFee = 20 * Constants.D18;
+		uint256 liquidityPoolBalance = 15000 * 1e18;
+		uint256 swapCollateral = 10000 * 1e18;
+		uint256 openingFee = 20 * 1e18;
 		IporTypes.AccruedIpor memory accruedIpor = IporTypes.AccruedIpor(
 			4 * 10**16, // indexValue: 4%
 			1 * 10**18, // ibtPrice: 1
@@ -82,8 +82,8 @@ contract AmmTreasurySpreadReceiveFixedTest is Test, TestCommons {
 			1 * 10**15 // exponentialWeightedMovingVariance: 0.001%
 		);
 		IporTypes.AmmBalancesMemory memory accruedBalance = IporTypes.AmmBalancesMemory(
-			10000 * Constants.D18 + swapCollateral, // totalCollateralPayFixed 
-			13000 * Constants.D18, // totalCollateralReceiveFixed
+			10000 * 1e18 + swapCollateral, // totalCollateralPayFixed
+			13000 * 1e18, // totalCollateralReceiveFixed
 			liquidityPoolBalance + openingFee, // liquidityPool
 			0 // vault
 		);
@@ -97,9 +97,9 @@ contract AmmTreasurySpreadReceiveFixedTest is Test, TestCommons {
 
 	function testShouldCalculateQuoteValueReceiveFixedSpreadPremiumsNegativeAndAbsoluteValueSpreadPremiumLowerThanIporIndex() public {
 		// given
-		uint256 liquidityPoolBalance = 15000 * Constants.D18;
-		uint256 swapCollateral = 10000 * Constants.D18;
-		uint256 openingFee = 20 * Constants.D18;
+		uint256 liquidityPoolBalance = 15000 * 1e18;
+		uint256 swapCollateral = 10000 * 1e18;
+		uint256 openingFee = 20 * 1e18;
 		IporTypes.AccruedIpor memory accruedIpor = IporTypes.AccruedIpor(
 			4 * 10**16, // indexValue: 4%
 			1 * 10**18, // ibtPrice: 1
@@ -107,8 +107,8 @@ contract AmmTreasurySpreadReceiveFixedTest is Test, TestCommons {
 			1 * 10**12 // exponentialWeightedMovingVariance: 0.000001%
 		);
 		IporTypes.AmmBalancesMemory memory accruedBalance = IporTypes.AmmBalancesMemory(
-			10000 * Constants.D18 + swapCollateral, // totalCollateralPayFixed 
-			13000 * Constants.D18, // totalCollateralReceiveFixed
+			10000 * 1e18 + swapCollateral, // totalCollateralPayFixed
+			13000 * 1e18, // totalCollateralReceiveFixed
 			liquidityPoolBalance + openingFee, // liquidityPool
 			0 // vault
 		);

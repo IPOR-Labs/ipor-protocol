@@ -145,8 +145,8 @@ contract IporRiskManagementOracle is
             maxNotionalPerLeg,
             maxUtilizationRatePerLeg,
             maxUtilizationRate,
-            spread * Constants.D12_INT,
-            fixedRateCap * Constants.D14
+            spread * 1e12,
+            fixedRateCap * 1e14
         );
     }
     function _getRiskIndicatorsPerLeg(address asset, uint256 direction)
@@ -287,12 +287,12 @@ contract IporRiskManagementOracle is
         );
         return (
             uint256(baseSpreadsAndFixedRateCaps.lastUpdateTimestamp),
-            int256(baseSpreadsAndFixedRateCaps.spread28dPayFixed) * Constants.D12_INT, // 1 = 0.01%
-            int256(baseSpreadsAndFixedRateCaps.spread28dReceiveFixed) * Constants.D12_INT,
-            int256(baseSpreadsAndFixedRateCaps.spread60dPayFixed) * Constants.D12_INT,
-            int256(baseSpreadsAndFixedRateCaps.spread60dReceiveFixed) * Constants.D12_INT,
-            int256(baseSpreadsAndFixedRateCaps.spread90dPayFixed) * Constants.D12_INT,
-            int256(baseSpreadsAndFixedRateCaps.spread90dReceiveFixed) * Constants.D12_INT
+            int256(baseSpreadsAndFixedRateCaps.spread28dPayFixed) * 1e12, // 1 = 0.01%
+            int256(baseSpreadsAndFixedRateCaps.spread28dReceiveFixed) * 1e12,
+            int256(baseSpreadsAndFixedRateCaps.spread60dPayFixed) * 1e12,
+            int256(baseSpreadsAndFixedRateCaps.spread60dReceiveFixed) * 1e12,
+            int256(baseSpreadsAndFixedRateCaps.spread90dPayFixed) * 1e12,
+            int256(baseSpreadsAndFixedRateCaps.spread90dReceiveFixed) * 1e12
         );
     }
 
@@ -334,12 +334,12 @@ contract IporRiskManagementOracle is
         );
         return (
             baseSpreadsAndFixedRateCaps.lastUpdateTimestamp,
-            baseSpreadsAndFixedRateCaps.fixedRateCap28dPayFixed * Constants.D14, // 1 = 0.01%
-            baseSpreadsAndFixedRateCaps.fixedRateCap28dReceiveFixed * Constants.D14,
-            baseSpreadsAndFixedRateCaps.fixedRateCap60dPayFixed * Constants.D14,
-            baseSpreadsAndFixedRateCaps.fixedRateCap60dReceiveFixed * Constants.D14,
-            baseSpreadsAndFixedRateCaps.fixedRateCap90dPayFixed * Constants.D14,
-            baseSpreadsAndFixedRateCaps.fixedRateCap90dReceiveFixed * Constants.D14
+            baseSpreadsAndFixedRateCaps.fixedRateCap28dPayFixed * 1e14, // 1 = 0.01%
+            baseSpreadsAndFixedRateCaps.fixedRateCap28dReceiveFixed * 1e14,
+            baseSpreadsAndFixedRateCaps.fixedRateCap60dPayFixed * 1e14,
+            baseSpreadsAndFixedRateCaps.fixedRateCap60dReceiveFixed * 1e14,
+            baseSpreadsAndFixedRateCaps.fixedRateCap90dPayFixed * 1e14,
+            baseSpreadsAndFixedRateCaps.fixedRateCap90dReceiveFixed * 1e14
         );
     }
 

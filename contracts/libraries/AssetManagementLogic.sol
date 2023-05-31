@@ -28,8 +28,8 @@ library AssetManagementLogic {
                 (wadAmmErc20BalanceBeforeWithdraw.toInt256() +
                     vaultBalance.toInt256() -
                     wadOperationAmount.toInt256()) *
-                    (Constants.D18_INT - wadAmmTreasuryAndAssetManagementRatioCfg.toInt256()),
-                Constants.D18_INT
+                    (1e18 - wadAmmTreasuryAndAssetManagementRatioCfg.toInt256()),
+                1e18
             ) - vaultBalance.toInt256();
     }
 }
