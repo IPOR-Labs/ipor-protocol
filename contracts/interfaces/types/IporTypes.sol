@@ -105,5 +105,7 @@ library IporTypes {
         uint256 totalNotionalReceiveFixed;
         /// @notice Ipor index value at the time of swap creation
         uint256 indexValue;
+        // @notice cap for offered rate without demandSpread in 18 decimals
+        uint256 cap;
     }
 }

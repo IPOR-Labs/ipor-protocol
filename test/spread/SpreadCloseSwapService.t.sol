@@ -36,7 +36,8 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             liquidityPool: 1_000_000e18,
             totalNotionalPayFixed: 100_000e18,
             totalNotionalReceiveFixed: 100_000e18,
-            indexValue: 1e16
+            indexValue: 1e16,
+            cap: 0 //todo
         });
         uint256 openSwapTimeStamp = block.timestamp + 100 days;
         AmmInternalTypes.OpenSwapItem memory closedSwap = AmmInternalTypes.OpenSwapItem(
@@ -99,7 +100,8 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             liquidityPool: 1_000_000e18,
             totalNotionalPayFixed: 100_000e18,
             totalNotionalReceiveFixed: 100_000e18,
-            indexValue: 1e16
+            indexValue: 1e16,
+            cap: 0 //todo
         });
         uint256 openSwapTimeStamp = block.timestamp + 100 days;
         AmmInternalTypes.OpenSwapItem memory closedSwap = AmmInternalTypes.OpenSwapItem(
@@ -163,7 +165,8 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             liquidityPool: 1_000_000e18,
             totalNotionalPayFixed: 100_000e18,
             totalNotionalReceiveFixed: 100_000e18,
-            indexValue: 1e16
+            indexValue: 1e16,
+            cap: 0 //todo
         });
         AmmInternalTypes.OpenSwapItem memory closedSwap = AmmInternalTypes.OpenSwapItem(
             10,
@@ -229,7 +232,8 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             liquidityPool: 1_000_000e18,
             totalNotionalPayFixed: 100_000e18,
             totalNotionalReceiveFixed: 100_000e18,
-            indexValue: 1e16
+            indexValue: 1e16,
+            cap: 0 //todo
         });
         AmmInternalTypes.OpenSwapItem memory closedSwap = AmmInternalTypes.OpenSwapItem(
             10,
@@ -296,7 +300,8 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             liquidityPool: 1_000_000e18,
             totalNotionalPayFixed: 100_000e18,
             totalNotionalReceiveFixed: 100_000e18,
-            indexValue: 1e16
+            indexValue: 1e16,
+            cap: 0 //todo
         });
 
         vm.warp(1000 days);
@@ -432,7 +437,8 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             liquidityPool: 1_000_000e18,
             totalNotionalPayFixed: 100_000e18,
             totalNotionalReceiveFixed: 100_000e18,
-            indexValue: 1e16
+            indexValue: 1e16,
+            cap: 0 //todo
         });
 
         vm.warp(1000 days);
