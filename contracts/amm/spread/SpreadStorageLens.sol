@@ -4,7 +4,6 @@ pragma solidity 0.8.16;
 import "../../interfaces/types/IporTypes.sol";
 import "./SpreadTypes.sol";
 import "./ISpreadStorageLens.sol";
-import "./CalculateWeightedNotionalLibs.sol";
 import "./SpreadStorageLibs.sol";
 
 contract  SpreadStorageLens is ISpreadStorageLens {
@@ -17,7 +16,7 @@ contract  SpreadStorageLens is ISpreadStorageLens {
 
         timeWeightedNotionalResponse = new SpreadTypes.TimeWeightedNotionalResponse[](storageIds.length);
         for (uint256 i; i < storageIds.length; i++) {
-            timeWeightedNotionalResponse[i].timeWeightedNotional = SpreadStorageLibs.getWeightedNotional(storageIds[i]);
+            timeWeightedNotionalResponse[i].timeWeightedNotional = SpreadStorageLibs.getTimeWeightedNotional(storageIds[i]);
             timeWeightedNotionalResponse[i].key = keys[i];
         }
     }

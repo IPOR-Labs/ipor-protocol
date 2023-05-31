@@ -101,7 +101,7 @@ library CalculateTimeWeightedNotionalLibs {
     {
         uint256 length = storageIds.length;
         for (uint256 i; i != length; ) {
-            SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional = SpreadStorageLibs.getWeightedNotional(
+            SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
                 storageIds[i]
             );
             uint256 timeWeightedNotionalPayFixedTemp = calculateTimeWeightedNotional(

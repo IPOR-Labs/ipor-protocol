@@ -16,6 +16,6 @@ contract MockSpreadStorage {
     external
     returns (SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional28Days)
     {
-        return SpreadStorageLibs.getWeightedNotional(storageId);
+        return SpreadStorageLibs.getTimeWeightedNotional(storageId);
     }
 }

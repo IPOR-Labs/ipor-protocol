@@ -2,7 +2,6 @@
 pragma solidity 0.8.16;
 
 import "../interfaces/types/AmmTypes.sol";
-import "../interfaces/types/AmmTypes.sol";
 
 /// @title Interface of the service that allows to open new swaps.
 interface IAmmOpenSwapService {
