@@ -8,11 +8,11 @@ contract MockPowerTokenFlowsService is IPowerTokenFlowsService {
 
     function updateIndicatorsInLiquidityMining(address account, address[] calldata lpTokens) external {}
 
-    function delegateLpTokensToLiquidityMining(address[] calldata lpTokens, uint256[] calldata lpTokenAmounts)
+    function delegatePwTokensToLiquidityMining(address[] calldata lpTokens, uint256[] calldata lpTokenAmounts)
         external
     {}
 
-    function undelegateLpTokensFromLiquidityMining(address[] calldata lpTokens, uint256[] calldata lpTokenAmounts)
+    function undelegatePwTokensToLiquidityMining(address[] calldata lpTokens, uint256[] calldata lpTokenAmounts)
         external
     {}
 }

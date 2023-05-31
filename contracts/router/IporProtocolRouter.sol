@@ -287,9 +287,9 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             _reentrancyStatus = _ENTERED;
             return STAKE_SERVICE_ADDRESS;
         } else if (
-            sig == IPowerTokenFlowsService.delegateLpTokensToLiquidityMining.selector ||
+            sig == IPowerTokenFlowsService.delegatePwTokensToLiquidityMining.selector ||
             sig == IPowerTokenFlowsService.updateIndicatorsInLiquidityMining.selector ||
-            sig == IPowerTokenFlowsService.undelegateLpTokensFromLiquidityMining.selector ||
+            sig == IPowerTokenFlowsService.undelegatePwTokensToLiquidityMining.selector ||
             sig == IPowerTokenFlowsService.claimRewardsFromLiquidityMining.selector
         ) {
             _whenNotPaused();
