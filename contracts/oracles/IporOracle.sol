@@ -85,10 +85,14 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     function postUpgrade(address[] memory assets) public onlyOwner {
         uint256 assetsLength = assets.length;
 
+        IporOracleTypes.IPOR memory oldIpor;
+
         for (uint256 i; i != assetsLength; ) {
             require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
-            IporOracleTypes.IPOR memory oldIpor = _indexes[assets[i]];
+
+            oldIpor = _indexes[assets[i]];
             _indexes[assets[i]] = IporOracleTypes.IPOR(0, oldIpor.indexValue, block.timestamp.toUint32());
+
             unchecked {
                 ++i;
             }
