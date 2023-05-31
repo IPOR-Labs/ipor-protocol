@@ -14,11 +14,6 @@ contract LiquidityMiningLensBuilder is Test {
         _owner = owner;
     }
 
-    function withContractId(bytes32 contractId) public returns (LiquidityMiningLensBuilder) {
-        _builderData.contractId = contractId;
-        return this;
-    }
-
     function build() public returns (ILiquidityMiningLens) {
         vm.startPrank(_owner);
         MockLiquidityMiningLens LiquidityMiningLens = new MockLiquidityMiningLens(_builderData);

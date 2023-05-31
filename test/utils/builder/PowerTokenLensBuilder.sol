@@ -15,11 +15,6 @@ contract PowerTokenLensBuilder is Test {
         _owner = owner;
     }
 
-    function withName(string memory name) public returns (PowerTokenLensBuilder) {
-        _builderData.name = name;
-        return this;
-    }
-
     function build() public returns (IPowerTokenLens) {
         vm.startPrank(_owner);
         MockPowerTokenLens powerTokenLens = new MockPowerTokenLens(_builderData);
