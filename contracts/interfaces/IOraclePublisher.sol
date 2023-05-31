@@ -10,19 +10,7 @@ interface IOraclePublisher {
     /// @return current OraclePublisher version
     function getVersion() external pure returns (uint256);
 
-    function publish(
-        address asset,
-        uint256 indexValue,
-        IporRiskManagementOracleTypes.RiskIndicators calldata riskIndicators,
-        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps calldata baseSpreadsAndFixedRateCaps
-    ) external;
-
-    function publish(
-        address[] memory asset,
-        uint256[] memory indexValue,
-        IporRiskManagementOracleTypes.RiskIndicators[] memory riskIndicators,
-        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[] memory baseSpreadsAndFixedRateCaps
-    ) external;
+    function publish(address[] memory addresses, bytes[] calldata calls) external;
 
     /// @notice Adds new Updater. Updater has right to use OraclePublisher contract to publish index and risk management indicators. Function available only for Owner.
     /// @param newUpdater new updater address

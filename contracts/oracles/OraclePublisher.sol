@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 
+import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
@@ -24,8 +25,10 @@ contract OraclePublisher is
     IporOwnableUpgradeable,
     IOraclePublisher
 {
-    IIporOracle internal immutable _iporOracle;
-    IIporRiskManagementOracle internal immutable _iporRiskManagementOracle;
+    using Address for address;
+
+    address internal immutable _iporOracle;
+    address internal immutable _iporRiskManagementOracle;
 
     mapping(address => uint256) internal _updaters;
 
@@ -35,7 +38,7 @@ contract OraclePublisher is
     }
 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(IIporOracle iporOracle, IIporRiskManagementOracle iporRiskManagementOracle) {
+    constructor(address iporOracle, address iporRiskManagementOracle) {
         _disableInitializers();
 
         _iporOracle = iporOracle;
@@ -56,29 +59,16 @@ contract OraclePublisher is
         return (address(_iporOracle), address(_iporRiskManagementOracle));
     }
 
-    function publish(
-        address asset,
-        uint256 indexValue,
-        IporRiskManagementOracleTypes.RiskIndicators calldata riskIndicators,
-        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps calldata baseSpreadsAndFixedRateCaps
-    ) external override onlyUpdater whenNotPaused {
-        address[] memory assets = new address[](1);
-        assets[0] = asset;
-
-        uint256[] memory indexValues = new uint256[](1);
-        indexValues[0] = indexValue;
-
-        IporRiskManagementOracleTypes.RiskIndicators[]
-            memory riskIndicatorsArray = new IporRiskManagementOracleTypes.RiskIndicators[](1);
-        riskIndicatorsArray[0] = riskIndicators;
-
-        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[]
-            memory baseSpreadsAndFixedRateCapsArray = new IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[](
-                1
+    function publish(address[] memory addresses, bytes[] calldata calls) external override onlyUpdater whenNotPaused {
+        uint256 addressesLength = addresses.length;
+        require(addressesLength == calls.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
+        for (uint256 i = 0; i < addressesLength; i++) {
+            require(
+                addresses[i] == _iporOracle || addresses[i] == _iporRiskManagementOracle,
+                IporOracleErrors.INVALID_ORACLE_ADDRESS
             );
-        baseSpreadsAndFixedRateCapsArray[0] = baseSpreadsAndFixedRateCaps;
-
-        _updateOracles(assets, indexValues, riskIndicatorsArray, baseSpreadsAndFixedRateCapsArray, block.timestamp);
+            addresses[i].functionCall(calls[i]);
+        }
     }
 
     function addUpdater(address updater) external override onlyOwner whenNotPaused {
@@ -101,35 +91,6 @@ contract OraclePublisher is
 
     function unpause() external override onlyOwner {
         _unpause();
-    }
-
-    function _updateOracles(
-        address[] memory assets,
-        uint256[] memory indexValues,
-        IporRiskManagementOracleTypes.RiskIndicators[] memory riskIndicators,
-        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[] memory baseSpreadsAndFixedRateCaps,
-        uint256 updateTimestamp
-    ) internal {
-        uint256 assetsLength = assets.length;
-        require(
-            assetsLength == indexValues.length &&
-                assetsLength == riskIndicators.length &&
-                assetsLength == baseSpreadsAndFixedRateCaps.length,
-            IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH
-        );
-
-        for (uint256 i; i != assets.length; ++i) {
-            _iporOracle.updateIndex(assets[i], indexValues[i]);
-            _iporRiskManagementOracle.updateRiskIndicators(
-                assets[i],
-                riskIndicators[i].maxNotionalPayFixed,
-                riskIndicators[i].maxNotionalReceiveFixed,
-                riskIndicators[i].maxUtilizationRatePayFixed,
-                riskIndicators[i].maxUtilizationRateReceiveFixed,
-                riskIndicators[i].maxUtilizationRate
-            );
-            _iporRiskManagementOracle.updateBaseSpreadsAndFixedRateCaps(assets[i], baseSpreadsAndFixedRateCaps[i]);
-        }
     }
 
     //solhint-disable no-empty-blocks
