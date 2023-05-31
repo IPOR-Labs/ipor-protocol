@@ -28,7 +28,7 @@ contract AmmPoolsExchangeRateLiquidityTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
-        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getExchangeRate(address(_iporProtocol.asset));
+        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(address(_iporProtocol.asset));
 
         // then
         assertEq(actualExchangeRate, TestConstants.D18);
@@ -44,7 +44,7 @@ contract AmmPoolsExchangeRateLiquidityTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_14_000_18DEC);
 
         // when
-        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getExchangeRate(address(_iporProtocol.asset));
+        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(address(_iporProtocol.asset));
 
         // then
         assertEq(actualExchangeRate, TestConstants.D18);
@@ -60,7 +60,7 @@ contract AmmPoolsExchangeRateLiquidityTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_14_000_6DEC);
 
         // when
-        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getExchangeRate(address(_iporProtocol.asset));
+        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(address(_iporProtocol.asset));
 
         // then
         assertEq(actualExchangeRate, TestConstants.D18);
@@ -76,12 +76,12 @@ contract AmmPoolsExchangeRateLiquidityTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_10_000_18DEC);
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        vm.prank(address(_iporProtocol.router));
+        vm.startPrank(address(_iporProtocol.router));
         _iporProtocol.ammStorage.subtractLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
         vm.stopPrank();
 
         // when
-        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getExchangeRate(address(_iporProtocol.asset));
+        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(address(_iporProtocol.asset));
 
         // then
         assertEq(actualExchangeRate, TestConstants.ZERO);
@@ -110,7 +110,7 @@ contract AmmPoolsExchangeRateLiquidityTest is TestCommons {
         );
 
         // when
-        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getExchangeRate(address(_iporProtocol.asset));
+        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(address(_iporProtocol.asset));
 
         // then
         assertEq(actualExchangeRate, 1000951604132680805);
@@ -129,23 +129,25 @@ contract AmmPoolsExchangeRateLiquidityTest is TestCommons {
         );
 
         //BEGIN HACK - provide liquidity without mint ipToken
-        vm.prank(address(_iporProtocol.router));
+        vm.startPrank(address(_iporProtocol.router));
         _iporProtocol.ammStorage.addLiquidity(
             _liquidityProvider,
             TestConstants.USD_2_000_18DEC,
             TestConstants.USD_20_000_000_18DEC,
             TestConstants.USD_10_000_000_18DEC
         );
+        vm.stopPrank();
+        vm.startPrank(address(_liquidityProvider));
         _iporProtocol.asset.transfer(address(_iporProtocol.ammTreasury), TestConstants.USD_2_000_18DEC);
         vm.stopPrank();
         //END HACK - provide liquidity without mint ipToken
 
-        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getBalance(
+        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getAmmBalance(
             address(_iporProtocol.asset)
         );
 
         // when
-        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getExchangeRate(address(_iporProtocol.asset));
+        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(address(_iporProtocol.asset));
 
         // then
         assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.ipToken)), TestConstants.ZERO);
@@ -176,7 +178,7 @@ contract AmmPoolsExchangeRateLiquidityTest is TestCommons {
         );
 
         // when
-        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getExchangeRate(address(_iporProtocol.asset));
+        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(address(_iporProtocol.asset));
 
         // then
         assertEq(actualExchangeRate, 1000951604132680805);

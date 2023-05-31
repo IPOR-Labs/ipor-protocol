@@ -46,7 +46,7 @@ contract AmmPoolsNotExchangeRate is TestCommons {
             TestConstants.LEVERAGE_18DEC
         );
 
-        uint256 exchangeRateBeforeProvideLiquidity = _iporProtocol.ammPoolsLens.getExchangeRate(
+        uint256 exchangeRateBeforeProvideLiquidity = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(
             address(_iporProtocol.asset)
         );
 
@@ -56,7 +56,7 @@ contract AmmPoolsNotExchangeRate is TestCommons {
 
         // then
         uint256 actualIpTokenBalanceForUserThree = _iporProtocol.ipToken.balanceOf(_userThree);
-        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getExchangeRate(address(_iporProtocol.asset));
+        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(address(_iporProtocol.asset));
 
         assertEq(actualIpTokenBalanceForUserThree, 1499712450089551257107);
         assertEq(exchangeRateBeforeProvideLiquidity, 1000191736696212379);
@@ -82,19 +82,19 @@ contract AmmPoolsNotExchangeRate is TestCommons {
             TestConstants.LEVERAGE_18DEC
         );
 
-        uint256 exchangeRateBeforeProvideLiquidity = _iporProtocol.ammPoolsLens.getExchangeRate(
+        uint256 exchangeRateBeforeProvideLiquidity = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(
             address(_iporProtocol.asset)
         );
 
         // when
         vm.startPrank(_userThree);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_userThree, 1500 * TestConstants.D18);
-        _iporProtocol.ammPoolsService.redeemDai(_userThree, 874999999999999999854);
+        _iporProtocol.ammPoolsService.redeemFromAmmPoolDai(_userThree, 874999999999999999854);
         vm.stopPrank();
 
         // then
         uint256 actualIpTokenBalanceForUserThree = _iporProtocol.ipToken.balanceOf(_userThree);
-        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getExchangeRate(address(_iporProtocol.asset));
+        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(address(_iporProtocol.asset));
 
         assertEq(actualIpTokenBalanceForUserThree, 624712450089551257253);
         assertEq(exchangeRateBeforeProvideLiquidity, 1000191736696212379);
@@ -122,19 +122,19 @@ contract AmmPoolsNotExchangeRate is TestCommons {
             TestConstants.LEVERAGE_18DEC
         );
 
-        uint256 exchangeRateBeforeProvideLiquidity = _iporProtocol.ammPoolsLens.getExchangeRate(
+        uint256 exchangeRateBeforeProvideLiquidity = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(
             address(_iporProtocol.asset)
         );
 
         // when
         vm.startPrank(_userThree);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_userThree, 1500 * TestConstants.N1__0_6DEC);
-        _iporProtocol.ammPoolsService.redeemUsdt(_userThree, 874999999999999999854);
+        _iporProtocol.ammPoolsService.redeemFromAmmPoolUsdt(_userThree, 874999999999999999854);
         vm.stopPrank();
 
         // then
         uint256 actualIpTokenBalanceForUserThree = _iporProtocol.ipToken.balanceOf(_userThree);
-        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getExchangeRate(address(_iporProtocol.asset));
+        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(address(_iporProtocol.asset));
 
         assertEq(actualIpTokenBalanceForUserThree, 312964338781575037701);
         assertEq(exchangeRateBeforeProvideLiquidity, 1262664165103189493);
@@ -162,7 +162,7 @@ contract AmmPoolsNotExchangeRate is TestCommons {
             TestConstants.LEVERAGE_18DEC
         );
 
-        uint256 exchangeRateBeforeProvideLiquidity = _iporProtocol.ammPoolsLens.getExchangeRate(
+        uint256 exchangeRateBeforeProvideLiquidity = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(
             address(_iporProtocol.asset)
         );
 
@@ -173,12 +173,12 @@ contract AmmPoolsNotExchangeRate is TestCommons {
         // when
         vm.startPrank(_userThree);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_userThree, 1500 * TestConstants.N1__0_6DEC);
-        _iporProtocol.ammPoolsService.redeemUsdt(_userThree, 871111000099999999854);
+        _iporProtocol.ammPoolsService.redeemFromAmmPoolUsdt(_userThree, 871111000099999999854);
         vm.stopPrank();
 
         // then
         uint256 actualIpTokenBalanceForUserThree = _iporProtocol.ipToken.balanceOf(_userThree);
-        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getExchangeRate(address(_iporProtocol.asset));
+        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(address(_iporProtocol.asset));
 
         assertEq(actualIpTokenBalanceForUserThree, 316853338681575037701);
         assertEq(exchangeRateBeforeProvideLiquidity, 1262664165103189493);
@@ -206,7 +206,7 @@ contract AmmPoolsNotExchangeRate is TestCommons {
             TestConstants.LEVERAGE_18DEC
         );
 
-        uint256 exchangeRateBeforeProvideLiquidity = _iporProtocol.ammPoolsLens.getExchangeRate(
+        uint256 exchangeRateBeforeProvideLiquidity = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(
             address(_iporProtocol.asset)
         );
 
@@ -217,12 +217,12 @@ contract AmmPoolsNotExchangeRate is TestCommons {
         // when
         vm.startPrank(_userThree);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_userThree, 1500 * TestConstants.N1__0_6DEC);
-        _iporProtocol.ammPoolsService.redeemUsdt(_userThree, 871110090000000999854);
+        _iporProtocol.ammPoolsService.redeemFromAmmPoolUsdt(_userThree, 871110090000000999854);
         vm.stopPrank();
 
         // then
         uint256 actualIpTokenBalanceForUserThree = _iporProtocol.ipToken.balanceOf(_userThree);
-        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getExchangeRate(address(_iporProtocol.asset));
+        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(address(_iporProtocol.asset));
 
         assertEq(actualIpTokenBalanceForUserThree, 316854248781574037701, "incorrect ipToken balance for user three");
         assertEq(
