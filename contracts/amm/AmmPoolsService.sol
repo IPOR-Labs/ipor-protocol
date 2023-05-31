@@ -121,7 +121,7 @@ contract AmmPoolsService is IAmmPoolsService {
         _iporOracle = iporOracle;
     }
 
-    function getPoolConfiguration(address asset) external view override returns (PoolConfiguration memory) {
+    function getAmmPoolServiceConfiguration(address asset) external view override returns (PoolConfiguration memory) {
         return _getPoolConfiguration(asset);
     }
 
@@ -137,19 +137,19 @@ contract AmmPoolsService is IAmmPoolsService {
         _provideLiquidity(_dai, onBehalfOf, assetAmount);
     }
 
-    function redeemUsdt(address onBehalfOf, uint256 ipTokenAmount) external override {
+    function redeemFromAmmPoolUsdt(address onBehalfOf, uint256 ipTokenAmount) external override {
         _redeem(_usdt, onBehalfOf, ipTokenAmount);
     }
 
-    function redeemUsdc(address onBehalfOf, uint256 ipTokenAmount) external override {
+    function redeemFromAmmPoolUsdc(address onBehalfOf, uint256 ipTokenAmount) external override {
         _redeem(_usdc, onBehalfOf, ipTokenAmount);
     }
 
-    function redeemDai(address onBehalfOf, uint256 ipTokenAmount) external override {
+    function redeemFromAmmPoolDai(address onBehalfOf, uint256 ipTokenAmount) external override {
         _redeem(_dai, onBehalfOf, ipTokenAmount);
     }
 
-    function rebalance(address asset) external override {
+    function rebalanceBetweenAmmTreasuryAndAssetManagement(address asset) external override {
         require(
             AmmConfigurationManager.isAppointedToRebalanceInAmm(asset, msg.sender),
             AmmPoolsErrors.CALLER_NOT_APPOINTED_TO_REBALANCE

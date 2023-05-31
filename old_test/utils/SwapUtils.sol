@@ -3,7 +3,9 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../utils/TestConstants.sol";
-import "contracts/itf/ItfAmmTreasury.sol";
+import "../../contracts/amm/AmmTreasury.sol";
+import "../../contracts/amm/AmmStorage.sol";
+import "../../contracts/oracles/IporOracle.sol";
 
 contract SwapUtils is Test {
     function iterateOpenSwapsPayFixed(

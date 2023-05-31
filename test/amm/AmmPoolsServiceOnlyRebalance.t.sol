@@ -20,7 +20,7 @@ contract AmmPoolsServiceOnlyRebalanceTest is Test, TestCommons {
 
         // when
         vm.expectRevert(bytes(AmmPoolsErrors.CALLER_NOT_APPOINTED_TO_REBALANCE));
-        _iporProtocol.ammPoolsService.rebalance(address(_iporProtocol.asset));
+        _iporProtocol.ammPoolsService.rebalanceBetweenAmmTreasuryAndAssetManagement(address(_iporProtocol.asset));
     }
 
     function testShouldAddUserToAppointedRebalanceSender() public {
@@ -76,6 +76,6 @@ contract AmmPoolsServiceOnlyRebalanceTest is Test, TestCommons {
 
         // when
         vm.expectRevert(bytes(AmmPoolsErrors.ASSET_MANAGEMENT_BALANCE_IS_EMPTY));
-        _iporProtocol.ammPoolsService.rebalance(address(_iporProtocol.asset));
+        _iporProtocol.ammPoolsService.rebalanceBetweenAmmTreasuryAndAssetManagement(address(_iporProtocol.asset));
     }
 }

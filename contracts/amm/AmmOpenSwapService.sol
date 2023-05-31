@@ -745,7 +745,8 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             maxNotionalPerLeg,
             riskIndicators.maxUtilizationRatePerLeg,
             riskIndicators.maxUtilizationRate,
-            riskIndicators.spread
+            riskIndicators.spread,
+            riskIndicators.fixedRateCap
         ) = IIporRiskManagementOracle(_iporRiskManagementOracle).getOpenSwapParameters(
             asset,
             direction,

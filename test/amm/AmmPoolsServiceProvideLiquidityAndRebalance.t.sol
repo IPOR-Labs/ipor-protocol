@@ -49,7 +49,7 @@ contract JosephAutoRebalance is TestCommons {
         _iporProtocol.ammGovernanceService.addAppointedToRebalanceInAmm(address(_iporProtocol.asset), address(this));
 
         //when
-        _iporProtocol.ammPoolsService.rebalance(address(_iporProtocol.asset));
+        _iporProtocol.ammPoolsService.rebalanceBetweenAmmTreasuryAndAssetManagement(address(_iporProtocol.asset));
 
         //then
         assertEq(
@@ -94,7 +94,7 @@ contract JosephAutoRebalance is TestCommons {
 
         //when
         vm.warp(101);
-        _iporProtocol.ammPoolsService.rebalance(address(_iporProtocol.asset));
+        _iporProtocol.ammPoolsService.rebalanceBetweenAmmTreasuryAndAssetManagement(address(_iporProtocol.asset));
 
         //then
         assertTrue(
@@ -134,7 +134,7 @@ contract JosephAutoRebalance is TestCommons {
         vm.stopPrank();
 
         _iporProtocol.ammGovernanceService.addAppointedToRebalanceInAmm(address(_iporProtocol.asset), address(this));
-        _iporProtocol.ammPoolsService.rebalance(address(_iporProtocol.asset));
+        _iporProtocol.ammPoolsService.rebalanceBetweenAmmTreasuryAndAssetManagement(address(_iporProtocol.asset));
 
         //when
         vm.prank(address(_userOne));
@@ -183,7 +183,7 @@ contract JosephAutoRebalance is TestCommons {
         vm.stopPrank();
 
         _iporProtocol.ammGovernanceService.addAppointedToRebalanceInAmm(address(_iporProtocol.asset), address(this));
-        _iporProtocol.ammPoolsService.rebalance(address(_iporProtocol.asset));
+        _iporProtocol.ammPoolsService.rebalanceBetweenAmmTreasuryAndAssetManagement(address(_iporProtocol.asset));
 
         //when
         vm.warp(105);
