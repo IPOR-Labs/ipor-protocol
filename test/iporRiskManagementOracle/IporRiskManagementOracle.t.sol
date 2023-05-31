@@ -649,6 +649,22 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
         assertEq(fixedRateCap90dPayFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_2_0_PER) * 1e14);
         assertEq(fixedRateCap90dReceiveFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_3_5_PER) * 1e14);
         assertEq(lastUpdateTimestampFixedRateCap, _blockTimestamp);
+        (
+            uint256 lastUpdateTimestampFixedRateCap,
+            uint256 fixedRateCap28dPayFixed,
+            uint256 fixedRateCap28dReceiveFixed,
+            uint256 fixedRateCap60dPayFixed,
+            uint256 fixedRateCap60dReceiveFixed,
+            uint256 fixedRateCap90dPayFixed,
+            uint256 fixedRateCap90dReceiveFixed
+        ) = _iporRiskManagementOracle.getFixedRateCaps(address(_daiTestnetToken));
+        assertEq(fixedRateCap28dPayFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_2_0_PER) * 1e12);
+        assertEq(fixedRateCap28dReceiveFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_3_5_PER) * 1e12);
+        assertEq(fixedRateCap60dPayFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_2_0_PER) * 1e12);
+        assertEq(fixedRateCap60dReceiveFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_3_5_PER) * 1e12);
+        assertEq(fixedRateCap90dPayFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_2_0_PER) * 1e12);
+        assertEq(fixedRateCap90dReceiveFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_3_5_PER) * 1e12);
+        assertEq(lastUpdateTimestampFixedRateCap, _blockTimestamp);
     }
 
     function testShouldUpdateIndicators() public {
