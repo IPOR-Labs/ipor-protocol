@@ -67,11 +67,11 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     function postUpgrade() public onlyOwner {
         _soapIndicatorsPayFixed.hypotheticalInterestCumulative = IporMath.division(
             _soapIndicatorsPayFixed.hypotheticalInterestCumulative,
-            1e18 * 1e18 * Constants.YEAR_IN_SECONDS
+            1e36 * Constants.YEAR_IN_SECONDS
         );
         _soapIndicatorsReceiveFixed.hypotheticalInterestCumulative = IporMath.division(
             _soapIndicatorsReceiveFixed.hypotheticalInterestCumulative,
-            1e18 * 1e18 * Constants.YEAR_IN_SECONDS
+            1e36 * Constants.YEAR_IN_SECONDS
         );
     }
 
