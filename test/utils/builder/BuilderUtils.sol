@@ -116,6 +116,12 @@ contract BuilderUtils {
         DEFAULT,
         CASE1
     }
+
+    enum AmmPoolsServiceTestCase {
+        DEFAULT,
+        CASE1
+    }
+
     enum AmmTreasuryTestCase {
         DEFAULT,
         CASE0,
@@ -154,7 +160,16 @@ contract BuilderUtils {
         CASE6,
         /// @dev Pay Fixed Quote Value 0%
         /// @dev Receive Fixed Quote Value in 18 decimals: 38877399621396944
-        CASE7
+        CASE7,
+        /// @dev Pay Fixed Quote Value 0%
+        /// @dev Receive Fixed Quote Value 7%
+        CASE8,
+        /// @dev Pay Fixed Quote Value 0%
+        /// @dev Receive Fixed Quote Value 49%
+        CASE9,
+        /// @dev Pay Fixed Quote Value 51%
+        /// @dev Receive Fixed Quote Value 0%
+        CASE10
     }
 
     enum Spread60DaysTestCase {
