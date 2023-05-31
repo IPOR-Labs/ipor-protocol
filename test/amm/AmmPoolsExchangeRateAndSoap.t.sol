@@ -198,6 +198,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
+        vm.stopPrank();
 
         // BEGIN HACK - subtract liquidity without  burn ipToken
         vm.startPrank(address(_iporProtocol.router));
