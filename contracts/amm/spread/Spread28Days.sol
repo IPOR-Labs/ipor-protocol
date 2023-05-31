@@ -39,7 +39,7 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         offeredRate = OfferedRateCalculationLibs.calculatePayFixedOfferedRate(
             spreadInputs.indexValue,
             spreadInputs.baseSpread,
-            _calculateImbalancePayFixedAndUpdateTimeWeightedNotional28Day(spreadInputs),
+            _calculateDemandPayFixedAndUpdateTimeWeightedNotional28Day(spreadInputs),
             spreadInputs.cap
         );
     }
@@ -53,7 +53,7 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         offeredRate = OfferedRateCalculationLibs.calculatePayFixedOfferedRate(
             spreadInputs.indexValue,
             spreadInputs.baseSpread,
-            _calculateImbalancePayFixed28Day(spreadInputs),
+            _calculateDemandPayFixed28Day(spreadInputs),
             spreadInputs.cap
         );
     }
@@ -79,7 +79,7 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         offeredRate = OfferedRateCalculationLibs.calculateReceiveFixedOfferedRate(
             spreadInputs.indexValue,
             spreadInputs.baseSpread,
-            _calculateImbalanceReceiveFixed28Day(spreadInputs),
+            _calculateDemandReceiveFixed28Day(spreadInputs),
             spreadInputs.cap
         );
     }
@@ -96,20 +96,20 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         return ImbalanceSpreadLibs.spreadFunctionConfig();
     }
 
-    function _calculateImbalancePayFixed28Day(IporTypes.SpreadInputs memory spreadInputs)
+    function _calculateDemandPayFixed28Day(IporTypes.SpreadInputs memory spreadInputs)
         internal
         returns (uint256 spreadValue)
     {
-        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForImbalance(spreadInputs);
+        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
 
         spreadValue = ImbalanceSpreadLibs.calculatePayFixedSpread(inputData);
     }
 
-    function _calculateImbalancePayFixedAndUpdateTimeWeightedNotional28Day(IporTypes.SpreadInputs memory spreadInputs)
+    function _calculateDemandPayFixedAndUpdateTimeWeightedNotional28Day(IporTypes.SpreadInputs memory spreadInputs)
         internal
         returns (uint256 spreadValue)
     {
-        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForImbalance(spreadInputs);
+        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
         spreadValue = ImbalanceSpreadLibs.calculatePayFixedSpread(inputData);
 
         SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
@@ -123,11 +123,11 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         );
     }
 
-    function _calculateImbalanceReceiveFixed28Day(IporTypes.SpreadInputs calldata spreadInputs)
+    function _calculateDemandReceiveFixed28Day(IporTypes.SpreadInputs calldata spreadInputs)
         internal
         returns (uint256 spreadValue)
     {
-        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForImbalance(spreadInputs);
+        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
 
         spreadValue = ImbalanceSpreadLibs.calculateReceiveFixedSpread(inputData);
     }
@@ -135,7 +135,7 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
     function _calculateImbalanceReceiveFixedAndUpdateTimeWeightedNotional28Day(
         IporTypes.SpreadInputs calldata spreadInputs
     ) internal returns (uint256 spreadValue) {
-        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForImbalance(spreadInputs);
+        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
 
         spreadValue = ImbalanceSpreadLibs.calculateReceiveFixedSpread(inputData);
         SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
@@ -149,7 +149,7 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         );
     }
 
-    function _getSpreadConfigForImbalance(IporTypes.SpreadInputs memory spreadInputs)
+    function _getSpreadConfigForDemand(IporTypes.SpreadInputs memory spreadInputs)
         internal
         returns (ImbalanceSpreadLibs.SpreadInputData memory inputData)
     {
