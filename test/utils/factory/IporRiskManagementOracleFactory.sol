@@ -25,8 +25,8 @@ contract IporRiskManagementOracleFactory is Test {
 
         IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps
             memory baseSpreadsAndFixedRateCaps = _constructSpreadsBasedOnInitialParamTestCase(initialParams);
-
-        for (uint256 i = 0; i < assets.length; i++) {
+        uint256 assetLength = assets.length;
+        for (uint256 i; i < assetLength; ++i) {
             _iporRiskManagementOracleBuilder.withAsset(assets[i], riskIndicators, baseSpreadsAndFixedRateCaps);
         }
 

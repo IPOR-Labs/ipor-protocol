@@ -32,6 +32,31 @@ contract BuilderUtils {
         SpreadRouter spreadRouter;
         ItfAssetManagement assetManagement;
         AmmTreasury ammTreasury;
+        ILiquidityMiningLens liquidityMiningLens;
+        IPowerTokenLens powerTokenLens;
+        IPowerTokenFlowsService flowService;
+        IPowerTokenStakeService stakeService;
+    }
+
+    struct LiquidityMiningLensData {
+        bytes32 contractId;
+        uint256 balanceOf;
+    }
+
+    struct PowerTokenLensData {
+        string name;
+        bytes32 contractId;
+        string symbol;
+        uint8 decimals;
+        uint256 totalSupply;
+        uint256 balanceOf;
+        uint256 delegatedPowerTokensToLiquidityMiningBalanceOf;
+        uint256 getUnstakeWithoutCooldownFee;
+        uint256 unstakeWithoutCooldownFee;
+        PowerTokenTypes.PwTokenCooldown activeCooldown;
+        uint256 coolDownInSeconds;
+        uint256 exchangeRate;
+        uint256 totalSupplyBase;
     }
 
     enum IporOracleInitialParamsTestCase {
@@ -109,7 +134,8 @@ contract BuilderUtils {
     }
     enum AmmOpenSwapServiceTestCase {
         DEFAULT,
-        CASE1
+        CASE1,
+        CASE2
     }
 
     enum AmmCloseSwapServiceTestCase {

@@ -2,7 +2,7 @@
 pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "../../contracts/amm/spread/CalculateWeightedNotionalLibs.sol";
+import "contracts/amm/spread/CalculateTimeWeightedNotionalLibs.sol";
 import "../TestCommons.sol";
 
 contract CalculateWeightedNotionalLibsTest is TestCommons {
@@ -19,7 +19,7 @@ contract CalculateWeightedNotionalLibsTest is TestCommons {
 
     modifier _parameterizedStorageId() {
         uint256 length = _storageIdEnums.length;
-        for (uint256 i = 0; i < length; ++i) {
+        for (uint256 i; i != length; ++i) {
             _storageIdIterationItem = _storageIdEnums[i];
             _;
         }
@@ -103,7 +103,7 @@ contract CalculateWeightedNotionalLibsTest is TestCommons {
 
         newSwapNotional = newSwapNotional * 1e18;
 
-        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalBefore = SpreadStorageLibs.getWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalBefore = SpreadStorageLibs.getTimeWeightedNotional(
             _storageIdIterationItem
         );
 
@@ -121,7 +121,7 @@ contract CalculateWeightedNotionalLibsTest is TestCommons {
         );
 
         // then
-        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibs.getWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibs.getTimeWeightedNotional(
             _storageIdIterationItem
         );
 
@@ -155,7 +155,7 @@ contract CalculateWeightedNotionalLibsTest is TestCommons {
 
         newSwapNotional = newSwapNotional * 1e18;
 
-        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalBefore = SpreadStorageLibs.getWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalBefore = SpreadStorageLibs.getTimeWeightedNotional(
             _storageIdIterationItem
         );
 
@@ -173,7 +173,7 @@ contract CalculateWeightedNotionalLibsTest is TestCommons {
         );
 
         // then
-        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibs.getWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibs.getTimeWeightedNotional(
             _storageIdIterationItem
         );
 
@@ -220,7 +220,7 @@ contract CalculateWeightedNotionalLibsTest is TestCommons {
         );
 
         // then
-        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibs.getWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibs.getTimeWeightedNotional(
             _storageIdIterationItem
         );
 
@@ -260,7 +260,7 @@ contract CalculateWeightedNotionalLibsTest is TestCommons {
         CalculateTimeWeightedNotionalLibs.updateTimeWeightedNotionalPayFixed(weightedNotionalBefore, newSwapNotional, 28 days);
 
         // then
-        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibs.getWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibs.getTimeWeightedNotional(
             _storageIdIterationItem
         );
     }

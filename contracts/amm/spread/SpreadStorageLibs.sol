@@ -72,7 +72,7 @@ library SpreadStorageLibs {
         }
     }
 
-    function getWeightedNotional(StorageId storageId)
+    function getTimeWeightedNotional(StorageId storageId)
         internal
         returns (SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional28Days)
     {

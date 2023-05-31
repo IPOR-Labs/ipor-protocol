@@ -27,9 +27,14 @@ contract ItfDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeab
     ) public initializer {
         __Ownable_init();
         __UUPSUpgradeable_init();
-        uint256 i = 0;
-        for (i; i < assets.length; i++) {
+
+        uint256 assetsLength = assets.length;
+
+        for (uint256 i; i != assetsLength; ) {
             _ammStorages[assets[i]] = AmmStorage(ammStorages[i]);
+            unchecked {
+                ++i;
+            }
         }
         _iporOracle = ItfIporOracle(iporOracle);
     }
@@ -74,8 +79,7 @@ contract ItfDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeab
     {
         AmmStorage ammStorage = _ammStorages[asset];
         AmmStorageTypes.ExtendedBalancesMemory memory balance = ammStorage.getExtendedBalance();
-        (uint256 totalNotionalPayFixed, uint256 totalNotionalReceiveFixed) = ammStorage
-            .getTotalOutstandingNotional();
+        (uint256 totalNotionalPayFixed, uint256 totalNotionalReceiveFixed) = ammStorage.getTotalOutstandingNotional();
         ammStorageData = ItfDataProviderTypes.ItfAmmStorageData(
             balance.totalCollateralPayFixed,
             balance.totalCollateralReceiveFixed,

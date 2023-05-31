@@ -38,7 +38,6 @@ contract OraclePublisherTest is Test, TestCommons {
         updateTimestamps[2] = uint32(_blockTimestamp);
 
         IporOracle iporOracleImplementation = new IporOracle(
-            address(0),
             address(_usdtTestnetToken),
             1e18,
             address(_usdcTestnetToken),
@@ -515,12 +514,12 @@ contract OraclePublisherTest is Test, TestCommons {
             uint256 fixedRateCap90dPayFixed,
             uint256 fixedRateCap90dReceiveFixed
         ) = _iporRiskManagementOracle.getFixedRateCaps(address(_daiTestnetToken));
-        assertEq(fixedRateCap28dPayFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_0_PER) * 1e12);
-        assertEq(fixedRateCap28dReceiveFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_0_PER) * 1e12);
-        assertEq(fixedRateCap60dPayFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_0_PER) * 1e12);
-        assertEq(fixedRateCap60dReceiveFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_0_PER) * 1e12);
-        assertEq(fixedRateCap90dPayFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_0_PER) * 1e12);
-        assertEq(fixedRateCap90dReceiveFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_0_PER) * 1e12);
+        assertEq(fixedRateCap28dPayFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_0_PER) * 1e14);
+        assertEq(fixedRateCap28dReceiveFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_0_PER) * 1e14);
+        assertEq(fixedRateCap60dPayFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_0_PER) * 1e14);
+        assertEq(fixedRateCap60dReceiveFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_0_PER) * 1e14);
+        assertEq(fixedRateCap90dPayFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_0_PER) * 1e14);
+        assertEq(fixedRateCap90dReceiveFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_0_PER) * 1e14);
         assertEq(lastUpdateTimestampFixedRateCap, _blockTimestamp2);
     }
 

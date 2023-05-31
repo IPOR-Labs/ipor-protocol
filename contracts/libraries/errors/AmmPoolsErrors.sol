@@ -16,13 +16,13 @@ library AmmPoolsErrors {
     string public constant CALLER_NOT_TREASURY_MANAGER = "IPOR_404";
 
     //@notice Incorrect Treasury Treasurer Address
-    string public constant INCORRECT_TREASURE_TREASURER = "IPOR_405";
+//    string public constant INCORRECT_TREASURE_TREASURER = "IPOR_405";
 
     //@notice Sender is not a publication fee transferer, not match address defined in IporConfiguration in key AMM_TREASURY_PUBLICATION_FEE_TRANSFERER
     string public constant CALLER_NOT_PUBLICATION_FEE_TRANSFERER = "IPOR_406";
 
     //@notice Charlie Treasurer address is incorrect
-    string public constant INCORRECT_CHARLIE_TREASURER = "IPOR_407";
+    //string public constant INCORRECT_CHARLIE_TREASURER = "IPOR_407";
 
     string public constant ASSET_MANAGEMENT_BALANCE_IS_EMPTY = "IPOR_408";
 

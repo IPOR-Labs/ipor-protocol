@@ -19,18 +19,17 @@ contract JosephAutoRebalance is TestCommons {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
-        uint256 autoRebalanceThreshold = 10;
-        uint256 ammTreasuryAssetManagementRatio = 150000000000000000;
+        uint32 autoRebalanceThreshold = 10;
+        uint16 ammTreasuryAssetManagementRatio = 1500;
         uint256 userPosition = 500000 * 1e6;
 
         vm.warp(100);
 
-        _iporProtocol.ammGovernanceService.setAmmAutoRebalanceThreshold(
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
-            autoRebalanceThreshold
-        );
-        _iporProtocol.ammGovernanceService.setAmmAndAssetManagementRatio(
-            address(_iporProtocol.asset),
+            1000000000,
+            1000000000,
+            autoRebalanceThreshold,
             ammTreasuryAssetManagementRatio
         );
 
@@ -49,7 +48,7 @@ contract JosephAutoRebalance is TestCommons {
         _iporProtocol.ammGovernanceService.addAppointedToRebalanceInAmm(address(_iporProtocol.asset), address(this));
 
         //when
-        _iporProtocol.ammPoolsService.rebalance(address(_iporProtocol.asset));
+        _iporProtocol.ammPoolsService.rebalanceBetweenAmmTreasuryAndAssetManagement(address(_iporProtocol.asset));
 
         //then
         assertEq(
@@ -63,18 +62,17 @@ contract JosephAutoRebalance is TestCommons {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
-        uint256 autoRebalanceThreshold = 10;
-        uint256 ammTreasuryAssetManagementRatio = 150000000000000000;
+        uint32 autoRebalanceThreshold = 10;
+        uint16 ammTreasuryAssetManagementRatio = 1500;
         uint256 userPosition = 500000 * 1e6;
 
         vm.warp(100);
 
-        _iporProtocol.ammGovernanceService.setAmmAutoRebalanceThreshold(
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
-            autoRebalanceThreshold
-        );
-        _iporProtocol.ammGovernanceService.setAmmAndAssetManagementRatio(
-            address(_iporProtocol.asset),
+            1000000000,
+            1000000000,
+            autoRebalanceThreshold,
             ammTreasuryAssetManagementRatio
         );
 
@@ -94,7 +92,7 @@ contract JosephAutoRebalance is TestCommons {
 
         //when
         vm.warp(101);
-        _iporProtocol.ammPoolsService.rebalance(address(_iporProtocol.asset));
+        _iporProtocol.ammPoolsService.rebalanceBetweenAmmTreasuryAndAssetManagement(address(_iporProtocol.asset));
 
         //then
         assertTrue(
@@ -108,8 +106,8 @@ contract JosephAutoRebalance is TestCommons {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
-        uint256 autoRebalanceThreshold = 10;
-        uint256 ammTreasuryAssetManagementRatio = 150000000000000000;
+        uint32 autoRebalanceThreshold = 10;
+        uint16 ammTreasuryAssetManagementRatio = 1500;
         uint256 userPosition = 500000 * 1e6;
 
         uint256 expectedAmmTreasuryBalance = 150000000000;
@@ -117,12 +115,11 @@ contract JosephAutoRebalance is TestCommons {
 
         vm.warp(100);
 
-        _iporProtocol.ammGovernanceService.setAmmAutoRebalanceThreshold(
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
-            autoRebalanceThreshold
-        );
-        _iporProtocol.ammGovernanceService.setAmmAndAssetManagementRatio(
-            address(_iporProtocol.asset),
+            1000000000,
+            1000000000,
+            autoRebalanceThreshold,
             ammTreasuryAssetManagementRatio
         );
 
@@ -134,7 +131,7 @@ contract JosephAutoRebalance is TestCommons {
         vm.stopPrank();
 
         _iporProtocol.ammGovernanceService.addAppointedToRebalanceInAmm(address(_iporProtocol.asset), address(this));
-        _iporProtocol.ammPoolsService.rebalance(address(_iporProtocol.asset));
+        _iporProtocol.ammPoolsService.rebalanceBetweenAmmTreasuryAndAssetManagement(address(_iporProtocol.asset));
 
         //when
         vm.prank(address(_userOne));
@@ -157,8 +154,8 @@ contract JosephAutoRebalance is TestCommons {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
-        uint256 autoRebalanceThreshold = 10;
-        uint256 ammTreasuryAssetManagementRatio = 150000000000000000;
+        uint32 autoRebalanceThreshold = 10;
+        uint16 ammTreasuryAssetManagementRatio = 1500;
         uint256 userPosition = 500000 * 1e6;
 
         uint256 expectedAmmTreasuryBalance = 150000000354;
@@ -166,12 +163,11 @@ contract JosephAutoRebalance is TestCommons {
 
         vm.warp(100);
 
-        _iporProtocol.ammGovernanceService.setAmmAutoRebalanceThreshold(
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
-            autoRebalanceThreshold
-        );
-        _iporProtocol.ammGovernanceService.setAmmAndAssetManagementRatio(
-            address(_iporProtocol.asset),
+            1000000000,
+            1000000000,
+            autoRebalanceThreshold,
             ammTreasuryAssetManagementRatio
         );
 
@@ -183,7 +179,7 @@ contract JosephAutoRebalance is TestCommons {
         vm.stopPrank();
 
         _iporProtocol.ammGovernanceService.addAppointedToRebalanceInAmm(address(_iporProtocol.asset), address(this));
-        _iporProtocol.ammPoolsService.rebalance(address(_iporProtocol.asset));
+        _iporProtocol.ammPoolsService.rebalanceBetweenAmmTreasuryAndAssetManagement(address(_iporProtocol.asset));
 
         //when
         vm.warp(105);

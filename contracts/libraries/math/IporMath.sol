@@ -27,11 +27,11 @@ library IporMath {
         if (sign < 0) {
             // remainder << 1 left shift is equivalent to multiplying by 2
             if (remainder << 1 > absY) {
-                divAbs++;
+                ++divAbs;
             }
         } else {
             if (remainder << 1 >= absY) {
-                divAbs++;
+                ++divAbs;
             }
         }
 

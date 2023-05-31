@@ -40,7 +40,7 @@ contract DataUtils is Test {
         address josephUsd,
         address miltonUsd
     ) public {
-        for (uint256 i = 0; i < users.length; ++i) {
+        for (uint256 i; i < users.length; ++i) {
             vm.startPrank(users[i]);
             tokenUsd.approve(address(josephUsd), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
             tokenUsd.approve(address(miltonUsd), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
@@ -55,7 +55,7 @@ contract DataUtils is Test {
         address josephDai,
         address miltonDai
     ) public {
-        for (uint256 i = 0; i < users.length; ++i) {
+        for (uint256 i; i < users.length; ++i) {
             vm.startPrank(users[i]);
             tokenDai.approve(address(josephDai), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
             tokenDai.approve(address(miltonDai), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
