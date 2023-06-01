@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 /// @title Interface for interaction with  AssetManagement's strategy.
 /// @notice Strategy represents an external DeFi protocol and acts as and wrapper that standarizes the API of the external protocol.
