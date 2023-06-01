@@ -14,7 +14,7 @@ import "./IAmmGovernanceService.sol";
 import "./IPowerTokenStakeService.sol";
 import "./IPowerTokenFlowsService.sol";
 
-interface IIporProtocolAbi is
+interface IIporProtocol is
     IAmmSwapsLens,
     IAmmPoolsLens,
     IAssetManagementLens,
