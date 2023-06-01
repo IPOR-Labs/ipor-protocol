@@ -71,12 +71,12 @@ contract OraclePublisher is
         }
     }
 
-    function addUpdater(address updater) external override onlyOwner whenNotPaused {
+    function addUpdater(address updater) external override onlyOwner {
         _updaters[updater] = 1;
         emit IporOracleUpdateFacadeAddUpdater(updater);
     }
 
-    function removeUpdater(address updater) external override onlyOwner whenNotPaused {
+    function removeUpdater(address updater) external override onlyOwner {
         _updaters[updater] = 0;
         emit IporOracleUpdateFacadeRemoveUpdater(updater);
     }
