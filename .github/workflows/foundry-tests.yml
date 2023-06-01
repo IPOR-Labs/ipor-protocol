@@ -11,7 +11,7 @@ on:
       node-version:
         description: "NodeJS version"
         type: string
-        default: 16.15.0
+        default: 18.15.0
         required: false
 
       test-enabled:
