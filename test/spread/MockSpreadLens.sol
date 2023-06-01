@@ -20,7 +20,7 @@ contract MockSpreadLens is ISpread28DaysLens {
         spreadValue = 1;
     }
 
-    function calculateReceiveFixed28Days(
+    function calculateOfferedRateReceiveFixed28Days(
         IporTypes.SpreadInputs calldata spreadInputs
     ) external view returns (uint256 spreadValue) {
         spreadValue = 2;

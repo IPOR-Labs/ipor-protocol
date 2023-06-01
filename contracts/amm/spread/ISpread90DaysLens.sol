@@ -15,7 +15,7 @@ interface ISpread90DaysLens {
     /// @notice Calculates the quote value for a fixed 90-day period on the receive-fixed side based on the provided spread inputs.
     /// @param spreadInputs The spread inputs required for the calculation.
     /// @return quoteValue The calculated quote value for the receive-fixed side.
-    function calculateReceiveFixed90Days(IporTypes.SpreadInputs calldata spreadInputs)
+    function calculateOfferedRateReceiveFixed90Days(IporTypes.SpreadInputs calldata spreadInputs)
         external
         returns (uint256 quoteValue);
 

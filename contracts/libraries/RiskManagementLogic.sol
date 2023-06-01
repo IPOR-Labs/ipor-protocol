@@ -115,13 +115,13 @@ library RiskManagementLogic {
         } else if (direction == 1) {
             if (duration == AmmTypes.SwapDuration.DAYS_28) {
                 return
-                    "calculateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
+                    "calculateOfferedRateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
             } else if (duration == AmmTypes.SwapDuration.DAYS_60) {
                 return
-                    "calculateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
+                    "calculateOfferedRateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
             } else if (duration == AmmTypes.SwapDuration.DAYS_90) {
                 return
-                    "calculateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
+                    "calculateOfferedRateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
             } else {
                 revert("Invalid duration");
             }

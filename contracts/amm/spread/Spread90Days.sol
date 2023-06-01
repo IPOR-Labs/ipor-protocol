@@ -70,7 +70,7 @@ contract Spread90Days is ISpread90Days, ISpread90DaysLens {
         );
     }
 
-    function calculateReceiveFixed90Days(IporTypes.SpreadInputs calldata spreadInputs)
+    function calculateOfferedRateReceiveFixed90Days(IporTypes.SpreadInputs calldata spreadInputs)
         external
         override
         returns (uint256 offeredRate)
