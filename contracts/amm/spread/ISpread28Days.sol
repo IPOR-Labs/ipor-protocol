@@ -7,14 +7,14 @@ interface ISpread28Days {
     /// @notice Calculates the quote value for pay fixed 28-day period based on the provided spread inputs.
     /// @param spreadInputs The spread inputs required for the calculation.
     /// @return quoteValue The calculated quote value.
-    function calculateQuotePayFixed28Days(
+    function calculateAndUpdateOfferedRatePayFixed28Days(
         IporTypes.SpreadInputs calldata spreadInputs
     ) external returns (uint256 quoteValue);
 
     /// @notice Calculates the quote value to receive fixed 28-day period based on the provided spread inputs.
     /// @param spreadInputs The spread inputs required for the calculation.
     /// @return quoteValue The calculated quote value to receive.
-    function calculateQuoteReceiveFixed28Days(
+    function calculateAndUpdateOfferedRateReceiveFixed28Days(
         IporTypes.SpreadInputs calldata spreadInputs
     ) external returns (uint256 quoteValue);
 }

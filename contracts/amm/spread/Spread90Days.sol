@@ -6,8 +6,9 @@ import "contracts/libraries/errors/IporOracleErrors.sol";
 import "contracts/libraries/errors/IporErrors.sol";
 import "./ISpread90Days.sol";
 import "./ISpread90DaysLens.sol";
-import "./ImbalanceSpreadLibs.sol";
+import "./DemandSpreadLibs.sol";
 import "./SpreadStorageLibs.sol";
+import "./OfferedRateCalculationLibs.sol";
 
 contract Spread90Days is ISpread90Days, ISpread90DaysLens {
     using SafeCast for uint256;
@@ -31,60 +32,56 @@ contract Spread90Days is ISpread90Days, ISpread90DaysLens {
         _USDT = usdt;
     }
 
-    function calculateQuotePayFixed90Days(IporTypes.SpreadInputs calldata spreadInputs)
+    function calculateAndUpdateOfferedRatePayFixed90Days(IporTypes.SpreadInputs calldata spreadInputs)
         external
         override
-        returns (uint256 quoteValue)
+        returns (uint256 offeredRate)
     {
-        uint256 imbalanceSpread = _calculateImbalancePayFixedAndUpdateTimeWeightedNotional90Day(spreadInputs);
-
-        int256 intQuoteValue = spreadInputs.indexValue.toInt256() +
-            spreadInputs.baseSpread +
-            imbalanceSpread.toInt256();
-
-        quoteValue = intQuoteValue > 0 ? intQuoteValue.toUint256() : 0;
+        offeredRate = OfferedRateCalculationLibs.calculatePayFixedOfferedRate(
+            spreadInputs.indexValue,
+            spreadInputs.baseSpread,
+            _calculateDemandPayFixedAndUpdateTimeWeightedNotional90Day(spreadInputs),
+            spreadInputs.cap
+        );
     }
 
-    function calculatePayFixed90Days(IporTypes.SpreadInputs calldata spreadInputs)
+    function calculateOfferedRatePayFixed90Days(IporTypes.SpreadInputs calldata spreadInputs)
         external
         override
-        returns (uint256 quoteValue)
+        returns (uint256 offeredRate)
     {
-        uint256 imbalanceSpread = _calculateImbalancePayFixed90Day(spreadInputs);
-
-        int256 intQuoteValue = spreadInputs.indexValue.toInt256() +
-            spreadInputs.baseSpread +
-            imbalanceSpread.toInt256();
-
-        quoteValue = intQuoteValue > 0 ? intQuoteValue.toUint256() : 0;
+        offeredRate = OfferedRateCalculationLibs.calculatePayFixedOfferedRate(
+            spreadInputs.indexValue,
+            spreadInputs.baseSpread,
+            _calculateDemandPayFixed90Day(spreadInputs),
+            spreadInputs.cap
+        );
     }
 
-    function calculateQuoteReceiveFixed90Days(IporTypes.SpreadInputs calldata spreadInputs)
+    function calculateAndUpdateOfferedRateReceiveFixed90Days(IporTypes.SpreadInputs calldata spreadInputs)
         external
         override
-        returns (uint256 quoteValue)
+        returns (uint256 offeredRate)
     {
-        uint256 imbalanceSpread = _calculateImbalanceReceiveFixedAndUpdateTimeWeightedNotional90Day(spreadInputs);
-
-        int256 intQuoteValueWithIpor = spreadInputs.indexValue.toInt256() +
-            spreadInputs.baseSpread -
-            imbalanceSpread.toInt256();
-
-        quoteValue = intQuoteValueWithIpor > 0 ? intQuoteValueWithIpor.toUint256() : 0;
+        offeredRate = OfferedRateCalculationLibs.calculateReceiveFixedOfferedRate(
+            spreadInputs.indexValue,
+            spreadInputs.baseSpread,
+            _calculateDemandReceiveFixedAndUpdateTimeWeightedNotional90Day(spreadInputs),
+            spreadInputs.cap
+        );
     }
 
-    function calculateReceiveFixed90Days(IporTypes.SpreadInputs calldata spreadInputs)
+    function calculateOfferedRateReceiveFixed90Days(IporTypes.SpreadInputs calldata spreadInputs)
         external
         override
-        returns (uint256 quoteValue)
+        returns (uint256 offeredRate)
     {
-        uint256 imbalanceSpread = _calculateImbalanceReceiveFixed90Day(spreadInputs);
-
-        int256 intQuoteValueWithIpor = spreadInputs.indexValue.toInt256() +
-            spreadInputs.baseSpread -
-            imbalanceSpread.toInt256();
-
-        quoteValue = intQuoteValueWithIpor > 0 ? intQuoteValueWithIpor.toUint256() : 0;
+        offeredRate = OfferedRateCalculationLibs.calculateReceiveFixedOfferedRate(
+            spreadInputs.indexValue,
+            spreadInputs.baseSpread,
+            _calculateDemandReceiveFixed90Day(spreadInputs),
+            spreadInputs.cap
+        );
     }
 
     function getSupportedAssets() external view returns (address[] memory) {
@@ -96,25 +93,25 @@ contract Spread90Days is ISpread90Days, ISpread90DaysLens {
     }
 
     function spreadFunction90DaysConfig() external pure returns (uint256[] memory) {
-        return ImbalanceSpreadLibs.spreadFunctionConfig();
+        return DemandSpreadLibs.spreadFunctionConfig();
     }
 
-    function _calculateImbalancePayFixed90Day(IporTypes.SpreadInputs memory spreadInputs)
+    function _calculateDemandPayFixed90Day(IporTypes.SpreadInputs memory spreadInputs)
         internal
         returns (uint256 spreadValue)
     {
-        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForImbalance(spreadInputs);
+        DemandSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
 
-        spreadValue = ImbalanceSpreadLibs.calculatePayFixedSpread(inputData);
+        spreadValue = DemandSpreadLibs.calculatePayFixedSpread(inputData);
     }
 
-    function _calculateImbalancePayFixedAndUpdateTimeWeightedNotional90Day(IporTypes.SpreadInputs memory spreadInputs)
+    function _calculateDemandPayFixedAndUpdateTimeWeightedNotional90Day(IporTypes.SpreadInputs memory spreadInputs)
         internal
         returns (uint256 spreadValue)
     {
-        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForImbalance(spreadInputs);
+        DemandSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
 
-        spreadValue = ImbalanceSpreadLibs.calculatePayFixedSpread(inputData);
+        spreadValue = DemandSpreadLibs.calculatePayFixedSpread(inputData);
 
         SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
             inputData.storageId
@@ -123,21 +120,21 @@ contract Spread90Days is ISpread90Days, ISpread90DaysLens {
         CalculateTimeWeightedNotionalLibs.updateTimeWeightedNotionalPayFixed(weightedNotional, inputData.swapNotional, 90 days);
     }
 
-    function _calculateImbalanceReceiveFixed90Day(IporTypes.SpreadInputs calldata spreadInputs)
+    function _calculateDemandReceiveFixed90Day(IporTypes.SpreadInputs calldata spreadInputs)
         internal
         returns (uint256 spreadValue)
     {
-        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForImbalance(spreadInputs);
+        DemandSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
 
-        spreadValue = ImbalanceSpreadLibs.calculateReceiveFixedSpread(inputData);
+        spreadValue = DemandSpreadLibs.calculateReceiveFixedSpread(inputData);
     }
 
-    function _calculateImbalanceReceiveFixedAndUpdateTimeWeightedNotional90Day(
+    function _calculateDemandReceiveFixedAndUpdateTimeWeightedNotional90Day(
         IporTypes.SpreadInputs calldata spreadInputs
     ) internal returns (uint256 spreadValue) {
-        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForImbalance(spreadInputs);
+        DemandSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
 
-        spreadValue = ImbalanceSpreadLibs.calculateReceiveFixedSpread(inputData);
+        spreadValue = DemandSpreadLibs.calculateReceiveFixedSpread(inputData);
 
         SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
             inputData.storageId
@@ -150,11 +147,11 @@ contract Spread90Days is ISpread90Days, ISpread90DaysLens {
         );
     }
 
-    function _getSpreadConfigForImbalance(IporTypes.SpreadInputs memory spreadInputs)
+    function _getSpreadConfigForDemand(IporTypes.SpreadInputs memory spreadInputs)
         internal
-        returns (ImbalanceSpreadLibs.SpreadInputData memory inputData)
+        returns (DemandSpreadLibs.SpreadInputData memory inputData)
     {
-        inputData = ImbalanceSpreadLibs.SpreadInputData({
+        inputData = DemandSpreadLibs.SpreadInputData({
             totalCollateralPayFixed: spreadInputs.totalCollateralPayFixed,
             totalCollateralReceiveFixed: spreadInputs.totalCollateralReceiveFixed,
             liquidityPool: spreadInputs.liquidityPool,

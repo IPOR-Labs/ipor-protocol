@@ -4,7 +4,7 @@ pragma solidity 0.8.16;
 import "contracts/interfaces/types/IporTypes.sol";
 import "./CalculateTimeWeightedNotionalLibs.sol";
 
-library ImbalanceSpreadLibs {
+library DemandSpreadLibs {
     /// @notice Dto for the Weighted Notional
     struct SpreadInputData {
         /// @notice Swap's balance for Pay Fixed leg

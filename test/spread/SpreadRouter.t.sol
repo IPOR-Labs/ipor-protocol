@@ -44,8 +44,8 @@ contract SpreadRouterTest is TestCommons {
 //        // when
 //
 //        SpreadRouter router = new SpreadRouter(deployedContracts);
-//        uint256 spreadQuotePayFixed = ISpread28Days(address(router)).calculateQuotePayFixed28Days(spreadInputs);
-//        uint256 spreadQuoteReceiveFixed = ISpread28Days(address(router)).calculateQuoteReceiveFixed28Days(spreadInputs);
+//        uint256 spreadQuotePayFixed = ISpread28Days(address(router)).calculateAndUpdateOfferedRatePayFixed28Days(spreadInputs);
+//        uint256 spreadQuoteReceiveFixed = ISpread28Days(address(router)).calculateOfferedRateReceiveFixed28Days(spreadInputs);
 //
 //        // then
 //        assertEq(spreadQuotePayFixed, 1);
@@ -81,10 +81,10 @@ contract SpreadRouterTest is TestCommons {
 //        // when
 //
 //        SpreadRouter router = new SpreadRouter(deployedContracts);
-//        uint256 spreadQuotePayFixed = ISpread28Days(address(router)).calculateQuotePayFixed28Days(
+//        uint256 spreadQuotePayFixed = ISpread28Days(address(router)).calculateAndUpdateOfferedRatePayFixed28Days(
 //            spreadInputs
 //        );
-//        uint256 spreadQuoteReceiveFixed = ISpread28Days(address(router)).calculateQuoteReceiveFixed28Days(
+//        uint256 spreadQuoteReceiveFixed = ISpread28Days(address(router)).calculateOfferedRateReceiveFixed28Days(
 //            spreadInputs
 //        );
 //
@@ -122,10 +122,10 @@ contract SpreadRouterTest is TestCommons {
 //        // when
 //
 //        SpreadRouter router = new SpreadRouter(deployedContracts);
-//        uint256 spreadQuotePayFixed = ISpread28Days(address(router)).calculateQuotePayFixed28Days(
+//        uint256 spreadQuotePayFixed = ISpread28Days(address(router)).calculateAndUpdateOfferedRatePayFixed28Days(
 //            spreadInputs
 //        );
-//        uint256 spreadQuoteReceiveFixed = ISpread28Days(address(router)).calculateQuoteReceiveFixed28Days(
+//        uint256 spreadQuoteReceiveFixed = ISpread28Days(address(router)).calculateOfferedRateReceiveFixed28Days(
 //            spreadInputs
 //        );
 //

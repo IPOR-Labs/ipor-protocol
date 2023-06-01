@@ -58,39 +58,39 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
 
     function getRouterImplementation(bytes4 sig) public view returns (address) {
         if (
-            sig == ISpread28Days.calculateQuotePayFixed28Days.selector ||
-            sig == ISpread28Days.calculateQuoteReceiveFixed28Days.selector
+            sig == ISpread28Days.calculateAndUpdateOfferedRatePayFixed28Days.selector ||
+            sig == ISpread28Days.calculateAndUpdateOfferedRateReceiveFixed28Days.selector
         ) {
             _onlyIporProtocolRouter();
             _whenNotPaused();
             return SPREAD_28_DAYS;
         } else if (
-            sig == ISpread60Days.calculateQuotePayFixed60Days.selector ||
-            sig == ISpread60Days.calculateQuoteReceiveFixed60Days.selector
+            sig == ISpread60Days.calculateAndUpdateOfferedRatePayFixed60Days.selector ||
+            sig == ISpread60Days.calculateAndUpdateOfferedRateReceiveFixed60Days.selector
         ) {
             _onlyIporProtocolRouter();
             _whenNotPaused();
             return SPREAD_60_DAYS;
         } else if (
-            sig == ISpread90Days.calculateQuotePayFixed90Days.selector ||
-            sig == ISpread90Days.calculateQuoteReceiveFixed90Days.selector
+            sig == ISpread90Days.calculateAndUpdateOfferedRatePayFixed90Days.selector ||
+            sig == ISpread90Days.calculateAndUpdateOfferedRateReceiveFixed90Days.selector
         ) {
             _onlyIporProtocolRouter();
             _whenNotPaused();
             return SPREAD_90_DAYS;
         } else if (
-            sig == ISpread28DaysLens.calculatePayFixed28Days.selector ||
-            sig == ISpread28DaysLens.calculateReceiveFixed28Days.selector
+            sig == ISpread28DaysLens.calculateOfferedRatePayFixed28Days.selector ||
+            sig == ISpread28DaysLens.calculateOfferedRateReceiveFixed28Days.selector
         ) {
             return SPREAD_28_DAYS;
         } else if (
-            sig == ISpread60DaysLens.calculatePayFixed60Days.selector ||
-            sig == ISpread60DaysLens.calculateReceiveFixed60Days.selector
+            sig == ISpread60DaysLens.calculateOfferedRatePayFixed60Days.selector ||
+            sig == ISpread60DaysLens.calculateOfferedRateReceiveFixed60Days.selector
         ) {
             return SPREAD_60_DAYS;
         } else if (
-            sig == ISpread90DaysLens.calculatePayFixed90Days.selector ||
-            sig == ISpread90DaysLens.calculateReceiveFixed90Days.selector
+            sig == ISpread90DaysLens.calculateOfferedRatePayFixed90Days.selector ||
+            sig == ISpread90DaysLens.calculateOfferedRateReceiveFixed90Days.selector
         ) {
             return SPREAD_90_DAYS;
         } else if (sig == ISpreadStorageLens.getTimeWeightedNotional.selector) {

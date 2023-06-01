@@ -36,7 +36,8 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             liquidityPool: 1_000_000e18,
             totalNotionalPayFixed: 100_000e18,
             totalNotionalReceiveFixed: 100_000e18,
-            indexValue: 1e16
+            indexValue: 1e16,
+            cap: 0 //todo
         });
         uint256 openSwapTimeStamp = block.timestamp + 100 days;
         AmmInternalTypes.OpenSwapItem memory closedSwap = AmmInternalTypes.OpenSwapItem(
@@ -48,7 +49,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
 
         vm.warp(openSwapTimeStamp);
         vm.prank(_ammAddress);
-        uint256 payFixed28Open = ISpread28Days(_routerAddress).calculateQuotePayFixed28Days(spreadInputsOpen);
+        uint256 payFixed28Open = ISpread28Days(_routerAddress).calculateAndUpdateOfferedRatePayFixed28Days(spreadInputsOpen);
 
         SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseBefore = ISpreadStorageLens(
             _routerAddress
@@ -99,7 +100,8 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             liquidityPool: 1_000_000e18,
             totalNotionalPayFixed: 100_000e18,
             totalNotionalReceiveFixed: 100_000e18,
-            indexValue: 1e16
+            indexValue: 1e16,
+            cap: 0 //todo
         });
         uint256 openSwapTimeStamp = block.timestamp + 100 days;
         AmmInternalTypes.OpenSwapItem memory closedSwap = AmmInternalTypes.OpenSwapItem(
@@ -111,7 +113,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
 
         vm.warp(openSwapTimeStamp);
         vm.prank(_ammAddress);
-        uint256 payFixed28Open = ISpread28Days(_routerAddress).calculateQuoteReceiveFixed28Days(spreadInputsOpen);
+        uint256 payFixed28Open = ISpread28Days(_routerAddress).calculateAndUpdateOfferedRateReceiveFixed28Days(spreadInputsOpen);
 
         SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseBefore = ISpreadStorageLens(
             _routerAddress
@@ -163,7 +165,8 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             liquidityPool: 1_000_000e18,
             totalNotionalPayFixed: 100_000e18,
             totalNotionalReceiveFixed: 100_000e18,
-            indexValue: 1e16
+            indexValue: 1e16,
+            cap: 0 //todo
         });
         AmmInternalTypes.OpenSwapItem memory closedSwap = AmmInternalTypes.OpenSwapItem(
             10,
@@ -173,10 +176,10 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         );
 
         vm.prank(_ammAddress);
-        ISpread28Days(_routerAddress).calculateQuotePayFixed28Days(spreadInputsOpen);
+        ISpread28Days(_routerAddress).calculateAndUpdateOfferedRatePayFixed28Days(spreadInputsOpen);
 
         vm.prank(_ammAddress);
-        ISpread28Days(_routerAddress).calculateQuotePayFixed28Days(spreadInputsOpen);
+        ISpread28Days(_routerAddress).calculateAndUpdateOfferedRatePayFixed28Days(spreadInputsOpen);
 
         SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseBefore = ISpreadStorageLens(
             _routerAddress
@@ -229,7 +232,8 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             liquidityPool: 1_000_000e18,
             totalNotionalPayFixed: 100_000e18,
             totalNotionalReceiveFixed: 100_000e18,
-            indexValue: 1e16
+            indexValue: 1e16,
+            cap: 0 //todo
         });
         AmmInternalTypes.OpenSwapItem memory closedSwap = AmmInternalTypes.OpenSwapItem(
             10,
@@ -239,10 +243,10 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         );
 
         vm.prank(_ammAddress);
-        ISpread28Days(_routerAddress).calculateQuoteReceiveFixed28Days(spreadInputsOpen);
+        ISpread28Days(_routerAddress).calculateAndUpdateOfferedRateReceiveFixed28Days(spreadInputsOpen);
 
         vm.prank(_ammAddress);
-        ISpread28Days(_routerAddress).calculateQuoteReceiveFixed28Days(spreadInputsOpen);
+        ISpread28Days(_routerAddress).calculateAndUpdateOfferedRateReceiveFixed28Days(spreadInputsOpen);
 
         SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseBefore = ISpreadStorageLens(
             _routerAddress
@@ -296,7 +300,8 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             liquidityPool: 1_000_000e18,
             totalNotionalPayFixed: 100_000e18,
             totalNotionalReceiveFixed: 100_000e18,
-            indexValue: 1e16
+            indexValue: 1e16,
+            cap: 0 //todo
         });
 
         vm.warp(1000 days);
@@ -316,7 +321,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         vm.prank(_owner);
         ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap1, cfgIporPublicationFee);
         vm.prank(_ammAddress);
-        ISpread28Days(_routerAddress).calculateQuoteReceiveFixed28Days(spreadInputsOpen);
+        ISpread28Days(_routerAddress).calculateAndUpdateOfferedRateReceiveFixed28Days(spreadInputsOpen);
 
         vm.warp(block.timestamp + 5 days);
         AmmTypes.NewSwap memory newSwap2 = AmmTypes.NewSwap(
@@ -334,7 +339,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         vm.prank(_owner);
         ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap2, cfgIporPublicationFee);
         vm.prank(_ammAddress);
-        ISpread28Days(_routerAddress).calculateQuoteReceiveFixed28Days(spreadInputsOpen);
+        ISpread28Days(_routerAddress).calculateAndUpdateOfferedRateReceiveFixed28Days(spreadInputsOpen);
 
         vm.warp(block.timestamp + 5 days);
         SpreadTypes.TimeWeightedNotionalResponse[]
@@ -354,7 +359,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             AmmTypes.SwapDuration.DAYS_28
         );
         vm.prank(_ammAddress);
-        ISpread28Days(_routerAddress).calculateQuoteReceiveFixed28Days(spreadInputsOpen);
+        ISpread28Days(_routerAddress).calculateAndUpdateOfferedRateReceiveFixed28Days(spreadInputsOpen);
 
         SpreadTypes.TimeWeightedNotionalResponse[]
             memory timeWeightedNotionalResponseAfterOpenLastSwap = ISpreadStorageLens(_routerAddress)
@@ -432,7 +437,8 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             liquidityPool: 1_000_000e18,
             totalNotionalPayFixed: 100_000e18,
             totalNotionalReceiveFixed: 100_000e18,
-            indexValue: 1e16
+            indexValue: 1e16,
+            cap: 0 //todo
         });
 
         vm.warp(1000 days);
@@ -452,7 +458,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         vm.prank(_owner);
         ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap1, cfgIporPublicationFee);
         vm.prank(_ammAddress);
-        ISpread28Days(_routerAddress).calculateQuotePayFixed28Days(spreadInputsOpen);
+        ISpread28Days(_routerAddress).calculateAndUpdateOfferedRatePayFixed28Days(spreadInputsOpen);
 
         vm.warp(block.timestamp + 5 days);
         AmmTypes.NewSwap memory newSwap2 = AmmTypes.NewSwap(
@@ -470,7 +476,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         vm.prank(_owner);
         ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap2, cfgIporPublicationFee);
         vm.prank(_ammAddress);
-        ISpread28Days(_routerAddress).calculateQuotePayFixed28Days(spreadInputsOpen);
+        ISpread28Days(_routerAddress).calculateAndUpdateOfferedRatePayFixed28Days(spreadInputsOpen);
 
         vm.warp(block.timestamp + 5 days);
         SpreadTypes.TimeWeightedNotionalResponse[]
@@ -490,7 +496,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             AmmTypes.SwapDuration.DAYS_28
         );
         vm.prank(_ammAddress);
-        ISpread28Days(_routerAddress).calculateQuotePayFixed28Days(spreadInputsOpen);
+        ISpread28Days(_routerAddress).calculateAndUpdateOfferedRatePayFixed28Days(spreadInputsOpen);
 
         SpreadTypes.TimeWeightedNotionalResponse[]
             memory timeWeightedNotionalResponseAfterOpenLastSwap = ISpreadStorageLens(_routerAddress)
