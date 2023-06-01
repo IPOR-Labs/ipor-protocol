@@ -54,9 +54,9 @@ contract AmmPoolsService is IAmmPoolsService {
     address internal immutable _iporOracle;
 
     constructor(
-        PoolConfiguration memory usdtPoolCfg,
-        PoolConfiguration memory usdcPoolCfg,
-        PoolConfiguration memory daiPoolCfg,
+        AmmPoolsServicePoolConfiguration memory usdtPoolCfg,
+        AmmPoolsServicePoolConfiguration memory usdcPoolCfg,
+        AmmPoolsServicePoolConfiguration memory daiPoolCfg,
         address iporOracle
     ) {
         require(usdtPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool asset"));
@@ -122,7 +122,7 @@ contract AmmPoolsService is IAmmPoolsService {
         _iporOracle = iporOracle;
     }
 
-    function getAmmPoolServiceConfiguration(address asset) external view override returns (PoolConfiguration memory) {
+    function getAmmPoolServiceConfiguration(address asset) external view override returns (AmmPoolsServicePoolConfiguration memory) {
         return _getPoolConfiguration(asset);
     }
 
@@ -156,7 +156,7 @@ contract AmmPoolsService is IAmmPoolsService {
             AmmPoolsErrors.CALLER_NOT_APPOINTED_TO_REBALANCE
         );
 
-        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+        AmmPoolsServicePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
             poolCfg.asset
@@ -197,7 +197,7 @@ contract AmmPoolsService is IAmmPoolsService {
         address onBehalfOf,
         uint256 assetAmount
     ) internal {
-        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+        AmmPoolsServicePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
             poolCfg.asset
         );
@@ -249,7 +249,7 @@ contract AmmPoolsService is IAmmPoolsService {
         address onBehalfOf,
         uint256 ipTokenAmount
     ) internal {
-        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+        AmmPoolsServicePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         require(
             ipTokenAmount > 0 && ipTokenAmount <= IIpToken(poolCfg.ipToken).balanceOf(msg.sender),
@@ -317,10 +317,10 @@ contract AmmPoolsService is IAmmPoolsService {
         );
     }
 
-    function _getPoolConfiguration(address asset) internal view returns (PoolConfiguration memory) {
+    function _getPoolConfiguration(address asset) internal view returns (AmmPoolsServicePoolConfiguration memory) {
         if (asset == _usdt) {
             return
-                PoolConfiguration({
+                AmmPoolsServicePoolConfiguration({
                     asset: _usdt,
                     decimals: _usdtDecimals,
                     ipToken: _usdtIpToken,
@@ -332,7 +332,7 @@ contract AmmPoolsService is IAmmPoolsService {
                 });
         } else if (asset == _usdc) {
             return
-                PoolConfiguration({
+                AmmPoolsServicePoolConfiguration({
                     asset: _usdc,
                     decimals: _usdcDecimals,
                     ipToken: _usdcIpToken,
@@ -344,7 +344,7 @@ contract AmmPoolsService is IAmmPoolsService {
                 });
         } else if (asset == _dai) {
             return
-                PoolConfiguration({
+                AmmPoolsServicePoolConfiguration({
                     asset: _dai,
                     decimals: _daiDecimals,
                     ipToken: _daiIpToken,
@@ -383,7 +383,7 @@ contract AmmPoolsService is IAmmPoolsService {
     }
 
     function _rebalanceIfNeededAfterProvideLiquidity(
-        PoolConfiguration memory poolCfg,
+        AmmPoolsServicePoolConfiguration memory poolCfg,
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg,
         uint256 vaultBalance,
         uint256 wadOperationAmount
@@ -426,7 +426,7 @@ contract AmmPoolsService is IAmmPoolsService {
     }
 
     function _rebalanceIfNeededBeforeRedeem(
-        PoolConfiguration memory poolCfg,
+        AmmPoolsServicePoolConfiguration memory poolCfg,
         uint256 wadAmmTreasuryErc20Balance,
         uint256 vaultBalance,
         uint256 wadOperationAmount

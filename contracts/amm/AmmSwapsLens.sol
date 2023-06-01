@@ -182,8 +182,8 @@ contract AmmSwapsLens is IAmmSwapsLens {
         uint256 direction,
         uint256 duration
     ) external view override returns (AmmFacadeTypes.AssetConfiguration memory) {
-        IAmmOpenSwapService.PoolConfiguration memory openSwapPoolCfg = IAmmOpenSwapService(_router)
-            .getPoolConfiguration(asset);
+        IAmmOpenSwapService.AmmOpenSwapServicePoolConfiguration memory openSwapPoolCfg = IAmmOpenSwapService(_router)
+            .getAmmOpenSwapServicePoolConfiguration(asset);
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
             openSwapPoolCfg.asset
         );

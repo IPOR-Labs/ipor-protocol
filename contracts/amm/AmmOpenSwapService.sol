@@ -64,13 +64,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         /// @notice swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
         AmmTypes.SwapDuration duration;
         string spreadMethodSig;
-        PoolConfiguration poolCfg;
+        AmmOpenSwapServicePoolConfiguration poolCfg;
     }
 
     constructor(
-        PoolConfiguration memory usdtPoolCfg,
-        PoolConfiguration memory usdcPoolCfg,
-        PoolConfiguration memory daiPoolCfg,
+        AmmOpenSwapServicePoolConfiguration memory usdtPoolCfg,
+        AmmOpenSwapServicePoolConfiguration memory usdcPoolCfg,
+        AmmOpenSwapServicePoolConfiguration memory daiPoolCfg,
         address iporOracle,
         address iporRiskManagementOracle,
         address spreadRouter
@@ -138,7 +138,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         _spreadRouter = spreadRouter;
     }
 
-    function getPoolConfiguration(address asset) external view override returns (PoolConfiguration memory) {
+    function getAmmOpenSwapServicePoolConfiguration(address asset) external view override returns (AmmOpenSwapServicePoolConfiguration memory) {
         return _getPoolConfiguration(asset);
     }
 
@@ -415,10 +415,10 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
 
-    function _getPoolConfiguration(address asset) internal view returns (PoolConfiguration memory) {
+    function _getPoolConfiguration(address asset) internal view returns (AmmOpenSwapServicePoolConfiguration memory) {
         if (asset == _usdt) {
             return
-                PoolConfiguration({
+                AmmOpenSwapServicePoolConfiguration({
                     asset: _usdt,
                     decimals: _usdtDecimals,
                     ammStorage: _usdtAmmStorage,
@@ -432,7 +432,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                 });
         } else if (asset == _usdc) {
             return
-                PoolConfiguration({
+                AmmOpenSwapServicePoolConfiguration({
                     asset: _usdc,
                     decimals: _usdcDecimals,
                     ammStorage: _usdcAmmStorage,
@@ -446,7 +446,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                 });
         } else if (asset == _dai) {
             return
-                PoolConfiguration({
+                AmmOpenSwapServicePoolConfiguration({
                     asset: _dai,
                     decimals: _daiDecimals,
                     ammStorage: _daiAmmStorage,
@@ -674,7 +674,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         uint256 totalAmount,
         uint256 leverage,
         AmmTypes.SwapDuration duration,
-        PoolConfiguration memory poolCfg
+        AmmOpenSwapServicePoolConfiguration memory poolCfg
     ) internal view returns (AmmInternalTypes.BeforeOpenSwapStruct memory bosStruct) {
         require(onBehalfOf != address(0), IporErrors.WRONG_ADDRESS);
 

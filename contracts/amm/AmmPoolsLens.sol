@@ -33,9 +33,9 @@ contract AmmPoolsLens is IAmmPoolsLens {
     address internal immutable _iporOracle;
 
     constructor(
-        PoolConfiguration memory usdtPoolCfg,
-        PoolConfiguration memory usdcPoolCfg,
-        PoolConfiguration memory daiPoolCfg,
+        AmmPoolsLensPoolConfiguration memory usdtPoolCfg,
+        AmmPoolsLensPoolConfiguration memory usdcPoolCfg,
+        AmmPoolsLensPoolConfiguration memory daiPoolCfg,
         address iporOracle
     ) {
         require(usdtPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool asset"));
@@ -95,7 +95,7 @@ contract AmmPoolsLens is IAmmPoolsLens {
         _iporOracle = iporOracle;
     }
 
-    function getAmmPoolsLensConfiguration(address asset) external view override returns (PoolConfiguration memory) {
+    function getAmmPoolsLensConfiguration(address asset) external view override returns (AmmPoolsLensPoolConfiguration memory) {
         return _getPoolConfiguration(asset);
     }
 
@@ -108,12 +108,12 @@ contract AmmPoolsLens is IAmmPoolsLens {
     }
 
     function getLiquidityPoolAccountContribution(address asset, address account) external view returns (uint256) {
-        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+        AmmPoolsLensPoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
         return IAmmStorage(poolCfg.ammStorage).getLiquidityPoolAccountContribution(account);
     }
 
     function _getPoolCoreModel(address asset) internal view returns (AmmTypes.AmmPoolCoreModel memory) {
-        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+        AmmPoolsLensPoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         AmmTypes.AmmPoolCoreModel memory model;
 
@@ -128,10 +128,10 @@ contract AmmPoolsLens is IAmmPoolsLens {
         return model;
     }
 
-    function _getPoolConfiguration(address asset) internal view returns (PoolConfiguration memory) {
+    function _getPoolConfiguration(address asset) internal view returns (AmmPoolsLensPoolConfiguration memory) {
         if (asset == _usdt) {
             return
-                PoolConfiguration({
+                AmmPoolsLensPoolConfiguration({
                     asset: _usdt,
                     decimals: _usdtDecimals,
                     ipToken: _usdtIpToken,
@@ -141,7 +141,7 @@ contract AmmPoolsLens is IAmmPoolsLens {
                 });
         } else if (asset == _usdc) {
             return
-                PoolConfiguration({
+                AmmPoolsLensPoolConfiguration({
                     asset: _usdc,
                     decimals: _usdcDecimals,
                     ipToken: _usdcIpToken,
@@ -151,7 +151,7 @@ contract AmmPoolsLens is IAmmPoolsLens {
                 });
         } else if (asset == _dai) {
             return
-                PoolConfiguration({
+                AmmPoolsLensPoolConfiguration({
                     asset: _dai,
                     decimals: _daiDecimals,
                     ipToken: _daiIpToken,

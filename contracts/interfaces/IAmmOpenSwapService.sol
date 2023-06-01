@@ -25,7 +25,7 @@ interface IAmmOpenSwapService {
         AmmTypes.IporSwapIndicator indicator
     );
 
-    struct PoolConfiguration {
+    struct AmmOpenSwapServicePoolConfiguration {
         address asset;
         uint256 decimals;
         address ammStorage;
@@ -38,7 +38,7 @@ interface IAmmOpenSwapService {
         uint256 openingFeeTreasuryPortionRate;
     }
 
-    function getPoolConfiguration(address asset) external view returns (PoolConfiguration memory);
+    function getAmmOpenSwapServicePoolConfiguration(address asset) external view returns (AmmOpenSwapServicePoolConfiguration memory);
 
     /// @notice Open new swap pay fixed receive floating with maturity in 28 days for asset USDT.
     /// @param onBehalfOf address of the account on behalf of which this swap is opened.
