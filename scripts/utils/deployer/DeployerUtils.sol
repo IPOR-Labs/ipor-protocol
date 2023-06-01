@@ -2,7 +2,6 @@
 pragma solidity 0.8.16;
 import "contracts/tokens/IpToken.sol";
 import "contracts/tokens/IvToken.sol";
-import "contracts/itf/IporOracle.sol";
 import "contracts/oracles/IporRiskManagementOracle.sol";
 import "contracts/amm/AmmStorage.sol";
 import "contracts/amm/AmmTreasury.sol";

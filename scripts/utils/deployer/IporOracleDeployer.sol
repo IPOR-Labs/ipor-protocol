@@ -41,15 +41,15 @@ contract IporOracleDeployer {
         return this;
     }
 
-    function build() public returns (ItfIporOracle) {
+    function build() public returns (IporOracle) {
         ERC1967Proxy proxy = _constructProxy(address(deployerData.iporOracleImplementation));
-        ItfIporOracle iporOracle = ItfIporOracle(address(proxy));
+        IporOracle iporOracle = IporOracle(address(proxy));
         return iporOracle;
     }
 
-    function buildEmptyProxy() public returns (ItfIporOracle) {
+    function buildEmptyProxy() public returns (IporOracle) {
         ERC1967Proxy proxy = _constructProxy(address(new EmptyIporOracleImplementation()));
-        ItfIporOracle iporOracle = ItfIporOracle(address(proxy));
+        IporOracle iporOracle = IporOracle(address(proxy));
         return iporOracle;
     }
 
