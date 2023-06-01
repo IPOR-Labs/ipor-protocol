@@ -57,7 +57,7 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         );
     }
 
-    function calculateOfferedRateReceiveFixed28Days(IporTypes.SpreadInputs calldata spreadInputs)
+    function calculateAndUpdateOfferedRateReceiveFixed28Days(IporTypes.SpreadInputs calldata spreadInputs)
         external
         override
         returns (uint256 offeredRate)

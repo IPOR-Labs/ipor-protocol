@@ -478,7 +478,7 @@ contract SpreadSmokeTest is TestCommons {
 
         // when
         vm.prank(_ammAddress);
-        uint256 receiveFixed28Open = ISpread28Days(_routerAddress).calculateOfferedRateReceiveFixed28Days(spreadInputsOpen);
+        uint256 receiveFixed28Open = ISpread28Days(_routerAddress).calculateAndUpdateOfferedRateReceiveFixed28Days(spreadInputsOpen);
 
         // then
         uint256 payFixed28After = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(spreadInputsPayFixed);
@@ -536,7 +536,7 @@ contract SpreadSmokeTest is TestCommons {
         });
         // when
         vm.prank(_ammAddress);
-        uint256 receiveFixed28Open = ISpread28Days(_routerAddress).calculateOfferedRateReceiveFixed28Days(spreadInputsOpen);
+        uint256 receiveFixed28Open = ISpread28Days(_routerAddress).calculateAndUpdateOfferedRateReceiveFixed28Days(spreadInputsOpen);
 
         // then
         assertTrue(receiveFixed28Open < 1e15, "receiveFixed28Open should be less than 1e15");
@@ -570,7 +570,7 @@ contract SpreadSmokeTest is TestCommons {
 
         // when
         vm.prank(_ammAddress);
-        uint256 receiveFixed60Open = ISpread60Days(_routerAddress).calculateOfferedRateReceiveFixed60Days(spreadInputsOpen);
+        uint256 receiveFixed60Open = ISpread60Days(_routerAddress).calculateAndUpdateOfferedRateReceiveFixed60Days(spreadInputsOpen);
 
         // then
         uint256 payFixed28After = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(spreadInputsPayFixed);
@@ -621,7 +621,7 @@ contract SpreadSmokeTest is TestCommons {
 
         // when
         vm.prank(_ammAddress);
-        uint256 receiveFixed60Open = ISpread60Days(_routerAddress).calculateOfferedRateReceiveFixed60Days(spreadInputsOpen);
+        uint256 receiveFixed60Open = ISpread60Days(_routerAddress).calculateAndUpdateOfferedRateReceiveFixed60Days(spreadInputsOpen);
 
         // then
         assertTrue(receiveFixed60Open < 1e15, "receiveFixed60Open should be less than 1e15");
@@ -656,7 +656,7 @@ contract SpreadSmokeTest is TestCommons {
 
         // when
         vm.prank(_ammAddress);
-        uint256 receiveFixed90Open = ISpread90Days(_routerAddress).calculateOfferedRateReceiveFixed90Days(spreadInputsOpen);
+        uint256 receiveFixed90Open = ISpread90Days(_routerAddress).calculateAndUpdateOfferedRateReceiveFixed90Days(spreadInputsOpen);
 
         // then
         uint256 payFixed28After = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(spreadInputsPayFixed);
@@ -708,7 +708,7 @@ contract SpreadSmokeTest is TestCommons {
 
         // when
         vm.prank(_ammAddress);
-        uint256 receiveFixed90Open = ISpread90Days(_routerAddress).calculateOfferedRateReceiveFixed90Days(spreadInputsOpen);
+        uint256 receiveFixed90Open = ISpread90Days(_routerAddress).calculateAndUpdateOfferedRateReceiveFixed90Days(spreadInputsOpen);
 
         // then
         assertTrue(receiveFixed90Open < 1e15, "receiveFixed90Open should be less than 1e15");

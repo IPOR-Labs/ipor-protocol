@@ -196,7 +196,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_28,
-            spreadMethodSig: "calculateOfferedRateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdt)
         });
 
@@ -213,7 +213,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_60,
-            spreadMethodSig: "calculateOfferedRateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdt)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -228,7 +228,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_90,
-            spreadMethodSig: "calculateOfferedRateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdt)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -289,7 +289,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_28,
-            spreadMethodSig: "calculateOfferedRateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdc)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -304,7 +304,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_60,
-            spreadMethodSig: "calculateOfferedRateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdc)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -319,7 +319,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_90,
-            spreadMethodSig: "calculateOfferedRateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdc)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -379,7 +379,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_28,
-            spreadMethodSig: "calculateOfferedRateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_dai)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -394,7 +394,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_60,
-            spreadMethodSig: "calculateOfferedRateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_dai)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -409,7 +409,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_90,
-            spreadMethodSig: "calculateOfferedRateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_dai)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);

@@ -19,7 +19,7 @@ contract MockSpreadXDays {
         return _payFixedQuoteValue;
     }
 
-    function calculateOfferedRateReceiveFixed28Days(IporTypes.SpreadInputs calldata spreadInputs)
+    function calculateAndUpdateOfferedRateReceiveFixed28Days(IporTypes.SpreadInputs calldata spreadInputs)
         external
         view
         returns (uint256 quoteValue)
@@ -34,7 +34,7 @@ contract MockSpreadXDays {
         return _payFixedQuoteValue;
     }
 
-    function calculateOfferedRateReceiveFixed60Days(IporTypes.SpreadInputs calldata spreadInputs)
+    function calculateAndUpdateOfferedRateReceiveFixed60Days(IporTypes.SpreadInputs calldata spreadInputs)
         external
         returns (uint256 quoteValue)
     {
@@ -48,7 +48,7 @@ contract MockSpreadXDays {
         return _payFixedQuoteValue;
     }
 
-    function calculateOfferedRateReceiveFixed90Days(IporTypes.SpreadInputs calldata spreadInputs)
+    function calculateAndUpdateOfferedRateReceiveFixed90Days(IporTypes.SpreadInputs calldata spreadInputs)
         external
         returns (uint256 quoteValue)
     {
