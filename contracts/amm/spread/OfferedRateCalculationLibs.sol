@@ -11,14 +11,14 @@ library OfferedRateCalculationLibs {
         uint256 indexValue,
         int256 baseSpread,
         uint256 demandSpread,
-        uint256 cap
+        uint256 payFixedMinCap
     ) internal pure returns (uint256 offeredRate) {
         int256 baseOfferedRate = indexValue.toInt256() + baseSpread;
 
-        if (baseOfferedRate > cap.toInt256()) {
+        if (baseOfferedRate > payFixedMinCap.toInt256()) {
             offeredRate = baseOfferedRate.toUint256() + demandSpread;
         } else {
-            offeredRate = cap + demandSpread;
+            offeredRate = payFixedMinCap + demandSpread;
         }
     }
 
@@ -26,15 +26,15 @@ library OfferedRateCalculationLibs {
         uint256 indexValue,
         int256 baseSpread,
         uint256 demandSpread,
-        uint256 cap
+        uint256 receiveFixedMaxCap
     ) internal pure returns (uint256 offeredRate) {
         int256 baseOfferedRate = indexValue.toInt256() + baseSpread;
 
         int256 temp;
-        if (baseOfferedRate < cap.toInt256()) {
+        if (baseOfferedRate < receiveFixedMaxCap.toInt256()) {
             temp = baseOfferedRate - demandSpread.toInt256();
         } else {
-            temp = cap.toInt256() - demandSpread.toInt256();
+            temp = receiveFixedMaxCap.toInt256() - demandSpread.toInt256();
         }
         offeredRate = temp < 0 ? 0 : temp.toUint256();
     }
