@@ -13,9 +13,9 @@ export const iporRiskManagementOracleFactory = async (initialParams: any): Promi
             initialParams.assets,
             initialParams.maxNotionalPayFixed,
             initialParams.maxNotionalReceiveFixed,
-            initialParams.maxUtilizationRatePayFixed,
-            initialParams.maxUtilizationRateReceiveFixed,
-            initialParams.maxUtilizationRate,
+            initialParams.maxCollateralRatioPayFixed,
+            initialParams.maxCollateralRatioReceiveFixed,
+            initialParams.maxCollateralRatio,
         ],
         {
             kind: "uups",
