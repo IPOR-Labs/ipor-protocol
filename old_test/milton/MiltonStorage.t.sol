@@ -262,7 +262,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.ammStorage.setAmmTreasury(_ammStorageAddress);
 
         vm.prank(address(_iporProtocol.ammTreasury));
-        IporTypes.IporSwapMemory memory derivativeItem = _iporProtocol
+        AmmTypes.Swap memory derivativeItem = _iporProtocol
             .ammStorage
             .getSwapPayFixed(1);
 
@@ -303,7 +303,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.ammStorage.setAmmTreasury(_ammStorageAddress);
 
         vm.prank(address(_iporProtocol.ammTreasury));
-        IporTypes.IporSwapMemory memory derivativeItem = _iporProtocol
+        AmmTypes.Swap memory derivativeItem = _iporProtocol
             .ammStorage
             .getSwapPayFixed(1);
 
@@ -342,7 +342,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         _iporProtocol.ammStorage.setAmmTreasury(_ammStorageAddress);
-        IporTypes.IporSwapMemory memory derivativeItem = _iporProtocol
+        AmmTypes.Swap memory derivativeItem = _iporProtocol
             .ammStorage
             .getSwapPayFixed(1);
 
@@ -374,7 +374,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.expectRevert("IPOR_009");
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsPayFixed(_userTwo, TestConstants.ZERO, TestConstants.ZERO);
 
@@ -401,7 +401,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsPayFixed(_userTwo, TestConstants.ZERO, 10);
 
@@ -429,7 +429,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsPayFixed(_userTwo, 10, 10);
 
@@ -465,7 +465,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsPayFixed(_userTwo, TestConstants.ZERO, 10);
 
@@ -501,7 +501,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsPayFixed(_userTwo, 10, 10);
 
@@ -537,7 +537,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsPayFixed(_userTwo, 20, 10);
 
@@ -573,7 +573,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsPayFixed(_userTwo, 20, 10);
 
@@ -608,7 +608,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.expectRevert("IPOR_009");
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsReceiveFixed(_userTwo, TestConstants.ZERO, TestConstants.ZERO);
 
@@ -644,7 +644,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsReceiveFixed(_userTwo, TestConstants.ZERO, 10);
 
@@ -672,7 +672,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsReceiveFixed(_userTwo, 10, 10);
 
@@ -708,7 +708,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsReceiveFixed(_userTwo, 10, 10);
 
@@ -744,7 +744,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsReceiveFixed(_userTwo, 10, 10);
 
@@ -780,7 +780,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsReceiveFixed(_userTwo, 20, 10);
 
@@ -816,7 +816,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsReceiveFixed(_userTwo, 20, 10);
 

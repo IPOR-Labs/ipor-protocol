@@ -126,7 +126,7 @@ contract IporRiskManagementOracle is
     function getOpenSwapParameters(
         address asset,
         uint256 direction,
-        uint256 duration
+        IporTypes.SwapTenor tenor
     )
     external
     view
@@ -140,7 +140,7 @@ contract IporRiskManagementOracle is
     )
     {
         (maxNotionalPerLeg, maxUtilizationRatePerLeg, maxUtilizationRate) = _getRiskIndicatorsPerLeg(asset, direction);
-        (spread, fixedRateCap) = _getSpread(asset, direction, duration);
+        (spread, fixedRateCap) = _getSpread(asset, direction, tenor);
         return (
             maxNotionalPerLeg,
             maxUtilizationRatePerLeg,
@@ -177,7 +177,7 @@ contract IporRiskManagementOracle is
     function _getSpread(
         address asset,
         uint256 direction,
-        uint256 duration
+        IporTypes.SwapTenor tenor
     ) internal view returns (int256 spread, uint256 fixedRateCap) {
         IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage
         memory baseSpreadsAndFixedRateCaps = _bytes32ToBaseSpreadsAndFixedRateCapsStorage(_baseSpreadsAndFixedRateCaps[asset]);
@@ -186,7 +186,7 @@ contract IporRiskManagementOracle is
             IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED
         );
 
-        if (duration == 0) {
+        if (tenor == IporTypes.SwapTenor.DAYS_28) {
             if (direction == 0) {
                 return (
                     baseSpreadsAndFixedRateCaps.spread28dPayFixed,
@@ -198,7 +198,7 @@ contract IporRiskManagementOracle is
                     baseSpreadsAndFixedRateCaps.fixedRateCap28dReceiveFixed
                 );
             }
-        } else if (duration == 1) {
+        } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
             if (direction == 0) {
                 return (
                     baseSpreadsAndFixedRateCaps.spread60dPayFixed,

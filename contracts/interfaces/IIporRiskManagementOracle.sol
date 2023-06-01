@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.16;
 
+import "contracts/interfaces/types/IporTypes.sol";
 import "./types/IporRiskManagementOracleTypes.sol";
 
 interface IIporRiskManagementOracle {
@@ -9,18 +10,18 @@ interface IIporRiskManagementOracle {
     /// @return current IIporRiskManagementOracle version
     function getVersion() external pure returns (uint256);
 
-    /// @notice Gets risk indicators and base spread for a given asset, swap direction and duration. Rates represented in 6 decimals. 1 = 0.0001%
+    /// @notice Gets risk indicators and base spread for a given asset, swap direction and tenor. Rates represented in 6 decimals. 1 = 0.0001%
     /// @param asset underlying / stablecoin address supported in Ipor Protocol
     /// @param direction swap direction, 0 = pay fixed, 1 = receive fixed
-    /// @param duration swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
+    /// @param tenor swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
     /// @return maxNotionalPerLeg maximum notional value for given leg
     /// @return maxUtilizationRatePerLeg maximum utilization rate for given leg
     /// @return maxUtilizationRate maximum utilization rate for both legs
-    /// @return spread spread for given direction and duration
+    /// @return spread spread for given direction and tenor
     function getOpenSwapParameters(
         address asset,
         uint256 direction,
-        uint256 duration
+        IporTypes.SwapTenor tenor
     )
         external
         view

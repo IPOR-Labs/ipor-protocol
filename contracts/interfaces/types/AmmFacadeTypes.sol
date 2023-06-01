@@ -74,7 +74,7 @@ library AmmFacadeTypes {
         int256 payoff;
         /// @notice Moment when swap was opened.
         uint256 openTimestamp;
-        /// @notice Mopment when swap achieve its maturity.
+        /// @notice Moment when swap achieve its maturity.
         uint256 endTimestamp;
         /// @notice Liqudidation deposit value on day when swap was opened. Value represented in 18 decimals.
         uint256 liquidationDepositAmount;

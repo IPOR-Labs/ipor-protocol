@@ -957,7 +957,7 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
         ) = _iporRiskManagementOracle.getOpenSwapParameters(
                 address(_daiTestnetToken),
                 TestConstants.LEG_PAY_FIXED,
-                TestConstants.SWAP_DURATION_60D
+                IporTypes.SwapTenor.DAYS_60
             );
         (
             uint256 daiReceiveFixed90DMaxNotionalPerLeg,
@@ -968,7 +968,7 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
         ) = _iporRiskManagementOracle.getOpenSwapParameters(
                 address(_daiTestnetToken),
                 TestConstants.LEG_RECEIVE_FIXED,
-                TestConstants.SWAP_DURATION_90D
+                IporTypes.SwapTenor.DAYS_90
             );
 
         //then:

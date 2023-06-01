@@ -40,7 +40,7 @@ interface IAmmOpenSwapService {
 
     function getAmmOpenSwapServicePoolConfiguration(address asset) external view returns (AmmOpenSwapServicePoolConfiguration memory);
 
-    /// @notice Open new swap pay fixed receive floating with maturity in 28 days for asset USDT.
+    /// @notice Open new swap pay fixed receive floating with tenor in 28 days for asset USDT.
     /// @param onBehalfOf address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
@@ -54,7 +54,7 @@ interface IAmmOpenSwapService {
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap pay fixed receive floating with maturity in 60 days for asset USDT.
+    /// @notice Open new swap pay fixed receive floating with tenor in 60 days for asset USDT.
     /// @param onBehalfOf address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
@@ -68,7 +68,7 @@ interface IAmmOpenSwapService {
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap pay fixed receive floating with maturity in 90 days for asset USDT.
+    /// @notice Open new swap pay fixed receive floating with tenor in 90 days for asset USDT.
     /// @param onBehalfOf address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
@@ -82,7 +82,7 @@ interface IAmmOpenSwapService {
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap receive fixed pay floating with maturity in 28 days for asset USDT.
+    /// @notice Open new swap receive fixed pay floating with tenor in 28 days for asset USDT.
     /// @param onBehalfOf address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
@@ -96,7 +96,7 @@ interface IAmmOpenSwapService {
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap receive fixed pay floating with maturity in 60 days for asset USDT.
+    /// @notice Open new swap receive fixed pay floating with tenor in 60 days for asset USDT.
     /// @param onBehalfOf address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
@@ -110,7 +110,7 @@ interface IAmmOpenSwapService {
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap receive fixed pay floating with maturity in 90 days for asset USDT.
+    /// @notice Open new swap receive fixed pay floating with tenor in 90 days for asset USDT.
     /// @param onBehalfOf address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
@@ -124,7 +124,7 @@ interface IAmmOpenSwapService {
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap pay fixed receive floating with maturity in 28 days for asset USDC.
+    /// @notice Open new swap pay fixed receive floating with tenor in 28 days for asset USDC.
     /// @param onBehalfOf address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
@@ -138,7 +138,7 @@ interface IAmmOpenSwapService {
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap pay fixed receive floating with maturity in 60 days for asset USDC.
+    /// @notice Open new swap pay fixed receive floating with tenor in 60 days for asset USDC.
     /// @param onBehalfOf address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
@@ -152,7 +152,7 @@ interface IAmmOpenSwapService {
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap pay fixed receive floating with maturity in 90 days for asset USDC.
+    /// @notice Open new swap pay fixed receive floating with tenor in 90 days for asset USDC.
     /// @param onBehalfOf address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
@@ -166,7 +166,7 @@ interface IAmmOpenSwapService {
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap receive fixed pay floating with maturity in 28 days for asset USDC.
+    /// @notice Open new swap receive fixed pay floating with tenor in 28 days for asset USDC.
     /// @param onBehalfOf address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
@@ -180,7 +180,7 @@ interface IAmmOpenSwapService {
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap receive fixed pay floating with maturity in 60 days for asset USDC.
+    /// @notice Open new swap receive fixed pay floating with tenor in 60 days for asset USDC.
     /// @param onBehalfOf address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
@@ -194,7 +194,7 @@ interface IAmmOpenSwapService {
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap receive fixed pay floating with maturity in 90 days for asset USDC.
+    /// @notice Open new swap receive fixed pay floating with tenor in 90 days for asset USDC.
     /// @param onBehalfOf address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
@@ -208,7 +208,7 @@ interface IAmmOpenSwapService {
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap pay fixed receive floating with maturity in 28 days for asset DAI.
+    /// @notice Open new swap pay fixed receive floating with tenor in 28 days for asset DAI.
     /// @param onBehalfOf address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
@@ -222,7 +222,7 @@ interface IAmmOpenSwapService {
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap pay fixed receive floating with maturity in 60 days for asset DAI.
+    /// @notice Open new swap pay fixed receive floating with tenor in 60 days for asset DAI.
     /// @param onBehalfOf address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
@@ -236,7 +236,7 @@ interface IAmmOpenSwapService {
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap pay fixed receive floating with maturity in 90 days for asset DAI.
+    /// @notice Open new swap pay fixed receive floating with tenor in 90 days for asset DAI.
     /// @param onBehalfOf address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
@@ -250,7 +250,7 @@ interface IAmmOpenSwapService {
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap receive fixed pay floating with maturity in 28 days for asset DAI.
+    /// @notice Open new swap receive fixed pay floating with tenor in 28 days for asset DAI.
     /// @param onBehalfOf address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
@@ -264,7 +264,7 @@ interface IAmmOpenSwapService {
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap receive fixed pay floating with maturity in 60 days for asset DAI.
+    /// @notice Open new swap receive fixed pay floating with tenor in 60 days for asset DAI.
     /// @param onBehalfOf address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
@@ -278,7 +278,7 @@ interface IAmmOpenSwapService {
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap receive fixed pay floating with maturity in 90 days for asset DAI.
+    /// @notice Open new swap receive fixed pay floating with tenor in 90 days for asset DAI.
     /// @param onBehalfOf address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.

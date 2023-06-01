@@ -16,7 +16,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         public
     {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -24,7 +24,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -47,7 +47,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         public
     {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -55,7 +55,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -78,7 +78,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         public
     {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 200 * 1e18;
         uint256 oppositeLegFixedRate = 3 * 1e16;
@@ -86,7 +86,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -107,7 +107,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtHedgPosElapsed10NegativePnLOppositeLegRateHigher() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = -200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -115,7 +115,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -138,7 +138,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         public
     {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = -200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -146,7 +146,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -169,7 +169,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         public
     {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = -200 * 1e18;
         uint256 oppositeLegFixedRate = 3 * 1e16;
@@ -177,7 +177,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -200,7 +200,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         public
     {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = -200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -208,7 +208,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -231,7 +231,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         public
     {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = -200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -239,7 +239,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -262,7 +262,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         public
     {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = -200 * 1e18;
         uint256 oppositeLegFixedRate = 3 * 1e16;
@@ -270,7 +270,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -293,7 +293,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         public
     {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -301,7 +301,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -324,7 +324,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         public
     {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -332,7 +332,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -355,7 +355,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         public
     {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 200 * 1e18;
         uint256 oppositeLegFixedRate = 3 * 1e16;
@@ -363,7 +363,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -386,7 +386,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         public
     {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 0;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -394,7 +394,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -417,7 +417,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         public
     {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 0;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -425,7 +425,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -448,7 +448,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         public
     {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 0;
         uint256 oppositeLegFixedRate = 3 * 1e16;
@@ -456,7 +456,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -479,7 +479,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         public
     {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 0;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -487,7 +487,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -510,7 +510,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         public
     {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 0;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -518,7 +518,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -541,7 +541,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         public
     {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 0;
         uint256 oppositeLegFixedRate = 3 * 1e16;
@@ -549,7 +549,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -570,7 +570,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtualHedgingSwapElapsed10PnL200PayFixedZero() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -578,7 +578,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 0;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -599,7 +599,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtualHedgingSwapElapsed10PnL200OppositeLegZero() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 200 * 1e18;
         uint256 oppositeLegFixedRate = 0;
@@ -607,7 +607,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -628,7 +628,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtualHedgingSwapElapsed10PnLNegative200PayFixedZero() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = -200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -636,7 +636,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 0;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -659,7 +659,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         public
     {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = -200 * 1e18;
         uint256 oppositeLegFixedRate = 0;
@@ -667,7 +667,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
@@ -688,7 +688,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtHedgPosPnLZeroClosingInDayWhenOpenedOppositeLegHigher() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 0;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -696,7 +696,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp;
 
@@ -717,7 +717,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtHedgPosPnLZeroClosingInDayWhenOpenedOppositeLegEqual() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 0;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -725,7 +725,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp;
 
@@ -746,7 +746,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtHedgPosPnLZeroClosingInDayWhenOpenedOppositeLegLower() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 0;
         uint256 oppositeLegFixedRate = 3 * 1e16;
@@ -754,7 +754,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp;
 
@@ -775,7 +775,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtHedgPosPnL200ClosingInDayWhenOpenedOppositeLegHigher() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -783,7 +783,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp;
 
@@ -804,7 +804,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtHedgPosPnL200ClosingInDayWhenOpenedOppositeLegEqual() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -812,7 +812,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp;
 
@@ -833,7 +833,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtHedgPosPnL200ClosingInDayWhenOpenedOppositeLegLower() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 200 * 1e18;
         uint256 oppositeLegFixedRate = 3 * 1e16;
@@ -841,7 +841,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp;
 
@@ -862,7 +862,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtHedgPosPnLZeroClosingInDayWhenOpenedLegEqualZero() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 0;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -870,7 +870,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 0;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp;
 
@@ -893,7 +893,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         public
     {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 0;
         uint256 oppositeLegFixedRate = 0;
@@ -901,7 +901,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp;
 
@@ -922,7 +922,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtHedgPosPnLZeroClosingInDayWhenOpenedBothLegZero() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 0;
         uint256 oppositeLegFixedRate = 0;
@@ -930,7 +930,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 0;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp;
 
@@ -951,7 +951,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtHedgPosMaturityPnL200OppositeLegHigher() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -959,7 +959,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 28 days;
 
@@ -980,7 +980,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtHedgPosMaturityPnL200OppositeLegEqual() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -988,7 +988,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 28 days;
 
@@ -1009,7 +1009,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtHedgPosMaturityPnL200OppositeLegLower() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 200 * 1e18;
         uint256 oppositeLegFixedRate = 3 * 1e16;
@@ -1017,7 +1017,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 28 days;
 
@@ -1038,7 +1038,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtHedgPosMaturityPnL200MinusOppositeLegHigher() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = -200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -1046,7 +1046,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 28 days;
 
@@ -1067,7 +1067,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtHedgPosMaturityPnL200MinusOppositeLegEqual() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = -200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -1075,7 +1075,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 28 days;
 
@@ -1096,7 +1096,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtHedgPosMaturityPnL200MinusOppositeLegLower() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = -200 * 1e18;
         uint256 oppositeLegFixedRate = 3 * 1e16;
@@ -1104,7 +1104,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 28 days;
 
@@ -1125,7 +1125,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtHedgPosAfterMaturityPnL200OppositeLegHigher() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -1133,7 +1133,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 28 days + 2 days;
 
@@ -1155,7 +1155,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtHedgPosAfterMaturityPnL200OppositeLegEqual() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -1163,7 +1163,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 28 days + 2 days;
 
@@ -1185,7 +1185,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtHedgPosAterMaturityPnL200OppositeLegLower() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = 200 * 1e18;
         uint256 oppositeLegFixedRate = 3 * 1e16;
@@ -1193,7 +1193,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 28 days + 2 days;
 
@@ -1215,7 +1215,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtHedgPosAfterMaturityPnL200MinusOppositeLegHigher() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = -200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -1223,7 +1223,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 28 days + 2 days;
 
@@ -1245,7 +1245,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtHedgPosAfterMaturityPnL200MinusOppositeLegEqual() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = -200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
@@ -1253,7 +1253,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 28 days + 2 days;
 
@@ -1275,7 +1275,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
     function testShouldCalculateVirtHedgPosAfterMaturityPnL200MinusOppositeLegLower() public {
         // given
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         int256 basePayoff = -200 * 1e18;
         uint256 oppositeLegFixedRate = 3 * 1e16;
@@ -1283,7 +1283,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
-        swap.duration = 0;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
         uint256 closingTimestamp = swap.openTimestamp + 28 days + 2 days;
 

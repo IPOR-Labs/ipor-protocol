@@ -5,7 +5,7 @@ import "../../../interfaces/types/AmmTypes.sol";
 
 /// @notice Structs used in the AmmStorage interface
 library StorageInternalTypes {
-    struct IporSwap {
+    struct Swap {
         /// @notice Swap's ID
         uint32 id;
         /// @notice Address of swap's Buyer
@@ -33,17 +33,17 @@ library StorageInternalTypes {
         uint32 liquidationDepositAmount;
         /// @notice State of the swap
         /// @dev 0 - INACTIVE, 1 - ACTIVE
-        AmmTypes.SwapState state;
-        /// @notice Swap's duration, it is used to calculate the swap's maturity date.
+        IporTypes.SwapState state;
+        /// @notice Swap's tenor, it is used to calculate the swap's end date, date when swap achieved maturity.
         /// @dev 0 - 28 days, 1 - 60 days, 2 - 90 days
-        AmmTypes.SwapDuration duration;
+        IporTypes.SwapTenor tenor;
     }
 
     /// @notice All active swaps available in AMM with information on swaps belong to the account.
     /// It describes swaps for a given leg.
-    struct IporSwapContainer {
+    struct SwapContainer {
         /// @notice Swap details, key in the map is a swapId
-        mapping(uint32 => IporSwap) swaps;
+        mapping(uint32 => Swap) swaps;
         /// @notice List of swap IDs for every account, key in the list is the account's address, and the value is a list of swap IDs
         mapping(address => uint32[]) ids;
     }
