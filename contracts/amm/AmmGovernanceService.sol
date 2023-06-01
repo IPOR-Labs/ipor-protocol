@@ -48,64 +48,64 @@ contract AmmGovernanceService is IAmmGovernanceService {
         PoolConfiguration memory usdcPoolCfg,
         PoolConfiguration memory daiPoolCfg
     ) {
-        require(usdcPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " asset usdc"));
-        require(usdcPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " ammStorage usdc"));
-        require(usdcPoolCfg.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " ammTreasury usdc"));
-        require(
-            usdcPoolCfg.ammPoolsTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammPoolsTreasury usdc")
-        );
-        require(
-            usdcPoolCfg.ammPoolsTreasuryManager != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammPoolsTreasuryManager usdc")
-        );
-        require(
-            usdcPoolCfg.ammCharlieTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammCharlieTreasury usdc")
-        );
-        require(
-            usdcPoolCfg.ammCharlieTreasuryManager != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammCharlieTreasuryManager usdc")
-        );
-
-        require(usdtPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " asset usdt"));
-        require(usdtPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " ammStorage usdt"));
-        require(usdtPoolCfg.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " ammTreasury usdt"));
+        require(usdtPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " asset USDT address cannot be 0"));
+        require(usdtPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " ammStorage USDT address cannot be 0"));
+        require(usdtPoolCfg.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " ammTreasury USDT address cannot be 0"));
         require(
             usdtPoolCfg.ammPoolsTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammPoolsTreasury usdt")
+            string.concat(IporErrors.WRONG_ADDRESS, " ammPoolsTreasury USDT address cannot be 0")
         );
         require(
             usdtPoolCfg.ammPoolsTreasuryManager != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammPoolsTreasuryManager usdt")
+            string.concat(IporErrors.WRONG_ADDRESS, " ammPoolsTreasuryManager USDT address cannot be 0")
         );
         require(
             usdtPoolCfg.ammCharlieTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammCharlieTreasury usdt")
+            string.concat(IporErrors.WRONG_ADDRESS, " ammCharlieTreasury USDT address cannot be 0")
         );
         require(
             usdtPoolCfg.ammCharlieTreasuryManager != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammCharlieTreasuryManager usdt")
+            string.concat(IporErrors.WRONG_ADDRESS, " ammCharlieTreasuryManager USDT address cannot be 0")
         );
 
-        require(daiPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " asset dai"));
-        require(daiPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " ammStorage dai"));
-        require(daiPoolCfg.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " ammTreasury dai"));
+        require(usdcPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " asset USDC address cannot be 0"));
+        require(usdcPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " ammStorage USDC address cannot be 0"));
+        require(usdcPoolCfg.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " ammTreasury USDC address cannot be 0"));
+        require(
+            usdcPoolCfg.ammPoolsTreasury != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " ammPoolsTreasury USDC address cannot be 0")
+        );
+        require(
+            usdcPoolCfg.ammPoolsTreasuryManager != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " ammPoolsTreasuryManager USDC address cannot be 0")
+        );
+        require(
+            usdcPoolCfg.ammCharlieTreasury != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " ammCharlieTreasury USDC address cannot be 0")
+        );
+        require(
+            usdcPoolCfg.ammCharlieTreasuryManager != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " ammCharlieTreasuryManager USDC address cannot be 0")
+        );
+
+        require(daiPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " asset DAI address cannot be 0"));
+        require(daiPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " ammStorage DAI address cannot be 0"));
+        require(daiPoolCfg.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " ammTreasury DAI address cannot be 0"));
         require(
             daiPoolCfg.ammPoolsTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammPoolsTreasury dai")
+            string.concat(IporErrors.WRONG_ADDRESS, " ammPoolsTreasury DAI address cannot be 0")
         );
         require(
             daiPoolCfg.ammPoolsTreasuryManager != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammPoolsTreasuryManager dai")
+            string.concat(IporErrors.WRONG_ADDRESS, " ammPoolsTreasuryManager DAI address cannot be 0")
         );
         require(
             daiPoolCfg.ammCharlieTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammCharlieTreasury dai")
+            string.concat(IporErrors.WRONG_ADDRESS, " ammCharlieTreasury DAI address cannot be 0")
         );
         require(
             daiPoolCfg.ammCharlieTreasuryManager != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammCharlieTreasuryManager dai")
+            string.concat(IporErrors.WRONG_ADDRESS, " ammCharlieTreasuryManager DAI address cannot be 0")
         );
 
         _usdt = usdtPoolCfg.asset;

@@ -53,6 +53,9 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(address iporProtocolRouterInput, address ammTreasury) {
+        require(iporProtocolRouterInput != address(0), string.concat(IporErrors.WRONG_ADDRESS, " IPOR protocol router address cannot be 0"));
+        require(ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " AMM treasury address cannot be 0"));
+
         IPOR_PROTOCOL_ROUTER = iporProtocolRouterInput;
         AMM_TREASURY = ammTreasury;
         _disableInitializers();

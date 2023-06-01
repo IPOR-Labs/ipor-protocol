@@ -14,7 +14,8 @@ contract SpreadAccessControl {
     address internal immutable IPOR_PROTOCOL_ROUTER;
 
     constructor(address ammAddress) {
-        require(ammAddress != address(0), string.concat(IporErrors.WRONG_ADDRESS, " ammAddress"));
+        require(ammAddress != address(0), string.concat(IporErrors.WRONG_ADDRESS, " AMM address cannot be 0"));
+
         IPOR_PROTOCOL_ROUTER = ammAddress;
     }
 

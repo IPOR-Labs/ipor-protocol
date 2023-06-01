@@ -5,6 +5,7 @@ pragma solidity 0.8.16;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import "../../../libraries/errors/IporErrors.sol";
 import "../../../vault/interfaces/aave/DataTypesContract.sol";
 import "../../../vault/interfaces/aave/AaveLendingPoolV2.sol";
 import "./aTokens/MockIAToken.sol";
@@ -28,6 +29,13 @@ contract MockLendingPoolAave is AaveLendingPoolV2 {
         address aUsdt,
         uint256 liquidityRatesUsdt
     ) {
+        require(dai != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI asset address cannot be 0"));
+        require(aDai != address(0), string.concat(IporErrors.WRONG_ADDRESS, " aDAI asset address cannot be 0"));
+        require(usdc != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC asset address cannot be 0"));
+        require(aUsdc != address(0), string.concat(IporErrors.WRONG_ADDRESS, " aUSDC asset address cannot be 0"));
+        require(usdt != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT asset address cannot be 0"));
+        require(aUsdt != address(0), string.concat(IporErrors.WRONG_ADDRESS, " aUSDT asset address cannot be 0"));
+
         _aTokens[dai] = aDai;
         _aTokens[usdc] = aUsdc;
         _aTokens[usdt] = aUsdt;

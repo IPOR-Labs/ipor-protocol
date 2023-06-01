@@ -4,6 +4,7 @@ pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "../../../libraries/errors/IporErrors.sol";
 
 contract MockStakedAave is ERC20 {
     address private _aaveMock;
@@ -12,6 +13,8 @@ contract MockStakedAave is ERC20 {
     mapping(address => bool) public cooldownMapping;
 
     constructor(address aaveMock) ERC20("stkAAVE", "stkAAVE") {
+        require(aaveMock != address(0), string.concat(IporErrors.WRONG_ADDRESS, " AAVE asset address cannot be 0"));
+
         _aaveMock = aaveMock;
         _mint(msg.sender, 10**24); // 1.000.000 aDAI
         _cooldownStartTimestamp = block.timestamp - (10 * 24 * 60 * 60);

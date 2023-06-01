@@ -40,6 +40,11 @@ contract AmmTreasury is
         address assetManagement,
         address router
     ) {
+        require(asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " asset address cannot be 0"));
+        require(ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " AMM storage address cannot be 0"));
+        require(assetManagement != address(0), string.concat(IporErrors.WRONG_ADDRESS, " asset management address cannot be 0"));
+        require(router != address(0), string.concat(IporErrors.WRONG_ADDRESS, " router address cannot be 0"));
+
         _asset = asset;
         _decimals = decimals;
         _ammStorage = ammStorage;
