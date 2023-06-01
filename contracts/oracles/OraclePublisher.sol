@@ -39,6 +39,11 @@ contract OraclePublisher is
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(address iporOracle, address iporRiskManagementOracle) {
+        require(iporOracle != address(0), string.concat(IporErrors.WRONG_ADDRESS, " IporOracle"));
+        require(
+            iporRiskManagementOracle != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " IporRiskManagementOracle")
+        );
         _disableInitializers();
 
         _iporOracle = iporOracle;
@@ -73,12 +78,12 @@ contract OraclePublisher is
 
     function addUpdater(address updater) external override onlyOwner {
         _updaters[updater] = 1;
-        emit IporOracleUpdateFacadeAddUpdater(updater);
+        emit OraclePublisherUpdaterAdded(updater);
     }
 
     function removeUpdater(address updater) external override onlyOwner {
         _updaters[updater] = 0;
-        emit IporOracleUpdateFacadeRemoveUpdater(updater);
+        emit OraclePublisherUpdaterRemoved(updater);
     }
 
     function isUpdater(address updater) external view override returns (uint256) {

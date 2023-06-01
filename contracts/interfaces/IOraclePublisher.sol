@@ -35,9 +35,9 @@ interface IOraclePublisher {
 
     /// @notice event emitted when OraclePublisher Updater is added by Owner
     /// @param newUpdater new Updater address
-    event IporOracleUpdateFacadeAddUpdater(address newUpdater);
+    event OraclePublisherUpdaterAdded(address newUpdater);
 
     /// @notice event emitted when OraclePublisher Updater is removed by Owner
     /// @param updater updater address
-    event IporOracleUpdateFacadeRemoveUpdater(address updater);
+    event OraclePublisherUpdaterRemoved(address updater);
 }
