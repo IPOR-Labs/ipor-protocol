@@ -58,21 +58,21 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
     function getRouterImplementation(bytes4 sig) public view returns (address) {
         if (
             sig == ISpread28Days.calculateAndUpdateOfferedRatePayFixed28Days.selector ||
-            sig == ISpread28Days.calculateQuoteReceiveFixed28Days.selector
+            sig == ISpread28Days.calculateOfferedRateReceiveFixed28Days.selector
         ) {
             _onlyIporProtocolRouter();
             _whenNotPaused();
             return SPREAD_28_DAYS;
         } else if (
             sig == ISpread60Days.calculateAndUpdateOfferedRatePayFixed60Days.selector ||
-            sig == ISpread60Days.calculateQuoteReceiveFixed60Days.selector
+            sig == ISpread60Days.calculateOfferedRateReceiveFixed60Days.selector
         ) {
             _onlyIporProtocolRouter();
             _whenNotPaused();
             return SPREAD_60_DAYS;
         } else if (
             sig == ISpread90Days.calculateAndUpdateOfferedRatePayFixed90Days.selector ||
-            sig == ISpread90Days.calculateQuoteReceiveFixed90Days.selector
+            sig == ISpread90Days.calculateOfferedRateReceiveFixed90Days.selector
         ) {
             _onlyIporProtocolRouter();
             _whenNotPaused();

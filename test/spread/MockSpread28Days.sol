@@ -10,7 +10,7 @@ contract MockSpread28Days is ISpread28Days {
         return 1;
     }
 
-    function calculateQuoteReceiveFixed28Days(
+    function calculateOfferedRateReceiveFixed28Days(
         IporTypes.SpreadInputs calldata spreadInputs
     ) external override returns (uint256 quoteValue) {
         return 2;
