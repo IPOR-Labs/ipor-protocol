@@ -92,6 +92,10 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             usdtPoolCfg.ammTreasury != address(0),
             string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammTreasury")
         );
+        require(
+            usdtPoolCfg.assetManagement != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool assetManagement")
+        );
 
         require(usdcPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool asset"));
         require(usdcPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammStorage"));
@@ -99,10 +103,19 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             usdcPoolCfg.ammTreasury != address(0),
             string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammTreasury")
         );
+        require(
+            usdcPoolCfg.assetManagement != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool assetManagement")
+        );
 
         require(daiPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool asset"));
         require(daiPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammStorage"));
         require(daiPoolCfg.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammTreasury"));
+
+        require(
+            daiPoolCfg.assetManagement != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " DAI pool assetManagement")
+        );
 
         require(iporOracle != address(0), string.concat(IporErrors.WRONG_ADDRESS, " iporOracle"));
         require(

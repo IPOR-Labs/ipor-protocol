@@ -36,6 +36,7 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
         require(deployedContracts.spread90Days != address(0), string.concat(IporErrors.WRONG_ADDRESS, " spread90Days"));
         require(deployedContracts.storageLens != address(0), string.concat(IporErrors.WRONG_ADDRESS, " storageLens"));
         require(deployedContracts.closeSwapService != address(0), string.concat(IporErrors.WRONG_ADDRESS, " closeSwapService"));
+
         SPREAD_28_DAYS = deployedContracts.spread28Days;
         SPREAD_60_DAYS = deployedContracts.spread60Days;
         SPREAD_90_DAYS = deployedContracts.spread90Days;

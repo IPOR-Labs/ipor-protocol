@@ -3,6 +3,7 @@ pragma solidity 0.8.16;
 import "../interfaces/IAmmStorage.sol";
 import "./types/ItfAmmTreasuryTypes.sol";
 import "../libraries/errors/AmmErrors.sol";
+import "../libraries/errors/IporErrors.sol";
 
 contract ItfLiquidator {
 
@@ -10,6 +11,9 @@ contract ItfLiquidator {
 //    IAmmStorage private _ammStorage;
 
     constructor(address ammTreasuryAddress, address ammStorage) {
+//        require(ammTreasuryAddress != address(0), string.concat(IporErrors.WRONG_ADDRESS, " AMM treasury address cannot be 0"));
+//        require(ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " AMM storage address cannot be 0"));
+
 //        _ammTreasury = ItfAmmTreasury(ammTreasuryAddress);
 //        _ammStorage = IAmmStorage(ammStorage);
     }

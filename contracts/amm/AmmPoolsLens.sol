@@ -38,38 +38,40 @@ contract AmmPoolsLens is IAmmPoolsLens {
         AmmPoolsLensPoolConfiguration memory daiPoolCfg,
         address iporOracle
     ) {
-        require(usdtPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool asset"));
-        require(usdtPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ipToken"));
-        require(usdtPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammStorage"));
+        require(usdtPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool asset address cannot be 0"));
+        require(usdtPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ipToken address cannot be 0"));
+        require(usdtPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammStorage address cannot be 0"));
         require(
             usdtPoolCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammTreasury")
+            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammTreasury address cannot be 0")
         );
         require(
             usdtPoolCfg.assetManagement != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool assetManagement")
+            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool assetManagement address cannot be 0")
         );
 
-        require(usdcPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool asset"));
-        require(usdcPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ipToken"));
-        require(usdcPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammStorage"));
+        require(usdcPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool asset address cannot be 0"));
+        require(usdcPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ipToken address cannot be 0"));
+        require(usdcPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammStorage address cannot be 0"));
         require(
             usdcPoolCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammTreasury")
+            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammTreasury address cannot be 0")
         );
         require(
             usdcPoolCfg.assetManagement != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool assetManagement")
+            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool assetManagement address cannot be 0")
         );
 
-        require(daiPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool asset"));
-        require(daiPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ipToken"));
-        require(daiPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammStorage"));
-        require(daiPoolCfg.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammTreasury"));
+        require(daiPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool asset address cannot be 0"));
+        require(daiPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ipToken address cannot be 0"));
+        require(daiPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammStorage address cannot be 0"));
+        require(daiPoolCfg.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammTreasury address cannot be 0"));
         require(
             daiPoolCfg.assetManagement != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " DAI pool assetManagement")
+            string.concat(IporErrors.WRONG_ADDRESS, " DAI pool assetManagement address cannot be 0")
         );
+
+        require(iporOracle != address(0), string.concat(IporErrors.WRONG_ADDRESS, " iporOracle address cannot be 0"));
 
         _usdt = usdtPoolCfg.asset;
         _usdtDecimals = usdtPoolCfg.decimals;

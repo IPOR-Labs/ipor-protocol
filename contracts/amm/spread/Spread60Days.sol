@@ -22,9 +22,10 @@ contract Spread60Days is ISpread60Days, ISpread60DaysLens {
         address usdc,
         address usdt
     ) {
-        require(dai != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI"));
-        require(usdc != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC"));
-        require(usdt != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT"));
+        require(dai != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI asset address cannot be 0"));
+        require(usdc != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC asset address cannot be 0"));
+        require(usdt != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT asset address cannot be 0"));
+
         _DAI = dai;
         _USDC = usdc;
         _USDT = usdt;
