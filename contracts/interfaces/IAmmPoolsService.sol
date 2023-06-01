@@ -4,7 +4,7 @@ pragma solidity 0.8.16;
 import "../interfaces/types/AmmTypes.sol";
 
 interface IAmmPoolsService {
-    struct PoolConfiguration {
+    struct AmmPoolsServicePoolConfiguration {
         address asset;
         uint256 decimals;
         address ipToken;
@@ -59,7 +59,7 @@ interface IAmmPoolsService {
         uint256 redeemAmount
     );
 
-    function getAmmPoolServiceConfiguration(address asset) external view returns (PoolConfiguration memory);
+    function getAmmPoolServiceConfiguration(address asset) external view returns (AmmPoolsServicePoolConfiguration memory);
 
     /// @notice Function invoked to provide asset to Liquidity Pool in amount `assetValue`
     /// @dev Emits {ProvideLiquidity} event and transfers ERC20 tokens from sender to AmmTreasury,

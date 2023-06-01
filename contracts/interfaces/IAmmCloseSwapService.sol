@@ -33,7 +33,7 @@ interface IAmmCloseSwapService {
         uint256 swapUnwindOpeningFee
     );
 
-    struct PoolConfiguration {
+    struct AmmCloseSwapServicePoolConfiguration {
         address asset;
         uint256 decimals;
         address ammStorage;
@@ -49,7 +49,7 @@ interface IAmmCloseSwapService {
         uint256 minLeverage;
     }
 
-    function getPoolConfiguration(address asset) external view returns (PoolConfiguration memory);
+    function getAmmCloseSwapServicePoolConfiguration(address asset) external view returns (AmmCloseSwapServicePoolConfiguration memory);
 
     function closeSwapPayFixedUsdt(address beneficiary, uint256 swapId) external;
 

@@ -199,7 +199,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             _nonReentrant();
             _reentrancyStatus = _ENTERED;
             return AMM_CLOSE_SWAP_SERVICE_ADDRESS;
-        } else if (sig == IAmmCloseSwapService.getPoolConfiguration.selector) {
+        } else if (sig == IAmmCloseSwapService.getAmmCloseSwapServicePoolConfiguration.selector) {
             return AMM_CLOSE_SWAP_SERVICE_ADDRESS;
         } else if (
             sig == IAmmCloseSwapService.emergencyCloseSwapPayFixedUsdt.selector ||
