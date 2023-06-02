@@ -99,7 +99,7 @@ contract DevDeployment is Script {
 
     function _getFullInstance(AmmConfig memory cfg, Amm memory amm) internal {
         deployEmptyRouter(amm);
-        deployEmptyTreasury(amm);
+        deployEmptyAmmTreasury(amm);
         deployAssets(amm);
         deployOracle(amm);
         deployRiskOracle(amm);
@@ -108,7 +108,7 @@ contract DevDeployment is Script {
         deployStorage(amm);
         deploySpreadRouter(amm);
         deployAssetManagement(amm);
-        deployFullTreasury(amm);
+        deployFullAmmTreasury(amm);
         deployFullRouter(amm);
     }
 
@@ -156,8 +156,8 @@ contract DevDeployment is Script {
             ammStorage: ammStorage,
             ammTreasury: ammTreasury,
             assetManagement: assetManagement,
-            openingFeeRate: 1e16,
-            openingFeeRateForSwapUnwind: 5 * 1e18, //TODO: suspicious value
+            openingFeeRate: 5e14,
+            openingFeeRateForSwapUnwind: 5e14,
             liquidationLegLimit: 10,
             timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
             timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
@@ -181,7 +181,7 @@ contract DevDeployment is Script {
             maxSwapCollateralAmount: 100_000 * 1e18,
             liquidationDepositAmount: 25,
             minLeverage: 10 * 1e18,
-            openingFeeRate: 1e16,
+            openingFeeRate: 5e14,
             openingFeeTreasuryPortionRate: 0
         });
     }
@@ -311,7 +311,7 @@ contract DevDeployment is Script {
         amm.dai.asset = address(new MockTestnetToken("Mocked DAI", "DAI", TestConstants.TOTAL_SUPPLY_18_DECIMALS, 18));
     }
 
-    function deployEmptyTreasury(Amm memory amm) internal {
+    function deployEmptyAmmTreasury(Amm memory amm) internal {
         amm.usdt.ammTreasury = address(
             new ERC1967Proxy(
                 address(new EmptyAmmTreasuryImplementation()),
@@ -478,7 +478,7 @@ contract DevDeployment is Script {
         IStrategy(amm.dai.strategyCompound).setAssetManagement(amm.dai.assetManagement);
     }
 
-    function deployFullTreasury(Amm memory amm) internal {
+    function deployFullAmmTreasury(Amm memory amm) internal {
         AmmTreasury(amm.usdt.ammTreasury).upgradeTo(
             address(new AmmTreasury(amm.usdt.asset, 6, amm.usdt.ammStorage, amm.usdt.assetManagement, amm.router))
         );
