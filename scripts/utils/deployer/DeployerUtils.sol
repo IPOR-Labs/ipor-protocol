@@ -9,11 +9,10 @@ import "contracts/amm/spread/SpreadRouter.sol";
 import "contracts/itf/ItfAssetManagement.sol";
 import "contracts/router/IporProtocolRouter.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
-import "contracts/oracles/IporOracle.sol";
+import "contracts/interfaces/IIporOracle.sol";
 
-contract DeployerUtils {
+library DeployerUtils {
     struct IporProtocol {
-        IporProtocolRouter router;
         IAmmSwapsLens ammSwapsLens;
         IAmmPoolsService ammPoolsService;
         IAmmPoolsLens ammPoolsLens;
@@ -23,7 +22,7 @@ contract DeployerUtils {
         MockTestnetToken asset;
         IpToken ipToken;
         IvToken ivToken;
-        IporOracle iporOracle;
+        IIporOracle iporOracle;
         IporRiskManagementOracle iporRiskManagementOracle;
         AmmStorage ammStorage;
         SpreadRouter spreadRouter;

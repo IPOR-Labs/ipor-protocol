@@ -9,10 +9,6 @@ import "../contracts/amm/AmmSwapsLens.sol";
 import "../contracts/amm/AssetManagementLens.sol";
 import "../contracts/amm/AmmCloseSwapService.sol";
 import "../contracts/amm/AmmPoolsService.sol";
-import "./utils/deployer/IporProtocolRouterDeployer.sol";
-import "./utils/deployer/AmmTreasuryDeployer.sol";
-import "./utils/deployer/AssetDeployer.sol";
-import "./utils/factory/IporOracleDeploymentFactory.sol";
 
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
@@ -23,7 +19,6 @@ pragma solidity 0.8.16;
 //import "contracts/mocks/tokens/MockTestnetToken.sol";
 //import "contracts/tokens/IpToken.sol";
 //import "contracts/tokens/IvToken.sol";
-//import "contracts/itf/ItfIporOracle.sol";
 //
 //import "../test/utils/Deployer/AssetDeployer.sol";
 //import "../test/utils/Deployer/IpTokenDeployer.sol";
@@ -41,7 +36,16 @@ pragma solidity 0.8.16;
 //import "contracts/interfaces/IPowerTokenLens.sol";
 //import "contracts/interfaces/ILiquidityMiningLens.sol";
 //import "contracts/interfaces/IPowerTokenFlowsService.sol";
-//import "contracts/interfaces/IStakeService.sol";
+import "contracts/interfaces/IIporOracle.sol";
+import "../contracts/oracles/IporOracle.sol";
+import "../contracts/amm/spread/SpreadRouter.sol";
+import "../contracts/oracles/IporRiskManagementOracle.sol";
+import "./utils/deployer/DeployerUtils.sol";
+import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import "./mocks/EmptyAmmTreasuryImplementation.sol";
+import "./mocks/EmptyRouterImplementation.sol";
+import "../test/utils/TestConstants.sol";
+
 //import "contracts/amm/AmmSwapsLens.sol";
 //import "contracts/amm/AmmPoolsLens.sol";
 //import "contracts/amm/AssetManagementLens.sol";
@@ -61,30 +65,24 @@ pragma solidity 0.8.16;
 // then run:
 // $ forge script scripts/DeployLocal.s.sol --fork-url http://127.0.0.1:8545 --broadcast
 contract DeployLocal is Script {
-    uint256 _privateKey;
+    uint256 _private_key;
+    AmmConfig ammConfig;
 
     function setUp() public {
-        _privateKey = vm.envUint("SC_ADMIN_PRIV_KEY");
-        _iporProtocolRouterDeployer = new IporProtocolRouterDeployer();
-        _ammTreasuryDeployer = new AmmTreasuryDeployer();
-        _assetDeployer = new AssetDeployer();
-        _iporOracleDeploymentFactory = new IporOracleDeploymentFactory();
+        _private_key = vm.envUint("SC_ADMIN_PRIV_KEY");
+        ammConfig.iporOracleUpdater = vm.envAddress("SC_MIGRATION_IPOR_INDEX_UPDATER_ADDRESS");
     }
 
     function run() public {
-        AmmConfig memory ammConfig;
-
-        vm.startBroadcast(_privateKey);
-
-        Amm memory amm = _getFullInstance(ammConfig);
-
+        vm.startBroadcast(_private_key);
+        _getFullInstance(ammConfig);
         vm.stopBroadcast();
     }
 
     struct Amm {
         IporProtocolRouter router;
         SpreadRouter spreadRouter;
-        IporOracle iporOracle;
+        IIporOracle iporOracle;
         IporRiskManagementOracle iporRiskManagementOracle;
         DeployerUtils.IporProtocol usdt;
         DeployerUtils.IporProtocol usdc;
@@ -108,119 +106,16 @@ contract DeployLocal is Script {
         address assetManagementImplementation;
     }
 
-    IporOracleDeploymentFactory internal _iporOracleDeploymentFactory;
-    //    IporRiskManagementOracleDeploymentFactory internal _iporRiskManagementOracleDeploymentFactory;
-    //
-    AssetDeployer internal _assetDeployer;
-    //    IpTokenDeployer internal _ipTokenDeployer;
-    //    IvTokenDeployer internal _ivTokenDeployer;
-    //    AmmStorageDeployer internal _ammStorageDeployer;
-    AmmTreasuryDeployer internal _ammTreasuryDeployer;
-    //    SpreadRouterDeployer internal _spreadRouterDeployer;
-    //    AssetManagementDeployer internal _assetManagementDeployer;
-    //    AmmTreasuryDeployer internal _miltonDeployer;
-    IporProtocolRouterDeployer internal _iporProtocolRouterDeployer;
-    //    PowerTokenLensDeployer internal _powerTokenLensDeployer;
-    //    LiquidityMiningLensDeployer internal _liquidityMiningLensDeployer;
-    //    PowerTokenFlowsServiceDeployer internal _powerTokenFlowsServiceDeployer;
-    //    PowerTokenStakeServiceDeployer internal _powerTokenStakeServiceDeployer;
-
-    //    address internal _fakeContract = address(new EmptyImplementation());
-
-    address internal _owner;
-
     function _getFullInstance(AmmConfig memory cfg) internal returns (Amm memory amm) {
-        amm.router = _iporProtocolRouterDeployer.buildEmptyProxy();
+        deployEmptyRouter(amm);
+        deployEmptyTreasury(amm);
+        deployAssets(amm);
+        deployOracle(amm);
+        deployRiskOracle(amm);
+        deployIpTokens(amm);
+        deployIvTokens(amm);
+        deployStorage(amm);
 
-        amm.usdt.ammTreasury = _ammTreasuryDeployer.buildEmptyProxy();
-        amm.usdc.ammTreasury = _ammTreasuryDeployer.buildEmptyProxy();
-        amm.dai.ammTreasury = _ammTreasuryDeployer.buildEmptyProxy();
-
-        amm.usdt.router = amm.router;
-        amm.usdc.router = amm.router;
-        amm.dai.router = amm.router;
-
-        _assetDeployer.withUSDT();
-        amm.usdt.asset = _assetDeployer.build();
-
-        _assetDeployer.withUSDC();
-        amm.usdc.asset = _assetDeployer.build();
-
-        _assetDeployer.withDAI();
-        amm.dai.asset = _assetDeployer.build();
-
-        address[] memory assets = new address[](3);
-        assets[0] = address(amm.dai.asset);
-        assets[1] = address(amm.usdt.asset);
-        assets[2] = address(amm.usdc.asset);
-
-        amm.iporOracle = _iporOracleDeploymentFactory.getEmptyInstance(assets);
-
-        amm.usdt.iporOracle = amm.iporOracle;
-        amm.usdc.iporOracle = amm.iporOracle;
-        amm.dai.iporOracle = amm.iporOracle;
-
-        //
-        //        _iporOracleDeploymentFactory.upgrade(
-        //            address(amm.iporOracle),
-        //            cfg.iporOracleUpdater,
-        //            IporOracleDeploymentFactory.IporOracleConstructorParams({
-        //                usdt: address(amm.usdt.asset),
-        //                usdtInitialIbtPrice: 1e18,
-        //                usdc: address(amm.usdc.asset),
-        //                usdcInitialIbtPrice: 1e18,
-        //                dai: address(amm.dai.asset),
-        //                daiInitialIbtPrice: 1e18
-        //            })
-        //        );
-        //
-        //        amm.iporRiskManagementOracle = _iporRiskManagementOracleDeploymentFactory.getInstance(
-        //            assets,
-        //            cfg.iporRiskManagementOracleUpdater
-        //        );
-        //
-        //        amm.usdt.ipToken = _ipTokenDeployer
-        //            .withName("IP USDT")
-        //            .withSymbol("ipUSDT")
-        //            .withAsset(address(amm.usdt.asset))
-        //            .build();
-        //        amm.usdt.ivToken = _ivTokenDeployer
-        //            .withName("IV USDT")
-        //            .withSymbol("ivUSDT")
-        //            .withAsset(address(amm.usdt.asset))
-        //            .build();
-        //
-        //        amm.usdc.ipToken = _ipTokenDeployer
-        //            .withName("IP USDC")
-        //            .withSymbol("ipUSDC")
-        //            .withAsset(address(amm.usdc.asset))
-        //            .build();
-        //        amm.usdc.ivToken = _ivTokenDeployer
-        //            .withName("IV USDC")
-        //            .withSymbol("ivUSDC")
-        //            .withAsset(address(amm.usdc.asset))
-        //            .build();
-        //
-        //        amm.dai.ipToken = _ipTokenDeployer
-        //            .withName("IP DAI")
-        //            .withSymbol("ipDAI")
-        //            .withAsset(address(amm.dai.asset))
-        //            .build();
-        //        amm.dai.ivToken = _ivTokenDeployer
-        //            .withName("IV DAI")
-        //            .withSymbol("ivDAI")
-        //            .withAsset(address(amm.dai.asset))
-        //            .build();
-        //
-        //        _ammStorageDeployer.withIporProtocolRouter(address(amm.router));
-        //        _ammStorageDeployer.withAmmTreasury(address(amm.usdt.ammTreasury));
-        //        amm.usdt.ammStorage = _ammStorageDeployer.build();
-        //
-        //        _ammStorageDeployer.withAmmTreasury(address(amm.usdc.ammTreasury));
-        //        amm.usdc.ammStorage = _ammStorageDeployer.build();
-        //
-        //        _ammStorageDeployer.withAmmTreasury(address(amm.dai.ammTreasury));
-        //        amm.dai.ammStorage = _ammStorageDeployer.build();
         //
         //        _spreadRouterDeployer.withIporRouter(address(amm.router));
         //        _spreadRouterDeployer.withUsdt(address(amm.usdt.asset));
@@ -309,227 +204,227 @@ contract DeployLocal is Script {
         //        IAmmGovernanceService(address(amm.router)).setAmmMaxLpAccountContribution(address(amm.dai.asset), 1000000000);
     }
 
-    function _getFullIporProtocolRouterInstance(Amm memory amm) public returns (IporProtocolRouter) {
-        if (address(amm.router) == address(0)) {
-            amm.router = _iporProtocolRouterDeployer.buildEmptyProxy();
-        }
-
-        IporProtocolRouter.DeployedContracts memory deployerContracts;
-
-        deployerContracts.ammSwapsLens = address(
-            new AmmSwapsLens(
-                IAmmSwapsLens.SwapLensConfiguration({
-                    asset: address(amm.usdt.asset),
-                    ammStorage: address(amm.usdt.ammStorage),
-                    ammTreasury: address(amm.usdt.ammTreasury)
-                }),
-                IAmmSwapsLens.SwapLensConfiguration({
-                    asset: address(amm.usdc.asset),
-                    ammStorage: address(amm.usdc.ammStorage),
-                    ammTreasury: address(amm.usdc.ammTreasury)
-                }),
-                IAmmSwapsLens.SwapLensConfiguration({
-                    asset: address(amm.dai.asset),
-                    ammStorage: address(amm.dai.ammStorage),
-                    ammTreasury: address(amm.dai.ammTreasury)
-                }),
-                amm.iporOracle,
-                address(amm.iporRiskManagementOracle),
-                address(amm.router)
-            )
-        );
-
-        deployerContracts.ammPoolsLens = address(
-            new AmmPoolsLens(
-                IAmmPoolsLens.PoolConfiguration({
-                    asset: address(amm.usdt.asset),
-                    decimals: amm.usdt.asset.decimals(),
-                    ipToken: address(amm.usdt.ipToken),
-                    ammStorage: address(amm.usdt.ammStorage),
-                    ammTreasury: address(amm.usdt.ammTreasury),
-                    assetManagement: address(amm.usdt.assetManagement)
-                }),
-                IAmmPoolsLens.PoolConfiguration({
-                    asset: address(amm.usdc.asset),
-                    decimals: amm.usdc.asset.decimals(),
-                    ipToken: address(amm.usdc.ipToken),
-                    ammStorage: address(amm.usdc.ammStorage),
-                    ammTreasury: address(amm.usdc.ammTreasury),
-                    assetManagement: address(amm.usdc.assetManagement)
-                }),
-                IAmmPoolsLens.PoolConfiguration({
-                    asset: address(amm.dai.asset),
-                    decimals: amm.dai.asset.decimals(),
-                    ipToken: address(amm.dai.ipToken),
-                    ammStorage: address(amm.dai.ammStorage),
-                    ammTreasury: address(amm.dai.ammTreasury),
-                    assetManagement: address(amm.dai.assetManagement)
-                }),
-                address(amm.iporOracle)
-            )
-        );
-
-        deployerContracts.assetManagementLens = address(
-            new AssetManagementLens(
-                IAssetManagementLens.AssetManagementConfiguration({
-                    asset: address(amm.usdt.asset),
-                    decimals: amm.usdt.asset.decimals(),
-                    assetManagement: address(amm.usdt.assetManagement),
-                    ammTreasury: address(amm.usdt.ammTreasury)
-                }),
-                IAssetManagementLens.AssetManagementConfiguration({
-                    asset: address(amm.usdc.asset),
-                    decimals: amm.usdc.asset.decimals(),
-                    assetManagement: address(amm.usdc.assetManagement),
-                    ammTreasury: address(amm.usdc.ammTreasury)
-                }),
-                IAssetManagementLens.AssetManagementConfiguration({
-                    asset: address(amm.dai.asset),
-                    decimals: amm.dai.asset.decimals(),
-                    assetManagement: address(amm.dai.assetManagement),
-                    ammTreasury: address(amm.dai.ammTreasury)
-                })
-            )
-        );
-
-        deployerContracts.ammOpenSwapService = address(
-            new AmmOpenSwapService({
-                usdtPoolCfg: _preparePoolCfgForOpenSwapService(
-                    address(amm.usdt.asset),
-                    address(amm.usdt.ammTreasury),
-                    address(amm.usdt.ammStorage)
-                ),
-                usdcPoolCfg: _preparePoolCfgForOpenSwapService(
-                    address(amm.usdc.asset),
-                    address(amm.usdc.ammTreasury),
-                    address(amm.usdc.ammStorage)
-                ),
-                daiPoolCfg: _preparePoolCfgForOpenSwapService(
-                    address(amm.dai.asset),
-                    address(amm.dai.ammTreasury),
-                    address(amm.dai.ammStorage)
-                ),
-                iporOracle: address(amm.iporOracle),
-                iporRiskManagementOracle: address(amm.iporRiskManagementOracle),
-                spreadRouter: address(amm.spreadRouter)
-            })
-        );
-
-        deployerContracts.ammCloseSwapService = address(
-            new AmmCloseSwapService({
-                usdtPoolCfg: _preparePoolCfgForCloseSwapService(
-                    address(amm.usdt.asset),
-                    address(amm.usdt.ammTreasury),
-                    address(amm.usdt.ammStorage),
-                    address(amm.usdt.assetManagement)
-                ),
-                usdcPoolCfg: _preparePoolCfgForCloseSwapService(
-                    address(amm.usdc.asset),
-                    address(amm.usdc.ammTreasury),
-                    address(amm.usdc.ammStorage),
-                    address(amm.usdc.assetManagement)
-                ),
-                daiPoolCfg: _preparePoolCfgForCloseSwapService(
-                    address(amm.dai.asset),
-                    address(amm.dai.ammTreasury),
-                    address(amm.dai.ammStorage),
-                    address(amm.dai.assetManagement)
-                ),
-                iporOracle: address(amm.iporOracle),
-                iporRiskManagementOracle: address(amm.iporRiskManagementOracle),
-                spreadRouter: address(amm.spreadRouter)
-            })
-        );
-
-        deployerContracts.ammPoolsService = address(
-            new AmmPoolsService({
-                usdtPoolCfg: _preparePoolCfgForPoolsService(
-                    address(amm.usdt.asset),
-                    address(amm.usdt.ipToken),
-                    address(amm.usdt.ammTreasury),
-                    address(amm.usdt.ammStorage),
-                    address(amm.usdt.assetManagement)
-                ),
-                usdcPoolCfg: _preparePoolCfgForPoolsService(
-                    address(amm.usdc.asset),
-                    address(amm.usdc.ipToken),
-                    address(amm.usdc.ammTreasury),
-                    address(amm.usdc.ammStorage),
-                    address(amm.usdc.assetManagement)
-                ),
-                daiPoolCfg: _preparePoolCfgForPoolsService(
-                    address(amm.dai.asset),
-                    address(amm.dai.ipToken),
-                    address(amm.dai.ammTreasury),
-                    address(amm.dai.ammStorage),
-                    address(amm.dai.assetManagement)
-                ),
-                iporOracle: address(amm.iporOracle)
-            })
-        );
-
-        deployerContracts.ammGovernanceService = address(
-            new AmmGovernanceService({
-                usdtPoolCfg: _preparePoolCfgForGovernanceService(
-                    address(amm.usdt.asset),
-                    address(amm.usdt.ammTreasury),
-                    address(amm.usdt.ammStorage)
-                ),
-                usdcPoolCfg: _preparePoolCfgForGovernanceService(
-                    address(amm.usdc.asset),
-                    address(amm.usdc.ammTreasury),
-                    address(amm.usdc.ammStorage)
-                ),
-                daiPoolCfg: _preparePoolCfgForGovernanceService(
-                    address(amm.dai.asset),
-                    address(amm.dai.ammTreasury),
-                    address(amm.dai.ammStorage)
-                )
-            })
-        );
-
-        //        deployerContracts.powerTokenLens = address(_powerTokenLensDeployer.build());
-        //        deployerContracts.liquidityMiningLens = address(_liquidityMiningLensDeployer.build());
-        //        deployerContracts.flowService = address(_powerTokenFlowsServiceDeployer.build());
-        //        deployerContracts.stakeService = address(_powerTokenStakeServiceDeployer.build());
-
-        IporProtocolRouter(amm.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
-
-        amm.usdt.ammSwapsLens = IAmmSwapsLens(address(amm.router));
-        amm.usdt.ammPoolsService = IAmmPoolsService(address(amm.router));
-        amm.usdt.ammPoolsLens = IAmmPoolsLens(address(amm.router));
-        amm.usdt.ammOpenSwapService = IAmmOpenSwapService(address(amm.router));
-        amm.usdt.ammCloseSwapService = IAmmCloseSwapService(address(amm.router));
-        amm.usdt.ammGovernanceService = IAmmGovernanceService(address(amm.router));
-        amm.usdt.powerTokenLens = IPowerTokenLens(address(amm.router));
-        amm.usdt.liquidityMiningLens = ILiquidityMiningLens(address(amm.router));
-        amm.usdt.flowService = IPowerTokenFlowsService(address(amm.router));
-        amm.usdt.stakeService = IPowerTokenStakeService(address(amm.router));
-
-        amm.usdc.ammSwapsLens = IAmmSwapsLens(address(amm.router));
-        amm.usdc.ammPoolsService = IAmmPoolsService(address(amm.router));
-        amm.usdc.ammPoolsLens = IAmmPoolsLens(address(amm.router));
-        amm.usdc.ammOpenSwapService = IAmmOpenSwapService(address(amm.router));
-        amm.usdc.ammCloseSwapService = IAmmCloseSwapService(address(amm.router));
-        amm.usdc.ammGovernanceService = IAmmGovernanceService(address(amm.router));
-        amm.usdc.powerTokenLens = IPowerTokenLens(address(amm.router));
-        amm.usdc.liquidityMiningLens = ILiquidityMiningLens(address(amm.router));
-        amm.usdc.flowService = IPowerTokenFlowsService(address(amm.router));
-        amm.usdc.stakeService = IPowerTokenStakeService(address(amm.router));
-
-        amm.dai.ammSwapsLens = IAmmSwapsLens(address(amm.router));
-        amm.dai.ammPoolsService = IAmmPoolsService(address(amm.router));
-        amm.dai.ammPoolsLens = IAmmPoolsLens(address(amm.router));
-        amm.dai.ammOpenSwapService = IAmmOpenSwapService(address(amm.router));
-        amm.dai.ammCloseSwapService = IAmmCloseSwapService(address(amm.router));
-        amm.dai.ammGovernanceService = IAmmGovernanceService(address(amm.router));
-        amm.dai.powerTokenLens = IPowerTokenLens(address(amm.router));
-        amm.dai.liquidityMiningLens = ILiquidityMiningLens(address(amm.router));
-        amm.dai.flowService = IPowerTokenFlowsService(address(amm.router));
-        amm.dai.stakeService = IPowerTokenStakeService(address(amm.router));
-
-        return IporProtocolRouter(amm.router);
-    }
+    //    function _getFullIporProtocolRouterInstance(Amm memory amm) public returns (IporProtocolRouter) {
+    //        if (address(amm.router) == address(0)) {
+    //            amm.router = _iporProtocolRouterDeployer.buildEmptyProxy();
+    //        }
+    //
+    //        IporProtocolRouter.DeployedContracts memory deployerContracts;
+    //
+    //        deployerContracts.ammSwapsLens = address(
+    //            new AmmSwapsLens(
+    //                IAmmSwapsLens.SwapLensConfiguration({
+    //                    asset: address(amm.usdt.asset),
+    //                    ammStorage: address(amm.usdt.ammStorage),
+    //                    ammTreasury: address(amm.usdt.ammTreasury)
+    //                }),
+    //                IAmmSwapsLens.SwapLensConfiguration({
+    //                    asset: address(amm.usdc.asset),
+    //                    ammStorage: address(amm.usdc.ammStorage),
+    //                    ammTreasury: address(amm.usdc.ammTreasury)
+    //                }),
+    //                IAmmSwapsLens.SwapLensConfiguration({
+    //                    asset: address(amm.dai.asset),
+    //                    ammStorage: address(amm.dai.ammStorage),
+    //                    ammTreasury: address(amm.dai.ammTreasury)
+    //                }),
+    //                amm.iporOracle,
+    //                address(amm.iporRiskManagementOracle),
+    //                address(amm.router)
+    //            )
+    //        );
+    //
+    //        deployerContracts.ammPoolsLens = address(
+    //            new AmmPoolsLens(
+    //                IAmmPoolsLens.PoolConfiguration({
+    //                    asset: address(amm.usdt.asset),
+    //                    decimals: amm.usdt.asset.decimals(),
+    //                    ipToken: address(amm.usdt.ipToken),
+    //                    ammStorage: address(amm.usdt.ammStorage),
+    //                    ammTreasury: address(amm.usdt.ammTreasury),
+    //                    assetManagement: address(amm.usdt.assetManagement)
+    //                }),
+    //                IAmmPoolsLens.PoolConfiguration({
+    //                    asset: address(amm.usdc.asset),
+    //                    decimals: amm.usdc.asset.decimals(),
+    //                    ipToken: address(amm.usdc.ipToken),
+    //                    ammStorage: address(amm.usdc.ammStorage),
+    //                    ammTreasury: address(amm.usdc.ammTreasury),
+    //                    assetManagement: address(amm.usdc.assetManagement)
+    //                }),
+    //                IAmmPoolsLens.PoolConfiguration({
+    //                    asset: address(amm.dai.asset),
+    //                    decimals: amm.dai.asset.decimals(),
+    //                    ipToken: address(amm.dai.ipToken),
+    //                    ammStorage: address(amm.dai.ammStorage),
+    //                    ammTreasury: address(amm.dai.ammTreasury),
+    //                    assetManagement: address(amm.dai.assetManagement)
+    //                }),
+    //                address(amm.iporOracle)
+    //            )
+    //        );
+    //
+    //        deployerContracts.assetManagementLens = address(
+    //            new AssetManagementLens(
+    //                IAssetManagementLens.AssetManagementConfiguration({
+    //                    asset: address(amm.usdt.asset),
+    //                    decimals: amm.usdt.asset.decimals(),
+    //                    assetManagement: address(amm.usdt.assetManagement),
+    //                    ammTreasury: address(amm.usdt.ammTreasury)
+    //                }),
+    //                IAssetManagementLens.AssetManagementConfiguration({
+    //                    asset: address(amm.usdc.asset),
+    //                    decimals: amm.usdc.asset.decimals(),
+    //                    assetManagement: address(amm.usdc.assetManagement),
+    //                    ammTreasury: address(amm.usdc.ammTreasury)
+    //                }),
+    //                IAssetManagementLens.AssetManagementConfiguration({
+    //                    asset: address(amm.dai.asset),
+    //                    decimals: amm.dai.asset.decimals(),
+    //                    assetManagement: address(amm.dai.assetManagement),
+    //                    ammTreasury: address(amm.dai.ammTreasury)
+    //                })
+    //            )
+    //        );
+    //
+    //        deployerContracts.ammOpenSwapService = address(
+    //            new AmmOpenSwapService({
+    //                usdtPoolCfg: _preparePoolCfgForOpenSwapService(
+    //                    address(amm.usdt.asset),
+    //                    address(amm.usdt.ammTreasury),
+    //                    address(amm.usdt.ammStorage)
+    //                ),
+    //                usdcPoolCfg: _preparePoolCfgForOpenSwapService(
+    //                    address(amm.usdc.asset),
+    //                    address(amm.usdc.ammTreasury),
+    //                    address(amm.usdc.ammStorage)
+    //                ),
+    //                daiPoolCfg: _preparePoolCfgForOpenSwapService(
+    //                    address(amm.dai.asset),
+    //                    address(amm.dai.ammTreasury),
+    //                    address(amm.dai.ammStorage)
+    //                ),
+    //                iporOracle: address(amm.iporOracle),
+    //                iporRiskManagementOracle: address(amm.iporRiskManagementOracle),
+    //                spreadRouter: address(amm.spreadRouter)
+    //            })
+    //        );
+    //
+    //        deployerContracts.ammCloseSwapService = address(
+    //            new AmmCloseSwapService({
+    //                usdtPoolCfg: _preparePoolCfgForCloseSwapService(
+    //                    address(amm.usdt.asset),
+    //                    address(amm.usdt.ammTreasury),
+    //                    address(amm.usdt.ammStorage),
+    //                    address(amm.usdt.assetManagement)
+    //                ),
+    //                usdcPoolCfg: _preparePoolCfgForCloseSwapService(
+    //                    address(amm.usdc.asset),
+    //                    address(amm.usdc.ammTreasury),
+    //                    address(amm.usdc.ammStorage),
+    //                    address(amm.usdc.assetManagement)
+    //                ),
+    //                daiPoolCfg: _preparePoolCfgForCloseSwapService(
+    //                    address(amm.dai.asset),
+    //                    address(amm.dai.ammTreasury),
+    //                    address(amm.dai.ammStorage),
+    //                    address(amm.dai.assetManagement)
+    //                ),
+    //                iporOracle: address(amm.iporOracle),
+    //                iporRiskManagementOracle: address(amm.iporRiskManagementOracle),
+    //                spreadRouter: address(amm.spreadRouter)
+    //            })
+    //        );
+    //
+    //        deployerContracts.ammPoolsService = address(
+    //            new AmmPoolsService({
+    //                usdtPoolCfg: _preparePoolCfgForPoolsService(
+    //                    address(amm.usdt.asset),
+    //                    address(amm.usdt.ipToken),
+    //                    address(amm.usdt.ammTreasury),
+    //                    address(amm.usdt.ammStorage),
+    //                    address(amm.usdt.assetManagement)
+    //                ),
+    //                usdcPoolCfg: _preparePoolCfgForPoolsService(
+    //                    address(amm.usdc.asset),
+    //                    address(amm.usdc.ipToken),
+    //                    address(amm.usdc.ammTreasury),
+    //                    address(amm.usdc.ammStorage),
+    //                    address(amm.usdc.assetManagement)
+    //                ),
+    //                daiPoolCfg: _preparePoolCfgForPoolsService(
+    //                    address(amm.dai.asset),
+    //                    address(amm.dai.ipToken),
+    //                    address(amm.dai.ammTreasury),
+    //                    address(amm.dai.ammStorage),
+    //                    address(amm.dai.assetManagement)
+    //                ),
+    //                iporOracle: address(amm.iporOracle)
+    //            })
+    //        );
+    //
+    //        deployerContracts.ammGovernanceService = address(
+    //            new AmmGovernanceService({
+    //                usdtPoolCfg: _preparePoolCfgForGovernanceService(
+    //                    address(amm.usdt.asset),
+    //                    address(amm.usdt.ammTreasury),
+    //                    address(amm.usdt.ammStorage)
+    //                ),
+    //                usdcPoolCfg: _preparePoolCfgForGovernanceService(
+    //                    address(amm.usdc.asset),
+    //                    address(amm.usdc.ammTreasury),
+    //                    address(amm.usdc.ammStorage)
+    //                ),
+    //                daiPoolCfg: _preparePoolCfgForGovernanceService(
+    //                    address(amm.dai.asset),
+    //                    address(amm.dai.ammTreasury),
+    //                    address(amm.dai.ammStorage)
+    //                )
+    //            })
+    //        );
+    //
+    //        //        deployerContracts.powerTokenLens = address(_powerTokenLensDeployer.build());
+    //        //        deployerContracts.liquidityMiningLens = address(_liquidityMiningLensDeployer.build());
+    //        //        deployerContracts.flowService = address(_powerTokenFlowsServiceDeployer.build());
+    //        //        deployerContracts.stakeService = address(_powerTokenStakeServiceDeployer.build());
+    //
+    //        IporProtocolRouter(amm.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
+    //
+    //        amm.usdt.ammSwapsLens = IAmmSwapsLens(address(amm.router));
+    //        amm.usdt.ammPoolsService = IAmmPoolsService(address(amm.router));
+    //        amm.usdt.ammPoolsLens = IAmmPoolsLens(address(amm.router));
+    //        amm.usdt.ammOpenSwapService = IAmmOpenSwapService(address(amm.router));
+    //        amm.usdt.ammCloseSwapService = IAmmCloseSwapService(address(amm.router));
+    //        amm.usdt.ammGovernanceService = IAmmGovernanceService(address(amm.router));
+    //        amm.usdt.powerTokenLens = IPowerTokenLens(address(amm.router));
+    //        amm.usdt.liquidityMiningLens = ILiquidityMiningLens(address(amm.router));
+    //        amm.usdt.flowService = IPowerTokenFlowsService(address(amm.router));
+    //        amm.usdt.stakeService = IPowerTokenStakeService(address(amm.router));
+    //
+    //        amm.usdc.ammSwapsLens = IAmmSwapsLens(address(amm.router));
+    //        amm.usdc.ammPoolsService = IAmmPoolsService(address(amm.router));
+    //        amm.usdc.ammPoolsLens = IAmmPoolsLens(address(amm.router));
+    //        amm.usdc.ammOpenSwapService = IAmmOpenSwapService(address(amm.router));
+    //        amm.usdc.ammCloseSwapService = IAmmCloseSwapService(address(amm.router));
+    //        amm.usdc.ammGovernanceService = IAmmGovernanceService(address(amm.router));
+    //        amm.usdc.powerTokenLens = IPowerTokenLens(address(amm.router));
+    //        amm.usdc.liquidityMiningLens = ILiquidityMiningLens(address(amm.router));
+    //        amm.usdc.flowService = IPowerTokenFlowsService(address(amm.router));
+    //        amm.usdc.stakeService = IPowerTokenStakeService(address(amm.router));
+    //
+    //        amm.dai.ammSwapsLens = IAmmSwapsLens(address(amm.router));
+    //        amm.dai.ammPoolsService = IAmmPoolsService(address(amm.router));
+    //        amm.dai.ammPoolsLens = IAmmPoolsLens(address(amm.router));
+    //        amm.dai.ammOpenSwapService = IAmmOpenSwapService(address(amm.router));
+    //        amm.dai.ammCloseSwapService = IAmmCloseSwapService(address(amm.router));
+    //        amm.dai.ammGovernanceService = IAmmGovernanceService(address(amm.router));
+    //        amm.dai.powerTokenLens = IPowerTokenLens(address(amm.router));
+    //        amm.dai.liquidityMiningLens = ILiquidityMiningLens(address(amm.router));
+    //        amm.dai.flowService = IPowerTokenFlowsService(address(amm.router));
+    //        amm.dai.stakeService = IPowerTokenStakeService(address(amm.router));
+    //
+    //        return IporProtocolRouter(amm.router);
+    //    }
 
     function _preparePoolCfgForGovernanceService(
         address asset,
@@ -603,5 +498,196 @@ contract DeployLocal is Script {
             openingFeeRate: 1e16,
             openingFeeTreasuryPortionRate: 0
         });
+    }
+
+    function getCurrentTimestamps(address[] memory assets)
+        internal
+        view
+        returns (uint32[] memory lastUpdateTimestamps)
+    {
+        lastUpdateTimestamps = new uint32[](assets.length);
+
+        uint32 lastUpdateTimestamp = uint32(block.timestamp);
+
+        for (uint256 i = 0; i < assets.length; i++) {
+            lastUpdateTimestamps[i] = lastUpdateTimestamp;
+        }
+    }
+
+    function deployOracle(Amm memory amm) internal {
+        address[] memory assets = new address[](3);
+        assets[0] = address(amm.dai.asset);
+        assets[1] = address(amm.usdt.asset);
+        assets[2] = address(amm.usdc.asset);
+
+        IporOracle iporOracleImplementation = new IporOracle(
+            address(0),
+            address(amm.usdt.asset),
+            1e18,
+            address(amm.usdc.asset),
+            1e18,
+            address(amm.dai.asset),
+            1e18
+        );
+
+        uint32[] memory lastUpdateTimestamps = getCurrentTimestamps(assets);
+
+        amm.iporOracle = IIporOracle(
+            address(
+                new ERC1967Proxy(
+                    address(iporOracleImplementation),
+                    abi.encodeWithSignature("initialize(address[],uint32[])", assets, lastUpdateTimestamps)
+                )
+            )
+        );
+
+        amm.usdt.iporOracle = amm.iporOracle;
+        amm.usdc.iporOracle = amm.iporOracle;
+        amm.dai.iporOracle = amm.iporOracle;
+
+        amm.iporOracle.addUpdater(ammConfig.iporOracleUpdater);
+    }
+
+    function deployRiskOracle(Amm memory amm) internal {
+        address[] memory assets = new address[](3);
+        assets[0] = address(amm.dai.asset);
+        assets[1] = address(amm.usdt.asset);
+        assets[2] = address(amm.usdc.asset);
+
+        IporRiskManagementOracleTypes.RiskIndicators[]
+            memory riskIndicators = new IporRiskManagementOracleTypes.RiskIndicators[](assets.length);
+        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[]
+            memory baseSpreadsAndFixedRateCaps = new IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[](
+                assets.length
+            );
+
+        for (uint256 i = 0; i < assets.length; i++) {
+            riskIndicators[i] = IporRiskManagementOracleTypes.RiskIndicators({
+                maxNotionalPayFixed: TestConstants.RMO_NOTIONAL_1B,
+                maxNotionalReceiveFixed: TestConstants.RMO_NOTIONAL_1B,
+                maxUtilizationRatePayFixed: TestConstants.RMO_UTILIZATION_RATE_48_PER,
+                maxUtilizationRateReceiveFixed: TestConstants.RMO_UTILIZATION_RATE_48_PER,
+                maxUtilizationRate: TestConstants.RMO_UTILIZATION_RATE_90_PER
+            });
+            baseSpreadsAndFixedRateCaps[i] = IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps({
+                spread28dPayFixed: TestConstants.RMO_SPREAD_0_1_PER,
+                spread28dReceiveFixed: TestConstants.RMO_SPREAD_0_1_PER,
+                spread60dPayFixed: TestConstants.RMO_SPREAD_0_1_PER,
+                spread60dReceiveFixed: TestConstants.RMO_SPREAD_0_1_PER,
+                spread90dPayFixed: TestConstants.RMO_SPREAD_0_1_PER,
+                spread90dReceiveFixed: TestConstants.RMO_SPREAD_0_1_PER,
+                fixedRateCap28dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_2_0_PER,
+                fixedRateCap28dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_3_5_PER,
+                fixedRateCap60dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_2_0_PER,
+                fixedRateCap60dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_3_5_PER,
+                fixedRateCap90dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_2_0_PER,
+                fixedRateCap90dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_3_5_PER
+            });
+        }
+
+        IporRiskManagementOracle riskOracleProxy = IporRiskManagementOracle(
+            address(
+                new ERC1967Proxy(
+                    address(new IporRiskManagementOracle()),
+                    abi.encodeWithSignature(
+                        "initialize(address[],(uint256,uint256,uint256,uint256,uint256)[],(int256,int256,int256,int256,int256,int256,uint256,uint256,uint256,uint256,uint256,uint256)[])",
+                        assets,
+                        riskIndicators,
+                        baseSpreadsAndFixedRateCaps
+                    )
+                )
+            )
+        );
+
+        riskOracleProxy.addUpdater(ammConfig.iporOracleUpdater);
+
+        amm.iporRiskManagementOracle = IporRiskManagementOracle(address(riskOracleProxy));
+    }
+
+    function deployEmptyRouter(Amm memory amm) internal {
+        amm.router = IporProtocolRouter(
+            address(
+                new ERC1967Proxy(
+                    address(new EmptyRouterImplementation()),
+                    abi.encodeWithSignature("initialize(bool)", false)
+                )
+            )
+        );
+    }
+
+    function deployIpTokens(Amm memory amm) internal {
+        amm.usdt.ipToken = new IpToken("IP USDT", "ipUSDT", address(amm.usdt.asset));
+        amm.usdc.ipToken = new IpToken("IP USDC", "ipUSDC", address(amm.usdc.asset));
+        amm.dai.ipToken = new IpToken("IP DAI", "ipDAI", address(amm.dai.asset));
+    }
+
+    function deployIvTokens(Amm memory amm) internal {
+        amm.usdt.ivToken = new IvToken("IV USDT", "ivUSDT", address(amm.usdt.asset));
+        amm.usdc.ivToken = new IvToken("IV USDC", "ivUSDC", address(amm.usdc.asset));
+        amm.dai.ivToken = new IvToken("IV DAI", "ivDAI", address(amm.dai.asset));
+    }
+
+    function deployAssets(Amm memory amm) internal {
+        amm.usdt.asset = new MockTestnetToken("Mocked USDT", "USDT", TestConstants.TOTAL_SUPPLY_6_DECIMALS, 6);
+        amm.usdc.asset = new MockTestnetToken("Mocked USDC", "USDC", TestConstants.TOTAL_SUPPLY_6_DECIMALS, 6);
+        amm.dai.asset = new MockTestnetToken("Mocked DAI", "DAI", TestConstants.TOTAL_SUPPLY_18_DECIMALS, 18);
+    }
+
+    function deployEmptyTreasury(Amm memory amm) internal {
+        amm.usdt.ammTreasury = AmmTreasury(
+            address(
+                new ERC1967Proxy(
+                    address(new EmptyAmmTreasuryImplementation()),
+                    abi.encodeWithSignature("initialize(bool)", false)
+                )
+            )
+        );
+
+        amm.usdc.ammTreasury = AmmTreasury(
+            address(
+                new ERC1967Proxy(
+                    address(new EmptyAmmTreasuryImplementation()),
+                    abi.encodeWithSignature("initialize(bool)", false)
+                )
+            )
+        );
+
+        amm.dai.ammTreasury = AmmTreasury(
+            address(
+                new ERC1967Proxy(
+                    address(new EmptyAmmTreasuryImplementation()),
+                    abi.encodeWithSignature("initialize(bool)", false)
+                )
+            )
+        );
+    }
+
+    function deployStorage(Amm memory amm) internal {
+        amm.usdt.ammStorage = AmmStorage(
+            address(
+                new ERC1967Proxy(
+                    address(new AmmStorage(address(amm.router), address(amm.usdt.ammTreasury))),
+                    abi.encodeWithSignature("initialize()", "")
+                )
+            )
+        );
+
+        amm.usdc.ammStorage = AmmStorage(
+            address(
+                new ERC1967Proxy(
+                    address(new AmmStorage(address(amm.router), address(amm.usdc.ammTreasury))),
+                    abi.encodeWithSignature("initialize()", "")
+                )
+            )
+        );
+
+        amm.dai.ammStorage = AmmStorage(
+            address(
+                new ERC1967Proxy(
+                    address(new AmmStorage(address(amm.router), address(amm.dai.ammTreasury))),
+                    abi.encodeWithSignature("initialize()", "")
+                )
+            )
+        );
     }
 }
