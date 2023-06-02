@@ -89,8 +89,8 @@ library IporTypes {
         uint256 swapNotional;
         /// @notice Maximum leverage
         uint256 maxLeverage;
-        /// @notice Maximum LP utilization per leg rate
-        uint256 maxLpUtilizationPerLegRate;
+        /// @notice Maximum LP Collateral Ratio per leg rate
+        uint256 maxLpCollateralRatioPerLegRate;
         /// @notice Base spread
         int256 baseSpread;
         /// @notice Swap's balance for Pay Fixed leg

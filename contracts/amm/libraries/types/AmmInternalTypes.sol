@@ -31,8 +31,8 @@ library AmmInternalTypes {
     }
 
     struct OpenSwapRiskIndicators {
-        uint256 maxUtilizationRate;
-        uint256 maxUtilizationRatePerLeg;
+        uint256 maxCollateralRatio;
+        uint256 maxCollateralRatioPerLeg;
         uint256 maxLeveragePerLeg;
         int256 spread;
         uint256 fixedRateCap;
