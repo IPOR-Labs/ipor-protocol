@@ -9,7 +9,7 @@ interface AaveLendingPoolV2 {
      * - E.g. User deposits 100 USDC and gets in return 100 aUSDC
      * @param asset The address of the underlying asset to deposit
      * @param amount The amount to be deposited
-     * @param beneficiary The address that will receive the aTokens, same as msg.sender if the user
+     * @param onBehalfOf The address that will receive the aTokens, same as msg.sender if the user
      *   wants to receive them on his own wallet, or a different address if the beneficiary of aTokens
      *   is a different wallet
      * @param referralCode Code used to register the integrator originating the operation, for potential rewards.
@@ -18,7 +18,7 @@ interface AaveLendingPoolV2 {
     function deposit(
         address asset,
         uint256 amount,
-        address beneficiary,
+        address onBehalfOf,
         uint16 referralCode
     ) external;
 
