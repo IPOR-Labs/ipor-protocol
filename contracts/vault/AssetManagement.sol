@@ -288,7 +288,7 @@ abstract contract AssetManagement is
         uint256 wadAssetManagementAssetAmount = IporMath.convertToWad(assetManagementAssetAmount, _getDecimals());
         IStrategy(strategyMaxApy).deposit(wadAssetManagementAssetAmount);
 
-        emit AssetMigrated(_msgSender(), from, address(strategyMaxApy), wadAssetManagementAssetAmount);
+        emit AssetMigrated(address(strategyMaxApy), wadAssetManagementAssetAmount);
     }
 
     function setStrategyAave(address newStrategyAddr) external override whenNotPaused onlyOwner {
@@ -301,9 +301,8 @@ abstract contract AssetManagement is
 
     function setAmmTreasury(address newAmmTreasury) external override whenNotPaused onlyOwner {
         require(newAmmTreasury != address(0), IporErrors.WRONG_ADDRESS);
-        address oldAmmTreasury = _ammTreasury;
         _ammTreasury = newAmmTreasury;
-        emit AmmTreasuryChanged(_msgSender(), oldAmmTreasury, newAmmTreasury);
+        emit AmmTreasuryChanged(newAmmTreasury);
     }
 
     function pause() external override onlyPauseGuardian {
@@ -371,7 +370,7 @@ abstract contract AssetManagement is
             _revokeStrategyAllowance(oldStrategyAddress);
         }
 
-        emit StrategyChanged(_msgSender(), oldStrategyAddress, newStrategyAddress, address(newShareToken));
+        emit StrategyChanged(newStrategyAddress, address(newShareToken));
 
         return newStrategyAddress;
     }

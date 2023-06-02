@@ -25,18 +25,18 @@ library CalculateTimeWeightedNotionalLibs {
     /// @notice calculate weighted notional
     /// @param timeWeightedNotional weighted notional value
     /// @param timeFromLastUpdate time from last update in seconds
-    /// @param maturity maturity in seconds
+    /// @param tenorInSeconds tenor in seconds
     function calculateTimeWeightedNotional(
         uint256 timeWeightedNotional,
         uint256 timeFromLastUpdate,
-        uint256 maturity
+        uint256 tenorInSeconds
     ) internal view returns (uint256) {
-        if (timeFromLastUpdate >= maturity) {
+        if (timeFromLastUpdate >= tenorInSeconds) {
             return 0;
         }
         uint256 newTimeWeightedNotional = IporMath.divisionWithoutRound(
-            timeWeightedNotional * (maturity - timeFromLastUpdate),
-            maturity
+            timeWeightedNotional * (tenorInSeconds - timeFromLastUpdate),
+            tenorInSeconds
         );
         return newTimeWeightedNotional;
     }
@@ -44,20 +44,24 @@ library CalculateTimeWeightedNotionalLibs {
     /// @notice Updates the time-weighted notional value for the receive fixed leg.
     /// @param timeWeightedNotional The memory struct containing the time-weighted notional information.
     /// @param newSwapNotional The new swap notional value.
-    /// @param maturity The maturity timestamp.
+    /// @param tenorInSeconds Tenor in seconds.
     /// @dev This function is internal and used to update the time-weighted notional value for the receive fixed leg.
     function updateTimeWeightedNotionalReceiveFixed(
         SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional,
         uint256 newSwapNotional,
-        uint256 maturity
+        uint256 tenorInSeconds
     ) internal {
         if (timeWeightedNotional.timeWeightedNotionalReceiveFixed == 0) {
-            timeWeightedNotional.timeWeightedNotionalReceiveFixed = calculateTimeWeightedNotional(newSwapNotional, 0, maturity);
+            timeWeightedNotional.timeWeightedNotionalReceiveFixed = calculateTimeWeightedNotional(
+                newSwapNotional,
+                0,
+                tenorInSeconds
+            );
         } else {
             uint256 oldWeightedNotionalReceiveFixed = calculateTimeWeightedNotional(
                 timeWeightedNotional.timeWeightedNotionalReceiveFixed,
                 block.timestamp - timeWeightedNotional.lastUpdateTimeReceiveFixed,
-                maturity
+                tenorInSeconds
             );
             timeWeightedNotional.timeWeightedNotionalReceiveFixed = newSwapNotional + oldWeightedNotionalReceiveFixed;
         }
@@ -68,20 +72,24 @@ library CalculateTimeWeightedNotionalLibs {
     /// @notice Updates the time-weighted notional value for the pay fixed leg.
     /// @param timeWeightedNotional The memory struct containing the time-weighted notional information.
     /// @param newSwapNotional The new swap notional value.
-    /// @param maturity The maturity timestamp.
+    /// @param tenorInSeconds Tenor in seconds.
     /// @dev This function is internal and used to update the time-weighted notional value for the pay fixed leg.
     function updateTimeWeightedNotionalPayFixed(
         SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional,
         uint256 newSwapNotional,
-        uint256 maturity
+        uint256 tenorInSeconds
     ) internal {
         if (timeWeightedNotional.timeWeightedNotionalPayFixed == 0) {
-            timeWeightedNotional.timeWeightedNotionalPayFixed = calculateTimeWeightedNotional(newSwapNotional, 0, maturity);
+            timeWeightedNotional.timeWeightedNotionalPayFixed = calculateTimeWeightedNotional(
+                newSwapNotional,
+                0,
+                tenorInSeconds
+            );
         } else {
             uint256 oldWeightedNotionalPayFixed = calculateTimeWeightedNotional(
                 timeWeightedNotional.timeWeightedNotionalPayFixed,
                 block.timestamp - timeWeightedNotional.lastUpdateTimePayFixed,
-                maturity
+                tenorInSeconds
             );
             timeWeightedNotional.timeWeightedNotionalPayFixed = newSwapNotional + oldWeightedNotionalPayFixed;
         }
@@ -101,9 +109,8 @@ library CalculateTimeWeightedNotionalLibs {
     {
         uint256 length = storageIds.length;
         for (uint256 i; i != length; ) {
-            SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
-                storageIds[i]
-            );
+            SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional = SpreadStorageLibs
+                .getTimeWeightedNotional(storageIds[i]);
             uint256 timeWeightedNotionalPayFixedTemp = calculateTimeWeightedNotional(
                 timeWeightedNotional.timeWeightedNotionalPayFixed,
                 block.timestamp - timeWeightedNotional.lastUpdateTimePayFixed,

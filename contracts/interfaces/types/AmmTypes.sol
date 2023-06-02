@@ -1,20 +1,10 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
+import "contracts/interfaces/types/IporTypes.sol";
 
 /// @title Types used in interfaces strictly related to AMM (Automated Market Maker).
 /// @dev Used by IAmmTreasury and IAmmStorage interfaces.
 library AmmTypes {
-    /// @notice enum describing Swap's duration, 28 days, 60 days or 90 days
-    enum SwapDuration {
-        DAYS_28,
-        DAYS_60,
-        DAYS_90
-    }
-    /// @notice enum describing Swap's state, ACTIVE - when the swap is opened, INACTIVE when it's closed
-    enum SwapState {
-        INACTIVE,
-        ACTIVE
-    }
 
     struct AmmPoolCoreModel {
         address asset;
@@ -56,8 +46,42 @@ library AmmTypes {
         /// @notice Opening fee amount part which is allocated in Treasury Balance. This fee is calculated as a rate of the swap's collateral.
         /// @dev value represented in 18 decimals
         uint256 openingFeeTreasuryAmount;
-        /// @notice Swap's duration, 0 - 28 days, 1 - 60 days or 2 - 90 days
-        AmmTypes.SwapDuration duration;
+        /// @notice Swap's tenor, 0 - 28 days, 1 - 60 days or 2 - 90 days
+        IporTypes.SwapTenor tenor;
+    }
+
+    /// @notice Struct representing swap item, used for listing and in internal calculations
+    struct Swap {
+        /// @notice Swap's unique ID
+        uint256 id;
+        /// @notice Swap's buyer
+        address buyer;
+        /// @notice Swap opening epoch timestamp
+        uint256 openTimestamp;
+        /// @notice Swap's tenor
+        IporTypes.SwapTenor tenor;
+        /// @notice Index position of this Swap in an array of swaps' identification associated to swap buyer
+        /// @dev Field used for gas optimization purposes, it allows for quick removal by id in the array.
+        /// During removal the last item in the array is switched with the one that just has been removed.
+        uint256 idsIndex;
+        /// @notice Swap's collateral
+        /// @dev value represented in 18 decimals
+        uint256 collateral;
+        /// @notice Swap's notional amount
+        /// @dev value represented in 18 decimals
+        uint256 notional;
+        /// @notice Swap's notional amount denominated in the Interest Bearing Token (IBT)
+        /// @dev value represented in 18 decimals
+        uint256 ibtQuantity;
+        /// @notice Fixed interest rate at which the position has been opened
+        /// @dev value represented in 18 decimals
+        uint256 fixedInterestRate;
+        /// @notice Liquidation deposit amount
+        /// @dev value represented in 18 decimals
+        uint256 liquidationDepositAmount;
+        /// @notice State of the swap
+        /// @dev 0 - INACTIVE, 1 - ACTIVE
+        IporTypes.SwapState state;
     }
 
     /// @notice Struct representing assets (ie. stablecoin) related to Swap that is presently being opened.

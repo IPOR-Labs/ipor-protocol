@@ -148,10 +148,6 @@ library TestConstants {
     uint256 public constant LEG_PAY_FIXED = 0;
     uint256 public constant LEG_RECEIVE_FIXED = 1;
 
-    uint256 public constant SWAP_DURATION_28D = 0;
-    uint256 public constant SWAP_DURATION_60D = 1;
-    uint256 public constant SWAP_DURATION_90D = 2;
-
     uint256 public constant N1__0_18DEC = 1000000000000000000;
     uint256 public constant N1__0_6DEC = 1000000;
     uint256 public constant N0__1_6DEC = 100000;
@@ -244,18 +240,18 @@ library TestConstants {
     uint64 public constant RMO_NOTIONAL_2B = 200000;
     uint64 public constant RMO_NOTIONAL_3B = 300000;
     uint64 public constant RMO_NOTIONAL_10B = 1000000;
-    uint16 public constant RMO_UTILIZATION_RATE_0_1_PER = 10;
-    uint16 public constant RMO_UTILIZATION_RATE_5_PER = 500;
-    uint16 public constant RMO_UTILIZATION_RATE_20_PER = 2000;
-    uint16 public constant RMO_UTILIZATION_RATE_30_PER = 3000;
-    uint16 public constant RMO_UTILIZATION_RATE_35_PER = 3500;
-    uint16 public constant RMO_UTILIZATION_RATE_48_PER = 4800;
-    uint16 public constant RMO_UTILIZATION_RATE_60_PER = 6000;
-    uint16 public constant RMO_UTILIZATION_RATE_80_PER = 8000;
-    uint16 public constant RMO_UTILIZATION_RATE_90_PER = 9000;
-    uint16 public constant RMO_UTILIZATION_RATE_100_PER = 10000;
-    uint16 public constant RMO_UTILIZATION_RATE_150_PER = 15000;
-    uint16 public constant RMO_UTILIZATION_RATE_MAX = type(uint16).max;
+    uint16 public constant RMO_COLLATERAL_RATIO_0_1_PER = 10;
+    uint16 public constant RMO_COLLATERAL_RATIO_5_PER = 500;
+    uint16 public constant RMO_COLLATERAL_RATIO_20_PER = 2000;
+    uint16 public constant RMO_COLLATERAL_RATIO_30_PER = 3000;
+    uint16 public constant RMO_COLLATERAL_RATIO_35_PER = 3500;
+    uint16 public constant RMO_COLLATERAL_RATIO_48_PER = 4800;
+    uint16 public constant RMO_COLLATERAL_RATIO_60_PER = 6000;
+    uint16 public constant RMO_COLLATERAL_RATIO_80_PER = 8000;
+    uint16 public constant RMO_COLLATERAL_RATIO_90_PER = 9000;
+    uint16 public constant RMO_COLLATERAL_RATIO_100_PER = 10000;
+    uint16 public constant RMO_COLLATERAL_RATIO_150_PER = 15000;
+    uint16 public constant RMO_COLLATERAL_RATIO_MAX = type(uint16).max;
     int24 public constant RMO_SPREAD_0_1_PER = 1000;
     int24 public constant RMO_SPREAD_0_15_PER = 1500;
     int24 public constant RMO_SPREAD_0_2_PER = 2000;

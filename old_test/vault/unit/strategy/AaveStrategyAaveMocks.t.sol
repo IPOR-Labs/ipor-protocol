@@ -38,7 +38,7 @@ contract AaveStrategyAaveMocksTest is TestCommons, DataUtils {
     StrategyAave internal _strategyAaveUsdc;
     StrategyAave internal _strategyAaveDai;
 
-    event AssetManagementChanged(address changedBy, address oldAssetManagement, address newAssetManagement);
+    event AssetManagementChanged(address newAssetManagement);
 
     function setUp() public {
         vm.warp(1000 * 24 * 60 * 60);
@@ -103,7 +103,7 @@ contract AaveStrategyAaveMocksTest is TestCommons, DataUtils {
         address newAssetManagementAddress = _userTwo; // random address
         address oldAssetManagementAddress = _strategyAaveDai.getAssetManagement();
         vm.expectEmit(true, true, true, true);
-        emit AssetManagementChanged(_admin, oldAssetManagementAddress, newAssetManagementAddress);
+        emit AssetManagementChanged(newAssetManagementAddress);
         _strategyAaveDai.setAssetManagement(newAssetManagementAddress);
         deal(address(_daiMockedToken), address(newAssetManagementAddress), TestConstants.USD_10_000_18DEC);
         vm.startPrank(_userTwo);
@@ -122,7 +122,7 @@ contract AaveStrategyAaveMocksTest is TestCommons, DataUtils {
         address newAssetManagementAddress = _userTwo; // random address
         address oldAssetManagementAddress = _strategyAaveUsdc.getAssetManagement();
         vm.expectEmit(true, true, true, true);
-        emit AssetManagementChanged(_admin, oldAssetManagementAddress, newAssetManagementAddress);
+        emit AssetManagementChanged(newAssetManagementAddress);
         _strategyAaveUsdc.setAssetManagement(newAssetManagementAddress);
         deal(address(_usdcMockedToken), address(newAssetManagementAddress), TestConstants.USD_10_000_6DEC);
         vm.startPrank(_userTwo);
@@ -141,7 +141,7 @@ contract AaveStrategyAaveMocksTest is TestCommons, DataUtils {
         address newAssetManagementAddress = _userTwo; // random address
         address oldAssetManagementAddress = _strategyAaveUsdt.getAssetManagement();
         vm.expectEmit(true, true, true, true);
-        emit AssetManagementChanged(_admin, oldAssetManagementAddress, newAssetManagementAddress);
+        emit AssetManagementChanged(newAssetManagementAddress);
         _strategyAaveUsdt.setAssetManagement(newAssetManagementAddress);
         deal(address(_usdtMockedToken), address(newAssetManagementAddress), TestConstants.USD_10_000_6DEC);
         vm.startPrank(_userTwo);

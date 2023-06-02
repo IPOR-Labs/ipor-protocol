@@ -159,7 +159,7 @@ contract Spread90Days is ISpread90Days, ISpread90DaysLens {
             totalNotionalReceiveFixed: spreadInputs.totalNotionalReceiveFixed,
             swapNotional: spreadInputs.swapNotional,
             maxLeverage: spreadInputs.maxLeverage,
-            maxLpUtilizationPerLegRate: spreadInputs.maxLpUtilizationPerLegRate,
+            maxLpCollateralRatioPerLegRate: spreadInputs.maxLpCollateralRatioPerLegRate,
             storageIds: new SpreadStorageLibs.StorageId[](3),
             maturities: new uint256[](3),
             storageId: SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysDai

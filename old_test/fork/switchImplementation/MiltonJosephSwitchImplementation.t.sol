@@ -430,8 +430,8 @@ contract DaiAmmTreasuryJosephSwitchImplementation is Test, TestCommons, ForkUtil
             getRiskManagementOracleAsset(
                 _owner,
                 assetAddress,
-                TestConstants.RMO_UTILIZATION_RATE_48_PER,
-                TestConstants.RMO_UTILIZATION_RATE_80_PER,
+                TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+                TestConstants.RMO_COLLATERAL_RATIO_80_PER,
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_SPREAD_0_1_PER
             );

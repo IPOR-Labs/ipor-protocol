@@ -20,7 +20,10 @@ interface IAmmStorage {
     /// @return last swap ID, integer
     function getLastSwapId() external view returns (uint256);
 
-    function getLastOpenedSwap(AmmTypes.SwapDuration duration, uint256 direction) external view returns (AmmInternalTypes.OpenSwapItem memory);
+    function getLastOpenedSwap(IporTypes.SwapTenor tenor, uint256 direction)
+        external
+        view
+        returns (AmmInternalTypes.OpenSwapItem memory);
 
     /// @notice Gets balance struct
     /// @dev Balance contains:
@@ -54,37 +57,37 @@ interface IAmmStorage {
 
     /// @notice Gets Pay-Fixed swap for a given swap ID
     /// @param swapId swap ID.
-    /// @return swap structure {IporTypes.IporSwapMemory}
-    function getSwapPayFixed(uint256 swapId) external view returns (IporTypes.IporSwapMemory memory);
+    /// @return swap structure {AmmTypes.Swap}
+    function getSwapPayFixed(uint256 swapId) external view returns (AmmTypes.Swap memory);
 
     /// @notice Gets Receive-Fixed swap for a given swap ID
     /// @param swapId swap ID.
-    /// @return swap structure {IporTypes.IporSwapMemory}
-    function getSwapReceiveFixed(uint256 swapId) external view returns (IporTypes.IporSwapMemory memory);
+    /// @return swap structure {AmmTypes.Swap}
+    function getSwapReceiveFixed(uint256 swapId) external view returns (AmmTypes.Swap memory);
 
     /// @notice Gets active Pay-Fixed swaps for a given account address.
     /// @param account account address
     /// @param offset offset for paging
     /// @param chunkSize page size for paging
     /// @return totalCount total number of active Pay-Fixed swaps
-    /// @return swaps array where each element has structure {IporTypes.IporSwapMemory}
+    /// @return swaps array where each element has structure {AmmTypes.Swap}
     function getSwapsPayFixed(
         address account,
         uint256 offset,
         uint256 chunkSize
-    ) external view returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps);
+    ) external view returns (uint256 totalCount, AmmTypes.Swap[] memory swaps);
 
     /// @notice Gets active Receive-Fixed swaps for a given account address.
     /// @param account account address
     /// @param offset offset for paging
     /// @param chunkSize page size for paging
     /// @return totalCount total number of active Receive Fixed swaps
-    /// @return swaps array where each element has structure {IporTypes.IporSwapMemory}
+    /// @return swaps array where each element has structure {AmmTypes.Swap}
     function getSwapsReceiveFixed(
         address account,
         uint256 offset,
         uint256 chunkSize
-    ) external view returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps);
+    ) external view returns (uint256 totalCount, AmmTypes.Swap[] memory swaps);
 
     /// @notice Gets active Pay-Fixed swaps IDs for a given account address.
     /// @param account account address
@@ -189,26 +192,26 @@ interface IAmmStorage {
 
     /// @notice Updates structures in the storage: balance, swaps, SOAP indicators when closing Pay-Fixed swap.
     /// @dev This function is only available to AmmTreasury.
-    /// @param iporSwap The swap structure containing IPOR swap information.
+    /// @param swap The swap structure containing IPOR swap information.
     /// @param payoff The amount that the trader has earned or lost on the swap, represented in 18 decimals.
     ///              It can be negative.
     /// @param closingTimestamp The moment when the swap was closed.
     /// @return closedSwap A memory struct representing the closed swap.
     function updateStorageWhenCloseSwapPayFixed(
-        IporTypes.IporSwapMemory memory iporSwap,
+        AmmTypes.Swap memory swap,
         int256 payoff,
         uint256 closingTimestamp
     ) external returns (AmmInternalTypes.OpenSwapItem memory closedSwap);
 
     /// @notice Updates structures in the storage: swaps, balances, SOAP indicators when closing Receive-Fixed swap.
     /// @dev This function is only available to AmmTreasury.
-    /// @param iporSwap The swap structure containing IPOR swap information.
+    /// @param swap The swap structure containing IPOR swap information.
     /// @param payoff The amount that the trader has earned or lost on the swap, represented in 18 decimals.
     ///              It can be negative.
     /// @param closingTimestamp The moment when the swap was closed.
     /// @return closedSwap A memory struct representing the closed swap.
     function updateStorageWhenCloseSwapReceiveFixed(
-        IporTypes.IporSwapMemory memory iporSwap,
+        AmmTypes.Swap memory swap,
         int256 payoff,
         uint256 closingTimestamp
     ) external returns (AmmInternalTypes.OpenSwapItem memory closedSwap);
@@ -245,8 +248,6 @@ interface IAmmStorage {
     function getLiquidityPoolAccountContribution(address account) external view returns (uint256);
 
     /// @notice Emitted when AMM Treausury address has changed by the smart contract Owner.
-    /// @param changedBy account address that has changed AmmTreasury's address
-    /// @param oldAmmTreasury old AmmTreasury's address
     /// @param newAmmTreasury new AmmTreasury's address
-    event AmmTreasuryChanged(address changedBy, address oldAmmTreasury, address newAmmTreasury);
+    event AmmTreasuryChanged(address newAmmTreasury);
 }

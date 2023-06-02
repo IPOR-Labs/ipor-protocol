@@ -293,7 +293,7 @@ contract AmmTreasuryShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUti
         );
     }
 
-    function testShouldNotOpenPositionWhenUtilizationIsExceeded() public {
+    function testShouldNotOpenPositionWhenCollateralRatioIsExceeded() public {
         // given
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE7;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -309,7 +309,7 @@ contract AmmTreasuryShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUti
         );
     }
 
-    function testShouldNotOpenPositionWhenRiskManagementOracleProvidesZeroUtilizationRate() public {
+    function testShouldNotOpenPositionWhenRiskManagementOracleProvidesZeroCollateralRatio() public {
         // given
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE7;
         _cfg.iporRiskManagementOracleInitialParamsTestCase = BuilderUtils

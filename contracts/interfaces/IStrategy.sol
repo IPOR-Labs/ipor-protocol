@@ -77,11 +77,9 @@ interface IStrategy {
     /// @param _guardian The address of the pause guardian to be removed.
     function removePauseGuardian(address _guardian) external;
 
-    /// @notice Emmited when AssetManagement address is changed by Owner.
-    /// @param changedBy account address that has changed AssetManagement address
-    /// @param oldAssetManagement old AssetManagement address
+    /// @notice Emitted when AssetManagement address is changed by Owner.
     /// @param newAssetManagement new AssetManagement address
-    event AssetManagementChanged(address changedBy, address oldAssetManagement, address newAssetManagement);
+    event AssetManagementChanged(address newAssetManagement);
 
     /// @notice Emmited when doClaim function had been executed.
     /// @param claimedBy account that executes claim action
@@ -96,18 +94,12 @@ interface IStrategy {
     );
 
     /// @notice Emmited when Treasury address has changed
-    /// @param changedBy account address that has changed Treasury address
-    /// @param oldTreasury old Treasury address
     /// @param newTreasury new Treasury address
-    event TreasuryChanged(address changedBy, address oldTreasury, address newTreasury);
+    event TreasuryChanged(address newTreasury);
 
     /// @notice Emmited when Treasury Manager address has changed
-    /// @param changedBy account address that changed Treasury Manager's address
-    /// @param oldTreasuryManager old Treasury Manager address
     /// @param newTreasuryManager new Treasury Manager address
     event TreasuryManagerChanged(
-        address changedBy,
-        address oldTreasuryManager,
         address newTreasuryManager
     );
 }

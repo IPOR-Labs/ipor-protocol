@@ -31,7 +31,7 @@ contract AmmPoolsService is IAmmPoolsService {
     address internal immutable _usdtAmmTreasury;
     address internal immutable _usdtAssetManagement;
     uint256 internal immutable _usdtRedeemFeeRate;
-    uint256 internal immutable _usdtRedeemLpMaxUtilizationRate;
+    uint256 internal immutable _usdtRedeemLpMaxCollateralRatio;
 
     address internal immutable _usdc;
     uint256 internal immutable _usdcDecimals;
@@ -40,7 +40,7 @@ contract AmmPoolsService is IAmmPoolsService {
     address internal immutable _usdcAmmTreasury;
     address internal immutable _usdcAssetManagement;
     uint256 internal immutable _usdcRedeemFeeRate;
-    uint256 internal immutable _usdcRedeemLpMaxUtilizationRate;
+    uint256 internal immutable _usdcRedeemLpMaxCollateralRatio;
 
     address internal immutable _dai;
     uint256 internal immutable _daiDecimals;
@@ -49,7 +49,7 @@ contract AmmPoolsService is IAmmPoolsService {
     address internal immutable _daiAmmTreasury;
     address internal immutable _daiAssetManagement;
     uint256 internal immutable _daiRedeemFeeRate;
-    uint256 internal immutable _daiRedeemLpMaxUtilizationRate;
+    uint256 internal immutable _daiRedeemLpMaxCollateralRatio;
 
     address internal immutable _iporOracle;
 
@@ -99,7 +99,7 @@ contract AmmPoolsService is IAmmPoolsService {
         _usdtAmmTreasury = usdtPoolCfg.ammTreasury;
         _usdtAssetManagement = usdtPoolCfg.assetManagement;
         _usdtRedeemFeeRate = usdtPoolCfg.redeemFeeRate;
-        _usdtRedeemLpMaxUtilizationRate = usdtPoolCfg.redeemLpMaxUtilizationRate;
+        _usdtRedeemLpMaxCollateralRatio = usdtPoolCfg.redeemLpMaxCollateralRatio;
 
         _usdc = usdcPoolCfg.asset;
         _usdcDecimals = usdcPoolCfg.decimals;
@@ -108,7 +108,7 @@ contract AmmPoolsService is IAmmPoolsService {
         _usdcAmmTreasury = usdcPoolCfg.ammTreasury;
         _usdcAssetManagement = usdcPoolCfg.assetManagement;
         _usdcRedeemFeeRate = usdcPoolCfg.redeemFeeRate;
-        _usdcRedeemLpMaxUtilizationRate = usdcPoolCfg.redeemLpMaxUtilizationRate;
+        _usdcRedeemLpMaxCollateralRatio = usdcPoolCfg.redeemLpMaxCollateralRatio;
 
         _dai = daiPoolCfg.asset;
         _daiDecimals = daiPoolCfg.decimals;
@@ -117,7 +117,7 @@ contract AmmPoolsService is IAmmPoolsService {
         _daiAmmTreasury = daiPoolCfg.ammTreasury;
         _daiAssetManagement = daiPoolCfg.assetManagement;
         _daiRedeemFeeRate = daiPoolCfg.redeemFeeRate;
-        _daiRedeemLpMaxUtilizationRate = daiPoolCfg.redeemLpMaxUtilizationRate;
+        _daiRedeemLpMaxCollateralRatio = daiPoolCfg.redeemLpMaxCollateralRatio;
 
         _iporOracle = iporOracle;
     }
@@ -291,12 +291,12 @@ contract AmmPoolsService is IAmmPoolsService {
         _rebalanceIfNeededBeforeRedeem(poolCfg, wadAmmTreasuryErc20Balance, balance.vault, redeemMoney.wadRedeemAmount);
 
         require(
-            _calculateRedeemedUtilizationRate(
+            _calculateRedeemedCollateralRatio(
                 balance.liquidityPool,
                 balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
                 redeemMoney.wadRedeemAmount
-            ) <= poolCfg.redeemLpMaxUtilizationRate,
-            AmmPoolsErrors.REDEEM_LP_UTILIZATION_EXCEEDED
+            ) <= poolCfg.redeemLpMaxCollateralRatio,
+            AmmPoolsErrors.REDEEM_LP_COLLATERAL_RATIO_EXCEEDED
         );
 
         IIpToken(poolCfg.ipToken).burn(msg.sender, ipTokenAmount);
@@ -328,7 +328,7 @@ contract AmmPoolsService is IAmmPoolsService {
                     ammTreasury: _usdtAmmTreasury,
                     assetManagement: _usdtAssetManagement,
                     redeemFeeRate: _usdtRedeemFeeRate,
-                    redeemLpMaxUtilizationRate: _usdtRedeemLpMaxUtilizationRate
+                    redeemLpMaxCollateralRatio: _usdtRedeemLpMaxCollateralRatio
                 });
         } else if (asset == _usdc) {
             return
@@ -340,7 +340,7 @@ contract AmmPoolsService is IAmmPoolsService {
                     ammTreasury: _usdcAmmTreasury,
                     assetManagement: _usdcAssetManagement,
                     redeemFeeRate: _usdcRedeemFeeRate,
-                    redeemLpMaxUtilizationRate: _usdcRedeemLpMaxUtilizationRate
+                    redeemLpMaxCollateralRatio: _usdcRedeemLpMaxCollateralRatio
                 });
         } else if (asset == _dai) {
             return
@@ -352,7 +352,7 @@ contract AmmPoolsService is IAmmPoolsService {
                     ammTreasury: _daiAmmTreasury,
                     assetManagement: _daiAssetManagement,
                     redeemFeeRate: _daiRedeemFeeRate,
-                    redeemLpMaxUtilizationRate: _daiRedeemLpMaxUtilizationRate
+                    redeemLpMaxCollateralRatio: _daiRedeemLpMaxCollateralRatio
                 });
         } else {
             revert("AmmPoolsLens: asset not supported");
@@ -454,7 +454,7 @@ contract AmmPoolsService is IAmmPoolsService {
         }
     }
 
-    function _calculateRedeemedUtilizationRate(
+    function _calculateRedeemedCollateralRatio(
         uint256 totalLiquidityPoolBalance,
         uint256 totalCollateralBalance,
         uint256 redeemedAmount

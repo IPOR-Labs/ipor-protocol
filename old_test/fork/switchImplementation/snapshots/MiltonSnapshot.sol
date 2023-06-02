@@ -21,9 +21,9 @@ contract AmmTreasurySnapshot is Script, Test {
     uint256 public ammTreasuryVersion;
     uint256 public ammTreasuryFacadeDataProviderVersion;
     uint256 public ammTreasuryMaxSwapCollateralAmount;
-    uint256 public ammTreasuryMaxLpUtilizationRate;
-    uint256 public ammTreasuryMaxLpUtilizationRatePayFixed;
-    uint256 public ammTreasuryMaxLpUtilizationRateReceiveFixed;
+    uint256 public ammTreasuryMaxLpCollateralRatio;
+    uint256 public ammTreasuryMaxLpCollateralRatioPayFixed;
+    uint256 public ammTreasuryMaxLpCollateralRatioReceiveFixed;
     uint256 public ammTreasuryIncomeFeeRate;
     uint256 public ammTreasuryOpeningFeeRate;
     uint256 public ammTreasuryOpeningFeeTreasuryPortionRate;
@@ -63,11 +63,11 @@ contract AmmTreasurySnapshot is Script, Test {
         ammTreasuryVersion = ammTreasury.getVersion();
         ammTreasuryFacadeDataProviderVersion = ammTreasuryFacadeDataProvider.getVersion();
         ammTreasuryMaxSwapCollateralAmount = ammTreasury.getMaxSwapCollateralAmount();
-        ammTreasuryMaxLpUtilizationRate = ammTreasury.getMaxLpUtilizationRate();
-        //        ammTreasuryMaxLpUtilizationRatePayFixed = ammTreasury
-        //        .getMaxLpUtilizationRatePayFixed(); TODO revert
-        //        ammTreasuryMaxLpUtilizationRateReceiveFixed = ammTreasury
-        //        .getMaxLpUtilizationRateReceiveFixed(); TODO revert
+        ammTreasuryMaxLpCollateralRatio = ammTreasury.getMaxLpCollateralRatio();
+        //        ammTreasuryMaxLpCollateralRatioPayFixed = ammTreasury
+        //        .getMaxLpCollateralRatioPayFixed(); TODO revert
+        //        ammTreasuryMaxLpCollateralRatioReceiveFixed = ammTreasury
+        //        .getMaxLpCollateralRatioReceiveFixed(); TODO revert
 
         //        ammTreasuryOpeningFeeRate = ammTreasury.getOpeningFeeRate();
         //        ammTreasuryOpeningFeeTreasuryPortionRate = ammTreasury
@@ -106,9 +106,9 @@ contract AmmTreasurySnapshot is Script, Test {
         vm.serializeUint(ammTreasuryJson, "ammTreasuryVersion", ammTreasuryVersion);
         vm.serializeUint(ammTreasuryJson, "ammTreasuryFacadeDataProviderVersion", ammTreasuryFacadeDataProviderVersion);
         vm.serializeUint(ammTreasuryJson, "ammTreasuryMaxSwapCollateralAmount", ammTreasuryMaxSwapCollateralAmount);
-        vm.serializeUint(ammTreasuryJson, "ammTreasuryMaxLpUtilizationRate", ammTreasuryMaxLpUtilizationRate);
-        vm.serializeUint(ammTreasuryJson, "ammTreasuryMaxLpUtilizationRatePayFixed", ammTreasuryMaxLpUtilizationRatePayFixed);
-        vm.serializeUint(ammTreasuryJson, "ammTreasuryMaxLpUtilizationRateReceiveFixed", ammTreasuryMaxLpUtilizationRateReceiveFixed);
+        vm.serializeUint(ammTreasuryJson, "ammTreasuryMaxLpCollateralRatio", ammTreasuryMaxLpCollateralRatio);
+        vm.serializeUint(ammTreasuryJson, "ammTreasuryMaxLpCollateralRatioPayFixed", ammTreasuryMaxLpCollateralRatioPayFixed);
+        vm.serializeUint(ammTreasuryJson, "ammTreasuryMaxLpCollateralRatioReceiveFixed", ammTreasuryMaxLpCollateralRatioReceiveFixed);
         vm.serializeUint(ammTreasuryJson, "ammTreasuryOpeningFeeRate", ammTreasuryOpeningFeeRate);
         vm.serializeUint(ammTreasuryJson, "ammTreasuryOpeningFeeTreasuryPortionRate", ammTreasuryOpeningFeeTreasuryPortionRate);
         vm.serializeUint(ammTreasuryJson, "ammTreasuryIporPublicationFee", ammTreasuryIporPublicationFee);
@@ -155,19 +155,19 @@ contract AmmTreasurySnapshot is Script, Test {
             "AmmTreasury: Max Swap Collateral Amount should be the same"
         );
         assertEq(
-            ammTreasurySnapshot1.ammTreasuryMaxLpUtilizationRate(),
-            ammTreasurySnapshot2.ammTreasuryMaxLpUtilizationRate(),
-            "AmmTreasury: Max LP Utilization Rate should be the same"
+            ammTreasurySnapshot1.ammTreasuryMaxLpCollateralRatio(),
+            ammTreasurySnapshot2.ammTreasuryMaxLpCollateralRatio(),
+            "AmmTreasury: Max LP Collateral Ratio should be the same"
         );
         assertEq(
-            ammTreasurySnapshot1.ammTreasuryMaxLpUtilizationRatePayFixed(),
-            ammTreasurySnapshot2.ammTreasuryMaxLpUtilizationRatePayFixed(),
-            "AmmTreasury: Max LP Utilization Per Pay Fixed Leg Rate should be the same"
+            ammTreasurySnapshot1.ammTreasuryMaxLpCollateralRatioPayFixed(),
+            ammTreasurySnapshot2.ammTreasuryMaxLpCollateralRatioPayFixed(),
+            "AmmTreasury: Max LP Collateral Ratio Per Pay Fixed Leg Rate should be the same"
         );
         assertEq(
-            ammTreasurySnapshot1.ammTreasuryMaxLpUtilizationRateReceiveFixed(),
-            ammTreasurySnapshot2.ammTreasuryMaxLpUtilizationRateReceiveFixed(),
-            "AmmTreasury: Max LP Utilization Per Receive Fixed Leg Rate should be the same"
+            ammTreasurySnapshot1.ammTreasuryMaxLpCollateralRatioReceiveFixed(),
+            ammTreasurySnapshot2.ammTreasuryMaxLpCollateralRatioReceiveFixed(),
+            "AmmTreasury: Max LP Collateral Ratio Per Receive Fixed Leg Rate should be the same"
         );
         assertEq(
             ammTreasurySnapshot1.ammTreasuryIncomeFeeRate(),
@@ -271,19 +271,19 @@ contract AmmTreasurySnapshot is Script, Test {
             "AmmTreasury: Max Swap Collateral Amount should be the same"
         );
         assertEq(
-            ammTreasurySnapshot1.ammTreasuryMaxLpUtilizationRate(),
-            ammTreasurySnapshot2.ammTreasuryMaxLpUtilizationRate(),
-            "AmmTreasury: Max LP Utilization Rate should be the same"
+            ammTreasurySnapshot1.ammTreasuryMaxLpCollateralRatio(),
+            ammTreasurySnapshot2.ammTreasuryMaxLpCollateralRatio(),
+            "AmmTreasury: Max LP Collateral Ratio Rate should be the same"
         );
         assertEq(
-            ammTreasurySnapshot1.ammTreasuryMaxLpUtilizationRatePayFixed(),
-            ammTreasurySnapshot2.ammTreasuryMaxLpUtilizationRatePayFixed(),
-            "AmmTreasury: Max LP Utilization Per Pay Fixed Leg Rate should be the same"
+            ammTreasurySnapshot1.ammTreasuryMaxLpCollateralRatioPayFixed(),
+            ammTreasurySnapshot2.ammTreasuryMaxLpCollateralRatioPayFixed(),
+            "AmmTreasury: Max LP Collateral Ratio Per Pay Fixed Leg Rate should be the same"
         );
         assertEq(
-            ammTreasurySnapshot1.ammTreasuryMaxLpUtilizationRateReceiveFixed(),
-            ammTreasurySnapshot2.ammTreasuryMaxLpUtilizationRateReceiveFixed(),
-            "AmmTreasury: Max LP Utilization Per Receive Fixed Leg Rate should be the same"
+            ammTreasurySnapshot1.ammTreasuryMaxLpCollateralRatioReceiveFixed(),
+            ammTreasurySnapshot2.ammTreasuryMaxLpCollateralRatioReceiveFixed(),
+            "AmmTreasury: Max LP Collateral Ratio Per Receive Fixed Leg Rate should be the same"
         );
         assertEq(
             ammTreasurySnapshot1.ammTreasuryIncomeFeeRate(),
@@ -382,9 +382,9 @@ contract AmmTreasurySnapshot is Script, Test {
         console2.log("ammTreasuryVersion", ammTreasuryVersion);
         console2.log("ammTreasuryFacadeDataProviderVersion", ammTreasuryFacadeDataProviderVersion);
         console2.log("ammTreasuryMaxSwapCollateralAmount", ammTreasuryMaxSwapCollateralAmount);
-        console2.log("ammTreasuryMaxLpUtilizationRate", ammTreasuryMaxLpUtilizationRate);
-        console2.log("ammTreasuryMaxLpUtilizationRatePayFixed", ammTreasuryMaxLpUtilizationRatePayFixed);
-        console2.log("ammTreasuryMaxLpUtilizationRateReceiveFixed", ammTreasuryMaxLpUtilizationRateReceiveFixed);
+        console2.log("ammTreasuryMaxLpCollateralRatio", ammTreasuryMaxLpCollateralRatio);
+        console2.log("ammTreasuryMaxLpCollateralRatioPayFixed", ammTreasuryMaxLpCollateralRatioPayFixed);
+        console2.log("ammTreasuryMaxLpCollateralRatioReceiveFixed", ammTreasuryMaxLpCollateralRatioReceiveFixed);
         console2.log("ammTreasuryIncomeFeeRate", ammTreasuryIncomeFeeRate);
         console2.log("ammTreasuryOpeningFeeRate", ammTreasuryOpeningFeeRate);
         console2.log("ammTreasuryOpeningFeeTreasuryPortionRate", ammTreasuryOpeningFeeTreasuryPortionRate);

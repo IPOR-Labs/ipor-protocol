@@ -19,7 +19,7 @@ library DemandSpreadLibs {
         uint256 totalNotionalReceiveFixed;
         uint256 swapNotional;
         uint256 maxLeverage;
-        uint256 maxLpUtilizationPerLegRate;
+        uint256 maxLpCollateralRatioPerLegRate;
         uint256[] maturities;
         SpreadStorageLibs.StorageId[] storageIds;
         SpreadStorageLibs.StorageId storageId;
@@ -36,7 +36,7 @@ library DemandSpreadLibs {
         );
 
         uint256 notionalDepth = IporMath.division(
-            lpDepth * inputData.maxLeverage * inputData.maxLpUtilizationPerLegRate,
+            lpDepth * inputData.maxLeverage * inputData.maxLpCollateralRatioPerLegRate,
             1e36
         );
 
@@ -72,7 +72,7 @@ library DemandSpreadLibs {
         );
 
         uint256 notionalDepth = IporMath.division(
-            lpDepth * inputData.maxLeverage * inputData.maxLpUtilizationPerLegRate,
+            lpDepth * inputData.maxLeverage * inputData.maxLpCollateralRatioPerLegRate,
             1e36
         );
         (uint256 timeWeightedNotionalPayFixed, uint256 oldWeightedNotionalReceiveFixed) = CalculateTimeWeightedNotionalLibs
@@ -153,11 +153,11 @@ library DemandSpreadLibs {
     }
 
     /// @notice Calculates the spread value based on the given maximum notional and weighted notional.
-    /// @param maxNotional The maximum notional value determined by lpDepth, leverage, and maxUtilisation.
+    /// @param maxNotional The maximum notional value determined by lpDepth, leverage, and maxCollateralRatio.
     /// @param weightedNotional The weighted notional value used in the spread calculation.
     /// @return spreadValue The calculated spread value based on the given inputs.
     function calculateSpreadFunction(
-        uint256 maxNotional, // lpDepth * leverage * maxUtilisation
+        uint256 maxNotional, // lpDepth * leverage * maxCollateralRatio
         uint256 weightedNotional
     ) public view returns (uint256 spreadValue) {
         uint256 ratio = IporMath.division(weightedNotional * 1e18, maxNotional);

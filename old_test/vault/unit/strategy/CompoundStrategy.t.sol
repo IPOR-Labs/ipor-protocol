@@ -25,9 +25,9 @@ contract CompoundStrategyTest is TestCommons, DataUtils {
     MockComptroller internal _mockComptroller;
     MockWhitePaper internal _mockWhitepaper;
 
-    event AssetManagementChanged(address changedBy, address oldAssetManagement, address newAssetManagement);
+    event AssetManagementChanged(address newAssetManagement);
 
-    event BlocksPerDayChanged(address changedBy, uint256 oldBlocksPerDay, uint256 newBlocksPerDay);
+    event BlocksPerDayChanged(uint256 newBlocksPerDay);
 
     event DoClaim(address indexed claimedBy, address indexed shareToken, address indexed treasury, uint256 amount);
 

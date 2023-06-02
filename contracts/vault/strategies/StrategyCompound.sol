@@ -170,9 +170,8 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
 
     function setBlocksPerDay(uint256 newBlocksPerDay) external whenNotPaused onlyOwner {
         require(newBlocksPerDay > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-        uint256 oldBlocksPerDay = _blocksPerDay;
         _blocksPerDay = newBlocksPerDay;
-        emit BlocksPerDayChanged(_msgSender(), oldBlocksPerDay, newBlocksPerDay);
+        emit BlocksPerDayChanged(newBlocksPerDay);
     }
 }
 

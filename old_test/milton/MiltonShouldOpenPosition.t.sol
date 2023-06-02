@@ -86,7 +86,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
             TestConstants.LEVERAGE_18DEC
         );
 
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -160,7 +160,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
             TestConstants.LEVERAGE_18DEC
         );
 
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -239,7 +239,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_1000_18DEC
         );
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -381,7 +381,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
             15125000000000000000
         );
 
-        IporTypes.IporSwapMemory memory swapPayFixed = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swapPayFixed = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
         // then
         assertEq(swapPayFixed.collateral, expectedCollateralBalance, "incorrect collateral");
@@ -450,7 +450,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
         actualBalances.actualAmmTreasuryBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -523,7 +523,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
         );
 
         // then
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             10
@@ -579,7 +579,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
         );
 
         // then
-        (, IporTypes.IporSwapMemory[] memory swapsUserOne) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swapsUserOne) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             10
@@ -596,7 +596,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
         assertEq(swapsUserOne[0].id, 1);
         assertEq(swapsUserOne[1].idsIndex, 1);
         assertEq(swapsUserOne[1].id, 3);
-        (, IporTypes.IporSwapMemory[] memory swapsUserTwo) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swapsUserTwo) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userThree,
             TestConstants.ZERO,
             10
@@ -654,7 +654,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
         _iporProtocol.ammTreasury.itfCloseSwapPayFixed(2, block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
 
         // then
-        (, IporTypes.IporSwapMemory[] memory swapsUserOne) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swapsUserOne) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             10
@@ -671,7 +671,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
         assertEq(swapsUserOne[0].id, 1);
         assertEq(swapsUserOne[1].idsIndex, 1);
         assertEq(swapsUserOne[1].id, 3);
-        (, IporTypes.IporSwapMemory[] memory swapsUserTwo) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swapsUserTwo) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userThree,
             TestConstants.ZERO,
             10
@@ -728,7 +728,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
         _iporProtocol.ammTreasury.itfCloseSwapPayFixed(3, block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
 
         // then
-        (, IporTypes.IporSwapMemory[] memory swapsUserOne) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swapsUserOne) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             10
@@ -743,7 +743,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
         assertEq(swapsUserOneCount, 1);
         assertEq(swapsUserOne[0].idsIndex, 0);
         assertEq(swapsUserOne[0].id, 1);
-        (, IporTypes.IporSwapMemory[] memory swapsUserTwo) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swapsUserTwo) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userThree,
             TestConstants.ZERO,
             10
@@ -793,7 +793,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
         vm.stopPrank();
 
         // then
-        (, IporTypes.IporSwapMemory[] memory swapsUserOne) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swapsUserOne) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             10
@@ -806,7 +806,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
         assertEq(swapsUserOne.length, 0);
         assertEq(swapsUserOneIds.length, 0);
         assertEq(swapsUserOneCount, 0);
-        (, IporTypes.IporSwapMemory[] memory swapsUserTwo) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swapsUserTwo) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userThree,
             TestConstants.ZERO,
             10
@@ -860,7 +860,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
         _iporProtocol.ammTreasury.itfCloseSwapPayFixed(2, block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
 
         // then
-        (, IporTypes.IporSwapMemory[] memory swapsUserOne) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swapsUserOne) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             10
@@ -873,7 +873,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
         assertEq(swapsUserOne.length, 0);
         assertEq(swapsUserOneIds.length, 0);
         assertEq(swapsUserOneCount, 0);
-        (, IporTypes.IporSwapMemory[] memory swapsUserTwo) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swapsUserTwo) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userThree,
             TestConstants.ZERO,
             10
@@ -925,7 +925,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
         vm.stopPrank();
 
         // then
-        (, IporTypes.IporSwapMemory[] memory swapsUserOne) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swapsUserOne) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             10
@@ -938,7 +938,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
         assertEq(swapsUserOne.length, 0);
         assertEq(swapsUserOneIds.length, 0);
         assertEq(swapsUserOneCount, 0);
-        (, IporTypes.IporSwapMemory[] memory swapsUserTwo) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swapsUserTwo) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userThree,
             TestConstants.ZERO,
             10

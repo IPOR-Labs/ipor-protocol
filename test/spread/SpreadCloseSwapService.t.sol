@@ -29,7 +29,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             asset: dai,
             swapNotional: 10_000e18,
             maxLeverage: 1_000e18,
-            maxLpUtilizationPerLegRate: 1e18,
+            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpread: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
@@ -61,7 +61,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         ISpreadCloseSwapService(_routerAddress).updateTimeWeightedNotionalOnClose(
             dai,
             0,
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             spreadInputsOpen.swapNotional,
             closedSwap,
             address(0)
@@ -93,7 +93,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             asset: dai,
             swapNotional: 10_000e18,
             maxLeverage: 1_000e18,
-            maxLpUtilizationPerLegRate: 1e18,
+            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpread: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
@@ -125,7 +125,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         ISpreadCloseSwapService(_routerAddress).updateTimeWeightedNotionalOnClose(
             dai,
             1,
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             spreadInputsOpen.swapNotional,
             closedSwap,
             address(0)
@@ -158,7 +158,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             asset: dai,
             swapNotional: 10_000e18,
             maxLeverage: 1_000e18,
-            maxLpUtilizationPerLegRate: 1e18,
+            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpread: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
@@ -191,7 +191,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         ISpreadCloseSwapService(_routerAddress).updateTimeWeightedNotionalOnClose(
             dai,
             0,
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             spreadInputsOpen.swapNotional,
             closedSwap,
             address(0)
@@ -225,7 +225,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             asset: dai,
             swapNotional: 10_000e18,
             maxLeverage: 1_000e18,
-            maxLpUtilizationPerLegRate: 1e18,
+            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpread: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
@@ -258,7 +258,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         ISpreadCloseSwapService(_routerAddress).updateTimeWeightedNotionalOnClose(
             dai,
             1,
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             spreadInputsOpen.swapNotional,
             closedSwap,
             address(0)
@@ -293,7 +293,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             asset: dai,
             swapNotional: 10_000e18,
             maxLeverage: 1_000e18,
-            maxLpUtilizationPerLegRate: 1e18,
+            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpread: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
@@ -316,7 +316,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             25, //liquidationDepositAmount
             1e18,
             1e18,
-            AmmTypes.SwapDuration.DAYS_28
+            IporTypes.SwapTenor.DAYS_28
         );
         vm.prank(_owner);
         ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap1, cfgIporPublicationFee);
@@ -334,7 +334,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             25, //liquidationDepositAmount
             1e18,
             1e18,
-            AmmTypes.SwapDuration.DAYS_28
+            IporTypes.SwapTenor.DAYS_28
         );
         vm.prank(_owner);
         ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap2, cfgIporPublicationFee);
@@ -356,7 +356,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             25, //liquidationDepositAmount
             1e18,
             1e18,
-            AmmTypes.SwapDuration.DAYS_28
+            IporTypes.SwapTenor.DAYS_28
         );
         vm.prank(_ammAddress);
         ISpread28Days(_routerAddress).calculateAndUpdateOfferedRateReceiveFixed28Days(spreadInputsOpen);
@@ -378,7 +378,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         ISpreadCloseSwapService(_routerAddress).updateTimeWeightedNotionalOnClose(
             dai,
             1,
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             spreadInputsOpen.swapNotional,
             closedSwap,
             ammStorageAddress
@@ -430,7 +430,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             asset: dai,
             swapNotional: 10_000e18,
             maxLeverage: 1_000e18,
-            maxLpUtilizationPerLegRate: 1e18,
+            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpread: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
@@ -453,7 +453,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             25, //liquidationDepositAmount
             1e18,
             1e18,
-            AmmTypes.SwapDuration.DAYS_28
+            IporTypes.SwapTenor.DAYS_28
         );
         vm.prank(_owner);
         ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap1, cfgIporPublicationFee);
@@ -471,7 +471,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             25, //liquidationDepositAmount
             1e18,
             1e18,
-            AmmTypes.SwapDuration.DAYS_28
+            IporTypes.SwapTenor.DAYS_28
         );
         vm.prank(_owner);
         ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap2, cfgIporPublicationFee);
@@ -493,7 +493,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             25, //liquidationDepositAmount
             1e18,
             1e18,
-            AmmTypes.SwapDuration.DAYS_28
+            IporTypes.SwapTenor.DAYS_28
         );
         vm.prank(_ammAddress);
         ISpread28Days(_routerAddress).calculateAndUpdateOfferedRatePayFixed28Days(spreadInputsOpen);
@@ -515,7 +515,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         ISpreadCloseSwapService(_routerAddress).updateTimeWeightedNotionalOnClose(
             dai,
             0,
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             spreadInputsOpen.swapNotional,
             closedSwap,
             ammStorageAddress

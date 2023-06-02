@@ -43,9 +43,8 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
 
     function setRouter(address newRouter) external override onlyOwner {
         require(newRouter != address(0), IporErrors.WRONG_ADDRESS);
-        address oldRouter = _router;
         _router = newRouter;
-        emit RouterChanged(_msgSender(), oldRouter, newRouter);
+        emit RouterChanged(newRouter);
     }
 
     function mint(address account, uint256 amount) external override onlyRouter {

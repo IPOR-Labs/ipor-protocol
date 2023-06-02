@@ -62,9 +62,8 @@ abstract contract StrategyCore is
 
     function setAssetManagement(address newAssetManagement) external whenNotPaused onlyOwner {
         require(newAssetManagement != address(0), IporErrors.WRONG_ADDRESS);
-        address oldAssetManagement = _assetManagement;
         _assetManagement = newAssetManagement;
-        emit AssetManagementChanged(_msgSender(), oldAssetManagement, newAssetManagement);
+        emit AssetManagementChanged(newAssetManagement);
     }
 
     function getTreasuryManager() external view override returns (address) {
@@ -73,9 +72,8 @@ abstract contract StrategyCore is
 
     function setTreasuryManager(address manager) external whenNotPaused onlyOwner {
         require(manager != address(0), IporErrors.WRONG_ADDRESS);
-        address oldTreasuryManager = _treasuryManager;
         _treasuryManager = manager;
-        emit TreasuryManagerChanged(_msgSender(), oldTreasuryManager, manager);
+        emit TreasuryManagerChanged(manager);
     }
 
     function getTreasury() external view override returns (address) {
@@ -84,9 +82,8 @@ abstract contract StrategyCore is
 
     function setTreasury(address newTreasury) external whenNotPaused onlyTreasuryManager {
         require(newTreasury != address(0), AssetManagementErrors.INCORRECT_TREASURY_ADDRESS);
-        address oldTreasury = _treasury;
         _treasury = newTreasury;
-        emit TreasuryChanged(_msgSender(), oldTreasury, newTreasury);
+        emit TreasuryChanged(newTreasury);
     }
 
     function pause() external override onlyPauseGuardian {

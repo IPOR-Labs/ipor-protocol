@@ -8,7 +8,7 @@ import "../interfaces/IAmmOpenSwapService.sol";
 import "../libraries/RiskManagementLogic.sol";
 
 contract AmmSwapsLens is IAmmSwapsLens {
-    using IporSwapLogic for IporTypes.IporSwapMemory;
+    using IporSwapLogic for AmmTypes.Swap;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
 
     address internal immutable _usdtAsset;
@@ -138,16 +138,16 @@ contract AmmSwapsLens is IAmmSwapsLens {
 
     function getPayoffPayFixed(address asset, uint256 swapId) external view override returns (int256) {
         IAmmStorage ammStorage = _getAmmStorage(asset);
-        IporTypes.IporSwapMemory memory iporSwap = ammStorage.getSwapPayFixed(swapId);
+        AmmTypes.Swap memory swap = ammStorage.getSwapPayFixed(swapId);
         uint256 accruedIbtPrice = _iporOracle.calculateAccruedIbtPrice(asset, block.timestamp);
-        return iporSwap.calculatePayoffPayFixed(block.timestamp, accruedIbtPrice);
+        return swap.calculatePayoffPayFixed(block.timestamp, accruedIbtPrice);
     }
 
     function getPayoffReceiveFixed(address asset, uint256 swapId) external view override returns (int256) {
         IAmmStorage ammStorage = _getAmmStorage(asset);
-        IporTypes.IporSwapMemory memory iporSwap = ammStorage.getSwapReceiveFixed(swapId);
+        AmmTypes.Swap memory swap = ammStorage.getSwapReceiveFixed(swapId);
         uint256 accruedIbtPrice = _iporOracle.calculateAccruedIbtPrice(asset, block.timestamp);
-        return iporSwap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
+        return swap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
     }
 
     function getSOAP(address asset)
@@ -180,7 +180,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
     function getAmmSwapsLensConfiguration(
         address asset,
         uint256 direction,
-        uint256 duration
+        IporTypes.SwapTenor tenor
     ) external view override returns (AmmFacadeTypes.AssetConfiguration memory) {
         IAmmOpenSwapService.AmmOpenSwapServicePoolConfiguration memory openSwapPoolCfg = IAmmOpenSwapService(_router)
             .getAmmOpenSwapServicePoolConfiguration(asset);
@@ -188,8 +188,8 @@ contract AmmSwapsLens is IAmmSwapsLens {
             openSwapPoolCfg.asset
         );
 
-        (, , uint256 maxUtilizationRate, int256 spread,) = IIporRiskManagementOracle(_riskManagementOracle)
-        .getOpenSwapParameters(asset, direction, duration);
+        (, , uint256 maxCollateralRatio, int256 spread, ) = IIporRiskManagementOracle(_riskManagementOracle)
+            .getOpenSwapParameters(asset, direction, tenor);
 
         IporTypes.AmmBalancesForOpenSwapMemory memory balances = IAmmStorage(openSwapPoolCfg.ammStorage)
             .getBalancesForOpenSwap();
@@ -197,7 +197,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = RiskManagementLogic.getRiskIndicators(
             asset,
             direction,
-            duration,
+            tenor,
             balances.liquidityPool,
             openSwapPoolCfg.minLeverage,
             _riskManagementOracle
@@ -212,7 +212,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
                 openSwapPoolCfg.iporPublicationFee,
                 openSwapPoolCfg.liquidationDepositAmount,
                 spread,
-                maxUtilizationRate,
+                maxCollateralRatio,
                 uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
                 uint256(ammPoolsParamsCfg.maxLpAccountContribution) * 1e18
             );
@@ -225,11 +225,11 @@ contract AmmSwapsLens is IAmmSwapsLens {
     ) internal view returns (IAmmSwapsLens.IporSwap[] memory swaps) {
         uint256 swapCount = swapIds.length;
         AmmStorageTypes.IporSwapId[] memory swapIdsWithDirection = new AmmStorageTypes.IporSwapId[](swapCount);
-        for (uint256 i; i != swapCount;) {
+        for (uint256 i; i != swapCount; ) {
             swapIdsWithDirection[i] = AmmStorageTypes.IporSwapId({id: swapIds[i], direction: 0});
-        unchecked {
-            ++i;
-        }
+            unchecked {
+                ++i;
+            }
         }
         return _mapSwaps(asset, ammStorage, swapIdsWithDirection);
     }
@@ -241,11 +241,11 @@ contract AmmSwapsLens is IAmmSwapsLens {
     ) internal view returns (IAmmSwapsLens.IporSwap[] memory swaps) {
         uint256 swapCount = swapIds.length;
         AmmStorageTypes.IporSwapId[] memory swapIdsWithDirection = new AmmStorageTypes.IporSwapId[](swapCount);
-        for (uint256 i; i != swapCount;) {
+        for (uint256 i; i != swapCount; ) {
             swapIdsWithDirection[i] = AmmStorageTypes.IporSwapId({id: swapIds[i], direction: 1});
-        unchecked {
-            ++i;
-        }
+            unchecked {
+                ++i;
+            }
         }
         return _mapSwaps(asset, ammStorage, swapIdsWithDirection);
     }
@@ -258,27 +258,27 @@ contract AmmSwapsLens is IAmmSwapsLens {
         uint256 accruedIbtPrice = _iporOracle.calculateAccruedIbtPrice(asset, block.timestamp);
         uint256 swapCount = swapIds.length;
         IAmmSwapsLens.IporSwap[] memory mappedSwaps = new IAmmSwapsLens.IporSwap[](swapCount);
-        for (uint256 i; i != swapCount;) {
+        for (uint256 i; i != swapCount; ) {
             AmmStorageTypes.IporSwapId memory swapId = swapIds[i];
             if (swapId.direction == 0) {
-                IporTypes.IporSwapMemory memory iporSwap = ammStorage.getSwapPayFixed(swapId.id);
-                int256 swapValue = iporSwap.calculatePayoffPayFixed(block.timestamp, accruedIbtPrice);
-                mappedSwaps[i] = _mapSwap(asset, iporSwap, 0, swapValue);
+                AmmTypes.Swap memory swap = ammStorage.getSwapPayFixed(swapId.id);
+                int256 swapValue = swap.calculatePayoffPayFixed(block.timestamp, accruedIbtPrice);
+                mappedSwaps[i] = _mapSwap(asset, swap, 0, swapValue);
             } else {
-                IporTypes.IporSwapMemory memory iporSwap = ammStorage.getSwapReceiveFixed(swapId.id);
-                int256 swapValue = iporSwap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
-                mappedSwaps[i] = _mapSwap(asset, iporSwap, 1, swapValue);
+                AmmTypes.Swap memory swap = ammStorage.getSwapReceiveFixed(swapId.id);
+                int256 swapValue = swap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
+                mappedSwaps[i] = _mapSwap(asset, swap, 1, swapValue);
             }
-        unchecked {
-            ++i;
-        }
+            unchecked {
+                ++i;
+            }
         }
         return mappedSwaps;
     }
 
     function _mapSwap(
         address asset,
-        IporTypes.IporSwapMemory memory swap,
+        AmmTypes.Swap memory swap,
         uint256 direction,
         int256 swapValue
     ) internal pure returns (IAmmSwapsLens.IporSwap memory) {
@@ -295,9 +295,9 @@ contract AmmSwapsLens is IAmmSwapsLens {
                 fixedInterestRate: swap.fixedInterestRate,
                 payoff: swapValue,
                 openTimestamp: swap.openTimestamp,
-                endTimestamp: swap.calculateSwapMaturity(),
+                endTimestamp: swap.getSwapEndTimestamp(),
                 liquidationDepositAmount: swap.liquidationDepositAmount,
-                state: swap.state
+                state: uint256(swap.state)
             });
     }
 

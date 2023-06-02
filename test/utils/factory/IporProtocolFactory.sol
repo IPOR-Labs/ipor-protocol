@@ -1477,7 +1477,7 @@ contract IporProtocolFactory is Test {
             ammTreasury: address(_fakeContract),
             assetManagement: address(_fakeContract),
             redeemFeeRate: 0,
-            redeemLpMaxUtilizationRate: 0
+            redeemLpMaxCollateralRatio: 0
         });
     }
 
@@ -1558,7 +1558,7 @@ contract IporProtocolFactory is Test {
                 ammTreasury: ammTreasury,
                 assetManagement: assetManagement,
                 redeemFeeRate: 0,
-                redeemLpMaxUtilizationRate: 1e18
+                redeemLpMaxCollateralRatio: 1e18
             });
         } else {
             poolCfg = IAmmPoolsService.AmmPoolsServicePoolConfiguration({
@@ -1569,7 +1569,7 @@ contract IporProtocolFactory is Test {
                 ammTreasury: ammTreasury,
                 assetManagement: assetManagement,
                 redeemFeeRate: 5 * 1e15,
-                redeemLpMaxUtilizationRate: 1e18
+                redeemLpMaxCollateralRatio: 1e18
             });
         }
     }

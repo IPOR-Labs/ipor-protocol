@@ -36,7 +36,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         );
     }
 
-    function testShouldNotRedeemWhenLiquidityPoolUtilizationAlreadyExceededAndPayFixed() public {
+    function testShouldNotRedeemWhenLiquidityPoolCollateralRatioAlreadyExceededAndPayFixed() public {
         // given
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -76,7 +76,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         assertGt(actualCollateral, actualLiquidityPoolBalance);
     }
 
-    function testShouldNotRedeemWhenLiquidityPoolUtilizationAlreadyExceededAndReceiveFixed() public {
+    function testShouldNotRedeemWhenLiquidityPoolCollateralRatioAlreadyExceededAndReceiveFixed() public {
         // given
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -116,7 +116,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         assertGt(actualCollateral, actualLiquidityPoolBalance);
     }
 
-    function testShouldNotRedeemWhenLiquidityPoolUtilizationExceededAndPayFixed() public {
+    function testShouldNotRedeemWhenLiquidityPoolCollateralRatioExceededAndPayFixed() public {
         // given
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -150,7 +150,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         assertLt(actualCollateral, actualLiquidityPoolBalance);
     }
 
-    function testShouldNotRedeemWhenLiquidityPoolUtilizationExceededAndReceiveFixed() public {
+    function testShouldNotRedeemWhenLiquidityPoolCollateralRatioExceededAndReceiveFixed() public {
         // given
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);

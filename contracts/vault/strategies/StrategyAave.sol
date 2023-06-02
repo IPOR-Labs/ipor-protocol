@@ -204,9 +204,8 @@ contract StrategyAave is StrategyCore, IStrategyAave {
      */
     function setStkAave(address newStkAave) external whenNotPaused onlyOwner {
         require(newStkAave != address(0), IporErrors.WRONG_ADDRESS);
-        address oldStkAave = _stkAave;
         _stkAave = newStkAave;
-        emit StkAaveChanged(_msgSender(), oldStkAave, newStkAave);
+        emit StkAaveChanged(newStkAave);
     }
 }
 

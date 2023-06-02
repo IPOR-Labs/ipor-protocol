@@ -62,7 +62,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     struct Context {
         address onBehalfOf;
         /// @notice swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
-        AmmTypes.SwapDuration duration;
+        IporTypes.SwapTenor tenor;
         string spreadMethodSig;
         AmmOpenSwapServicePoolConfiguration poolCfg;
     }
@@ -138,7 +138,12 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         _spreadRouter = spreadRouter;
     }
 
-    function getAmmOpenSwapServicePoolConfiguration(address asset) external view override returns (AmmOpenSwapServicePoolConfiguration memory) {
+    function getAmmOpenSwapServicePoolConfiguration(address asset)
+        external
+        view
+        override
+        returns (AmmOpenSwapServicePoolConfiguration memory)
+    {
         return _getPoolConfiguration(asset);
     }
 
@@ -150,7 +155,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            duration: AmmTypes.SwapDuration.DAYS_28,
+            tenor: IporTypes.SwapTenor.DAYS_28,
             spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdt)
         });
@@ -165,7 +170,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            duration: AmmTypes.SwapDuration.DAYS_60,
+            tenor: IporTypes.SwapTenor.DAYS_60,
             spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdt)
         });
@@ -180,7 +185,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            duration: AmmTypes.SwapDuration.DAYS_90,
+            tenor: IporTypes.SwapTenor.DAYS_90,
             spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdt)
         });
@@ -195,7 +200,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            duration: AmmTypes.SwapDuration.DAYS_28,
+            tenor: IporTypes.SwapTenor.DAYS_28,
             spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdt)
         });
@@ -212,7 +217,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         require(onBehalfOf != address(0), "AmmOpenSwapService: onBehalfOf is zero address");
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            duration: AmmTypes.SwapDuration.DAYS_60,
+            tenor: IporTypes.SwapTenor.DAYS_60,
             spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdt)
         });
@@ -227,7 +232,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            duration: AmmTypes.SwapDuration.DAYS_90,
+            tenor: IporTypes.SwapTenor.DAYS_90,
             spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdt)
         });
@@ -242,7 +247,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            duration: AmmTypes.SwapDuration.DAYS_28,
+            tenor: IporTypes.SwapTenor.DAYS_28,
             spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdc)
         });
@@ -258,7 +263,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            duration: AmmTypes.SwapDuration.DAYS_60,
+            tenor: IporTypes.SwapTenor.DAYS_60,
             spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdc)
         });
@@ -273,7 +278,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            duration: AmmTypes.SwapDuration.DAYS_90,
+            tenor: IporTypes.SwapTenor.DAYS_90,
             spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdc)
         });
@@ -288,7 +293,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            duration: AmmTypes.SwapDuration.DAYS_28,
+            tenor: IporTypes.SwapTenor.DAYS_28,
             spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdc)
         });
@@ -303,7 +308,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            duration: AmmTypes.SwapDuration.DAYS_60,
+            tenor: IporTypes.SwapTenor.DAYS_60,
             spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdc)
         });
@@ -318,7 +323,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            duration: AmmTypes.SwapDuration.DAYS_90,
+            tenor: IporTypes.SwapTenor.DAYS_90,
             spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdc)
         });
@@ -333,7 +338,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            duration: AmmTypes.SwapDuration.DAYS_28,
+            tenor: IporTypes.SwapTenor.DAYS_28,
             spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_dai)
         });
@@ -348,7 +353,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            duration: AmmTypes.SwapDuration.DAYS_60,
+            tenor: IporTypes.SwapTenor.DAYS_60,
             spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_dai)
         });
@@ -363,7 +368,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            duration: AmmTypes.SwapDuration.DAYS_90,
+            tenor: IporTypes.SwapTenor.DAYS_90,
             spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_dai)
         });
@@ -378,7 +383,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            duration: AmmTypes.SwapDuration.DAYS_28,
+            tenor: IporTypes.SwapTenor.DAYS_28,
             spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_dai)
         });
@@ -393,7 +398,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            duration: AmmTypes.SwapDuration.DAYS_60,
+            tenor: IporTypes.SwapTenor.DAYS_60,
             spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_dai)
         });
@@ -408,7 +413,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            duration: AmmTypes.SwapDuration.DAYS_90,
+            tenor: IporTypes.SwapTenor.DAYS_90,
             spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_dai)
         });
@@ -474,7 +479,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             block.timestamp,
             totalAmount,
             leverage,
-            ctx.duration,
+            ctx.tenor,
             ctx.poolCfg
         );
 
@@ -486,19 +491,19 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
             ctx.poolCfg.asset,
             0,
-            ctx.duration,
+            ctx.tenor,
             balance.liquidityPool,
             ctx.poolCfg.minLeverage
         );
 
-        _validateLiquidityPoolUtilizationAndSwapLeverage(
+        _validateLiquidityPoolCollateralRatioAndSwapLeverage(
             balance.liquidityPool,
             balance.totalCollateralPayFixed,
             balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
             leverage,
             riskIndicators.maxLeveragePerLeg,
-            riskIndicators.maxUtilizationRate,
-            riskIndicators.maxUtilizationRatePerLeg,
+            riskIndicators.maxCollateralRatio,
+            riskIndicators.maxCollateralRatioPerLeg,
             ctx.poolCfg.minLeverage
         );
 
@@ -509,7 +514,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                     ctx.poolCfg.asset,
                     bosStruct.notional,
                     riskIndicators.maxLeveragePerLeg,
-                    riskIndicators.maxUtilizationRatePerLeg,
+                    riskIndicators.maxCollateralRatioPerLeg,
                     riskIndicators.spread,
                     balance.totalCollateralPayFixed,
                     balance.totalCollateralReceiveFixed,
@@ -545,7 +550,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             bosStruct.liquidationDepositAmount,
             bosStruct.openingFeeLPAmount,
             bosStruct.openingFeeTreasuryAmount,
-            ctx.duration
+            ctx.tenor
         );
 
         uint256 newSwapId = IAmmStorage(ctx.poolCfg.ammStorage).updateStorageWhenOpenSwapPayFixed(
@@ -579,7 +584,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             block.timestamp,
             totalAmount,
             leverage,
-            ctx.duration,
+            ctx.tenor,
             ctx.poolCfg
         );
 
@@ -591,19 +596,19 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
             ctx.poolCfg.asset,
             1,
-            ctx.duration,
+            ctx.tenor,
             balance.liquidityPool,
             ctx.poolCfg.minLeverage
         );
 
-        _validateLiquidityPoolUtilizationAndSwapLeverage(
+        _validateLiquidityPoolCollateralRatioAndSwapLeverage(
             balance.liquidityPool,
             balance.totalCollateralReceiveFixed,
             balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
             leverage,
             riskIndicators.maxLeveragePerLeg,
-            riskIndicators.maxUtilizationRate,
-            riskIndicators.maxUtilizationRatePerLeg,
+            riskIndicators.maxCollateralRatio,
+            riskIndicators.maxCollateralRatioPerLeg,
             ctx.poolCfg.minLeverage
         );
 
@@ -614,7 +619,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                     ctx.poolCfg.asset,
                     bosStruct.notional,
                     riskIndicators.maxLeveragePerLeg,
-                    riskIndicators.maxUtilizationRatePerLeg,
+                    riskIndicators.maxCollateralRatioPerLeg,
                     riskIndicators.spread,
                     balance.totalCollateralPayFixed,
                     balance.totalCollateralReceiveFixed,
@@ -647,7 +652,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             bosStruct.liquidationDepositAmount,
             bosStruct.openingFeeLPAmount,
             bosStruct.openingFeeTreasuryAmount,
-            ctx.duration
+            ctx.tenor
         );
 
         uint256 newSwapId = IAmmStorage(ctx.poolCfg.ammStorage).updateStorageWhenOpenSwapReceiveFixed(
@@ -675,7 +680,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         uint256 openTimestamp,
         uint256 totalAmount,
         uint256 leverage,
-        AmmTypes.SwapDuration duration,
+        IporTypes.SwapTenor tenor,
         AmmOpenSwapServicePoolConfiguration memory poolCfg
     ) internal view returns (AmmInternalTypes.BeforeOpenSwapStruct memory bosStruct) {
         require(onBehalfOf != address(0), IporErrors.WRONG_ADDRESS);
@@ -696,7 +701,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         );
 
         (uint256 collateral, uint256 notional, uint256 openingFeeAmount) = IporSwapLogic.calculateSwapAmount(
-            duration,
+            tenor,
             wadTotalAmount,
             leverage,
             liquidationDepositAmountWad,
@@ -735,7 +740,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     function _getRiskIndicators(
         address asset,
         uint256 direction,
-        AmmTypes.SwapDuration duration,
+        IporTypes.SwapTenor tenor,
         uint256 liquidityPool,
         uint256 cfgMinLeverage
     ) internal view virtual returns (AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators) {
@@ -743,17 +748,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
 
         (
             maxNotionalPerLeg,
-            riskIndicators.maxUtilizationRatePerLeg,
-            riskIndicators.maxUtilizationRate,
+            riskIndicators.maxCollateralRatioPerLeg,
+            riskIndicators.maxCollateralRatio,
             riskIndicators.spread,
             riskIndicators.fixedRateCap
-        ) = IIporRiskManagementOracle(_iporRiskManagementOracle).getOpenSwapParameters(
-            asset,
-            direction,
-            uint256(duration)
-        );
+        ) = IIporRiskManagementOracle(_iporRiskManagementOracle).getOpenSwapParameters(asset, direction, tenor);
 
-        uint256 maxCollateralPerLeg = IporMath.division(liquidityPool * riskIndicators.maxUtilizationRatePerLeg, 1e18);
+        uint256 maxCollateralPerLeg = IporMath.division(liquidityPool * riskIndicators.maxCollateralRatioPerLeg, 1e18);
 
         if (maxCollateralPerLeg > 0) {
             riskIndicators.maxLeveragePerLeg = _leverageInRange(
@@ -808,36 +809,36 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                 newSwap.liquidationDepositAmount * 1e18
             ),
             newSwap.openTimestamp,
-            newSwap.openTimestamp + IporSwapLogic.getMaturity(newSwap.duration),
+            newSwap.openTimestamp + IporSwapLogic.getTenorInSeconds(newSwap.tenor),
             indicator
         );
     }
 
-    function _validateLiquidityPoolUtilizationAndSwapLeverage(
+    function _validateLiquidityPoolCollateralRatioAndSwapLeverage(
         uint256 totalLiquidityPoolBalance,
         uint256 collateralPerLegBalance,
         uint256 totalCollateralBalance,
         uint256 leverage,
         uint256 maxLeverage,
-        uint256 maxUtilizationRate,
-        uint256 maxUtilizationRatePerLeg,
+        uint256 maxCollateralRatio,
+        uint256 maxCollateralRatioPerLeg,
         uint256 cfgMinLeverage
     ) internal pure {
-        uint256 utilizationRate;
-        uint256 utilizationRatePerLeg;
+        uint256 collateralRatio;
+        uint256 collateralRatioPerLeg;
 
         if (totalLiquidityPoolBalance > 0) {
-            utilizationRate = IporMath.division(totalCollateralBalance * 1e18, totalLiquidityPoolBalance);
+            collateralRatio = IporMath.division(totalCollateralBalance * 1e18, totalLiquidityPoolBalance);
 
-            utilizationRatePerLeg = IporMath.division(collateralPerLegBalance * 1e18, totalLiquidityPoolBalance);
+            collateralRatioPerLeg = IporMath.division(collateralPerLegBalance * 1e18, totalLiquidityPoolBalance);
         } else {
-            utilizationRate = Constants.MAX_VALUE;
-            utilizationRatePerLeg = Constants.MAX_VALUE;
+            collateralRatio = Constants.MAX_VALUE;
+            collateralRatioPerLeg = Constants.MAX_VALUE;
         }
 
-        require(utilizationRate <= maxUtilizationRate, AmmErrors.LP_UTILIZATION_EXCEEDED);
+        require(collateralRatio <= maxCollateralRatio, AmmErrors.LP_COLLATERAL_RATIO_EXCEEDED);
 
-        require(utilizationRatePerLeg <= maxUtilizationRatePerLeg, AmmErrors.LP_UTILIZATION_PER_LEG_EXCEEDED);
+        require(collateralRatioPerLeg <= maxCollateralRatioPerLeg, AmmErrors.LP_COLLATERAL_RATIO_PER_LEG_EXCEEDED);
 
         require(leverage >= cfgMinLeverage, AmmErrors.LEVERAGE_TOO_LOW);
         require(leverage <= maxLeverage, AmmErrors.LEVERAGE_TOO_HIGH);
