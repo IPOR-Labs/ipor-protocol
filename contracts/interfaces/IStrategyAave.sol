@@ -19,8 +19,6 @@ interface IStrategyAave is IStrategy {
     event DoBeforeClaim(address indexed executedBy, address[] shareTokens);
 
     /// @notice Emmited when Stk AAVE address has changed
-    /// @param changedBy account address that has changed Stk AAVE address
-    /// @param oldStkAave old Stk Aave address
     /// @param newStkAave new Stk Aave address
-    event StkAaveChanged(address changedBy, address oldStkAave, address newStkAave);
+    event StkAaveChanged(address newStkAave);
 }
