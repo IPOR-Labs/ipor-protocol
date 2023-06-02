@@ -163,7 +163,7 @@ contract DevDeployment is Script {
             timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
             minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
             minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
-            minLeverage: 0
+            minLeverage: 10 * 1e18
         });
     }
 
@@ -182,7 +182,7 @@ contract DevDeployment is Script {
             liquidationDepositAmount: 25,
             minLeverage: 10 * 1e18,
             openingFeeRate: 5e14,
-            openingFeeTreasuryPortionRate: 0
+            openingFeeTreasuryPortionRate: 5e17
         });
     }
 
