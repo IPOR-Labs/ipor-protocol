@@ -36,7 +36,7 @@ import "../contracts/amm/AmmTreasury.sol";
 // get private key from anvil then set SC_ADMIN_PRIV_KEY variable in .env file
 // then run:
 // $ forge script scripts/DeployLocal.s.sol --fork-url http://127.0.0.1:8545 --broadcast
-contract DeployLocal is Script {
+contract DevDeployment is Script {
     struct IporProtocol {
         address asset;
         address ipToken;
@@ -90,13 +90,14 @@ contract DeployLocal is Script {
     }
 
     function run() public {
+        Amm memory amm;
         vm.startBroadcast(_private_key);
-        _getFullInstance(ammConfig);
+        _getFullInstance(ammConfig, amm);
         vm.stopBroadcast();
+        _toAddressesJson(amm);
     }
 
-    function _getFullInstance(AmmConfig memory cfg) internal {
-        Amm memory amm;
+    function _getFullInstance(AmmConfig memory cfg, Amm memory amm) internal {
         deployEmptyRouter(amm);
         deployEmptyTreasury(amm);
         deployAssets(amm);
@@ -679,5 +680,58 @@ contract DeployLocal is Script {
         });
 
         IporProtocolRouter(amm.router).upgradeTo(address(new IporProtocolRouter(deployedContracts)));
+    }
+
+    function _toAddressesJson(Amm memory amm) internal {
+        string memory path = vm.projectRoot();
+        string memory addressesJson = "";
+
+        vm.serializeAddress(addressesJson, "USDT", amm.usdt.asset);
+        vm.serializeAddress(addressesJson, "USDC", amm.usdc.asset);
+        vm.serializeAddress(addressesJson, "DAI", amm.dai.asset);
+
+        vm.serializeAddress(addressesJson, "ipUSDT", amm.usdt.ipToken);
+        vm.serializeAddress(addressesJson, "ipUSDC", amm.usdc.ipToken);
+        vm.serializeAddress(addressesJson, "ipDAI", amm.dai.ipToken);
+
+        vm.serializeAddress(addressesJson, "ivUSDT", amm.usdt.ivToken);
+        vm.serializeAddress(addressesJson, "ivUSDC", amm.usdc.ivToken);
+        vm.serializeAddress(addressesJson, "ivDAI", amm.dai.ivToken);
+
+        vm.serializeAddress(addressesJson, "aUSDT", amm.usdt.aToken);
+        vm.serializeAddress(addressesJson, "aUSDC", amm.usdc.aToken);
+        vm.serializeAddress(addressesJson, "aDAI", amm.dai.aToken);
+
+        vm.serializeAddress(addressesJson, "cUSDT", amm.usdt.cToken);
+        vm.serializeAddress(addressesJson, "cUSDC", amm.usdc.cToken);
+        vm.serializeAddress(addressesJson, "cDAI", amm.dai.cToken);
+
+        vm.serializeAddress(addressesJson, "StrategyCompoundUsdt", amm.usdt.strategyCompound);
+        vm.serializeAddress(addressesJson, "StrategyCompoundUsdc", amm.usdc.strategyCompound);
+        vm.serializeAddress(addressesJson, "StrategyCompoundDai", amm.dai.strategyCompound);
+
+        vm.serializeAddress(addressesJson, "StrategyAaveUsdt", amm.usdt.strategyAave);
+        vm.serializeAddress(addressesJson, "StrategyAaveUsdc", amm.usdc.strategyAave);
+        vm.serializeAddress(addressesJson, "StrategyAaveDai", amm.dai.strategyAave);
+
+        vm.serializeAddress(addressesJson, "AmmStorageUsdt", amm.usdt.ammStorage);
+        vm.serializeAddress(addressesJson, "AmmStorageUsdc", amm.usdc.ammStorage);
+        vm.serializeAddress(addressesJson, "AmmStorageDai", amm.dai.ammStorage);
+
+        vm.serializeAddress(addressesJson, "AssetManagementUsdt", amm.usdt.assetManagement);
+        vm.serializeAddress(addressesJson, "AssetManagementUsdc", amm.usdc.assetManagement);
+        vm.serializeAddress(addressesJson, "AssetManagementDai", amm.dai.assetManagement);
+
+        vm.serializeAddress(addressesJson, "AmmTreasuryUsdt", amm.usdt.ammTreasury);
+        vm.serializeAddress(addressesJson, "AmmTreasuryUsdc", amm.usdc.ammTreasury);
+        vm.serializeAddress(addressesJson, "AmmTreasuryDai", amm.dai.ammTreasury);
+
+        vm.serializeAddress(addressesJson, "SpreadRouter", amm.spreadRouter);
+        vm.serializeAddress(addressesJson, "IporOracle", amm.iporOracle);
+        vm.serializeAddress(addressesJson, "IporRiskManagementOracle", amm.iporRiskManagementOracle);
+
+        string memory finalJson = vm.serializeAddress(addressesJson, "IporProtocolRouter", amm.router);
+
+        vm.writeJson(finalJson, string.concat(path, "/addresses.json"));
     }
 }
