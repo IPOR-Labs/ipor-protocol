@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 
-import "./types/IporTypes.sol";
-import "./types/AmmTypes.sol";
-import "./types/AmmStorageTypes.sol";
-import "../amm/libraries/types/AmmInternalTypes.sol";
+import "contracts/interfaces/types/IporTypes.sol";
+import "contracts/interfaces/types/AmmTypes.sol";
+import "contracts/interfaces/types/AmmStorageTypes.sol";
+import "contracts/amm/libraries/types/AmmInternalTypes.sol";
 
 /// @title Interface for interaction with AmmTreasury Storage smart contract, reposnsible for managing AMM storage.
 interface IAmmStorage {
@@ -47,13 +47,21 @@ interface IAmmStorage {
     /// @return balance structure {AmmStorageTypes.ExtendedBalancesMemory}
     function getExtendedBalance() external view returns (AmmStorageTypes.ExtendedBalancesMemory memory);
 
+    function getSoapIndicators()
+        external
+        view
+        returns (
+            AmmStorageTypes.SoapIndicators memory indicatorsPayFixed,
+            AmmStorageTypes.SoapIndicators memory indicatorsReceiveFixed
+        );
+
     /// @notice Gets total outstanding notional.
     /// @return totalNotionalPayFixed Sum of notional amount of all swaps for Pay-Fixed leg, represented in 18 decimals
     /// @return totalNotionalReceiveFixed Sum of notional amount of all swaps for Receive-Fixed leg, represented in 18 decimals
-    function getTotalOutstandingNotional()
-        external
-        view
-        returns (uint256 totalNotionalPayFixed, uint256 totalNotionalReceiveFixed);
+//    function getTotalOutstandingNotional()
+//        external
+//        view
+//        returns (uint256 totalNotionalPayFixed, uint256 totalNotionalReceiveFixed);
 
     /// @notice Gets Pay-Fixed swap for a given swap ID
     /// @param swapId swap ID.
@@ -131,32 +139,32 @@ interface IAmmStorage {
     /// @return soapPayFixed SOAP for Pay-Fixed and Receive-Floating leg, represented in 18 decimals
     /// @return soapReceiveFixed SOAP for Receive-Fixed and Pay-Floating leg, represented in 18 decimals
     /// @return soap Sum of SOAP for Pay-Fixed leg and Receive-Fixed leg , represented in 18 decimals
-    function calculateSoap(uint256 ibtPrice, uint256 calculateTimestamp)
-        external
-        view
-        returns (
-            int256 soapPayFixed,
-            int256 soapReceiveFixed,
-            int256 soap
-        );
+//    function calculateSoap(uint256 ibtPrice, uint256 calculateTimestamp)
+//        external
+//        view
+//        returns (
+//            int256 soapPayFixed,
+//            int256 soapReceiveFixed,
+//            int256 soap
+//        );
 
     /// @notice Calculates SOAP for Pay-Fixed leg at given IBT price and time.
     /// @param ibtPrice IBT (Interest Bearing Token) price
     /// @param calculateTimestamp epoch timestamp, the time for which SOAP is calculated
     /// @return soapPayFixed SOAP for Pay-Fixed leg, represented in 18 decimals
-    function calculateSoapPayFixed(uint256 ibtPrice, uint256 calculateTimestamp)
-        external
-        view
-        returns (int256 soapPayFixed);
+//    function calculateSoapPayFixed(uint256 ibtPrice, uint256 calculateTimestamp)
+//    external
+//    view
+//    returns (int256 soapPayFixed);
 
     /// @notice Calculates SOAP for Receive-Fixed leg at given IBT price and time.
     /// @param ibtPrice IBT (Interest Bearing Token) price
     /// @param calculateTimestamp epoch timestamp, the time for which SOAP is calculated
     /// @return soapReceiveFixed SOAP for Receive-Fixed leg, represented in 18 decimals
-    function calculateSoapReceiveFixed(uint256 ibtPrice, uint256 calculateTimestamp)
-        external
-        view
-        returns (int256 soapReceiveFixed);
+//    function calculateSoapReceiveFixed(uint256 ibtPrice, uint256 calculateTimestamp)
+//        external
+//        view
+//        returns (int256 soapReceiveFixed);
 
     /// @notice add liquidity to the Liquidity Pool. Function available only to Router.
     /// @param account account address who execute request for redeem asset amount

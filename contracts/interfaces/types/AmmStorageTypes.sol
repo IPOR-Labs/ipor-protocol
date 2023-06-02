@@ -29,4 +29,23 @@ library AmmStorageTypes {
         /// @notice Balance of the DAO's treasury. Fed by portion of the opening fee set by the DAO
         uint256 treasury;
     }
+
+    /// @notice A struct with parameters required to calculate SOAP for pay fixed and receive fixed legs.
+    /// @dev Committed to the memory.
+    struct SoapIndicators {
+        /// @notice Value of interest accrued on a fixed leg of all derivatives for this particular type of swap.
+        /// @dev Is represented in 18 decimals.
+        uint256 hypotheticalInterestCumulative;
+        /// @notice Sum of all swaps' notional amounts for a given leg.
+        /// @dev Is represented in 18 decimals.
+        uint256 totalNotional;
+        /// @notice Sum of all IBTs on a given leg.
+        /// @dev Is represented in 18 decimals.
+        uint256 totalIbtQuantity;
+        /// @notice The notional-weighted average interest rate of all swaps on a given leg combined.
+        /// @dev Is represented in 18 decimals.
+        uint256 averageInterestRate;
+        /// @notice EPOCH timestamp of when the most recent rebalancing took place
+        uint256 rebalanceTimestamp;
+    }
 }

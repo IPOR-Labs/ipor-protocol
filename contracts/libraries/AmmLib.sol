@@ -1,18 +1,22 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "../libraries/Constants.sol";
-import "../libraries/math/IporMath.sol";
-import "../libraries/errors/IporErrors.sol";
-import "../libraries/errors/AmmErrors.sol";
-import "../interfaces/IIpToken.sol";
-import "../interfaces/IIporOracle.sol";
-import "../interfaces/IAmmStorage.sol";
-import "../interfaces/IAssetManagement.sol";
+
+import "contracts/libraries/Constants.sol";
+import "contracts/libraries/math/IporMath.sol";
+import "contracts/libraries/errors/IporErrors.sol";
+import "contracts/libraries/errors/AmmErrors.sol";
+import "contracts/amm/libraries/SoapIndicatorLogic.sol";
+import "contracts/interfaces/types/AmmStorageTypes.sol";
+import "contracts/interfaces/IIpToken.sol";
+import "contracts/interfaces/IIporOracle.sol";
+import "contracts/interfaces/IAmmStorage.sol";
+import "contracts/interfaces/IAssetManagement.sol";
 
 library AmmLib {
     using SafeCast for uint256;
     using SafeCast for int256;
+    using SoapIndicatorLogic for AmmStorageTypes.SoapIndicators;
 
     function getExchangeRate(AmmTypes.AmmPoolCoreModel memory model) internal view returns (uint256) {
         (, , int256 soap) = getSOAP(model);
@@ -62,10 +66,17 @@ library AmmLib {
             int256 soap
         )
     {
-        (soapPayFixed, soapReceiveFixed, soap) = IAmmStorage(model.ammStorage).calculateSoap(
-            IIporOracle(model.iporOracle).calculateAccruedIbtPrice(model.asset, block.timestamp),
-            block.timestamp
-        );
+        uint256 timestamp = block.timestamp;
+        (
+            AmmStorageTypes.SoapIndicators memory indicatorsPayFixed,
+            AmmStorageTypes.SoapIndicators memory indicatorsReceiveFixed
+        ) = IAmmStorage(model.ammStorage).getSoapIndicators();
+
+        uint256 ibtPrice = IIporOracle(model.iporOracle).calculateAccruedIbtPrice(model.asset, timestamp);
+
+        soapPayFixed = indicatorsPayFixed.calculateSoapPayFixed(timestamp, ibtPrice);
+        soapReceiveFixed = indicatorsReceiveFixed.calculateSoapReceiveFixed(timestamp, ibtPrice);
+        soap = soapPayFixed + soapReceiveFixed;
     }
 
     function getAccruedBalance(AmmTypes.AmmPoolCoreModel memory model)
