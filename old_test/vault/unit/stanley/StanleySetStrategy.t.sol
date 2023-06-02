@@ -19,7 +19,7 @@ contract AssetManagementSetStrategyTest is TestCommons, DataUtils {
     AssetManagementDai internal _assetManagementDai;
     IvToken internal _ivTokenDai;
 
-    event StrategyChanged(address changedBy, address oldStrategy, address newStrategy, address newShareToken);
+    event StrategyChanged(address newStrategy, address newShareToken);
 
     function setUp() public {
         _daiMockedToken = getTokenDai();
@@ -59,7 +59,7 @@ contract AssetManagementSetStrategyTest is TestCommons, DataUtils {
         _strategyAaveDai.setBalance(TestConstants.USD_1_000_18DEC);
         // when
         vm.expectEmit(true, true, true, true);
-        emit StrategyChanged(_admin, address(_strategyAaveDai), address(newStrategyAaveDai), address(_aDai));
+        emit StrategyChanged(address(newStrategyAaveDai), address(_aDai));
         _assetManagementDai.setStrategyAave(address(newStrategyAaveDai));
         // then
         uint256 newStrategyBalanceAfter = newStrategyAaveDai.balanceOf();
@@ -75,7 +75,7 @@ contract AssetManagementSetStrategyTest is TestCommons, DataUtils {
         uint256 newStrategyBalanceBefore = newStrategyAaveDai.balanceOf();
         // when
         vm.expectEmit(true, true, true, true);
-        emit StrategyChanged(_admin, address(_strategyAaveDai), address(newStrategyAaveDai), address(_aDai));
+        emit StrategyChanged(address(newStrategyAaveDai), address(_aDai));
         _assetManagementDai.setStrategyAave(address(newStrategyAaveDai));
         // then
         uint256 oldStrategyBalanceAfter = _strategyAaveDai.balanceOf();
@@ -114,7 +114,7 @@ contract AssetManagementSetStrategyTest is TestCommons, DataUtils {
         _strategyCompoundDai.setBalance(TestConstants.USD_1_000_18DEC);
         // when
         vm.expectEmit(true, true, true, true);
-        emit StrategyChanged(_admin, address(_strategyCompoundDai), address(newStrategyCompoundDai), address(_cDai));
+        emit StrategyChanged(address(newStrategyCompoundDai), address(_cDai));
         _assetManagementDai.setStrategyCompound(address(newStrategyCompoundDai));
         // then
         uint256 newStrategyBalanceAfter = newStrategyCompoundDai.balanceOf();

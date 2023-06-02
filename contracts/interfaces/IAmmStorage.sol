@@ -248,8 +248,6 @@ interface IAmmStorage {
     function getLiquidityPoolAccountContribution(address account) external view returns (uint256);
 
     /// @notice Emitted when AMM Treausury address has changed by the smart contract Owner.
-    /// @param changedBy account address that has changed AmmTreasury's address
-    /// @param oldAmmTreasury old AmmTreasury's address
     /// @param newAmmTreasury new AmmTreasury's address
-    event AmmTreasuryChanged(address changedBy, address oldAmmTreasury, address newAmmTreasury);
+    event AmmTreasuryChanged(address newAmmTreasury);
 }

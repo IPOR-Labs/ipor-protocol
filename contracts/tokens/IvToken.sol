@@ -38,9 +38,8 @@ contract IvToken is IporOwnable, IIvToken, ERC20 {
 
     function setAssetManagement(address newAssetManagement) external override onlyOwner {
         require(newAssetManagement != address(0), IporErrors.WRONG_ADDRESS);
-        address oldAssetManagement = _assetManagement;
         _assetManagement = newAssetManagement;
-        emit AssetManagementChanged(_msgSender(), oldAssetManagement, newAssetManagement);
+        emit AssetManagementChanged(newAssetManagement);
     }
 
     function mint(address account, uint256 amount) external override onlyAssetManagement {

@@ -38,12 +38,8 @@ interface IIpToken is IERC20 {
     event Burn(address indexed account, uint256 amount);
 
     /// @notice Emmited when Router address is changed by its owner.
-    /// @param changedBy account address that changed Router's address
-    /// @param oldRouter old address of Router
     /// @param newRouter new address of Router
     event RouterChanged(
-        address indexed changedBy,
-        address indexed oldRouter,
         address indexed newRouter
     );
 }
