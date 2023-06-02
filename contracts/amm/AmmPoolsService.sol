@@ -126,28 +126,28 @@ contract AmmPoolsService is IAmmPoolsService {
         return _getPoolConfiguration(asset);
     }
 
-    function provideLiquidityUsdt(address onBehalfOf, uint256 assetAmount) external override {
-        _provideLiquidity(_usdt, onBehalfOf, assetAmount);
+    function provideLiquidityUsdt(address beneficiary, uint256 assetAmount) external override {
+        _provideLiquidity(_usdt, beneficiary, assetAmount);
     }
 
-    function provideLiquidityUsdc(address onBehalfOf, uint256 assetAmount) external override {
-        _provideLiquidity(_usdc, onBehalfOf, assetAmount);
+    function provideLiquidityUsdc(address beneficiary, uint256 assetAmount) external override {
+        _provideLiquidity(_usdc, beneficiary, assetAmount);
     }
 
-    function provideLiquidityDai(address onBehalfOf, uint256 assetAmount) external override {
-        _provideLiquidity(_dai, onBehalfOf, assetAmount);
+    function provideLiquidityDai(address beneficiary, uint256 assetAmount) external override {
+        _provideLiquidity(_dai, beneficiary, assetAmount);
     }
 
-    function redeemFromAmmPoolUsdt(address onBehalfOf, uint256 ipTokenAmount) external override {
-        _redeem(_usdt, onBehalfOf, ipTokenAmount);
+    function redeemFromAmmPoolUsdt(address beneficiary, uint256 ipTokenAmount) external override {
+        _redeem(_usdt, beneficiary, ipTokenAmount);
     }
 
-    function redeemFromAmmPoolUsdc(address onBehalfOf, uint256 ipTokenAmount) external override {
-        _redeem(_usdc, onBehalfOf, ipTokenAmount);
+    function redeemFromAmmPoolUsdc(address beneficiary, uint256 ipTokenAmount) external override {
+        _redeem(_usdc, beneficiary, ipTokenAmount);
     }
 
-    function redeemFromAmmPoolDai(address onBehalfOf, uint256 ipTokenAmount) external override {
-        _redeem(_dai, onBehalfOf, ipTokenAmount);
+    function redeemFromAmmPoolDai(address beneficiary, uint256 ipTokenAmount) external override {
+        _redeem(_dai, beneficiary, ipTokenAmount);
     }
 
     function rebalanceBetweenAmmTreasuryAndAssetManagement(address asset) external override {
@@ -194,7 +194,7 @@ contract AmmPoolsService is IAmmPoolsService {
 
     function _provideLiquidity(
         address asset,
-        address onBehalfOf,
+        address beneficiary,
         uint256 assetAmount
     ) internal {
         AmmPoolsServicePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
@@ -219,7 +219,7 @@ contract AmmPoolsService is IAmmPoolsService {
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmount, poolCfg.decimals);
 
         IAmmStorage(poolCfg.ammStorage).addLiquidity(
-            onBehalfOf,
+            beneficiary,
             wadAssetAmount,
             uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
             uint256(ammPoolsParamsCfg.maxLpAccountContribution) * 1e18
@@ -229,14 +229,14 @@ contract AmmPoolsService is IAmmPoolsService {
 
         uint256 ipTokenAmount = IporMath.division(wadAssetAmount * 1e18, exchangeRate);
 
-        IIpToken(poolCfg.ipToken).mint(onBehalfOf, ipTokenAmount);
+        IIpToken(poolCfg.ipToken).mint(beneficiary, ipTokenAmount);
 
         /// @dev Order of the following two functions is important, first safeTransferFrom, then rebalanceIfNeededAfterProvideLiquidity.
         _rebalanceIfNeededAfterProvideLiquidity(poolCfg, ammPoolsParamsCfg, balance.vault, wadAssetAmount);
 
         emit ProvideLiquidity(
             block.timestamp,
-            onBehalfOf,
+            beneficiary,
             poolCfg.ammTreasury,
             exchangeRate,
             wadAssetAmount,
@@ -246,7 +246,7 @@ contract AmmPoolsService is IAmmPoolsService {
 
     function _redeem(
         address asset,
-        address onBehalfOf,
+        address beneficiary,
         uint256 ipTokenAmount
     ) internal {
         AmmPoolsServicePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
@@ -303,12 +303,12 @@ contract AmmPoolsService is IAmmPoolsService {
 
         IAmmStorage(poolCfg.ammStorage).subtractLiquidity(redeemMoney.wadRedeemAmount);
 
-        IERC20Upgradeable(asset).safeTransferFrom(poolCfg.ammTreasury, onBehalfOf, redeemMoney.redeemAmount);
+        IERC20Upgradeable(asset).safeTransferFrom(poolCfg.ammTreasury, beneficiary, redeemMoney.redeemAmount);
 
         emit Redeem(
             block.timestamp,
             poolCfg.ammTreasury,
-            onBehalfOf,
+            beneficiary,
             exchangeRate,
             redeemMoney.wadAssetAmount,
             ipTokenAmount,

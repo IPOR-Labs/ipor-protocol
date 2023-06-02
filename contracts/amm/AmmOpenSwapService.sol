@@ -60,7 +60,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     address internal immutable _spreadRouter;
 
     struct Context {
-        address onBehalfOf;
+        address beneficiary;
         /// @notice swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
         IporTypes.SwapTenor tenor;
         string spreadMethodSig;
@@ -148,13 +148,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapPayFixed28daysUsdt(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            onBehalfOf: onBehalfOf,
+            beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_28,
             spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdt)
@@ -163,13 +163,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapPayFixed60daysUsdt(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            onBehalfOf: onBehalfOf,
+            beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_60,
             spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdt)
@@ -178,13 +178,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapPayFixed90daysUsdt(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            onBehalfOf: onBehalfOf,
+            beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_90,
             spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdt)
@@ -193,13 +193,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapReceiveFixed28daysUsdt(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            onBehalfOf: onBehalfOf,
+            beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_28,
             spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdt)
@@ -209,14 +209,14 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapReceiveFixed60daysUsdt(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
-        require(onBehalfOf != address(0), "AmmOpenSwapService: onBehalfOf is zero address");
+        require(beneficiary != address(0), "AmmOpenSwapService: beneficiary is zero address");
         Context memory context = Context({
-            onBehalfOf: onBehalfOf,
+            beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_60,
             spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdt)
@@ -225,13 +225,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapReceiveFixed90daysUsdt(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            onBehalfOf: onBehalfOf,
+            beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_90,
             spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdt)
@@ -240,13 +240,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapPayFixed28daysUsdc(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            onBehalfOf: onBehalfOf,
+            beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_28,
             spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdc)
@@ -256,13 +256,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapPayFixed60daysUsdc(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            onBehalfOf: onBehalfOf,
+            beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_60,
             spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdc)
@@ -271,13 +271,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapPayFixed90daysUsdc(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            onBehalfOf: onBehalfOf,
+            beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_90,
             spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdc)
@@ -286,13 +286,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapReceiveFixed28daysUsdc(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            onBehalfOf: onBehalfOf,
+            beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_28,
             spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdc)
@@ -301,13 +301,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapReceiveFixed60daysUsdc(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            onBehalfOf: onBehalfOf,
+            beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_60,
             spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdc)
@@ -316,13 +316,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapReceiveFixed90daysUsdc(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            onBehalfOf: onBehalfOf,
+            beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_90,
             spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_usdc)
@@ -331,13 +331,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapPayFixed28daysDai(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            onBehalfOf: onBehalfOf,
+            beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_28,
             spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_dai)
@@ -346,13 +346,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapPayFixed60daysDai(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            onBehalfOf: onBehalfOf,
+            beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_60,
             spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_dai)
@@ -361,13 +361,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapPayFixed90daysDai(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            onBehalfOf: onBehalfOf,
+            beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_90,
             spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_dai)
@@ -376,13 +376,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapReceiveFixed28daysDai(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            onBehalfOf: onBehalfOf,
+            beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_28,
             spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_dai)
@@ -391,13 +391,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapReceiveFixed60daysDai(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            onBehalfOf: onBehalfOf,
+            beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_60,
             spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_dai)
@@ -406,13 +406,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapReceiveFixed90daysDai(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            onBehalfOf: onBehalfOf,
+            beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_90,
             spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
             poolCfg: _getPoolConfiguration(_dai)
@@ -475,7 +475,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         uint256 leverage
     ) internal returns (uint256) {
         AmmInternalTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
-            ctx.onBehalfOf,
+            ctx.beneficiary,
             block.timestamp,
             totalAmount,
             leverage,
@@ -541,7 +541,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         );
 
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(
-            ctx.onBehalfOf,
+            ctx.beneficiary,
             block.timestamp,
             bosStruct.collateral,
             bosStruct.notional,
@@ -580,7 +580,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         uint256 leverage
     ) internal returns (uint256) {
         AmmInternalTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
-            ctx.onBehalfOf,
+            ctx.beneficiary,
             block.timestamp,
             totalAmount,
             leverage,
@@ -643,7 +643,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         );
 
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(
-            ctx.onBehalfOf,
+            ctx.beneficiary,
             block.timestamp,
             bosStruct.collateral,
             bosStruct.notional,
@@ -676,14 +676,14 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function _beforeOpenSwap(
-        address onBehalfOf,
+        address beneficiary,
         uint256 openTimestamp,
         uint256 totalAmount,
         uint256 leverage,
         IporTypes.SwapTenor tenor,
         AmmOpenSwapServicePoolConfiguration memory poolCfg
     ) internal view returns (AmmInternalTypes.BeforeOpenSwapStruct memory bosStruct) {
-        require(onBehalfOf != address(0), IporErrors.WRONG_ADDRESS);
+        require(beneficiary != address(0), IporErrors.WRONG_ADDRESS);
 
         require(totalAmount > 0, AmmErrors.TOTAL_AMOUNT_TOO_LOW);
 

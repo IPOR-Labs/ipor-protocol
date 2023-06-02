@@ -11,7 +11,7 @@ library PowerTokenTypes {
     }
 
     struct UpdateStakedToken {
-        address onBehalfOf;
+        address beneficiary;
         uint256 stakedTokenAmount;
     }
 }
