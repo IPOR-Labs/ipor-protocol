@@ -119,7 +119,7 @@ contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
 
         // then
         AmmStorage ammStorage = daiAmm.ammStorage();
-        IporTypes.IporSwapMemory memory swap = ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = ammStorage.getSwapPayFixed(1);
 
         assertEq(swap.id, 1);
         assertEq(swap.buyer, user);
@@ -154,7 +154,7 @@ contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
 
         // then
         AmmStorage ammStorage = daiAmm.ammStorage();
-        IporTypes.IporSwapMemory memory swap = ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = ammStorage.getSwapReceiveFixed(1);
 
         assertEq(swap.id, 1);
         assertEq(swap.buyer, user);
@@ -184,13 +184,13 @@ contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
 
         vm.prank(userTwo);
         uint256 swapId = ammTreasury.openSwapPayFixed(100e18, 9e16, 10e18);
-        IporTypes.IporSwapMemory memory swapBefore = ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swapBefore = ammStorage.getSwapPayFixed(1);
 
         // when
         ammTreasury.closeSwapPayFixed(swapId);
 
         // then
-        IporTypes.IporSwapMemory memory swapAfter = ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swapAfter = ammStorage.getSwapPayFixed(1);
 
         assertEq(swapBefore.id, swapAfter.id);
         assertEq(swapBefore.buyer, swapAfter.buyer);
@@ -228,13 +228,13 @@ contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
 
         vm.prank(userTwo);
         uint256 swapId = ammTreasury.openSwapReceiveFixed(100e18, 1e16, 10e18);
-        IporTypes.IporSwapMemory memory swapBefore = ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swapBefore = ammStorage.getSwapReceiveFixed(1);
 
         // when
         ammTreasury.closeSwapReceiveFixed(swapId);
 
         // then
-        IporTypes.IporSwapMemory memory swapAfter = ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swapAfter = ammStorage.getSwapReceiveFixed(1);
 
         assertEq(swapBefore.id, swapAfter.id);
         assertEq(swapBefore.buyer, swapAfter.buyer);

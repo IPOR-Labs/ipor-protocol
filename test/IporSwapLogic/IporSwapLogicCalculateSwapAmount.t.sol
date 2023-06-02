@@ -16,7 +16,7 @@ contract IporSwapLogicCalculateInterest is TestCommons, DataUtils {
 
     function testShouldCalculateSwapAmountSimpleCase1000Leverage() public {
         //given
-        AmmTypes.SwapDuration swapDuration = AmmTypes.SwapDuration.DAYS_28;
+        IporTypes.SwapTenor tenor = IporTypes.SwapTenor.DAYS_28;
         uint256 totalAmount = 1000e18;
         uint256 leverage = 1000e18;
         uint256 liquidationDepositAmount = 20e18;
@@ -25,7 +25,7 @@ contract IporSwapLogicCalculateInterest is TestCommons, DataUtils {
 
         //when
         (uint256 collateral, , uint256 openingFee) = _iporSwapLogic.calculateSwapAmount(
-            swapDuration,
+            tenor,
             totalAmount,
             leverage,
             liquidationDepositAmount,
@@ -45,7 +45,7 @@ contract IporSwapLogicCalculateInterest is TestCommons, DataUtils {
 
     function testShouldCalculateSwapAmountSimpleCase10Leverage() public {
         //given
-        AmmTypes.SwapDuration swapDuration = AmmTypes.SwapDuration.DAYS_28;
+        IporTypes.SwapTenor tenor = IporTypes.SwapTenor.DAYS_28;
         uint256 totalAmount = 1000e18;
         uint256 leverage = 10e18;
         uint256 liquidationDepositAmount = 20e18;
@@ -54,7 +54,7 @@ contract IporSwapLogicCalculateInterest is TestCommons, DataUtils {
 
         //when
         (uint256 collateral, , uint256 openingFee) = _iporSwapLogic.calculateSwapAmount(
-            swapDuration,
+            tenor,
             totalAmount,
             leverage,
             liquidationDepositAmount,
@@ -74,7 +74,7 @@ contract IporSwapLogicCalculateInterest is TestCommons, DataUtils {
 
     function testShouldCalculateSwapAmount100OpeningFeeRate() public {
         //given
-        AmmTypes.SwapDuration swapDuration = AmmTypes.SwapDuration.DAYS_28;
+        IporTypes.SwapTenor tenor = IporTypes.SwapTenor.DAYS_28;
         uint256 totalAmount = 1000e18;
         uint256 leverage = 1000e18;
         uint256 liquidationDepositAmount = 20e18;
@@ -83,7 +83,7 @@ contract IporSwapLogicCalculateInterest is TestCommons, DataUtils {
 
         //when
         (uint256 collateral, , uint256 openingFee) = _iporSwapLogic.calculateSwapAmount(
-            swapDuration,
+            tenor,
             totalAmount,
             leverage,
             liquidationDepositAmount,
@@ -103,7 +103,7 @@ contract IporSwapLogicCalculateInterest is TestCommons, DataUtils {
 
     function testShouldCalculateSwapAmountZeroPercentOpeningFeeRate() public {
         //given
-        AmmTypes.SwapDuration swapDuration = AmmTypes.SwapDuration.DAYS_28;
+        IporTypes.SwapTenor tenor = IporTypes.SwapTenor.DAYS_28;
         uint256 totalAmount = 1000e18;
         uint256 leverage = 1000e18;
         uint256 liquidationDepositAmount = 20e18;
@@ -112,7 +112,7 @@ contract IporSwapLogicCalculateInterest is TestCommons, DataUtils {
 
         //when
         (uint256 collateral, , uint256 openingFee) = _iporSwapLogic.calculateSwapAmount(
-            swapDuration,
+            tenor,
             totalAmount,
             leverage,
             liquidationDepositAmount,
@@ -132,7 +132,7 @@ contract IporSwapLogicCalculateInterest is TestCommons, DataUtils {
 
     function testShouldCalculateSwapAmountOpeningFeeRateLeverageZero() public {
         //given
-        AmmTypes.SwapDuration swapDuration = AmmTypes.SwapDuration.DAYS_28;
+        IporTypes.SwapTenor tenor = IporTypes.SwapTenor.DAYS_28;
         uint256 totalAmount = 1000e18;
         uint256 leverage = 0;
         uint256 liquidationDepositAmount = 20e18;
@@ -141,7 +141,7 @@ contract IporSwapLogicCalculateInterest is TestCommons, DataUtils {
 
         //when
         (uint256 collateral, , uint256 openingFee) = _iporSwapLogic.calculateSwapAmount(
-            swapDuration,
+            tenor,
             totalAmount,
             leverage,
             liquidationDepositAmount,

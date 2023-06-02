@@ -1081,9 +1081,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         ammTreasury.addSwapLiquidator(_liquidator);
@@ -1103,7 +1103,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
@@ -1152,9 +1152,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         ammTreasury.addSwapLiquidator(_liquidator);
@@ -1174,7 +1174,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
@@ -1221,9 +1221,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -1241,7 +1241,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
@@ -1288,9 +1288,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 24 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -1308,7 +1308,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
@@ -1355,9 +1355,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         ammTreasury.addSwapLiquidator(_liquidator);
@@ -1377,7 +1377,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
@@ -1424,9 +1424,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -1444,7 +1444,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
@@ -1494,9 +1494,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -1514,7 +1514,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -1566,9 +1566,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -1586,7 +1586,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -1636,9 +1636,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         ammTreasury.addSwapLiquidator(_liquidator);
@@ -1658,7 +1658,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -1708,9 +1708,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         ammTreasury.addSwapLiquidator(_liquidator);
@@ -1730,7 +1730,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -1780,9 +1780,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -1800,7 +1800,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -1850,9 +1850,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 24 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -1870,7 +1870,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -1920,9 +1920,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         ammTreasury.addSwapLiquidator(_liquidator);
@@ -1942,7 +1942,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -1992,9 +1992,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -2012,7 +2012,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -2062,9 +2062,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -2083,7 +2083,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -2133,9 +2133,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -2154,7 +2154,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -2204,9 +2204,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -2225,7 +2225,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -2275,9 +2275,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -2295,7 +2295,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -2346,9 +2346,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         ammTreasury.addSwapLiquidator(_liquidator);
@@ -2420,9 +2420,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         ammTreasury.addSwapLiquidator(_liquidator);
@@ -2488,9 +2488,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -2508,7 +2508,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
@@ -2555,9 +2555,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 24 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -2575,7 +2575,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
@@ -2622,9 +2622,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         ammTreasury.addSwapLiquidator(_liquidator);
@@ -2644,7 +2644,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
@@ -2691,9 +2691,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -2711,7 +2711,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
@@ -2759,9 +2759,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -2779,7 +2779,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -2831,9 +2831,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -2851,7 +2851,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -2905,9 +2905,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -2925,7 +2925,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -2975,9 +2975,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         ammTreasury.addSwapLiquidator(_liquidator);
@@ -2997,7 +2997,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3047,9 +3047,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         ammTreasury.addSwapLiquidator(_liquidator);
@@ -3069,7 +3069,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3119,9 +3119,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -3139,7 +3139,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3189,9 +3189,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 24 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -3209,7 +3209,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3259,9 +3259,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         ammTreasury.addSwapLiquidator(_liquidator);
@@ -3281,7 +3281,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3331,9 +3331,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -3351,7 +3351,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3401,9 +3401,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -3422,7 +3422,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3472,9 +3472,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -3493,7 +3493,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3543,9 +3543,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -3564,7 +3564,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3614,9 +3614,9 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(swap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
@@ -3634,7 +3634,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);

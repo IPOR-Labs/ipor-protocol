@@ -97,7 +97,10 @@ interface IAmmSwapsLens {
 
     /// @notice Gets the balances required to open a swap.
     /// @return AmmBalancesForOpenSwapMemory The balances required for opening a swap.
-    function getBalancesForOpenSwap(address asset) external view returns (IporTypes.AmmBalancesForOpenSwapMemory memory);
+    function getBalancesForOpenSwap(address asset)
+        external
+        view
+        returns (IporTypes.AmmBalancesForOpenSwapMemory memory);
 
     function getSOAP(address asset)
         external
@@ -109,11 +112,15 @@ interface IAmmSwapsLens {
         );
 
     /**
-     * @dev Returns the asset configuration details for a given asset, direction and duration.
+     * @dev Returns the asset configuration details for a given asset, direction and tenor.
      * @param asset The address of the asset.
      * @param direction The direction of the swap (0 for pay fixed, 1 for receive fixed).
-     * @param duration The duration of the swap
+     * @param tenor The duration of the swap
      * @return The asset configuration details.
      */
-    function getAmmSwapsLensConfiguration(address asset, uint256 direction, uint256 duration) external view returns (AmmFacadeTypes.AssetConfiguration memory);
+    function getAmmSwapsLensConfiguration(
+        address asset,
+        uint256 direction,
+        IporTypes.SwapTenor tenor
+    ) external view returns (AmmFacadeTypes.AssetConfiguration memory);
 }

@@ -38,8 +38,8 @@ contract ItfLiquidator {
 //            payFixedClosedSwaps = new AmmTypes.IporSwapClosingResult[](payFixedSwapIdsLength);
 //            for (uint256 i; i < payFixedSwapIdsLength; ++i) {
 //                swapId = payFixedSwapIds[i];
-//                IporTypes.IporSwapMemory memory iporSwap = ammStorage.getSwapPayFixed(swapId);
-//                if (iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE)) {
+//                AmmTypes.Swap memory swap = ammStorage.getSwapPayFixed(swapId);
+//                if (swap.state == uint256(IporTypes.SwapState.ACTIVE)) {
 //                    try ammTreasury.itfCloseSwapPayFixed(swapId, closeTimestamp) {
 //                        payFixedClosedSwaps[i] = AmmTypes.IporSwapClosingResult(swapId, true);
 //                    } catch {
@@ -56,10 +56,10 @@ contract ItfLiquidator {
 //            );
 //            for (uint256 i; i < receiveFixedSwapIdsLength; ++i) {
 //                swapId = receiveFixedSwapIds[i];
-//                IporTypes.IporSwapMemory memory iporSwap = _ammStorage.getSwapReceiveFixed(
+//                AmmTypes.Swap memory swap = _ammStorage.getSwapReceiveFixed(
 //                    swapId
 //                );
-//                if (iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE)) {
+//                if (swap.state == uint256(IporTypes.SwapState.ACTIVE)) {
 //                    try ammTreasury.itfCloseSwapReceiveFixed(swapId, closeTimestamp) {
 //                        receiveFixedClosedSwaps[i] = AmmTypes.IporSwapClosingResult(
 //                            swapId,

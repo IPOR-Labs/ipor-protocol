@@ -14,14 +14,14 @@ library IporSwapLogic {
     using InterestRates for uint256;
     using InterestRates for int256;
 
-    /// @param duration swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
+    /// @param tenor swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
     /// @param totalAmount total amount represented in 18 decimals
     /// @param leverage swap leverage, represented in 18 decimals
     /// @param liquidationDepositAmount liquidation deposit amount, represented in 18 decimals
     /// @param iporPublicationFeeAmount IPOR publication fee amount, represented in 18 decimals
     /// @param openingFeeRate opening fee rate, represented in 18 decimals
     function calculateSwapAmount(
-        AmmTypes.SwapDuration duration,
+        IporTypes.SwapTenor tenor,
         uint256 totalAmount,
         uint256 leverage,
         uint256 liquidationDepositAmount,
@@ -40,27 +40,14 @@ library IporSwapLogic {
 
         collateral = IporMath.division(
             availableAmount * 1e18,
-            1e18 +
-                IporMath.division(leverage * openingFeeRate * getTimeToMaturityInDays(duration), 365 * 1e18)
+            1e18 + IporMath.division(leverage * openingFeeRate * getTenorInDays(tenor), 365 * 1e18)
         );
         notional = IporMath.division(leverage * collateral, 1e18);
         openingFee = availableAmount - collateral;
     }
 
-    function getTimeToMaturityInDays(AmmTypes.SwapDuration duration) internal pure returns (uint256) {
-        if (duration == AmmTypes.SwapDuration.DAYS_28) {
-            return 28;
-        } else if (duration == AmmTypes.SwapDuration.DAYS_60) {
-            return 60;
-        } else if (duration == AmmTypes.SwapDuration.DAYS_90) {
-            return 90;
-        } else {
-            revert(AmmErrors.UNSUPPORTED_SWAP_DURATION);
-        }
-    }
-
     function calculatePayoffPayFixed(
-        IporTypes.IporSwapMemory memory swap,
+        AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) internal pure returns (int256 swapValue) {
@@ -70,7 +57,7 @@ library IporSwapLogic {
     }
 
     function calculatePayoffReceiveFixed(
-        IporTypes.IporSwapMemory memory swap,
+        AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) internal pure returns (int256 swapValue) {
@@ -80,13 +67,13 @@ library IporSwapLogic {
     }
 
     function calculateSwapUnwindValue(
-        IporTypes.IporSwapMemory memory swap,
+        AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
         int256 swapPayoffToDate,
         uint256 oppositeLegFixedRate,
         uint256 openingFeeRateForSwapUnwind
     ) internal pure returns (int256 swapUnwindValue) {
-        uint256 endTimestamp = calculateSwapMaturity(swap);
+        uint256 endTimestamp = getSwapEndTimestamp(swap);
         require(closingTimestamp <= endTimestamp, AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE);
 
         swapUnwindValue =
@@ -99,7 +86,7 @@ library IporSwapLogic {
     }
 
     function calculateInterest(
-        IporTypes.IporSwapMemory memory swap,
+        AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) internal pure returns (uint256 interestFixed, uint256 interestFloating) {
@@ -148,26 +135,38 @@ library IporSwapLogic {
         }
     }
 
-    function calculateSwapMaturity(IporTypes.IporSwapMemory memory swap) internal pure returns (uint256) {
-        if (swap.duration == 0) {
+    function getSwapEndTimestamp(AmmTypes.Swap memory swap) internal pure returns (uint256) {
+        if (swap.tenor == IporTypes.SwapTenor.DAYS_28) {
             return swap.openTimestamp + 28 days;
-        } else if (swap.duration == 1) {
+        } else if (swap.tenor == IporTypes.SwapTenor.DAYS_60) {
             return swap.openTimestamp + 60 days;
-        } else if (swap.duration == 2) {
+        } else if (swap.tenor == IporTypes.SwapTenor.DAYS_90) {
             return swap.openTimestamp + 90 days;
         } else {
-            revert(AmmErrors.UNSUPPORTED_SWAP_DURATION);
+            revert(AmmErrors.UNSUPPORTED_SWAP_TENOR);
         }
     }
 
-    function getMaturity(AmmTypes.SwapDuration duration) internal pure returns (uint256) {
-        if (duration == AmmTypes.SwapDuration.DAYS_28) {
+    function getTenorInSeconds(IporTypes.SwapTenor tenor) internal pure returns (uint256) {
+        if (tenor == IporTypes.SwapTenor.DAYS_28) {
             return 28 days;
-        } else if (duration == AmmTypes.SwapDuration.DAYS_60) {
+        } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
             return 60 days;
-        } else if (duration == AmmTypes.SwapDuration.DAYS_90) {
+        } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
             return 90 days;
         }
-        revert(string.concat(AmmErrors.WRONG_MATURITY, " maturity"));
+        revert(AmmErrors.UNSUPPORTED_SWAP_TENOR);
+    }
+
+    function getTenorInDays(IporTypes.SwapTenor tenor) internal pure returns (uint256) {
+        if (tenor == IporTypes.SwapTenor.DAYS_28) {
+            return 28;
+        } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
+            return 60;
+        } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
+            return 90;
+        } else {
+            revert(AmmErrors.UNSUPPORTED_SWAP_TENOR);
+        }
     }
 }
