@@ -22,6 +22,7 @@ contract BuilderUtils {
         IAmmOpenSwapService ammOpenSwapService;
         IAmmCloseSwapService ammCloseSwapService;
         IAmmGovernanceService ammGovernanceService;
+        IAmmGovernanceLens ammGovernanceLens;
         MockTestnetToken asset;
         IpToken ipToken;
         IvToken ivToken;

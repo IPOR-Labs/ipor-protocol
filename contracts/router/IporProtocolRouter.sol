@@ -3,19 +3,21 @@ pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
-import "./AccessControl.sol";
-import "../libraries/errors/IporErrors.sol";
-import "../interfaces/IAmmSwapsLens.sol";
-import "../interfaces/IAmmPoolsLens.sol";
-import "../interfaces/IAssetManagementLens.sol";
-import "../interfaces/IAmmOpenSwapService.sol";
-import "../interfaces/IAmmCloseSwapService.sol";
-import "../interfaces/IAmmPoolsService.sol";
-import "../interfaces/IAmmGovernanceService.sol";
-import "../interfaces/ILiquidityMiningLens.sol";
-import "../interfaces/IPowerTokenLens.sol";
-import "../interfaces/IPowerTokenFlowsService.sol";
-import "../interfaces/IPowerTokenStakeService.sol";
+
+import "contracts/libraries/errors/IporErrors.sol";
+import "contracts/router/AccessControl.sol";
+import "contracts/interfaces/IAmmSwapsLens.sol";
+import "contracts/interfaces/IAmmPoolsLens.sol";
+import "contracts/interfaces/IAssetManagementLens.sol";
+import "contracts/interfaces/IPowerTokenLens.sol";
+import "contracts/interfaces/ILiquidityMiningLens.sol";
+import "contracts/interfaces/IAmmGovernanceService.sol";
+import "contracts/interfaces/IAmmGovernanceLens.sol";
+import "contracts/interfaces/IAmmOpenSwapService.sol";
+import "contracts/interfaces/IAmmCloseSwapService.sol";
+import "contracts/interfaces/IAmmPoolsService.sol";
+import "contracts/interfaces/IPowerTokenFlowsService.sol";
+import "contracts/interfaces/IPowerTokenStakeService.sol";
 
 contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
     using Address for address;
@@ -247,9 +249,9 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             _reentrancyStatus = _ENTERED;
             return AMM_GOVERNANCE_SERVICE_ADDRESS;
         } else if (
-            sig == IAmmGovernanceService.isSwapLiquidator.selector ||
-            sig == IAmmGovernanceService.isAppointedToRebalanceInAmm.selector ||
-            sig == IAmmGovernanceService.getAmmPoolsParams.selector
+            sig == IAmmGovernanceLens.isSwapLiquidator.selector ||
+            sig == IAmmGovernanceLens.isAppointedToRebalanceInAmm.selector ||
+            sig == IAmmGovernanceLens.getAmmPoolsParams.selector
         ) {
             return AMM_GOVERNANCE_SERVICE_ADDRESS;
         } else if (
