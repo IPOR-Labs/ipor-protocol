@@ -44,9 +44,9 @@ library AmmFacadeTypes {
         uint256 liquidationDepositAmount;
         /// @notice Calculated Spread. Represented in 18 decimals.
         int256 spread;
-        /// @notice Maximum Liquidity Pool Utilization.
+        /// @notice Maximum Liquidity Pool Collateral Ratio.
         /// @dev It is a ratio of total collateral balance / liquidity pool balance
-        uint256 maxLpUtilizationRate;
+        uint256 maxLpCollateralRatio;
         /// @notice Maximum amount which can be in Liquidity Pool, represented in 18 decimals.
         uint256 maxLiquidityPoolBalance;
         /// @notice Maximum amount which can be contributed by one account in Liquidity Pool, represented in 18 decimals.

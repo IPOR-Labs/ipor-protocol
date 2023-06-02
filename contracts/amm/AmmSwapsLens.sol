@@ -188,7 +188,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
             openSwapPoolCfg.asset
         );
 
-        (, , uint256 maxUtilizationRate, int256 spread, ) = IIporRiskManagementOracle(_riskManagementOracle)
+        (, , uint256 maxCollateralRatio, int256 spread, ) = IIporRiskManagementOracle(_riskManagementOracle)
             .getOpenSwapParameters(asset, direction, tenor);
 
         IporTypes.AmmBalancesForOpenSwapMemory memory balances = IAmmStorage(openSwapPoolCfg.ammStorage)
@@ -212,7 +212,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
                 openSwapPoolCfg.iporPublicationFee,
                 openSwapPoolCfg.liquidationDepositAmount,
                 spread,
-                maxUtilizationRate,
+                maxCollateralRatio,
                 uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
                 uint256(ammPoolsParamsCfg.maxLpAccountContribution) * 1e18
             );

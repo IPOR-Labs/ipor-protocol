@@ -49,7 +49,7 @@ library RiskManagementLogic {
                         spreadQuoteCtx.asset,
                         swapNotional,
                         riskIndicators.maxLeveragePerLeg,
-                        riskIndicators.maxUtilizationRatePerLeg,
+                        riskIndicators.maxCollateralRatioPerLeg,
                         riskIndicators.spread,
                         balance.totalCollateralPayFixed,
                         balance.totalCollateralReceiveFixed,
@@ -72,17 +72,17 @@ library RiskManagementLogic {
         address cfgIporRiskManagementOracle
     ) internal view returns (AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators) {
         uint256 maxNotionalPerLeg;
-        uint256 maxUtilizationRate;
+        uint256 maxCollateralRatio;
 
         (
             maxNotionalPerLeg,
-            riskIndicators.maxUtilizationRatePerLeg,
-            maxUtilizationRate,
+            riskIndicators.maxCollateralRatioPerLeg,
+            maxCollateralRatio,
             riskIndicators.spread,
             riskIndicators.fixedRateCap
         ) = IIporRiskManagementOracle(cfgIporRiskManagementOracle).getOpenSwapParameters(asset, direction, tenor);
 
-        uint256 maxCollateralPerLeg = IporMath.division(liquidityPool * riskIndicators.maxUtilizationRatePerLeg, 1e18);
+        uint256 maxCollateralPerLeg = IporMath.division(liquidityPool * riskIndicators.maxCollateralRatioPerLeg, 1e18);
 
         if (maxCollateralPerLeg > 0) {
             riskIndicators.maxLeveragePerLeg = _leverageInRange(

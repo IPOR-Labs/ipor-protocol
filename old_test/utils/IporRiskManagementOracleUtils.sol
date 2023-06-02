@@ -10,8 +10,8 @@ contract IporRiskManagementOracleUtils is Test {
     function getRiskManagementOracleAsset(
         address updater,
         address asset,
-        uint16 maxUtilizationRatePerLeg,
-        uint16 maxUtilizationRate,
+        uint16 maxCollateralRatioPerLeg,
+        uint16 maxCollateralRatio,
         uint64 maxNotional,
         int24 baseSpread
     ) public returns (IIporRiskManagementOracle) {
@@ -20,9 +20,9 @@ contract IporRiskManagementOracleUtils is Test {
         riskIndicatorsList[0] = IporRiskManagementOracleTypes.RiskIndicators({
             maxNotionalPayFixed: maxNotional,
             maxNotionalReceiveFixed: maxNotional,
-            maxUtilizationRatePayFixed: maxUtilizationRatePerLeg,
-            maxUtilizationRateReceiveFixed: maxUtilizationRatePerLeg,
-            maxUtilizationRate: maxUtilizationRate
+            maxCollateralRatioPayFixed: maxCollateralRatioPerLeg,
+            maxCollateralRatioReceiveFixed: maxCollateralRatioPerLeg,
+            maxCollateralRatio: maxCollateralRatio
         });
         IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[]
             memory baseSpreadsList = new IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[](1);
@@ -42,8 +42,8 @@ contract IporRiskManagementOracleUtils is Test {
     function getRiskManagementOracleAssets(
         address updater,
         address[] memory assets,
-        uint16 maxUtilizationRatePerLeg,
-        uint16 maxUtilizationRate,
+        uint16 maxCollateralRatioPerLeg,
+        uint16 maxCollateralRatio,
         uint64 maxNotional,
         int24 baseSpread
     ) public returns (IIporRiskManagementOracle) {
@@ -56,9 +56,9 @@ contract IporRiskManagementOracleUtils is Test {
             riskIndicatorsList[i] = IporRiskManagementOracleTypes.RiskIndicators({
                 maxNotionalPayFixed: maxNotional,
                 maxNotionalReceiveFixed: maxNotional,
-                maxUtilizationRatePayFixed: maxUtilizationRatePerLeg,
-                maxUtilizationRateReceiveFixed: maxUtilizationRatePerLeg,
-                maxUtilizationRate: maxUtilizationRate
+                maxCollateralRatioPayFixed: maxCollateralRatioPerLeg,
+                maxCollateralRatioReceiveFixed: maxCollateralRatioPerLeg,
+                maxCollateralRatio: maxCollateralRatio
             });
             baseSpreadsList[i] = IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps({
                 spread28dPayFixed: baseSpread,

@@ -67,8 +67,8 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
         _RiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdcMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_80_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_80_PER,
             TestConstants.RMO_NOTIONAL_1B,
             TestConstants.RMO_SPREAD_0_1_PER
         );
@@ -144,9 +144,9 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
         assertEq(iporOracleData.accruedExponentialMovingAverage, TestConstants.ZERO);
         assertEq(iporOracleData.accruedExponentialWeightedMovingVariance, TestConstants.ZERO);
         assertEq(ammTreasuryData.maxSwapCollateralAmount, 100000 * TestConstants.D18);
-        assertEq(ammTreasuryData.maxLpUtilizationRate, 8 * TestConstants.D17);
-        assertEq(ammTreasuryData.maxLpUtilizationRatePayFixed, 48 * TestConstants.D16);
-        assertEq(ammTreasuryData.maxLpUtilizationRateReceiveFixed, 48 * TestConstants.D16);
+        assertEq(ammTreasuryData.maxLpCollateralRatio, 8 * TestConstants.D17);
+        assertEq(ammTreasuryData.maxLpCollateralRatioPayFixed, 48 * TestConstants.D16);
+        assertEq(ammTreasuryData.maxLpCollateralRatioReceiveFixed, 48 * TestConstants.D16);
         assertEq(ammTreasuryData.openingFeeRate, 300000000000000);
         assertEq(ammTreasuryData.openingFeeTreasuryPortionRate, TestConstants.ZERO);
         assertEq(ammTreasuryData.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);

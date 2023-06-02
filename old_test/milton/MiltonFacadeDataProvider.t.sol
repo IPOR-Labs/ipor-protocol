@@ -122,9 +122,9 @@ contract AmmTreasuryFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils 
             );
             assertEq(1 * TestConstants.D16_INT, assetConfigurations[i].spreadPayFixed);
             assertEq(1 * TestConstants.D16_INT, assetConfigurations[i].spreadReceiveFixed);
-            assertEq(8 * TestConstants.D17, assetConfigurations[i].maxLpUtilizationRate);
-            assertEq(48 * TestConstants.D16, assetConfigurations[i].maxLpUtilizationRatePayFixed);
-            assertEq(48 * TestConstants.D16, assetConfigurations[i].maxLpUtilizationRateReceiveFixed);
+            assertEq(8 * TestConstants.D17, assetConfigurations[i].maxLpCollateralRatio);
+            assertEq(48 * TestConstants.D16, assetConfigurations[i].maxLpCollateralRatioPayFixed);
+            assertEq(48 * TestConstants.D16, assetConfigurations[i].maxLpCollateralRatioReceiveFixed);
         }
     }
 

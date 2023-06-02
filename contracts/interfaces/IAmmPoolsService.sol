@@ -12,7 +12,7 @@ interface IAmmPoolsService {
         address ammTreasury;
         address assetManagement;
         uint256 redeemFeeRate;
-        uint256 redeemLpMaxUtilizationRate;
+        uint256 redeemLpMaxCollateralRatio;
     }
 
     /// @notice Emitted when `from` account provides liquidity (ERC20 token supported by IPOR Protocol) to AmmTreasury Liquidity Pool

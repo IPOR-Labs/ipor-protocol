@@ -61,9 +61,9 @@ contract IporRiskManagementOracle is
             _indicators[assets[i]] = IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage(
                 riskIndicators[i].maxNotionalPayFixed.toUint64(),
                 riskIndicators[i].maxNotionalReceiveFixed.toUint64(),
-                riskIndicators[i].maxUtilizationRatePayFixed.toUint16(),
-                riskIndicators[i].maxUtilizationRateReceiveFixed.toUint16(),
-                riskIndicators[i].maxUtilizationRate.toUint16(),
+                riskIndicators[i].maxCollateralRatioPayFixed.toUint16(),
+                riskIndicators[i].maxCollateralRatioReceiveFixed.toUint16(),
+                riskIndicators[i].maxCollateralRatio.toUint16(),
                 block.timestamp.toUint32()
             );
 
@@ -71,9 +71,9 @@ contract IporRiskManagementOracle is
                 assets[i],
                 riskIndicators[i].maxNotionalPayFixed,
                 riskIndicators[i].maxNotionalReceiveFixed,
-                riskIndicators[i].maxUtilizationRatePayFixed,
-                riskIndicators[i].maxUtilizationRateReceiveFixed,
-                riskIndicators[i].maxUtilizationRate
+                riskIndicators[i].maxCollateralRatioPayFixed,
+                riskIndicators[i].maxCollateralRatioReceiveFixed,
+                riskIndicators[i].maxCollateralRatio
             );
 
             _baseSpreadsAndFixedRateCaps[assets[i]] = _baseSpreadsAndFixedRateCapsStorageToBytes32(IporRiskManagementOracleStorageTypes
@@ -133,18 +133,18 @@ contract IporRiskManagementOracle is
     override
     returns (
         uint256 maxNotionalPerLeg,
-        uint256 maxUtilizationRatePerLeg,
-        uint256 maxUtilizationRate,
+        uint256 maxCollateralRatioPerLeg,
+        uint256 maxCollateralRatio,
         int256 spread,
         uint256 fixedRateCap
     )
     {
-        (maxNotionalPerLeg, maxUtilizationRatePerLeg, maxUtilizationRate) = _getRiskIndicatorsPerLeg(asset, direction);
+        (maxNotionalPerLeg, maxCollateralRatioPerLeg, maxCollateralRatio) = _getRiskIndicatorsPerLeg(asset, direction);
         (spread, fixedRateCap) = _getSpread(asset, direction, tenor);
         return (
             maxNotionalPerLeg,
-            maxUtilizationRatePerLeg,
-            maxUtilizationRate,
+            maxCollateralRatioPerLeg,
+            maxCollateralRatio,
             spread * 1e12,
             fixedRateCap * 1e14
         );
@@ -154,23 +154,23 @@ contract IporRiskManagementOracle is
     view
     returns (
         uint256 maxNotionalPerLeg,
-        uint256 maxUtilizationRatePerLeg,
-        uint256 maxUtilizationRate
+        uint256 maxCollateralRatioPerLeg,
+        uint256 maxCollateralRatio
     )
     {
         (
         uint256 maxNotionalPayFixed,
         uint256 maxNotionalReceiveFixed,
-        uint256 maxUtilizationRatePayFixed,
-        uint256 maxUtilizationRateReceiveFixed,
-        uint256 maxUtilizationRateBothLegs,
+        uint256 maxCollateralRatioPayFixed,
+        uint256 maxCollateralRatioReceiveFixed,
+        uint256 maxCollateralRatioBothLegs,
 
         ) = _getRiskIndicators(asset);
 
         if (direction == 0) {
-            return (maxNotionalPayFixed, maxUtilizationRatePayFixed, maxUtilizationRateBothLegs);
+            return (maxNotionalPayFixed, maxCollateralRatioPayFixed, maxCollateralRatioBothLegs);
         } else {
-            return (maxNotionalReceiveFixed, maxUtilizationRateReceiveFixed, maxUtilizationRateBothLegs);
+            return (maxNotionalReceiveFixed, maxCollateralRatioReceiveFixed, maxCollateralRatioBothLegs);
         }
     }
 
@@ -232,9 +232,9 @@ contract IporRiskManagementOracle is
     returns (
         uint256 maxNotionalPayFixed,
         uint256 maxNotionalReceiveFixed,
-        uint256 maxUtilizationRatePayFixed,
-        uint256 maxUtilizationRateReceiveFixed,
-        uint256 maxUtilizationRate,
+        uint256 maxCollateralRatioPayFixed,
+        uint256 maxCollateralRatioReceiveFixed,
+        uint256 maxCollateralRatio,
         uint256 lastUpdateTimestamp
     )
     {
@@ -247,9 +247,9 @@ contract IporRiskManagementOracle is
     returns (
         uint256 maxNotionalPayFixed,
         uint256 maxNotionalReceiveFixed,
-        uint256 maxUtilizationRatePayFixed,
-        uint256 maxUtilizationRateReceiveFixed,
-        uint256 maxUtilizationRate,
+        uint256 maxCollateralRatioPayFixed,
+        uint256 maxCollateralRatioReceiveFixed,
+        uint256 maxCollateralRatio,
         uint256 lastUpdateTimestamp
     )
     {
@@ -258,9 +258,9 @@ contract IporRiskManagementOracle is
         return (
             uint256(indicators.maxNotionalPayFixed) * 1e22, // 1 = 10k notional
             uint256(indicators.maxNotionalReceiveFixed) * 1e22,
-            uint256(indicators.maxUtilizationRatePayFixed) * 1e14, // 1 = 0.01%
-            uint256(indicators.maxUtilizationRateReceiveFixed) * 1e14,
-            uint256(indicators.maxUtilizationRate) * 1e14,
+            uint256(indicators.maxCollateralRatioPayFixed) * 1e14, // 1 = 0.01%
+            uint256(indicators.maxCollateralRatioReceiveFixed) * 1e14,
+            uint256(indicators.maxCollateralRatio) * 1e14,
             uint256(indicators.lastUpdateTimestamp)
         );
     }
@@ -347,17 +347,17 @@ contract IporRiskManagementOracle is
         address asset,
         uint256 maxNotionalPayFixed,
         uint256 maxNotionalReceiveFixed,
-        uint256 maxUtilizationRatePayFixed,
-        uint256 maxUtilizationRateReceiveFixed,
-        uint256 maxUtilizationRate
+        uint256 maxCollateralRatioPayFixed,
+        uint256 maxCollateralRatioReceiveFixed,
+        uint256 maxCollateralRatio
     ) external override onlyUpdater whenNotPaused {
         _updateRiskIndicators(
             asset,
             maxNotionalPayFixed,
             maxNotionalReceiveFixed,
-            maxUtilizationRatePayFixed,
-            maxUtilizationRateReceiveFixed,
-            maxUtilizationRate
+            maxCollateralRatioPayFixed,
+            maxCollateralRatioReceiveFixed,
+            maxCollateralRatio
         );
     }
 
@@ -365,18 +365,18 @@ contract IporRiskManagementOracle is
         address[] calldata asset,
         uint256[] calldata maxNotionalPayFixed,
         uint256[] calldata maxNotionalReceiveFixed,
-        uint256[] calldata maxUtilizationRatePayFixed,
-        uint256[] calldata maxUtilizationRateReceiveFixed,
-        uint256[] calldata maxUtilizationRate
+        uint256[] calldata maxCollateralRatioPayFixed,
+        uint256[] calldata maxCollateralRatioReceiveFixed,
+        uint256[] calldata maxCollateralRatio
     ) external override onlyUpdater whenNotPaused {
         uint256 assetsLength = asset.length;
 
         require(
             assetsLength == maxNotionalPayFixed.length &&
             assetsLength == maxNotionalReceiveFixed.length &&
-            assetsLength == maxUtilizationRatePayFixed.length &&
-            assetsLength == maxUtilizationRateReceiveFixed.length &&
-            assetsLength == maxUtilizationRate.length,
+            assetsLength == maxCollateralRatioPayFixed.length &&
+            assetsLength == maxCollateralRatioReceiveFixed.length &&
+            assetsLength == maxCollateralRatio.length,
             IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH
         );
 
@@ -385,9 +385,9 @@ contract IporRiskManagementOracle is
                 asset[i],
                 maxNotionalPayFixed[i],
                 maxNotionalReceiveFixed[i],
-                maxUtilizationRatePayFixed[i],
-                maxUtilizationRateReceiveFixed[i],
-                maxUtilizationRate[i]
+                maxCollateralRatioPayFixed[i],
+                maxCollateralRatioReceiveFixed[i],
+                maxCollateralRatio[i]
             );
         unchecked {
             ++i;
@@ -399,9 +399,9 @@ contract IporRiskManagementOracle is
         address asset,
         uint256 maxNotionalPayFixed,
         uint256 maxNotionalReceiveFixed,
-        uint256 maxUtilizationRatePayFixed,
-        uint256 maxUtilizationRateReceiveFixed,
-        uint256 maxUtilizationRate
+        uint256 maxCollateralRatioPayFixed,
+        uint256 maxCollateralRatioReceiveFixed,
+        uint256 maxCollateralRatio
     ) internal {
         IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage memory indicators = _indicators[asset];
 
@@ -410,9 +410,9 @@ contract IporRiskManagementOracle is
         _indicators[asset] = IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage(
             maxNotionalPayFixed.toUint64(),
             maxNotionalReceiveFixed.toUint64(),
-            maxUtilizationRatePayFixed.toUint16(),
-            maxUtilizationRateReceiveFixed.toUint16(),
-            maxUtilizationRate.toUint16(),
+            maxCollateralRatioPayFixed.toUint16(),
+            maxCollateralRatioReceiveFixed.toUint16(),
+            maxCollateralRatio.toUint16(),
             block.timestamp.toUint32()
         );
 
@@ -420,9 +420,9 @@ contract IporRiskManagementOracle is
             asset,
             maxNotionalPayFixed,
             maxNotionalReceiveFixed,
-            maxUtilizationRatePayFixed,
-            maxUtilizationRateReceiveFixed,
-            maxUtilizationRate
+            maxCollateralRatioPayFixed,
+            maxCollateralRatioReceiveFixed,
+            maxCollateralRatio
         );
     }
 
@@ -512,9 +512,9 @@ contract IporRiskManagementOracle is
         _indicators[asset] = IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage(
             riskIndicators.maxNotionalPayFixed.toUint64(),
             riskIndicators.maxNotionalReceiveFixed.toUint64(),
-            riskIndicators.maxUtilizationRatePayFixed.toUint16(),
-            riskIndicators.maxUtilizationRateReceiveFixed.toUint16(),
-            riskIndicators.maxUtilizationRate.toUint16(),
+            riskIndicators.maxCollateralRatioPayFixed.toUint16(),
+            riskIndicators.maxCollateralRatioReceiveFixed.toUint16(),
+            riskIndicators.maxCollateralRatio.toUint16(),
             block.timestamp.toUint32()
         );
 

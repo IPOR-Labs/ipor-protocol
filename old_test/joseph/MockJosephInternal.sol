@@ -31,7 +31,7 @@ abstract contract MockJosephInternal is
     using SafeCast for uint256;
 
     uint256 internal constant _REDEEM_FEE_RATE = 5e15;
-    uint256 internal constant _REDEEM_LP_MAX_UTILIZATION_RATE = 1e18;
+    uint256 internal constant _REDEEM_LP_MAX_COLLATERAL_RATIO = 1e18;
 
     address internal _asset;
     IIpToken internal _ipToken;
@@ -137,8 +137,8 @@ abstract contract MockJosephInternal is
         return _REDEEM_FEE_RATE;
     }
 
-    function _getRedeemLpMaxUtilizationRate() internal pure virtual returns (uint256) {
-        return _REDEEM_LP_MAX_UTILIZATION_RATE;
+    function _getRedeemLpMaxCollateralRatio() internal pure virtual returns (uint256) {
+        return _REDEEM_LP_MAX_COLLATERAL_RATIO;
     }
 
     function _getAssetManagement() internal view virtual returns (IAssetManagement) {
@@ -302,8 +302,8 @@ abstract contract MockJosephInternal is
         return _getRedeemFeeRate();
     }
 
-    function getRedeemLpMaxUtilizationRate() external pure returns (uint256) {
-        return _getRedeemLpMaxUtilizationRate();
+    function getRedeemLpMaxCollateralRatio() external pure returns (uint256) {
+        return _getRedeemLpMaxCollateralRatio();
     }
 
     function getAmmTreasuryAssetManagementBalanceRatio() external view returns (uint256) {

@@ -56,23 +56,23 @@ contract OraclePublisherTest is Test, TestCommons {
         riskIndicators[0] = IporRiskManagementOracleTypes.RiskIndicators(
             TestConstants.RMO_NOTIONAL_1B,
             TestConstants.RMO_NOTIONAL_1B,
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_90_PER
         );
         riskIndicators[1] = IporRiskManagementOracleTypes.RiskIndicators(
             TestConstants.RMO_NOTIONAL_1B,
             TestConstants.RMO_NOTIONAL_1B,
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_90_PER
         );
         riskIndicators[2] = IporRiskManagementOracleTypes.RiskIndicators(
             TestConstants.RMO_NOTIONAL_1B,
             TestConstants.RMO_NOTIONAL_1B,
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_90_PER
         );
 
         IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[]
@@ -427,9 +427,9 @@ contract OraclePublisherTest is Test, TestCommons {
             address(_daiTestnetToken),
             TestConstants.RMO_NOTIONAL_2B,
             TestConstants.RMO_NOTIONAL_2B,
-            TestConstants.RMO_UTILIZATION_RATE_30_PER,
-            TestConstants.RMO_UTILIZATION_RATE_30_PER,
-            TestConstants.RMO_UTILIZATION_RATE_48_PER
+            TestConstants.RMO_COLLATERAL_RATIO_30_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_30_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER
         );
         address[] memory addresses = new address[](1);
         addresses[0] = address(_iporRiskManagementOracle);
@@ -443,16 +443,16 @@ contract OraclePublisherTest is Test, TestCommons {
         (
             uint256 maxNotionalPayFixed,
             uint256 maxNotionalReceiveFixed,
-            uint256 maxUtilizationRatePayFixed,
-            uint256 maxUtilizationRateReceiveFixed,
-            uint256 maxUtilizationRate,
+            uint256 maxCollateralRatioPayFixed,
+            uint256 maxCollateralRatioReceiveFixed,
+            uint256 maxCollateralRatio,
             uint256 lastUpdateTimestamp
         ) = _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken));
         assertEq(maxNotionalPayFixed, uint256(TestConstants.RMO_NOTIONAL_2B) * 1e22);
         assertEq(maxNotionalReceiveFixed, uint256(TestConstants.RMO_NOTIONAL_2B) * 1e22);
-        assertEq(maxUtilizationRatePayFixed, uint256(TestConstants.RMO_UTILIZATION_RATE_30_PER) * 1e14);
-        assertEq(maxUtilizationRateReceiveFixed, uint256(TestConstants.RMO_UTILIZATION_RATE_30_PER) * 1e14);
-        assertEq(maxUtilizationRate, uint256(TestConstants.RMO_UTILIZATION_RATE_48_PER) * 1e14);
+        assertEq(maxCollateralRatioPayFixed, uint256(TestConstants.RMO_COLLATERAL_RATIO_30_PER) * 1e14);
+        assertEq(maxCollateralRatioReceiveFixed, uint256(TestConstants.RMO_COLLATERAL_RATIO_30_PER) * 1e14);
+        assertEq(maxCollateralRatio, uint256(TestConstants.RMO_COLLATERAL_RATIO_48_PER) * 1e14);
         assertEq(lastUpdateTimestamp, _blockTimestamp2);
     }
 
@@ -543,9 +543,9 @@ contract OraclePublisherTest is Test, TestCommons {
             address(_daiTestnetToken),
             TestConstants.RMO_NOTIONAL_2B,
             TestConstants.RMO_NOTIONAL_2B,
-            TestConstants.RMO_UTILIZATION_RATE_30_PER,
-            TestConstants.RMO_UTILIZATION_RATE_30_PER,
-            TestConstants.RMO_UTILIZATION_RATE_48_PER
+            TestConstants.RMO_COLLATERAL_RATIO_30_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_30_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER
         );
         addresses[1] = address(_iporRiskManagementOracle);
         calls[1] = updateIndicatorsCallData;
@@ -560,16 +560,16 @@ contract OraclePublisherTest is Test, TestCommons {
         (
             uint256 maxNotionalPayFixed,
             uint256 maxNotionalReceiveFixed,
-            uint256 maxUtilizationRatePayFixed,
-            uint256 maxUtilizationRateReceiveFixed,
-            uint256 maxUtilizationRate,
+            uint256 maxCollateralRatioPayFixed,
+            uint256 maxCollateralRatioReceiveFixed,
+            uint256 maxCollateralRatio,
             uint256 lastUpdateTimestampRiskIndicators
         ) = _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken));
         assertEq(maxNotionalPayFixed, uint256(TestConstants.RMO_NOTIONAL_2B) * 1e22);
         assertEq(maxNotionalReceiveFixed, uint256(TestConstants.RMO_NOTIONAL_2B) * 1e22);
-        assertEq(maxUtilizationRatePayFixed, uint256(TestConstants.RMO_UTILIZATION_RATE_30_PER) * 1e14);
-        assertEq(maxUtilizationRateReceiveFixed, uint256(TestConstants.RMO_UTILIZATION_RATE_30_PER) * 1e14);
-        assertEq(maxUtilizationRate, uint256(TestConstants.RMO_UTILIZATION_RATE_48_PER) * 1e14);
+        assertEq(maxCollateralRatioPayFixed, uint256(TestConstants.RMO_COLLATERAL_RATIO_30_PER) * 1e14);
+        assertEq(maxCollateralRatioReceiveFixed, uint256(TestConstants.RMO_COLLATERAL_RATIO_30_PER) * 1e14);
+        assertEq(maxCollateralRatio, uint256(TestConstants.RMO_COLLATERAL_RATIO_48_PER) * 1e14);
         assertEq(lastUpdateTimestampRiskIndicators, _blockTimestamp2);
     }
 

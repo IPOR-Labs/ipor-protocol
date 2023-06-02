@@ -31,23 +31,23 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
         riskIndicators[0] = IporRiskManagementOracleTypes.RiskIndicators(
             TestConstants.RMO_NOTIONAL_1B,
             TestConstants.RMO_NOTIONAL_1B,
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_90_PER
         );
         riskIndicators[1] = IporRiskManagementOracleTypes.RiskIndicators(
             TestConstants.RMO_NOTIONAL_1B,
             TestConstants.RMO_NOTIONAL_1B,
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_90_PER
         );
         riskIndicators[2] = IporRiskManagementOracleTypes.RiskIndicators(
             TestConstants.RMO_NOTIONAL_1B,
             TestConstants.RMO_NOTIONAL_1B,
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_90_PER
         );
 
         IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[]
@@ -141,9 +141,9 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
             address(_daiTestnetToken),
             TestConstants.RMO_NOTIONAL_2B,
             TestConstants.RMO_NOTIONAL_2B,
-            TestConstants.RMO_UTILIZATION_RATE_30_PER,
-            TestConstants.RMO_UTILIZATION_RATE_30_PER,
-            TestConstants.RMO_UTILIZATION_RATE_48_PER
+            TestConstants.RMO_COLLATERAL_RATIO_30_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_30_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER
         );
 
         address[] memory assets = new address[](2);
@@ -158,26 +158,26 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
         maxNotionalReceiveFixed[0] = TestConstants.RMO_NOTIONAL_2B;
         maxNotionalReceiveFixed[1] = TestConstants.RMO_NOTIONAL_2B;
 
-        uint256[] memory maxUtilizationRatePayFixed = new uint256[](2);
-        maxUtilizationRatePayFixed[0] = TestConstants.RMO_UTILIZATION_RATE_30_PER;
-        maxUtilizationRatePayFixed[1] = TestConstants.RMO_UTILIZATION_RATE_30_PER;
+        uint256[] memory maxCollateralRatioPayFixed = new uint256[](2);
+        maxCollateralRatioPayFixed[0] = TestConstants.RMO_COLLATERAL_RATIO_30_PER;
+        maxCollateralRatioPayFixed[1] = TestConstants.RMO_COLLATERAL_RATIO_30_PER;
 
-        uint256[] memory maxUtilizationRateReceiveFixed = new uint256[](2);
-        maxUtilizationRateReceiveFixed[0] = TestConstants.RMO_UTILIZATION_RATE_30_PER;
-        maxUtilizationRateReceiveFixed[1] = TestConstants.RMO_UTILIZATION_RATE_30_PER;
+        uint256[] memory maxCollateralRatioReceiveFixed = new uint256[](2);
+        maxCollateralRatioReceiveFixed[0] = TestConstants.RMO_COLLATERAL_RATIO_30_PER;
+        maxCollateralRatioReceiveFixed[1] = TestConstants.RMO_COLLATERAL_RATIO_30_PER;
 
-        uint256[] memory maxUtilizationRate = new uint256[](2);
-        maxUtilizationRate[0] = TestConstants.RMO_UTILIZATION_RATE_80_PER;
-        maxUtilizationRate[1] = TestConstants.RMO_UTILIZATION_RATE_80_PER;
+        uint256[] memory maxCollateralRatio = new uint256[](2);
+        maxCollateralRatio[0] = TestConstants.RMO_COLLATERAL_RATIO_80_PER;
+        maxCollateralRatio[1] = TestConstants.RMO_COLLATERAL_RATIO_80_PER;
 
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
         _iporRiskManagementOracle.updateRiskIndicators(
             assets,
             maxNotionalPayFixed,
             maxNotionalReceiveFixed,
-            maxUtilizationRatePayFixed,
-            maxUtilizationRateReceiveFixed,
-            maxUtilizationRate
+            maxCollateralRatioPayFixed,
+            maxCollateralRatioReceiveFixed,
+            maxCollateralRatio
         );
 
         IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps memory baseSpreads1 = IporRiskManagementOracleTypes
@@ -437,9 +437,9 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
             IporRiskManagementOracleTypes.RiskIndicators(
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_NOTIONAL_1B,
-                TestConstants.RMO_UTILIZATION_RATE_48_PER,
-                TestConstants.RMO_UTILIZATION_RATE_48_PER,
-                TestConstants.RMO_UTILIZATION_RATE_90_PER
+                TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+                TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+                TestConstants.RMO_COLLATERAL_RATIO_90_PER
             ),
             IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
                 TestConstants.RMO_SPREAD_0_1_PER,
@@ -473,25 +473,25 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
             address(_daiTestnetToken),
             TestConstants.RMO_NOTIONAL_2B,
             TestConstants.RMO_NOTIONAL_2B,
-            TestConstants.RMO_UTILIZATION_RATE_30_PER,
-            TestConstants.RMO_UTILIZATION_RATE_30_PER,
-            TestConstants.RMO_UTILIZATION_RATE_48_PER
+            TestConstants.RMO_COLLATERAL_RATIO_30_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_30_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER
         );
 
         // then
         (
             uint256 maxNotionalPayFixed,
             uint256 maxNotionalReceiveFixed,
-            uint256 maxUtilizationRatePayFixed,
-            uint256 maxUtilizationRateReceiveFixed,
-            uint256 maxUtilizationRate,
+            uint256 maxCollateralRatioPayFixed,
+            uint256 maxCollateralRatioReceiveFixed,
+            uint256 maxCollateralRatio,
             uint256 lastUpdateTimestamp
         ) = _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken));
         assertEq(maxNotionalPayFixed, uint256(TestConstants.RMO_NOTIONAL_1B) * 1e22);
         assertEq(maxNotionalReceiveFixed, uint256(TestConstants.RMO_NOTIONAL_1B) * 1e22);
-        assertEq(maxUtilizationRatePayFixed, uint256(TestConstants.RMO_UTILIZATION_RATE_48_PER) * 1e14);
-        assertEq(maxUtilizationRateReceiveFixed, uint256(TestConstants.RMO_UTILIZATION_RATE_48_PER) * 1e14);
-        assertEq(maxUtilizationRate, uint256(TestConstants.RMO_UTILIZATION_RATE_90_PER) * 1e14);
+        assertEq(maxCollateralRatioPayFixed, uint256(TestConstants.RMO_COLLATERAL_RATIO_48_PER) * 1e14);
+        assertEq(maxCollateralRatioReceiveFixed, uint256(TestConstants.RMO_COLLATERAL_RATIO_48_PER) * 1e14);
+        assertEq(maxCollateralRatio, uint256(TestConstants.RMO_COLLATERAL_RATIO_90_PER) * 1e14);
         assertEq(lastUpdateTimestamp, _blockTimestamp);
     }
 
@@ -565,27 +565,27 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
             address(_daiTestnetToken),
             TestConstants.RMO_NOTIONAL_2B,
             TestConstants.RMO_NOTIONAL_2B,
-            TestConstants.RMO_UTILIZATION_RATE_30_PER,
-            TestConstants.RMO_UTILIZATION_RATE_30_PER,
-            TestConstants.RMO_UTILIZATION_RATE_48_PER
+            TestConstants.RMO_COLLATERAL_RATIO_30_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_30_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER
         );
 
         // then
         (
             uint256 maxNotionalPayFixed,
             uint256 maxNotionalReceiveFixed,
-            uint256 maxUtilizationRatePayFixed,
-            uint256 maxUtilizationRateReceiveFixed,
-            uint256 maxUtilizationRate,
+            uint256 maxCollateralRatioPayFixed,
+            uint256 maxCollateralRatioReceiveFixed,
+            uint256 maxCollateralRatio,
             uint256 lastUpdateTimestamp
         ) = _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken));
         assertEq(isUpdaterBeforeRemove, 1);
         assertEq(isUpdaterAfterRemove, 0);
         assertEq(maxNotionalPayFixed, uint256(TestConstants.RMO_NOTIONAL_1B) * 1e22);
         assertEq(maxNotionalReceiveFixed, uint256(TestConstants.RMO_NOTIONAL_1B) * 1e22);
-        assertEq(maxUtilizationRatePayFixed, uint256(TestConstants.RMO_UTILIZATION_RATE_48_PER) * 1e14);
-        assertEq(maxUtilizationRateReceiveFixed, uint256(TestConstants.RMO_UTILIZATION_RATE_48_PER) * 1e14);
-        assertEq(maxUtilizationRate, uint256(TestConstants.RMO_UTILIZATION_RATE_90_PER) * 1e14);
+        assertEq(maxCollateralRatioPayFixed, uint256(TestConstants.RMO_COLLATERAL_RATIO_48_PER) * 1e14);
+        assertEq(maxCollateralRatioReceiveFixed, uint256(TestConstants.RMO_COLLATERAL_RATIO_48_PER) * 1e14);
+        assertEq(maxCollateralRatio, uint256(TestConstants.RMO_COLLATERAL_RATIO_90_PER) * 1e14);
         assertEq(lastUpdateTimestamp, _blockTimestamp);
     }
 
@@ -660,25 +660,25 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
             address(_daiTestnetToken),
             TestConstants.RMO_NOTIONAL_2B,
             TestConstants.RMO_NOTIONAL_2B,
-            TestConstants.RMO_UTILIZATION_RATE_30_PER,
-            TestConstants.RMO_UTILIZATION_RATE_30_PER,
-            TestConstants.RMO_UTILIZATION_RATE_48_PER
+            TestConstants.RMO_COLLATERAL_RATIO_30_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_30_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER
         );
 
         // then
         (
             uint256 maxNotionalPayFixed,
             uint256 maxNotionalReceiveFixed,
-            uint256 maxUtilizationRatePayFixed,
-            uint256 maxUtilizationRateReceiveFixed,
-            uint256 maxUtilizationRate,
+            uint256 maxCollateralRatioPayFixed,
+            uint256 maxCollateralRatioReceiveFixed,
+            uint256 maxCollateralRatio,
             uint256 lastUpdateTimestamp
         ) = _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken));
         assertEq(maxNotionalPayFixed, uint256(TestConstants.RMO_NOTIONAL_2B) * 1e22);
         assertEq(maxNotionalReceiveFixed, uint256(TestConstants.RMO_NOTIONAL_2B) * 1e22);
-        assertEq(maxUtilizationRatePayFixed, uint256(TestConstants.RMO_UTILIZATION_RATE_30_PER) * 1e14);
-        assertEq(maxUtilizationRateReceiveFixed, uint256(TestConstants.RMO_UTILIZATION_RATE_30_PER) * 1e14);
-        assertEq(maxUtilizationRate, uint256(TestConstants.RMO_UTILIZATION_RATE_48_PER) * 1e14);
+        assertEq(maxCollateralRatioPayFixed, uint256(TestConstants.RMO_COLLATERAL_RATIO_30_PER) * 1e14);
+        assertEq(maxCollateralRatioReceiveFixed, uint256(TestConstants.RMO_COLLATERAL_RATIO_30_PER) * 1e14);
+        assertEq(maxCollateralRatio, uint256(TestConstants.RMO_COLLATERAL_RATIO_48_PER) * 1e14);
         assertEq(lastUpdateTimestamp, _blockTimestamp2);
     }
 
@@ -755,56 +755,56 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
         maxNotionalReceiveFixed[0] = TestConstants.RMO_NOTIONAL_2B;
         maxNotionalReceiveFixed[1] = TestConstants.RMO_NOTIONAL_10B;
 
-        uint256[] memory maxUtilizationRatePayFixed = new uint256[](2);
-        maxUtilizationRatePayFixed[0] = TestConstants.RMO_UTILIZATION_RATE_30_PER;
-        maxUtilizationRatePayFixed[1] = TestConstants.RMO_UTILIZATION_RATE_20_PER;
+        uint256[] memory maxCollateralRatioPayFixed = new uint256[](2);
+        maxCollateralRatioPayFixed[0] = TestConstants.RMO_COLLATERAL_RATIO_30_PER;
+        maxCollateralRatioPayFixed[1] = TestConstants.RMO_COLLATERAL_RATIO_20_PER;
 
-        uint256[] memory maxUtilizationRateReceiveFixed = new uint256[](2);
-        maxUtilizationRateReceiveFixed[0] = TestConstants.RMO_UTILIZATION_RATE_30_PER;
-        maxUtilizationRateReceiveFixed[1] = TestConstants.RMO_UTILIZATION_RATE_35_PER;
+        uint256[] memory maxCollateralRatioReceiveFixed = new uint256[](2);
+        maxCollateralRatioReceiveFixed[0] = TestConstants.RMO_COLLATERAL_RATIO_30_PER;
+        maxCollateralRatioReceiveFixed[1] = TestConstants.RMO_COLLATERAL_RATIO_35_PER;
 
-        uint256[] memory maxUtilizationRate = new uint256[](2);
-        maxUtilizationRate[0] = TestConstants.RMO_UTILIZATION_RATE_48_PER;
-        maxUtilizationRate[1] = TestConstants.RMO_UTILIZATION_RATE_60_PER;
+        uint256[] memory maxCollateralRatio = new uint256[](2);
+        maxCollateralRatio[0] = TestConstants.RMO_COLLATERAL_RATIO_48_PER;
+        maxCollateralRatio[1] = TestConstants.RMO_COLLATERAL_RATIO_60_PER;
 
         // when
         _iporRiskManagementOracle.updateRiskIndicators(
             assets,
             maxNotionalPayFixed,
             maxNotionalReceiveFixed,
-            maxUtilizationRatePayFixed,
-            maxUtilizationRateReceiveFixed,
-            maxUtilizationRate
+            maxCollateralRatioPayFixed,
+            maxCollateralRatioReceiveFixed,
+            maxCollateralRatio
         );
 
         // then
         (
             uint256 daiMaxNotionalPayFixed,
             uint256 daiMaxNotionalReceiveFixed,
-            uint256 daiMaxUtilizationRatePayFixed,
-            uint256 daiMaxUtilizationRateReceiveFixed,
-            uint256 daiMaxUtilizationRate,
+            uint256 daiMaxCollateralRatioPayFixed,
+            uint256 daiMaxCollateralRatioReceiveFixed,
+            uint256 daiMaxCollateralRatio,
             uint256 daiLastUpdateTimestamp
         ) = _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken));
         assertEq(daiMaxNotionalPayFixed, uint256(TestConstants.RMO_NOTIONAL_2B) * 1e22);
         assertEq(daiMaxNotionalReceiveFixed, uint256(TestConstants.RMO_NOTIONAL_2B) * 1e22);
-        assertEq(daiMaxUtilizationRatePayFixed, uint256(TestConstants.RMO_UTILIZATION_RATE_30_PER) * 1e14);
-        assertEq(daiMaxUtilizationRateReceiveFixed, uint256(TestConstants.RMO_UTILIZATION_RATE_30_PER) * 1e14);
-        assertEq(daiMaxUtilizationRate, uint256(TestConstants.RMO_UTILIZATION_RATE_48_PER) * 1e14);
+        assertEq(daiMaxCollateralRatioPayFixed, uint256(TestConstants.RMO_COLLATERAL_RATIO_30_PER) * 1e14);
+        assertEq(daiMaxCollateralRatioReceiveFixed, uint256(TestConstants.RMO_COLLATERAL_RATIO_30_PER) * 1e14);
+        assertEq(daiMaxCollateralRatio, uint256(TestConstants.RMO_COLLATERAL_RATIO_48_PER) * 1e14);
         assertEq(daiLastUpdateTimestamp, _blockTimestamp2);
         (
             uint256 usdcMaxNotionalPayFixed,
             uint256 usdcMaxNotionalReceiveFixed,
-            uint256 usdcMaxUtilizationRatePayFixed,
-            uint256 usdcMaxUtilizationRateReceiveFixed,
-            uint256 usdcMaxUtilizationRate,
+            uint256 usdcMaxCollateralRatioPayFixed,
+            uint256 usdcMaxCollateralRatioReceiveFixed,
+            uint256 usdcMaxCollateralRatio,
             uint256 usdcLastUpdateTimestamp
         ) = _iporRiskManagementOracle.getRiskIndicators(address(_usdcTestnetToken));
         assertEq(usdcMaxNotionalPayFixed, uint256(TestConstants.RMO_NOTIONAL_3B) * 1e22);
         assertEq(usdcMaxNotionalReceiveFixed, uint256(TestConstants.RMO_NOTIONAL_10B) * 1e22);
-        assertEq(usdcMaxUtilizationRatePayFixed, uint256(TestConstants.RMO_UTILIZATION_RATE_20_PER) * 1e14);
-        assertEq(usdcMaxUtilizationRateReceiveFixed, uint256(TestConstants.RMO_UTILIZATION_RATE_35_PER) * 1e14);
-        assertEq(usdcMaxUtilizationRate, uint256(TestConstants.RMO_UTILIZATION_RATE_60_PER) * 1e14);
+        assertEq(usdcMaxCollateralRatioPayFixed, uint256(TestConstants.RMO_COLLATERAL_RATIO_20_PER) * 1e14);
+        assertEq(usdcMaxCollateralRatioReceiveFixed, uint256(TestConstants.RMO_COLLATERAL_RATIO_35_PER) * 1e14);
+        assertEq(usdcMaxCollateralRatio, uint256(TestConstants.RMO_COLLATERAL_RATIO_60_PER) * 1e14);
         assertEq(usdcLastUpdateTimestamp, _blockTimestamp2);
     }
 
@@ -926,9 +926,9 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
             address(_daiTestnetToken),
             TestConstants.RMO_NOTIONAL_2B,
             TestConstants.RMO_NOTIONAL_2B,
-            TestConstants.RMO_UTILIZATION_RATE_30_PER,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_48_PER
+            TestConstants.RMO_COLLATERAL_RATIO_30_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER
         );
         IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps memory input = IporRiskManagementOracleTypes
             .BaseSpreadsAndFixedRateCaps(
@@ -950,8 +950,8 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
         // when
         (
             uint256 daiPayFixed60DMaxNotionalPerLeg,
-            uint256 daiPayFixed60DMaxUtilizationRatePerLeg,
-            uint256 daiPayFixed60DMaxUtilizationRate,
+            uint256 daiPayFixed60DMaxCollateralRatioPerLeg,
+            uint256 daiPayFixed60DMaxCollateralRatio,
             int256 daiPayFixed60DSpread,
             uint256 daiFixedRateCap60D
         ) = _iporRiskManagementOracle.getOpenSwapParameters(
@@ -961,8 +961,8 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
             );
         (
             uint256 daiReceiveFixed90DMaxNotionalPerLeg,
-            uint256 daiReceiveFixed90DMaxUtilizationRatePerLeg,
-            uint256 daiReceiveFixed90DMaxUtilizationRate,
+            uint256 daiReceiveFixed90DMaxCollateralRatioPerLeg,
+            uint256 daiReceiveFixed90DMaxCollateralRatio,
             int256 daiReceiveFixed90DSpread,
             uint256 daiFixedRateCap90D
         ) = _iporRiskManagementOracle.getOpenSwapParameters(
@@ -973,14 +973,14 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
 
         //then:
         assertEq(daiPayFixed60DMaxNotionalPerLeg, uint256(TestConstants.RMO_NOTIONAL_2B) * 1e22);
-        assertEq(daiPayFixed60DMaxUtilizationRatePerLeg, uint256(TestConstants.RMO_UTILIZATION_RATE_30_PER) * 1e14);
-        assertEq(daiPayFixed60DMaxUtilizationRate, uint256(TestConstants.RMO_UTILIZATION_RATE_48_PER) * 1e14);
+        assertEq(daiPayFixed60DMaxCollateralRatioPerLeg, uint256(TestConstants.RMO_COLLATERAL_RATIO_30_PER) * 1e14);
+        assertEq(daiPayFixed60DMaxCollateralRatio, uint256(TestConstants.RMO_COLLATERAL_RATIO_48_PER) * 1e14);
         assertEq(daiPayFixed60DSpread, int256(TestConstants.RMO_SPREAD_0_2_PER) * 1e12);
         assertEq(daiFixedRateCap60D, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_0_PER) * 1e14);
 
         assertEq(daiReceiveFixed90DMaxNotionalPerLeg, uint256(TestConstants.RMO_NOTIONAL_2B) * 1e22);
-        assertEq(daiReceiveFixed90DMaxUtilizationRatePerLeg, uint256(TestConstants.RMO_UTILIZATION_RATE_20_PER) * 1e14);
-        assertEq(daiReceiveFixed90DMaxUtilizationRate, uint256(TestConstants.RMO_UTILIZATION_RATE_48_PER) * 1e14);
+        assertEq(daiReceiveFixed90DMaxCollateralRatioPerLeg, uint256(TestConstants.RMO_COLLATERAL_RATIO_20_PER) * 1e14);
+        assertEq(daiReceiveFixed90DMaxCollateralRatio, uint256(TestConstants.RMO_COLLATERAL_RATIO_48_PER) * 1e14);
         assertEq(daiReceiveFixed90DSpread, int256(TestConstants.RMO_SPREAD_0_25_PER) * 1e12);
         assertEq(daiFixedRateCap90D, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_0_PER) * 1e14);
     }

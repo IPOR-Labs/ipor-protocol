@@ -496,14 +496,14 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             ctx.poolCfg.minLeverage
         );
 
-        _validateLiquidityPoolUtilizationAndSwapLeverage(
+        _validateLiquidityPoolCollateralRatioAndSwapLeverage(
             balance.liquidityPool,
             balance.totalCollateralPayFixed,
             balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
             leverage,
             riskIndicators.maxLeveragePerLeg,
-            riskIndicators.maxUtilizationRate,
-            riskIndicators.maxUtilizationRatePerLeg,
+            riskIndicators.maxCollateralRatio,
+            riskIndicators.maxCollateralRatioPerLeg,
             ctx.poolCfg.minLeverage
         );
 
@@ -514,7 +514,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                     ctx.poolCfg.asset,
                     bosStruct.notional,
                     riskIndicators.maxLeveragePerLeg,
-                    riskIndicators.maxUtilizationRatePerLeg,
+                    riskIndicators.maxCollateralRatioPerLeg,
                     riskIndicators.spread,
                     balance.totalCollateralPayFixed,
                     balance.totalCollateralReceiveFixed,
@@ -601,14 +601,14 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             ctx.poolCfg.minLeverage
         );
 
-        _validateLiquidityPoolUtilizationAndSwapLeverage(
+        _validateLiquidityPoolCollateralRatioAndSwapLeverage(
             balance.liquidityPool,
             balance.totalCollateralReceiveFixed,
             balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
             leverage,
             riskIndicators.maxLeveragePerLeg,
-            riskIndicators.maxUtilizationRate,
-            riskIndicators.maxUtilizationRatePerLeg,
+            riskIndicators.maxCollateralRatio,
+            riskIndicators.maxCollateralRatioPerLeg,
             ctx.poolCfg.minLeverage
         );
 
@@ -619,7 +619,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                     ctx.poolCfg.asset,
                     bosStruct.notional,
                     riskIndicators.maxLeveragePerLeg,
-                    riskIndicators.maxUtilizationRatePerLeg,
+                    riskIndicators.maxCollateralRatioPerLeg,
                     riskIndicators.spread,
                     balance.totalCollateralPayFixed,
                     balance.totalCollateralReceiveFixed,
@@ -748,13 +748,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
 
         (
             maxNotionalPerLeg,
-            riskIndicators.maxUtilizationRatePerLeg,
-            riskIndicators.maxUtilizationRate,
+            riskIndicators.maxCollateralRatioPerLeg,
+            riskIndicators.maxCollateralRatio,
             riskIndicators.spread,
             riskIndicators.fixedRateCap
         ) = IIporRiskManagementOracle(_iporRiskManagementOracle).getOpenSwapParameters(asset, direction, tenor);
 
-        uint256 maxCollateralPerLeg = IporMath.division(liquidityPool * riskIndicators.maxUtilizationRatePerLeg, 1e18);
+        uint256 maxCollateralPerLeg = IporMath.division(liquidityPool * riskIndicators.maxCollateralRatioPerLeg, 1e18);
 
         if (maxCollateralPerLeg > 0) {
             riskIndicators.maxLeveragePerLeg = _leverageInRange(
@@ -814,31 +814,31 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         );
     }
 
-    function _validateLiquidityPoolUtilizationAndSwapLeverage(
+    function _validateLiquidityPoolCollateralRatioAndSwapLeverage(
         uint256 totalLiquidityPoolBalance,
         uint256 collateralPerLegBalance,
         uint256 totalCollateralBalance,
         uint256 leverage,
         uint256 maxLeverage,
-        uint256 maxUtilizationRate,
-        uint256 maxUtilizationRatePerLeg,
+        uint256 maxCollateralRatio,
+        uint256 maxCollateralRatioPerLeg,
         uint256 cfgMinLeverage
     ) internal pure {
-        uint256 utilizationRate;
-        uint256 utilizationRatePerLeg;
+        uint256 collateralRatio;
+        uint256 collateralRatioPerLeg;
 
         if (totalLiquidityPoolBalance > 0) {
-            utilizationRate = IporMath.division(totalCollateralBalance * 1e18, totalLiquidityPoolBalance);
+            collateralRatio = IporMath.division(totalCollateralBalance * 1e18, totalLiquidityPoolBalance);
 
-            utilizationRatePerLeg = IporMath.division(collateralPerLegBalance * 1e18, totalLiquidityPoolBalance);
+            collateralRatioPerLeg = IporMath.division(collateralPerLegBalance * 1e18, totalLiquidityPoolBalance);
         } else {
-            utilizationRate = Constants.MAX_VALUE;
-            utilizationRatePerLeg = Constants.MAX_VALUE;
+            collateralRatio = Constants.MAX_VALUE;
+            collateralRatioPerLeg = Constants.MAX_VALUE;
         }
 
-        require(utilizationRate <= maxUtilizationRate, AmmErrors.LP_UTILIZATION_EXCEEDED);
+        require(collateralRatio <= maxCollateralRatio, AmmErrors.LP_COLLATERAL_RATIO_EXCEEDED);
 
-        require(utilizationRatePerLeg <= maxUtilizationRatePerLeg, AmmErrors.LP_UTILIZATION_PER_LEG_EXCEEDED);
+        require(collateralRatioPerLeg <= maxCollateralRatioPerLeg, AmmErrors.LP_COLLATERAL_RATIO_PER_LEG_EXCEEDED);
 
         require(leverage >= cfgMinLeverage, AmmErrors.LEVERAGE_TOO_LOW);
         require(leverage <= maxLeverage, AmmErrors.LEVERAGE_TOO_HIGH);
