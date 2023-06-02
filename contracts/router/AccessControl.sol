@@ -52,16 +52,28 @@ contract AccessControl {
         OwnerManager.renounceOwnership();
     }
 
-    function pause() external onlyPauseGuardian {
-        _pause();
+    function pause(bytes4[] calldata functionSigs) external onlyPauseGuardian {
+        uint256 len = functionSigs.length;
+        for (uint256 i = 0; i < len; ) {
+            StorageLib.getRouterFunctionPaused().value[functionSigs[i]] = 1;
+            unchecked {
+                ++i;
+            }
+        }
     }
 
-    function unpause() external onlyOwner {
-        StorageLib.getPaused().value = 0;
+    function unpause(bytes4[] calldata functionSigs) external onlyOwner {
+        uint256 len = functionSigs.length;
+        for (uint256 i = 0; i < len; ) {
+            StorageLib.getRouterFunctionPaused().value[functionSigs[i]] = 0;
+            unchecked {
+                ++i;
+            }
+        }
     }
 
-    function paused() external view returns (uint256) {
-        return uint256(StorageLib.getPaused().value);
+    function paused(bytes4 functionSig) external view returns (uint256) {
+        return StorageLib.getRouterFunctionPaused().value[functionSig];
     }
 
     function addPauseGuardian(address guardian) external onlyOwner {
@@ -76,19 +88,16 @@ contract AccessControl {
         return PauseManager.isPauseGuardian(guardian);
     }
 
+    function _checkFunctionSigAndIsNotPause(bytes4 functionSig, bytes4 expectedSig) internal view returns (bool) {
+        if (functionSig == expectedSig) {
+            require(StorageLib.getRouterFunctionPaused().value[functionSig] == 0, "Pausable: paused");
+            return true;
+        }
+        return false;
+    }
+
     function _onlyOwner() internal view {
         require(address(StorageLib.getOwner().owner) == msg.sender, "Ownable: caller is not the owner");
     }
 
-    function _whenNotPaused() internal view {
-        require(uint256(StorageLib.getPaused().value) == 0, "Pausable: paused");
-    }
-
-    function _pause() internal {
-        StorageLib.getPaused().value = 1;
-    }
-
-    function _nonReentrant() internal view {
-        require(_reentrancyStatus != _ENTERED, "ReentrancyGuard: reentrant call");
-    }
 }
