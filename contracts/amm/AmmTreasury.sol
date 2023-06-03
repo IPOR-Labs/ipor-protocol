@@ -103,18 +103,18 @@ contract AmmTreasury is
 
     /// @notice Joseph deposits to AssetManagement asset amount from AmmTreasury.
     /// @param assetAmount underlying token amount represented in 18 decimals
-    function depositToAssetManagement(uint256 assetAmount) external onlyRouter nonReentrant whenNotPaused {
+    function depositToAssetManagementInternal(uint256 assetAmount) external onlyRouter nonReentrant whenNotPaused {
         (uint256 vaultBalance, uint256 depositedAmount) = IAssetManagement(_assetManagement).deposit(assetAmount);
         IAmmStorage(_ammStorage).updateStorageWhenDepositToAssetManagement(depositedAmount, vaultBalance);
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
-    function withdrawFromAssetManagement(uint256 assetAmount) external nonReentrant onlyRouter whenNotPaused {
+    function withdrawFromAssetManagementInternal(uint256 assetAmount) external nonReentrant onlyRouter whenNotPaused {
         (uint256 withdrawnAmount, uint256 vaultBalance) = IAssetManagement(_assetManagement).withdraw(assetAmount);
         IAmmStorage(_ammStorage).updateStorageWhenWithdrawFromAssetManagement(withdrawnAmount, vaultBalance);
     }
 
-    function withdrawAllFromAssetManagement() external nonReentrant onlyRouter whenNotPaused {
+    function withdrawAllFromAssetManagementInternal() external nonReentrant onlyRouter whenNotPaused {
         (uint256 withdrawnAmount, uint256 vaultBalance) = IAssetManagement(_assetManagement).withdrawAll();
         IAmmStorage(_ammStorage).updateStorageWhenWithdrawFromAssetManagement(withdrawnAmount, vaultBalance);
     }

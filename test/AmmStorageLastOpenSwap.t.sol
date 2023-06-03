@@ -57,7 +57,7 @@ contract SimpleTest is TestCommons {
 
         // when
         vm.prank(_router);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
 
         // then
 
@@ -98,8 +98,8 @@ contract SimpleTest is TestCommons {
 
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
         vm.stopPrank();
 
         // then
@@ -140,7 +140,7 @@ contract SimpleTest is TestCommons {
 
         // when
         vm.prank(_router);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
 
         // then
 
@@ -180,8 +180,8 @@ contract SimpleTest is TestCommons {
 
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
         vm.stopPrank();
 
         // then
@@ -238,8 +238,8 @@ contract SimpleTest is TestCommons {
 
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap28Days, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap60Days, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap28Days, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap60Days, cfgIporPublicationFee);
         vm.stopPrank();
 
         // then
@@ -277,9 +277,9 @@ contract SimpleTest is TestCommons {
         );
         uint256 cfgIporPublicationFee = 1e18;
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
         vm.stopPrank();
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
@@ -302,7 +302,7 @@ contract SimpleTest is TestCommons {
         );
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenCloseSwapPayFixed(swap, 0, 1028 days);
+        _ammStorage.updateStorageWhenCloseSwapPayFixedInternal(swap, 0, 1028 days);
         vm.stopPrank();
 
         // then
@@ -336,9 +336,9 @@ contract SimpleTest is TestCommons {
         );
         uint256 cfgIporPublicationFee = 1e18;
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
         vm.stopPrank();
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
@@ -361,7 +361,7 @@ contract SimpleTest is TestCommons {
         );
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenCloseSwapPayFixed(swap, 0, 1028 days);
+        _ammStorage.updateStorageWhenCloseSwapPayFixedInternal(swap, 0, 1028 days);
         vm.stopPrank();
 
         // then
@@ -395,9 +395,9 @@ contract SimpleTest is TestCommons {
         );
         uint256 cfgIporPublicationFee = 1e18;
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
         vm.stopPrank();
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
@@ -420,7 +420,7 @@ contract SimpleTest is TestCommons {
         );
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenCloseSwapPayFixed(swap, 0, 1028 days);
+        _ammStorage.updateStorageWhenCloseSwapPayFixedInternal(swap, 0, 1028 days);
         vm.stopPrank();
 
         // then
@@ -454,9 +454,9 @@ contract SimpleTest is TestCommons {
         );
         uint256 cfgIporPublicationFee = 1e18;
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
         vm.stopPrank();
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
@@ -479,7 +479,7 @@ contract SimpleTest is TestCommons {
         );
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenCloseSwapReceiveFixed(swap, 0, 1028 days);
+        _ammStorage.updateStorageWhenCloseSwapReceiveFixedInternal(swap, 0, 1028 days);
         vm.stopPrank();
 
         // then
@@ -513,9 +513,9 @@ contract SimpleTest is TestCommons {
         );
         uint256 cfgIporPublicationFee = 1e18;
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
         vm.stopPrank();
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
@@ -538,7 +538,7 @@ contract SimpleTest is TestCommons {
         );
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenCloseSwapReceiveFixed(swap, 0, 1028 days);
+        _ammStorage.updateStorageWhenCloseSwapReceiveFixedInternal(swap, 0, 1028 days);
         vm.stopPrank();
 
         // then
@@ -572,9 +572,9 @@ contract SimpleTest is TestCommons {
         );
         uint256 cfgIporPublicationFee = 1e18;
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
         vm.stopPrank();
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
@@ -597,7 +597,7 @@ contract SimpleTest is TestCommons {
         );
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenCloseSwapReceiveFixed(swap, 0, 1028 days);
+        _ammStorage.updateStorageWhenCloseSwapReceiveFixedInternal(swap, 0, 1028 days);
         vm.stopPrank();
 
         // then

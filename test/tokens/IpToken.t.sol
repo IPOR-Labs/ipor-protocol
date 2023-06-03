@@ -112,7 +112,7 @@ contract IpTokenTest is Test, TestCommons {
         // when & then
         vm.prank(_user1);
         vm.expectRevert(abi.encodePacked(AmmErrors.CALLER_NOT_ROUTER));
-        ipToken.mint(_user2, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
+        ipToken.mintInternal(_user2, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
     }
 
     function testShouldNotMintIpTokenIfZero() public {
@@ -122,7 +122,7 @@ contract IpTokenTest is Test, TestCommons {
         // when & then
         vm.prank(_router);
         vm.expectRevert(abi.encodePacked(AmmPoolsErrors.IP_TOKEN_MINT_AMOUNT_TOO_LOW));
-        ipToken.mint(_user1, TestConstants.ZERO);
+        ipToken.mintInternal(_user1, TestConstants.ZERO);
     }
 
     function testShouldNotBurnIpTokenIfZero() public {
@@ -132,7 +132,7 @@ contract IpTokenTest is Test, TestCommons {
         // when & then
         vm.prank(_router);
         vm.expectRevert(abi.encodePacked(AmmPoolsErrors.IP_TOKEN_BURN_AMOUNT_TOO_LOW));
-        ipToken.burn(_user1, TestConstants.ZERO);
+        ipToken.burnInternal(_user1, TestConstants.ZERO);
     }
 
     function testShouldNotBurnIpTokenIfNotJoseph() public {
@@ -142,7 +142,7 @@ contract IpTokenTest is Test, TestCommons {
         // when & then
         vm.prank(_user1);
         vm.expectRevert(abi.encodePacked(AmmErrors.CALLER_NOT_ROUTER));
-        ipToken.burn(_user2, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
+        ipToken.burnInternal(_user2, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
     }
 
     function testShouldEmitEvent() public {
@@ -155,7 +155,7 @@ contract IpTokenTest is Test, TestCommons {
         vm.expectEmit(true, true, true, true);
         emit Mint(_user1, amount);
 
-        ipToken.mint(_user1, amount);
+        ipToken.mintInternal(_user1, amount);
     }
 
     function testShouldContain18Decimals() public {

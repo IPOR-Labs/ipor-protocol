@@ -13,8 +13,6 @@ interface IAmmStorage {
     /// @return current AmmTreasury Storage version, integer
     function getVersion() external pure returns (uint256);
 
-    function getIporProtocolRouter() external view returns (address);
-
     /// @notice Gets last swap ID.
     /// @dev swap ID is incremented when new position is opened, last swap ID is used in Pay Fixed and Receive Fixed swaps.
     /// @return last swap ID, integer
@@ -163,7 +161,7 @@ interface IAmmStorage {
     /// @param assetAmount amount of asset added to balance of Liquidity Pool, represented in 18 decimals
     /// @param cfgMaxLiquidityPoolBalance max liquidity pool balance taken from Joseph configuration, represented in 18 decimals.
     /// @param cfgMaxLpAccountContribution max liquidity pool account contribution taken from AMM configuration, represented in 18 decimals.
-    function addLiquidity(
+    function addLiquidityInternal(
         address account,
         uint256 assetAmount,
         uint256 cfgMaxLiquidityPoolBalance,
@@ -172,13 +170,13 @@ interface IAmmStorage {
 
     /// @notice subtract liquidity from the Liquidity Pool. Function available only to Router.
     /// @param assetAmount amount of asset subtracted from Liquidity Pool, represented in 18 decimals
-    function subtractLiquidity(uint256 assetAmount) external;
+    function subtractLiquidityInternal(uint256 assetAmount) external;
 
     /// @notice Updates structures in storage: balance, swaps, SOAP indicators when new Pay-Fixed swap is opened. Function available only to AmmTreasury.
     /// @param newSwap new swap structure {AmmTypes.NewSwap}
     /// @param cfgIporPublicationFee publication fee amount taken from AmmTreasury configuration, represented in 18 decimals.
     /// @return new swap ID
-    function updateStorageWhenOpenSwapPayFixed(AmmTypes.NewSwap memory newSwap, uint256 cfgIporPublicationFee)
+    function updateStorageWhenOpenSwapPayFixedInternal(AmmTypes.NewSwap memory newSwap, uint256 cfgIporPublicationFee)
         external
         returns (uint256);
 
@@ -186,7 +184,7 @@ interface IAmmStorage {
     /// @param newSwap new swap structure {AmmTypes.NewSwap}
     /// @param cfgIporPublicationFee publication fee amount taken from AmmTreasury configuration, represented in 18 decimals.
     /// @return new swap ID
-    function updateStorageWhenOpenSwapReceiveFixed(AmmTypes.NewSwap memory newSwap, uint256 cfgIporPublicationFee)
+    function updateStorageWhenOpenSwapReceiveFixedInternal(AmmTypes.NewSwap memory newSwap, uint256 cfgIporPublicationFee)
         external
         returns (uint256);
 
@@ -197,7 +195,7 @@ interface IAmmStorage {
     ///              It can be negative.
     /// @param closingTimestamp The moment when the swap was closed.
     /// @return closedSwap A memory struct representing the closed swap.
-    function updateStorageWhenCloseSwapPayFixed(
+    function updateStorageWhenCloseSwapPayFixedInternal(
         AmmTypes.Swap memory swap,
         int256 payoff,
         uint256 closingTimestamp
@@ -210,7 +208,7 @@ interface IAmmStorage {
     ///              It can be negative.
     /// @param closingTimestamp The moment when the swap was closed.
     /// @return closedSwap A memory struct representing the closed swap.
-    function updateStorageWhenCloseSwapReceiveFixed(
+    function updateStorageWhenCloseSwapReceiveFixedInternal(
         AmmTypes.Swap memory swap,
         int256 payoff,
         uint256 closingTimestamp
@@ -228,11 +226,11 @@ interface IAmmStorage {
 
     /// @notice Updates the balance when Joseph transfers AmmTreasury's assets to Charlie Treasury's multisig wallet. Function is only available to Joseph.
     /// @param transferredAmount asset amount transferred to Charlie Treasury multisig wallet.
-    function updateStorageWhenTransferToCharlieTreasury(uint256 transferredAmount) external;
+    function updateStorageWhenTransferToCharlieTreasuryInternal(uint256 transferredAmount) external;
 
     /// @notice Updates the balance when Joseph transfers AmmTreasury's assets to Treasury's multisig wallet. Function is only available to Joseph.
     /// @param transferredAmount asset amount transferred to Treasury's multisig wallet.
-    function updateStorageWhenTransferToTreasury(uint256 transferredAmount) external;
+    function updateStorageWhenTransferToTreasuryInternal(uint256 transferredAmount) external;
 
     /// @notice Pauses current smart contract, it can be executed only by the Owner
     /// @dev Emits {Paused} event from Amm Treasury.
