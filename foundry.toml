@@ -3,6 +3,7 @@ src = 'contracts'
 out = 'out'
 libs = ["node_modules", "lib"]
 fs_permissions = [{ access = "read-write", path = "./"}]
+libraries = []
 remappings = [
     '@ensdomains/=node_modules/@ensdomains/',
     '@openzeppelin/=node_modules/@openzeppelin/',
@@ -12,6 +13,6 @@ remappings = [
     'contracts/=contracts/',
     'scripts/=scripts/'
 ]
-optimizer_runs = 400
+optimizer_runs = 500
 ignored_error_codes = [5667, 9302, 2462, 5574, 8760]
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config

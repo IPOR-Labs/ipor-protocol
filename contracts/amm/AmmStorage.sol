@@ -12,7 +12,6 @@ import "contracts/interfaces/types/AmmStorageTypes.sol";
 import "contracts/interfaces/IAmmStorage.sol";
 import "contracts/security/IporOwnableUpgradeable.sol";
 import "contracts/amm/libraries/SoapIndicatorRebalanceLogic.sol";
-import "contracts/amm/libraries/IporSwapLogic.sol";
 import "contracts/amm/libraries/types/StorageInternalTypes.sol";
 import "contracts/amm/libraries/types/AmmInternalTypes.sol";
 
@@ -142,28 +141,20 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             );
     }
 
-    function getSwapPayFixed(uint256 swapId) external view override returns (AmmTypes.Swap memory) {
+    function getSwap(AmmTypes.SwapDirection direction, uint256 swapId)
+        external
+        view
+        override
+        returns (AmmTypes.Swap memory)
+    {
         uint32 id = swapId.toUint32();
-        StorageInternalTypes.Swap storage swap = _swapsPayFixed.swaps[id];
-        return
-            AmmTypes.Swap(
-                swap.id,
-                swap.buyer,
-                swap.openTimestamp,
-                swap.tenor,
-                swap.idsIndex,
-                swap.collateral,
-                swap.notional,
-                swap.ibtQuantity,
-                swap.fixedInterestRate,
-                uint256(swap.liquidationDepositAmount) * 1e18,
-                swap.state
-            );
-    }
+        StorageInternalTypes.Swap storage swap;
 
-    function getSwapReceiveFixed(uint256 swapId) external view override returns (AmmTypes.Swap memory) {
-        uint32 id = swapId.toUint32();
-        StorageInternalTypes.Swap storage swap = _swapsReceiveFixed.swaps[id];
+        if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) swap = _swapsPayFixed.swaps[id];
+        else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) swap = _swapsReceiveFixed.swaps[id];
+        else {
+            revert(AmmErrors.UNSUPPORTED_DIRECTION);
+        }
         return
             AmmTypes.Swap(
                 swap.id,
@@ -310,7 +301,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         onlyRouter
         returns (uint256)
     {
-        uint256 id = _updateSwapsWhenOpenPayFixed(newSwap);
+        uint256 id = _updateSwapsWhenOpen(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, newSwap);
         _updateBalancesWhenOpenSwapPayFixed(
             newSwap.collateral,
             newSwap.openingFeeLPAmount,
@@ -334,7 +325,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         onlyRouter
         returns (uint256)
     {
-        uint256 id = _updateSwapsWhenOpenReceiveFixed(newSwap);
+        uint256 id = _updateSwapsWhenOpen(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, newSwap);
         _updateBalancesWhenOpenSwapReceiveFixed(
             newSwap.collateral,
             newSwap.openingFeeLPAmount,
@@ -561,16 +552,30 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         }
     }
 
-    function _updateSwapsWhenOpenPayFixed(AmmTypes.NewSwap memory newSwap) internal returns (uint256) {
+    function _updateSwapsWhenOpen(AmmTypes.SwapDirection direction, AmmTypes.NewSwap memory newSwap)
+        internal
+        returns (uint256)
+    {
         _lastSwapId++;
         uint32 id = _lastSwapId;
 
-        StorageInternalTypes.Swap storage swap = _swapsPayFixed.swaps[id];
+        StorageInternalTypes.Swap storage swap;
+        uint32 idsIndexLocal;
+
+        if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
+            swap = _swapsPayFixed.swaps[id];
+            idsIndexLocal = _swapsPayFixed.ids[newSwap.buyer].length.toUint32();
+        } else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
+            swap = _swapsReceiveFixed.swaps[id];
+            idsIndexLocal = _swapsReceiveFixed.ids[newSwap.buyer].length.toUint32();
+        } else {
+            revert(AmmErrors.UNSUPPORTED_DIRECTION);
+        }
 
         swap.id = id;
         swap.buyer = newSwap.buyer;
         swap.openTimestamp = newSwap.openTimestamp.toUint32();
-        swap.idsIndex = _swapsPayFixed.ids[newSwap.buyer].length.toUint32();
+        swap.idsIndex = idsIndexLocal;
         swap.collateral = newSwap.collateral.toUint128();
         swap.notional = newSwap.notional.toUint128();
         swap.ibtQuantity = newSwap.ibtQuantity.toUint128();
@@ -579,31 +584,14 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         swap.state = IporTypes.SwapState.ACTIVE;
         swap.tenor = newSwap.tenor;
 
-        _swapsPayFixed.ids[newSwap.buyer].push(id);
-        _lastSwapId = id;
+        if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
+            _swapsPayFixed.ids[newSwap.buyer].push(id);
+        } else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
+            _swapsReceiveFixed.ids[newSwap.buyer].push(id);
+        } else {
+            revert(AmmErrors.UNSUPPORTED_DIRECTION);
+        }
 
-        return id;
-    }
-
-    function _updateSwapsWhenOpenReceiveFixed(AmmTypes.NewSwap memory newSwap) internal returns (uint256) {
-        _lastSwapId++;
-        uint32 id = _lastSwapId;
-
-        StorageInternalTypes.Swap storage swap = _swapsReceiveFixed.swaps[id];
-
-        swap.id = id;
-        swap.buyer = newSwap.buyer;
-        swap.openTimestamp = newSwap.openTimestamp.toUint32();
-        swap.idsIndex = _swapsReceiveFixed.ids[newSwap.buyer].length.toUint32();
-        swap.collateral = newSwap.collateral.toUint128();
-        swap.notional = newSwap.notional.toUint128();
-        swap.ibtQuantity = newSwap.ibtQuantity.toUint128();
-        swap.fixedInterestRate = newSwap.fixedInterestRate.toUint64();
-        swap.liquidationDepositAmount = newSwap.liquidationDepositAmount.toUint32();
-        swap.state = IporTypes.SwapState.ACTIVE;
-        swap.tenor = newSwap.tenor;
-
-        _swapsReceiveFixed.ids[newSwap.buyer].push(id);
         _lastSwapId = id;
 
         return id;
