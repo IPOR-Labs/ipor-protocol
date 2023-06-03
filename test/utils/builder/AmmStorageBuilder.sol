@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 import "forge-std/Test.sol";
-import "../../../contracts/amm/AmmStorage.sol";
+import "contracts/amm/AmmStorage.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 contract AmmStorageBuilder is Test {
@@ -31,6 +31,7 @@ contract AmmStorageBuilder is Test {
     function build() public returns (AmmStorage) {
         require(builderData.iporProtocolRouter != address(0), "iporProtocolRouter is required");
         vm.startPrank(_owner);
+
         ERC1967Proxy proxy = _constructProxy(
             address(new AmmStorage(builderData.iporProtocolRouter, builderData.ammTreasury))
         );

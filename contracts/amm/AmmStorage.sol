@@ -662,7 +662,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             _soapIndicatorsPayFixed.rebalanceTimestamp
         );
 
-        pf.rebalanceWhenOpenSwap(openTimestamp, notional, fixedInterestRate, ibtQuantity);
+        pf = pf.rebalanceWhenOpenSwap(openTimestamp, notional, fixedInterestRate, ibtQuantity);
 
         _soapIndicatorsPayFixed.rebalanceTimestamp = pf.rebalanceTimestamp.toUint32();
         _soapIndicatorsPayFixed.totalNotional = pf.totalNotional.toUint128();
@@ -684,7 +684,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             _soapIndicatorsReceiveFixed.averageInterestRate,
             _soapIndicatorsReceiveFixed.rebalanceTimestamp
         );
-        rf.rebalanceWhenOpenSwap(openTimestamp, notional, fixedInterestRate, ibtQuantity);
+        rf = rf.rebalanceWhenOpenSwap(openTimestamp, notional, fixedInterestRate, ibtQuantity);
 
         _soapIndicatorsReceiveFixed.rebalanceTimestamp = rf.rebalanceTimestamp.toUint32();
         _soapIndicatorsReceiveFixed.totalNotional = rf.totalNotional.toUint128();
@@ -702,7 +702,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             _soapIndicatorsPayFixed.rebalanceTimestamp
         );
 
-        pf.rebalanceWhenCloseSwap(
+        pf = pf.rebalanceWhenCloseSwap(
             closingTimestamp,
             swap.openTimestamp,
             swap.notional,
@@ -730,7 +730,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             _soapIndicatorsReceiveFixed.rebalanceTimestamp
         );
 
-        rf.rebalanceWhenCloseSwap(
+        rf = rf.rebalanceWhenCloseSwap(
             closingTimestamp,
             swap.openTimestamp,
             swap.notional,
