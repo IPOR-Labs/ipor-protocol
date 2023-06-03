@@ -374,8 +374,9 @@ contract DevDeployment is Script {
             new Spread90Days(address(amm.dai.asset), address(amm.usdc.asset), address(amm.usdt.asset))
         );
 
-        //TODO: add appropriact closeSwapService address
-        deployedContracts.closeSwapService = address(new SpreadStorageLens());
+        deployedContracts.closeSwapService = address(
+            new SpreadCloseSwapService(address(amm.dai.asset), address(amm.usdc.asset), address(amm.usdt.asset))
+        );
 
         amm.spreadRouter = address(
             new ERC1967Proxy(
