@@ -8,10 +8,6 @@ contract EmptyRouterImplementation is UUPSUpgradeable, AccessControl {
     function initialize(bool paused) external initializer {
         __UUPSUpgradeable_init();
         OwnerManager.transferOwnership(msg.sender);
-
-        if (paused) {
-            _pause();
-        }
     }
 
     function _authorizeUpgrade(address) internal override onlyOwner {}

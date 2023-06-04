@@ -12,6 +12,7 @@ library StorageLib {
         AppointedOwner,
         Paused,
         PauseGuardian,
+        RouterFunctionPaused,
         AmmSwapsLiquidators,
         AmmPoolsAppointedToRebalance,
         AmmPoolsParams
@@ -61,6 +62,11 @@ library StorageLib {
         mapping(address => AmmPoolsParamsValue) value;
     }
 
+    /// @dev key - function sig, value - 1 if function is paused, 0 if not
+    struct RouterFunctionPausedStorage {
+        mapping(bytes4 => uint256) value;
+    }
+
     function getOwner() internal pure returns (OwnerStorage storage owner) {
         uint256 slot = _getStorageSlot(StorageId.Owner);
         assembly {
@@ -77,6 +83,13 @@ library StorageLib {
 
     function getPaused() internal pure returns (PausedStorage storage paused) {
         uint256 slot = _getStorageSlot(StorageId.Paused);
+        assembly {
+            paused.slot := slot
+        }
+    }
+
+    function getRouterFunctionPaused() internal pure returns (RouterFunctionPausedStorage storage paused) {
+        uint256 slot = _getStorageSlot(StorageId.RouterFunctionPaused);
         assembly {
             paused.slot := slot
         }
