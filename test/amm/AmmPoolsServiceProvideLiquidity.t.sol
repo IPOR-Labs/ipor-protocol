@@ -98,7 +98,7 @@ contract AmmPoolsServiceProvideLiquidity is TestCommons {
 
         // when
         vm.prank(_liquidityProvider);
-        vm.expectRevert("Pausable: paused");
+        vm.expectRevert(bytes(IporErrors.METHOD_PAUSED));
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_14_000_18DEC);
 
         // then

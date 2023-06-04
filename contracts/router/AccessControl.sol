@@ -54,7 +54,7 @@ contract AccessControl {
 
     function pause(bytes4[] calldata functionSigs) external onlyPauseGuardian {
         uint256 len = functionSigs.length;
-        for (uint256 i = 0; i < len; ) {
+        for (uint256 i; i < len; ) {
             StorageLib.getRouterFunctionPaused().value[functionSigs[i]] = 1;
             unchecked {
                 ++i;
@@ -64,7 +64,7 @@ contract AccessControl {
 
     function unpause(bytes4[] calldata functionSigs) external onlyOwner {
         uint256 len = functionSigs.length;
-        for (uint256 i = 0; i < len; ) {
+        for (uint256 i; i < len; ) {
             StorageLib.getRouterFunctionPaused().value[functionSigs[i]] = 0;
             unchecked {
                 ++i;
@@ -90,14 +90,14 @@ contract AccessControl {
 
     function _checkFunctionSigAndIsNotPause(bytes4 functionSig, bytes4 expectedSig) internal view returns (bool) {
         if (functionSig == expectedSig) {
-            require(StorageLib.getRouterFunctionPaused().value[functionSig] == 0, "Pausable: paused");
+            require(StorageLib.getRouterFunctionPaused().value[functionSig] == 0, IporErrors.METHOD_PAUSED);
             return true;
         }
         return false;
     }
 
     function _onlyOwner() internal view {
-        require(address(StorageLib.getOwner().owner) == msg.sender, "Ownable: caller is not the owner");
+        require(address(StorageLib.getOwner().owner) == msg.sender, IporErrors.CALLER_NOT_OWNER);
     }
 
 }
