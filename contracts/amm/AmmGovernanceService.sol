@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
@@ -174,15 +174,15 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     }
 
     function depositToAssetManagement(address asset, uint256 assetAmount) external override {
-        IAmmTreasury(_getAmmTreasury(asset)).depositToAssetManagement(assetAmount);
+        IAmmTreasury(_getAmmTreasury(asset)).depositToAssetManagementInternal(assetAmount);
     }
 
     function withdrawFromAssetManagement(address asset, uint256 assetAmount) external override {
-        IAmmTreasury(_getAmmTreasury(asset)).withdrawFromAssetManagement(assetAmount);
+        IAmmTreasury(_getAmmTreasury(asset)).withdrawFromAssetManagementInternal(assetAmount);
     }
 
     function withdrawAllFromAssetManagement(address asset) external override {
-        IAmmTreasury(_getAmmTreasury(asset)).withdrawAllFromAssetManagement();
+        IAmmTreasury(_getAmmTreasury(asset)).withdrawAllFromAssetManagementInternal();
     }
 
     function transferToTreasury(address asset, uint256 assetAmount) external override {
@@ -193,7 +193,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(assetAmount, poolCfg.assetDecimals);
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, poolCfg.assetDecimals);
 
-        IAmmStorage(poolCfg.ammStorage).updateStorageWhenTransferToTreasury(wadAssetAmount);
+        IAmmStorage(poolCfg.ammStorage).updateStorageWhenTransferToTreasuryInternal(wadAssetAmount);
 
         IERC20Upgradeable(asset).safeTransferFrom(
             poolCfg.ammTreasury,
@@ -210,7 +210,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(assetAmount, poolCfg.assetDecimals);
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, poolCfg.assetDecimals);
 
-        IAmmStorage(poolCfg.ammStorage).updateStorageWhenTransferToCharlieTreasury(wadAssetAmount);
+        IAmmStorage(poolCfg.ammStorage).updateStorageWhenTransferToCharlieTreasuryInternal(wadAssetAmount);
 
         IERC20Upgradeable(asset).safeTransferFrom(
             poolCfg.ammTreasury,

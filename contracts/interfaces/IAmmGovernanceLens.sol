@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 import "../libraries/StorageLib.sol";
 
 interface IAmmGovernanceLens {
@@ -20,5 +20,8 @@ interface IAmmGovernanceLens {
 
     function isAppointedToRebalanceInAmm(address asset, address account) external view returns (bool);
 
+    /// @notice Gets structure or common params described AMM Pool configuration
+    /// @param asset Address of asset which represents specific pool
+    /// @return ammPoolsParams Structure of common params described AMM Pool configuration
     function getAmmPoolsParams(address asset) external view returns (StorageLib.AmmPoolsParamsValue memory);
 }

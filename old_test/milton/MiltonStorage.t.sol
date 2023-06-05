@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
@@ -142,7 +142,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.prank(_ammStorageAddress);
-        uint256 swapId = _iporProtocol.ammStorage.updateStorageWhenOpenSwapPayFixed(
+        uint256 swapId = _iporProtocol.ammStorage.updateStorageWhenOpenSwapPayFixedInternal(
             newSwap,
             iporPublicationFee
         );
@@ -167,7 +167,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_008");
         vm.prank(_userThree);
-        _iporProtocol.ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, iporPublicationFee);
+        _iporProtocol.ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, iporPublicationFee);
     }
 
     function testShouldNotAddLiquidityWhenAssetAmountIsZero() public {

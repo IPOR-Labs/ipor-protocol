@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "../libraries/Constants.sol";
@@ -181,13 +181,13 @@ contract AmmPoolsService is IAmmPoolsService {
             uint256 assetAmount = wadAmmTreasuryAssetBalance -
                 IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18);
             if (assetAmount > 0) {
-                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagement(assetAmount);
+                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagementInternal(assetAmount);
             }
         } else {
             uint256 assetAmount = IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18) -
                 wadAmmTreasuryAssetBalance;
             if (assetAmount > 0) {
-                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagement(assetAmount);
+                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagementInternal(assetAmount);
             }
         }
     }
@@ -218,7 +218,7 @@ contract AmmPoolsService is IAmmPoolsService {
 
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmount, poolCfg.decimals);
 
-        IAmmStorage(poolCfg.ammStorage).addLiquidity(
+        IAmmStorage(poolCfg.ammStorage).addLiquidityInternal(
             beneficiary,
             wadAssetAmount,
             uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
@@ -229,7 +229,7 @@ contract AmmPoolsService is IAmmPoolsService {
 
         uint256 ipTokenAmount = IporMath.division(wadAssetAmount * 1e18, exchangeRate);
 
-        IIpToken(poolCfg.ipToken).mint(beneficiary, ipTokenAmount);
+        IIpToken(poolCfg.ipToken).mintInternal(beneficiary, ipTokenAmount);
 
         /// @dev Order of the following two functions is important, first safeTransferFrom, then rebalanceIfNeededAfterProvideLiquidity.
         _rebalanceIfNeededAfterProvideLiquidity(poolCfg, ammPoolsParamsCfg, balance.vault, wadAssetAmount);
@@ -299,9 +299,9 @@ contract AmmPoolsService is IAmmPoolsService {
             AmmPoolsErrors.REDEEM_LP_COLLATERAL_RATIO_EXCEEDED
         );
 
-        IIpToken(poolCfg.ipToken).burn(msg.sender, ipTokenAmount);
+        IIpToken(poolCfg.ipToken).burnInternal(msg.sender, ipTokenAmount);
 
-        IAmmStorage(poolCfg.ammStorage).subtractLiquidity(redeemMoney.wadRedeemAmount);
+        IAmmStorage(poolCfg.ammStorage).subtractLiquidityInternal(redeemMoney.wadRedeemAmount);
 
         IERC20Upgradeable(asset).safeTransferFrom(poolCfg.ammTreasury, beneficiary, redeemMoney.redeemAmount);
 
@@ -368,7 +368,7 @@ contract AmmPoolsService is IAmmPoolsService {
         uint256 ipTokenAmount,
         uint256 exchangeRate,
         uint256 cfgRedeemFeeRate
-    ) internal view returns (AmmTypes.RedeemMoney memory redeemMoney) {
+    ) internal pure returns (AmmTypes.RedeemMoney memory redeemMoney) {
         uint256 wadAssetAmount = IporMath.division(ipTokenAmount * exchangeRate, 1e18);
         uint256 wadRedeemFee = IporMath.division(wadAssetAmount * cfgRedeemFeeRate, 1e18);
         uint256 redeemAmount = IporMath.convertWadToAssetDecimals(wadAssetAmount - wadRedeemFee, assetDecimals);
@@ -402,7 +402,7 @@ contract AmmPoolsService is IAmmPoolsService {
             );
 
             if (rebalanceAmount > 0) {
-                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagement(rebalanceAmount.toUint256());
+                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagementInternal(rebalanceAmount.toUint256());
             }
         }
     }
@@ -416,7 +416,7 @@ contract AmmPoolsService is IAmmPoolsService {
         uint256 wadAmmTreasuryErc20BalanceAfterDeposit,
         uint256 vaultBalance,
         uint256 wadAmmTreasuryAndAssetManagementRatio
-    ) internal view returns (int256) {
+    ) internal pure returns (int256) {
         return
             IporMath.divisionInt(
                 (wadAmmTreasuryErc20BalanceAfterDeposit + vaultBalance).toInt256() *
@@ -449,7 +449,7 @@ contract AmmPoolsService is IAmmPoolsService {
             );
 
             if (rebalanceAmount < 0) {
-                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagement((-rebalanceAmount).toUint256());
+                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagementInternal((-rebalanceAmount).toUint256());
             }
         }
     }

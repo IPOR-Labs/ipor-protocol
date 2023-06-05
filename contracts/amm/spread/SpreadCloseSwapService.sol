@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "contracts/amm/libraries/types/AmmInternalTypes.sol";
 import "contracts/interfaces/types/AmmTypes.sol";
@@ -102,7 +102,7 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
     }
 
     function _getStorageId(address asset, IporTypes.SwapTenor tenor)
-        internal
+        internal view
         returns (SpreadStorageLibs.StorageId storageId)
     {
         if (asset == _DAI) {

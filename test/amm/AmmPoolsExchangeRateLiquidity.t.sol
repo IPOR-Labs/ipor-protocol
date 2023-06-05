@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
@@ -77,7 +77,7 @@ contract AmmPoolsExchangeRateLiquidityTest is TestCommons {
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
         vm.startPrank(address(_iporProtocol.router));
-        _iporProtocol.ammStorage.subtractLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
+        _iporProtocol.ammStorage.subtractLiquidityInternal(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
         vm.stopPrank();
 
         // when
@@ -130,7 +130,7 @@ contract AmmPoolsExchangeRateLiquidityTest is TestCommons {
 
         //BEGIN HACK - provide liquidity without mint ipToken
         vm.startPrank(address(_iporProtocol.router));
-        _iporProtocol.ammStorage.addLiquidity(
+        _iporProtocol.ammStorage.addLiquidityInternal(
             _liquidityProvider,
             TestConstants.USD_2_000_18DEC,
             TestConstants.USD_20_000_000_18DEC,
