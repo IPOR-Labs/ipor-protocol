@@ -10,7 +10,7 @@ contract AccessControl {
     uint256 internal constant _NOT_ENTERED = 1;
     uint256 internal constant _ENTERED = 2;
 
-    uint256 internal _reentrancyStatus = 1;
+    uint256 internal _reentrancyStatus;
 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new
