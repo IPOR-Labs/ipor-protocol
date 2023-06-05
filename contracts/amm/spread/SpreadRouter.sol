@@ -91,17 +91,20 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
             return SPREAD_90_DAYS;
         } else if (
             sig == ISpread28DaysLens.calculateOfferedRatePayFixed28Days.selector ||
-            sig == ISpread28DaysLens.calculateOfferedRateReceiveFixed28Days.selector
+            sig == ISpread28DaysLens.calculateOfferedRateReceiveFixed28Days.selector ||
+            sig == ISpread28DaysLens.spreadFunction28DaysConfig.selector
         ) {
             return SPREAD_28_DAYS;
         } else if (
             sig == ISpread60DaysLens.calculateOfferedRatePayFixed60Days.selector ||
-            sig == ISpread60DaysLens.calculateOfferedRateReceiveFixed60Days.selector
+            sig == ISpread60DaysLens.calculateOfferedRateReceiveFixed60Days.selector ||
+            sig == ISpread60DaysLens.spreadFunction60DaysConfig.selector
         ) {
             return SPREAD_60_DAYS;
         } else if (
             sig == ISpread90DaysLens.calculateOfferedRatePayFixed90Days.selector ||
-            sig == ISpread90DaysLens.calculateOfferedRateReceiveFixed90Days.selector
+            sig == ISpread90DaysLens.calculateOfferedRateReceiveFixed90Days.selector ||
+            sig == ISpread90DaysLens.spreadFunction90DaysConfig.selector
         ) {
             return SPREAD_90_DAYS;
         } else if (sig == ISpreadStorageLens.getTimeWeightedNotional.selector) {

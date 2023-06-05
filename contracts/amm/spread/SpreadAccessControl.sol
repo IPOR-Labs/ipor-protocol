@@ -117,12 +117,12 @@ contract SpreadAccessControl {
     }
 
     function _whenNotPaused() internal view {
-        require(uint256(SpreadStorageLibs.getPaused().value) == 0, "Pausable: paused");
+        require(uint256(SpreadStorageLibs.getPaused().value) == 0, IporErrors.METHOD_PAUSED);
     }
 
     /// @dev Internal function to check if the sender is the contract owner.
     function _onlyOwner() internal view {
-        require(address(SpreadStorageLibs.getOwner().owner) == msg.sender, "Ownable: caller is not the owner");
+        require(address(SpreadStorageLibs.getOwner().owner) == msg.sender, IporErrors.CALLER_NOT_OWNER);
     }
 
     function _pause() internal {
