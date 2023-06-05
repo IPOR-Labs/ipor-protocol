@@ -72,8 +72,6 @@ contract AmmPoolsServiceProvideLiquidity is TestCommons {
         uint256 isPausedAfter = AccessControl(address(_iporProtocol.router)).paused(
             _iporProtocol.ammPoolsService.provideLiquidityDai.selector
         );
-        console2.log("isPausedAfter: ", isPausedAfter);
-
         assertEq(TestConstants.USD_14_000_18DEC, _iporProtocol.ipToken.balanceOf(_liquidityProvider));
         assertEq(TestConstants.USD_14_000_18DEC, _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)));
         assertEq(TestConstants.USD_14_000_18DEC, balance.liquidityPool);
