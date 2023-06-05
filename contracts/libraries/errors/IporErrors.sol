@@ -41,5 +41,6 @@ library IporErrors {
     string public constant CALLER_NOT_AMM_TREASURY = "IPOR_013";
     string public constant CALLER_NOT_OWNER = "IPOR_014";
     string public constant METHOD_PAUSED = "IPOR_015";
+    string public constant REENTRANCY = "IPOR_016";
 
 }

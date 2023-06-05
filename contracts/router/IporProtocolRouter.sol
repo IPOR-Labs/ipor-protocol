@@ -20,6 +20,9 @@ import "../interfaces/IPowerTokenStakeService.sol";
 contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
     using Address for address;
 
+    uint256 private constant SINGLE_OPERATION = 0;
+    uint256 private constant BATCH_OPERATION = 1;
+
     address public immutable AMM_SWAPS_LENS;
     address public immutable AMM_POOLS_LENS;
     address public immutable ASSET_MANAGEMENT_LENS;
@@ -114,7 +117,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
         _disableInitializers();
     }
 
-    function getRouterImplementation(bytes4 sig) public returns (address) {
+    function getRouterImplementation(bytes4 sig, uint256 batchOperation) public returns (address) {
         if (
             _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapService.openSwapPayFixed60daysUsdt.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapService.openSwapPayFixed28daysUsdt.selector) ||
@@ -135,6 +138,9 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapService.openSwapReceiveFixed60daysDai.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapService.openSwapReceiveFixed90daysDai.selector)
         ) {
+            if (batchOperation == 0) {
+                _nonReentrantBefore;
+            }
             return AMM_OPEN_SWAP_SERVICE_ADDRESS;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapPayFixedUsdt.selector) ||
@@ -147,6 +153,9 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapsUsdc.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapsDai.selector)
         ) {
+            if (batchOperation == 0) {
+                _nonReentrantBefore;
+            }
             return AMM_CLOSE_SWAP_SERVICE_ADDRESS;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsService.provideLiquidityUsdt.selector) ||
@@ -157,6 +166,9 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsService.redeemFromAmmPoolDai.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsService.rebalanceBetweenAmmTreasuryAndAssetManagement.selector)
         ) {
+            if (batchOperation == 0) {
+                _nonReentrantBefore;
+            }
             return AMM_POOLS_SERVICE_ADDRESS;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenStakeService.stakeLpTokensToLiquidityMining.selector) ||
@@ -170,6 +182,9 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenStakeService.pwTokenCancelCooldown.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenStakeService.redeemPwToken.selector)
         ) {
+            if (batchOperation == 0) {
+                _nonReentrantBefore;
+            }
             return STAKE_SERVICE_ADDRESS;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenFlowsService.delegatePwTokensToLiquidityMining.selector) ||
@@ -177,17 +192,26 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenFlowsService.undelegatePwTokensToLiquidityMining.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenFlowsService.claimRewardsFromLiquidityMining.selector)
         ) {
+            if (batchOperation == 0) {
+                _nonReentrantBefore;
+            }
             return FLOW_SERVICE_ADDRESS;
         } else if (
             sig == IAmmGovernanceService.transferToTreasury.selector ||
             sig == IAmmGovernanceService.transferToCharlieTreasury.selector
         ) {
+            if (batchOperation == 0) {
+                _nonReentrantBefore;
+            }
             return AMM_GOVERNANCE_SERVICE_ADDRESS;
         } else if (
             sig == IAmmGovernanceService.isSwapLiquidator.selector ||
             sig == IAmmGovernanceService.isAppointedToRebalanceInAmm.selector ||
             sig == IAmmGovernanceService.getAmmPoolsParams.selector
         ) {
+            if (batchOperation == 0) {
+                _nonReentrantBefore;
+            }
             return AMM_GOVERNANCE_SERVICE_ADDRESS;
         } else if (
             sig == IAmmGovernanceService.addSwapLiquidator.selector ||
@@ -270,7 +294,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
     }
 
     fallback() external {
-        _delegate(getRouterImplementation(msg.sig));
+        _delegate(getRouterImplementation(msg.sig, SINGLE_OPERATION));
     }
 
     /// @dev Delegates the current call to `implementation`.
@@ -287,7 +311,9 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             // Call the implementation.
             // out and outsize are 0 because we don't know the size yet.
             result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)
-
+        }
+        _nonReentrantAfter();
+        assembly {
             // Copy the returned data.
             returndatacopy(0, 0, returndatasize())
 
@@ -302,11 +328,10 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
         }
     }
 
-    function batchExecutor(bytes[] calldata calls) external {
+    function batchExecutor(bytes[] calldata calls) external nonReentrant {
         uint256 length = calls.length;
         for (uint256 i; i != length; ) {
-            bytes4 sig = bytes4(calls[i][:4]);
-            address implementation = getRouterImplementation(sig);
+            address implementation = getRouterImplementation(bytes4(calls[i][:4]), BATCH_OPERATION);
             implementation.functionDelegateCall(calls[i]);
             unchecked {
                 ++i;
@@ -317,6 +342,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
     function initialize(bool paused) external initializer {
         __UUPSUpgradeable_init();
         OwnerManager.transferOwnership(msg.sender);
+        StorageLib.getReentrancyStatus().value = _NOT_ENTERED;
     }
 
     //solhint-disable no-empty-blocks

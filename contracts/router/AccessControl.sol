@@ -10,7 +10,7 @@ contract AccessControl {
     uint256 internal constant _NOT_ENTERED = 1;
     uint256 internal constant _ENTERED = 2;
 
-    uint256 internal _reentrancyStatus;
+    uint256 internal _reentrancyStatus = 1;
 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new
@@ -34,6 +34,12 @@ contract AccessControl {
     modifier onlyPauseGuardian() {
         require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
         _;
+    }
+
+    modifier nonReentrant() {
+        _nonReentrantBefore();
+        _;
+        _nonReentrantAfter();
     }
 
     function owner() external view returns (address) {
@@ -99,5 +105,22 @@ contract AccessControl {
     function _onlyOwner() internal view {
         require(address(StorageLib.getOwner().owner) == msg.sender, IporErrors.CALLER_NOT_OWNER);
     }
+
+    function _nonReentrantBefore() internal {
+        // On the first call to nonReentrant, _status will be _NOT_ENTERED
+        require(StorageLib.getReentrancyStatus().value != _ENTERED, IporErrors.REENTRANCY);
+
+        // Any calls to nonReentrant after this point will fail
+        StorageLib.getReentrancyStatus().value = _ENTERED;
+    }
+
+    function _nonReentrantAfter() internal {
+        // By storing the original value once again, a refund is triggered (see
+        // https://eips.ethereum.org/EIPS/eip-2200)
+        if (StorageLib.getReentrancyStatus().value == _ENTERED) {
+            StorageLib.getReentrancyStatus().value = _NOT_ENTERED;
+        }
+    }
+
 
 }
