@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../interfaces/IAmmSwapsLens.sol";
 import "./libraries/IporSwapLogic.sol";
@@ -138,14 +138,14 @@ contract AmmSwapsLens is IAmmSwapsLens {
 
     function getPayoffPayFixed(address asset, uint256 swapId) external view override returns (int256) {
         IAmmStorage ammStorage = _getAmmStorage(asset);
-        AmmTypes.Swap memory swap = ammStorage.getSwapPayFixed(swapId);
+        AmmTypes.Swap memory swap = ammStorage.getSwap(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, swapId);
         uint256 accruedIbtPrice = _iporOracle.calculateAccruedIbtPrice(asset, block.timestamp);
         return swap.calculatePayoffPayFixed(block.timestamp, accruedIbtPrice);
     }
 
     function getPayoffReceiveFixed(address asset, uint256 swapId) external view override returns (int256) {
         IAmmStorage ammStorage = _getAmmStorage(asset);
-        AmmTypes.Swap memory swap = ammStorage.getSwapReceiveFixed(swapId);
+        AmmTypes.Swap memory swap = ammStorage.getSwap(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, swapId);
         uint256 accruedIbtPrice = _iporOracle.calculateAccruedIbtPrice(asset, block.timestamp);
         return swap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
     }
@@ -261,11 +261,17 @@ contract AmmSwapsLens is IAmmSwapsLens {
         for (uint256 i; i != swapCount; ) {
             AmmStorageTypes.IporSwapId memory swapId = swapIds[i];
             if (swapId.direction == 0) {
-                AmmTypes.Swap memory swap = ammStorage.getSwapPayFixed(swapId.id);
+                AmmTypes.Swap memory swap = ammStorage.getSwap(
+                    AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+                    swapId.id
+                );
                 int256 swapValue = swap.calculatePayoffPayFixed(block.timestamp, accruedIbtPrice);
                 mappedSwaps[i] = _mapSwap(asset, swap, 0, swapValue);
             } else {
-                AmmTypes.Swap memory swap = ammStorage.getSwapReceiveFixed(swapId.id);
+                AmmTypes.Swap memory swap = ammStorage.getSwap(
+                    AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+                    swapId.id
+                );
                 int256 swapValue = swap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
                 mappedSwaps[i] = _mapSwap(asset, swap, 1, swapValue);
             }

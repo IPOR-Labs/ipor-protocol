@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 /// @title Types used in comunication with Cockpit - an internal webapp responsible for IPOR Protocol diagnosis and monitoring.
 /// @dev used by ICockpitDataProvider interface

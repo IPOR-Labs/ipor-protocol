@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "./TestCommons.sol";
 import "./utils/TestConstants.sol";
 import "contracts/amm/libraries/types/StorageInternalTypes.sol";
 import "contracts/amm/libraries/SoapIndicatorLogic.sol";
+import "contracts/amm/libraries/SoapIndicatorRebalanceLogic.sol";
 
 contract SoapIndicatorLogicTest is TestCommons {
     struct ExpectedBalances {
@@ -37,14 +38,14 @@ contract SoapIndicatorLogicTest is TestCommons {
         uint256 derivativeNotional = TestConstants.USD_10_000_18DEC;
         uint256 swapFixedInterestRate = TestConstants.PERCENTAGE_4_18DEC;
         uint256 expectedInterestRate = 66666666666666667;
-        StorageInternalTypes.SoapIndicatorsMemory memory soapIndicators;
+        AmmStorageTypes.SoapIndicators memory soapIndicators;
         soapIndicators.hypotheticalInterestCumulative = 500 * TestConstants.D18;
         soapIndicators.totalNotional = 20000 * TestConstants.D18_128UINT;
         soapIndicators.totalIbtQuantity = 100 * TestConstants.D18_128UINT;
         soapIndicators.averageInterestRate = 8 * TestConstants.D16_64UINT;
         soapIndicators.rebalanceTimestamp = uint32(block.timestamp);
         // when
-        uint256 actualInterestRate = SoapIndicatorLogic.calculateAverageInterestRateWhenOpenSwap(
+        uint256 actualInterestRate = SoapIndicatorRebalanceLogic.calculateAverageInterestRateWhenOpenSwap(
             soapIndicators.totalNotional,
             soapIndicators.averageInterestRate,
             derivativeNotional,
@@ -59,14 +60,14 @@ contract SoapIndicatorLogicTest is TestCommons {
         uint256 derivativeNotional = TestConstants.USD_10_000_18DEC;
         uint256 swapFixedInterestRate = TestConstants.PERCENTAGE_4_18DEC;
         uint256 expectedInterestRate = 12 * TestConstants.D16;
-        StorageInternalTypes.SoapIndicatorsMemory memory soapIndicators;
+        AmmStorageTypes.SoapIndicators memory soapIndicators;
         soapIndicators.hypotheticalInterestCumulative = 500 * TestConstants.D18;
         soapIndicators.totalNotional = 20000 * TestConstants.D18_128UINT;
         soapIndicators.totalIbtQuantity = 100 * TestConstants.D18_128UINT;
         soapIndicators.averageInterestRate = 8 * TestConstants.D16_64UINT;
         soapIndicators.rebalanceTimestamp = uint32(block.timestamp);
         // when
-        uint256 actualInterestRate = SoapIndicatorLogic.calculateAverageInterestRateWhenCloseSwap(
+        uint256 actualInterestRate = SoapIndicatorRebalanceLogic.calculateAverageInterestRateWhenCloseSwap(
             soapIndicators.totalNotional,
             soapIndicators.averageInterestRate,
             derivativeNotional,
@@ -80,7 +81,7 @@ contract SoapIndicatorLogicTest is TestCommons {
         // given
         uint256 derivativeNotional = 40000 * TestConstants.D18;
         uint256 swapFixedInterestRate = TestConstants.PERCENTAGE_4_18DEC;
-        StorageInternalTypes.SoapIndicatorsMemory memory soapIndicators;
+        AmmStorageTypes.SoapIndicators memory soapIndicators;
         soapIndicators.hypotheticalInterestCumulative = 500 * TestConstants.D18;
         soapIndicators.totalNotional = 20000 * TestConstants.D18_128UINT;
         soapIndicators.totalIbtQuantity = 100 * TestConstants.D18_128UINT;
@@ -88,7 +89,7 @@ contract SoapIndicatorLogicTest is TestCommons {
         soapIndicators.rebalanceTimestamp = uint32(block.timestamp);
         // when
         vm.expectRevert("IPOR_314");
-        SoapIndicatorLogic.calculateAverageInterestRateWhenCloseSwap(
+        SoapIndicatorRebalanceLogic.calculateAverageInterestRateWhenCloseSwap(
             soapIndicators.totalNotional,
             soapIndicators.averageInterestRate,
             derivativeNotional,
@@ -99,7 +100,7 @@ contract SoapIndicatorLogicTest is TestCommons {
     function testShouldCalculateInterestDeltaWhenSimpleCase1And18Decimals() public {
         // given
         uint256 expectedInterestDelta = 109889834186915586030;
-        StorageInternalTypes.SoapIndicatorsMemory memory soapIndicators;
+        AmmStorageTypes.SoapIndicators memory soapIndicators;
         soapIndicators.totalNotional = 20000 * TestConstants.D18_128UINT;
         soapIndicators.totalIbtQuantity = 100 * TestConstants.D18_128UINT;
         soapIndicators.averageInterestRate = 8 * TestConstants.D16_64UINT;
@@ -130,13 +131,18 @@ contract SoapIndicatorLogicTest is TestCommons {
     function testShouldRevertWhenCalculateTimestampIsGreaterThanOrEqualToDerivativeOpenTimestamp() public {
         // when
         vm.expectRevert("IPOR_318");
-        SoapIndicatorLogic.calculateInterestPaidOut(TestConstants.ZERO, 1, TestConstants.ZERO, TestConstants.ZERO);
+        SoapIndicatorRebalanceLogic.calculateInterestPaidOut(
+            TestConstants.ZERO,
+            1,
+            TestConstants.ZERO,
+            TestConstants.ZERO
+        );
     }
 
     function testShouldCalculateHypotheticalInterestDeltaWhenSimpleCase1And18Decimals() public {
         // given
         uint256 expectedHypotheticalInterestTotal = 612637080041588475681;
-        StorageInternalTypes.SoapIndicatorsMemory memory soapIndicators;
+        AmmStorageTypes.SoapIndicators memory soapIndicators;
         soapIndicators.hypotheticalInterestCumulative = 500 * TestConstants.D18;
         soapIndicators.totalNotional = 20000 * TestConstants.D18_128UINT;
         soapIndicators.totalIbtQuantity = 100 * TestConstants.D18_128UINT;
@@ -154,7 +160,7 @@ contract SoapIndicatorLogicTest is TestCommons {
 
     function testShouldRebalanceSOAPIndicatorsWhenOpenPositionAndOneRebalanceAnd18Decimals() public {
         // given
-        StorageInternalTypes.SoapIndicatorsMemory memory soapIndicators;
+        AmmStorageTypes.SoapIndicators memory soapIndicators;
         soapIndicators.hypotheticalInterestCumulative = TestConstants.ZERO;
         soapIndicators.totalNotional = TestConstants.ZERO_128UINT;
         soapIndicators.totalIbtQuantity = TestConstants.ZERO_128UINT;
@@ -168,14 +174,13 @@ contract SoapIndicatorLogicTest is TestCommons {
         rebalanceBalances.averageInterestRate = TestConstants.PERCENTAGE_5_18DEC;
         rebalanceBalances.totalIbtQuantity = 95 * TestConstants.D18;
         // when
-        StorageInternalTypes.SoapIndicatorsMemory memory actualSoapIndicators = SoapIndicatorLogic
-            .rebalanceWhenOpenSwap(
-                soapIndicators,
-                rebalanceBalances.rebalanceTimestamp,
-                rebalanceBalances.totalNotional,
-                rebalanceBalances.averageInterestRate,
-                rebalanceBalances.totalIbtQuantity
-            );
+        AmmStorageTypes.SoapIndicators memory actualSoapIndicators = SoapIndicatorRebalanceLogic.rebalanceWhenOpenSwap(
+            soapIndicators,
+            rebalanceBalances.rebalanceTimestamp,
+            rebalanceBalances.totalNotional,
+            rebalanceBalances.averageInterestRate,
+            rebalanceBalances.totalIbtQuantity
+        );
         // then
         assertEq(actualSoapIndicators.rebalanceTimestamp, rebalanceBalances.rebalanceTimestamp);
         assertEq(actualSoapIndicators.totalNotional, rebalanceBalances.totalNotional);
@@ -186,7 +191,7 @@ contract SoapIndicatorLogicTest is TestCommons {
 
     function testShouldRebalanceSOAPIndicatorsWhenOpenPositionAndTwoRebalancesAnd18Decimals() public {
         // given
-        StorageInternalTypes.SoapIndicatorsMemory memory soapIndicators;
+        AmmStorageTypes.SoapIndicators memory soapIndicators;
         soapIndicators.hypotheticalInterestCumulative = TestConstants.ZERO;
         soapIndicators.totalNotional = TestConstants.ZERO_128UINT;
         soapIndicators.totalIbtQuantity = TestConstants.ZERO_128UINT;
@@ -199,7 +204,7 @@ contract SoapIndicatorLogicTest is TestCommons {
         rebalanceBalancesFirst.totalNotional = 10000 * TestConstants.D18;
         rebalanceBalancesFirst.averageInterestRate = TestConstants.PERCENTAGE_5_18DEC;
         rebalanceBalancesFirst.totalIbtQuantity = 95 * TestConstants.D18;
-        StorageInternalTypes.SoapIndicatorsMemory memory actualSoapIndicatorsFirst = SoapIndicatorLogic
+        AmmStorageTypes.SoapIndicators memory actualSoapIndicatorsFirst = SoapIndicatorRebalanceLogic
             .rebalanceWhenOpenSwap(
                 soapIndicators,
                 rebalanceBalancesFirst.rebalanceTimestamp,
@@ -225,7 +230,7 @@ contract SoapIndicatorLogicTest is TestCommons {
         expectedBalances.expectedAverageInterestRate = TestConstants.PERCENTAGE_7_18DEC;
         expectedBalances.expectedHypotheticalInterestCumulative = 34305283738185983233;
         // when
-        StorageInternalTypes.SoapIndicatorsMemory memory actualSoapIndicatorsSecond = SoapIndicatorLogic
+        AmmStorageTypes.SoapIndicators memory actualSoapIndicatorsSecond = SoapIndicatorRebalanceLogic
             .rebalanceWhenOpenSwap(
                 actualSoapIndicatorsFirst,
                 rebalanceBalancesSecond.rebalanceTimestamp,
@@ -246,7 +251,7 @@ contract SoapIndicatorLogicTest is TestCommons {
 
     function testShouldRebalanceSOAPIndicatorsWhenClosePositionAndOneRebalanceAnd18Decimals() public {
         // given
-        StorageInternalTypes.SoapIndicatorsMemory memory soapIndicators;
+        AmmStorageTypes.SoapIndicators memory soapIndicators;
         soapIndicators.hypotheticalInterestCumulative = TestConstants.ZERO;
         soapIndicators.totalNotional = TestConstants.ZERO_128UINT;
         soapIndicators.totalIbtQuantity = TestConstants.ZERO_128UINT;
@@ -259,7 +264,7 @@ contract SoapIndicatorLogicTest is TestCommons {
         rebalanceBalances.totalNotional = 10000 * TestConstants.D18;
         rebalanceBalances.averageInterestRate = TestConstants.PERCENTAGE_5_18DEC;
         rebalanceBalances.totalIbtQuantity = 95 * TestConstants.D18;
-        StorageInternalTypes.SoapIndicatorsMemory memory soapIndicatorsAfterOpen = SoapIndicatorLogic
+        AmmStorageTypes.SoapIndicators memory soapIndicatorsAfterOpen = SoapIndicatorRebalanceLogic
             .rebalanceWhenOpenSwap(
                 soapIndicators,
                 rebalanceBalances.rebalanceTimestamp,
@@ -275,7 +280,7 @@ contract SoapIndicatorLogicTest is TestCommons {
         expectedBalances.expectedAverageInterestRate = TestConstants.ZERO_64UINT;
         expectedBalances.expectedHypotheticalInterestCumulative = TestConstants.ZERO;
         // when
-        StorageInternalTypes.SoapIndicatorsMemory memory soapIndicatorsAfterClose = SoapIndicatorLogic
+        AmmStorageTypes.SoapIndicators memory soapIndicatorsAfterClose = SoapIndicatorRebalanceLogic
             .rebalanceWhenCloseSwap(
                 soapIndicatorsAfterOpen,
                 closeTimestamp,
@@ -297,7 +302,7 @@ contract SoapIndicatorLogicTest is TestCommons {
 
     function testShouldRebalanceSOAPIndicatorsWhenOpenTwoPositionsAndCloseOnePositionAnd18Decimals() public {
         // given
-        StorageInternalTypes.SoapIndicatorsMemory memory soapIndicators;
+        AmmStorageTypes.SoapIndicators memory soapIndicators;
         soapIndicators.hypotheticalInterestCumulative = TestConstants.ZERO;
         soapIndicators.totalNotional = TestConstants.ZERO_128UINT;
         soapIndicators.totalIbtQuantity = TestConstants.ZERO_128UINT;
@@ -310,7 +315,7 @@ contract SoapIndicatorLogicTest is TestCommons {
         rebalanceBalancesFirst.totalNotional = 10000 * TestConstants.D18;
         rebalanceBalancesFirst.averageInterestRate = TestConstants.PERCENTAGE_5_18DEC;
         rebalanceBalancesFirst.totalIbtQuantity = 95 * TestConstants.D18;
-        StorageInternalTypes.SoapIndicatorsMemory memory actualSoapIndicatorsAfterOpenFirst = SoapIndicatorLogic
+        AmmStorageTypes.SoapIndicators memory actualSoapIndicatorsAfterOpenFirst = SoapIndicatorRebalanceLogic
             .rebalanceWhenOpenSwap(
                 soapIndicators,
                 rebalanceBalancesFirst.rebalanceTimestamp,
@@ -333,16 +338,15 @@ contract SoapIndicatorLogicTest is TestCommons {
         expectedBalances.expectedTotalIbtQuantity = 95 * TestConstants.D18;
         expectedBalances.expectedAverageInterestRate = averageInterestRateAfterFirstOpen;
         expectedBalances.expectedHypotheticalInterestCumulative = 68761301442321639744;
-        StorageInternalTypes.SoapIndicatorsMemory memory soapIndicatorsAfterOpenSecond = SoapIndicatorLogic
-            .rebalanceWhenOpenSwap(
-                actualSoapIndicatorsAfterOpenFirst,
-                rebalanceBalancesSecond.rebalanceTimestamp,
-                rebalanceBalancesSecond.totalNotional,
-                rebalanceBalancesSecond.averageInterestRate,
-                rebalanceBalancesSecond.totalIbtQuantity
-            );
+        AmmStorageTypes.SoapIndicators memory soapIndicatorsAfterOpenSecond = SoapIndicatorRebalanceLogic.rebalanceWhenOpenSwap(
+            actualSoapIndicatorsAfterOpenFirst,
+            rebalanceBalancesSecond.rebalanceTimestamp,
+            rebalanceBalancesSecond.totalNotional,
+            rebalanceBalancesSecond.averageInterestRate,
+            rebalanceBalancesSecond.totalIbtQuantity
+        );
         // when
-        StorageInternalTypes.SoapIndicatorsMemory memory soapIndicatorsAfterClose = SoapIndicatorLogic
+        AmmStorageTypes.SoapIndicators memory soapIndicatorsAfterClose = SoapIndicatorRebalanceLogic
             .rebalanceWhenCloseSwap(
                 soapIndicatorsAfterOpenSecond,
                 closeTimestamp,
@@ -367,7 +371,7 @@ contract SoapIndicatorLogicTest is TestCommons {
     {
         /// @dev In this test we simulate situation when every opened swap has fixed rate = 0, so that average interest rate is equal zero.
         //given
-        StorageInternalTypes.SoapIndicatorsMemory memory soapIndicators;
+        AmmStorageTypes.SoapIndicators memory soapIndicators;
         soapIndicators.hypotheticalInterestCumulative = TestConstants.ZERO;
         soapIndicators.totalNotional = TestConstants.ZERO_128UINT;
         soapIndicators.totalIbtQuantity = TestConstants.ZERO_128UINT;
@@ -380,7 +384,7 @@ contract SoapIndicatorLogicTest is TestCommons {
         rebalanceBalancesFirst.totalNotional = 10000 * TestConstants.D18;
         rebalanceBalancesFirst.averageInterestRate = TestConstants.ZERO_64UINT;
         rebalanceBalancesFirst.totalIbtQuantity = 95 * TestConstants.D18;
-        StorageInternalTypes.SoapIndicatorsMemory memory actualSoapIndicatorsAfterOpenFirst = SoapIndicatorLogic
+        AmmStorageTypes.SoapIndicators memory actualSoapIndicatorsAfterOpenFirst = SoapIndicatorRebalanceLogic
             .rebalanceWhenOpenSwap(
                 soapIndicators,
                 rebalanceBalancesFirst.rebalanceTimestamp,
@@ -396,7 +400,7 @@ contract SoapIndicatorLogicTest is TestCommons {
         rebalanceBalancesSecond.totalNotional = 20000 * TestConstants.D18;
         rebalanceBalancesSecond.averageInterestRate = TestConstants.ZERO_64UINT;
         rebalanceBalancesSecond.totalIbtQuantity = 173 * TestConstants.D18;
-        StorageInternalTypes.SoapIndicatorsMemory memory actualSoapIndicatorsAfterOpenSecond = SoapIndicatorLogic
+        AmmStorageTypes.SoapIndicators memory actualSoapIndicatorsAfterOpenSecond = SoapIndicatorRebalanceLogic
             .rebalanceWhenOpenSwap(
                 actualSoapIndicatorsAfterOpenFirst,
                 rebalanceBalancesSecond.rebalanceTimestamp,
@@ -413,7 +417,7 @@ contract SoapIndicatorLogicTest is TestCommons {
         expectedBalances.expectedAverageInterestRate = averageInterestRateAfterFirstOpen;
         expectedBalances.expectedHypotheticalInterestCumulative = TestConstants.ZERO;
         // when
-        StorageInternalTypes.SoapIndicatorsMemory memory soapIndicatorsAfterClose = SoapIndicatorLogic
+        AmmStorageTypes.SoapIndicators memory soapIndicatorsAfterClose = SoapIndicatorRebalanceLogic
             .rebalanceWhenCloseSwap(
                 actualSoapIndicatorsAfterOpenSecond,
                 closeTimestamp,
@@ -435,7 +439,7 @@ contract SoapIndicatorLogicTest is TestCommons {
 
     function testShouldRebalanceSOAPIndicatorsWhenOpenTwoPositionsAndCloseTwoPositionsAnd18Decimals() public {
         // given
-        StorageInternalTypes.SoapIndicatorsMemory memory soapIndicators;
+        AmmStorageTypes.SoapIndicators memory soapIndicators;
         soapIndicators.hypotheticalInterestCumulative = TestConstants.ZERO;
         soapIndicators.totalNotional = TestConstants.ZERO_128UINT;
         soapIndicators.totalIbtQuantity = TestConstants.ZERO_128UINT;
@@ -448,7 +452,7 @@ contract SoapIndicatorLogicTest is TestCommons {
         rebalanceBalancesFirst.totalNotional = 10000 * TestConstants.D18;
         rebalanceBalancesFirst.averageInterestRate = TestConstants.PERCENTAGE_5_18DEC;
         rebalanceBalancesFirst.totalIbtQuantity = 95 * TestConstants.D18;
-        StorageInternalTypes.SoapIndicatorsMemory memory actualSoapIndicatorsAfterOpenFirst = SoapIndicatorLogic
+        AmmStorageTypes.SoapIndicators memory actualSoapIndicatorsAfterOpenFirst = SoapIndicatorRebalanceLogic
             .rebalanceWhenOpenSwap(
                 soapIndicators,
                 rebalanceBalancesFirst.rebalanceTimestamp,
@@ -463,7 +467,7 @@ contract SoapIndicatorLogicTest is TestCommons {
         rebalanceBalancesSecond.totalNotional = 20000 * TestConstants.D18;
         rebalanceBalancesSecond.averageInterestRate = TestConstants.PERCENTAGE_8_18DEC;
         rebalanceBalancesSecond.totalIbtQuantity = 173 * TestConstants.D18;
-        StorageInternalTypes.SoapIndicatorsMemory memory actualSoapIndicatorsAfterOpenSecond = SoapIndicatorLogic
+        AmmStorageTypes.SoapIndicators memory actualSoapIndicatorsAfterOpenSecond = SoapIndicatorRebalanceLogic
             .rebalanceWhenOpenSwap(
                 actualSoapIndicatorsAfterOpenFirst,
                 rebalanceBalancesSecond.rebalanceTimestamp,
@@ -471,7 +475,7 @@ contract SoapIndicatorLogicTest is TestCommons {
                 rebalanceBalancesSecond.averageInterestRate,
                 rebalanceBalancesSecond.totalIbtQuantity
             );
-        StorageInternalTypes.SoapIndicatorsMemory memory soapIndicatorsAfterCloseSecond = SoapIndicatorLogic
+        AmmStorageTypes.SoapIndicators memory soapIndicatorsAfterCloseSecond = SoapIndicatorRebalanceLogic
             .rebalanceWhenCloseSwap(
                 actualSoapIndicatorsAfterOpenSecond,
                 actualSoapIndicatorsAfterOpenSecond.rebalanceTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
@@ -489,15 +493,14 @@ contract SoapIndicatorLogicTest is TestCommons {
         expectedBalances.expectedAverageInterestRate = TestConstants.ZERO;
         expectedBalances.expectedHypotheticalInterestCumulative = TestConstants.ZERO;
         // when
-        StorageInternalTypes.SoapIndicatorsMemory memory soapIndicatorsAfterCloseFirst = SoapIndicatorLogic
-            .rebalanceWhenCloseSwap(
-                soapIndicatorsAfterCloseSecond,
-                closeTimestampFirstPositon,
-                rebalanceBalancesFirst.rebalanceTimestamp,
-                rebalanceBalancesFirst.totalNotional,
-                rebalanceBalancesFirst.averageInterestRate,
-                rebalanceBalancesFirst.totalIbtQuantity
-            );
+        AmmStorageTypes.SoapIndicators memory soapIndicatorsAfterCloseFirst = SoapIndicatorRebalanceLogic.rebalanceWhenCloseSwap(
+            soapIndicatorsAfterCloseSecond,
+            closeTimestampFirstPositon,
+            rebalanceBalancesFirst.rebalanceTimestamp,
+            rebalanceBalancesFirst.totalNotional,
+            rebalanceBalancesFirst.averageInterestRate,
+            rebalanceBalancesFirst.totalIbtQuantity
+        );
         // then
         assertEq(soapIndicatorsAfterCloseFirst.rebalanceTimestamp, expectedBalances.expectedRebalanceTimestamp);
         assertEq(soapIndicatorsAfterCloseFirst.totalNotional, expectedBalances.expectedTotalNotional);
@@ -508,5 +511,4 @@ contract SoapIndicatorLogicTest is TestCommons {
             expectedBalances.expectedHypotheticalInterestCumulative
         );
     }
-
 }

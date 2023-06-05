@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
@@ -43,9 +43,10 @@ library SpreadStorageLibs {
         address appointedOwner;
     }
 
-    function saveTimeWeightedNotional(StorageId storageId, SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional)
-        internal
-    {
+    function saveTimeWeightedNotional(
+        StorageId storageId,
+        SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional
+    ) internal {
         _checkTimeWeightedNotional(storageId);
         uint256 timeWeightedNotionalPayFixedTemp;
         uint256 timeWeightedNotionalReceiveFixedTemp;
@@ -72,10 +73,9 @@ library SpreadStorageLibs {
         }
     }
 
-    function getTimeWeightedNotional(StorageId storageId)
-        internal
-        returns (SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional28Days)
-    {
+    function getTimeWeightedNotional(
+        StorageId storageId
+    ) internal view returns (SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional28Days) {
         _checkTimeWeightedNotional(storageId);
         uint256 timeWeightedNotionalPayFixed;
         uint256 lastUpdateTimePayFixed;
@@ -126,42 +126,42 @@ library SpreadStorageLibs {
         keys[8] = "TimeWeightedNotional90DaysUsdt";
     }
 
-    function getOwner() internal view returns (OwnerStorage storage owner) {
+    function getOwner() internal pure returns (OwnerStorage storage owner) {
         uint256 slotAddress = _getStorageSlot(StorageId.Owner);
         assembly {
             owner.slot := slotAddress
         }
     }
 
-    function getAppointedOwner() internal view returns (AppointedOwnerStorage storage appointedOwner) {
+    function getAppointedOwner() internal pure returns (AppointedOwnerStorage storage appointedOwner) {
         uint256 slotAddress = _getStorageSlot(StorageId.AppointedOwner);
         assembly {
             appointedOwner.slot := slotAddress
         }
     }
 
-    function getPaused() internal view returns (PausedStorage storage paused) {
+    function getPaused() internal pure returns (PausedStorage storage paused) {
         uint256 slotAddress = _getStorageSlot(StorageId.Paused);
         assembly {
             paused.slot := slotAddress
         }
     }
 
-    function _getStorageSlot(StorageId storageId) internal view returns (uint256 slot) {
+    function _getStorageSlot(StorageId storageId) internal pure returns (uint256 slot) {
         slot = uint256(storageId) + STORAGE_SLOT_BASE;
     }
 
     function _checkTimeWeightedNotional(StorageId storageId) internal pure {
         require(
             storageId == StorageId.TimeWeightedNotional28DaysDai ||
-            storageId == StorageId.TimeWeightedNotional28DaysUsdc ||
-            storageId == StorageId.TimeWeightedNotional28DaysUsdt ||
-            storageId == StorageId.TimeWeightedNotional60DaysDai ||
-            storageId == StorageId.TimeWeightedNotional60DaysUsdc ||
-            storageId == StorageId.TimeWeightedNotional60DaysUsdt ||
-            storageId == StorageId.TimeWeightedNotional90DaysDai ||
-            storageId == StorageId.TimeWeightedNotional90DaysUsdc ||
-            storageId == StorageId.TimeWeightedNotional90DaysUsdt,
+                storageId == StorageId.TimeWeightedNotional28DaysUsdc ||
+                storageId == StorageId.TimeWeightedNotional28DaysUsdt ||
+                storageId == StorageId.TimeWeightedNotional60DaysDai ||
+                storageId == StorageId.TimeWeightedNotional60DaysUsdc ||
+                storageId == StorageId.TimeWeightedNotional60DaysUsdt ||
+                storageId == StorageId.TimeWeightedNotional90DaysDai ||
+                storageId == StorageId.TimeWeightedNotional90DaysUsdc ||
+                storageId == StorageId.TimeWeightedNotional90DaysUsdt,
             AmmErrors.STORAGE_ID_IS_NOT_TIME_WEIGHTED_NOTIONAL
         );
     }

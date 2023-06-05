@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
@@ -236,7 +236,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
 
         // BEGIN HACK - subtract liquidity without  burn ipToken
         vm.startPrank(address(_iporProtocol.router));
-        _iporProtocol.ammStorage.subtractLiquidity(55000 * TestConstants.D18);
+        _iporProtocol.ammStorage.subtractLiquidityInternal(55000 * TestConstants.D18);
         vm.stopPrank();
         // END HACK - subtract liquidity without  burn ipToken
 
@@ -293,7 +293,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
 
         // BEGIN HACK - subtract liquidity without  burn ipToken
         vm.startPrank(address(_iporProtocol.router));
-        _iporProtocol.ammStorage.subtractLiquidity(55000 * TestConstants.D18);
+        _iporProtocol.ammStorage.subtractLiquidityInternal(55000 * TestConstants.D18);
         vm.stopPrank();
         // END HACK - subtract liquidity without  burn ipToken
 
@@ -350,7 +350,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
 
         //BEGIN HACK - subtract liquidity without  burn ipToken. Notice! This affect ipToken price!
         vm.startPrank(address(_iporProtocol.router));
-        _iporProtocol.ammStorage.subtractLiquidity(55000 * TestConstants.D18);
+        _iporProtocol.ammStorage.subtractLiquidityInternal(55000 * TestConstants.D18);
         vm.stopPrank();
         //END HACK - subtract liquidity without  burn ipToken. Notice! This affect ipToken price!
 
@@ -403,7 +403,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
 
         //BEGIN HACK - subtract liquidity without  burn ipToken. Notice! This affect ipToken price!
         vm.startPrank(address(_iporProtocol.router));
-        _iporProtocol.ammStorage.subtractLiquidity(55000 * TestConstants.D18);
+        _iporProtocol.ammStorage.subtractLiquidityInternal(55000 * TestConstants.D18);
         vm.stopPrank();
         //END HACK - subtract liquidity without  burn ipToken. Notice! This affect ipToken price!
 
