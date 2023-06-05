@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 import "../../../contracts/mocks/tokens/MockTestnetToken.sol";
 import "../../../contracts/tokens/IpToken.sol";
 import "../../../contracts/tokens/IvToken.sol";
@@ -22,6 +22,7 @@ contract BuilderUtils {
         IAmmOpenSwapService ammOpenSwapService;
         IAmmCloseSwapService ammCloseSwapService;
         IAmmGovernanceService ammGovernanceService;
+        IAmmGovernanceLens ammGovernanceLens;
         MockTestnetToken asset;
         IpToken ipToken;
         IvToken ivToken;

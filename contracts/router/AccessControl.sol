@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/StorageLib.sol";
@@ -34,6 +34,12 @@ contract AccessControl {
     modifier onlyPauseGuardian() {
         require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
         _;
+    }
+
+    modifier nonReentrant() {
+        _nonReentrantBefore();
+        _;
+        _nonReentrantAfter();
     }
 
     function owner() external view returns (address) {
@@ -99,5 +105,22 @@ contract AccessControl {
     function _onlyOwner() internal view {
         require(address(StorageLib.getOwner().owner) == msg.sender, IporErrors.CALLER_NOT_OWNER);
     }
+
+    function _nonReentrantBefore() internal {
+        // On the first call to nonReentrant, _status will be _NOT_ENTERED
+        require(StorageLib.getReentrancyStatus().value != _ENTERED, IporErrors.REENTRANCY);
+
+        // Any calls to nonReentrant after this point will fail
+        StorageLib.getReentrancyStatus().value = _ENTERED;
+    }
+
+    function _nonReentrantAfter() internal {
+        // By storing the original value once again, a refund is triggered (see
+        // https://eips.ethereum.org/EIPS/eip-2200)
+        if (StorageLib.getReentrancyStatus().value == _ENTERED) {
+            StorageLib.getReentrancyStatus().value = _NOT_ENTERED;
+        }
+    }
+
 
 }

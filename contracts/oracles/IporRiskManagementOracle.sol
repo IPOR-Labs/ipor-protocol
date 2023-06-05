@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
@@ -56,7 +56,7 @@ contract IporRiskManagementOracle is
             IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH
         );
 
-        for (uint256 i; i != assetsLength;) {
+        for (uint256 i; i != assetsLength; ) {
             require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
             _indicators[assets[i]] = IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage(
                 riskIndicators[i].maxNotionalPayFixed.toUint64(),
@@ -76,22 +76,23 @@ contract IporRiskManagementOracle is
                 riskIndicators[i].maxCollateralRatio
             );
 
-            _baseSpreadsAndFixedRateCaps[assets[i]] = _baseSpreadsAndFixedRateCapsStorageToBytes32(IporRiskManagementOracleStorageTypes
-            .BaseSpreadsAndFixedRateCapsStorage(
-                block.timestamp,
-                baseSpreadsAndFixedRateCaps[i].spread28dPayFixed,
-                baseSpreadsAndFixedRateCaps[i].spread28dReceiveFixed,
-                baseSpreadsAndFixedRateCaps[i].spread60dPayFixed,
-                baseSpreadsAndFixedRateCaps[i].spread60dReceiveFixed,
-                baseSpreadsAndFixedRateCaps[i].spread90dPayFixed,
-                baseSpreadsAndFixedRateCaps[i].spread90dReceiveFixed,
-                baseSpreadsAndFixedRateCaps[i].fixedRateCap28dPayFixed,
-                baseSpreadsAndFixedRateCaps[i].fixedRateCap28dReceiveFixed,
-                baseSpreadsAndFixedRateCaps[i].fixedRateCap60dPayFixed,
-                baseSpreadsAndFixedRateCaps[i].fixedRateCap60dReceiveFixed,
-                baseSpreadsAndFixedRateCaps[i].fixedRateCap90dPayFixed,
-                baseSpreadsAndFixedRateCaps[i].fixedRateCap90dReceiveFixed
-            ));
+            _baseSpreadsAndFixedRateCaps[assets[i]] = _baseSpreadsAndFixedRateCapsStorageToBytes32(
+                IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage(
+                    block.timestamp,
+                    baseSpreadsAndFixedRateCaps[i].spread28dPayFixed,
+                    baseSpreadsAndFixedRateCaps[i].spread28dReceiveFixed,
+                    baseSpreadsAndFixedRateCaps[i].spread60dPayFixed,
+                    baseSpreadsAndFixedRateCaps[i].spread60dReceiveFixed,
+                    baseSpreadsAndFixedRateCaps[i].spread90dPayFixed,
+                    baseSpreadsAndFixedRateCaps[i].spread90dReceiveFixed,
+                    baseSpreadsAndFixedRateCaps[i].fixedRateCap28dPayFixed,
+                    baseSpreadsAndFixedRateCaps[i].fixedRateCap28dReceiveFixed,
+                    baseSpreadsAndFixedRateCaps[i].fixedRateCap60dPayFixed,
+                    baseSpreadsAndFixedRateCaps[i].fixedRateCap60dReceiveFixed,
+                    baseSpreadsAndFixedRateCaps[i].fixedRateCap90dPayFixed,
+                    baseSpreadsAndFixedRateCaps[i].fixedRateCap90dReceiveFixed
+                )
+            );
 
             emit BaseSpreadsUpdated(
                 assets[i],
@@ -115,7 +116,6 @@ contract IporRiskManagementOracle is
             unchecked {
                 ++i;
             }
-
         }
     }
 
@@ -128,42 +128,32 @@ contract IporRiskManagementOracle is
         uint256 direction,
         IporTypes.SwapTenor tenor
     )
-    external
-    view
-    override
-    returns (
-        uint256 maxNotionalPerLeg,
-        uint256 maxCollateralRatioPerLeg,
-        uint256 maxCollateralRatio,
-        int256 spread,
-        uint256 fixedRateCap
-    )
+        external
+        view
+        override
+        returns (
+            uint256 maxNotionalPerLeg,
+            uint256 maxCollateralRatioPerLeg,
+            uint256 maxCollateralRatio,
+            int256 spread,
+            uint256 fixedRateCap
+        )
     {
         (maxNotionalPerLeg, maxCollateralRatioPerLeg, maxCollateralRatio) = _getRiskIndicatorsPerLeg(asset, direction);
         (spread, fixedRateCap) = _getSpread(asset, direction, tenor);
-        return (
-            maxNotionalPerLeg,
-            maxCollateralRatioPerLeg,
-            maxCollateralRatio,
-            spread * 1e12,
-            fixedRateCap * 1e14
-        );
+        return (maxNotionalPerLeg, maxCollateralRatioPerLeg, maxCollateralRatio, spread * 1e12, fixedRateCap * 1e14);
     }
-    function _getRiskIndicatorsPerLeg(address asset, uint256 direction)
-    internal
-    view
-    returns (
-        uint256 maxNotionalPerLeg,
-        uint256 maxCollateralRatioPerLeg,
-        uint256 maxCollateralRatio
-    )
-    {
+
+    function _getRiskIndicatorsPerLeg(
+        address asset,
+        uint256 direction
+    ) internal view returns (uint256 maxNotionalPerLeg, uint256 maxCollateralRatioPerLeg, uint256 maxCollateralRatio) {
         (
-        uint256 maxNotionalPayFixed,
-        uint256 maxNotionalReceiveFixed,
-        uint256 maxCollateralRatioPayFixed,
-        uint256 maxCollateralRatioReceiveFixed,
-        uint256 maxCollateralRatioBothLegs,
+            uint256 maxNotionalPayFixed,
+            uint256 maxNotionalReceiveFixed,
+            uint256 maxCollateralRatioPayFixed,
+            uint256 maxCollateralRatioReceiveFixed,
+            uint256 maxCollateralRatioBothLegs,
 
         ) = _getRiskIndicators(asset);
 
@@ -180,7 +170,9 @@ contract IporRiskManagementOracle is
         IporTypes.SwapTenor tenor
     ) internal view returns (int256 spread, uint256 fixedRateCap) {
         IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage
-        memory baseSpreadsAndFixedRateCaps = _bytes32ToBaseSpreadsAndFixedRateCapsStorage(_baseSpreadsAndFixedRateCaps[asset]);
+            memory baseSpreadsAndFixedRateCaps = _bytes32ToBaseSpreadsAndFixedRateCapsStorage(
+                _baseSpreadsAndFixedRateCaps[asset]
+            );
         require(
             baseSpreadsAndFixedRateCaps.lastUpdateTimestamp > 0,
             IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED
@@ -225,33 +217,37 @@ contract IporRiskManagementOracle is
         }
     }
 
-    function getRiskIndicators(address asset)
-    external
-    view
-    override
-    returns (
-        uint256 maxNotionalPayFixed,
-        uint256 maxNotionalReceiveFixed,
-        uint256 maxCollateralRatioPayFixed,
-        uint256 maxCollateralRatioReceiveFixed,
-        uint256 maxCollateralRatio,
-        uint256 lastUpdateTimestamp
+    function getRiskIndicators(
+        address asset
     )
+        external
+        view
+        override
+        returns (
+            uint256 maxNotionalPayFixed,
+            uint256 maxNotionalReceiveFixed,
+            uint256 maxCollateralRatioPayFixed,
+            uint256 maxCollateralRatioReceiveFixed,
+            uint256 maxCollateralRatio,
+            uint256 lastUpdateTimestamp
+        )
     {
         return _getRiskIndicators(asset);
     }
 
-    function _getRiskIndicators(address asset)
-    internal
-    view
-    returns (
-        uint256 maxNotionalPayFixed,
-        uint256 maxNotionalReceiveFixed,
-        uint256 maxCollateralRatioPayFixed,
-        uint256 maxCollateralRatioReceiveFixed,
-        uint256 maxCollateralRatio,
-        uint256 lastUpdateTimestamp
+    function _getRiskIndicators(
+        address asset
     )
+        internal
+        view
+        returns (
+            uint256 maxNotionalPayFixed,
+            uint256 maxNotionalReceiveFixed,
+            uint256 maxCollateralRatioPayFixed,
+            uint256 maxCollateralRatioReceiveFixed,
+            uint256 maxCollateralRatio,
+            uint256 lastUpdateTimestamp
+        )
     {
         IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage memory indicators = _indicators[asset];
         require(indicators.lastUpdateTimestamp > 0, IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED);
@@ -265,22 +261,26 @@ contract IporRiskManagementOracle is
         );
     }
 
-    function getBaseSpreads(address asset)
-    external
-    view
-    override
-    returns (
-        uint256 lastUpdateTimestamp,
-        int256 spread28dPayFixed,
-        int256 spread28dReceiveFixed,
-        int256 spread60dPayFixed,
-        int256 spread60dReceiveFixed,
-        int256 spread90dPayFixed,
-        int256 spread90dReceiveFixed
+    function getBaseSpreads(
+        address asset
     )
+        external
+        view
+        override
+        returns (
+            uint256 lastUpdateTimestamp,
+            int256 spread28dPayFixed,
+            int256 spread28dReceiveFixed,
+            int256 spread60dPayFixed,
+            int256 spread60dReceiveFixed,
+            int256 spread90dPayFixed,
+            int256 spread90dReceiveFixed
+        )
     {
         IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage
-        memory baseSpreadsAndFixedRateCaps = _bytes32ToBaseSpreadsAndFixedRateCapsStorage(_baseSpreadsAndFixedRateCaps[asset]);
+            memory baseSpreadsAndFixedRateCaps = _bytes32ToBaseSpreadsAndFixedRateCapsStorage(
+                _baseSpreadsAndFixedRateCaps[asset]
+            );
         require(
             baseSpreadsAndFixedRateCaps.lastUpdateTimestamp > 0,
             IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED
@@ -296,38 +296,44 @@ contract IporRiskManagementOracle is
         );
     }
 
-    function getFixedRateCaps(address asset)
-    external
-    view
-    override
-    returns (
-        uint256 lastUpdateTimestamp,
-        uint256 fixedRateCap28dPayFixed,
-        uint256 fixedRateCap28dReceiveFixed,
-        uint256 fixedRateCap60dPayFixed,
-        uint256 fixedRateCap60dReceiveFixed,
-        uint256 fixedRateCap90dPayFixed,
-        uint256 fixedRateCap90dReceiveFixed
+    function getFixedRateCaps(
+        address asset
     )
+        external
+        view
+        override
+        returns (
+            uint256 lastUpdateTimestamp,
+            uint256 fixedRateCap28dPayFixed,
+            uint256 fixedRateCap28dReceiveFixed,
+            uint256 fixedRateCap60dPayFixed,
+            uint256 fixedRateCap60dReceiveFixed,
+            uint256 fixedRateCap90dPayFixed,
+            uint256 fixedRateCap90dReceiveFixed
+        )
     {
         return _getFixedRateCaps(asset);
     }
 
-    function _getFixedRateCaps(address asset)
-    internal
-    view
-    returns (
-        uint256 lastUpdateTimestamp,
-        uint256 fixedRateCap28dPayFixed,
-        uint256 fixedRateCap28dReceiveFixed,
-        uint256 fixedRateCap60dPayFixed,
-        uint256 fixedRateCap60dReceiveFixed,
-        uint256 fixedRateCap90dPayFixed,
-        uint256 fixedRateCap90dReceiveFixed
+    function _getFixedRateCaps(
+        address asset
     )
+        internal
+        view
+        returns (
+            uint256 lastUpdateTimestamp,
+            uint256 fixedRateCap28dPayFixed,
+            uint256 fixedRateCap28dReceiveFixed,
+            uint256 fixedRateCap60dPayFixed,
+            uint256 fixedRateCap60dReceiveFixed,
+            uint256 fixedRateCap90dPayFixed,
+            uint256 fixedRateCap90dReceiveFixed
+        )
     {
         IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage
-        memory baseSpreadsAndFixedRateCaps = _bytes32ToBaseSpreadsAndFixedRateCapsStorage(_baseSpreadsAndFixedRateCaps[asset]);
+            memory baseSpreadsAndFixedRateCaps = _bytes32ToBaseSpreadsAndFixedRateCapsStorage(
+                _baseSpreadsAndFixedRateCaps[asset]
+            );
         require(
             baseSpreadsAndFixedRateCaps.lastUpdateTimestamp > 0,
             IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED
@@ -373,14 +379,14 @@ contract IporRiskManagementOracle is
 
         require(
             assetsLength == maxNotionalPayFixed.length &&
-            assetsLength == maxNotionalReceiveFixed.length &&
-            assetsLength == maxCollateralRatioPayFixed.length &&
-            assetsLength == maxCollateralRatioReceiveFixed.length &&
-            assetsLength == maxCollateralRatio.length,
+                assetsLength == maxNotionalReceiveFixed.length &&
+                assetsLength == maxCollateralRatioPayFixed.length &&
+                assetsLength == maxCollateralRatioReceiveFixed.length &&
+                assetsLength == maxCollateralRatio.length,
             IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH
         );
 
-        for (uint256 i; i != assetsLength;) {
+        for (uint256 i; i != assetsLength; ) {
             _updateRiskIndicators(
                 asset[i],
                 maxNotionalPayFixed[i],
@@ -389,9 +395,9 @@ contract IporRiskManagementOracle is
                 maxCollateralRatioReceiveFixed[i],
                 maxCollateralRatio[i]
             );
-        unchecked {
-            ++i;
-        }
+            unchecked {
+                ++i;
+            }
         }
     }
 
@@ -441,7 +447,7 @@ contract IporRiskManagementOracle is
 
         require(assetsLength == baseSpreadsAndFixedRateCaps.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
 
-        for (uint256 i; i != assetsLength;) {
+        for (uint256 i; i != assetsLength; ) {
             _updateBaseSpreadsAndFixedRateCaps(asset[i], baseSpreadsAndFixedRateCaps[i]);
             unchecked {
                 ++i;
@@ -454,28 +460,32 @@ contract IporRiskManagementOracle is
         IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps calldata baseSpreadsAndFixedRateCaps
     ) internal {
         IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage
-        memory baseSpreadsAndFixedRateCapsStorage = _bytes32ToBaseSpreadsAndFixedRateCapsStorage(_baseSpreadsAndFixedRateCaps[asset]);
+            memory baseSpreadsAndFixedRateCapsStorage = _bytes32ToBaseSpreadsAndFixedRateCapsStorage(
+                _baseSpreadsAndFixedRateCaps[asset]
+            );
 
         require(
             baseSpreadsAndFixedRateCapsStorage.lastUpdateTimestamp > 0,
             IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED
         );
 
-        _baseSpreadsAndFixedRateCaps[asset] = _baseSpreadsAndFixedRateCapsStorageToBytes32(IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage(
-            block.timestamp,
-            baseSpreadsAndFixedRateCaps.spread28dPayFixed,
-            baseSpreadsAndFixedRateCaps.spread28dReceiveFixed,
-            baseSpreadsAndFixedRateCaps.spread60dPayFixed,
-            baseSpreadsAndFixedRateCaps.spread60dReceiveFixed,
-            baseSpreadsAndFixedRateCaps.spread90dPayFixed,
-            baseSpreadsAndFixedRateCaps.spread90dReceiveFixed,
-            baseSpreadsAndFixedRateCaps.fixedRateCap28dPayFixed,
-            baseSpreadsAndFixedRateCaps.fixedRateCap28dReceiveFixed,
-            baseSpreadsAndFixedRateCaps.fixedRateCap60dPayFixed,
-            baseSpreadsAndFixedRateCaps.fixedRateCap60dReceiveFixed,
-            baseSpreadsAndFixedRateCaps.fixedRateCap90dPayFixed,
-            baseSpreadsAndFixedRateCaps.fixedRateCap90dReceiveFixed
-        ));
+        _baseSpreadsAndFixedRateCaps[asset] = _baseSpreadsAndFixedRateCapsStorageToBytes32(
+            IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage(
+                block.timestamp,
+                baseSpreadsAndFixedRateCaps.spread28dPayFixed,
+                baseSpreadsAndFixedRateCaps.spread28dReceiveFixed,
+                baseSpreadsAndFixedRateCaps.spread60dPayFixed,
+                baseSpreadsAndFixedRateCaps.spread60dReceiveFixed,
+                baseSpreadsAndFixedRateCaps.spread90dPayFixed,
+                baseSpreadsAndFixedRateCaps.spread90dReceiveFixed,
+                baseSpreadsAndFixedRateCaps.fixedRateCap28dPayFixed,
+                baseSpreadsAndFixedRateCaps.fixedRateCap28dReceiveFixed,
+                baseSpreadsAndFixedRateCaps.fixedRateCap60dPayFixed,
+                baseSpreadsAndFixedRateCaps.fixedRateCap60dReceiveFixed,
+                baseSpreadsAndFixedRateCaps.fixedRateCap90dPayFixed,
+                baseSpreadsAndFixedRateCaps.fixedRateCap90dReceiveFixed
+            )
+        );
 
         emit BaseSpreadsUpdated(
             asset,
@@ -518,21 +528,23 @@ contract IporRiskManagementOracle is
             block.timestamp.toUint32()
         );
 
-        _baseSpreadsAndFixedRateCaps[asset] = _baseSpreadsAndFixedRateCapsStorageToBytes32(IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage(
-            block.timestamp,
-            baseSpreadsAndFixedRateCaps.spread28dPayFixed,
-            baseSpreadsAndFixedRateCaps.spread28dReceiveFixed,
-            baseSpreadsAndFixedRateCaps.spread60dPayFixed,
-            baseSpreadsAndFixedRateCaps.spread60dReceiveFixed,
-            baseSpreadsAndFixedRateCaps.spread90dPayFixed,
-            baseSpreadsAndFixedRateCaps.spread90dReceiveFixed,
-            baseSpreadsAndFixedRateCaps.fixedRateCap28dPayFixed,
-            baseSpreadsAndFixedRateCaps.fixedRateCap28dReceiveFixed,
-            baseSpreadsAndFixedRateCaps.fixedRateCap60dPayFixed,
-            baseSpreadsAndFixedRateCaps.fixedRateCap60dReceiveFixed,
-            baseSpreadsAndFixedRateCaps.fixedRateCap90dPayFixed,
-            baseSpreadsAndFixedRateCaps.fixedRateCap90dReceiveFixed
-        ));
+        _baseSpreadsAndFixedRateCaps[asset] = _baseSpreadsAndFixedRateCapsStorageToBytes32(
+            IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage(
+                block.timestamp,
+                baseSpreadsAndFixedRateCaps.spread28dPayFixed,
+                baseSpreadsAndFixedRateCaps.spread28dReceiveFixed,
+                baseSpreadsAndFixedRateCaps.spread60dPayFixed,
+                baseSpreadsAndFixedRateCaps.spread60dReceiveFixed,
+                baseSpreadsAndFixedRateCaps.spread90dPayFixed,
+                baseSpreadsAndFixedRateCaps.spread90dReceiveFixed,
+                baseSpreadsAndFixedRateCaps.fixedRateCap28dPayFixed,
+                baseSpreadsAndFixedRateCaps.fixedRateCap28dReceiveFixed,
+                baseSpreadsAndFixedRateCaps.fixedRateCap60dPayFixed,
+                baseSpreadsAndFixedRateCaps.fixedRateCap60dReceiveFixed,
+                baseSpreadsAndFixedRateCaps.fixedRateCap90dPayFixed,
+                baseSpreadsAndFixedRateCaps.fixedRateCap90dReceiveFixed
+            )
+        );
 
         emit IporRiskManagementOracleAssetAdded(asset);
     }
@@ -578,28 +590,23 @@ contract IporRiskManagementOracle is
     //solhint-disable no-empty-blocks
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
-    function _baseSpreadsAndFixedRateCapsStorageToBytes32(IporRiskManagementOracleStorageTypes
-    .BaseSpreadsAndFixedRateCapsStorage memory toSave)
-    internal
-    pure
-    returns (bytes32 result)
-    {
-
-
+    function _baseSpreadsAndFixedRateCapsStorageToBytes32(
+        IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage memory toSave
+    ) internal pure returns (bytes32 result) {
         require(toSave.lastUpdateTimestamp < type(uint32).max, "lastUpdateTimestamp overflow");
         require(toSave.spread28dPayFixed < type(int256).max, "spread28dPayFixed overflow");
         require(toSave.spread28dReceiveFixed < type(int256).max, "spread28dReceiveFixed overflow");
         require(toSave.spread60dPayFixed < type(int256).max, "spread60dPayFixed overflow");
         require(
-            - type(int256).max < toSave.spread60dReceiveFixed && toSave.spread60dReceiveFixed < type(int256).max,
+            -type(int256).max < toSave.spread60dReceiveFixed && toSave.spread60dReceiveFixed < type(int256).max,
             "spread60dReceiveFixed overflow"
         );
         require(
-            - type(int256).max < toSave.spread90dPayFixed && toSave.spread90dPayFixed < type(int256).max,
+            -type(int256).max < toSave.spread90dPayFixed && toSave.spread90dPayFixed < type(int256).max,
             "spread90dPayFixed overflow"
         );
         require(
-            - type(int256).max < toSave.spread90dReceiveFixed && toSave.spread90dReceiveFixed < type(int256).max,
+            -type(int256).max < toSave.spread90dReceiveFixed && toSave.spread90dReceiveFixed < type(int256).max,
             "spread90dReceiveFixed overflow"
         );
         require(toSave.fixedRateCap28dPayFixed < 2 ** 12, "fixedRateCap28dPayFixed overflow");
@@ -609,7 +616,6 @@ contract IporRiskManagementOracle is
         require(toSave.fixedRateCap90dPayFixed < 2 ** 12, "fixedRateCap90dPayFixed overflow");
         require(toSave.fixedRateCap90dReceiveFixed < 2 ** 12, "fixedRateCap90dReceiveFixed overflow");
 
-        bytes32 result;
         assembly {
             function abs(value) -> y {
                 switch slt(value, 0)
@@ -622,53 +628,67 @@ contract IporRiskManagementOracle is
             }
 
             result := add(
-            mload(toSave),
-            add(
-            shl(32, slt(mload(add(toSave, 32)), 0)),
-            add(
-            shl(33, abs(mload(add(toSave, 32)))),
-            add(
-            shl(56, slt(mload(add(toSave, 64)), 0)),
-            add(
-            shl(57, abs(mload(add(toSave, 64)))),
-            add(
-            shl(80, slt(mload(add(toSave, 96)), 0)), //spread60dPayFixed
-            add(
-            shl(81, abs(mload(add(toSave, 96)))), //spread60dPayFixed
-            add(
-            shl(104, slt(mload(add(toSave, 128)), 0)), //spread60dReceiveFixed
-            add(
-            shl(105, abs(mload(add(toSave, 128)))), //spread60dReceiveFixed
-            add(
-            shl(128, slt(mload(add(toSave, 160)), 0)), //spread90dPayFixed
-            add(
-            shl(129, abs(mload(add(toSave, 160)))), //spread90dPayFixed
-            add(
-            shl(152, slt(mload(add(toSave, 192)), 0)), //spread90dReceiveFixed
-            add(
-            shl(153, abs(mload(add(toSave, 192)))), //spread90dReceiveFixed
-            add(
-            shl(176, mload(add(toSave, 224))), //fixedRateCap28dPayFixed
-            add(
-            shl(188, mload(add(toSave, 256))), //fixedRateCap28dReceiveFixed
-            add(
-            shl(200, mload(add(toSave, 288))), //fixedRateCap60dPayFixed
-            add(
-            shl(212, mload(add(toSave, 320))), //fixedRateCap60dReceiveFixed
-            add(
-            shl(224, mload(add(toSave, 352))), //fixedRateCap90dPayFixed
-            shl(236, mload(add(toSave, 384))) //fixedRateCap90dReceiveFixed
-            ))))))))))))))))))
+                mload(toSave),
+                add(
+                    shl(32, slt(mload(add(toSave, 32)), 0)),
+                    add(
+                        shl(33, abs(mload(add(toSave, 32)))),
+                        add(
+                            shl(56, slt(mload(add(toSave, 64)), 0)),
+                            add(
+                                shl(57, abs(mload(add(toSave, 64)))),
+                                add(
+                                    shl(80, slt(mload(add(toSave, 96)), 0)), //spread60dPayFixed
+                                    add(
+                                        shl(81, abs(mload(add(toSave, 96)))), //spread60dPayFixed
+                                        add(
+                                            shl(104, slt(mload(add(toSave, 128)), 0)), //spread60dReceiveFixed
+                                            add(
+                                                shl(105, abs(mload(add(toSave, 128)))), //spread60dReceiveFixed
+                                                add(
+                                                    shl(128, slt(mload(add(toSave, 160)), 0)), //spread90dPayFixed
+                                                    add(
+                                                        shl(129, abs(mload(add(toSave, 160)))), //spread90dPayFixed
+                                                        add(
+                                                            shl(152, slt(mload(add(toSave, 192)), 0)), //spread90dReceiveFixed
+                                                            add(
+                                                                shl(153, abs(mload(add(toSave, 192)))), //spread90dReceiveFixed
+                                                                add(
+                                                                    shl(176, mload(add(toSave, 224))), //fixedRateCap28dPayFixed
+                                                                    add(
+                                                                        shl(188, mload(add(toSave, 256))), //fixedRateCap28dReceiveFixed
+                                                                        add(
+                                                                            shl(200, mload(add(toSave, 288))), //fixedRateCap60dPayFixed
+                                                                            add(
+                                                                                shl(212, mload(add(toSave, 320))), //fixedRateCap60dReceiveFixed
+                                                                                add(
+                                                                                    shl(224, mload(add(toSave, 352))), //fixedRateCap90dPayFixed
+                                                                                    shl(236, mload(add(toSave, 384))) //fixedRateCap90dReceiveFixed
+                                                                                )
+                                                                            )
+                                                                        )
+                                                                    )
+                                                                )
+                                                            )
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
         }
         return result;
     }
 
-    function _bytes32ToBaseSpreadsAndFixedRateCapsStorage(bytes32 toSave)
-    internal
-    view
-    returns (IporRiskManagementOracleStorageTypes
-    .BaseSpreadsAndFixedRateCapsStorage memory result)
-    {
+    function _bytes32ToBaseSpreadsAndFixedRateCapsStorage(
+        bytes32 toSave
+    ) internal pure returns (IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage memory result) {
         assembly {
             function convertToInt(sign, value) -> y {
                 switch sign

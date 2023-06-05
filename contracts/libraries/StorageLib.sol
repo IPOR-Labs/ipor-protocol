@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 /// @title Storage ID's associated with the IPOR Protocol Router.
 library StorageLib {
@@ -12,6 +12,7 @@ library StorageLib {
         AppointedOwner,
         Paused,
         PauseGuardian,
+        ReentrancyStatus,
         RouterFunctionPaused,
         AmmSwapsLiquidators,
         AmmPoolsAppointedToRebalance,
@@ -27,6 +28,10 @@ library StorageLib {
     }
 
     struct PausedStorage {
+        uint256 value;
+    }
+
+    struct ReentrancyStatusStorage {
         uint256 value;
     }
 
@@ -85,6 +90,12 @@ library StorageLib {
         uint256 slot = _getStorageSlot(StorageId.Paused);
         assembly {
             paused.slot := slot
+        }
+    }
+    function getReentrancyStatus() internal pure returns (ReentrancyStatusStorage storage reentrancyStatus) {
+        uint256 slot = _getStorageSlot(StorageId.ReentrancyStatus);
+        assembly {
+            reentrancyStatus.slot := slot
         }
     }
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "forge-std/console2.sol";
 import "forge-std/Script.sol";
@@ -67,8 +67,8 @@ contract AmmStorageSnapshot is Script, Test {
         liquidityPool = ammStorageBalance.liquidityPool;
         vault = ammStorageBalance.vault;
 
-        (ammStorageTotalNotionalPayFixed, ammStorageTotalNotionalReceiveFixed) = ammStorage
-            .getTotalOutstandingNotional();
+//        (ammStorageTotalNotionalPayFixed, ammStorageTotalNotionalReceiveFixed) = ammStorage
+//            .getTotalOutstandingNotional();
 
         ammStorageIsPaused = ammStorage.paused();
 

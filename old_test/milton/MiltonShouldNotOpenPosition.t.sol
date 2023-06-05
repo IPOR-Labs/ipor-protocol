@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
@@ -234,7 +234,7 @@ contract AmmTreasuryShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUti
         _iporProtocol.ammStorage.setJoseph(_userOne);
 
         vm.prank(_userOne);
-        _iporProtocol.ammStorage.subtractLiquidity(20000 * TestConstants.D18);
+        _iporProtocol.ammStorage.subtractLiquidityInternal(20000 * TestConstants.D18);
         _iporProtocol.ammStorage.setJoseph(address(_iporProtocol.joseph));
 
         // when
