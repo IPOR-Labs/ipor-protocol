@@ -113,4 +113,5 @@ library AmmErrors {
     string public constant SENDER_NOT_AMM = "IPOR_336";
     string public constant STORAGE_ID_IS_NOT_TIME_WEIGHTED_NOTIONAL = "IPOR_337";
     string public constant FUNCTION_NOT_SUPPORTED = "IPOR_338";
+    string public constant UNSUPPORTED_DIRECTION = "IPOR_339";
 }

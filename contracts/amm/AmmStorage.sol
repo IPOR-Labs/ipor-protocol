@@ -5,20 +5,20 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "../interfaces/types/AmmStorageTypes.sol";
-import "../interfaces/IAmmStorage.sol";
-import "../libraries/Constants.sol";
-import "../libraries/PaginationUtils.sol";
-import "../security/IporOwnableUpgradeable.sol";
-import "contracts/amm/libraries/IporSwapLogic.sol";
-import "./libraries/types/StorageInternalTypes.sol";
-import "./libraries/SoapIndicatorLogic.sol";
-import "./libraries/types/AmmInternalTypes.sol";
+
+import "contracts/libraries/Constants.sol";
+import "contracts/libraries/PaginationUtils.sol";
+import "contracts/interfaces/types/AmmStorageTypes.sol";
+import "contracts/interfaces/IAmmStorage.sol";
+import "contracts/security/IporOwnableUpgradeable.sol";
+import "contracts/amm/libraries/SoapIndicatorRebalanceLogic.sol";
+import "contracts/amm/libraries/types/StorageInternalTypes.sol";
+import "contracts/amm/libraries/types/AmmInternalTypes.sol";
 
 //@dev all stored valuse related with money are in 18 decimals.
 contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, IporOwnableUpgradeable, IAmmStorage {
     using SafeCast for uint256;
-    using SoapIndicatorLogic for StorageInternalTypes.SoapIndicatorsMemory;
+    using SoapIndicatorRebalanceLogic for AmmStorageTypes.SoapIndicators;
 
     address private immutable IPOR_PROTOCOL_ROUTER;
     address private immutable AMM_TREASURY;
@@ -32,8 +32,8 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     address public josephDeprecated;
 
     StorageInternalTypes.Balances internal _balances;
-    StorageInternalTypes.SoapIndicators internal _soapIndicatorsPayFixed;
-    StorageInternalTypes.SoapIndicators internal _soapIndicatorsReceiveFixed;
+    StorageInternalTypes.SoapIndicatorsStorage internal _soapIndicatorsPayFixed;
+    StorageInternalTypes.SoapIndicatorsStorage internal _soapIndicatorsReceiveFixed;
     StorageInternalTypes.SwapContainer internal _swapsPayFixed;
     StorageInternalTypes.SwapContainer internal _swapsReceiveFixed;
 
@@ -135,38 +135,20 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             );
     }
 
-    function getTotalOutstandingNotional()
+    function getSwap(AmmTypes.SwapDirection direction, uint256 swapId)
         external
         view
         override
-        returns (uint256 totalNotionalPayFixed, uint256 totalNotionalReceiveFixed)
+        returns (AmmTypes.Swap memory)
     {
-        totalNotionalPayFixed = _soapIndicatorsPayFixed.totalNotional;
-        totalNotionalReceiveFixed = _soapIndicatorsReceiveFixed.totalNotional;
-    }
-
-    function getSwapPayFixed(uint256 swapId) external view override returns (AmmTypes.Swap memory) {
         uint32 id = swapId.toUint32();
-        StorageInternalTypes.Swap storage swap = _swapsPayFixed.swaps[id];
-        return
-            AmmTypes.Swap(
-                swap.id,
-                swap.buyer,
-                swap.openTimestamp,
-                swap.tenor,
-                swap.idsIndex,
-                swap.collateral,
-                swap.notional,
-                swap.ibtQuantity,
-                swap.fixedInterestRate,
-                uint256(swap.liquidationDepositAmount) * 1e18,
-                swap.state
-            );
-    }
+        StorageInternalTypes.Swap storage swap;
 
-    function getSwapReceiveFixed(uint256 swapId) external view override returns (AmmTypes.Swap memory) {
-        uint32 id = swapId.toUint32();
-        StorageInternalTypes.Swap storage swap = _swapsReceiveFixed.swaps[id];
+        if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) swap = _swapsPayFixed.swaps[id];
+        else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) swap = _swapsReceiveFixed.swaps[id];
+        else {
+            revert(AmmErrors.UNSUPPORTED_DIRECTION);
+        }
         return
             AmmTypes.Swap(
                 swap.id,
@@ -279,49 +261,6 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         }
     }
 
-    function calculateSoap(
-        uint256 ibtPrice,
-        uint256 calculateTimestamp
-    ) external view override returns (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap) {
-        StorageInternalTypes.SoapIndicatorsMemory memory spf = StorageInternalTypes.SoapIndicatorsMemory(
-            _soapIndicatorsPayFixed.hypotheticalInterestCumulative,
-            _soapIndicatorsPayFixed.totalNotional,
-            _soapIndicatorsPayFixed.totalIbtQuantity,
-            _soapIndicatorsPayFixed.averageInterestRate,
-            _soapIndicatorsPayFixed.rebalanceTimestamp
-        );
-        int256 _soapPayFixed = spf.calculateSoapPayFixed(calculateTimestamp, ibtPrice);
-
-        StorageInternalTypes.SoapIndicatorsMemory memory srf = StorageInternalTypes.SoapIndicatorsMemory(
-            _soapIndicatorsReceiveFixed.hypotheticalInterestCumulative,
-            _soapIndicatorsReceiveFixed.totalNotional,
-            _soapIndicatorsReceiveFixed.totalIbtQuantity,
-            _soapIndicatorsReceiveFixed.averageInterestRate,
-            _soapIndicatorsReceiveFixed.rebalanceTimestamp
-        );
-        int256 _soapReceiveFixed = srf.calculateSoapReceiveFixed(calculateTimestamp, ibtPrice);
-
-        return (
-            soapPayFixed = _soapPayFixed,
-            soapReceiveFixed = _soapReceiveFixed,
-            soap = _soapPayFixed + _soapReceiveFixed
-        );
-    }
-
-    function calculateSoapPayFixed(
-        uint256 ibtPrice,
-        uint256 calculateTimestamp
-    ) external view override returns (int256 soapPayFixed) {
-        return _calculateSoapPayFixed(ibtPrice, calculateTimestamp);
-    }
-
-    function calculateSoapReceiveFixed(
-        uint256 ibtPrice,
-        uint256 calculateTimestamp
-    ) external view override returns (int256 soapReceiveFixed) {
-        return _calculateSoapReceiveFixed(ibtPrice, calculateTimestamp);
-    }
-
     function addLiquidityInternal(
         address account,
         uint256 assetAmount,
@@ -354,7 +293,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         AmmTypes.NewSwap memory newSwap,
         uint256 cfgIporPublicationFee
     ) external override onlyRouter returns (uint256) {
-        uint256 id = _updateSwapsWhenOpenPayFixed(newSwap);
+        uint256 id = _updateSwapsWhenOpen(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, newSwap);
         _updateBalancesWhenOpenSwapPayFixed(
             newSwap.collateral,
             newSwap.openingFeeLPAmount,
@@ -376,7 +315,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         AmmTypes.NewSwap memory newSwap,
         uint256 cfgIporPublicationFee
     ) external override onlyRouter returns (uint256) {
-        uint256 id = _updateSwapsWhenOpenReceiveFixed(newSwap);
+        uint256 id = _updateSwapsWhenOpen(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, newSwap);
         _updateBalancesWhenOpenSwapReceiveFixed(
             newSwap.collateral,
             newSwap.openingFeeLPAmount,
@@ -520,32 +459,32 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         return derivatives;
     }
 
-    function _calculateSoapPayFixed(
-        uint256 ibtPrice,
-        uint256 calculateTimestamp
-    ) internal view returns (int256 soapPayFixed) {
-        StorageInternalTypes.SoapIndicatorsMemory memory spf = StorageInternalTypes.SoapIndicatorsMemory(
-            _soapIndicatorsPayFixed.hypotheticalInterestCumulative,
-            _soapIndicatorsPayFixed.totalNotional,
-            _soapIndicatorsPayFixed.totalIbtQuantity,
-            _soapIndicatorsPayFixed.averageInterestRate,
-            _soapIndicatorsPayFixed.rebalanceTimestamp
-        );
-        soapPayFixed = spf.calculateSoapPayFixed(calculateTimestamp, ibtPrice);
-    }
+    function getSoapIndicators()
+        external
+        view
+        returns (
+            AmmStorageTypes.SoapIndicators memory indicatorsPayFixed,
+            AmmStorageTypes.SoapIndicators memory indicatorsReceiveFixed
+        )
+    {
+        StorageInternalTypes.SoapIndicatorsStorage memory soapIndicatorsPayFixed = _soapIndicatorsPayFixed;
+        StorageInternalTypes.SoapIndicatorsStorage memory soapIndicatorsReceiveFixed = _soapIndicatorsReceiveFixed;
 
-    function _calculateSoapReceiveFixed(
-        uint256 ibtPrice,
-        uint256 calculateTimestamp
-    ) internal view returns (int256 soapReceiveFixed) {
-        StorageInternalTypes.SoapIndicatorsMemory memory srf = StorageInternalTypes.SoapIndicatorsMemory(
-            _soapIndicatorsReceiveFixed.hypotheticalInterestCumulative,
-            _soapIndicatorsReceiveFixed.totalNotional,
-            _soapIndicatorsReceiveFixed.totalIbtQuantity,
-            _soapIndicatorsReceiveFixed.averageInterestRate,
-            _soapIndicatorsReceiveFixed.rebalanceTimestamp
-        );
-        soapReceiveFixed = srf.calculateSoapReceiveFixed(calculateTimestamp, ibtPrice);
+        indicatorsPayFixed = AmmStorageTypes.SoapIndicators({
+            hypotheticalInterestCumulative: soapIndicatorsPayFixed.hypotheticalInterestCumulative,
+            totalNotional: soapIndicatorsPayFixed.totalNotional,
+            totalIbtQuantity: soapIndicatorsPayFixed.totalIbtQuantity,
+            averageInterestRate: soapIndicatorsPayFixed.averageInterestRate,
+            rebalanceTimestamp: soapIndicatorsPayFixed.rebalanceTimestamp
+        });
+
+        indicatorsReceiveFixed = AmmStorageTypes.SoapIndicators({
+            hypotheticalInterestCumulative: soapIndicatorsReceiveFixed.hypotheticalInterestCumulative,
+            totalNotional: soapIndicatorsReceiveFixed.totalNotional,
+            totalIbtQuantity: soapIndicatorsReceiveFixed.totalIbtQuantity,
+            averageInterestRate: soapIndicatorsReceiveFixed.averageInterestRate,
+            rebalanceTimestamp: soapIndicatorsReceiveFixed.rebalanceTimestamp
+        });
     }
 
     function _updateBalancesWhenOpenSwapPayFixed(
@@ -603,16 +542,30 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         }
     }
 
-    function _updateSwapsWhenOpenPayFixed(AmmTypes.NewSwap memory newSwap) internal returns (uint256) {
+    function _updateSwapsWhenOpen(AmmTypes.SwapDirection direction, AmmTypes.NewSwap memory newSwap)
+        internal
+        returns (uint256)
+    {
         _lastSwapId++;
         uint32 id = _lastSwapId;
 
-        StorageInternalTypes.Swap storage swap = _swapsPayFixed.swaps[id];
+        StorageInternalTypes.Swap storage swap;
+        uint32 idsIndexLocal;
+
+        if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
+            swap = _swapsPayFixed.swaps[id];
+            idsIndexLocal = _swapsPayFixed.ids[newSwap.buyer].length.toUint32();
+        } else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
+            swap = _swapsReceiveFixed.swaps[id];
+            idsIndexLocal = _swapsReceiveFixed.ids[newSwap.buyer].length.toUint32();
+        } else {
+            revert(AmmErrors.UNSUPPORTED_DIRECTION);
+        }
 
         swap.id = id;
         swap.buyer = newSwap.buyer;
         swap.openTimestamp = newSwap.openTimestamp.toUint32();
-        swap.idsIndex = _swapsPayFixed.ids[newSwap.buyer].length.toUint32();
+        swap.idsIndex = idsIndexLocal;
         swap.collateral = newSwap.collateral.toUint128();
         swap.notional = newSwap.notional.toUint128();
         swap.ibtQuantity = newSwap.ibtQuantity.toUint128();
@@ -621,31 +574,14 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         swap.state = IporTypes.SwapState.ACTIVE;
         swap.tenor = newSwap.tenor;
 
-        _swapsPayFixed.ids[newSwap.buyer].push(id);
-        _lastSwapId = id;
+        if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
+            _swapsPayFixed.ids[newSwap.buyer].push(id);
+        } else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
+            _swapsReceiveFixed.ids[newSwap.buyer].push(id);
+        } else {
+            revert(AmmErrors.UNSUPPORTED_DIRECTION);
+        }
 
-        return id;
-    }
-
-    function _updateSwapsWhenOpenReceiveFixed(AmmTypes.NewSwap memory newSwap) internal returns (uint256) {
-        _lastSwapId++;
-        uint32 id = _lastSwapId;
-
-        StorageInternalTypes.Swap storage swap = _swapsReceiveFixed.swaps[id];
-
-        swap.id = id;
-        swap.buyer = newSwap.buyer;
-        swap.openTimestamp = newSwap.openTimestamp.toUint32();
-        swap.idsIndex = _swapsReceiveFixed.ids[newSwap.buyer].length.toUint32();
-        swap.collateral = newSwap.collateral.toUint128();
-        swap.notional = newSwap.notional.toUint128();
-        swap.ibtQuantity = newSwap.ibtQuantity.toUint128();
-        swap.fixedInterestRate = newSwap.fixedInterestRate.toUint64();
-        swap.liquidationDepositAmount = newSwap.liquidationDepositAmount.toUint32();
-        swap.state = IporTypes.SwapState.ACTIVE;
-        swap.tenor = newSwap.tenor;
-
-        _swapsReceiveFixed.ids[newSwap.buyer].push(id);
         _lastSwapId = id;
 
         return id;
@@ -696,7 +632,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         uint256 fixedInterestRate,
         uint256 ibtQuantity
     ) internal {
-        StorageInternalTypes.SoapIndicatorsMemory memory pf = StorageInternalTypes.SoapIndicatorsMemory(
+        AmmStorageTypes.SoapIndicators memory pf = AmmStorageTypes.SoapIndicators(
             _soapIndicatorsPayFixed.hypotheticalInterestCumulative,
             _soapIndicatorsPayFixed.totalNotional,
             _soapIndicatorsPayFixed.totalIbtQuantity,
@@ -704,7 +640,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             _soapIndicatorsPayFixed.rebalanceTimestamp
         );
 
-        pf.rebalanceWhenOpenSwap(openTimestamp, notional, fixedInterestRate, ibtQuantity);
+        pf = pf.rebalanceWhenOpenSwap(openTimestamp, notional, fixedInterestRate, ibtQuantity);
 
         _soapIndicatorsPayFixed.rebalanceTimestamp = pf.rebalanceTimestamp.toUint32();
         _soapIndicatorsPayFixed.totalNotional = pf.totalNotional.toUint128();
@@ -719,14 +655,14 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         uint256 fixedInterestRate,
         uint256 ibtQuantity
     ) internal {
-        StorageInternalTypes.SoapIndicatorsMemory memory rf = StorageInternalTypes.SoapIndicatorsMemory(
+        AmmStorageTypes.SoapIndicators memory rf = AmmStorageTypes.SoapIndicators(
             _soapIndicatorsReceiveFixed.hypotheticalInterestCumulative,
             _soapIndicatorsReceiveFixed.totalNotional,
             _soapIndicatorsReceiveFixed.totalIbtQuantity,
             _soapIndicatorsReceiveFixed.averageInterestRate,
             _soapIndicatorsReceiveFixed.rebalanceTimestamp
         );
-        rf.rebalanceWhenOpenSwap(openTimestamp, notional, fixedInterestRate, ibtQuantity);
+        rf = rf.rebalanceWhenOpenSwap(openTimestamp, notional, fixedInterestRate, ibtQuantity);
 
         _soapIndicatorsReceiveFixed.rebalanceTimestamp = rf.rebalanceTimestamp.toUint32();
         _soapIndicatorsReceiveFixed.totalNotional = rf.totalNotional.toUint128();
@@ -736,7 +672,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     }
 
     function _updateSoapIndicatorsWhenCloseSwapPayFixed(AmmTypes.Swap memory swap, uint256 closingTimestamp) internal {
-        StorageInternalTypes.SoapIndicatorsMemory memory pf = StorageInternalTypes.SoapIndicatorsMemory(
+        AmmStorageTypes.SoapIndicators memory pf = AmmStorageTypes.SoapIndicators(
             _soapIndicatorsPayFixed.hypotheticalInterestCumulative,
             _soapIndicatorsPayFixed.totalNotional,
             _soapIndicatorsPayFixed.totalIbtQuantity,
@@ -744,7 +680,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             _soapIndicatorsPayFixed.rebalanceTimestamp
         );
 
-        pf.rebalanceWhenCloseSwap(
+        pf = pf.rebalanceWhenCloseSwap(
             closingTimestamp,
             swap.openTimestamp,
             swap.notional,
@@ -752,7 +688,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             swap.ibtQuantity
         );
 
-        _soapIndicatorsPayFixed = StorageInternalTypes.SoapIndicators(
+        _soapIndicatorsPayFixed = StorageInternalTypes.SoapIndicatorsStorage(
             pf.hypotheticalInterestCumulative,
             pf.totalNotional.toUint128(),
             pf.totalIbtQuantity.toUint128(),
@@ -765,7 +701,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         AmmTypes.Swap memory swap,
         uint256 closingTimestamp
     ) internal {
-        StorageInternalTypes.SoapIndicatorsMemory memory rf = StorageInternalTypes.SoapIndicatorsMemory(
+        AmmStorageTypes.SoapIndicators memory rf = AmmStorageTypes.SoapIndicators(
             _soapIndicatorsReceiveFixed.hypotheticalInterestCumulative,
             _soapIndicatorsReceiveFixed.totalNotional,
             _soapIndicatorsReceiveFixed.totalIbtQuantity,
@@ -773,7 +709,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             _soapIndicatorsReceiveFixed.rebalanceTimestamp
         );
 
-        rf.rebalanceWhenCloseSwap(
+        rf = rf.rebalanceWhenCloseSwap(
             closingTimestamp,
             swap.openTimestamp,
             swap.notional,
@@ -781,7 +717,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             swap.ibtQuantity
         );
 
-        _soapIndicatorsReceiveFixed = StorageInternalTypes.SoapIndicators(
+        _soapIndicatorsReceiveFixed = StorageInternalTypes.SoapIndicatorsStorage(
             rf.hypotheticalInterestCumulative,
             rf.totalNotional.toUint128(),
             rf.totalIbtQuantity.toUint128(),

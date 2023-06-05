@@ -67,8 +67,8 @@ contract AmmStorageSnapshot is Script, Test {
         liquidityPool = ammStorageBalance.liquidityPool;
         vault = ammStorageBalance.vault;
 
-        (ammStorageTotalNotionalPayFixed, ammStorageTotalNotionalReceiveFixed) = ammStorage
-            .getTotalOutstandingNotional();
+//        (ammStorageTotalNotionalPayFixed, ammStorageTotalNotionalReceiveFixed) = ammStorage
+//            .getTotalOutstandingNotional();
 
         ammStorageIsPaused = ammStorage.paused();
 

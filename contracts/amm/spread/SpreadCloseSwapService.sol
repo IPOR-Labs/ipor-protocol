@@ -40,7 +40,7 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
         AmmInternalTypes.OpenSwapItem memory closedSwap,
         address ammStorageAddress
     ) external {
-        // @dev when timestamp is 0, it means that the swap was open in ipor-protocole v1 .
+        // @dev when timestamp is 0, it means that the swap was open in ipor-protocol v1 .
         if (closedSwap.openSwapTimestamp == 0) {
             return;
         }
