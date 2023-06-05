@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 /// @title Struct used across various interfaces in IPOR Protocol.
 library IporTypes {

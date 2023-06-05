@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 //import {DataUtils} from "../utils/DataUtils.sol";
@@ -129,7 +129,7 @@ contract AmmPoolsServiceProvideLiquidity is TestCommons {
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
         vm.prank(address(_iporProtocol.router));
-        _iporProtocol.ammStorage.subtractLiquidity(TestConstants.USD_10_000_18DEC);
+        _iporProtocol.ammStorage.subtractLiquidityInternal(TestConstants.USD_10_000_18DEC);
 
         // when
         vm.prank(_liquidityProvider);
