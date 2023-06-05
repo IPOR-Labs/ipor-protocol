@@ -3,19 +3,6 @@ pragma solidity 0.8.20;
 import "../libraries/StorageLib.sol";
 
 interface IAmmGovernanceService {
-    struct PoolConfiguration {
-        address asset;
-        uint256 assetDecimals;
-        address ammStorage;
-        address ammTreasury;
-        address ammPoolsTreasury;
-        address ammPoolsTreasuryManager;
-        address ammCharlieTreasury;
-        address ammCharlieTreasuryManager;
-    }
-
-    function getAmmGovernanceServicePoolConfiguration(address asset) external view returns (PoolConfiguration memory);
-
     function depositToAssetManagement(address asset, uint256 assetAmount) external;
 
     function withdrawFromAssetManagement(address asset, uint256 assetAmount) external;
@@ -30,13 +17,9 @@ interface IAmmGovernanceService {
 
     function removeSwapLiquidator(address asset, address account) external;
 
-    function isSwapLiquidator(address asset, address account) external view returns (bool);
-
     function addAppointedToRebalanceInAmm(address asset, address account) external;
 
     function removeAppointedToRebalanceInAmm(address asset, address account) external;
-
-    function isAppointedToRebalanceInAmm(address asset, address account) external view returns (bool);
 
     function setAmmPoolsParams(
         address asset,
@@ -45,6 +28,4 @@ interface IAmmGovernanceService {
         uint32 newAutoRebalanceThresholdInThousands,
         uint16 newAmmTreasuryAndAssetManagementRatio
     ) external;
-
-    function getAmmPoolsParams(address asset) external view returns (StorageLib.AmmPoolsParamsValue memory);
 }

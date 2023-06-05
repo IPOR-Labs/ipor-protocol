@@ -22,7 +22,7 @@ library AssetManagementLogic {
         uint256 vaultBalance,
         uint256 wadOperationAmount,
         uint256 wadAmmTreasuryAndAssetManagementRatioCfg
-    ) internal view returns (int256) {
+    ) internal pure returns (int256) {
         return
             IporMath.divisionInt(
                 (wadAmmErc20BalanceBeforeWithdraw.toInt256() +

@@ -9,6 +9,7 @@ import "./SpreadStorageLibs.sol";
 contract SpreadStorageLens is ISpreadStorageLens {
     function getTimeWeightedNotional()
         external
+        view
         override
         returns (SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse)
     {

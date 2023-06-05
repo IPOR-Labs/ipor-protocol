@@ -430,6 +430,7 @@ contract IporProtocolFactory is Test {
         iporProtocol.ammOpenSwapService = IAmmOpenSwapService(address(iporProtocol.router));
         iporProtocol.ammCloseSwapService = IAmmCloseSwapService(address(iporProtocol.router));
         iporProtocol.ammGovernanceService = IAmmGovernanceService(address(iporProtocol.router));
+        iporProtocol.ammGovernanceLens = IAmmGovernanceLens(address(iporProtocol.router));
 
         vm.startPrank(address(_owner));
 
@@ -544,6 +545,7 @@ contract IporProtocolFactory is Test {
         iporProtocol.ammOpenSwapService = IAmmOpenSwapService(address(iporProtocol.router));
         iporProtocol.ammCloseSwapService = IAmmCloseSwapService(address(iporProtocol.router));
         iporProtocol.ammGovernanceService = IAmmGovernanceService(address(iporProtocol.router));
+        iporProtocol.ammGovernanceLens = IAmmGovernanceLens(address(iporProtocol.router));
 
         vm.startPrank(address(_owner));
 
@@ -657,6 +659,7 @@ contract IporProtocolFactory is Test {
         iporProtocol.ammOpenSwapService = IAmmOpenSwapService(address(iporProtocol.router));
         iporProtocol.ammCloseSwapService = IAmmCloseSwapService(address(iporProtocol.router));
         iporProtocol.ammGovernanceService = IAmmGovernanceService(address(iporProtocol.router));
+        iporProtocol.ammGovernanceLens = IAmmGovernanceLens(address(iporProtocol.router));
 
         vm.startPrank(address(_owner));
 
@@ -900,6 +903,7 @@ contract IporProtocolFactory is Test {
         amm.usdt.ammOpenSwapService = IAmmOpenSwapService(address(amm.router));
         amm.usdt.ammCloseSwapService = IAmmCloseSwapService(address(amm.router));
         amm.usdt.ammGovernanceService = IAmmGovernanceService(address(amm.router));
+        amm.usdt.ammGovernanceLens = IAmmGovernanceLens(address(amm.router));
         amm.usdt.powerTokenLens = IPowerTokenLens(address(amm.router));
         amm.usdt.liquidityMiningLens = ILiquidityMiningLens(address(amm.router));
         amm.usdt.flowService = IPowerTokenFlowsService(address(amm.router));
@@ -911,6 +915,7 @@ contract IporProtocolFactory is Test {
         amm.usdc.ammOpenSwapService = IAmmOpenSwapService(address(amm.router));
         amm.usdc.ammCloseSwapService = IAmmCloseSwapService(address(amm.router));
         amm.usdc.ammGovernanceService = IAmmGovernanceService(address(amm.router));
+        amm.usdc.ammGovernanceLens = IAmmGovernanceLens(address(amm.router));
         amm.usdc.powerTokenLens = IPowerTokenLens(address(amm.router));
         amm.usdc.liquidityMiningLens = ILiquidityMiningLens(address(amm.router));
         amm.usdc.flowService = IPowerTokenFlowsService(address(amm.router));
@@ -922,6 +927,7 @@ contract IporProtocolFactory is Test {
         amm.dai.ammOpenSwapService = IAmmOpenSwapService(address(amm.router));
         amm.dai.ammCloseSwapService = IAmmCloseSwapService(address(amm.router));
         amm.dai.ammGovernanceService = IAmmGovernanceService(address(amm.router));
+        amm.dai.ammGovernanceLens = IAmmGovernanceLens(address(amm.router));
         amm.dai.powerTokenLens = IPowerTokenLens(address(amm.router));
         amm.dai.liquidityMiningLens = ILiquidityMiningLens(address(amm.router));
         amm.dai.flowService = IPowerTokenFlowsService(address(amm.router));
@@ -1096,6 +1102,7 @@ contract IporProtocolFactory is Test {
         iporProtocol.ammOpenSwapService = IAmmOpenSwapService(address(iporProtocol.router));
         iporProtocol.ammCloseSwapService = IAmmCloseSwapService(address(iporProtocol.router));
         iporProtocol.ammGovernanceService = IAmmGovernanceService(address(iporProtocol.router));
+        iporProtocol.ammGovernanceLens = IAmmGovernanceLens(address(iporProtocol.router));
         iporProtocol.powerTokenLens = IPowerTokenLens(address(iporProtocol.router));
         iporProtocol.liquidityMiningLens = ILiquidityMiningLens(address(iporProtocol.router));
         iporProtocol.flowService = IPowerTokenFlowsService(address(iporProtocol.router));
@@ -1270,6 +1277,7 @@ contract IporProtocolFactory is Test {
         iporProtocol.ammOpenSwapService = IAmmOpenSwapService(address(iporProtocol.router));
         iporProtocol.ammCloseSwapService = IAmmCloseSwapService(address(iporProtocol.router));
         iporProtocol.ammGovernanceService = IAmmGovernanceService(address(iporProtocol.router));
+        iporProtocol.ammGovernanceLens = IAmmGovernanceLens(address(iporProtocol.router));
         iporProtocol.powerTokenLens = IPowerTokenLens(address(iporProtocol.router));
         iporProtocol.liquidityMiningLens = ILiquidityMiningLens(address(iporProtocol.router));
         iporProtocol.flowService = IPowerTokenFlowsService(address(iporProtocol.router));
@@ -1444,6 +1452,7 @@ contract IporProtocolFactory is Test {
         iporProtocol.ammOpenSwapService = IAmmOpenSwapService(address(iporProtocol.router));
         iporProtocol.ammCloseSwapService = IAmmCloseSwapService(address(iporProtocol.router));
         iporProtocol.ammGovernanceService = IAmmGovernanceService(address(iporProtocol.router));
+        iporProtocol.ammGovernanceLens = IAmmGovernanceLens(address(iporProtocol.router));
         iporProtocol.liquidityMiningLens = ILiquidityMiningLens(address(iporProtocol.router));
         iporProtocol.powerTokenLens = IPowerTokenLens(address(iporProtocol.router));
         iporProtocol.flowService = IPowerTokenFlowsService(address(iporProtocol.router));
@@ -1454,9 +1463,9 @@ contract IporProtocolFactory is Test {
 
     function _prepareFakePoolCfgForGovernanceService()
         internal
-        returns (IAmmGovernanceService.PoolConfiguration memory poolCfg)
+        returns (IAmmGovernanceLens.PoolConfiguration memory poolCfg)
     {
-        poolCfg = IAmmGovernanceService.PoolConfiguration({
+        poolCfg = IAmmGovernanceLens.PoolConfiguration({
             asset: address(_fakeContract),
             assetDecimals: 0,
             ammStorage: address(_fakeContract),
@@ -1468,7 +1477,10 @@ contract IporProtocolFactory is Test {
         });
     }
 
-    function _prepareFakePoolCfgForPoolsService() internal returns (AmmPoolsService.AmmPoolsServicePoolConfiguration memory poolCfg) {
+    function _prepareFakePoolCfgForPoolsService()
+        internal
+        returns (AmmPoolsService.AmmPoolsServicePoolConfiguration memory poolCfg)
+    {
         poolCfg = IAmmPoolsService.AmmPoolsServicePoolConfiguration({
             asset: address(_fakeContract),
             decimals: 0,
@@ -1528,8 +1540,8 @@ contract IporProtocolFactory is Test {
         address ammPoolsTreasuryManager,
         address ammCharlieTreasury,
         address ammCharlieTreasuryManager
-    ) internal returns (IAmmGovernanceService.PoolConfiguration memory poolCfg) {
-        poolCfg = IAmmGovernanceService.PoolConfiguration({
+    ) internal returns (IAmmGovernanceLens.PoolConfiguration memory poolCfg) {
+        poolCfg = IAmmGovernanceLens.PoolConfiguration({
             asset: asset,
             assetDecimals: IERC20MetadataUpgradeable(asset).decimals(),
             ammStorage: ammStorage,

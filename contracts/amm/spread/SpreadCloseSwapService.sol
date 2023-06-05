@@ -102,7 +102,7 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
     }
 
     function _getStorageId(address asset, IporTypes.SwapTenor tenor)
-        internal
+        internal view
         returns (SpreadStorageLibs.StorageId storageId)
     {
         if (asset == _DAI) {
