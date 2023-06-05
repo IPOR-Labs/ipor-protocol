@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 //import {DataUtils} from "../utils/DataUtils.sol";
@@ -42,6 +42,67 @@ contract AmmPoolsServiceProvideLiquidity is TestCommons {
         assertEq(TestConstants.USD_14_000_18DEC, _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)));
         assertEq(TestConstants.USD_14_000_18DEC, balance.liquidityPool);
         assertEq(9986000 * TestConstants.D18, _iporProtocol.asset.balanceOf(_liquidityProvider));
+    }
+
+    function testShouldProvideLiquidityAndTakeIpTokenWhenUnpauseMethod() public {
+        // given
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+        address router = address(_iporProtocol.router);
+
+        bytes4[] memory methods = new bytes4[](1);
+        methods[0] = _iporProtocol.ammPoolsService.provideLiquidityDai.selector;
+        vm.prank(_admin);
+        AccessControl(router).addPauseGuardian(_admin);
+        vm.prank(_admin);
+        AccessControl(router).pause(methods);
+        uint256 isPausedBefore = AccessControl(address(_iporProtocol.router)).paused(
+            _iporProtocol.ammPoolsService.provideLiquidityDai.selector
+        );
+
+        // when
+        vm.prank(_admin);
+        AccessControl(router).unpause(methods);
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_14_000_18DEC);
+        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getAmmBalance(
+            address(_iporProtocol.asset)
+        );
+
+        // then
+        uint256 isPausedAfter = AccessControl(address(_iporProtocol.router)).paused(
+            _iporProtocol.ammPoolsService.provideLiquidityDai.selector
+        );
+        console2.log("isPausedAfter: ", isPausedAfter);
+
+        assertEq(TestConstants.USD_14_000_18DEC, _iporProtocol.ipToken.balanceOf(_liquidityProvider));
+        assertEq(TestConstants.USD_14_000_18DEC, _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)));
+        assertEq(TestConstants.USD_14_000_18DEC, balance.liquidityPool);
+        assertEq(9986000 * TestConstants.D18, _iporProtocol.asset.balanceOf(_liquidityProvider));
+        assertTrue(isPausedBefore == 1, "Method should be paused before");
+        assertTrue(isPausedAfter == 0, "Method should not be paused after");
+    }
+
+    function testShouldNotProvideLiquidityWhenMethodPaused() public {
+        // given
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+        address router = address(_iporProtocol.router);
+        bytes4[] memory methods = new bytes4[](1);
+        methods[0] = _iporProtocol.ammPoolsService.provideLiquidityDai.selector;
+        vm.prank(_admin);
+        AccessControl(router).addPauseGuardian(_admin);
+        vm.prank(_admin);
+        AccessControl(router).pause(methods);
+        uint256 isPausedBefore = AccessControl(address(_iporProtocol.router)).paused(
+            _iporProtocol.ammPoolsService.provideLiquidityDai.selector
+        );
+
+        // when
+        vm.prank(_liquidityProvider);
+        vm.expectRevert(bytes(IporErrors.METHOD_PAUSED));
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_14_000_18DEC);
+
+        // then
+        assertTrue(isPausedBefore == 1, "Method should not be paused");
     }
 
     function testShouldProvideLiquidityAndTakeIpTokenWhemSimpleCase1And6Decimals() public {

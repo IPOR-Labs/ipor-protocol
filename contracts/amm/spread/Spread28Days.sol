@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "contracts/libraries/errors/IporOracleErrors.sol";
@@ -18,11 +18,7 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
     address internal immutable _USDC;
     address internal immutable _USDT;
 
-    constructor(
-        address dai,
-        address usdc,
-        address usdt
-    ) {
+    constructor(address dai, address usdc, address usdt) {
         require(dai != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI asset address cannot be 0"));
         require(usdc != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC asset address cannot be 0"));
         require(usdt != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT asset address cannot be 0"));
@@ -32,11 +28,9 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         _USDT = usdt;
     }
 
-    function calculateAndUpdateOfferedRatePayFixed28Days(IporTypes.SpreadInputs calldata spreadInputs)
-        external
-        override
-        returns (uint256 offeredRate)
-    {
+    function calculateAndUpdateOfferedRatePayFixed28Days(
+        IporTypes.SpreadInputs calldata spreadInputs
+    ) external override returns (uint256 offeredRate) {
         offeredRate = OfferedRateCalculationLibs.calculatePayFixedOfferedRate(
             spreadInputs.indexValue,
             spreadInputs.baseSpread,
@@ -45,11 +39,9 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         );
     }
 
-    function calculateOfferedRatePayFixed28Days(IporTypes.SpreadInputs calldata spreadInputs)
-        external
-        override
-        returns (uint256 offeredRate)
-    {
+    function calculateOfferedRatePayFixed28Days(
+        IporTypes.SpreadInputs calldata spreadInputs
+    ) external view override returns (uint256 offeredRate) {
         offeredRate = OfferedRateCalculationLibs.calculatePayFixedOfferedRate(
             spreadInputs.indexValue,
             spreadInputs.baseSpread,
@@ -58,11 +50,9 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         );
     }
 
-    function calculateAndUpdateOfferedRateReceiveFixed28Days(IporTypes.SpreadInputs calldata spreadInputs)
-        external
-        override
-        returns (uint256 offeredRate)
-    {
+    function calculateAndUpdateOfferedRateReceiveFixed28Days(
+        IporTypes.SpreadInputs calldata spreadInputs
+    ) external override returns (uint256 offeredRate) {
         offeredRate = OfferedRateCalculationLibs.calculateReceiveFixedOfferedRate(
             spreadInputs.indexValue,
             spreadInputs.baseSpread,
@@ -71,11 +61,9 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         );
     }
 
-    function calculateOfferedRateReceiveFixed28Days(IporTypes.SpreadInputs calldata spreadInputs)
-        external
-        override
-        returns (uint256 offeredRate)
-    {
+    function calculateOfferedRateReceiveFixed28Days(
+        IporTypes.SpreadInputs calldata spreadInputs
+    ) external view override returns (uint256 offeredRate) {
         offeredRate = OfferedRateCalculationLibs.calculateReceiveFixedOfferedRate(
             spreadInputs.indexValue,
             spreadInputs.baseSpread,
@@ -96,19 +84,17 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         return DemandSpreadLibs.spreadFunctionConfig();
     }
 
-    function _calculateDemandPayFixed28Day(IporTypes.SpreadInputs memory spreadInputs)
-        internal
-        returns (uint256 spreadValue)
-    {
+    function _calculateDemandPayFixed28Day(
+        IporTypes.SpreadInputs memory spreadInputs
+    ) internal view returns (uint256 spreadValue) {
         DemandSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
 
         spreadValue = DemandSpreadLibs.calculatePayFixedSpread(inputData);
     }
 
-    function _calculateDemandPayFixedAndUpdateTimeWeightedNotional28Day(IporTypes.SpreadInputs memory spreadInputs)
-        internal
-        returns (uint256 spreadValue)
-    {
+    function _calculateDemandPayFixedAndUpdateTimeWeightedNotional28Day(
+        IporTypes.SpreadInputs memory spreadInputs
+    ) internal returns (uint256 spreadValue) {
         DemandSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
         spreadValue = DemandSpreadLibs.calculatePayFixedSpread(inputData);
 
@@ -123,10 +109,9 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         );
     }
 
-    function _calculateDemandReceiveFixed28Day(IporTypes.SpreadInputs calldata spreadInputs)
-        internal
-        returns (uint256 spreadValue)
-    {
+    function _calculateDemandReceiveFixed28Day(
+        IporTypes.SpreadInputs calldata spreadInputs
+    ) internal view returns (uint256 spreadValue) {
         DemandSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
 
         spreadValue = DemandSpreadLibs.calculateReceiveFixedSpread(inputData);
@@ -149,10 +134,9 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         );
     }
 
-    function _getSpreadConfigForDemand(IporTypes.SpreadInputs memory spreadInputs)
-        internal
-        returns (DemandSpreadLibs.SpreadInputData memory inputData)
-    {
+    function _getSpreadConfigForDemand(
+        IporTypes.SpreadInputs memory spreadInputs
+    ) internal view returns (DemandSpreadLibs.SpreadInputData memory inputData) {
         inputData = DemandSpreadLibs.SpreadInputData({
             totalCollateralPayFixed: spreadInputs.totalCollateralPayFixed,
             totalCollateralReceiveFixed: spreadInputs.totalCollateralReceiveFixed,
