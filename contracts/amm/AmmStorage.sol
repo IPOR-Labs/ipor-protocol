@@ -92,12 +92,10 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         return _lastSwapId;
     }
 
-    function getLastOpenedSwap(IporTypes.SwapTenor tenor, uint256 direction)
-        external
-        view
-        override
-        returns (AmmInternalTypes.OpenSwapItem memory)
-    {
+    function getLastOpenedSwap(
+        IporTypes.SwapTenor tenor,
+        uint256 direction
+    ) external view override returns (AmmInternalTypes.OpenSwapItem memory) {
         return
             direction == 0
                 ? _openedSwapsPayFixed[tenor].swaps[_openedSwapsPayFixed[tenor].headSwapId]
@@ -285,16 +283,10 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         }
     }
 
-    function calculateSoap(uint256 ibtPrice, uint256 calculateTimestamp)
-        external
-        view
-        override
-        returns (
-            int256 soapPayFixed,
-            int256 soapReceiveFixed,
-            int256 soap
-        )
-    {
+    function calculateSoap(
+        uint256 ibtPrice,
+        uint256 calculateTimestamp
+    ) external view override returns (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap) {
         StorageInternalTypes.SoapIndicatorsMemory memory spf = StorageInternalTypes.SoapIndicatorsMemory(
             _soapIndicatorsPayFixed.hypotheticalInterestCumulative,
             _soapIndicatorsPayFixed.totalNotional,
@@ -320,21 +312,17 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         );
     }
 
-    function calculateSoapPayFixed(uint256 ibtPrice, uint256 calculateTimestamp)
-        external
-        view
-        override
-        returns (int256 soapPayFixed)
-    {
+    function calculateSoapPayFixed(
+        uint256 ibtPrice,
+        uint256 calculateTimestamp
+    ) external view override returns (int256 soapPayFixed) {
         return _calculateSoapPayFixed(ibtPrice, calculateTimestamp);
     }
 
-    function calculateSoapReceiveFixed(uint256 ibtPrice, uint256 calculateTimestamp)
-        external
-        view
-        override
-        returns (int256 soapReceiveFixed)
-    {
+    function calculateSoapReceiveFixed(
+        uint256 ibtPrice,
+        uint256 calculateTimestamp
+    ) external view override returns (int256 soapReceiveFixed) {
         return _calculateSoapReceiveFixed(ibtPrice, calculateTimestamp);
     }
 
@@ -366,12 +354,10 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _balances.liquidityPool = _balances.liquidityPool - assetAmount.toUint128();
     }
 
-    function updateStorageWhenOpenSwapPayFixed(AmmTypes.NewSwap memory newSwap, uint256 cfgIporPublicationFee)
-        external
-        override
-        onlyRouter
-        returns (uint256)
-    {
+    function updateStorageWhenOpenSwapPayFixed(
+        AmmTypes.NewSwap memory newSwap,
+        uint256 cfgIporPublicationFee
+    ) external override onlyRouter returns (uint256) {
         uint256 id = _updateSwapsWhenOpenPayFixed(newSwap);
         _updateBalancesWhenOpenSwapPayFixed(
             newSwap.collateral,
@@ -390,12 +376,10 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         return id;
     }
 
-    function updateStorageWhenOpenSwapReceiveFixed(AmmTypes.NewSwap memory newSwap, uint256 cfgIporPublicationFee)
-        external
-        override
-        onlyRouter
-        returns (uint256)
-    {
+    function updateStorageWhenOpenSwapReceiveFixed(
+        AmmTypes.NewSwap memory newSwap,
+        uint256 cfgIporPublicationFee
+    ) external override onlyRouter returns (uint256) {
         uint256 id = _updateSwapsWhenOpenReceiveFixed(newSwap);
         _updateBalancesWhenOpenSwapReceiveFixed(
             newSwap.collateral,
@@ -416,10 +400,17 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     function updateStorageWhenCloseSwapPayFixed(
         AmmTypes.Swap memory swap,
         int256 payoff,
+        uint256 swapUnwindOpeningFeeLPAmount,
+        uint256 swapUnwindOpeningFeeTreasuryAmount,
         uint256 closingTimestamp
     ) external override onlyRouter returns (AmmInternalTypes.OpenSwapItem memory closedSwap) {
         _updateSwapsWhenClosePayFixed(swap);
-        _updateBalancesWhenCloseSwapPayFixed(swap, payoff);
+        _updateBalancesWhenCloseSwapPayFixed(
+            swap,
+            payoff,
+            swapUnwindOpeningFeeLPAmount,
+            swapUnwindOpeningFeeTreasuryAmount
+        );
         _updateSoapIndicatorsWhenCloseSwapPayFixed(swap, closingTimestamp);
         return _updateOpenedSwapWhenClosePayFixed(swap.tenor, swap.id);
     }
@@ -427,19 +418,25 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     function updateStorageWhenCloseSwapReceiveFixed(
         AmmTypes.Swap memory swap,
         int256 payoff,
+        uint256 swapUnwindOpeningFeeLPAmount,
+        uint256 swapUnwindOpeningFeeTreasuryAmount,
         uint256 closingTimestamp
     ) external override onlyRouter returns (AmmInternalTypes.OpenSwapItem memory closedSwap) {
         _updateSwapsWhenCloseReceiveFixed(swap);
-        _updateBalancesWhenCloseSwapReceiveFixed(swap, payoff);
+        _updateBalancesWhenCloseSwapReceiveFixed(
+            swap,
+            payoff,
+            swapUnwindOpeningFeeLPAmount,
+            swapUnwindOpeningFeeTreasuryAmount
+        );
         _updateSoapIndicatorsWhenCloseSwapReceiveFixed(swap, closingTimestamp);
         return _updateOpenedSwapWhenCloseReceiveFixed(swap.tenor, swap.id);
     }
 
-    function updateStorageWhenWithdrawFromAssetManagement(uint256 withdrawnAmount, uint256 vaultBalance)
-        external
-        override
-        onlyAmmTreasury
-    {
+    function updateStorageWhenWithdrawFromAssetManagement(
+        uint256 withdrawnAmount,
+        uint256 vaultBalance
+    ) external override onlyAmmTreasury {
         uint256 currentVaultBalance = _balances.vault;
         // We nedd this because for compound if we deposit and withdraw we could get negative intrest based on rounds
         require(vaultBalance + withdrawnAmount >= currentVaultBalance, AmmErrors.INTEREST_FROM_STRATEGY_BELOW_ZERO);
@@ -452,11 +449,10 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _balances.vault = vaultBalance.toUint128();
     }
 
-    function updateStorageWhenDepositToAssetManagement(uint256 depositAmount, uint256 vaultBalance)
-        external
-        override
-        onlyAmmTreasury
-    {
+    function updateStorageWhenDepositToAssetManagement(
+        uint256 depositAmount,
+        uint256 vaultBalance
+    ) external override onlyAmmTreasury {
         require(vaultBalance >= depositAmount, AmmErrors.VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE);
 
         uint256 currentVaultBalance = _balances.vault;
@@ -540,11 +536,10 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         return derivatives;
     }
 
-    function _calculateSoapPayFixed(uint256 ibtPrice, uint256 calculateTimestamp)
-        internal
-        view
-        returns (int256 soapPayFixed)
-    {
+    function _calculateSoapPayFixed(
+        uint256 ibtPrice,
+        uint256 calculateTimestamp
+    ) internal view returns (int256 soapPayFixed) {
         StorageInternalTypes.SoapIndicatorsMemory memory spf = StorageInternalTypes.SoapIndicatorsMemory(
             _soapIndicatorsPayFixed.hypotheticalInterestCumulative,
             _soapIndicatorsPayFixed.totalNotional,
@@ -555,11 +550,10 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         soapPayFixed = spf.calculateSoapPayFixed(calculateTimestamp, ibtPrice);
     }
 
-    function _calculateSoapReceiveFixed(uint256 ibtPrice, uint256 calculateTimestamp)
-        internal
-        view
-        returns (int256 soapReceiveFixed)
-    {
+    function _calculateSoapReceiveFixed(
+        uint256 ibtPrice,
+        uint256 calculateTimestamp
+    ) internal view returns (int256 soapReceiveFixed) {
         StorageInternalTypes.SoapIndicatorsMemory memory srf = StorageInternalTypes.SoapIndicatorsMemory(
             _soapIndicatorsReceiveFixed.hypotheticalInterestCumulative,
             _soapIndicatorsReceiveFixed.totalNotional,
@@ -598,19 +592,33 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _balances.treasury = _balances.treasury + openingFeeTreasuryAmount.toUint128();
     }
 
-    function _updateBalancesWhenCloseSwapPayFixed(AmmTypes.Swap memory swap, int256 payoff) internal {
-        _updateBalancesWhenCloseSwap(payoff);
+    function _updateBalancesWhenCloseSwapPayFixed(
+        AmmTypes.Swap memory swap,
+        int256 payoff,
+        uint256 swapUnwindOpeningFeeLPAmount,
+        uint256 swapUnwindOpeningFeeTreasuryAmount
+    ) internal {
+        _updateBalancesWhenCloseSwap(payoff, swapUnwindOpeningFeeLPAmount, swapUnwindOpeningFeeTreasuryAmount);
 
         _balances.totalCollateralPayFixed = _balances.totalCollateralPayFixed - swap.collateral.toUint128();
     }
 
-    function _updateBalancesWhenCloseSwapReceiveFixed(AmmTypes.Swap memory swap, int256 payoff) internal {
+    function _updateBalancesWhenCloseSwapReceiveFixed(
+        AmmTypes.Swap memory swap,
+        int256 payoff,
+        uint256 swapUnwindOpeningFeeLPAmount,
+        uint256 swapUnwindOpeningFeeTreasuryAmount
+    ) internal {
         _updateBalancesWhenCloseSwap(payoff);
 
         _balances.totalCollateralReceiveFixed = _balances.totalCollateralReceiveFixed - swap.collateral.toUint128();
     }
 
-    function _updateBalancesWhenCloseSwap(int256 payoff) internal {
+    function _updateBalancesWhenCloseSwap(
+        int256 payoff,
+        uint256 swapUnwindOpeningFeeLPAmount,
+        uint256 swapUnwindOpeningFeeTreasuryAmount
+    ) internal {
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         if (payoff > 0) {
@@ -783,9 +791,10 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         );
     }
 
-    function _updateSoapIndicatorsWhenCloseSwapReceiveFixed(AmmTypes.Swap memory swap, uint256 closingTimestamp)
-        internal
-    {
+    function _updateSoapIndicatorsWhenCloseSwapReceiveFixed(
+        AmmTypes.Swap memory swap,
+        uint256 closingTimestamp
+    ) internal {
         StorageInternalTypes.SoapIndicatorsMemory memory rf = StorageInternalTypes.SoapIndicatorsMemory(
             _soapIndicatorsReceiveFixed.hypotheticalInterestCumulative,
             _soapIndicatorsReceiveFixed.totalNotional,
@@ -827,10 +836,10 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _openedSwapsPayFixed[tenor].swaps[headSwapId].nextSwapId = swapId.toUint32();
     }
 
-    function _updateOpenedSwapWhenClosePayFixed(IporTypes.SwapTenor tenor, uint256 swapId)
-        internal
-        returns (AmmInternalTypes.OpenSwapItem memory closedSwap)
-    {
+    function _updateOpenedSwapWhenClosePayFixed(
+        IporTypes.SwapTenor tenor,
+        uint256 swapId
+    ) internal returns (AmmInternalTypes.OpenSwapItem memory closedSwap) {
         uint32 headSwapId = _openedSwapsPayFixed[tenor].headSwapId;
         AmmInternalTypes.OpenSwapItem memory swap = _openedSwapsPayFixed[tenor].swaps[swapId.toUint32()];
         if (swap.openSwapTimestamp == 0) {
@@ -870,10 +879,10 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _openedSwapsReceiveFixed[tenor].swaps[headSwapId].nextSwapId = swapId.toUint32();
     }
 
-    function _updateOpenedSwapWhenCloseReceiveFixed(IporTypes.SwapTenor tenor, uint256 swapId)
-        internal
-        returns (AmmInternalTypes.OpenSwapItem memory closedSwap)
-    {
+    function _updateOpenedSwapWhenCloseReceiveFixed(
+        IporTypes.SwapTenor tenor,
+        uint256 swapId
+    ) internal returns (AmmInternalTypes.OpenSwapItem memory closedSwap) {
         uint32 headSwapId = _openedSwapsReceiveFixed[tenor].headSwapId;
         AmmInternalTypes.OpenSwapItem memory swap = _openedSwapsReceiveFixed[tenor].swaps[swapId.toUint32()];
         if (swap.openSwapTimestamp == 0) {

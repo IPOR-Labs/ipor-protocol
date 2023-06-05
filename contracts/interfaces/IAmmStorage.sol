@@ -20,10 +20,10 @@ interface IAmmStorage {
     /// @return last swap ID, integer
     function getLastSwapId() external view returns (uint256);
 
-    function getLastOpenedSwap(IporTypes.SwapTenor tenor, uint256 direction)
-        external
-        view
-        returns (AmmInternalTypes.OpenSwapItem memory);
+    function getLastOpenedSwap(
+        IporTypes.SwapTenor tenor,
+        uint256 direction
+    ) external view returns (AmmInternalTypes.OpenSwapItem memory);
 
     /// @notice Gets balance struct
     /// @dev Balance contains:
@@ -131,32 +131,28 @@ interface IAmmStorage {
     /// @return soapPayFixed SOAP for Pay-Fixed and Receive-Floating leg, represented in 18 decimals
     /// @return soapReceiveFixed SOAP for Receive-Fixed and Pay-Floating leg, represented in 18 decimals
     /// @return soap Sum of SOAP for Pay-Fixed leg and Receive-Fixed leg , represented in 18 decimals
-    function calculateSoap(uint256 ibtPrice, uint256 calculateTimestamp)
-        external
-        view
-        returns (
-            int256 soapPayFixed,
-            int256 soapReceiveFixed,
-            int256 soap
-        );
+    function calculateSoap(
+        uint256 ibtPrice,
+        uint256 calculateTimestamp
+    ) external view returns (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap);
 
     /// @notice Calculates SOAP for Pay-Fixed leg at given IBT price and time.
     /// @param ibtPrice IBT (Interest Bearing Token) price
     /// @param calculateTimestamp epoch timestamp, the time for which SOAP is calculated
     /// @return soapPayFixed SOAP for Pay-Fixed leg, represented in 18 decimals
-    function calculateSoapPayFixed(uint256 ibtPrice, uint256 calculateTimestamp)
-        external
-        view
-        returns (int256 soapPayFixed);
+    function calculateSoapPayFixed(
+        uint256 ibtPrice,
+        uint256 calculateTimestamp
+    ) external view returns (int256 soapPayFixed);
 
     /// @notice Calculates SOAP for Receive-Fixed leg at given IBT price and time.
     /// @param ibtPrice IBT (Interest Bearing Token) price
     /// @param calculateTimestamp epoch timestamp, the time for which SOAP is calculated
     /// @return soapReceiveFixed SOAP for Receive-Fixed leg, represented in 18 decimals
-    function calculateSoapReceiveFixed(uint256 ibtPrice, uint256 calculateTimestamp)
-        external
-        view
-        returns (int256 soapReceiveFixed);
+    function calculateSoapReceiveFixed(
+        uint256 ibtPrice,
+        uint256 calculateTimestamp
+    ) external view returns (int256 soapReceiveFixed);
 
     /// @notice add liquidity to the Liquidity Pool. Function available only to Router.
     /// @param account account address who execute request for redeem asset amount
@@ -178,17 +174,19 @@ interface IAmmStorage {
     /// @param newSwap new swap structure {AmmTypes.NewSwap}
     /// @param cfgIporPublicationFee publication fee amount taken from AmmTreasury configuration, represented in 18 decimals.
     /// @return new swap ID
-    function updateStorageWhenOpenSwapPayFixed(AmmTypes.NewSwap memory newSwap, uint256 cfgIporPublicationFee)
-        external
-        returns (uint256);
+    function updateStorageWhenOpenSwapPayFixed(
+        AmmTypes.NewSwap memory newSwap,
+        uint256 cfgIporPublicationFee
+    ) external returns (uint256);
 
     /// @notice Updates structures in the storage: balance, swaps, SOAP indicators when new Receive-Fixed swap is opened. Function is only available to AmmTreasury.
     /// @param newSwap new swap structure {AmmTypes.NewSwap}
     /// @param cfgIporPublicationFee publication fee amount taken from AmmTreasury configuration, represented in 18 decimals.
     /// @return new swap ID
-    function updateStorageWhenOpenSwapReceiveFixed(AmmTypes.NewSwap memory newSwap, uint256 cfgIporPublicationFee)
-        external
-        returns (uint256);
+    function updateStorageWhenOpenSwapReceiveFixed(
+        AmmTypes.NewSwap memory newSwap,
+        uint256 cfgIporPublicationFee
+    ) external returns (uint256);
 
     /// @notice Updates structures in the storage: balance, swaps, SOAP indicators when closing Pay-Fixed swap.
     /// @dev This function is only available to AmmTreasury.
@@ -200,6 +198,8 @@ interface IAmmStorage {
     function updateStorageWhenCloseSwapPayFixed(
         AmmTypes.Swap memory swap,
         int256 payoff,
+        uint256 swapUnwindOpeningFeeLPAmount,
+        uint256 swapUnwindOpeningFeeTreasuryAmount,
         uint256 closingTimestamp
     ) external returns (AmmInternalTypes.OpenSwapItem memory closedSwap);
 
@@ -213,6 +213,8 @@ interface IAmmStorage {
     function updateStorageWhenCloseSwapReceiveFixed(
         AmmTypes.Swap memory swap,
         int256 payoff,
+        uint256 swapUnwindOpeningFeeLPAmount,
+        uint256 swapUnwindOpeningFeeTreasuryAmount,
         uint256 closingTimestamp
     ) external returns (AmmInternalTypes.OpenSwapItem memory closedSwap);
 

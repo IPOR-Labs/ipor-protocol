@@ -27,15 +27,7 @@ library IporSwapLogic {
         uint256 liquidationDepositAmount,
         uint256 iporPublicationFeeAmount,
         uint256 openingFeeRate
-    )
-        internal
-        pure
-        returns (
-            uint256 collateral,
-            uint256 notional,
-            uint256 openingFee
-        )
-    {
+    ) internal pure returns (uint256 collateral, uint256 notional, uint256 openingFee) {
         uint256 availableAmount = totalAmount - liquidationDepositAmount - iporPublicationFeeAmount;
 
         collateral = IporMath.division(
@@ -70,10 +62,10 @@ library IporSwapLogic {
         AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
         int256 swapPayoffToDate,
-        uint256 oppositeLegFixedRate,
-        uint256 openingFeeRateForSwapUnwind
+        uint256 oppositeLegFixedRate
     ) internal pure returns (int256 swapUnwindValue) {
         uint256 endTimestamp = getSwapEndTimestamp(swap);
+
         require(closingTimestamp <= endTimestamp, AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE);
 
         swapUnwindValue =
@@ -81,8 +73,7 @@ library IporSwapLogic {
             swap.notional.toInt256().calculateContinuousCompoundInterestUsingRatePeriodMultiplicationInt(
                 (oppositeLegFixedRate.toInt256() - swap.fixedInterestRate.toInt256()) *
                     ((endTimestamp - swap.openTimestamp) - (closingTimestamp - swap.openTimestamp)).toInt256()
-            ) -
-            openingFeeRateForSwapUnwind.toInt256();
+            );
     }
 
     function calculateInterest(
@@ -168,5 +159,13 @@ library IporSwapLogic {
         } else {
             revert(AmmErrors.UNSUPPORTED_SWAP_TENOR);
         }
+    }
+
+    function splitOpeningFeeAmount(
+        uint256 openingFeeAmount,
+        uint256 openingFeeForTreasurePortionRate
+    ) internal pure returns (uint256 liquidityPoolAmount, uint256 treasuryAmount) {
+        treasuryAmount = IporMath.division(openingFeeAmount * openingFeeForTreasurePortionRate, 1e18);
+        liquidityPoolAmount = openingFeeAmount - treasuryAmount;
     }
 }

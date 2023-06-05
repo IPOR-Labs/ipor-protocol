@@ -138,12 +138,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         _spreadRouter = spreadRouter;
     }
 
-    function getAmmOpenSwapServicePoolConfiguration(address asset)
-        external
-        view
-        override
-        returns (AmmOpenSwapServicePoolConfiguration memory)
-    {
+    function getAmmOpenSwapServicePoolConfiguration(
+        address asset
+    ) external view override returns (AmmOpenSwapServicePoolConfiguration memory) {
         return _getPoolConfiguration(asset);
     }
 
@@ -709,7 +706,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             poolCfg.openingFeeRate
         );
 
-        (uint256 openingFeeLPAmount, uint256 openingFeeTreasuryAmount) = _splitOpeningFeeAmount(
+        (uint256 openingFeeLPAmount, uint256 openingFeeTreasuryAmount) = IporSwapLogic.splitOpeningFeeAmount(
             openingFeeAmount,
             poolCfg.openingFeeTreasuryPortionRate
         );
@@ -720,9 +717,10 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             wadTotalAmount > liquidationDepositAmountWad + poolCfg.iporPublicationFee + openingFeeAmount,
             AmmErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
-        IporTypes.AccruedIpor memory accruedIndex;
-
-        accruedIndex = IIporOracle(_iporOracle).getAccruedIndex(openTimestamp, poolCfg.asset);
+        IporTypes.AccruedIpor memory accruedIndex = IIporOracle(_iporOracle).getAccruedIndex(
+            openTimestamp,
+            poolCfg.asset
+        );
 
         return
             AmmInternalTypes.BeforeOpenSwapStruct(
@@ -774,15 +772,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         } else {
             return leverage;
         }
-    }
-
-    function _splitOpeningFeeAmount(uint256 openingFeeAmount, uint256 openingFeeForTreasureRate)
-        internal
-        pure
-        returns (uint256 liquidityPoolAmount, uint256 treasuryAmount)
-    {
-        treasuryAmount = IporMath.division(openingFeeAmount * openingFeeForTreasureRate, 1e18);
-        liquidityPoolAmount = openingFeeAmount - treasuryAmount;
     }
 
     function _emitOpenSwapEvent(

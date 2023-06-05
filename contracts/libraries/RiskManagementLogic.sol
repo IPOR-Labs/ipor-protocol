@@ -14,7 +14,7 @@ import "../amm/libraries/types/AmmInternalTypes.sol";
 library RiskManagementLogic {
     using Address for address;
 
-    struct SpreadQuoteContext {
+    struct SpreadOfferedRateContext {
         address asset;
         address ammStorage;
         address iporRiskManagementOracle;
@@ -23,30 +23,30 @@ library RiskManagementLogic {
         uint256 indexValue;
     }
 
-    function calculateQuote(
-        uint256 swapNotional,
+    function calculateOfferedRate(
         uint256 direction,
         IporTypes.SwapTenor tenor,
-        SpreadQuoteContext memory spreadQuoteCtx
+        uint256 swapNotional,
+        SpreadOfferedRateContext memory spreadOfferedRateCtx
     ) internal returns (uint256) {
-        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(spreadQuoteCtx.ammStorage)
+        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(spreadOfferedRateCtx.ammStorage)
             .getBalancesForOpenSwap();
 
         AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = getRiskIndicators(
-            spreadQuoteCtx.asset,
+            spreadOfferedRateCtx.asset,
             direction,
             tenor,
             balance.liquidityPool,
-            spreadQuoteCtx.minLeverage,
-            spreadQuoteCtx.iporRiskManagementOracle
+            spreadOfferedRateCtx.minLeverage,
+            spreadOfferedRateCtx.iporRiskManagementOracle
         );
 
         return
             abi.decode(
-                spreadQuoteCtx.spreadRouter.functionCall(
+                spreadOfferedRateCtx.spreadRouter.functionCall(
                     abi.encodeWithSignature(
                         determineSpreadMethodSig(direction, tenor),
-                        spreadQuoteCtx.asset,
+                        spreadOfferedRateCtx.asset,
                         swapNotional,
                         riskIndicators.maxLeveragePerLeg,
                         riskIndicators.maxCollateralRatioPerLeg,
@@ -56,7 +56,7 @@ library RiskManagementLogic {
                         balance.liquidityPool,
                         balance.totalNotionalPayFixed,
                         balance.totalNotionalReceiveFixed,
-                        spreadQuoteCtx.indexValue
+                        spreadOfferedRateCtx.indexValue
                     )
                 ),
                 (uint256)
@@ -94,11 +94,10 @@ library RiskManagementLogic {
         }
     }
 
-    function determineSpreadMethodSig(uint256 direction, IporTypes.SwapTenor tenor)
-        internal
-        pure
-        returns (string memory)
-    {
+    function determineSpreadMethodSig(
+        uint256 direction,
+        IporTypes.SwapTenor tenor
+    ) internal pure returns (string memory) {
         if (direction == 0) {
             if (tenor == IporTypes.SwapTenor.DAYS_28) {
                 return
