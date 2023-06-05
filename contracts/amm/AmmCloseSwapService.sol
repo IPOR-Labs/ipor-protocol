@@ -463,7 +463,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             0,
             swap.tenor,
             swap.notional,
-            IAmmStorage(poolCfg.ammStorage).updateStorageWhenCloseSwapPayFixed(swap, payoff, closeTimestamp),
+            IAmmStorage(poolCfg.ammStorage).updateStorageWhenCloseSwapPayFixedInternal(swap, payoff, closeTimestamp),
             poolCfg.ammStorage
         );
 
@@ -499,7 +499,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             1,
             swap.tenor,
             swap.notional,
-            IAmmStorage(poolCfg.ammStorage).updateStorageWhenCloseSwapReceiveFixed(swap, payoff, closeTimestamp),
+            IAmmStorage(poolCfg.ammStorage).updateStorageWhenCloseSwapReceiveFixedInternal(swap, payoff, closeTimestamp),
             poolCfg.ammStorage
         );
 
@@ -871,7 +871,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
                 );
 
                 if (rebalanceAmount < 0) {
-                    IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagement((-rebalanceAmount).toUint256());
+                    IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagementInternal((-rebalanceAmount).toUint256());
                 }
             }
 

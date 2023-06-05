@@ -234,7 +234,7 @@ contract AmmTreasuryShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUti
         _iporProtocol.ammStorage.setJoseph(_userOne);
 
         vm.prank(_userOne);
-        _iporProtocol.ammStorage.subtractLiquidity(20000 * TestConstants.D18);
+        _iporProtocol.ammStorage.subtractLiquidityInternal(20000 * TestConstants.D18);
         _iporProtocol.ammStorage.setJoseph(address(_iporProtocol.joseph));
 
         // when

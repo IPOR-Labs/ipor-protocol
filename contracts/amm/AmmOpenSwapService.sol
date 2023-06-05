@@ -553,7 +553,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             ctx.tenor
         );
 
-        uint256 newSwapId = IAmmStorage(ctx.poolCfg.ammStorage).updateStorageWhenOpenSwapPayFixed(
+        uint256 newSwapId = IAmmStorage(ctx.poolCfg.ammStorage).updateStorageWhenOpenSwapPayFixedInternal(
             newSwap,
             ctx.poolCfg.iporPublicationFee
         );
@@ -655,7 +655,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             ctx.tenor
         );
 
-        uint256 newSwapId = IAmmStorage(ctx.poolCfg.ammStorage).updateStorageWhenOpenSwapReceiveFixed(
+        uint256 newSwapId = IAmmStorage(ctx.poolCfg.ammStorage).updateStorageWhenOpenSwapReceiveFixedInternal(
             newSwap,
             ctx.poolCfg.iporPublicationFee
         );

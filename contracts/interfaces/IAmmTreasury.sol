@@ -27,18 +27,18 @@ interface IAmmTreasury {
     /// @dev AmmTreasury balance in storage is not changing after this deposit, balance of ERC20 assets on AmmTreasury is changing as they get transfered to AssetManagement.
     /// @dev Emits {Deposit} event from AssetManagement, emits {Transfer} event from ERC20, emits {Mint} event from ivToken
     /// @param assetAmount amount of asset
-    function depositToAssetManagement(uint256 assetAmount) external;
+    function depositToAssetManagementInternal(uint256 assetAmount) external;
 
     /// @notice Transfers the assets from AssetManagement to AmmTreasury. Action available only for Router.
     /// @dev AmmTreasury balance in storage is not changing, balance of ERC20 assets of AmmTreasury is changing.
     /// @dev Emits {Withdraw} event from AssetManagement, emits {Transfer} event from ERC20 asset, emits {Burn} event from ivToken
     /// @param assetAmount amount of assets
-    function withdrawFromAssetManagement(uint256 assetAmount) external;
+    function withdrawFromAssetManagementInternal(uint256 assetAmount) external;
 
     /// @notice Transfers assets (underlying tokens / stablecoins) from AssetManagement to AmmTreasury. Action available only for Router.
     /// @dev AmmTreasury Balance in storage is not changing after this wi, balance of ERC20 assets on AmmTreasury is changing.
     /// @dev Emits {Withdraw} event from AssetManagement, emits {Transfer} event from ERC20 asset, emits {Burn} event from ivToken
-    function withdrawAllFromAssetManagement() external;
+    function withdrawAllFromAssetManagementInternal() external;
 
     /// @notice Pauses current smart contract, it can be executed only by the Owner
     /// @dev Emits {Paused} event from AmmTreasury.

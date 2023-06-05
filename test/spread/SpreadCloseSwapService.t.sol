@@ -319,7 +319,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             IporTypes.SwapTenor.DAYS_28
         );
         vm.prank(_owner);
-        ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap1, cfgIporPublicationFee);
+        ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap1, cfgIporPublicationFee);
         vm.prank(_ammAddress);
         ISpread28Days(_routerAddress).calculateAndUpdateOfferedRateReceiveFixed28Days(spreadInputsOpen);
 
@@ -337,7 +337,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             IporTypes.SwapTenor.DAYS_28
         );
         vm.prank(_owner);
-        ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap2, cfgIporPublicationFee);
+        ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap2, cfgIporPublicationFee);
         vm.prank(_ammAddress);
         ISpread28Days(_routerAddress).calculateAndUpdateOfferedRateReceiveFixed28Days(spreadInputsOpen);
 
@@ -456,7 +456,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             IporTypes.SwapTenor.DAYS_28
         );
         vm.prank(_owner);
-        ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap1, cfgIporPublicationFee);
+        ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap1, cfgIporPublicationFee);
         vm.prank(_ammAddress);
         ISpread28Days(_routerAddress).calculateAndUpdateOfferedRatePayFixed28Days(spreadInputsOpen);
 
@@ -474,7 +474,7 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             IporTypes.SwapTenor.DAYS_28
         );
         vm.prank(_owner);
-        ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap2, cfgIporPublicationFee);
+        ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap2, cfgIporPublicationFee);
         vm.prank(_ammAddress);
         ISpread28Days(_routerAddress).calculateAndUpdateOfferedRatePayFixed28Days(spreadInputsOpen);
 
