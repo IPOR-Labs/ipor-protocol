@@ -87,7 +87,7 @@ contract SpreadRouterBuilder is Test {
 
     function _buildImplementation() internal returns (address impl) {
         SpreadRouter.DeployedContracts memory deployedContracts;
-        deployedContracts.ammAddress = builderData.iporRouter;
+        deployedContracts.iporProtocolRouter = builderData.iporRouter;
         deployedContracts.storageLens = address(new SpreadStorageLens());
         deployedContracts.spread28Days = _buildSpread28Days();
         deployedContracts.spread60Days = _buildSpread60Days();

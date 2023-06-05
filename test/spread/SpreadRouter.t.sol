@@ -2,23 +2,35 @@
 pragma solidity 0.8.16;
 
 import "../TestCommons.sol";
-import "../../contracts/amm/spread/SpreadRouter.sol";
-import "./MockSpread28Days.sol";
-import "./MockSpreadLens.sol";
+import "contracts/amm/spread/SpreadRouter.sol";
+import "./MockSpreadServices.sol";
 
 contract SpreadRouterTest is TestCommons {
-    MockTestnetToken internal _dai;
-    MockTestnetToken internal _usdc;
-    MockTestnetToken internal _usdt;
+    address internal _owner;
+    address internal _iporProtocolRouter;
+    address internal _spread28Days;
+    address internal _spread60Days;
+    address internal _spread90Days;
+    address internal _storageLens;
+    address internal _closeSwapService;
 
     function setUp() public {
-        (_dai, _usdc, _usdt) = _getStables();
+        _iporProtocolRouter = _getUserAddress(10);
     }
 
-//    function testShouldSetupProperDaiAddressesWhenDeployd() public {
-//        // given
-//        MockSpread28Days mockSpread28Days = new MockSpread28Days();
-//
+    function testShouldSetupProperDaiAddressesWhenDeployd() public {
+        // given
+        _owner = _getUserAddress(1);
+
+        vm.startPrank(_owner);
+        _spread28Days = address(new MockSpreadServices());
+//        _spread60Days = new Moc
+
+
+
+        vm.stopPrank();
+    }
+
 //        SpreadRouter.DeployedContracts memory deployedContracts = SpreadRouter.DeployedContracts(
 //            address(_dai),
 //            address(_usdc),

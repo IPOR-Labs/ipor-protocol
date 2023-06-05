@@ -13,10 +13,10 @@ contract SpreadAccessControl {
 
     address internal immutable IPOR_PROTOCOL_ROUTER;
 
-    constructor(address ammAddress) {
-        require(ammAddress != address(0), string.concat(IporErrors.WRONG_ADDRESS, " AMM address cannot be 0"));
+    constructor(address iporProtocolRouter) {
+        require(iporProtocolRouter != address(0), string.concat(IporErrors.WRONG_ADDRESS, " AMM address cannot be 0"));
 
-        IPOR_PROTOCOL_ROUTER = ammAddress;
+        IPOR_PROTOCOL_ROUTER = iporProtocolRouter;
     }
 
     /// @dev Throws error if called by any account other than the owner.
