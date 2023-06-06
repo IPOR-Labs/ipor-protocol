@@ -238,7 +238,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -279,7 +278,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -320,7 +318,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -358,7 +355,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapsPayFixedShouldFailWhenPageSizeIsEqualToZero() public {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -386,7 +382,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
     function testGetSwapsPayFixedShouldReturnEmptyListOfSwapsWhenZeroNumberOfSwapsAndOffsetZer0AndPageSize10()
         public
     {
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -414,7 +409,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -442,7 +436,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -478,7 +471,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -514,7 +506,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -550,7 +541,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -584,7 +574,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapsReceiveFixedShouldFailWhenPageSizeIsEqualToZero() public {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -621,7 +610,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -657,7 +645,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -685,7 +672,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -721,7 +707,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -757,7 +742,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -793,7 +777,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -827,7 +810,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapIdsPayFixedShouldFailWhenPageSizeIsEqualToZero() public {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -858,7 +840,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -888,7 +869,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -918,7 +898,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -956,7 +935,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -994,7 +972,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -1032,7 +1009,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -1068,7 +1044,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapIdsReceiveFixedShouldFailWhenPageSizeIsEqualToZero() public {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -1097,7 +1072,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -1125,7 +1099,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -1153,7 +1126,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -1189,7 +1161,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -1225,7 +1196,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -1259,7 +1229,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapIdsShouldFailWhenPageSizeIsEqualToZero() public {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -1289,7 +1258,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -1317,7 +1285,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -1345,7 +1312,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -1381,7 +1347,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -1417,7 +1382,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -1460,7 +1424,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -1503,7 +1466,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 

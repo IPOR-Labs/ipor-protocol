@@ -163,7 +163,6 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
     {
         // given
         _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE8;
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE2;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
@@ -267,7 +266,6 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
     {
         // given
         _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE9;
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
@@ -324,7 +322,6 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
     {
         // given
         _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE10;
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
