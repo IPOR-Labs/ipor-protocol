@@ -712,7 +712,7 @@ contract IporProtocolFactory is Test {
                     ammStorage: address(amm.dai.ammStorage),
                     ammTreasury: address(amm.dai.ammTreasury)
                 }),
-                amm.iporOracle,
+                address(amm.iporOracle),
                 address(amm.iporRiskManagementOracle),
                 address(amm.router)
             )
@@ -963,7 +963,7 @@ contract IporProtocolFactory is Test {
                     ammStorage: _fakeContract,
                     ammTreasury: _fakeContract
                 }),
-                iporProtocol.iporOracle,
+                address(iporProtocol.iporOracle),
                 address(iporProtocol.iporRiskManagementOracle),
                 address(iporProtocol.router)
             )
@@ -1138,7 +1138,7 @@ contract IporProtocolFactory is Test {
                     ammStorage: _fakeContract,
                     ammTreasury: _fakeContract
                 }),
-                iporProtocol.iporOracle,
+                address(iporProtocol.iporOracle),
                 address(iporProtocol.iporRiskManagementOracle),
                 address(iporProtocol.router)
             )
@@ -1313,7 +1313,7 @@ contract IporProtocolFactory is Test {
                     ammStorage: address(iporProtocol.ammStorage),
                     ammTreasury: address(iporProtocol.ammTreasury)
                 }),
-                iporProtocol.iporOracle,
+                address(iporProtocol.iporOracle),
                 address(iporProtocol.iporRiskManagementOracle),
                 address(iporProtocol.router)
             )

@@ -17,6 +17,9 @@ import "../interfaces/IAmmPoolsService.sol";
 import "../interfaces/IAmmStorage.sol";
 import "../governance/AmmConfigurationManager.sol";
 
+import "forge-std/Test.sol";
+
+
 contract AmmPoolsService is IAmmPoolsService {
     using SafeCast for int256;
     using SafeCast for uint256;
@@ -209,14 +212,14 @@ contract AmmPoolsService is IAmmPoolsService {
         model.ammTreasury = poolCfg.ammTreasury;
         model.assetManagement = poolCfg.assetManagement;
         model.iporOracle = _iporOracle;
-
         IporTypes.AmmBalancesMemory memory balance = model.getAccruedBalance();
-
-        uint256 exchangeRate = model.getExchangeRate(balance.liquidityPool);
-
+        console2.log("XXXXXX: ", balance.liquidityPool);
+        uint256 exchangeRate = model.getExchangeRate(balance.liquidityPool); //todo Error !!!!
+        console2.log("XXXXXX");
         require(exchangeRate > 0, AmmErrors.LIQUIDITY_POOL_IS_EMPTY);
 
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmount, poolCfg.decimals);
+        console2.log("XXXXXX");
 
         IAmmStorage(poolCfg.ammStorage).addLiquidityInternal(
             beneficiary,
