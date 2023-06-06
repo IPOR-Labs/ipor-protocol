@@ -16,6 +16,7 @@ contract AmmUnwindSwap is TestCommons {
 
     IporProtocolFactory.IporProtocolConfig private _cfg;
     BuilderUtils.IporProtocol internal _iporProtocol;
+    MockTestnetToken _asset;
 
     event SwapUnwind(
         uint256 indexed swapId,
@@ -36,7 +37,7 @@ contract AmmUnwindSwap is TestCommons {
     function testShouldUnwindPayFixedSimple() public {
         //given
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-        asset = _iporProtocol.asset;
+        _asset = _iporProtocol.asset;
 
         uint256 liquidityAmount = 1_000_000 * 1e18;
         uint256 totalAmount = 10_000 * 1e18;
@@ -48,12 +49,12 @@ contract AmmUnwindSwap is TestCommons {
         uint256 expectedOpeningFeeLpAmount = 29145104043000041192;
         uint256 expectedOpeningFeeTreasuryAmount = 14579841942471256;
 
-        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_admin, liquidityAmount);
-        asset.transfer(_buyer, totalAmount);
+        _asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(_iporProtocol.router), totalAmount);
+        _asset.approve(address(_iporProtocol.router), totalAmount);
 
         vm.prank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
@@ -90,7 +91,7 @@ contract AmmUnwindSwap is TestCommons {
     function testShouldUnwindPayFixedWhenCloseTwoPositionInDifferentMoment() public {
         //given
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-        asset = _iporProtocol.asset;
+        _asset = _iporProtocol.asset;
 
         uint256 liquidityAmount = 1_000_000 * 1e18;
         uint256 totalAmount = 10_000 * 1e18;
@@ -107,12 +108,12 @@ contract AmmUnwindSwap is TestCommons {
         uint256 expectedOpeningFeeLpAmountTwo = 16473326053178158123;
         uint256 expectedOpeningFeeTreasuryAmountTwo = 8240783418298228;
 
-        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_admin, liquidityAmount);
-        asset.transfer(_buyer, 2 * totalAmount);
+        _asset.transfer(_buyer, 2 * totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(_iporProtocol.router), 2 * totalAmount);
+        _asset.approve(address(_iporProtocol.router), 2 * totalAmount);
 
         vm.prank(_buyer);
         uint256 swapIdOne = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
@@ -168,7 +169,7 @@ contract AmmUnwindSwap is TestCommons {
     function testShouldUnwindReceiveFixedWhenCloseTwoPositionInDifferentMoment() public {
         //given
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-        asset = _iporProtocol.asset;
+        _asset = _iporProtocol.asset;
 
         uint256 liquidityAmount = 1_000_000 * 1e18;
         uint256 totalAmount = 10_000 * 1e18;
@@ -185,12 +186,12 @@ contract AmmUnwindSwap is TestCommons {
         uint256 expectedOpeningFeeLpAmountTwo = 16473326053178158123;
         uint256 expectedOpeningFeeTreasuryAmountTwo = 8240783418298228;
 
-        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_admin, liquidityAmount);
-        asset.transfer(_buyer, 2 * totalAmount);
+        _asset.transfer(_buyer, 2 * totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(_iporProtocol.router), 2 * totalAmount);
+        _asset.approve(address(_iporProtocol.router), 2 * totalAmount);
 
         vm.prank(_buyer);
         uint256 swapIdOne = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
