@@ -19,7 +19,6 @@ import "../interfaces/types/AmmTypes.sol";
 import "../interfaces/IIporOracle.sol";
 import "../interfaces/IAmmTreasury.sol";
 import "../interfaces/IAmmCloseSwapService.sol";
-import "forge-std/console2.sol";
 
 contract AmmCloseSwapService is IAmmCloseSwapService {
     using Address for address;
@@ -665,7 +664,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             );
 
             payoff = swapPayoffToDate + swapUnwindValue - swapUnwindOpeningFeeAmount.toInt256();
-            console2.log("swapUnwindOpeningFeeAmount=",swapUnwindOpeningFeeAmount);
+
             emit SwapUnwind(
                 swap.id,
                 swapPayoffToDate,
