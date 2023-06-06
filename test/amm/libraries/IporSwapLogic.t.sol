@@ -35,7 +35,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, 688393962504649529356);
+        assertEq(virtualHedgingSwap, 688393962504649529356 + 5e18);
     }
 
     function testShouldCalculateVirtualHedgingSwapElapsed10DaysPositivePnLOppositeLegRateEqual() public {
@@ -61,7 +61,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, 195000000000000000000);
+        assertEq(virtualHedgingSwap, 195000000000000000000 + 5e18);
     }
 
     function testShouldCalculateVirtualHedgingSwapElapsed10DaysPositivePnLOppositeLegRateLower() public {
@@ -87,7 +87,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -297907567269122150817);
+        assertEq(virtualHedgingSwap, -297907567269122150817 + 5e18);
     }
 
     function testShouldCalculateVirtHedgPosElapsed10NegativePnLOppositeLegRateHigher() public {
@@ -113,7 +113,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, 288393962504649529356);
+        assertEq(virtualHedgingSwap, 288393962504649529356 + 5e18);
     }
 
     function testShouldCalculateVirtHedgPositionElapsed10DaysNegativePnLOppositeLegRateEqual() public {
@@ -139,7 +139,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -205000000000000000000);
+        assertEq(virtualHedgingSwap, -200000000000000000000);
     }
 
     function testShouldCalculateVirtHedgPositionElapsed10DaysNegativePnLOppositeLegRateLower() public {
@@ -165,163 +165,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -697907567269122150817);
-    }
-
-    function testShouldCalculateVirtHedgPosElapsed10NegativePnLOppositeLegRateHigherFlatFeeZero() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 basePayoff = -200 * 1e18;
-        uint256 oppositeLegFixedRate = 5 * 1e16;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 3 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp + 10 days;
-
-        //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            basePayoff,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, 293393962504649529356);
-    }
-
-    function testShouldCalculateVirtHedgPositionElapsed10DaysNegativePnLOppositeLegRateEqualFlatFeeZero() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 basePayoff = -200 * 1e18;
-        uint256 oppositeLegFixedRate = 5 * 1e16;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 5 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp + 10 days;
-
-        //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            basePayoff,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, -200000000000000000000);
-    }
-
-    function testShouldCalculateVirtHedgPositionElapsed10DaysNegativePnLOppositeLegRateLowerFlatFeeZero() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 basePayoff = -200 * 1e18;
-        uint256 oppositeLegFixedRate = 3 * 1e16;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 5 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp + 10 days;
-
-        //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            basePayoff,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, -692907567269122150817);
-    }
-
-    function testShouldCalculateVirtualHedgingSwapElapsed10PositivePnLOppositeLegRateHigherFlatFeeZero() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 basePayoff = 200 * 1e18;
-        uint256 oppositeLegFixedRate = 5 * 1e16;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 3 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp + 10 days;
-
-        //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            basePayoff,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, 693393962504649529356);
-    }
-
-    function testShouldCalculateVirtualHedgingSwapElapsed10DaysPositivePnLOppositeLegRateEqualFlatFeeZero() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 basePayoff = 200 * 1e18;
-        uint256 oppositeLegFixedRate = 5 * 1e16;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 5 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp + 10 days;
-
-        //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            basePayoff,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, 200000000000000000000);
-    }
-
-    function testShouldCalculateVirtualHedgingSwapElapsed10DaysPositivePnLOppositeLegRateLowerFlatFeeZero() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 basePayoff = 200 * 1e18;
-        uint256 oppositeLegFixedRate = 3 * 1e16;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 5 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp + 10 days;
-
-        //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            basePayoff,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, -292907567269122150817);
+        assertEq(virtualHedgingSwap, -697907567269122150817 + 5e18);
     }
 
     function testShouldCalculateVirtualHedgingSwapElapsed10PnLZeroOppositeLegRateHigher() public {
@@ -347,7 +191,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, 488393962504649529356);
+        assertEq(virtualHedgingSwap, 488393962504649529356 + 5e18);
     }
 
     function testShouldCalculateVirtualHedgingSwapElapsed10DaysPnLZeroOppositeLegRateEqual() public {
@@ -373,7 +217,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -5000000000000000000);
+        assertEq(virtualHedgingSwap, -5000000000000000000 + 5e18);
     }
 
     function testShouldCalculateVirtualHedgingSwapElapsed10DaysPnLZeroOppositeLegRateLower() public {
@@ -399,85 +243,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -497907567269122150817);
-    }
-
-    function testShouldCalculateVirtualHedgingSwapElapsed10PnLZeroOppositeLegRateHigherFlatFeeZero() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 basePayoff = 0;
-        uint256 oppositeLegFixedRate = 5 * 1e16;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 3 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp + 10 days;
-
-        //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            basePayoff,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, 493393962504649529356);
-    }
-
-    function testShouldCalculateVirtualHedgingSwapElapsed10DaysPnLZeroOppositeLegRateEqualFlatFeeZero() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 basePayoff = 0;
-        uint256 oppositeLegFixedRate = 5 * 1e16;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 5 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp + 10 days;
-
-        //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            basePayoff,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, 0);
-    }
-
-    function testShouldCalculateVirtualHedgingSwapElapsed10DaysPnLZeroOppositeLegRateLowerFlatFeeZero() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 basePayoff = 0;
-        uint256 oppositeLegFixedRate = 3 * 1e16;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 5 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp + 10 days;
-
-        //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            basePayoff,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, -492907567269122150817);
+        assertEq(virtualHedgingSwap, -497907567269122150817 + 5e18);
     }
 
     function testShouldCalculateVirtualHedgingSwapElapsed10PnL200PayFixedZero() public {
@@ -503,7 +269,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, 1429397947389797852750);
+        assertEq(virtualHedgingSwap, 1429397947389797852750 + 5e18);
     }
 
     function testShouldCalculateVirtualHedgingSwapElapsed10PnL200OppositeLegZero() public {
@@ -529,7 +295,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -1036357975873955618668);
+        assertEq(virtualHedgingSwap, -1036357975873955618668 + 5e18);
     }
 
     function testShouldCalculateVirtualHedgingSwapElapsed10PnLNegative200PayFixedZero() public {
@@ -555,7 +321,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, 1029397947389797852750);
+        assertEq(virtualHedgingSwap, 1029397947389797852750 + 5e18);
     }
 
     function testShouldCalculateVirtualHedgingSwapElapsed10PnLNegative200OppositeLegZero() public {
@@ -581,7 +347,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -1436357975873955618668);
+        assertEq(virtualHedgingSwap, -1436357975873955618668 + 5e18);
     }
 
     function testShouldCalculateVirtHedgPosPnLZeroClosingInDayWhenOpenedOppositeLegHigher() public {
@@ -607,7 +373,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, 762712066882048171722);
+        assertEq(virtualHedgingSwap, 762712066882048171722 + 5e18);
     }
 
     function testShouldCalculateVirtHedgPosPnLZeroClosingInDayWhenOpenedOppositeLegEqual() public {
@@ -633,7 +399,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -5000000000000000000);
+        assertEq(virtualHedgingSwap, -5000000000000000000 + 5e18);
     }
 
     function testShouldCalculateVirtHedgPosPnLZeroClosingInDayWhenOpenedOppositeLegLower() public {
@@ -659,7 +425,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -771535110374201597255);
+        assertEq(virtualHedgingSwap, -771535110374201597255 + 5e18);
     }
 
     function testShouldCalculateVirtHedgPosPnL200ClosingInDayWhenOpenedOppositeLegHigher() public {
@@ -685,7 +451,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, 962712066882048171722);
+        assertEq(virtualHedgingSwap, 962712066882048171722 + 5e18);
     }
 
     function testShouldCalculateVirtHedgPosPnL200ClosingInDayWhenOpenedOppositeLegEqual() public {
@@ -711,7 +477,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, 195000000000000000000);
+        assertEq(virtualHedgingSwap, 195000000000000000000 + 5e18);
     }
 
     function testShouldCalculateVirtHedgPosPnL200ClosingInDayWhenOpenedOppositeLegLower() public {
@@ -737,7 +503,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -571535110374201597255);
+        assertEq(virtualHedgingSwap, -571535110374201597255 + 5e18);
     }
 
     function testShouldCalculateVirtHedgPosPnLZeroClosingInDayWhenOpenedLegEqualZero() public {
@@ -763,7 +529,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, 1916490914507168629875);
+        assertEq(virtualHedgingSwap, 1916490914507168629875+5e18);
     }
 
     function testShouldCalculateVirtHedgPosPnLZeroClosingInDayWhenOpenedOppositeLegEqualZero() public {
@@ -789,7 +555,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -1919134928757670748196);
+        assertEq(virtualHedgingSwap, -1919134928757670748196 + 5e18);
     }
 
     function testShouldCalculateVirtHedgPosPnLZeroClosingInDayWhenOpenedBothLegZero() public {
@@ -815,7 +581,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -5000000000000000000);
+        assertEq(virtualHedgingSwap, -5000000000000000000 + 5e18);
     }
 
     function testShouldCalculateVirtHedgPosMaturityPnL200OppositeLegHigher() public {
@@ -841,7 +607,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, 195000000000000000000);
+        assertEq(virtualHedgingSwap, 195000000000000000000 + 5e18);
     }
 
     function testShouldCalculateVirtHedgPosMaturityPnL200OppositeLegEqual() public {
@@ -867,7 +633,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, 195000000000000000000);
+        assertEq(virtualHedgingSwap, 200000000000000000000);
     }
 
     function testShouldCalculateVirtHedgPosMaturityPnL200OppositeLegLower() public {
@@ -893,7 +659,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, 195000000000000000000);
+        assertEq(virtualHedgingSwap, 200000000000000000000);
     }
 
     function testShouldCalculateVirtHedgPosMaturityPnL200MinusOppositeLegHigher() public {
@@ -919,7 +685,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -205000000000000000000);
+        assertEq(virtualHedgingSwap, -200000000000000000000);
     }
 
     function testShouldCalculateVirtHedgPosMaturityPnL200MinusOppositeLegEqual() public {
@@ -945,7 +711,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -205000000000000000000);
+        assertEq(virtualHedgingSwap, -200000000000000000000);
     }
 
     function testShouldCalculateVirtHedgPosMaturityPnL200MinusOppositeLegLower() public {
@@ -971,7 +737,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -205000000000000000000);
+        assertEq(virtualHedgingSwap, -200000000000000000000);
     }
 
     function testShouldCalculateVirtHedgPosAfterMaturityPnL200OppositeLegHigher() public {
