@@ -126,19 +126,19 @@ contract TestForkCommons is Test {
     function _switchImplementationOfIporOracle() private returns (uint256 versionBefore, uint256 versionAfter) {
         versionBefore = IporOracle(iporOracleProxy).getVersion();
 // todo fix złe wartości
-        (, uint256 daiInitialIbtPrice, ) = IporOracle(iporOracleProxy).getIndex(DAI);
-        (, uint256 usdcInitialIbtPrice, ) = IporOracle(iporOracleProxy).getIndex(USDC);
-        (, uint256 usdtInitialIbtPrice, ) = IporOracle(iporOracleProxy).getIndex(USDT);
+        IporTypes.AccruedIpor memory daiAccruedIpor = IporOracle(iporOracleProxy).getAccruedIndex(block.timestamp, DAI);
+        IporTypes.AccruedIpor memory usdcAccruedIpor = IporOracle(iporOracleProxy).getAccruedIndex(block.timestamp, USDC);
+        IporTypes.AccruedIpor memory usdtAccruedIpor = IporOracle(iporOracleProxy).getAccruedIndex(block.timestamp, USDT);
 
-        console2.log("daiInitialIbtPrice", daiInitialIbtPrice);
+        console2.log("daiInitialIbtPrice", daiAccruedIpor.ibtPrice);
 
         IporOracle iporOracleImplementation = new IporOracle(
             USDT,
-            usdtInitialIbtPrice,
+            usdtAccruedIpor.ibtPrice,
             USDC,
-            usdcInitialIbtPrice,
+            usdcAccruedIpor.ibtPrice,
             DAI,
-            daiInitialIbtPrice
+            daiAccruedIpor.ibtPrice
         );
 
         vm.prank(owner);
@@ -527,6 +527,9 @@ contract TestForkCommons is Test {
         AmmStorage(miltonStorageProxyDai).upgradeTo(address(daiStorageImplementation));
         AmmStorage(miltonStorageProxyUsdc).upgradeTo(address(usdcStorageImplementation));
         AmmStorage(miltonStorageProxyUsdt).upgradeTo(address(usdtStorageImplementation));
+        AmmStorage(miltonStorageProxyDai).postUpgrade();
+        AmmStorage(miltonStorageProxyUsdc).postUpgrade();
+        AmmStorage(miltonStorageProxyUsdt).postUpgrade();
         vm.stopPrank();
     }
 
