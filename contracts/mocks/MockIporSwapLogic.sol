@@ -12,7 +12,7 @@ contract MockIporSwapLogic {
         uint256 liquidationDepositAmount,
         uint256 iporPublicationFeeAmount,
         uint256 openingFeeRate
-    ) public pure returns (uint256 collateral, uint256 notional, uint256 openingFee) {
+    ) public view returns (uint256 collateral, uint256 notional, uint256 openingFee) {
         return
             IporSwapLogic.calculateSwapAmount(
                 tenor,

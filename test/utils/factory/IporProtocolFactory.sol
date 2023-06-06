@@ -87,7 +87,6 @@ contract IporProtocolFactory is Test {
         BuilderUtils.Spread60DaysTestCase spread60DaysTestCase;
         BuilderUtils.Spread90DaysTestCase spread90DaysTestCase;
         address[] approvalsForUsers;
-        address josephImplementation;
         address spreadImplementation;
         address assetManagementImplementation;
     }
@@ -343,10 +342,9 @@ contract IporProtocolFactory is Test {
         vm.stopPrank();
     }
 
-    function getUsdtInstance(IporProtocolConfig memory cfg)
-        public
-        returns (BuilderUtils.IporProtocol memory iporProtocol)
-    {
+    function getUsdtInstance(
+        IporProtocolConfig memory cfg
+    ) public returns (BuilderUtils.IporProtocol memory iporProtocol) {
         iporProtocol.router = _iporProtocolRouterBuilder.buildEmptyProxy();
         iporProtocol.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
 
@@ -456,10 +454,9 @@ contract IporProtocolFactory is Test {
         setupUsers(cfg, iporProtocol);
     }
 
-    function getUsdcInstance(IporProtocolConfig memory cfg)
-        public
-        returns (BuilderUtils.IporProtocol memory iporProtocol)
-    {
+    function getUsdcInstance(
+        IporProtocolConfig memory cfg
+    ) public returns (BuilderUtils.IporProtocol memory iporProtocol) {
         iporProtocol.router = _iporProtocolRouterBuilder.buildEmptyProxy();
         iporProtocol.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
 
@@ -571,10 +568,9 @@ contract IporProtocolFactory is Test {
         setupUsers(cfg, iporProtocol);
     }
 
-    function getDaiInstance(IporProtocolConfig memory cfg)
-        public
-        returns (BuilderUtils.IporProtocol memory iporProtocol)
-    {
+    function getDaiInstance(
+        IporProtocolConfig memory cfg
+    ) public returns (BuilderUtils.IporProtocol memory iporProtocol) {
         iporProtocol.router = _iporProtocolRouterBuilder.buildEmptyProxy();
         iporProtocol.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
 
@@ -685,10 +681,10 @@ contract IporProtocolFactory is Test {
         setupUsers(cfg, iporProtocol);
     }
 
-    function _getFullIporProtocolRouterInstance(Amm memory amm, AmmConfig memory cfg)
-        public
-        returns (IporProtocolRouter)
-    {
+    function _getFullIporProtocolRouterInstance(
+        Amm memory amm,
+        AmmConfig memory cfg
+    ) public returns (IporProtocolRouter) {
         if (address(amm.router) == address(0)) {
             amm.router = _iporProtocolRouterBuilder.buildEmptyProxy();
         }
@@ -1503,8 +1499,8 @@ contract IporProtocolFactory is Test {
             ammStorage: address(_fakeContract),
             ammTreasury: address(_fakeContract),
             assetManagement: address(_fakeContract),
-            openingFeeRate: 0,
             openingFeeRateForSwapUnwind: 0,
+            openingFeeTreasuryPortionRateForSwapUnwind: 0,
             liquidationLegLimit: 0,
             timeBeforeMaturityAllowedToCloseSwapByCommunity: 0,
             timeBeforeMaturityAllowedToCloseSwapByBuyer: 0,
@@ -1600,8 +1596,8 @@ contract IporProtocolFactory is Test {
                 ammStorage: ammStorage,
                 ammTreasury: ammTreasury,
                 assetManagement: assetManagement,
-                openingFeeRate: 1e16,
                 openingFeeRateForSwapUnwind: 5 * 1e18, //TODO: suspicious value
+                openingFeeTreasuryPortionRateForSwapUnwind: 5 * 1e14,
                 liquidationLegLimit: 10,
                 timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
                 timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
@@ -1616,8 +1612,8 @@ contract IporProtocolFactory is Test {
                 ammStorage: ammStorage,
                 ammTreasury: ammTreasury,
                 assetManagement: assetManagement,
-                openingFeeRate: 3e14,
                 openingFeeRateForSwapUnwind: 5 * 1e18, //TODO: suspicious value
+                openingFeeTreasuryPortionRateForSwapUnwind: 5 * 1e14,
                 liquidationLegLimit: 10,
                 timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
                 timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
@@ -1672,6 +1668,19 @@ contract IporProtocolFactory is Test {
                 minLeverage: 10 * 1e18,
                 openingFeeRate: 3e14,
                 openingFeeTreasuryPortionRate: 5e16
+            });
+        } else if (openSwapServiceTestCase == BuilderUtils.AmmOpenSwapServiceTestCase.CASE3) {
+            poolCfg = IAmmOpenSwapService.AmmOpenSwapServicePoolConfiguration({
+                asset: asset,
+                decimals: IERC20MetadataUpgradeable(asset).decimals(),
+                ammStorage: ammStorage,
+                ammTreasury: ammTreasury,
+                iporPublicationFee: 10 * 1e18,
+                maxSwapCollateralAmount: 100_000 * 1e18,
+                liquidationDepositAmount: 25,
+                minLeverage: 10 * 1e18,
+                openingFeeRate: 5e14,
+                openingFeeTreasuryPortionRate: 5e17
             });
         }
     }

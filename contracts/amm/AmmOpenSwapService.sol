@@ -504,7 +504,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             ctx.poolCfg.minLeverage
         );
 
-        uint256 quoteValue = abi.decode(
+        uint256 offeredRateValue = abi.decode(
             _spreadRouter.functionCall(
                 abi.encodeWithSignature(
                     ctx.spreadMethodSig,
@@ -526,7 +526,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         );
 
         require(
-            acceptableFixedInterestRate > 0 && quoteValue <= acceptableFixedInterestRate,
+            acceptableFixedInterestRate > 0 && offeredRateValue <= acceptableFixedInterestRate,
             AmmErrors.ACCEPTABLE_FIXED_INTEREST_RATE_EXCEEDED
         );
 
@@ -534,7 +534,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             bosStruct.accruedIpor.indexValue,
             bosStruct.accruedIpor.ibtPrice,
             IporMath.division(bosStruct.notional * 1e18, bosStruct.accruedIpor.ibtPrice),
-            quoteValue
+            offeredRateValue
         );
 
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(
@@ -549,6 +549,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             bosStruct.openingFeeTreasuryAmount,
             ctx.tenor
         );
+
+        console2.log("ibtQuantity", indicator.ibtQuantity);
+        console2.log("fixedInterestRate", indicator.fixedInterestRate);
 
         uint256 newSwapId = IAmmStorage(ctx.poolCfg.ammStorage).updateStorageWhenOpenSwapPayFixedInternal(
             newSwap,

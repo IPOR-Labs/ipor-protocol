@@ -39,7 +39,6 @@ interface IAmmCloseSwapService {
         address ammStorage;
         address ammTreasury;
         address assetManagement;
-        uint256 openingFeeRate;
         uint256 openingFeeRateForSwapUnwind;
         uint256 openingFeeTreasuryPortionRateForSwapUnwind;
         uint256 liquidationLegLimit;

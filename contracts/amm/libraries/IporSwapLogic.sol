@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
+import "forge-std/console2.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../../libraries/errors/AmmErrors.sol";
 import "../../interfaces/types/IporTypes.sol";
@@ -15,20 +16,20 @@ library IporSwapLogic {
     using InterestRates for int256;
 
     /// @param tenor swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
-    /// @param totalAmount total amount represented in 18 decimals
+    /// @param wadTotalAmount total amount represented in 18 decimals
     /// @param leverage swap leverage, represented in 18 decimals
     /// @param liquidationDepositAmount liquidation deposit amount, represented in 18 decimals
     /// @param iporPublicationFeeAmount IPOR publication fee amount, represented in 18 decimals
     /// @param openingFeeRate opening fee rate, represented in 18 decimals
     function calculateSwapAmount(
         IporTypes.SwapTenor tenor,
-        uint256 totalAmount,
+        uint256 wadTotalAmount,
         uint256 leverage,
         uint256 liquidationDepositAmount,
         uint256 iporPublicationFeeAmount,
         uint256 openingFeeRate
-    ) internal pure returns (uint256 collateral, uint256 notional, uint256 openingFee) {
-        uint256 availableAmount = totalAmount - liquidationDepositAmount - iporPublicationFeeAmount;
+    ) internal view returns (uint256 collateral, uint256 notional, uint256 openingFee) {
+        uint256 availableAmount = wadTotalAmount - liquidationDepositAmount - iporPublicationFeeAmount;
 
         collateral = IporMath.division(
             availableAmount * 1e18,
@@ -36,6 +37,10 @@ library IporSwapLogic {
         );
         notional = IporMath.division(leverage * collateral, 1e18);
         openingFee = availableAmount - collateral;
+        console2.log("openingFeeRate=", openingFeeRate);
+        console2.log("openingFee=", openingFee);
+        console2.log("collateral=", collateral);
+        console2.log("notional=", notional);
     }
 
     function calculatePayoffPayFixed(

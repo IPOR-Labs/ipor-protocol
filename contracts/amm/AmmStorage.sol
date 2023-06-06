@@ -135,12 +135,10 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             );
     }
 
-    function getSwap(AmmTypes.SwapDirection direction, uint256 swapId)
-        external
-        view
-        override
-        returns (AmmTypes.Swap memory)
-    {
+    function getSwap(
+        AmmTypes.SwapDirection direction,
+        uint256 swapId
+    ) external view override returns (AmmTypes.Swap memory) {
         uint32 id = swapId.toUint32();
         StorageInternalTypes.Swap storage swap;
 
@@ -538,6 +536,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _updateBalancesWhenCloseSwap(payoff, swapUnwindOpeningFeeLPAmount, swapUnwindOpeningFeeTreasuryAmount);
 
         _balances.totalCollateralPayFixed = _balances.totalCollateralPayFixed - swap.collateral.toUint128();
+        _balances.treasury = _balances.treasury + swapUnwindOpeningFeeTreasuryAmount.toUint128();
     }
 
     function _updateBalancesWhenCloseSwapReceiveFixed(
@@ -546,9 +545,10 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         uint256 swapUnwindOpeningFeeLPAmount,
         uint256 swapUnwindOpeningFeeTreasuryAmount
     ) internal {
-        _updateBalancesWhenCloseSwap(payoff);
+        _updateBalancesWhenCloseSwap(payoff, swapUnwindOpeningFeeLPAmount, swapUnwindOpeningFeeTreasuryAmount);
 
         _balances.totalCollateralReceiveFixed = _balances.totalCollateralReceiveFixed - swap.collateral.toUint128();
+        _balances.treasury = _balances.treasury + swapUnwindOpeningFeeTreasuryAmount.toUint128();
     }
 
     function _updateBalancesWhenCloseSwap(
@@ -563,17 +563,23 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             require(_balances.liquidityPool >= absPayoff, AmmErrors.CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW);
 
             /// @dev When AmmTreasury (LP) looses, then  always substract all payoff
-            _balances.liquidityPool = _balances.liquidityPool - absPayoff.toUint128();
+            _balances.liquidityPool =
+                _balances.liquidityPool -
+                absPayoff.toUint128() +
+                swapUnwindOpeningFeeLPAmount.toUint128();
         } else {
             /// @dev AmmTreasury earns, Buyer looses,
-            _balances.liquidityPool = _balances.liquidityPool + absPayoff.toUint128();
+            _balances.liquidityPool =
+                _balances.liquidityPool +
+                absPayoff.toUint128() +
+                swapUnwindOpeningFeeLPAmount.toUint128();
         }
     }
 
-    function _updateSwapsWhenOpen(AmmTypes.SwapDirection direction, AmmTypes.NewSwap memory newSwap)
-        internal
-        returns (uint256)
-    {
+    function _updateSwapsWhenOpen(
+        AmmTypes.SwapDirection direction,
+        AmmTypes.NewSwap memory newSwap
+    ) internal returns (uint256) {
         _lastSwapId++;
         uint32 id = _lastSwapId;
 

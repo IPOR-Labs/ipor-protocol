@@ -302,7 +302,7 @@ contract SimpleTest is TestCommons {
         );
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenCloseSwapPayFixedInternal(swap, 0, 1028 days);
+        _ammStorage.updateStorageWhenCloseSwapPayFixedInternal(swap, 0, 0, 0, 1028 days);
         vm.stopPrank();
 
         // then
@@ -361,7 +361,7 @@ contract SimpleTest is TestCommons {
         );
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenCloseSwapPayFixedInternal(swap, 0, 1028 days);
+        _ammStorage.updateStorageWhenCloseSwapPayFixedInternal(swap, 0, 0, 0, 1028 days);
         vm.stopPrank();
 
         // then
@@ -420,7 +420,7 @@ contract SimpleTest is TestCommons {
         );
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenCloseSwapPayFixedInternal(swap, 0, 1028 days);
+        _ammStorage.updateStorageWhenCloseSwapPayFixedInternal(swap, 0, 0, 0, 1028 days);
         vm.stopPrank();
 
         // then
@@ -479,7 +479,7 @@ contract SimpleTest is TestCommons {
         );
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenCloseSwapReceiveFixedInternal(swap, 0, 1028 days);
+        _ammStorage.updateStorageWhenCloseSwapReceiveFixedInternal(swap, 0, 0, 0, 1028 days);
         vm.stopPrank();
 
         // then
@@ -538,7 +538,7 @@ contract SimpleTest is TestCommons {
         );
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenCloseSwapReceiveFixedInternal(swap, 0, 1028 days);
+        _ammStorage.updateStorageWhenCloseSwapReceiveFixedInternal(swap, 0, 0, 0, 1028 days);
         vm.stopPrank();
 
         // then
@@ -597,7 +597,7 @@ contract SimpleTest is TestCommons {
         );
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenCloseSwapReceiveFixedInternal(swap, 0, 1028 days);
+        _ammStorage.updateStorageWhenCloseSwapReceiveFixedInternal(swap, 0, 0, 0, 1028 days);
         vm.stopPrank();
 
         // then
