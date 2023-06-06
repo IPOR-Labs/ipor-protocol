@@ -50,34 +50,6 @@ interface IAmmSwapsLens {
         address ammTreasury;
     }
 
-    /// @notice Gets the list of active Pay Fixed Receive Floating swaps in AmmTreasury for a given asset and address
-    /// @param asset asset / stablecoin address
-    /// @param account account address for which list of swaps is scoped
-    /// @param offset offset for paging
-    /// @param chunkSize page size for paging
-    /// @return totalCount total number of active Pay Fixed swaps in AmmTreasury
-    /// @return swaps list of active swaps for a given filter
-    function getSwapsPayFixed(
-        address asset,
-        address account,
-        uint256 offset,
-        uint256 chunkSize
-    ) external view returns (uint256 totalCount, IporSwap[] memory swaps);
-
-    /// @notice Gets the list of active Receive Fixed Pay Floating Swaps in AmmTreasury for a given asset and address
-    /// @param asset asset / stablecoin address
-    /// @param account account address for which list of swaps is scoped
-    /// @param offset offset for paging
-    /// @param chunkSize page size for paging
-    /// @return totalCount total number of Receive Fixed swaps in AmmTreasury
-    /// @return swaps list of active swaps for a given filter
-    function getSwapsReceiveFixed(
-        address asset,
-        address account,
-        uint256 offset,
-        uint256 chunkSize
-    ) external view returns (uint256 totalCount, IporSwap[] memory swaps);
-
     /// @notice Gets active swaps for a given asset sender address (aka buyer).
     /// @param asset asset address
     /// @param offset offset for paging

@@ -79,30 +79,6 @@ interface IAmmStorage {
         uint256 chunkSize
     ) external view returns (uint256 totalCount, AmmTypes.Swap[] memory swaps);
 
-    /// @notice Gets active Pay-Fixed swaps IDs for a given account address.
-    /// @param account account address
-    /// @param offset offset for paging
-    /// @param chunkSize page size for paging
-    /// @return totalCount total number of active Pay-Fixed IDs
-    /// @return ids list of IDs
-    function getSwapPayFixedIds(
-        address account,
-        uint256 offset,
-        uint256 chunkSize
-    ) external view returns (uint256 totalCount, uint256[] memory ids);
-
-    /// @notice Gets active Receive-Fixed swaps IDs for a given account address.
-    /// @param account account address
-    /// @param offset offset for paging
-    /// @param chunkSize page size for paging
-    /// @return totalCount total number of active Receive-Fixed IDs
-    /// @return ids list of IDs
-    function getSwapReceiveFixedIds(
-        address account,
-        uint256 offset,
-        uint256 chunkSize
-    ) external view returns (uint256 totalCount, uint256[] memory ids);
-
     /// @notice Gets active Pay-Fixed and Receive-Fixed swaps IDs for a given account address.
     /// @param account account address
     /// @param offset offset for paging
