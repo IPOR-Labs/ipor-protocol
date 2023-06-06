@@ -7,7 +7,6 @@ import "./IporMath.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
 library InterestRates {
-
     using SafeCast for uint256;
 
     /// @notice Adds interest to given value using continuous compounding formula: v2 = value * e^(interestRate * time)
@@ -55,7 +54,7 @@ library InterestRates {
         uint256 interestRatePeriodMultiplication
     ) internal pure returns (uint256) {
         return
-        addContinuousCompoundInterestUsingRatePeriodMultiplication(value, interestRatePeriodMultiplication) - value;
+            addContinuousCompoundInterestUsingRatePeriodMultiplication(value, interestRatePeriodMultiplication) - value;
     }
 
     /// @notice Calculates interest to given value using continuous compounding formula: v2 = value * e^(interestRate * time)
@@ -67,7 +66,8 @@ library InterestRates {
         int256 interestRatePeriodMultiplication
     ) internal pure returns (int256) {
         return
-        addContinuousCompoundInterestUsingRatePeriodMultiplicationInt(value, interestRatePeriodMultiplication) - value;
+            addContinuousCompoundInterestUsingRatePeriodMultiplicationInt(value, interestRatePeriodMultiplication) -
+            value;
     }
 
     /// @dev Quadruple precision, 128 bits
