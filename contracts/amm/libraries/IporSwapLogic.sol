@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
-import "forge-std/console2.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../../libraries/errors/AmmErrors.sol";
 import "../../interfaces/types/IporTypes.sol";
@@ -37,10 +36,6 @@ library IporSwapLogic {
         );
         notional = IporMath.division(leverage * collateral, 1e18);
         openingFee = availableAmount - collateral;
-        console2.log("openingFeeRate=", openingFeeRate);
-        console2.log("openingFee=", openingFee);
-        console2.log("collateral=", collateral);
-        console2.log("notional=", notional);
     }
 
     function calculatePayoffPayFixed(
@@ -79,6 +74,22 @@ library IporSwapLogic {
                 (oppositeLegFixedRate.toInt256() - swap.fixedInterestRate.toInt256()) *
                     ((endTimestamp - swap.openTimestamp) - (closingTimestamp - swap.openTimestamp)).toInt256()
             );
+    }
+
+    function calculateSwapUnwindOpeningFeeAmount(
+        AmmTypes.Swap memory swap,
+        uint256 closingTimestamp,
+        uint256 openingFeeRateCfg
+    ) internal pure returns (uint256 swapOpeningFeeAmount) {
+        swapOpeningFeeAmount = IporMath.division(
+            swap.notional *
+                openingFeeRateCfg *
+                IporMath.division(
+                    ((getSwapEndTimestamp(swap) - swap.openTimestamp) - (closingTimestamp - swap.openTimestamp)) * 1e18,
+                    365 days
+                ),
+            1e36
+        );
     }
 
     function calculateInterest(

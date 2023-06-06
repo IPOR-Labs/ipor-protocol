@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
-import "forge-std/console2.sol";
 import "contracts/amm/spread/ISpreadCloseSwapService.sol";
 import "../libraries/math/IporMath.sol";
 import "../libraries/errors/IporErrors.sol";
@@ -20,6 +19,7 @@ import "../interfaces/types/AmmTypes.sol";
 import "../interfaces/IIporOracle.sol";
 import "../interfaces/IAmmTreasury.sol";
 import "../interfaces/IAmmCloseSwapService.sol";
+import "forge-std/console2.sol";
 
 contract AmmCloseSwapService is IAmmCloseSwapService {
     using Address for address;
@@ -634,7 +634,6 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             _validateAllowanceToCloseSwap(OwnerManager.getOwner(), swapPayoffToDate, closeTimestamp, swap, poolCfg) ==
             true
         ) {
-            console2.log("Required unwind");
             uint256 oppositeLegFixedRate = RiskManagementLogic.calculateOfferedRate(
                 direction == 0 ? 1 : 0,
                 swap.tenor,
@@ -655,15 +654,9 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
                 oppositeLegFixedRate
             );
 
-            uint256 swapUnwindOpeningFeeAmount = IporMath.division(
-                swap.notional *
-                    poolCfg.openingFeeRateForSwapUnwind *
-                    IporMath.division(
-                        ((IporSwapLogic.getSwapEndTimestamp(swap) - swap.openTimestamp) -
-                            (closeTimestamp - swap.openTimestamp)) * 1e18,
-                        365 days
-                    ),
-                1e36
+            uint256 swapUnwindOpeningFeeAmount = swap.calculateSwapUnwindOpeningFeeAmount(
+                closeTimestamp,
+                poolCfg.openingFeeRateForSwapUnwind
             );
 
             (swapUnwindOpeningFeeLPAmount, swapUnwindOpeningFeeTreasuryAmount) = IporSwapLogic.splitOpeningFeeAmount(
@@ -672,7 +665,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             );
 
             payoff = swapPayoffToDate + swapUnwindValue - swapUnwindOpeningFeeAmount.toInt256();
-
+            console2.log("swapUnwindOpeningFeeAmount=",swapUnwindOpeningFeeAmount);
             emit SwapUnwind(
                 swap.id,
                 swapPayoffToDate,
@@ -682,7 +675,6 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             );
         } else {
             payoff = swapPayoffToDate;
-            console2.log("No unwind");
         }
 
         if (payoff > 0) {

@@ -529,7 +529,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, 1916490914507168629875+5e18);
+        assertEq(virtualHedgingSwap, 1916490914507168629875 + 5e18);
     }
 
     function testShouldCalculateVirtHedgPosPnLZeroClosingInDayWhenOpenedOppositeLegEqualZero() public {
@@ -900,5 +900,93 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         //then
         assertEq(virtualHedgingSwap, 0);
+    }
+
+    function testShouldCalculateSwapUnwindOpeningFeeAmount5daysLeft() public {
+        //given
+        AmmTypes.Swap memory swap;
+
+        swap.notional = 500_000 * 1e18;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 openingFeeRate = 5 * 1e14;
+        uint256 closeTimestamp = block.timestamp + 23 days;
+
+        //when
+        uint256 swapOpeningFeeAmount = _iporSwapLogic.calculateSwapUnwindOpeningFeeAmount(
+            swap,
+            closeTimestamp,
+            openingFeeRate
+        );
+
+        //then
+        assertEq(swapOpeningFeeAmount, 3424657534246575250);
+    }
+
+    function testShouldCalculateSwapUnwindOpeningFeeAmount18daysPassedTenor28() public {
+        //given
+        AmmTypes.Swap memory swap;
+
+        swap.notional = 500_000 * 1e18;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 openingFeeRate = 5 * 1e14;
+        uint256 closeTimestamp = block.timestamp + 18 days;
+
+        //when
+        uint256 swapOpeningFeeAmount = _iporSwapLogic.calculateSwapUnwindOpeningFeeAmount(
+            swap,
+            closeTimestamp,
+            openingFeeRate
+        );
+
+        //then
+        assertEq(swapOpeningFeeAmount, 6849315068493150750);
+    }
+
+    function testShouldCalculateSwapUnwindOpeningFeeAmount18daysPassedTenor60() public {
+        //given
+        AmmTypes.Swap memory swap;
+
+        swap.notional = 500_000 * 1e18;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_60;
+
+        uint256 openingFeeRate = 5 * 1e14;
+        uint256 closeTimestamp = block.timestamp + 18 days;
+
+        //when
+        uint256 swapOpeningFeeAmount = _iporSwapLogic.calculateSwapUnwindOpeningFeeAmount(
+            swap,
+            closeTimestamp,
+            openingFeeRate
+        );
+
+        //then
+        assertEq(swapOpeningFeeAmount, 28767123287671233000);
+    }
+
+    function testShouldCalculateSwapUnwindOpeningFeeAmount18daysPassedTenor90() public {
+        //given
+        AmmTypes.Swap memory swap;
+
+        swap.notional = 500_000 * 1e18;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_90;
+
+        uint256 openingFeeRate = 5 * 1e14;
+        uint256 closeTimestamp = block.timestamp + 18 days;
+
+        //when
+        uint256 swapOpeningFeeAmount = _iporSwapLogic.calculateSwapUnwindOpeningFeeAmount(
+            swap,
+            closeTimestamp,
+            openingFeeRate
+        );
+
+        //then
+        assertEq(swapOpeningFeeAmount, 49315068493150685000);
     }
 }

@@ -1596,7 +1596,7 @@ contract IporProtocolFactory is Test {
                 ammStorage: ammStorage,
                 ammTreasury: ammTreasury,
                 assetManagement: assetManagement,
-                openingFeeRateForSwapUnwind: 5 * 1e18, //TODO: suspicious value
+                openingFeeRateForSwapUnwind: 5 * 1e14,
                 openingFeeTreasuryPortionRateForSwapUnwind: 5 * 1e14,
                 liquidationLegLimit: 10,
                 timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
@@ -1612,7 +1612,7 @@ contract IporProtocolFactory is Test {
                 ammStorage: ammStorage,
                 ammTreasury: ammTreasury,
                 assetManagement: assetManagement,
-                openingFeeRateForSwapUnwind: 5 * 1e18, //TODO: suspicious value
+                openingFeeRateForSwapUnwind: 5 * 1e14,
                 openingFeeTreasuryPortionRateForSwapUnwind: 5 * 1e14,
                 liquidationLegLimit: 10,
                 timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,

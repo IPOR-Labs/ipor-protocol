@@ -17,6 +17,9 @@ import "../interfaces/IAmmOpenSwapService.sol";
 import "./libraries/types/AmmInternalTypes.sol";
 import "../libraries/errors/AmmErrors.sol";
 import "./libraries/IporSwapLogic.sol";
+import "contracts/amm/spread/ISpread28Days.sol";
+import "contracts/amm/spread/ISpread60Days.sol";
+import "contracts/amm/spread/ISpread90Days.sol";
 
 contract AmmOpenSwapService is IAmmOpenSwapService {
     using Address for address;
@@ -63,7 +66,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         address beneficiary;
         /// @notice swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
         IporTypes.SwapTenor tenor;
-        string spreadMethodSig;
+        bytes4 spreadMethodSig;
         AmmOpenSwapServicePoolConfiguration poolCfg;
     }
 
@@ -153,7 +156,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_28,
-            spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: ISpread28Days.calculateAndUpdateOfferedRatePayFixed28Days.selector,
             poolCfg: _getPoolConfiguration(_usdt)
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -168,7 +171,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_60,
-            spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: ISpread60Days.calculateAndUpdateOfferedRatePayFixed60Days.selector,
             poolCfg: _getPoolConfiguration(_usdt)
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -183,7 +186,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_90,
-            spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: ISpread90Days.calculateAndUpdateOfferedRatePayFixed90Days.selector,
             poolCfg: _getPoolConfiguration(_usdt)
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -198,7 +201,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_28,
-            spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: ISpread28Days.calculateAndUpdateOfferedRateReceiveFixed28Days.selector,
             poolCfg: _getPoolConfiguration(_usdt)
         });
 
@@ -215,7 +218,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_60,
-            spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: ISpread60Days.calculateAndUpdateOfferedRateReceiveFixed60Days.selector,
             poolCfg: _getPoolConfiguration(_usdt)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -230,7 +233,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_90,
-            spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: ISpread90Days.calculateAndUpdateOfferedRateReceiveFixed90Days.selector,
             poolCfg: _getPoolConfiguration(_usdt)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -245,7 +248,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_28,
-            spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: ISpread28Days.calculateAndUpdateOfferedRatePayFixed28Days.selector,
             poolCfg: _getPoolConfiguration(_usdc)
         });
 
@@ -261,7 +264,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_60,
-            spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: ISpread60Days.calculateAndUpdateOfferedRatePayFixed60Days.selector,
             poolCfg: _getPoolConfiguration(_usdc)
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -276,7 +279,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_90,
-            spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: ISpread90Days.calculateAndUpdateOfferedRatePayFixed90Days.selector,
             poolCfg: _getPoolConfiguration(_usdc)
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -291,7 +294,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_28,
-            spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: ISpread28Days.calculateAndUpdateOfferedRateReceiveFixed28Days.selector,
             poolCfg: _getPoolConfiguration(_usdc)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -306,7 +309,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_60,
-            spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: ISpread60Days.calculateAndUpdateOfferedRateReceiveFixed60Days.selector,
             poolCfg: _getPoolConfiguration(_usdc)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -321,7 +324,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_90,
-            spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: ISpread90Days.calculateAndUpdateOfferedRateReceiveFixed90Days.selector,
             poolCfg: _getPoolConfiguration(_usdc)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -336,7 +339,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_28,
-            spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: ISpread28Days.calculateAndUpdateOfferedRatePayFixed28Days.selector,
             poolCfg: _getPoolConfiguration(_dai)
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -351,7 +354,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_60,
-            spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: ISpread60Days.calculateAndUpdateOfferedRatePayFixed60Days.selector,
             poolCfg: _getPoolConfiguration(_dai)
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -366,7 +369,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_90,
-            spreadMethodSig: "calculateAndUpdateOfferedRatePayFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: ISpread90Days.calculateAndUpdateOfferedRatePayFixed90Days.selector,
             poolCfg: _getPoolConfiguration(_dai)
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -381,7 +384,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_28,
-            spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: ISpread28Days.calculateAndUpdateOfferedRateReceiveFixed28Days.selector,
             poolCfg: _getPoolConfiguration(_dai)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -396,7 +399,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_60,
-            spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: ISpread60Days.calculateAndUpdateOfferedRateReceiveFixed60Days.selector,
             poolCfg: _getPoolConfiguration(_dai)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -411,7 +414,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory context = Context({
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_90,
-            spreadMethodSig: "calculateAndUpdateOfferedRateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+            spreadMethodSig: ISpread90Days.calculateAndUpdateOfferedRateReceiveFixed90Days.selector,
             poolCfg: _getPoolConfiguration(_dai)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -506,7 +509,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
 
         uint256 offeredRateValue = abi.decode(
             _spreadRouter.functionCall(
-                abi.encodeWithSignature(
+                abi.encodeWithSelector(
                     ctx.spreadMethodSig,
                     ctx.poolCfg.asset,
                     bosStruct.notional,
@@ -549,9 +552,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             bosStruct.openingFeeTreasuryAmount,
             ctx.tenor
         );
-
-        console2.log("ibtQuantity", indicator.ibtQuantity);
-        console2.log("fixedInterestRate", indicator.fixedInterestRate);
 
         uint256 newSwapId = IAmmStorage(ctx.poolCfg.ammStorage).updateStorageWhenOpenSwapPayFixedInternal(
             newSwap,
@@ -612,9 +612,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             ctx.poolCfg.minLeverage
         );
 
-        uint256 quoteValue = abi.decode(
+        uint256 offeredRateValue = abi.decode(
             _spreadRouter.functionCall(
-                abi.encodeWithSignature(
+                abi.encodeWithSelector(
                     ctx.spreadMethodSig,
                     ctx.poolCfg.asset,
                     bosStruct.notional,
@@ -633,13 +633,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             (uint256)
         );
 
-        require(acceptableFixedInterestRate <= quoteValue, AmmErrors.ACCEPTABLE_FIXED_INTEREST_RATE_EXCEEDED);
+        require(acceptableFixedInterestRate <= offeredRateValue, AmmErrors.ACCEPTABLE_FIXED_INTEREST_RATE_EXCEEDED);
 
         AmmTypes.IporSwapIndicator memory indicator = AmmTypes.IporSwapIndicator(
             bosStruct.accruedIpor.indexValue,
             bosStruct.accruedIpor.ibtPrice,
             IporMath.division(bosStruct.notional * 1e18, bosStruct.accruedIpor.ibtPrice),
-            quoteValue
+            offeredRateValue
         );
 
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(

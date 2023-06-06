@@ -73,4 +73,16 @@ contract MockIporSwapLogic {
             oppositeLegFixedRate
         );
     }
+
+    function calculateSwapUnwindOpeningFeeAmount(
+        AmmTypes.Swap memory swap,
+        uint256 closingTimestamp,
+        uint256 openingFeeRateCfg
+    ) public pure returns (uint256 swapOpeningFeeAmount) {
+        swapOpeningFeeAmount = IporSwapLogic.calculateSwapUnwindOpeningFeeAmount(
+            swap,
+            closingTimestamp,
+            openingFeeRateCfg
+        );
+    }
 }
