@@ -15,8 +15,8 @@ interface IAmmOpenSwapService {
         address asset,
         /// @notice swap direction
         AmmTypes.SwapDirection direction,
-        /// @notice money structure related with this swap
-        AmmTypes.OpenSwapMoney money,
+        /// @notice amounts structure related with this swap
+        AmmTypes.OpenSwapAmount amounts,
         /// @notice the moment when swap was opened
         uint256 openTimestamp,
         /// @notice the moment when swap will achieve maturity

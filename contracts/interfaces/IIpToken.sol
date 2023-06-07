@@ -13,19 +13,19 @@ interface IIpToken is IERC20 {
     /// @notice Sets Router's address. Owner only
     /// @dev only Router can mint or burn ipTokens. Function emits `RouterChanged` event.
     /// @param newRouter Router's address
-    function setRouter(address newRouter) external;
+    function setJoseph(address newRouter) external;
 
     /// @notice Creates the ipTokens in the `amount` given and assigns them to the `account`
     /// @dev Emits {Transfer} from ERC20 asset and {Mint} event from ipToken
     /// @param account to which the created ipTokens were assigned
     /// @param amount volume of ipTokens created
-    function mintInternal(address account, uint256 amount) external;
+    function mint(address account, uint256 amount) external;
 
     /// @notice Burns the `amount` of ipTokens from `account`, reducing the total supply
     /// @dev Emits {Transfer} from ERC20 asset and {Burn} event from ipToken
     /// @param account from which burned ipTokens are taken
     /// @param amount volume of ipTokens that will be burned, represented in 18 decimals
-    function burnInternal(address account, uint256 amount) external;
+    function burn(address account, uint256 amount) external;
 
     /// @notice Emmited after the `amount` ipTokens were mint and transferred to `account`.
     /// @param account address where ipTokens are transferred after minting

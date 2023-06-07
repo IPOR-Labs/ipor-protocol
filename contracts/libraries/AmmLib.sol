@@ -44,12 +44,11 @@ library AmmLib {
     {
         (, , int256 soap) = getSOAP(model);
 
-        int256 balance = liquidityPoolBalance.toInt256() - soap;
 
+        int256 balance = liquidityPoolBalance.toInt256() - soap;
         require(balance >= 0, AmmErrors.SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW);
 
         uint256 ipTokenTotalSupply = IIpToken(model.ipToken).totalSupply();
-
         if (ipTokenTotalSupply > 0) {
             return IporMath.division(balance.toUint256() * 1e18, ipTokenTotalSupply);
         } else {
@@ -73,7 +72,6 @@ library AmmLib {
         ) = IAmmStorage(model.ammStorage).getSoapIndicators();
 
         uint256 ibtPrice = IIporOracle(model.iporOracle).calculateAccruedIbtPrice(model.asset, timestamp);
-
         soapPayFixed = indicatorsPayFixed.calculateSoapPayFixed(timestamp, ibtPrice);
         soapReceiveFixed = indicatorsReceiveFixed.calculateSoapReceiveFixed(timestamp, ibtPrice);
         soap = soapPayFixed + soapReceiveFixed;
@@ -88,14 +86,12 @@ library AmmLib {
         IporTypes.AmmBalancesMemory memory accruedBalance = IAmmStorage(model.ammStorage).getBalance();
 
         uint256 actualVaultBalance = IAssetManagement(model.assetManagement).totalBalance(model.ammTreasury);
-
         int256 liquidityPool = accruedBalance.liquidityPool.toInt256() +
             actualVaultBalance.toInt256() -
             accruedBalance.vault.toInt256();
 
         require(liquidityPool >= 0, AmmErrors.LIQUIDITY_POOL_AMOUNT_TOO_LOW);
         accruedBalance.liquidityPool = liquidityPool.toUint256();
-
         accruedBalance.vault = actualVaultBalance;
         return accruedBalance;
     }
