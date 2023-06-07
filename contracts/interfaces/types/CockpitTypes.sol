@@ -25,12 +25,6 @@ library CockpitTypes {
         /// @notice Interest Bearing Token (IBT) Price
         /// @dev value represented in 18 decimals
         uint256 ibtPrice;
-        /// @notice Exponential Moving Average
-        /// @dev value represented in 18 decimals
-        uint256 exponentialMovingAverage;
-        /// @notice Exponential Weighted Moving Variance
-        /// @dev value represented in 18 decimals
-        uint256 exponentialWeightedMovingVariance;
         /// @notice Epoch timestamp of most recent IPOR publication
         /// @dev value represented in 18 decimals
         uint256 lastUpdateTimestamp;

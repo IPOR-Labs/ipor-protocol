@@ -38,7 +38,6 @@ contract AmmTreasurySoapTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldCalculateSoapWhenNoDerivativesSoapEqualZero() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -49,7 +48,6 @@ contract AmmTreasurySoapTest is TestCommons, DataUtils, SwapUtils {
     }
 
     function testShouldCalculateSoapDAIPayFixedWhenAddPositionThenCalculate() public {
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -1281,7 +1279,6 @@ contract AmmTreasurySoapTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);

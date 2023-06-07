@@ -71,7 +71,6 @@ contract AmmTreasuryFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils 
 
     function testShouldListConfigurationUsdtUsdcDai() public {
         //given
-        _ammCfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _ammCfg.iporRiskManagementOracleInitialParamsTestCase = BuilderUtils
             .IporRiskManagementOracleInitialParamsTestCase
             .CASE6;
