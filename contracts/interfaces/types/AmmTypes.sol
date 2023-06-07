@@ -86,7 +86,7 @@ library AmmTypes {
 
     /// @notice Struct representing assets (ie. stablecoin) related to Swap that is presently being opened.
     /// @dev all values represented in 18 decimals
-    struct OpenSwapMoney {
+    struct OpenSwapAmount {
         /// @notice Total Amount of asset that is sent from buyer to AmmTreasury when opening swap.
         uint256 totalAmount;
         /// @notice Swap's collateral
@@ -112,7 +112,7 @@ library AmmTypes {
         bool closed;
     }
 
-    struct RedeemMoney {
+    struct RedeemAmount {
         uint256 wadAssetAmount;
         uint256 redeemAmount;
         uint256 wadRedeemFee;
