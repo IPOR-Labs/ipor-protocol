@@ -27,7 +27,7 @@ contract IporRiskManagementOracle is
 
     mapping(address => uint256) internal _updaters;
     mapping(address => IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage) internal _indicators;
-    //todo add comment about bits positions get from _baseSpreadsAndFixedRateCapsStorageToBytes32
+    
     /// @dev 0 - 31 bytes - lastUpdateTimestamp - uint32 - number of seconds since 1970-01-01T00:00:00Z
     /// @dev 32 - 55 bytes - baseSpread28dPayFixed - int24 - base spread for 28 days period for pay fixed leg, 
     /// @dev    - on 32th position it is a sing - 1 means negative, 0 means positive
@@ -612,19 +612,19 @@ contract IporRiskManagementOracle is
         IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage memory toSave
     ) internal pure returns (bytes32 result) {
         require(toSave.lastUpdateTimestamp < type(uint32).max, "lastUpdateTimestamp overflow");
-        require(toSave.spread28dPayFixed < type(int32).max, "spread28dPayFixed overflow");
-        require(toSave.spread28dReceiveFixed < type(int32).max, "spread28dReceiveFixed overflow");
-        require(toSave.spread60dPayFixed < type(int32).max, "spread60dPayFixed overflow");
+        require(toSave.spread28dPayFixed < type(int24).max, "spread28dPayFixed overflow");
+        require(toSave.spread28dReceiveFixed < type(int24).max, "spread28dReceiveFixed overflow");
+        require(toSave.spread60dPayFixed < type(int24).max, "spread60dPayFixed overflow");
         require(
-            -type(int32).max < toSave.spread60dReceiveFixed && toSave.spread60dReceiveFixed < type(int256).max,
+            -type(int24).max < toSave.spread60dReceiveFixed && toSave.spread60dReceiveFixed < type(int256).max,
             "spread60dReceiveFixed overflow"
         );
         require(
-            -type(int32).max < toSave.spread90dPayFixed && toSave.spread90dPayFixed < type(int256).max,
+            -type(int24).max < toSave.spread90dPayFixed && toSave.spread90dPayFixed < type(int256).max,
             "spread90dPayFixed overflow"
         );
         require(
-            -type(int32).max < toSave.spread90dReceiveFixed && toSave.spread90dReceiveFixed < type(int256).max,
+            -type(int24).max < toSave.spread90dReceiveFixed && toSave.spread90dReceiveFixed < type(int256).max,
             "spread90dReceiveFixed overflow"
         );
         require(toSave.fixedRateCap28dPayFixed < 2 ** 12, "fixedRateCap28dPayFixed overflow");
