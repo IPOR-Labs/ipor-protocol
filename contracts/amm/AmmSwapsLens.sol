@@ -99,28 +99,6 @@ contract AmmSwapsLens is IAmmSwapsLens {
         _router = router;
     }
 
-    function getSwapsPayFixed(
-        address asset,
-        address account,
-        uint256 offset,
-        uint256 chunkSize
-    ) external view override returns (uint256 totalCount, IAmmSwapsLens.IporSwap[] memory swaps) {
-        IAmmStorage ammStorage = _getAmmStorage(asset);
-        (uint256 count, uint256[] memory swapIds) = ammStorage.getSwapPayFixedIds(account, offset, chunkSize);
-        return (count, _mapSwapsPayFixed(asset, ammStorage, swapIds));
-    }
-
-    function getSwapsReceiveFixed(
-        address asset,
-        address account,
-        uint256 offset,
-        uint256 chunkSize
-    ) external view override returns (uint256 totalCount, IAmmSwapsLens.IporSwap[] memory swaps) {
-        IAmmStorage ammStorage = _getAmmStorage(asset);
-        (uint256 count, uint256[] memory swapIds) = ammStorage.getSwapReceiveFixedIds(account, offset, chunkSize);
-        return (count, _mapSwapsReceiveFixed(asset, ammStorage, swapIds));
-    }
-
     function getSwaps(
         address asset,
         address account,
@@ -216,38 +194,6 @@ contract AmmSwapsLens is IAmmSwapsLens {
                 uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
                 uint256(ammPoolsParamsCfg.maxLpAccountContribution) * 1e18
             );
-    }
-
-    function _mapSwapsPayFixed(
-        address asset,
-        IAmmStorage ammStorage,
-        uint256[] memory swapIds
-    ) internal view returns (IAmmSwapsLens.IporSwap[] memory swaps) {
-        uint256 swapCount = swapIds.length;
-        AmmStorageTypes.IporSwapId[] memory swapIdsWithDirection = new AmmStorageTypes.IporSwapId[](swapCount);
-        for (uint256 i; i != swapCount; ) {
-            swapIdsWithDirection[i] = AmmStorageTypes.IporSwapId({id: swapIds[i], direction: 0});
-            unchecked {
-                ++i;
-            }
-        }
-        return _mapSwaps(asset, ammStorage, swapIdsWithDirection);
-    }
-
-    function _mapSwapsReceiveFixed(
-        address asset,
-        IAmmStorage ammStorage,
-        uint256[] memory swapIds
-    ) internal view returns (IAmmSwapsLens.IporSwap[] memory swaps) {
-        uint256 swapCount = swapIds.length;
-        AmmStorageTypes.IporSwapId[] memory swapIdsWithDirection = new AmmStorageTypes.IporSwapId[](swapCount);
-        for (uint256 i; i != swapCount; ) {
-            swapIdsWithDirection[i] = AmmStorageTypes.IporSwapId({id: swapIds[i], direction: 1});
-            unchecked {
-                ++i;
-            }
-        }
-        return _mapSwaps(asset, ammStorage, swapIdsWithDirection);
     }
 
     function _mapSwaps(

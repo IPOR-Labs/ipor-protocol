@@ -362,7 +362,7 @@ contract DevDeployment is Script {
 
     function deploySpreadRouter(Amm memory amm) internal {
         SpreadRouter.DeployedContracts memory deployedContracts;
-        deployedContracts.ammAddress = address(amm.router);
+        deployedContracts.iporProtocolRouter = address(amm.router);
         deployedContracts.storageLens = address(new SpreadStorageLens());
         deployedContracts.spread28Days = address(
             new Spread28Days(address(amm.dai.asset), address(amm.usdc.asset), address(amm.usdt.asset))

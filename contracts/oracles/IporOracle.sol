@@ -149,9 +149,7 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
         accruedIpor = IporTypes.AccruedIpor(
             ipor.indexValue,
-            _calculateAccruedIbtPrice(asset, ipor, calculateTimestamp),
-            0,
-            0
+            _calculateAccruedIbtPrice(asset, ipor, calculateTimestamp)
         );
     }
 

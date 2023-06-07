@@ -10,8 +10,6 @@ library ItfDataProviderTypes {
         uint256 lastUpdateTimestamp;
         uint256 accruedIndexValue;
         uint256 accruedIbtPrice;
-        uint256 accruedExponentialMovingAverage;
-        uint256 accruedExponentialWeightedMovingVariance;
     }
 
     struct ItfAmmStorageData {

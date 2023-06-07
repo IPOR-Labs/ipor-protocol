@@ -71,7 +71,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
     function testShouldEmitCloseSwapEventWhenPayFixed() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
@@ -146,7 +145,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
     function testShouldEmitCloseSwapEventWhenReceiveFixed() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -220,7 +218,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
     function testShouldClose10PayFixedSwapsAnd10ReceiveFixedSwapsInOneTransactionCase1WhenAllAreOpened() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
 
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
@@ -303,7 +300,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -460,7 +456,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -548,7 +543,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -618,7 +612,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -696,7 +689,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -779,7 +771,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -857,7 +848,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
     function testShouldCommitTransactionEvenIfListsForClosingAreEmpty() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -884,7 +874,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -980,7 +969,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -1084,7 +1072,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -1187,7 +1174,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -1292,7 +1278,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -1404,7 +1389,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE9;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -1503,7 +1487,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -1601,7 +1584,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -1703,7 +1685,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE9;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -1802,7 +1783,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -1906,7 +1886,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -2008,7 +1987,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -2108,7 +2086,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -2208,7 +2185,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -2311,7 +2287,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);

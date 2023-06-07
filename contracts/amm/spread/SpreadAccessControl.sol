@@ -13,10 +13,10 @@ contract SpreadAccessControl {
 
     address internal immutable IPOR_PROTOCOL_ROUTER;
 
-    constructor(address ammAddress) {
-        require(ammAddress != address(0), string.concat(IporErrors.WRONG_ADDRESS, " AMM address cannot be 0"));
+    constructor(address iporProtocolRouter) {
+        require(iporProtocolRouter != address(0), string.concat(IporErrors.WRONG_ADDRESS, " AMM address cannot be 0"));
 
-        IPOR_PROTOCOL_ROUTER = ammAddress;
+        IPOR_PROTOCOL_ROUTER = iporProtocolRouter;
     }
 
     /// @dev Throws error if called by any account other than the owner.
@@ -117,12 +117,12 @@ contract SpreadAccessControl {
     }
 
     function _whenNotPaused() internal view {
-        require(uint256(SpreadStorageLibs.getPaused().value) == 0, "Pausable: paused");
+        require(uint256(SpreadStorageLibs.getPaused().value) == 0, IporErrors.METHOD_PAUSED);
     }
 
     /// @dev Internal function to check if the sender is the contract owner.
     function _onlyOwner() internal view {
-        require(address(SpreadStorageLibs.getOwner().owner) == msg.sender, "Ownable: caller is not the owner");
+        require(address(SpreadStorageLibs.getOwner().owner) == msg.sender, IporErrors.CALLER_NOT_OWNER);
     }
 
     function _pause() internal {

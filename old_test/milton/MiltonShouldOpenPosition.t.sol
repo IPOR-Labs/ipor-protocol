@@ -528,7 +528,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
             TestConstants.ZERO,
             10
         );
-        (uint256 swapsCount, uint256[] memory swapIds) = _iporProtocol.ammStorage.getSwapPayFixedIds(
+        (uint256 swapsCount, uint256[] memory swapIds) = _iporProtocol.ammStorage.getSwapIds(
             _userTwo,
             TestConstants.ZERO,
             10
@@ -584,7 +584,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
             TestConstants.ZERO,
             10
         );
-        (uint256 swapsUserOneCount, uint256[] memory swapsUserOneIds) = _iporProtocol.ammStorage.getSwapPayFixedIds(
+        (uint256 swapsUserOneCount, uint256[] memory swapsUserOneIds) = _iporProtocol.ammStorage.getSwapIds(
             _userTwo,
             TestConstants.ZERO,
             10
@@ -601,7 +601,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
             TestConstants.ZERO,
             10
         );
-        (uint256 swapsUserTwoCount, uint256[] memory swapsUserTwoIds) = _iporProtocol.ammStorage.getSwapPayFixedIds(
+        (uint256 swapsUserTwoCount, uint256[] memory swapsUserTwoIds) = _iporProtocol.ammStorage.getSwapIds(
             _userThree,
             TestConstants.ZERO,
             10
@@ -659,7 +659,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
             TestConstants.ZERO,
             10
         );
-        (uint256 swapsUserOneCount, uint256[] memory swapsUserOneIds) = _iporProtocol.ammStorage.getSwapPayFixedIds(
+        (uint256 swapsUserOneCount, uint256[] memory swapsUserOneIds) = _iporProtocol.ammStorage.getSwapIds(
             _userTwo,
             TestConstants.ZERO,
             10
@@ -676,7 +676,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
             TestConstants.ZERO,
             10
         );
-        (uint256 swapsUserTwoCount, uint256[] memory swapsUserTwoIds) = _iporProtocol.ammStorage.getSwapPayFixedIds(
+        (uint256 swapsUserTwoCount, uint256[] memory swapsUserTwoIds) = _iporProtocol.ammStorage.getSwapIds(
             _userThree,
             TestConstants.ZERO,
             10
@@ -733,7 +733,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
             TestConstants.ZERO,
             10
         );
-        (uint256 swapsUserOneCount, uint256[] memory swapsUserOneIds) = _iporProtocol.ammStorage.getSwapPayFixedIds(
+        (uint256 swapsUserOneCount, uint256[] memory swapsUserOneIds) = _iporProtocol.ammStorage.getSwapIds(
             _userTwo,
             TestConstants.ZERO,
             10
@@ -748,7 +748,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
             TestConstants.ZERO,
             10
         );
-        (uint256 swapsUserTwoCount, uint256[] memory swapsUserTwoIds) = _iporProtocol.ammStorage.getSwapPayFixedIds(
+        (uint256 swapsUserTwoCount, uint256[] memory swapsUserTwoIds) = _iporProtocol.ammStorage.getSwapIds(
             _userThree,
             TestConstants.ZERO,
             10
@@ -798,7 +798,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
             TestConstants.ZERO,
             10
         );
-        (uint256 swapsUserOneCount, uint256[] memory swapsUserOneIds) = _iporProtocol.ammStorage.getSwapPayFixedIds(
+        (uint256 swapsUserOneCount, uint256[] memory swapsUserOneIds) = _iporProtocol.ammStorage.getSwapIds(
             _userTwo,
             TestConstants.ZERO,
             10
@@ -811,7 +811,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
             TestConstants.ZERO,
             10
         );
-        (uint256 swapsUserTwoCount, uint256[] memory swapsUserTwoIds) = _iporProtocol.ammStorage.getSwapPayFixedIds(
+        (uint256 swapsUserTwoCount, uint256[] memory swapsUserTwoIds) = _iporProtocol.ammStorage.getSwapIds(
             _userThree,
             TestConstants.ZERO,
             10
@@ -865,7 +865,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
             TestConstants.ZERO,
             10
         );
-        (uint256 swapsUserOneCount, uint256[] memory swapsUserOneIds) = _iporProtocol.ammStorage.getSwapPayFixedIds(
+        (uint256 swapsUserOneCount, uint256[] memory swapsUserOneIds) = _iporProtocol.ammStorage.getSwapIds(
             _userTwo,
             TestConstants.ZERO,
             10
@@ -878,7 +878,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
             TestConstants.ZERO,
             10
         );
-        (uint256 swapsUserTwoCount, uint256[] memory swapsUserTwoIds) = _iporProtocol.ammStorage.getSwapPayFixedIds(
+        (uint256 swapsUserTwoCount, uint256[] memory swapsUserTwoIds) = _iporProtocol.ammStorage.getSwapIds(
             _userThree,
             TestConstants.ZERO,
             10
@@ -930,7 +930,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
             TestConstants.ZERO,
             10
         );
-        (uint256 swapsUserOneCount, uint256[] memory swapsUserOneIds) = _iporProtocol.ammStorage.getSwapPayFixedIds(
+        (uint256 swapsUserOneCount, uint256[] memory swapsUserOneIds) = _iporProtocol.ammStorage.getSwapIds(
             _userTwo,
             TestConstants.ZERO,
             10
@@ -943,7 +943,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
             TestConstants.ZERO,
             10
         );
-        (uint256 swapsUserTwoCount, uint256[] memory swapsUserTwoIds) = _iporProtocol.ammStorage.getSwapPayFixedIds(
+        (uint256 swapsUserTwoCount, uint256[] memory swapsUserTwoIds) = _iporProtocol.ammStorage.getSwapIds(
             _userThree,
             TestConstants.ZERO,
             10
