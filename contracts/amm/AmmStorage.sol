@@ -183,52 +183,6 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         return (ids.length, _getPositions(_swapsReceiveFixed.swaps, ids, offset, chunkSize));
     }
 
-    function getSwapPayFixedIds(
-        address account,
-        uint256 offset,
-        uint256 chunkSize
-    ) external view override returns (uint256 totalCount, uint256[] memory ids) {
-        require(chunkSize > 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
-        require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
-
-        uint32[] storage idsRef = _swapsPayFixed.ids[account];
-        totalCount = idsRef.length;
-
-        uint256 resultSetSize = PaginationUtils.resolveResultSetSize(totalCount, offset, chunkSize);
-
-        ids = new uint256[](resultSetSize);
-
-        for (uint256 i; i != resultSetSize; ) {
-            ids[i] = idsRef[offset + i];
-            unchecked {
-                ++i;
-            }
-        }
-    }
-
-    function getSwapReceiveFixedIds(
-        address account,
-        uint256 offset,
-        uint256 chunkSize
-    ) external view override returns (uint256 totalCount, uint256[] memory ids) {
-        require(chunkSize > 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
-        require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
-
-        uint32[] storage idsRef = _swapsReceiveFixed.ids[account];
-        totalCount = idsRef.length;
-
-        uint256 resultSetSize = PaginationUtils.resolveResultSetSize(totalCount, offset, chunkSize);
-
-        ids = new uint256[](resultSetSize);
-
-        for (uint256 i; i != resultSetSize; ) {
-            ids[i] = idsRef[offset + i];
-            unchecked {
-                ++i;
-            }
-        }
-    }
-
     function getSwapIds(
         address account,
         uint256 offset,
