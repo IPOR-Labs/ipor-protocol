@@ -5,7 +5,7 @@ import "contracts/interfaces/types/IporTypes.sol";
 import "./CalculateTimeWeightedNotionalLibs.sol";
 
 library DemandSpreadLibs {
-    /// @notice Dto for the Weighted Notional
+    /// @notice DTO for the Weighted Notional
     struct SpreadInputData {
         /// @notice Swap's balance for Pay Fixed leg
         uint256 totalCollateralPayFixed;

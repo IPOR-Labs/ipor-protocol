@@ -20,7 +20,7 @@ interface IAmmGovernanceLens {
 
     function isAppointedToRebalanceInAmm(address asset, address account) external view returns (bool);
 
-    /// @notice Gets structure or common params described AMM Pool configuration
+    /// @notice Gets the structure or common params described AMM Pool configuration
     /// @param asset Address of asset which represents specific pool
     /// @return ammPoolsParams Structure of common params described AMM Pool configuration
     function getAmmPoolsParams(address asset) external view returns (StorageLib.AmmPoolsParamsValue memory);

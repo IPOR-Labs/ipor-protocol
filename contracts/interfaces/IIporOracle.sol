@@ -15,7 +15,7 @@ interface IIporOracle {
     /// @param asset underlying / stablecoin address supported in Ipor Protocol
     /// @return value IPOR Index value for a given asset
     /// @return ibtPrice Interest Bearing Token Price for a given IPOR Index
-    /// @return lastUpdateTimestamp Last IPOR Index update done by Charlie off-chain service
+    /// @return lastUpdateTimestamp Last IPOR Index update done by off-chain service
     function getIndex(address asset)
         external
         view

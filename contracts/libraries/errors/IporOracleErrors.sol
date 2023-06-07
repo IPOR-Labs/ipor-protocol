@@ -8,7 +8,7 @@ library IporOracleErrors {
     //When lastUpdateTimestamp is equal 0, then we assume that asset is not supported.
     string public constant ASSET_NOT_SUPPORTED = "IPOR_200";
 
-    //@notice Cannot add new asset to asset list, because already exists
+    //@notice Cannot add new asset to asset list, because it's already added
     string public constant CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS = "IPOR_201";
 
     //@notice The caller must be the IporOracle updater
@@ -20,6 +20,6 @@ library IporOracleErrors {
     //@notice Address of algorithm used to calculate IPOR Index is not set
 //    string public constant IPOR_ALGORITHM_ADDRESS_NOT_SET = "IPOR_204";
 
-    //@notice Address is not valid oracle address
+    //@notice Address is not a valid oracle address
     string public constant INVALID_ORACLE_ADDRESS = "IPOR_205";
 }

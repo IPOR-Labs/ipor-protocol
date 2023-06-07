@@ -7,19 +7,19 @@ import "./types/AmmFacadeTypes.sol";
 interface IAmmSwapsLens {
     /// @notice IPOR Swap structure.
     struct IporSwap {
-        /// @notice Swap ID.
+        /// @notice Swap's ID.
         uint256 id;
-        /// @notice Swap asset (stablecoint / underlying token)
+        /// @notice Swap's asset (stablecoint / underlying token)
         address asset;
         /// @notice Swap's buyer
         address buyer;
-        /// @notice Swap collateral, represented in 18 decimals.
+        /// @notice Swap's collateral, represented in 18 decimals.
         uint256 collateral;
         /// @notice Notional amount, represented in 18 decimals.
         uint256 notional;
-        /// @notice Swap leverage, represented in 18 decimals.
+        /// @notice Swap's leverage, represented in 18 decimals.
         uint256 leverage;
-        /// @notice Swap direction
+        /// @notice Swap's direction
         /// @dev 0 - Pay Fixed-Receive Floating, 1 - Receive Fixed - Pay Floading
         uint256 direction;
         /// @notice Swap's notional amount denominated in the Interest Bearing Token (IBT)
