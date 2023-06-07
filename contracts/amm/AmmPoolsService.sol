@@ -359,10 +359,10 @@ contract AmmPoolsService is IAmmPoolsService {
         }
     }
 
-    /// @dev Calculate redeem money
+    /// @dev Calculate redeem amount 
     /// @param ipTokenAmount Amount of ipToken to redeem
     /// @param exchangeRate Exchange rate of ipToken
-    /// @return redeemMoney Redeem money struct
+    /// @return redeemMoney Redeem struct
     function _calculateRedeemMoney(
         uint256 assetDecimals,
         uint256 ipTokenAmount,
@@ -407,9 +407,9 @@ contract AmmPoolsService is IAmmPoolsService {
         }
     }
 
-    /// @notice Calculate rebalance amount for provide liquidity
+    /// @notice Calculate rebalance amount for liquidity provisioning 
     /// @param asset Asset address (pool context)
-    /// @param wadAmmTreasuryErc20BalanceAfterDeposit AmmTreasury erc20 balance in wad, Notice: this is balance after provide liquidity operation!
+    /// @param wadAmmTreasuryErc20BalanceAfterDeposit AmmTreasury erc20 balance in wad, Notice: this balance is after providing liquidity operation!
     /// @param vaultBalance Vault balance in wad, AssetManagement's accrued balance.
     function _calculateRebalanceAmountAfterProvideLiquidity(
         address asset,

@@ -22,8 +22,8 @@ library IporLogic {
             );
     }
 
-    //@param indexValue indexValue represent in WAD
-    //@param quasiIbtPrice quasiIbtPrice represent in WAD, quasi inform that IBT Price doesn't have final value, is required to divide by number of seconds in year
+    //@param indexValue indexValue represented in WAD
+    //@param quasiIbtPrice quasiIbtPrice represented in WAD, "quasi" prefix indicates that IBT Price doesn't have final value. It is required to divide by number of seconds in year
     //@dev return value represented in WAD
     function accrueQuasiIbtPrice(
         uint256 indexValue,

@@ -3,9 +3,9 @@ pragma solidity 0.8.20;
 
 import "../interfaces/types/AmmTypes.sol";
 
-/// @title Interface of the service that allows to open new swaps.
+/// @title Interface of the service allowing to open new swaps.
 interface IAmmOpenSwapService {
-    /// @notice Emitted when trader opens new swap.
+    /// @notice Emitted when the trader opens new swap.
     event OpenSwap(
         /// @notice swap ID.
         uint256 indexed swapId,

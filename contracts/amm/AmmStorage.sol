@@ -15,7 +15,7 @@ import "contracts/amm/libraries/SoapIndicatorRebalanceLogic.sol";
 import "contracts/amm/libraries/types/StorageInternalTypes.sol";
 import "contracts/amm/libraries/types/AmmInternalTypes.sol";
 
-//@dev all stored valuse related with money are in 18 decimals.
+//@dev all stored values related to tokens are in 18 decimals.
 contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, IporOwnableUpgradeable, IAmmStorage {
     using SafeCast for uint256;
     using SoapIndicatorRebalanceLogic for AmmStorageTypes.SoapIndicators;

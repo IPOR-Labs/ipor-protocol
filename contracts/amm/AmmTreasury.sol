@@ -56,7 +56,7 @@ contract AmmTreasury is
 
     /// @notice Initialize the contract
     /// @param paused If true, the contract will be paused after initialization
-    /// @dev WARNING! AmmTreasury had old storage fields that are not used in the new version.
+    /// @dev WARNING! AmmTreasury has deprecated storage fields that are not used in V2.
     /// @dev Before reusing those slots, clear them in the initialize function.
     /// @dev List of removed fields:
     ///  - address _asset

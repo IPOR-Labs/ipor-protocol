@@ -3,9 +3,9 @@ pragma solidity 0.8.20;
 
 import "../interfaces/types/AmmTypes.sol";
 
-/// @title Interface of the service that allows to close swaps.
+/// @title Interface of the service allowing to close swaps.
 interface IAmmCloseSwapService {
-    /// @notice Emmited when trader closes Swap.
+    /// @notice Emmited when the trader closes the swap.
     event CloseSwap(
         /// @notice swap ID.
         uint256 indexed swapId,
@@ -21,7 +21,7 @@ interface IAmmCloseSwapService {
         uint256 transferredToLiquidator
     );
 
-    /// @notice Emmited when trader closes Swap.
+    /// @notice Emmited when the trader closes the swap.
     event SwapUnwind(
         /// @notice swap ID.
         uint256 indexed swapId,

@@ -16,7 +16,7 @@ library AssetManagementErrors {
     //@notice amount should be > 0
     string public constant IV_TOKEN_BURN_AMOUNT_TOO_LOW = "IPOR_504";
 
-    // only Treasury Manager can have access to function
+    // only Treasury Manager can access the function
     string public constant CALLER_NOT_TREASURY_MANAGER = "IPOR_505";
 
     // problem with redeem shared token
