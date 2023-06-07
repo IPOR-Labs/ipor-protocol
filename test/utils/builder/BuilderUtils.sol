@@ -100,7 +100,8 @@ contract BuilderUtils {
     enum AmmOpenSwapServiceTestCase {
         DEFAULT,
         CASE1,
-        CASE2
+        CASE2,
+        CASE3
     }
 
     enum AmmCloseSwapServiceTestCase {
@@ -127,6 +128,7 @@ contract BuilderUtils {
     }
 
     enum Spread28DaysTestCase {
+        /// @dev Real calculation
         DEFAULT,
         /// @dev Pay Fixed Quote Value 0%
         /// @dev Receive Fixed Quote Value 0%

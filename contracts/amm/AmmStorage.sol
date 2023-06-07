@@ -135,12 +135,10 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             );
     }
 
-    function getSwap(AmmTypes.SwapDirection direction, uint256 swapId)
-        external
-        view
-        override
-        returns (AmmTypes.Swap memory)
-    {
+    function getSwap(
+        AmmTypes.SwapDirection direction,
+        uint256 swapId
+    ) external view override returns (AmmTypes.Swap memory) {
         uint32 id = swapId.toUint32();
         StorageInternalTypes.Swap storage swap;
 
@@ -289,10 +287,17 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     function updateStorageWhenCloseSwapPayFixedInternal(
         AmmTypes.Swap memory swap,
         int256 payoff,
+        uint256 swapUnwindOpeningFeeLPAmount,
+        uint256 swapUnwindOpeningFeeTreasuryAmount,
         uint256 closingTimestamp
     ) external override onlyRouter returns (AmmInternalTypes.OpenSwapItem memory closedSwap) {
         _updateSwapsWhenClosePayFixed(swap);
-        _updateBalancesWhenCloseSwapPayFixed(swap, payoff);
+        _updateBalancesWhenCloseSwapPayFixed(
+            swap,
+            payoff,
+            swapUnwindOpeningFeeLPAmount,
+            swapUnwindOpeningFeeTreasuryAmount
+        );
         _updateSoapIndicatorsWhenCloseSwapPayFixed(swap, closingTimestamp);
         return _updateOpenedSwapWhenClosePayFixed(swap.tenor, swap.id);
     }
@@ -300,10 +305,17 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     function updateStorageWhenCloseSwapReceiveFixedInternal(
         AmmTypes.Swap memory swap,
         int256 payoff,
+        uint256 swapUnwindOpeningFeeLPAmount,
+        uint256 swapUnwindOpeningFeeTreasuryAmount,
         uint256 closingTimestamp
     ) external override onlyRouter returns (AmmInternalTypes.OpenSwapItem memory closedSwap) {
         _updateSwapsWhenCloseReceiveFixed(swap);
-        _updateBalancesWhenCloseSwapReceiveFixed(swap, payoff);
+        _updateBalancesWhenCloseSwapReceiveFixed(
+            swap,
+            payoff,
+            swapUnwindOpeningFeeLPAmount,
+            swapUnwindOpeningFeeTreasuryAmount
+        );
         _updateSoapIndicatorsWhenCloseSwapReceiveFixed(swap, closingTimestamp);
         return _updateOpenedSwapWhenCloseReceiveFixed(swap.tenor, swap.id);
     }
@@ -469,19 +481,35 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _balances.treasury = _balances.treasury + openingFeeTreasuryAmount.toUint128();
     }
 
-    function _updateBalancesWhenCloseSwapPayFixed(AmmTypes.Swap memory swap, int256 payoff) internal {
-        _updateBalancesWhenCloseSwap(payoff);
+    function _updateBalancesWhenCloseSwapPayFixed(
+        AmmTypes.Swap memory swap,
+        int256 payoff,
+        uint256 swapUnwindOpeningFeeLPAmount,
+        uint256 swapUnwindOpeningFeeTreasuryAmount
+    ) internal {
+        _updateBalancesWhenCloseSwap(payoff, swapUnwindOpeningFeeLPAmount, swapUnwindOpeningFeeTreasuryAmount);
 
         _balances.totalCollateralPayFixed = _balances.totalCollateralPayFixed - swap.collateral.toUint128();
+        _balances.treasury = _balances.treasury + swapUnwindOpeningFeeTreasuryAmount.toUint128();
     }
 
-    function _updateBalancesWhenCloseSwapReceiveFixed(AmmTypes.Swap memory swap, int256 payoff) internal {
-        _updateBalancesWhenCloseSwap(payoff);
+    function _updateBalancesWhenCloseSwapReceiveFixed(
+        AmmTypes.Swap memory swap,
+        int256 payoff,
+        uint256 swapUnwindOpeningFeeLPAmount,
+        uint256 swapUnwindOpeningFeeTreasuryAmount
+    ) internal {
+        _updateBalancesWhenCloseSwap(payoff, swapUnwindOpeningFeeLPAmount, swapUnwindOpeningFeeTreasuryAmount);
 
         _balances.totalCollateralReceiveFixed = _balances.totalCollateralReceiveFixed - swap.collateral.toUint128();
+        _balances.treasury = _balances.treasury + swapUnwindOpeningFeeTreasuryAmount.toUint128();
     }
 
-    function _updateBalancesWhenCloseSwap(int256 payoff) internal {
+    function _updateBalancesWhenCloseSwap(
+        int256 payoff,
+        uint256 swapUnwindOpeningFeeLPAmount,
+        uint256 swapUnwindOpeningFeeTreasuryAmount
+    ) internal {
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         if (payoff > 0) {
@@ -489,17 +517,23 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             require(_balances.liquidityPool >= absPayoff, AmmErrors.CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW);
 
             /// @dev When AmmTreasury (LP) looses, then  always substract all payoff
-            _balances.liquidityPool = _balances.liquidityPool - absPayoff.toUint128();
+            _balances.liquidityPool =
+                _balances.liquidityPool -
+                absPayoff.toUint128() +
+                swapUnwindOpeningFeeLPAmount.toUint128();
         } else {
             /// @dev AmmTreasury earns, Buyer looses,
-            _balances.liquidityPool = _balances.liquidityPool + absPayoff.toUint128();
+            _balances.liquidityPool =
+                _balances.liquidityPool +
+                absPayoff.toUint128() +
+                swapUnwindOpeningFeeLPAmount.toUint128();
         }
     }
 
-    function _updateSwapsWhenOpen(AmmTypes.SwapDirection direction, AmmTypes.NewSwap memory newSwap)
-        internal
-        returns (uint256)
-    {
+    function _updateSwapsWhenOpen(
+        AmmTypes.SwapDirection direction,
+        AmmTypes.NewSwap memory newSwap
+    ) internal returns (uint256) {
         _lastSwapId++;
         uint32 id = _lastSwapId;
 

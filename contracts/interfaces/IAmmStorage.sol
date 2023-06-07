@@ -18,10 +18,10 @@ interface IAmmStorage {
     /// @return last swap ID, integer
     function getLastSwapId() external view returns (uint256);
 
-    function getLastOpenedSwap(IporTypes.SwapTenor tenor, uint256 direction)
-        external
-        view
-        returns (AmmInternalTypes.OpenSwapItem memory);
+    function getLastOpenedSwap(
+        IporTypes.SwapTenor tenor,
+        uint256 direction
+    ) external view returns (AmmInternalTypes.OpenSwapItem memory);
 
     /// @notice Gets balance struct
     /// @dev Balance contains:
@@ -111,17 +111,19 @@ interface IAmmStorage {
     /// @param newSwap new swap structure {AmmTypes.NewSwap}
     /// @param cfgIporPublicationFee publication fee amount taken from AmmTreasury configuration, represented in 18 decimals.
     /// @return new swap ID
-    function updateStorageWhenOpenSwapPayFixedInternal(AmmTypes.NewSwap memory newSwap, uint256 cfgIporPublicationFee)
-        external
-        returns (uint256);
+    function updateStorageWhenOpenSwapPayFixedInternal(
+        AmmTypes.NewSwap memory newSwap,
+        uint256 cfgIporPublicationFee
+    ) external returns (uint256);
 
     /// @notice Updates structures in the storage: balance, swaps, SOAP indicators when new Receive-Fixed swap is opened. Function is only available to AmmTreasury.
     /// @param newSwap new swap structure {AmmTypes.NewSwap}
     /// @param cfgIporPublicationFee publication fee amount taken from AmmTreasury configuration, represented in 18 decimals.
     /// @return new swap ID
-    function updateStorageWhenOpenSwapReceiveFixedInternal(AmmTypes.NewSwap memory newSwap, uint256 cfgIporPublicationFee)
-        external
-        returns (uint256);
+    function updateStorageWhenOpenSwapReceiveFixedInternal(
+        AmmTypes.NewSwap memory newSwap,
+        uint256 cfgIporPublicationFee
+    ) external returns (uint256);
 
     /// @notice Updates structures in the storage: balance, swaps, SOAP indicators when closing Pay-Fixed swap.
     /// @dev This function is only available to AmmTreasury.
@@ -133,6 +135,8 @@ interface IAmmStorage {
     function updateStorageWhenCloseSwapPayFixedInternal(
         AmmTypes.Swap memory swap,
         int256 payoff,
+        uint256 swapUnwindOpeningFeeLPAmount,
+        uint256 swapUnwindOpeningFeeTreasuryAmount,
         uint256 closingTimestamp
     ) external returns (AmmInternalTypes.OpenSwapItem memory closedSwap);
 
@@ -146,6 +150,8 @@ interface IAmmStorage {
     function updateStorageWhenCloseSwapReceiveFixedInternal(
         AmmTypes.Swap memory swap,
         int256 payoff,
+        uint256 swapUnwindOpeningFeeLPAmount,
+        uint256 swapUnwindOpeningFeeTreasuryAmount,
         uint256 closingTimestamp
     ) external returns (AmmInternalTypes.OpenSwapItem memory closedSwap);
 

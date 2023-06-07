@@ -12,15 +12,7 @@ contract MockIporSwapLogic {
         uint256 liquidationDepositAmount,
         uint256 iporPublicationFeeAmount,
         uint256 openingFeeRate
-    )
-        public
-        pure
-        returns (
-            uint256 collateral,
-            uint256 notional,
-            uint256 openingFee
-        )
-    {
+    ) public view returns (uint256 collateral, uint256 notional, uint256 openingFee) {
         return
             IporSwapLogic.calculateSwapAmount(
                 tenor,
@@ -48,11 +40,7 @@ contract MockIporSwapLogic {
         return IporSwapLogic.calculateInterestFixed(notional, swapFixedInterestRate, swapPeriodInSeconds);
     }
 
-    function calculateInterestFloating(uint256 ibtQuantity, uint256 ibtCurrentPrice)
-        public
-        pure
-        returns (uint256)
-    {
+    function calculateInterestFloating(uint256 ibtQuantity, uint256 ibtCurrentPrice) public pure returns (uint256) {
         return IporSwapLogic.calculateInterestFloating(ibtQuantity, ibtCurrentPrice);
     }
 
@@ -76,15 +64,25 @@ contract MockIporSwapLogic {
         AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
         int256 swapPayoffToDate,
-        uint256 oppositeLegFixedRate,
-        uint256 openingFeeRateForSwapUnwind
+        uint256 oppositeLegFixedRate
     ) public pure returns (int256 swapUnwindValue) {
         swapUnwindValue = IporSwapLogic.calculateSwapUnwindValue(
             swap,
             closingTimestamp,
             swapPayoffToDate,
-            oppositeLegFixedRate,
-            openingFeeRateForSwapUnwind
+            oppositeLegFixedRate
+        );
+    }
+
+    function calculateSwapUnwindOpeningFeeAmount(
+        AmmTypes.Swap memory swap,
+        uint256 closingTimestamp,
+        uint256 openingFeeRateCfg
+    ) public pure returns (uint256 swapOpeningFeeAmount) {
+        swapOpeningFeeAmount = IporSwapLogic.calculateSwapUnwindOpeningFeeAmount(
+            swap,
+            closingTimestamp,
+            openingFeeRateCfg
         );
     }
 }
