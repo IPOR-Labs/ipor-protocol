@@ -301,7 +301,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
                     ammCharlieTreasuryManager: _daiAmmCharlieTreasuryManager
                 });
         } else {
-            revert("Asset not supported");
+            revert(IporErrors.ASSET_NOT_SUPPORTED);
         }
     }
 
@@ -313,7 +313,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         } else if (asset == _dai) {
             return _daiAmmTreasury;
         } else {
-            revert("Asset not supported");
+            revert(IporErrors.ASSET_NOT_SUPPORTED);
         }
     }
 }

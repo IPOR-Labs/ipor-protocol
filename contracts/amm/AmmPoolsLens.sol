@@ -162,7 +162,7 @@ contract AmmPoolsLens is IAmmPoolsLens {
                     assetManagement: _daiAssetManagement
                 });
         } else {
-            revert("AmmPoolsLens: asset not supported");
+            revert(IporErrors.ASSET_NOT_SUPPORTED);
         }
     }
 }

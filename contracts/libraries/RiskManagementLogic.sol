@@ -13,6 +13,7 @@ import "../amm/libraries/types/AmmInternalTypes.sol";
 import "contracts/amm/spread/ISpread28DaysLens.sol";
 import "contracts/amm/spread/ISpread60DaysLens.sol";
 import "contracts/amm/spread/ISpread90DaysLens.sol";
+import "contracts/libraries/errors/AmmErrors.sol";
 
 library RiskManagementLogic {
     using Address for address;
@@ -107,7 +108,7 @@ library RiskManagementLogic {
             } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
                 return ISpread90DaysLens.calculateOfferedRatePayFixed90Days.selector;
             } else {
-                revert("Invalid tenor");
+                revert(AmmErrors.UNSUPPORTED_SWAP_TENOR);
             }
         } else if (direction == 1) {
             if (tenor == IporTypes.SwapTenor.DAYS_28) {
@@ -117,10 +118,10 @@ library RiskManagementLogic {
             } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
                 return ISpread90DaysLens.calculateOfferedRateReceiveFixed90Days.selector;
             } else {
-                revert("Invalid tenor");
+                revert(AmmErrors.UNSUPPORTED_SWAP_TENOR);
             }
         } else {
-            revert("Invalid direction");
+            revert(AmmErrors.UNSUPPORTED_DIRECTION);
         }
     }
 
