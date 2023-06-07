@@ -114,7 +114,7 @@ contract CockpitDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgra
     function _createIporFront(address asset) internal view returns (CockpitTypes.IporFront memory iporFront) {
         (uint256 value, uint256 ibtPrice, uint256 date) = IIporOracle(_iporOracle).getIndex(asset);
 
-        iporFront = CockpitTypes.IporFront(IERC20MetadataUpgradeable(asset).symbol(), value, ibtPrice, 0, 0, date);
+        iporFront = CockpitTypes.IporFront(IERC20MetadataUpgradeable(asset).symbol(), value, ibtPrice, date);
     }
 
     //solhint-disable no-empty-blocks

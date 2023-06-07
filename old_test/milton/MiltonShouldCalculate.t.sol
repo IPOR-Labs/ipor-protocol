@@ -41,7 +41,6 @@ contract AmmTreasuryShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE2;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_10_18DEC);
@@ -130,7 +129,6 @@ contract AmmTreasuryShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE2;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -217,7 +215,6 @@ contract AmmTreasuryShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE2;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_121_18DEC);
@@ -303,7 +300,6 @@ contract AmmTreasuryShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE2;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -380,7 +376,6 @@ contract AmmTreasuryShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_10_18DEC);
@@ -468,7 +463,6 @@ contract AmmTreasuryShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -555,7 +549,6 @@ contract AmmTreasuryShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_121_18DEC);
@@ -632,7 +625,6 @@ contract AmmTreasuryShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);

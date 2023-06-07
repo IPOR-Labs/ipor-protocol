@@ -11,7 +11,6 @@ import "contracts/mocks/MockIporWeighted.sol";
 contract IporOracleUtils is Test {
     struct OracleParams {
         uint32[] updateTimestamps;
-        uint64[] exponentialMovingAverages;
     }
 
     function getIporOracleAsset(

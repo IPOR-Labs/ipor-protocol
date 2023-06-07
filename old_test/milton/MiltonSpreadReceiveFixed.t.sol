@@ -23,9 +23,7 @@ contract AmmTreasurySpreadReceiveFixedTest is Test, TestCommons {
 		uint256 openingFee = 20 * 1e18;
 		IporTypes.AccruedIpor memory accruedIpor = IporTypes.AccruedIpor(
 			3 * 10**16, // indexValue: 3%
-			1 * 10**18, // ibtPrice: 1
-			1 * 10**16, // exponentialMovingAverage: 1%
-			1 * 10**13 // exponentialWeightedMovingVariance: 0.00001%
+			1 * 10**18 // ibtPrice: 1
 		);
 		IporTypes.AmmBalancesMemory memory accruedBalance = IporTypes.AmmBalancesMemory(
 			10000 * 1e18 + swapCollateral, // totalCollateralPayFixed
@@ -39,8 +37,6 @@ contract AmmTreasurySpreadReceiveFixedTest is Test, TestCommons {
 		uint256 actualQuotedValue = _ammTreasurySpread.calculateQuoteReceiveFixed(accruedIpor, accruedBalance);
 		// then
 		assertEq(actualQuotedValue, expectedQuoteValue);
-        //Actual EMA higher than Quote Value for this particular test case.
-		assertGe(accruedIpor.exponentialMovingAverage, actualQuotedValue);
 	}
 
 	function testShouldCalculateQuoteValueReceiveFixedSpreadPremiumsNegativeAndAbsoluteValueSpreadPremiumGreaterIporIndexAndNormalEmvarAndQuoteLowerThanZero() public{
@@ -50,9 +46,7 @@ contract AmmTreasurySpreadReceiveFixedTest is Test, TestCommons {
 		uint256 openingFee = 20 * 1e18;
 		IporTypes.AccruedIpor memory accruedIpor = IporTypes.AccruedIpor(
 			9 * 10**16, // indexValue: 9%
-			1 * 10**18, // ibtPrice: 1
-			1 * 10**16, // exponentialMovingAverage: 1%
-			1 * 10**12 // exponentialWeightedMovingVariance: 0.000001%
+			1 * 10**18 // ibtPrice: 1
 		);
 		IporTypes.AmmBalancesMemory memory accruedBalance = IporTypes.AmmBalancesMemory(
 			10000 * 1e18 + swapCollateral, // totalCollateralPayFixed
@@ -66,8 +60,6 @@ contract AmmTreasurySpreadReceiveFixedTest is Test, TestCommons {
 		uint256 actualQuotedValue = _ammTreasurySpread.calculateQuoteReceiveFixed(accruedIpor, accruedBalance);
 		// then
 		assertEq(actualQuotedValue, expectedQuoteValue);
-        //Actual EMA cannot be lower than Quote Value for this particular test case.
-		assertGe(accruedIpor.exponentialMovingAverage, actualQuotedValue);
 	}
 
 	function testShouldCalculateQuoteValueReceiveFixedSpreadPremiumsNegativeAndAbsoluteValueSpreadPremiumGreaterThanIporIndex() public {
@@ -77,9 +69,7 @@ contract AmmTreasurySpreadReceiveFixedTest is Test, TestCommons {
 		uint256 openingFee = 20 * 1e18;
 		IporTypes.AccruedIpor memory accruedIpor = IporTypes.AccruedIpor(
 			4 * 10**16, // indexValue: 4%
-			1 * 10**18, // ibtPrice: 1
-			3 * 10**16, // exponentialMovingAverage: 3%
-			1 * 10**15 // exponentialWeightedMovingVariance: 0.001%
+			1 * 10**18 // ibtPrice: 1
 		);
 		IporTypes.AmmBalancesMemory memory accruedBalance = IporTypes.AmmBalancesMemory(
 			10000 * 1e18 + swapCollateral, // totalCollateralPayFixed
@@ -102,9 +92,7 @@ contract AmmTreasurySpreadReceiveFixedTest is Test, TestCommons {
 		uint256 openingFee = 20 * 1e18;
 		IporTypes.AccruedIpor memory accruedIpor = IporTypes.AccruedIpor(
 			4 * 10**16, // indexValue: 4%
-			1 * 10**18, // ibtPrice: 1
-			3 * 10**16, // exponentialMovingAverage: 3%
-			1 * 10**12 // exponentialWeightedMovingVariance: 0.000001%
+			1 * 10**18 // ibtPrice: 1
 		);
 		IporTypes.AmmBalancesMemory memory accruedBalance = IporTypes.AmmBalancesMemory(
 			10000 * 1e18 + swapCollateral, // totalCollateralPayFixed
