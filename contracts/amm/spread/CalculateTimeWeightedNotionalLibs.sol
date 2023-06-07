@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 import "./SpreadTypes.sol";
 import "./SpreadStorageLibs.sol";
-import "contracts/libraries/math/IporMath.sol";
+import "@ipor-protocol/contracts/libraries/math/IporMath.sol";
 
 library CalculateTimeWeightedNotionalLibs {
     /// @notice calculate amm lp depth

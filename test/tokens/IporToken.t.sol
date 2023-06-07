@@ -2,8 +2,8 @@
 pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
-import "contracts/tokens/IpToken.sol";
-import "contracts/tokens/IporToken.sol";
+import "@ipor-protocol/contracts/tokens/IpToken.sol";
+import "@ipor-protocol/contracts/tokens/IporToken.sol";
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
 

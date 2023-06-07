@@ -5,12 +5,12 @@ import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "./BuilderUtils.sol";
 import "forge-std/Test.sol";
 import "../../utils/TestConstants.sol";
-import "contracts/amm/spread/SpreadRouter.sol";
-import "contracts/amm/spread/Spread28Days.sol";
-import "contracts/amm/spread/Spread60Days.sol";
-import "contracts/amm/spread/Spread90Days.sol";
-import "contracts/amm/spread/SpreadStorageLens.sol";
-import "contracts/amm/spread/SpreadCloseSwapService.sol";
+import "@ipor-protocol/contracts/amm/spread/SpreadRouter.sol";
+import "@ipor-protocol/contracts/amm/spread/Spread28Days.sol";
+import "@ipor-protocol/contracts/amm/spread/Spread60Days.sol";
+import "@ipor-protocol/contracts/amm/spread/Spread90Days.sol";
+import "@ipor-protocol/contracts/amm/spread/SpreadStorageLens.sol";
+import "@ipor-protocol/contracts/amm/spread/SpreadCloseSwapService.sol";
 import "../../mocks/MockSpreadCloseSwapService.sol";
 
 contract SpreadRouterBuilder is Test {

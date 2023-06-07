@@ -2,41 +2,40 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "forge-std/Script.sol";
-import "contracts/router/IporProtocolRouter.sol";
-import "contracts/amm/AmmPoolsLens.sol";
-import "contracts/amm/AmmOpenSwapService.sol";
-import "contracts/amm/AmmGovernanceService.sol";
-import "contracts/amm/AmmSwapsLens.sol";
-import "contracts/amm/AssetManagementLens.sol";
-import "contracts/amm/AmmCloseSwapService.sol";
-import "contracts/amm/AmmPoolsService.sol";
-import "contracts/interfaces/IIporOracle.sol";
-import "contracts/oracles/IporOracle.sol";
-import "contracts/amm/spread/SpreadRouter.sol";
-import "contracts/oracles/IporRiskManagementOracle.sol";
-import "./mocks/EmptyAmmTreasuryImplementation.sol";
-import "./mocks/EmptyRouterImplementation.sol";
-import "../test/utils/TestConstants.sol";
-import "contracts/amm/spread/SpreadStorageLens.sol";
-import "contracts/amm/spread/Spread28Days.sol";
-import "contracts/amm/spread/Spread60Days.sol";
-import "contracts/amm/spread/Spread90Days.sol";
-import "contracts/mocks/stanley/MockTestnetStrategy.sol";
-import "contracts/vault/AssetManagementUsdt.sol";
-import "contracts/vault/AssetManagementUsdc.sol";
-import "contracts/vault/AssetManagementDai.sol";
-import "contracts/tokens/IpToken.sol";
-import "contracts/tokens/IvToken.sol";
-import "contracts/mocks/tokens/MockTestnetToken.sol";
-import "contracts/amm/AmmStorage.sol";
-import "contracts/amm/AmmTreasury.sol";
+import "@ipor-protocol/contracts/router/IporProtocolRouter.sol";
+import "@ipor-protocol/contracts/amm/AmmPoolsLens.sol";
+import "@ipor-protocol/contracts/amm/AmmOpenSwapService.sol";
+import "@ipor-protocol/contracts/amm/AmmGovernanceService.sol";
+import "@ipor-protocol/contracts/amm/AmmSwapsLens.sol";
+import "@ipor-protocol/contracts/amm/AssetManagementLens.sol";
+import "@ipor-protocol/contracts/amm/AmmCloseSwapService.sol";
+import "@ipor-protocol/contracts/amm/AmmPoolsService.sol";
+import "@ipor-protocol/contracts/interfaces/IIporOracle.sol";
+import "@ipor-protocol/contracts/oracles/IporOracle.sol";
+import "@ipor-protocol/contracts/amm/spread/SpreadRouter.sol";
+import "@ipor-protocol/contracts/oracles/IporRiskManagementOracle.sol";
+import "@ipor-protocol/test/utils/TestConstants.sol";
+import "@ipor-protocol/contracts/amm/spread/SpreadStorageLens.sol";
+import "@ipor-protocol/contracts/amm/spread/Spread28Days.sol";
+import "@ipor-protocol/contracts/amm/spread/Spread60Days.sol";
+import "@ipor-protocol/contracts/amm/spread/Spread90Days.sol";
+import "@ipor-protocol/contracts/mocks/stanley/MockTestnetStrategy.sol";
+import "@ipor-protocol/contracts/vault/AssetManagementUsdt.sol";
+import "@ipor-protocol/contracts/vault/AssetManagementUsdc.sol";
+import "@ipor-protocol/contracts/vault/AssetManagementDai.sol";
+import "@ipor-protocol/contracts/tokens/IpToken.sol";
+import "@ipor-protocol/contracts/tokens/IvToken.sol";
+import "@ipor-protocol/contracts/mocks/tokens/MockTestnetToken.sol";
+import "@ipor-protocol/contracts/amm/AmmStorage.sol";
+import "@ipor-protocol/contracts/amm/AmmTreasury.sol";
+import "@ipor-protocol/contracts/amm/spread/SpreadCloseSwapService.sol";
 
 // run:
 // $ anvil
 // get private key from anvil then set SC_ADMIN_PRIV_KEY variable in .env file
 // then run:
 // $ forge script scripts/DeployLocal.s.sol --fork-url http://127.0.0.1:8545 --broadcast
-contract DevDeployment is Script {
+contract LocalDeployment is Script {
     struct IporProtocol {
         address asset;
         address ipToken;
@@ -76,11 +75,14 @@ contract DevDeployment is Script {
         address stakeService;
     }
 
+    address defaultAnvilAddress = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
     uint256 _private_key;
+    string _env_profile;
     AmmConfig ammConfig;
 
     function setUp() public {
         _private_key = vm.envUint("SC_ADMIN_PRIV_KEY");
+        _env_profile = vm.envString("ENV_PROFILE");
         ammConfig.iporOracleUpdater = vm.envAddress("SC_MIGRATION_IPOR_INDEX_UPDATER_ADDRESS");
         ammConfig.iporRiskManagementOracleUpdater = vm.envAddress("SC_MIGRATION_IPOR_INDEX_UPDATER_ADDRESS");
         ammConfig.powerTokenLens = vm.envAddress("SC_POWER_TOKEN_LENS_ADDRESS");
@@ -97,9 +99,9 @@ contract DevDeployment is Script {
         _toAddressesJson(amm);
     }
 
-    function _getFullInstance(AmmConfig memory cfg, Amm memory amm) internal {
-        deployEmptyRouter(amm);
-        deployEmptyAmmTreasury(amm);
+    function _getFullInstance(AmmConfig memory cfg, Amm memory amm) public {
+        deployDummyIporProtocolRouter(amm);
+        deployDummyAmmTreasury(amm);
         deployAssets(amm);
         deployOracle(amm);
         deployRiskOracle(amm);
@@ -108,8 +110,8 @@ contract DevDeployment is Script {
         deployStorage(amm);
         deploySpreadRouter(amm);
         deployAssetManagement(amm);
-        deployFullAmmTreasury(amm);
-        deployFullRouter(amm);
+        upgradeAmmTreasury(amm);
+        upgradeIporProtocolRouter(amm);
     }
 
     function _preparePoolCfgForGovernanceService(
@@ -153,7 +155,7 @@ contract DevDeployment is Script {
         address ammTreasury,
         address ammStorage,
         address assetManagement
-    ) internal returns (IAmmCloseSwapService.AmmCloseSwapServicePoolConfiguration memory poolCfg) {
+    ) internal view returns (IAmmCloseSwapService.AmmCloseSwapServicePoolConfiguration memory poolCfg) {
         poolCfg = IAmmCloseSwapService.AmmCloseSwapServicePoolConfiguration({
             asset: address(asset),
             decimals: IERC20MetadataUpgradeable(asset).decimals(),
@@ -175,7 +177,7 @@ contract DevDeployment is Script {
         address asset,
         address ammTreasury,
         address ammStorage
-    ) internal returns (IAmmOpenSwapService.AmmOpenSwapServicePoolConfiguration memory poolCfg) {
+    ) internal view returns (IAmmOpenSwapService.AmmOpenSwapServicePoolConfiguration memory poolCfg) {
         poolCfg = IAmmOpenSwapService.AmmOpenSwapServicePoolConfiguration({
             asset: asset,
             decimals: IERC20MetadataUpgradeable(asset).decimals(),
@@ -190,7 +192,7 @@ contract DevDeployment is Script {
         });
     }
 
-    function getCurrentTimestamps(address[] memory assets)
+    function _getCurrentTimestamps(address[] memory assets)
         internal
         view
         returns (uint32[] memory lastUpdateTimestamps)
@@ -204,7 +206,7 @@ contract DevDeployment is Script {
         }
     }
 
-    function deployOracle(Amm memory amm) internal {
+    function deployOracle(Amm memory amm) public {
         address[] memory assets = new address[](3);
         assets[0] = address(amm.dai.asset);
         assets[1] = address(amm.usdt.asset);
@@ -219,7 +221,7 @@ contract DevDeployment is Script {
             1e18
         );
 
-        uint32[] memory lastUpdateTimestamps = getCurrentTimestamps(assets);
+        uint32[] memory lastUpdateTimestamps = _getCurrentTimestamps(assets);
 
         amm.iporOracle = address(
             new ERC1967Proxy(
@@ -231,7 +233,7 @@ contract DevDeployment is Script {
         IIporOracle(amm.iporOracle).addUpdater(ammConfig.iporOracleUpdater);
     }
 
-    function deployRiskOracle(Amm memory amm) internal {
+    function deployRiskOracle(Amm memory amm) public {
         address[] memory assets = new address[](3);
         assets[0] = address(amm.dai.asset);
         assets[1] = address(amm.usdt.asset);
@@ -287,57 +289,68 @@ contract DevDeployment is Script {
         amm.iporRiskManagementOracle = address(riskOracleProxy);
     }
 
-    function deployEmptyRouter(Amm memory amm) internal {
+    function deployDummyIporProtocolRouter(Amm memory amm) public {
+        IporProtocolRouter.DeployedContracts memory deployedContracts = IporProtocolRouter.DeployedContracts({
+            ammSwapsLens: defaultAnvilAddress,
+            ammPoolsLens: defaultAnvilAddress,
+            assetManagementLens: defaultAnvilAddress,
+            ammOpenSwapService: defaultAnvilAddress,
+            ammCloseSwapService: defaultAnvilAddress,
+            ammPoolsService: defaultAnvilAddress,
+            ammGovernanceService: defaultAnvilAddress,
+            liquidityMiningLens: defaultAnvilAddress,
+            powerTokenLens: defaultAnvilAddress,
+            flowService: defaultAnvilAddress,
+            stakeService: defaultAnvilAddress
+        });
+
         amm.router = address(
             new ERC1967Proxy(
-                address(new EmptyRouterImplementation()),
+                address(new IporProtocolRouter(deployedContracts)),
                 abi.encodeWithSignature("initialize(bool)", false)
             )
         );
     }
 
-    function deployIpTokens(Amm memory amm) internal {
+    function deployIpTokens(Amm memory amm) public {
         amm.usdt.ipToken = address(new IpToken("IP USDT", "ipUSDT", address(amm.usdt.asset)));
         amm.usdc.ipToken = address(new IpToken("IP USDC", "ipUSDC", address(amm.usdc.asset)));
         amm.dai.ipToken = address(new IpToken("IP DAI", "ipDAI", address(amm.dai.asset)));
+
+        IpToken(amm.usdt.ipToken).setRouter(amm.router);
+        IpToken(amm.usdc.ipToken).setRouter(amm.router);
+        IpToken(amm.dai.ipToken).setRouter(amm.router);
     }
 
-    function deployIvTokens(Amm memory amm) internal {
+    function deployIvTokens(Amm memory amm) public {
         amm.usdt.ivToken = address(new IvToken("IV USDT", "ivUSDT", amm.usdt.asset));
         amm.usdc.ivToken = address(new IvToken("IV USDC", "ivUSDC", amm.usdc.asset));
         amm.dai.ivToken = address(new IvToken("IV DAI", "ivDAI", amm.dai.asset));
     }
 
-    function deployAssets(Amm memory amm) internal {
+    function deployAssets(Amm memory amm) public {
         amm.usdt.asset = address(new MockTestnetToken("Mocked USDT", "USDT", TestConstants.TOTAL_SUPPLY_6_DECIMALS, 6));
         amm.usdc.asset = address(new MockTestnetToken("Mocked USDC", "USDC", TestConstants.TOTAL_SUPPLY_6_DECIMALS, 6));
         amm.dai.asset = address(new MockTestnetToken("Mocked DAI", "DAI", TestConstants.TOTAL_SUPPLY_18_DECIMALS, 18));
     }
 
-    function deployEmptyAmmTreasury(Amm memory amm) internal {
+    function deployDummyAmmTreasury(Amm memory amm) public {
+        AmmTreasury emptyImpl = new AmmTreasury(defaultAnvilAddress, 0, defaultAnvilAddress, defaultAnvilAddress, defaultAnvilAddress);
+
         amm.usdt.ammTreasury = address(
-            new ERC1967Proxy(
-                address(new EmptyAmmTreasuryImplementation()),
-                abi.encodeWithSignature("initialize(bool)", false)
-            )
+            new ERC1967Proxy(address(emptyImpl), abi.encodeWithSignature("initialize(bool)", false))
         );
 
         amm.usdc.ammTreasury = address(
-            new ERC1967Proxy(
-                address(new EmptyAmmTreasuryImplementation()),
-                abi.encodeWithSignature("initialize(bool)", false)
-            )
+            new ERC1967Proxy(address(emptyImpl), abi.encodeWithSignature("initialize(bool)", false))
         );
 
         amm.dai.ammTreasury = address(
-            new ERC1967Proxy(
-                address(new EmptyAmmTreasuryImplementation()),
-                abi.encodeWithSignature("initialize(bool)", false)
-            )
+            new ERC1967Proxy(address(emptyImpl), abi.encodeWithSignature("initialize(bool)", false))
         );
     }
 
-    function deployStorage(Amm memory amm) internal {
+    function deployStorage(Amm memory amm) public {
         amm.usdt.ammStorage = address(
             new ERC1967Proxy(
                 address(new AmmStorage(address(amm.router), address(amm.usdt.ammTreasury))),
@@ -360,7 +373,7 @@ contract DevDeployment is Script {
         );
     }
 
-    function deploySpreadRouter(Amm memory amm) internal {
+    function deploySpreadRouter(Amm memory amm) public {
         SpreadRouter.DeployedContracts memory deployedContracts;
         deployedContracts.iporProtocolRouter = address(amm.router);
         deployedContracts.storageLens = address(new SpreadStorageLens());
@@ -386,7 +399,7 @@ contract DevDeployment is Script {
         );
     }
 
-    function deployAssetManagement(Amm memory amm) internal {
+    function deployAssetManagement(Amm memory amm) public {
         amm.usdt.aToken = address(new MockTestnetToken("Mocked Share aUSDT", "aUSDT", 0, 6));
         amm.usdc.aToken = address(new MockTestnetToken("Mocked Share aUSDC", "aUSDC", 0, 6));
         amm.dai.aToken = address(new MockTestnetToken("Mocked Share aDAI", "aDAI", 0, 18));
@@ -485,7 +498,7 @@ contract DevDeployment is Script {
         IStrategy(amm.dai.strategyCompound).setAssetManagement(amm.dai.assetManagement);
     }
 
-    function deployFullAmmTreasury(Amm memory amm) internal {
+    function upgradeAmmTreasury(Amm memory amm) public {
         AmmTreasury(amm.usdt.ammTreasury).upgradeTo(
             address(new AmmTreasury(amm.usdt.asset, 6, amm.usdt.ammStorage, amm.usdt.assetManagement, amm.router))
         );
@@ -499,7 +512,7 @@ contract DevDeployment is Script {
         );
     }
 
-    function deployFullRouter(Amm memory amm) internal {
+    function upgradeIporProtocolRouter(Amm memory amm) public {
         amm.ammSwapsLens = address(
             new AmmSwapsLens(
                 IAmmSwapsLens.SwapLensConfiguration({
@@ -739,6 +752,6 @@ contract DevDeployment is Script {
 
         string memory finalJson = vm.serializeAddress(addressesJson, "IporProtocolRouter", amm.router);
 
-        vm.writeJson(finalJson, string.concat(path, "/addresses.json"));
+        vm.writeJson(finalJson, string.concat(path, "/.ipor/", _env_profile,"-ipor-protocol-addresses.json"));
     }
 }
