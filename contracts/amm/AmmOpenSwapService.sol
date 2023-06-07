@@ -791,7 +791,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             newSwap.buyer,
             asset,
             AmmTypes.SwapDirection(direction),
-            AmmTypes.OpenSwapMoney(
+            AmmTypes.OpenSwapAmount(
                 wadTotalAmount,
                 newSwap.collateral,
                 newSwap.notional,
