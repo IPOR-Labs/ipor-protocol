@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 /// @title Structures used in the LiquidityMining.
 library LiquidityMiningTypes {
@@ -50,13 +50,13 @@ library LiquidityMiningTypes {
     }
 
     struct UpdateLpToken {
-        address onBehalfOf;
+        address beneficiary;
         address lpToken;
         uint256 lpTokenAmount;
     }
 
     struct UpdatePwToken {
-        address onBehalfOf;
+        address beneficiary;
         address lpToken;
         uint256 pwTokenAmount;
     }

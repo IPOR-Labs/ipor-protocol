@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: BSD-3-Clause
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 interface IPowerTokenStakeService {
     /// @notice Stakes the specified amounts of LP tokens into the LiquidityMining contract.
-    /// @dev This function allows the caller to stake their LP tokens on behalf of another address (`onBehalfOf`).
-    /// @param onBehalfOf The address on behalf of which the LP tokens are being staked.
+    /// @dev This function allows the caller to stake their LP tokens on behalf of another address (`beneficiary`).
+    /// @param beneficiary The address on behalf of which the LP tokens are being staked.
     /// @param lpTokens An array of LP token addresses to be staked.
     /// @param lpTokenAmounts An array of corresponding LP token amounts to be staked, represented with 18 decimals.
     /// @dev Both `lpTokens` and `lpTokenAmounts` arrays must have the same length.
-    /// @dev The `onBehalfOf` address must not be the zero address.
+    /// @dev The `beneficiary` address must not be the zero address.
     /// @dev The function ensures that the provided LP token addresses are valid and the amounts to be staked are greater than zero.
     /// @dev The function transfers the LP tokens from the caller's address to the LiquidityMining contract.
     /// @dev Finally, the function calls the `addLpTokens` function of the LiquidityMining contract to update the staked LP tokens.
     /// @dev Reverts if any of the requirements is not met or if the transfer of LP tokens fails.
     function stakeLpTokensToLiquidityMining(
-        address onBehalfOf,
+        address beneficiary,
         address[] calldata lpTokens,
         uint256[] calldata lpTokenAmounts
     ) external;
@@ -35,13 +35,13 @@ interface IPowerTokenStakeService {
     ) external;
 
     /// @notice Stakes the specified amount of IPOR tokens on behalf of the specified address.
-    /// @param onBehalfOf The address on whose behalf the IPOR tokens will be staked.
+    /// @param beneficiary The address on whose behalf the IPOR tokens will be staked.
     /// @param iporTokenAmount The amount of IPOR tokens to be staked, represented with 18 decimals.
-    /// @dev The function ensures that the provided `onBehalfOf` address is valid and the `iporTokenAmount` is greater than zero.
+    /// @dev The function ensures that the provided `beneficiary` address is valid and the `iporTokenAmount` is greater than zero.
     /// @dev The function calls the `addStakedToken` function of the PowerToken contract to update the staked IPOR tokens.
     /// @dev Finally, the function transfers the IPOR tokens from the sender to the PowerToken contract for staking.
     /// @dev Reverts if any of the requirements is not met or if the transfer of IPOR tokens fails.
-    function stakeGovernanceTokenToPowerToken(address onBehalfOf, uint256 iporTokenAmount) external;
+    function stakeGovernanceTokenToPowerToken(address beneficiary, uint256 iporTokenAmount) external;
 
     /// @notice Unstakes the specified amount of IPOR tokens and transfers them to the specified address.
     /// @param transferTo The address to which the unstaked IPOR tokens will be transferred.

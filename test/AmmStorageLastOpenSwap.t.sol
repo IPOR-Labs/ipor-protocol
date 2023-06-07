@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "contracts/amm/AmmStorage.sol";
@@ -46,23 +46,23 @@ contract SimpleTest is TestCommons {
             25, //liquidationDepositAmount
             1e18,
             1e18,
-            AmmTypes.SwapDuration.DAYS_28
+            IporTypes.SwapTenor.DAYS_28
         );
         uint256 cfgIporPublicationFee = 1e18;
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             0
         );
 
         // when
         vm.prank(_router);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
 
         // then
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             0
         );
 
@@ -87,25 +87,25 @@ contract SimpleTest is TestCommons {
             25, //liquidationDepositAmount
             1e18,
             1e18,
-            AmmTypes.SwapDuration.DAYS_28
+            IporTypes.SwapTenor.DAYS_28
         );
         uint256 cfgIporPublicationFee = 1e18;
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             0
         );
 
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
         vm.stopPrank();
 
         // then
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             0
         );
 
@@ -129,23 +129,23 @@ contract SimpleTest is TestCommons {
             25, //liquidationDepositAmount
             1e18,
             1e18,
-            AmmTypes.SwapDuration.DAYS_28
+            IporTypes.SwapTenor.DAYS_28
         );
         uint256 cfgIporPublicationFee = 1e18;
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             1
         );
 
         // when
         vm.prank(_router);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
 
         // then
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             1
         );
 
@@ -169,25 +169,25 @@ contract SimpleTest is TestCommons {
             25, //liquidationDepositAmount
             1e18,
             1e18,
-            AmmTypes.SwapDuration.DAYS_28
+            IporTypes.SwapTenor.DAYS_28
         );
         uint256 cfgIporPublicationFee = 1e18;
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             1
         );
 
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
         vm.stopPrank();
 
         // then
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             1
         );
 
@@ -211,7 +211,7 @@ contract SimpleTest is TestCommons {
             25, //liquidationDepositAmount
             1e18,
             1e18,
-            AmmTypes.SwapDuration.DAYS_28
+            IporTypes.SwapTenor.DAYS_28
         );
         AmmTypes.NewSwap memory newSwap60Days = AmmTypes.NewSwap(
             _buyer,
@@ -223,33 +223,33 @@ contract SimpleTest is TestCommons {
             25, //liquidationDepositAmount
             1e18,
             1e18,
-            AmmTypes.SwapDuration.DAYS_60
+            IporTypes.SwapTenor.DAYS_60
         );
         uint256 cfgIporPublicationFee = 1e18;
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore28 = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             1
         );
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore60 = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_60,
+            IporTypes.SwapTenor.DAYS_60,
             1
         );
 
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap28Days, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap60Days, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap28Days, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap60Days, cfgIporPublicationFee);
         vm.stopPrank();
 
         // then
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter28 = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             1
         );
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter60 = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_60,
+            IporTypes.SwapTenor.DAYS_60,
             1
         );
 
@@ -273,42 +273,42 @@ contract SimpleTest is TestCommons {
             25, //liquidationDepositAmount
             1e18,
             1e18,
-            AmmTypes.SwapDuration.DAYS_28
+            IporTypes.SwapTenor.DAYS_28
         );
         uint256 cfgIporPublicationFee = 1e18;
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
         vm.stopPrank();
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             0
         );
 
-        IporTypes.IporSwapMemory memory iporSwap = IporTypes.IporSwapMemory(
+        AmmTypes.Swap memory swap = AmmTypes.Swap(
             1,
             _buyer,
             newSwap.openTimestamp,
-            uint256(newSwap.duration),
+            newSwap.tenor,
             1,
             newSwap.collateral,
             newSwap.notional,
             newSwap.ibtQuantity,
             newSwap.fixedInterestRate,
             newSwap.liquidationDepositAmount,
-            1
+            IporTypes.SwapState.ACTIVE
         );
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenCloseSwapPayFixed(iporSwap, 0, 1028 days);
+        _ammStorage.updateStorageWhenCloseSwapPayFixedInternal(swap, 0, 0, 0, 1028 days);
         vm.stopPrank();
 
         // then
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             0
         );
 
@@ -316,7 +316,6 @@ contract SimpleTest is TestCommons {
         assertTrue(lastOpenSwapBefore.previousSwapId == 2, "lastOpenSwapBefore.previousSwapId == 2");
         assertTrue(lastOpenSwapAfter.swapId == 3, "lastOpenSwapBefore.swapId == 3");
         assertTrue(lastOpenSwapAfter.previousSwapId == 2, "lastOpenSwapBefore.previousSwapId == 2");
-
     }
 
     function testShouldOpen3SwapsAndCloseSecond() external {
@@ -333,42 +332,42 @@ contract SimpleTest is TestCommons {
             25, //liquidationDepositAmount
             1e18,
             1e18,
-            AmmTypes.SwapDuration.DAYS_28
+            IporTypes.SwapTenor.DAYS_28
         );
         uint256 cfgIporPublicationFee = 1e18;
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
         vm.stopPrank();
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             0
         );
 
-        IporTypes.IporSwapMemory memory iporSwap = IporTypes.IporSwapMemory(
+        AmmTypes.Swap memory swap = AmmTypes.Swap(
             2,
             _buyer,
             newSwap.openTimestamp,
-            uint256(newSwap.duration),
+            newSwap.tenor,
             2,
             newSwap.collateral,
             newSwap.notional,
             newSwap.ibtQuantity,
             newSwap.fixedInterestRate,
             newSwap.liquidationDepositAmount,
-            1
+            IporTypes.SwapState.ACTIVE
         );
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenCloseSwapPayFixed(iporSwap, 0, 1028 days);
+        _ammStorage.updateStorageWhenCloseSwapPayFixedInternal(swap, 0, 0, 0, 1028 days);
         vm.stopPrank();
 
         // then
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             0
         );
 
@@ -392,42 +391,42 @@ contract SimpleTest is TestCommons {
             25, //liquidationDepositAmount
             1e18,
             1e18,
-            AmmTypes.SwapDuration.DAYS_28
+            IporTypes.SwapTenor.DAYS_28
         );
         uint256 cfgIporPublicationFee = 1e18;
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, cfgIporPublicationFee);
         vm.stopPrank();
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             0
         );
 
-        IporTypes.IporSwapMemory memory iporSwap = IporTypes.IporSwapMemory(
+        AmmTypes.Swap memory swap = AmmTypes.Swap(
             3,
             _buyer,
             newSwap.openTimestamp,
-            uint256(newSwap.duration),
+            newSwap.tenor,
             3,
             newSwap.collateral,
             newSwap.notional,
             newSwap.ibtQuantity,
             newSwap.fixedInterestRate,
             newSwap.liquidationDepositAmount,
-            1
+            IporTypes.SwapState.ACTIVE
         );
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenCloseSwapPayFixed(iporSwap, 0, 1028 days);
+        _ammStorage.updateStorageWhenCloseSwapPayFixedInternal(swap, 0, 0, 0, 1028 days);
         vm.stopPrank();
 
         // then
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             0
         );
 
@@ -436,7 +435,6 @@ contract SimpleTest is TestCommons {
         assertTrue(lastOpenSwapAfter.swapId == 2, "lastOpenSwapBefore.swapId == 3");
         assertTrue(lastOpenSwapAfter.previousSwapId == 1, "lastOpenSwapBefore.previousSwapId == 1");
     }
-
 
     function testShouldOpen3SwapsReceiveFixedAndCloseFirst() external {
         // given
@@ -452,42 +450,42 @@ contract SimpleTest is TestCommons {
             25, //liquidationDepositAmount
             1e18,
             1e18,
-            AmmTypes.SwapDuration.DAYS_28
+            IporTypes.SwapTenor.DAYS_28
         );
         uint256 cfgIporPublicationFee = 1e18;
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
         vm.stopPrank();
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             1
         );
 
-        IporTypes.IporSwapMemory memory iporSwap = IporTypes.IporSwapMemory(
+        AmmTypes.Swap memory swap = AmmTypes.Swap(
             1,
             _buyer,
             newSwap.openTimestamp,
-            uint256(newSwap.duration),
+            newSwap.tenor,
             1,
             newSwap.collateral,
             newSwap.notional,
             newSwap.ibtQuantity,
             newSwap.fixedInterestRate,
             newSwap.liquidationDepositAmount,
-            1
+            IporTypes.SwapState.ACTIVE
         );
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenCloseSwapReceiveFixed(iporSwap, 0, 1028 days);
+        _ammStorage.updateStorageWhenCloseSwapReceiveFixedInternal(swap, 0, 0, 0, 1028 days);
         vm.stopPrank();
 
         // then
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             1
         );
 
@@ -495,7 +493,6 @@ contract SimpleTest is TestCommons {
         assertTrue(lastOpenSwapBefore.previousSwapId == 2, "lastOpenSwapBefore.previousSwapId == 2");
         assertTrue(lastOpenSwapAfter.swapId == 3, "lastOpenSwapBefore.swapId == 3");
         assertTrue(lastOpenSwapAfter.previousSwapId == 2, "lastOpenSwapBefore.previousSwapId == 2");
-
     }
 
     function testShouldOpen3SwapsReceiveFixedAndCloseSecond() external {
@@ -512,45 +509,44 @@ contract SimpleTest is TestCommons {
             25, //liquidationDepositAmount
             1e18,
             1e18,
-            AmmTypes.SwapDuration.DAYS_28
+            IporTypes.SwapTenor.DAYS_28
         );
         uint256 cfgIporPublicationFee = 1e18;
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
         vm.stopPrank();
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             1
         );
 
-        IporTypes.IporSwapMemory memory iporSwap = IporTypes.IporSwapMemory(
+        AmmTypes.Swap memory swap = AmmTypes.Swap(
             2,
             _buyer,
             newSwap.openTimestamp,
-            uint256(newSwap.duration),
+            newSwap.tenor,
             2,
             newSwap.collateral,
             newSwap.notional,
             newSwap.ibtQuantity,
             newSwap.fixedInterestRate,
             newSwap.liquidationDepositAmount,
-            1
+            IporTypes.SwapState.ACTIVE
         );
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenCloseSwapReceiveFixed(iporSwap, 0, 1028 days);
+        _ammStorage.updateStorageWhenCloseSwapReceiveFixedInternal(swap, 0, 0, 0, 1028 days);
         vm.stopPrank();
 
         // then
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             1
         );
-
 
         assertTrue(lastOpenSwapBefore.swapId == 3, "lastOpenSwapBefore.swapId == 3");
         assertTrue(lastOpenSwapBefore.previousSwapId == 2, "lastOpenSwapBefore.previousSwapId == 2");
@@ -572,42 +568,42 @@ contract SimpleTest is TestCommons {
             25, //liquidationDepositAmount
             1e18,
             1e18,
-            AmmTypes.SwapDuration.DAYS_28
+            IporTypes.SwapTenor.DAYS_28
         );
         uint256 cfgIporPublicationFee = 1e18;
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
-        _ammStorage.updateStorageWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
+        _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap, cfgIporPublicationFee);
         vm.stopPrank();
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapBefore = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             1
         );
 
-        IporTypes.IporSwapMemory memory iporSwap = IporTypes.IporSwapMemory(
+        AmmTypes.Swap memory swap = AmmTypes.Swap(
             3,
             _buyer,
             newSwap.openTimestamp,
-            uint256(newSwap.duration),
+            newSwap.tenor,
             3,
             newSwap.collateral,
             newSwap.notional,
             newSwap.ibtQuantity,
             newSwap.fixedInterestRate,
             newSwap.liquidationDepositAmount,
-            1
+            IporTypes.SwapState.ACTIVE
         );
         // when
         vm.startPrank(_router);
-        _ammStorage.updateStorageWhenCloseSwapReceiveFixed(iporSwap, 0, 1028 days);
+        _ammStorage.updateStorageWhenCloseSwapReceiveFixedInternal(swap, 0, 0, 0, 1028 days);
         vm.stopPrank();
 
         // then
 
         AmmInternalTypes.OpenSwapItem memory lastOpenSwapAfter = _ammStorage.getLastOpenedSwap(
-            AmmTypes.SwapDuration.DAYS_28,
+            IporTypes.SwapTenor.DAYS_28,
             1
         );
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
@@ -198,13 +198,6 @@ contract DaiAmm is Test, TestCommons, IporRiskManagementOracleUtils {
         uint32[] memory updateTimestamps = new uint32[](1);
         updateTimestamps[0] = uint32(1640000000);
 
-        uint64[] memory exponentialMovingAverages = new uint64[](1);
-        exponentialMovingAverages[0] = uint64(32706669664256327);
-
-        uint64[] memory exponentialWeightedMovingVariances = new uint64[](1);
-
-        exponentialWeightedMovingVariances[0] = uint64(49811986068491);
-
         iporOracle = IporOracle(
             address(
                 new ERC1967Proxy(
@@ -212,9 +205,7 @@ contract DaiAmm is Test, TestCommons, IporRiskManagementOracleUtils {
                     abi.encodeWithSignature(
                         "initialize(address[],uint32[])",
                         assets,
-                        updateTimestamps,
-                        exponentialMovingAverages,
-                        exponentialWeightedMovingVariances
+                        updateTimestamps
                     )
                 )
             )
@@ -225,8 +216,8 @@ contract DaiAmm is Test, TestCommons, IporRiskManagementOracleUtils {
         iporRiskManagementOracle = getRiskManagementOracleAsset(
             address(this),
             address(dai),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_90_PER,
             TestConstants.RMO_NOTIONAL_1B,
             TestConstants.RMO_SPREAD_0_1_PER
         );

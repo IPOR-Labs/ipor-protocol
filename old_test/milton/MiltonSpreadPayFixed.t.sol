@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
@@ -23,9 +23,7 @@ contract AmmTreasurySpreadPayFixedTest is Test, TestCommons {
         uint256 openingFee = 20 * 1e18;
         IporTypes.AccruedIpor memory accruedIpor = IporTypes.AccruedIpor(
             13 * 10**16, // indexValue: 13%
-            1 * 10**18, // ibtPrice: 1
-            1 * 10**16, // exponentialMovingAverage: 1%
-            15 * 10**15 // exponentialWeightedMovingVariance: 0.15%
+            1 * 10**18 // ibtPrice: 1
         );
         IporTypes.AmmBalancesMemory memory accruedBalance = IporTypes.AmmBalancesMemory(
             10000 * 1e18 + swapCollateral, // totalCollateralPayFixed
@@ -49,9 +47,7 @@ contract AmmTreasurySpreadPayFixedTest is Test, TestCommons {
         uint256 openingFee = 20 * 1e18;
         IporTypes.AccruedIpor memory accruedIpor = IporTypes.AccruedIpor(
             2 * 10**16, // indexValue: 2%
-            1 * 10**18, // ibtPrice: 1
-            1 * 10**16, // exponentialMovingAverage: 1%
-            15 * 10**15 // exponentialWeightedMovingVariance: 0.15%
+            1 * 10**18 // ibtPrice: 1
         );
         IporTypes.AmmBalancesMemory memory accruedBalance = IporTypes.AmmBalancesMemory(
             10000 * 1e18 + swapCollateral, // totalCollateralPayFixed

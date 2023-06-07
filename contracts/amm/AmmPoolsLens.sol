@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/AmmLib.sol";
@@ -33,43 +33,45 @@ contract AmmPoolsLens is IAmmPoolsLens {
     address internal immutable _iporOracle;
 
     constructor(
-        PoolConfiguration memory usdtPoolCfg,
-        PoolConfiguration memory usdcPoolCfg,
-        PoolConfiguration memory daiPoolCfg,
+        AmmPoolsLensPoolConfiguration memory usdtPoolCfg,
+        AmmPoolsLensPoolConfiguration memory usdcPoolCfg,
+        AmmPoolsLensPoolConfiguration memory daiPoolCfg,
         address iporOracle
     ) {
-        require(usdtPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool asset"));
-        require(usdtPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ipToken"));
-        require(usdtPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammStorage"));
+        require(usdtPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool asset address cannot be 0"));
+        require(usdtPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ipToken address cannot be 0"));
+        require(usdtPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammStorage address cannot be 0"));
         require(
             usdtPoolCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammTreasury")
+            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammTreasury address cannot be 0")
         );
         require(
             usdtPoolCfg.assetManagement != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool assetManagement")
+            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool assetManagement address cannot be 0")
         );
 
-        require(usdcPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool asset"));
-        require(usdcPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ipToken"));
-        require(usdcPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammStorage"));
+        require(usdcPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool asset address cannot be 0"));
+        require(usdcPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ipToken address cannot be 0"));
+        require(usdcPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammStorage address cannot be 0"));
         require(
             usdcPoolCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammTreasury")
+            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammTreasury address cannot be 0")
         );
         require(
             usdcPoolCfg.assetManagement != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool assetManagement")
+            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool assetManagement address cannot be 0")
         );
 
-        require(daiPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool asset"));
-        require(daiPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ipToken"));
-        require(daiPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammStorage"));
-        require(daiPoolCfg.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammTreasury"));
+        require(daiPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool asset address cannot be 0"));
+        require(daiPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ipToken address cannot be 0"));
+        require(daiPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammStorage address cannot be 0"));
+        require(daiPoolCfg.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammTreasury address cannot be 0"));
         require(
             daiPoolCfg.assetManagement != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " DAI pool assetManagement")
+            string.concat(IporErrors.WRONG_ADDRESS, " DAI pool assetManagement address cannot be 0")
         );
+
+        require(iporOracle != address(0), string.concat(IporErrors.WRONG_ADDRESS, " iporOracle address cannot be 0"));
 
         _usdt = usdtPoolCfg.asset;
         _usdtDecimals = usdtPoolCfg.decimals;
@@ -95,7 +97,7 @@ contract AmmPoolsLens is IAmmPoolsLens {
         _iporOracle = iporOracle;
     }
 
-    function getAmmPoolsLensConfiguration(address asset) external view override returns (PoolConfiguration memory) {
+    function getAmmPoolsLensConfiguration(address asset) external view override returns (AmmPoolsLensPoolConfiguration memory) {
         return _getPoolConfiguration(asset);
     }
 
@@ -108,12 +110,12 @@ contract AmmPoolsLens is IAmmPoolsLens {
     }
 
     function getLiquidityPoolAccountContribution(address asset, address account) external view returns (uint256) {
-        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+        AmmPoolsLensPoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
         return IAmmStorage(poolCfg.ammStorage).getLiquidityPoolAccountContribution(account);
     }
 
     function _getPoolCoreModel(address asset) internal view returns (AmmTypes.AmmPoolCoreModel memory) {
-        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+        AmmPoolsLensPoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         AmmTypes.AmmPoolCoreModel memory model;
 
@@ -128,10 +130,10 @@ contract AmmPoolsLens is IAmmPoolsLens {
         return model;
     }
 
-    function _getPoolConfiguration(address asset) internal view returns (PoolConfiguration memory) {
+    function _getPoolConfiguration(address asset) internal view returns (AmmPoolsLensPoolConfiguration memory) {
         if (asset == _usdt) {
             return
-                PoolConfiguration({
+                AmmPoolsLensPoolConfiguration({
                     asset: _usdt,
                     decimals: _usdtDecimals,
                     ipToken: _usdtIpToken,
@@ -141,7 +143,7 @@ contract AmmPoolsLens is IAmmPoolsLens {
                 });
         } else if (asset == _usdc) {
             return
-                PoolConfiguration({
+                AmmPoolsLensPoolConfiguration({
                     asset: _usdc,
                     decimals: _usdcDecimals,
                     ipToken: _usdcIpToken,
@@ -151,7 +153,7 @@ contract AmmPoolsLens is IAmmPoolsLens {
                 });
         } else if (asset == _dai) {
             return
-                PoolConfiguration({
+                AmmPoolsLensPoolConfiguration({
                     asset: _dai,
                     decimals: _daiDecimals,
                     ipToken: _daiIpToken,
@@ -160,7 +162,7 @@ contract AmmPoolsLens is IAmmPoolsLens {
                     assetManagement: _daiAssetManagement
                 });
         } else {
-            revert("AmmPoolsLens: asset not supported");
+            revert(IporErrors.ASSET_NOT_SUPPORTED);
         }
     }
 }

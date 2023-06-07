@@ -11,7 +11,7 @@ on:
       node-version:
         description: "NodeJS version"
         type: string
-        default: 16.15.0
+        default: 18.15.0
         required: false
 
       test-enabled:
@@ -70,7 +70,7 @@ jobs:
         # from tag: v1.0.9-ipor-v1
         uses: IPOR-Labs/foundry-toolchain@f3a099a91dbfb2e14eeb082c7e2f12df0a18bfe0
         with:
-          version: nightly-5182f4309e07abb380f99aaa37b52b3bbba1c80a
+          version: nightly-cae66aa8dd246b6707f682a1481ea494b8240526
 
       - name: Run Forge build
         run: |

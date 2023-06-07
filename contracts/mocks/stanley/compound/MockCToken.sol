@@ -1,10 +1,11 @@
 //solhint-disable no-empty-blocks
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 // interfaces
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/Constants.sol";
 import "../../../libraries/math/IporMath.sol";
 import "../../../vault/interfaces/compound/CErc20Mock.sol";
@@ -30,6 +31,9 @@ contract MockCToken is ERC20, CErc20Mock {
         string memory name,
         string memory code
     ) public ERC20(name, code) {
+        require(asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " asset address cannot be 0"));
+        require(interestRateModelInput != address(0), string.concat(IporErrors.WRONG_ADDRESS, " interest rate model address cannot be 0"));
+
         _asset = asset;
         _interestRateModel = interestRateModelInput;
         _detiomal = decimal;

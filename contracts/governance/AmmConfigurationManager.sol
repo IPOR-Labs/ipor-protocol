@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../libraries/Constants.sol";
 import "../libraries/errors/IporErrors.sol";
@@ -11,21 +11,18 @@ library AmmConfigurationManager {
     /// @param asset address of the asset (pool)
     /// @param liquidator address of the new liquidator
     event AmmSwapsLiquidatorChanged(
-        address indexed changedBy,
         address indexed asset,
         address indexed liquidator,
         bool status
     );
 
     event AmmAppointedToRebalanceChanged(
-        address indexed changedBy,
         address indexed asset,
         address indexed account,
         bool status
     );
 
     event AmmPoolsParamsChanged(
-        address indexed changedBy,
         address indexed asset,
         uint32 maxLiquidityPoolBalance,
         uint32 maxLpAccountContribution,
@@ -42,7 +39,7 @@ library AmmConfigurationManager {
             .value;
         swapLiquidators[asset][account] = true;
 
-        emit AmmSwapsLiquidatorChanged(msg.sender, asset, account, true);
+        emit AmmSwapsLiquidatorChanged(asset, account, true);
     }
 
     function removeSwapLiquidator(address asset, address account) internal {
@@ -54,7 +51,7 @@ library AmmConfigurationManager {
             .value;
         swapLiquidators[asset][account] = false;
 
-        emit AmmSwapsLiquidatorChanged(msg.sender, asset, account, false);
+        emit AmmSwapsLiquidatorChanged(asset, account, false);
     }
 
     function isSwapLiquidator(address asset, address account) internal view returns (bool) {
@@ -73,7 +70,7 @@ library AmmConfigurationManager {
             .value;
         appointedToRebalance[asset][account] = true;
 
-        emit AmmAppointedToRebalanceChanged(msg.sender, asset, account, true);
+        emit AmmAppointedToRebalanceChanged(asset, account, true);
     }
 
     function removeAppointedToRebalanceInAmm(address asset, address account) internal {
@@ -85,7 +82,7 @@ library AmmConfigurationManager {
             .value;
         appointedToRebalance[asset][account] = false;
 
-        emit AmmAppointedToRebalanceChanged(msg.sender, asset, account, false);
+        emit AmmAppointedToRebalanceChanged(asset, account, false);
     }
 
     function isAppointedToRebalanceInAmm(address asset, address account) internal view returns (bool) {
@@ -114,7 +111,6 @@ library AmmConfigurationManager {
         });
 
         emit AmmPoolsParamsChanged(
-            msg.sender,
             asset,
             newMaxLiquidityPoolBalance,
             newMaxLpAccountContribution,

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
@@ -27,7 +27,7 @@ contract AmmGovernanceServiceTest is TestCommons {
 
         // when
         vm.prank(_admin);
-        StorageLib.AmmPoolsParamsValue memory ammParams = _iporProtocol.ammGovernanceService.getAmmPoolsParams(
+        StorageLib.AmmPoolsParamsValue memory ammParams = _iporProtocol.ammGovernanceLens.getAmmPoolsParams(
             address(_iporProtocol.asset)
         );
 
@@ -51,7 +51,7 @@ contract AmmGovernanceServiceTest is TestCommons {
 
         // then
         vm.stopPrank();
-        StorageLib.AmmPoolsParamsValue memory ammParams = _iporProtocol.ammGovernanceService.getAmmPoolsParams(
+        StorageLib.AmmPoolsParamsValue memory ammParams = _iporProtocol.ammGovernanceLens.getAmmPoolsParams(
             address(_iporProtocol.asset)
         );
         assertEq(ammParams.ammTreasuryAndAssetManagementRatio, 5000);

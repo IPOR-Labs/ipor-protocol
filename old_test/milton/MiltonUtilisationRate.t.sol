@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
@@ -8,7 +8,7 @@ import "../utils/TestConstants.sol";
 
 import "contracts/amm/AmmStorage.sol";
 
-contract AmmTreasuryUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
+contract AmmTreasuryCollateralRatioTest is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
     BuilderUtils.IporProtocol internal _iporProtocol;
 
@@ -25,7 +25,7 @@ contract AmmTreasuryUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         _cfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
-    function testShouldOpenPayFixedPositionWhenLiquidityPoolUtilizationPerLegIsNotExceededAndDefaultUtilization()
+    function testShouldOpenPayFixedPositionWhenLiquidityPoolCollateralRatioPerLegIsNotExceededAndDefaultCollateralRatio()
         public
     {
         // given
@@ -54,7 +54,7 @@ contract AmmTreasuryUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         );
     }
 
-    function testShouldOpenReceiveFixedPositionWhenLiquidityPoolUtilizationPerLegIsNotExceededAndDefaultUtilization()
+    function testShouldOpenReceiveFixedPositionWhenLiquidityPoolCollateralRatioPerLegIsNotExceededAndDefaultCollateralRatio()
         public
     {
         // given
@@ -83,7 +83,7 @@ contract AmmTreasuryUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         );
     }
 
-    function testShouldOpenPayFixedPositionWhenLiquidityPoolUtilizationPerLegIsNotExceededAndCustomUtilization()
+    function testShouldOpenPayFixedPositionWhenLiquidityPoolCollateralRatioPerLegIsNotExceededAndCustomCollateralRatio()
         public
     {
         // given
@@ -111,7 +111,7 @@ contract AmmTreasuryUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         );
     }
 
-    function testShouldOpenReceiveFixedPositionWhenLiquidityPoolUtilizationPerLegIsNotExceededAndCustomUtilization()
+    function testShouldOpenReceiveFixedPositionWhenLiquidityPoolCollateralRatioPerLegIsNotExceededAndCustomCollateralRatio()
         public
     {
         // given
@@ -140,7 +140,7 @@ contract AmmTreasuryUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         );
     }
 
-    function testShouldNotOpenPayFixedPositionWhenLiquidityPoolUtilizationPerLegIsExceededAndDefaultUtilization()
+    function testShouldNotOpenPayFixedPositionWhenLiquidityPoolCollateralRatioPerLegIsExceededAndDefaultCollateralRatio()
         public
     {
         // given
@@ -168,7 +168,7 @@ contract AmmTreasuryUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         );
     }
 
-    function testShouldNotOpenPayFixedPositionWhenLiquidityPoolUtilizationPerLegIsExceededAndCustomUtilization()
+    function testShouldNotOpenPayFixedPositionWhenLiquidityPoolCollateralRatioPerLegIsExceededAndCustomCollateralRatio()
         public
     {
         // given
@@ -199,7 +199,7 @@ contract AmmTreasuryUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         );
     }
 
-    function testShouldNotOpenReceiveFixedPositionWhenLiquidityPoolUtilizationPerLegIsExceededAndDefaultUtilization()
+    function testShouldNotOpenReceiveFixedPositionWhenLiquidityPoolCollateralRatioPerLegIsExceededAndDefaultCollateralRatio()
         public
     {
         // given
@@ -227,7 +227,7 @@ contract AmmTreasuryUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         );
     }
 
-    function testShouldNotOpenReceiveFixedPositionWhenLiquidityPoolUtilizationPerLegIsExceededAndCustomUtilization()
+    function testShouldNotOpenReceiveFixedPositionWhenLiquidityPoolCollateralRatioPerLegIsExceededAndCustomCollateralRatio()
         public
     {
         // given

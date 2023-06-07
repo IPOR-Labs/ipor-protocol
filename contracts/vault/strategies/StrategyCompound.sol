@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
@@ -170,9 +170,8 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
 
     function setBlocksPerDay(uint256 newBlocksPerDay) external whenNotPaused onlyOwner {
         require(newBlocksPerDay > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-        uint256 oldBlocksPerDay = _blocksPerDay;
         _blocksPerDay = newBlocksPerDay;
-        emit BlocksPerDayChanged(_msgSender(), oldBlocksPerDay, newBlocksPerDay);
+        emit BlocksPerDayChanged(newBlocksPerDay);
     }
 }
 

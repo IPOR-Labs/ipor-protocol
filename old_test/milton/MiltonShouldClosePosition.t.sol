@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
@@ -52,7 +52,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_161_18DEC);
@@ -109,7 +108,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualAmmTreasuryBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -132,7 +131,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_161_18DEC);
@@ -204,7 +202,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(_userThree));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -230,7 +228,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
     function testShouldClosePositionUSDTWhenPayFixedAmmTreasuryEarnedAndUserLostMoreThanCollateralBeforeMaturity6DecimalsAndOwner()
         public
     {
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.TC_400_EMA_18DEC_64UINT);
@@ -298,7 +295,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualAmmTreasuryBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -318,7 +315,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
     function testShouldClosePositionUSDTWhenPayFixedAmmTreasuryEarnedAndUserLostMoreThanCollateralBeforeMaturity6DecimalsAndNotOwner()
         public
     {
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_400_18DEC);
@@ -391,7 +387,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(_userThree));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -414,7 +410,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_121_18DEC);
@@ -476,7 +471,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualAmmTreasuryBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -499,7 +494,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_10_18DEC);
@@ -563,7 +557,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualAmmTreasuryBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -584,7 +578,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
     function testShouldClosePositionDAIWhenPayFixedAmmTreasuryEarnedAndUserLostLessThanCollateralAfterMaturity18DecimalsAndOwner()
         public
     {
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_10_18DEC);
@@ -645,7 +638,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualAmmTreasuryBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -668,7 +661,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_10_18DEC);
@@ -739,7 +731,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(_userThree));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -762,7 +754,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_1_18DEC);
@@ -819,7 +810,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualAmmTreasuryBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -840,7 +831,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_1_18DEC);
@@ -900,7 +890,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualAmmTreasuryBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -938,7 +928,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -1000,7 +989,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualAmmTreasuryBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -1022,7 +1011,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_3_18DEC);
@@ -1084,7 +1072,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualAmmTreasuryBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -1122,7 +1110,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_1_18DEC);
@@ -1195,7 +1182,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(_userThree));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -1223,7 +1210,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_1_18DEC);
@@ -1285,7 +1271,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualAmmTreasuryBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -1307,7 +1293,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -1371,7 +1356,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualAmmTreasuryBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -1393,7 +1378,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -1466,7 +1450,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(_userThree));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -1488,7 +1472,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_1_18DEC);
@@ -1559,7 +1542,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(_userThree));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -1581,7 +1564,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_161_18DEC);
@@ -1651,7 +1633,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(_userThree));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -1673,7 +1655,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_10_18DEC);
@@ -1744,7 +1725,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(_userThree));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -1768,7 +1749,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_159_18DEC);
@@ -1829,7 +1809,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualAmmTreasuryBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -1852,7 +1832,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_1_18DEC);
@@ -1916,7 +1895,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualAmmTreasuryBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -1937,7 +1916,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -1999,7 +1977,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualAmmTreasuryBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -2020,7 +1998,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -2083,7 +2060,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualAmmTreasuryBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -2104,7 +2081,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_159_18DEC);
@@ -2167,7 +2143,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualAmmTreasuryBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -2189,7 +2165,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_10_18DEC);
@@ -2251,7 +2226,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualAmmTreasuryBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -2272,7 +2247,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -2335,7 +2309,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualAmmTreasuryBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -2356,7 +2330,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_3_18DEC);
@@ -2418,7 +2391,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualAmmTreasuryBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -2439,7 +2412,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_159_18DEC);
@@ -2510,7 +2482,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(_userThree));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -2532,7 +2504,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -2604,7 +2575,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(_userThree));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -2626,7 +2597,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_159_18DEC);
@@ -2699,7 +2669,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(_userThree));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -2722,7 +2692,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_10_18DEC);
@@ -2796,7 +2765,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(_userThree));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -2818,7 +2787,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -2892,7 +2860,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(_userThree));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -2914,7 +2882,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -2987,7 +2954,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(_userThree));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -3044,7 +3011,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
 
     function testShouldCloseDAISinglePayFixedPositionUsingFunctionWithArray18DecimalsAndOwner() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -3089,7 +3055,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
 
     function testShouldCloseDAITwoPayFixedPositionsUsingFunctionWithArray18DecimalsAndOwner() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -3129,7 +3094,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
 
     function testShouldCloseDAISingleReceiveFixedPositionUsingFunctionWithArray18DecimalsAndOwner() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -3166,7 +3130,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
 
     function testShouldCloseDAITwoReceiveFixedPositionsUsingFunctionWithArray18DecimalsAndOwner() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -3193,7 +3156,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
 
     function testShouldClosePositionByOwnerWhenPayFixedAndSingleIdWithEmergencyFunctionDAIAndContractIsPaused() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE7;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -3228,7 +3190,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
 
     function testShouldClosePositionByOwnerWhenPayFixedAndMultipleIDsWithEmergencyFunctionAndContractIsPaused() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE7;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -3269,7 +3230,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE7;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -3304,7 +3264,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
 
     function testShouldClosePositionByOwnerWhenReceiveFixedAndMultipleIDsWithEmergencyFunction() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE7;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -3375,7 +3334,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         vm.prank(_userTwo);
         _iporProtocol.ammTreasury.itfCloseSwapPayFixed(1, block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
         // then
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -3421,7 +3380,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         _iporProtocol.ammTreasury.itfCloseSwapPayFixed(2, block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
 
         // then
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -3434,7 +3393,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -3508,7 +3466,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         uint256 actualSumOfBalances = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)) +
             _iporProtocol.asset.balanceOf(_userTwo);
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -3542,7 +3500,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
 
     function testShouldClosePositionDAIReceiveFixedWithEmergencyFunctionMultipleIDsWhenContractIsPaused() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE7;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -3581,7 +3538,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
 
     function testShouldTransferAllLiquidationDepositsInASingleTransferToLiquidatorWhenPayFixed() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -3631,7 +3587,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
 
     function testShouldTransferAllLiquidationDepositsInASingleTransferToLiquidatorWhenReceiveFixed() public {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -3680,7 +3635,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
 
     function testShouldCloseTwoPayFixedPositionsUsingFunctionWithArrayWhenOneOfThemIsNotValid() public {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -3720,7 +3674,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
 
     function testShouldCloseTwoReceiveFixedPositionsUsingFunctionWithArrayWhenOneOfThemIsNotValid() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -3758,7 +3711,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
 
     function testShouldClose10PayFixedAnd10ReceiveFixedPositionsInOneTransactionCaseOne() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -3806,18 +3758,17 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
 
         // then
         for (uint256 i = 0; i < volumePayFixed; ++i) {
-            IporTypes.IporSwapMemory memory payFixedSwap = _iporProtocol.ammStorage.getSwapPayFixed(i + 1);
+            AmmTypes.Swap memory payFixedSwap = _iporProtocol.ammStorage.getSwapPayFixed(i + 1);
             assertEq(payFixedSwap.state, TestConstants.ZERO);
         }
         for (uint256 i = volumePayFixed; i < volumePayFixed + volumeReceiveFixed; ++i) {
-            IporTypes.IporSwapMemory memory receiveFixedSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(i + 1);
+            AmmTypes.Swap memory receiveFixedSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(i + 1);
             assertEq(receiveFixedSwap.state, TestConstants.ZERO);
         }
     }
 
     function testShouldClose5PayFixedAnd5ReceiveFixedPositionsInOneTransactionCase2SomeAreAlreadyClosed() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -3874,11 +3825,11 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
 
         // then
         for (uint256 i = 0; i < volumePayFixed; ++i) {
-            IporTypes.IporSwapMemory memory payFixedSwap = _iporProtocol.ammStorage.getSwapPayFixed(i + 1);
+            AmmTypes.Swap memory payFixedSwap = _iporProtocol.ammStorage.getSwapPayFixed(i + 1);
             assertEq(payFixedSwap.state, TestConstants.ZERO);
         }
         for (uint256 i = volumePayFixed; i < volumePayFixed + volumeReceiveFixed; ++i) {
-            IporTypes.IporSwapMemory memory receiveFixedSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(i + 1);
+            AmmTypes.Swap memory receiveFixedSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(i + 1);
             assertEq(receiveFixedSwap.state, TestConstants.ZERO);
         }
         assertTrue(closedPayFixedSwaps[0].closed);
@@ -3895,7 +3846,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
 
     function testShouldClose2PayFixedAnd2ReceiveFixedPositionsInOneTransactionCase4MixedLiquidators() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -3960,10 +3910,10 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         // then
         uint256 actualBalanceUserTwo = _iporProtocol.asset.balanceOf(address(_userTwo));
         uint256 actualBalanceUserThree = _iporProtocol.asset.balanceOf(address(_userThree));
-        IporTypes.IporSwapMemory memory payFixedSwapOne = _iporProtocol.ammStorage.getSwapPayFixed(1);
-        IporTypes.IporSwapMemory memory receiveFixedSwapTwo = _iporProtocol.ammStorage.getSwapReceiveFixed(2);
-        IporTypes.IporSwapMemory memory payFixedSwapThree = _iporProtocol.ammStorage.getSwapPayFixed(3);
-        IporTypes.IporSwapMemory memory receiveFixedSwapFour = _iporProtocol.ammStorage.getSwapReceiveFixed(4);
+        AmmTypes.Swap memory payFixedSwapOne = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory receiveFixedSwapTwo = _iporProtocol.ammStorage.getSwapReceiveFixed(2);
+        AmmTypes.Swap memory payFixedSwapThree = _iporProtocol.ammStorage.getSwapPayFixed(3);
+        AmmTypes.Swap memory receiveFixedSwapFour = _iporProtocol.ammStorage.getSwapReceiveFixed(4);
         assertEq(payFixedSwapOne.state, TestConstants.ZERO);
         assertEq(receiveFixedSwapTwo.state, TestConstants.ZERO);
         assertEq(payFixedSwapThree.state, TestConstants.ZERO);
@@ -3976,7 +3926,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -4043,7 +3992,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -4098,7 +4046,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -4152,7 +4099,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
 
     function testShouldClose10PayFixedAnd10ReceiveFixedPositionsInOneTransactionWhenVerifyBalances() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -4217,7 +4163,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -4291,7 +4236,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -4367,7 +4311,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -4444,7 +4387,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
 
     function testShouldCommitTransactionEvenWhenListsForClosingSwapsAreEmpty() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -4475,7 +4417,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
 
     function testShouldClosePositionDAIWhenAmountExceedsBalanceAmmTreasuryOnDAIToken() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../../../TestCommons.sol";
 import {DataUtils} from "../../../utils/DataUtils.sol";
@@ -30,13 +30,13 @@ contract AaveStrategyTest is TestCommons, DataUtils {
     MockAaveIncentivesController internal _mockAaveIncentivesController;
     StrategyAave internal _strategyAaveDai;
 
-    event AssetManagementChanged(address changedBy, address oldAssetManagement, address newAssetManagement);
+    event AssetManagementChanged(address newAssetManagement);
 
     event DoBeforeClaim(address indexed executedBy, address[] shareTokens);
 
     event DoClaim(address indexed claimedBy, address indexed shareToken, address indexed treasury, uint256 amount);
 
-    event StkAaveChanged(address changedBy, address oldStkAave, address newStkAave);
+    event StkAaveChanged(address newStkAave);
 
     function setUp() public {
         vm.warp(1000 * 24 * 60 * 60);
@@ -84,7 +84,7 @@ contract AaveStrategyTest is TestCommons, DataUtils {
         address oldAssetManagementAddress = _strategyAaveDai.getAssetManagement();
         // when
         vm.expectEmit(true, true, true, true);
-        emit AssetManagementChanged(_admin, oldAssetManagementAddress, newAssetManagementAddress);
+        emit AssetManagementChanged(newAssetManagementAddress);
         _strategyAaveDai.setAssetManagement(newAssetManagementAddress);
     }
 
@@ -133,7 +133,7 @@ contract AaveStrategyTest is TestCommons, DataUtils {
     function testShouldBeAbleToSetStkAaveAddress() public {
         // when
         vm.expectEmit(true, true, true, true);
-        emit StkAaveChanged(_admin, address(_mockStakedAave), address(_admin));
+        emit StkAaveChanged(address(_admin));
         _strategyAaveDai.setStkAave(address(_admin));
     }
 }

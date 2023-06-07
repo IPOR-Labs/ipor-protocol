@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 import "contracts/interfaces/types/AmmFacadeTypes.sol";
@@ -71,7 +71,6 @@ contract AmmTreasuryFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils 
 
     function testShouldListConfigurationUsdtUsdcDai() public {
         //given
-        _ammCfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _ammCfg.iporRiskManagementOracleInitialParamsTestCase = BuilderUtils
             .IporRiskManagementOracleInitialParamsTestCase
             .CASE6;
@@ -122,9 +121,9 @@ contract AmmTreasuryFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils 
             );
             assertEq(1 * TestConstants.D16_INT, assetConfigurations[i].spreadPayFixed);
             assertEq(1 * TestConstants.D16_INT, assetConfigurations[i].spreadReceiveFixed);
-            assertEq(8 * TestConstants.D17, assetConfigurations[i].maxLpUtilizationRate);
-            assertEq(48 * TestConstants.D16, assetConfigurations[i].maxLpUtilizationRatePayFixed);
-            assertEq(48 * TestConstants.D16, assetConfigurations[i].maxLpUtilizationRateReceiveFixed);
+            assertEq(8 * TestConstants.D17, assetConfigurations[i].maxLpCollateralRatio);
+            assertEq(48 * TestConstants.D16, assetConfigurations[i].maxLpCollateralRatioPayFixed);
+            assertEq(48 * TestConstants.D16, assetConfigurations[i].maxLpCollateralRatioReceiveFixed);
         }
     }
 

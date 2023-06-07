@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../interfaces/types/AmmTypes.sol";
 
 interface IAmmPoolsService {
-    struct PoolConfiguration {
+    struct AmmPoolsServicePoolConfiguration {
         address asset;
         uint256 decimals;
         address ipToken;
@@ -12,7 +12,7 @@ interface IAmmPoolsService {
         address ammTreasury;
         address assetManagement;
         uint256 redeemFeeRate;
-        uint256 redeemLpMaxUtilizationRate;
+        uint256 redeemLpMaxCollateralRatio;
     }
 
     /// @notice Emitted when `from` account provides liquidity (ERC20 token supported by IPOR Protocol) to AmmTreasury Liquidity Pool
@@ -59,28 +59,28 @@ interface IAmmPoolsService {
         uint256 redeemAmount
     );
 
-    function getAmmPoolServiceConfiguration(address asset) external view returns (PoolConfiguration memory);
+    function getAmmPoolServiceConfiguration(address asset) external view returns (AmmPoolsServicePoolConfiguration memory);
 
     /// @notice Function invoked to provide asset to Liquidity Pool in amount `assetValue`
     /// @dev Emits {ProvideLiquidity} event and transfers ERC20 tokens from sender to AmmTreasury,
     /// emits {Transfer} event from ERC20 asset, emits {Mint} event from ipToken.
     /// Transfers minted ipTokens to the sender. Amount of transferred ipTokens is based on current ipToken exchange rate
     /// @param assetAmount Amount of ERC20 tokens which are transferred from sender to AmmTreasury. Represented in decimals specific for asset.
-    function provideLiquidityUsdt(address onBehalfOf, uint256 assetAmount) external;
+    function provideLiquidityUsdt(address beneficiary, uint256 assetAmount) external;
 
-    function provideLiquidityUsdc(address onBehalfOf, uint256 assetAmount) external;
+    function provideLiquidityUsdc(address beneficiary, uint256 assetAmount) external;
 
-    function provideLiquidityDai(address onBehalfOf, uint256 assetAmount) external;
+    function provideLiquidityDai(address beneficiary, uint256 assetAmount) external;
 
     /// @notice Redeems `ipTokenAmount` IpTokens for underlying asset
     /// @dev Emits {Redeem} event, emits {Transfer} event from ERC20 asset, emits {Burn} event from ipToken.
     /// Transfers asser ERC20 tokens from AmmTreasury to sender based on current exchange rate.
     /// @param ipTokenAmount redeem amount, represented in 18 decimals.
-    function redeemFromAmmPoolUsdt(address onBehalfOf, uint256 ipTokenAmount) external;
+    function redeemFromAmmPoolUsdt(address beneficiary, uint256 ipTokenAmount) external;
 
-    function redeemFromAmmPoolUsdc(address onBehalfOf, uint256 ipTokenAmount) external;
+    function redeemFromAmmPoolUsdc(address beneficiary, uint256 ipTokenAmount) external;
 
-    function redeemFromAmmPoolDai(address onBehalfOf, uint256 ipTokenAmount) external;
+    function redeemFromAmmPoolDai(address beneficiary, uint256 ipTokenAmount) external;
 
     /// @notice Rebalances ERC20 balance between AmmTreasury and AssetManagement, based on configuration
     /// `_AMM_TREASURY_ASSET_MANAGEMENT_BALANCE_RATIO` part of AmmTreasury balance is transferred to AssetManagement or vice versa.

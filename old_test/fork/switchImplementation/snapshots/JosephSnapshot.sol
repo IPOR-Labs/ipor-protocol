@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "forge-std/console2.sol";
 import "forge-std/Script.sol";
@@ -19,7 +19,7 @@ contract JosephSnapshot is Script, Test {
     address public josephOwner;
     uint256 public josephVersion;
     uint256 public josephRedeemFeeRate;
-    uint256 public josephRedeemLpMaxUtilizationRate;
+    uint256 public josephRedeemLpMaxCollateralRatio;
     uint256 public josephAmmTreasuryAssetManagementBalanceRatio;
     uint256 public josephMaxLiquidityPoolBalance;
     uint256 public josephMaxLpAccountContribution;
@@ -43,7 +43,7 @@ contract JosephSnapshot is Script, Test {
         josephOwner = joseph.owner();
         josephVersion = joseph.getVersion();
         josephRedeemFeeRate = joseph.getRedeemFeeRate();
-        josephRedeemLpMaxUtilizationRate = joseph.getRedeemLpMaxUtilizationRate();
+        josephRedeemLpMaxCollateralRatio = joseph.getRedeemLpMaxCollateralRatio();
         josephAmmTreasuryAssetManagementBalanceRatio = joseph.getAmmTreasuryAssetManagementBalanceRatio();
         josephMaxLiquidityPoolBalance = joseph.getMaxLiquidityPoolBalance();
         josephMaxLpAccountContribution = joseph.getMaxLpAccountContribution();
@@ -68,7 +68,7 @@ contract JosephSnapshot is Script, Test {
 
         vm.serializeUint(josephJson, "josephVersion", josephVersion);
         vm.serializeUint(josephJson, "josephRedeemFeeRate", josephRedeemFeeRate);
-        vm.serializeUint(josephJson, "josephRedeemLpMaxUtilizationRate", josephRedeemLpMaxUtilizationRate);
+        vm.serializeUint(josephJson, "josephRedeemLpMaxCollateralRatio", josephRedeemLpMaxCollateralRatio);
         vm.serializeUint(josephJson, "josephAmmTreasuryAssetManagementBalanceRatio", josephAmmTreasuryAssetManagementBalanceRatio);
         vm.serializeUint(josephJson, "josephMaxLiquidityPoolBalance", josephMaxLiquidityPoolBalance);
         vm.serializeUint(josephJson, "josephMaxLpAccountContribution", josephMaxLpAccountContribution);
@@ -93,8 +93,8 @@ contract JosephSnapshot is Script, Test {
         assertEq(josephSnapshot1.josephOwner(), josephSnapshot2.josephOwner());
         assertEq(josephSnapshot1.josephRedeemFeeRate(), josephSnapshot2.josephRedeemFeeRate());
         assertEq(
-            josephSnapshot1.josephRedeemLpMaxUtilizationRate(),
-            josephSnapshot2.josephRedeemLpMaxUtilizationRate()
+            josephSnapshot1.josephRedeemLpMaxCollateralRatio(),
+            josephSnapshot2.josephRedeemLpMaxCollateralRatio()
         );
         assertEq(josephSnapshot1.josephAmmTreasuryAssetManagementBalanceRatio(), josephSnapshot2.josephAmmTreasuryAssetManagementBalanceRatio());
         assertEq(josephSnapshot1.josephMaxLiquidityPoolBalance(), josephSnapshot2.josephMaxLiquidityPoolBalance());

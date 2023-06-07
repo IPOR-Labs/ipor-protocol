@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -38,9 +38,8 @@ contract IvToken is IporOwnable, IIvToken, ERC20 {
 
     function setAssetManagement(address newAssetManagement) external override onlyOwner {
         require(newAssetManagement != address(0), IporErrors.WRONG_ADDRESS);
-        address oldAssetManagement = _assetManagement;
         _assetManagement = newAssetManagement;
-        emit AssetManagementChanged(_msgSender(), oldAssetManagement, newAssetManagement);
+        emit AssetManagementChanged(newAssetManagement);
     }
 
     function mint(address account, uint256 amount) external override onlyAssetManagement {

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
@@ -33,7 +33,6 @@ contract AmmTreasuryShouldNotClosePositionTest is TestCommons, DataUtils, SwapUt
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -80,7 +79,6 @@ contract AmmTreasuryShouldNotClosePositionTest is TestCommons, DataUtils, SwapUt
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -127,7 +125,6 @@ contract AmmTreasuryShouldNotClosePositionTest is TestCommons, DataUtils, SwapUt
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_121_18DEC);
@@ -174,7 +171,6 @@ contract AmmTreasuryShouldNotClosePositionTest is TestCommons, DataUtils, SwapUt
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_119_18DEC);
@@ -221,7 +217,6 @@ contract AmmTreasuryShouldNotClosePositionTest is TestCommons, DataUtils, SwapUt
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_119_18DEC);
@@ -268,7 +263,6 @@ contract AmmTreasuryShouldNotClosePositionTest is TestCommons, DataUtils, SwapUt
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -448,7 +442,6 @@ contract AmmTreasuryShouldNotClosePositionTest is TestCommons, DataUtils, SwapUt
 
     function testShouldNotClosePositionPayFixedSingleIdFunctionDAIWhenContractIsPaused() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -486,7 +479,6 @@ contract AmmTreasuryShouldNotClosePositionTest is TestCommons, DataUtils, SwapUt
 
     function testShouldNotClosePositionsPayFixedMultipleIdsFunctionDAIWhenContractIsPaused() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -532,7 +524,6 @@ contract AmmTreasuryShouldNotClosePositionTest is TestCommons, DataUtils, SwapUt
 
     function testShouldNotClosePositionReceiveFixedSingleIdFunctionDAIWhenContractIsPaused() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -570,7 +561,6 @@ contract AmmTreasuryShouldNotClosePositionTest is TestCommons, DataUtils, SwapUt
 
     function testShouldNotClosePositionsReceiveFixedMultipleIdsFunctionDAIWhenContractIsPaused() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -616,7 +606,6 @@ contract AmmTreasuryShouldNotClosePositionTest is TestCommons, DataUtils, SwapUt
 
     function testShouldNotClosePositionsPayFixedMultipleIdsWithEmergencyFunctionWhenContractIsPaused() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -659,7 +648,6 @@ contract AmmTreasuryShouldNotClosePositionTest is TestCommons, DataUtils, SwapUt
 
     function testShouldNotClosePositionPayFixedSingleIdWithEmergencyFunctionWhenContractIsPaused() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -696,7 +684,6 @@ contract AmmTreasuryShouldNotClosePositionTest is TestCommons, DataUtils, SwapUt
 
     function testShouldNotClosePositionsReceiveFixedMultipleIdsWithEmergencyFunctionWhenContractIsPaused() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -738,7 +725,6 @@ contract AmmTreasuryShouldNotClosePositionTest is TestCommons, DataUtils, SwapUt
 
     function testShouldNotClosePositionReceiveFixedSingleIdWithEmergencyFunctionWhenContractIsPaused() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -778,7 +764,6 @@ contract AmmTreasuryShouldNotClosePositionTest is TestCommons, DataUtils, SwapUt
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -819,7 +804,6 @@ contract AmmTreasuryShouldNotClosePositionTest is TestCommons, DataUtils, SwapUt
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -855,7 +839,6 @@ contract AmmTreasuryShouldNotClosePositionTest is TestCommons, DataUtils, SwapUt
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -902,7 +885,6 @@ contract AmmTreasuryShouldNotClosePositionTest is TestCommons, DataUtils, SwapUt
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -936,7 +918,6 @@ contract AmmTreasuryShouldNotClosePositionTest is TestCommons, DataUtils, SwapUt
 
     function testShouldNotClosePositionDAIWhenERC20AmountExceedsAmmTreasuryBalanceOnDAIToken() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);

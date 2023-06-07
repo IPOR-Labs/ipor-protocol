@@ -1,8 +1,21 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 /// @title Struct used across various interfaces in IPOR Protocol.
 library IporTypes {
+    /// @notice enum describing Swap's state, ACTIVE - when the swap is opened, INACTIVE when it's closed
+    enum SwapState {
+        INACTIVE,
+        ACTIVE
+    }
+
+    /// @notice enum describing Swap's duration, 28 days, 60 days or 90 days
+    enum SwapTenor {
+        DAYS_28,
+        DAYS_60,
+        DAYS_90
+    }
+
     /// @notice The struct describing the IPOR and its params calculated for the time when it was most recently updated and the change that took place since the update.
     /// Namely, the interest that would be computed into IBT should the rebalance occur.
     struct AccruedIpor {
@@ -13,46 +26,6 @@ library IporTypes {
         /// https://ipor-labs.gitbook.io/ipor-labs/interest-rate-derivatives/ibt
         /// @dev value represented in 18 decimals
         uint256 ibtPrice;
-        /// @notice Exponential Moving Average
-        /// @dev value represented in 18 decimals
-        uint256 exponentialMovingAverage;
-        /// @notice Exponential Weighted Moving Variance
-        /// @dev value represented in 18 decimals
-        uint256 exponentialWeightedMovingVariance;
-    }
-
-    /// @notice Struct representing swap item, used for listing and in internal calculations
-    struct IporSwapMemory {
-        /// @notice Swap's unique ID
-        uint256 id;
-        /// @notice Swap's buyer
-        address buyer;
-        /// @notice Swap opening epoch timestamp
-        uint256 openTimestamp;
-        /// @notice Swap's duration
-        uint256 duration;
-        /// @notice Index position of this Swap in an array of swaps' identification associated to swap buyer
-        /// @dev Field used for gas optimization purposes, it allows for quick removal by id in the array.
-        /// During removal the last item in the array is switched with the one that just has been removed.
-        uint256 idsIndex;
-        /// @notice Swap's collateral
-        /// @dev value represented in 18 decimals
-        uint256 collateral;
-        /// @notice Swap's notional amount
-        /// @dev value represented in 18 decimals
-        uint256 notional;
-        /// @notice Swap's notional amount denominated in the Interest Bearing Token (IBT)
-        /// @dev value represented in 18 decimals
-        uint256 ibtQuantity;
-        /// @notice Fixed interest rate at which the position has been opened
-        /// @dev value represented in 18 decimals
-        uint256 fixedInterestRate;
-        /// @notice Liquidation deposit amount
-        /// @dev value represented in 18 decimals
-        uint256 liquidationDepositAmount;
-        /// @notice State of the swap
-        /// @dev 0 - INACTIVE, 1 - ACTIVE
-        uint256 state;
     }
 
     /// @notice Struct representing balances used internally for asset calculations
@@ -89,8 +62,8 @@ library IporTypes {
         uint256 swapNotional;
         /// @notice Maximum leverage
         uint256 maxLeverage;
-        /// @notice Maximum LP utilization per leg rate
-        uint256 maxLpUtilizationPerLegRate;
+        /// @notice Maximum LP Collateral Ratio per leg rate
+        uint256 maxLpCollateralRatioPerLegRate;
         /// @notice Base spread
         int256 baseSpread;
         /// @notice Swap's balance for Pay Fixed leg
@@ -105,5 +78,7 @@ library IporTypes {
         uint256 totalNotionalReceiveFixed;
         /// @notice Ipor index value at the time of swap creation
         uint256 indexValue;
+        // @notice cap for offered rate without demandSpread in 18 decimals
+        uint256 cap;
     }
 }

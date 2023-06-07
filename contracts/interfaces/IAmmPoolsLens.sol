@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "./types/IporTypes.sol";
 
@@ -12,7 +12,7 @@ interface IAmmPoolsLens {
     /// @param ammStorage The address of the AMM's storage contract.
     /// @param ammTreasury The address of the AMM's treasury contract.
     /// @param assetManagement The address of the asset management contract.
-    struct PoolConfiguration {
+    struct AmmPoolsLensPoolConfiguration {
         address asset;
         uint256 decimals;
         address ipToken;
@@ -24,7 +24,7 @@ interface IAmmPoolsLens {
     /// @notice Retrieves the configuration of a specific asset's pool.
     /// @param asset The address of the asset.
     /// @return PoolConfiguration The pool's configuration.
-    function getAmmPoolsLensConfiguration(address asset) external view returns (PoolConfiguration memory);
+    function getAmmPoolsLensConfiguration(address asset) external view returns (AmmPoolsLensPoolConfiguration memory);
 
     /// @notice Calculates the ipToken exchange rate.
     /// @dev The exchange rate is a ratio between the Liquidity Pool Balance and the ipToken's total supply.

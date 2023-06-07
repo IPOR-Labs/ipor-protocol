@@ -1,29 +1,21 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../interfaces/types/IporTypes.sol";
 import "../amm/libraries/IporSwapLogic.sol";
 
 contract MockIporSwapLogic {
     function calculateSwapAmount(
-        AmmTypes.SwapDuration duration,
+        IporTypes.SwapTenor tenor,
         uint256 totalAmount,
         uint256 leverage,
         uint256 liquidationDepositAmount,
         uint256 iporPublicationFeeAmount,
         uint256 openingFeeRate
-    )
-        public
-        pure
-        returns (
-            uint256 collateral,
-            uint256 notional,
-            uint256 openingFee
-        )
-    {
+    ) public view returns (uint256 collateral, uint256 notional, uint256 openingFee) {
         return
             IporSwapLogic.calculateSwapAmount(
-                duration,
+                tenor,
                 totalAmount,
                 leverage,
                 liquidationDepositAmount,
@@ -33,7 +25,7 @@ contract MockIporSwapLogic {
     }
 
     function calculateInterest(
-        IporTypes.IporSwapMemory memory swap,
+        AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) public pure returns (uint256 interestFixed, uint256 interestFloating) {
@@ -48,16 +40,12 @@ contract MockIporSwapLogic {
         return IporSwapLogic.calculateInterestFixed(notional, swapFixedInterestRate, swapPeriodInSeconds);
     }
 
-    function calculateInterestFloating(uint256 ibtQuantity, uint256 ibtCurrentPrice)
-        public
-        pure
-        returns (uint256)
-    {
+    function calculateInterestFloating(uint256 ibtQuantity, uint256 ibtCurrentPrice) public pure returns (uint256) {
         return IporSwapLogic.calculateInterestFloating(ibtQuantity, ibtCurrentPrice);
     }
 
     function calculatePayoffPayFixed(
-        IporTypes.IporSwapMemory memory swap,
+        AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) public pure returns (int256 swapValue) {
@@ -65,7 +53,7 @@ contract MockIporSwapLogic {
     }
 
     function calculatePayoffReceiveFixed(
-        IporTypes.IporSwapMemory memory swap,
+        AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) public pure returns (int256 swapValue) {
@@ -73,18 +61,28 @@ contract MockIporSwapLogic {
     }
 
     function calculateSwapUnwindValue(
-        IporTypes.IporSwapMemory memory swap,
+        AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
         int256 swapPayoffToDate,
-        uint256 oppositeLegFixedRate,
-        uint256 openingFeeRateForSwapUnwind
+        uint256 oppositeLegFixedRate
     ) public pure returns (int256 swapUnwindValue) {
         swapUnwindValue = IporSwapLogic.calculateSwapUnwindValue(
             swap,
             closingTimestamp,
             swapPayoffToDate,
-            oppositeLegFixedRate,
-            openingFeeRateForSwapUnwind
+            oppositeLegFixedRate
+        );
+    }
+
+    function calculateSwapUnwindOpeningFeeAmount(
+        AmmTypes.Swap memory swap,
+        uint256 closingTimestamp,
+        uint256 openingFeeRateCfg
+    ) public pure returns (uint256 swapOpeningFeeAmount) {
+        swapOpeningFeeAmount = IporSwapLogic.calculateSwapUnwindOpeningFeeAmount(
+            swap,
+            closingTimestamp,
+            openingFeeRateCfg
         );
     }
 }

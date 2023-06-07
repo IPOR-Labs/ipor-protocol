@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 /// @title Interface for interaction with AssetManagement smart contract.
 /// @notice AssetManagement is reposnsible for delegating assets stored in AmmTreasury to money markets where they can earn interest.

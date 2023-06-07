@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 /// @title Errors which occur inside AmmTreasury's method execution.
 library AmmErrors {
@@ -10,11 +10,11 @@ library AmmErrors {
     /// @notice Liquidity Pool balance is too low, should be equal or higher than 0.
     string public constant LIQUIDITY_POOL_AMOUNT_TOO_LOW = "IPOR_301";
 
-    /// @notice Liquidity Pool Utilization exceeded. Liquidity Pool utilization is higher than configured in AmmTreasury maximum liquidity pool utilization.
-    string public constant LP_UTILIZATION_EXCEEDED = "IPOR_302";
+    /// @notice Liquidity Pool Collateral Ratio exceeded. Liquidity Pool Collateral Ratio is higher than configured in AmmTreasury maximum liquidity pool collateral ratio.
+    string public constant LP_COLLATERAL_RATIO_EXCEEDED = "IPOR_302";
 
-    /// @notice Liquidity Pool Utilization Per Leg exceeded. Liquidity Pool utilization per leg is higher than configured in AmmTreasury maximu liquidity pool utilization per leg.
-    string public constant LP_UTILIZATION_PER_LEG_EXCEEDED = "IPOR_303";
+    /// @notice Liquidity Pool Collateral Ratio Per Leg exceeded. Liquidity Pool Collateral Ratio per leg is higher than configured in AmmTreasury maximum liquidity pool collateral ratio per leg.
+    string public constant LP_COLLATERAL_RATIO_PER_LEG_EXCEEDED = "IPOR_303";
 
     /// @notice Liquidity Pool Balance is too high
     string public constant LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH = "IPOR_304";
@@ -108,10 +108,10 @@ library AmmErrors {
 
     string public constant SPREAD_ROUTER_CALL_FAILED = "IPOR_334";
 
-    string public constant UNSUPPORTED_SWAP_DURATION = "IPOR_335";
+    string public constant UNSUPPORTED_SWAP_TENOR = "IPOR_335";
 
     string public constant SENDER_NOT_AMM = "IPOR_336";
     string public constant STORAGE_ID_IS_NOT_TIME_WEIGHTED_NOTIONAL = "IPOR_337";
-    string public constant FUNCTION_NOT_SUPPORTED= "IPOR_338";
-    string public constant WRONG_MATURITY= "IPOR_339";
+    string public constant FUNCTION_NOT_SUPPORTED = "IPOR_338";
+    string public constant UNSUPPORTED_DIRECTION = "IPOR_339";
 }

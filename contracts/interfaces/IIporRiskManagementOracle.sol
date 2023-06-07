@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
+import "contracts/interfaces/types/IporTypes.sol";
 import "./types/IporRiskManagementOracleTypes.sol";
 
 interface IIporRiskManagementOracle {
@@ -9,25 +10,25 @@ interface IIporRiskManagementOracle {
     /// @return current IIporRiskManagementOracle version
     function getVersion() external pure returns (uint256);
 
-    /// @notice Gets risk indicators and base spread for a given asset, swap direction and duration. Rates represented in 6 decimals. 1 = 0.0001%
+    /// @notice Gets risk indicators and base spread for a given asset, swap direction and tenor. Rates represented in 6 decimals. 1 = 0.0001%
     /// @param asset underlying / stablecoin address supported in Ipor Protocol
     /// @param direction swap direction, 0 = pay fixed, 1 = receive fixed
-    /// @param duration swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
+    /// @param tenor swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
     /// @return maxNotionalPerLeg maximum notional value for given leg
-    /// @return maxUtilizationRatePerLeg maximum utilization rate for given leg
-    /// @return maxUtilizationRate maximum utilization rate for both legs
-    /// @return spread spread for given direction and duration
+    /// @return maxCollateralRatioPerLeg maximum collateral ratio for given leg
+    /// @return maxCollateralRatio maximum collateral ratio for both legs
+    /// @return spread spread for given direction and tenor
     function getOpenSwapParameters(
         address asset,
         uint256 direction,
-        uint256 duration
+        IporTypes.SwapTenor tenor
     )
         external
         view
         returns (
             uint256 maxNotionalPerLeg,
-            uint256 maxUtilizationRatePerLeg,
-            uint256 maxUtilizationRate,
+            uint256 maxCollateralRatioPerLeg,
+            uint256 maxCollateralRatio,
             int256 spread,
             uint256 fixedRateCap
         );
@@ -36,9 +37,9 @@ interface IIporRiskManagementOracle {
     /// @param asset underlying / stablecoin address supported in Ipor Protocol
     /// @return maxNotionalPayFixed maximum notional value for pay fixed leg
     /// @return maxNotionalReceiveFixed maximum notional value for receive fixed leg
-    /// @return maxUtilizationRatePayFixed maximum utilization rate for pay fixed leg
-    /// @return maxUtilizationRateReceiveFixed maximum utilization rate for receive fixed leg
-    /// @return maxUtilizationRate maximum utilization rate for both legs
+    /// @return maxCollateralRatioPayFixed maximum collateral ratio for pay fixed leg
+    /// @return maxCollateralRatioReceiveFixed maximum collateral ratio for receive fixed leg
+    /// @return maxCollateralRatio maximum collateral ratio for both legs
     /// @return lastUpdateTimestamp Last risk indicators update done by off-chain service
     function getRiskIndicators(address asset)
         external
@@ -46,9 +47,9 @@ interface IIporRiskManagementOracle {
         returns (
             uint256 maxNotionalPayFixed,
             uint256 maxNotionalReceiveFixed,
-            uint256 maxUtilizationRatePayFixed,
-            uint256 maxUtilizationRateReceiveFixed,
-            uint256 maxUtilizationRate,
+            uint256 maxCollateralRatioPayFixed,
+            uint256 maxCollateralRatioReceiveFixed,
+            uint256 maxCollateralRatio,
             uint256 lastUpdateTimestamp
         );
 
@@ -101,16 +102,16 @@ interface IIporRiskManagementOracle {
     /// @param asset underlying / stablecoin address supported by IPOR Protocol
     /// @param maxNotionalPayFixed maximum notional value for pay fixed leg, 1 = 10k
     /// @param maxNotionalReceiveFixed maximum notional value for receive fixed leg, 1 = 10k
-    /// @param maxUtilizationRatePayFixed maximum utilization rate for pay fixed leg, 1 = 0.01%
-    /// @param maxUtilizationRateReceiveFixed maximum utilization rate for receive fixed leg, 1 = 0.01%
-    /// @param maxUtilizationRate maximum utilization rate for both legs, 1 = 0.01%
+    /// @param maxCollateralRatioPayFixed maximum collateral ratio for pay fixed leg, 1 = 0.01%
+    /// @param maxCollateralRatioReceiveFixed maximum collateral ratio for receive fixed leg, 1 = 0.01%
+    /// @param maxCollateralRatio maximum collateral ratio for both legs, 1 = 0.01%
     function updateRiskIndicators(
         address asset,
         uint256 maxNotionalPayFixed,
         uint256 maxNotionalReceiveFixed,
-        uint256 maxUtilizationRatePayFixed,
-        uint256 maxUtilizationRateReceiveFixed,
-        uint256 maxUtilizationRate
+        uint256 maxCollateralRatioPayFixed,
+        uint256 maxCollateralRatioReceiveFixed,
+        uint256 maxCollateralRatio
     ) external;
 
     /// @notice Updates risk indicators for a multiple assets. Values and rates are not represented in 18 decimals.
@@ -118,16 +119,16 @@ interface IIporRiskManagementOracle {
     /// @param asset underlying / stablecoin addresses supported by IPOR Protocol
     /// @param maxNotionalPayFixed maximum notional value for pay fixed leg, 1 = 10k
     /// @param maxNotionalReceiveFixed maximum notional value for receive fixed leg, 1 = 10k
-    /// @param maxUtilizationRatePayFixed maximum utilization rate for pay fixed leg, 1 = 0.01%
-    /// @param maxUtilizationRateReceiveFixed maximum utilization rate for receive fixed leg, 1 = 0.01%
-    /// @param maxUtilizationRate maximum utilization rate for both legs, 1 = 0.01%
+    /// @param maxCollateralRatioPayFixed maximum collateral ratio for pay fixed leg, 1 = 0.01%
+    /// @param maxCollateralRatioReceiveFixed maximum collateral ratio for receive fixed leg, 1 = 0.01%
+    /// @param maxCollateralRatio maximum collateral ratio for both legs, 1 = 0.01%
     function updateRiskIndicators(
         address[] memory asset,
         uint256[] memory maxNotionalPayFixed,
         uint256[] memory maxNotionalReceiveFixed,
-        uint256[] memory maxUtilizationRatePayFixed,
-        uint256[] memory maxUtilizationRateReceiveFixed,
-        uint256[] memory maxUtilizationRate
+        uint256[] memory maxCollateralRatioPayFixed,
+        uint256[] memory maxCollateralRatioReceiveFixed,
+        uint256[] memory maxCollateralRatio
     ) external;
 
     /// @notice Updates base spreads and fixed rate caps for a given asset. Rates are not represented in 18 decimals
@@ -191,16 +192,16 @@ interface IIporRiskManagementOracle {
     /// @param asset underlying / stablecoin address supported by IPOR Protocol
     /// @param maxNotionalPayFixed maximum notional value for pay fixed leg, 1 = 10k
     /// @param maxNotionalReceiveFixed maximum notional value for receive fixed leg, 1 = 10k
-    /// @param maxUtilizationRatePayFixed maximum utilization rate for pay fixed leg, 1 = 0.01%
-    /// @param maxUtilizationRateReceiveFixed maximum utilization rate for receive fixed leg, 1 = 0.01%
-    /// @param maxUtilizationRate maximum utilization rate for both legs, 1 = 0.01%
+    /// @param maxCollateralRatioPayFixed maximum collateral ratio for pay fixed leg, 1 = 0.01%
+    /// @param maxCollateralRatioReceiveFixed maximum collateral ratio for receive fixed leg, 1 = 0.01%
+    /// @param maxCollateralRatio maximum collateral ratio for both legs, 1 = 0.01%
     event RiskIndicatorsUpdated(
         address indexed asset,
         uint256 maxNotionalPayFixed,
         uint256 maxNotionalReceiveFixed,
-        uint256 maxUtilizationRatePayFixed,
-        uint256 maxUtilizationRateReceiveFixed,
-        uint256 maxUtilizationRate
+        uint256 maxCollateralRatioPayFixed,
+        uint256 maxCollateralRatioReceiveFixed,
+        uint256 maxCollateralRatio
     );
 
     /// @notice event emitted when base spreads are updated. Rates are represented in 18 decimals.

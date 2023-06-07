@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../../interfaces/types/IporTypes.sol";
 import "./SpreadTypes.sol";
@@ -9,6 +9,7 @@ import "./SpreadStorageLibs.sol";
 contract SpreadStorageLens is ISpreadStorageLens {
     function getTimeWeightedNotional()
         external
+        view
         override
         returns (SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse)
     {

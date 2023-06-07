@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
@@ -9,7 +9,7 @@ import "contracts/libraries/Constants.sol";
 import "contracts/itf/ItfIporOracle.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
 
-contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
+contract AmmClosingSwaps is Test, TestCommons, DataUtils {
     address internal _buyer;
     address internal _community;
     address internal _liquidator;
@@ -29,95 +29,104 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         _cfg.iporOracleUpdater = _userOne;
         _cfg.iporRiskManagementOracleUpdater = _updater;
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE1;
+        _cfg.openSwapServiceTestCase = BuilderUtils.AmmOpenSwapServiceTestCase.CASE3;
+        _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE0;
     }
 
     function testShouldAddSwapLiquidatorAsIporOwner() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
 
         //when
         vm.prank(_admin);
-        ammTreasury.addSwapLiquidator(_liquidator);
+        _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         //then
-        bool isLiquidator = ammTreasury.isSwapLiquidator(_liquidator);
+        bool isLiquidator = _iporProtocol.ammGovernanceLens.isSwapLiquidator(address(_iporProtocol.asset), _liquidator);
         assertEq(isLiquidator, true);
     }
 
     function testShouldRemoveSwapLiquidatorAsIporOwner() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
 
-        ammTreasury.addSwapLiquidator(_liquidator);
+        _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         //when
         vm.prank(_admin);
-        ammTreasury.removeSwapLiquidator(_liquidator);
+        _iporProtocol.ammGovernanceService.removeSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         //then
-        bool isLiquidator = ammTreasury.isSwapLiquidator(_liquidator);
+        bool isLiquidator = _iporProtocol.ammGovernanceLens.isSwapLiquidator(address(_iporProtocol.asset), _liquidator);
         assertEq(isLiquidator, false);
     }
 
     function testShouldNotAddLiquidatorAsNotIporOwner() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
 
         //when
-        vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
+        vm.expectRevert(abi.encodePacked(IporErrors.CALLER_NOT_OWNER));
         vm.prank(_buyer);
-        ammTreasury.addSwapLiquidator(_liquidator);
+        _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
     }
 
     function testShouldNotRemoveLiquidatorAsNotIporOwner() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
 
-        ammTreasury.addSwapLiquidator(_liquidator);
+        _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         //when
-        vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
+        vm.expectRevert(abi.encodePacked(IporErrors.CALLER_NOT_OWNER));
         vm.prank(_buyer);
-        ammTreasury.removeSwapLiquidator(_liquidator);
+        _iporProtocol.ammGovernanceService.removeSwapLiquidator(address(_iporProtocol.asset), _liquidator);
     }
 
     function testShouldClosePayFixedSwapAsIporOwnerBeforeMaturity() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(200);
 
         //when
         vm.prank(_admin);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_admin, 1);
 
         //then
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            swapId
+        );
+
+        assertEq(uint256(swap.state), uint256(IporTypes.SwapState.INACTIVE));
+
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
 
@@ -129,33 +138,36 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(100 + 28 days - 24 hours);
 
         //when
         vm.prank(_buyer);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_buyer, 1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -163,39 +175,49 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873 - 25000000);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
+
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            swapId
+        );
+
+        assertEq(uint256(swap.state), uint256(IporTypes.SwapState.INACTIVE));
     }
 
     function testShouldClosePayFixedSwapAsBuyerInLast20hours() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(100 + 28 days - 20 hours);
 
         //when
         vm.prank(_buyer);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_buyer, 1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -209,34 +231,37 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
         uint256 anyoneBalanceBefore = _iporProtocol.asset.balanceOf(_community);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(100 + 28 days - 1 hours);
 
         //when
         vm.prank(_community);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_community, 1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -252,34 +277,37 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
         uint256 anyoneBalanceBefore = _iporProtocol.asset.balanceOf(_community);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(100 + 28 days - 30 minutes);
 
         //when
         vm.prank(_community);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_community, 1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -295,36 +323,39 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(100 + 28 days + 1 seconds);
 
-        ammTreasury.addSwapLiquidator(_liquidator);
+        _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         //when
         vm.prank(_liquidator);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_liquidator, 1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -340,36 +371,39 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(100 + 28 days - 4 hours - 1 seconds);
 
-        ammTreasury.addSwapLiquidator(_liquidator);
+        _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.prank(_liquidator);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_liquidator, 1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -383,33 +417,36 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(100 + 28 days + 1 seconds);
 
         //when
         vm.prank(_buyer);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_buyer, 1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -423,34 +460,37 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.prank(_community);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_community, 1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -464,34 +504,37 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(100 + 28 days + 1 seconds);
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_community, 1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -505,34 +548,37 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.prank(_liquidator);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_liquidator, 1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -546,33 +592,36 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(200);
 
         //when
         vm.prank(_admin);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_admin, 1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -586,33 +635,36 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(100 + 28 days - 24 hours);
 
         //when
         vm.prank(_buyer);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_buyer, 1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -626,33 +678,36 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(100 + 28 days - 20 hours);
 
         //when
         vm.prank(_buyer);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_buyer, 1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -666,34 +721,37 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
         uint256 anyoneBalanceBefore = _iporProtocol.asset.balanceOf(_community);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(100 + 28 days - 1 hours);
 
         //when
         vm.prank(_community);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_community, 1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -709,34 +767,37 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
         uint256 anyoneBalanceBefore = _iporProtocol.asset.balanceOf(_community);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(100 + 28 days - 30 minutes);
 
         //when
         vm.prank(_community);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_community, 1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -752,36 +813,39 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(100 + 28 days + 1 seconds);
 
-        ammTreasury.addSwapLiquidator(_liquidator);
+        _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         //when
         vm.prank(_liquidator);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -797,36 +861,39 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(100 + 28 days - 4 hours - 1 seconds);
 
-        ammTreasury.addSwapLiquidator(_liquidator);
+        _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.prank(_liquidator);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -840,33 +907,36 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(100 + 28 days + 1 seconds);
 
         //when
         vm.prank(_buyer);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_buyer, 1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -880,34 +950,37 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.prank(_community);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_community, 1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -921,34 +994,37 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(100 + 28 days + 1 seconds);
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_community, 1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -962,34 +1038,37 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(100 + 28 days - 1 hours - 1);
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.prank(_liquidator);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -1003,34 +1082,37 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
-        ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
-        asset.approve(address(joseph), liquidityAmount);
-        joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
         //when
         vm.prank(_liquidator);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_liquidator, 1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -1048,13 +1130,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -1062,35 +1143,42 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1295e14);
+        iporOracle.updateIndex(address(asset), 1290e14);
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
-
-        ammTreasury.addSwapLiquidator(_liquidator);
+        _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         //when
         vm.prank(_liquidator);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_liquidator, 1);
 
         //then
         assertEq(
@@ -1103,13 +1191,13 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
-        assertEq(buyerBalanceAfter, 19773896175);
+        assertEq(buyerBalanceAfter, 19784498911);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
@@ -1119,13 +1207,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -1133,35 +1220,42 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1295e14);
+        iporOracle.updateIndex(address(asset), 1290e14);
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
-
-        ammTreasury.addSwapLiquidator(_liquidator);
+        _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         //when
         vm.prank(_liquidator);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_liquidator, 1);
 
         //then
         assertEq(
@@ -1174,13 +1268,13 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
-        assertEq(buyerBalanceAfter, 19773904328);
+        assertEq(buyerBalanceAfter, 19784507113);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
@@ -1188,13 +1282,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -1202,33 +1295,41 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1344e14);
+        iporOracle.updateIndex(address(asset), 1335e14);
 
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_buyer);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_buyer, 1);
 
         //then
         assertEq(
@@ -1241,13 +1342,13 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
-        assertEq(buyerBalanceAfter, 19821186272);
+        assertEq(buyerBalanceAfter, 19803662021);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
@@ -1255,13 +1356,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -1269,33 +1369,41 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1340e14);
+        iporOracle.updateIndex(address(asset), 1333e14);
 
         vm.warp(100 + 28 days - 24 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_buyer);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_buyer, 1);
 
         //then
         assertEq(
@@ -1308,13 +1416,13 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
-        assertEq(buyerBalanceAfter, 19791821904);
+        assertEq(buyerBalanceAfter, 19788838452);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
@@ -1322,13 +1430,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -1336,35 +1443,42 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1290e14);
+        iporOracle.updateIndex(address(asset), 1285e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
-
-        ammTreasury.addSwapLiquidator(_liquidator);
+        _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         //when
         vm.prank(_liquidator);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_liquidator, 1);
 
         //then
         assertEq(
@@ -1377,13 +1491,13 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
-        assertEq(buyerBalanceAfter, 19765117870);
+        assertEq(buyerBalanceAfter, 19775519014);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
@@ -1391,13 +1505,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -1405,33 +1518,41 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1290e14);
+        iporOracle.updateIndex(address(asset), 1285e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_buyer);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_buyer, 1);
 
         //then
         assertEq(
@@ -1444,13 +1565,13 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
-        assertEq(buyerBalanceAfter, 19790117870);
+        assertEq(buyerBalanceAfter, 19800519014);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
@@ -1460,13 +1581,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -1474,34 +1594,42 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1305e14);
+        iporOracle.updateIndex(address(asset), 1293e14);
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_community);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_community, 1);
 
         //then
         assertEq(
@@ -1514,14 +1642,14 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
-        assertEq(buyerBalanceAfter, 19849934569);
+        assertEq(buyerBalanceAfter, 19807537215);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
@@ -1532,13 +1660,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -1546,34 +1673,42 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1300e14);
+        iporOracle.updateIndex(address(asset), 1295e14);
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_community);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_community, 1);
 
         //then
         assertEq(
@@ -1586,14 +1721,14 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
-        assertEq(buyerBalanceAfter, 19811923556);
+        assertEq(buyerBalanceAfter, 19822904613);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
@@ -1602,13 +1737,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -1616,36 +1750,44 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
-        ammTreasury.addSwapLiquidator(_liquidator);
+        _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         //when
         vm.prank(_liquidator);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_liquidator, 1);
 
         //then
         assertEq(
@@ -1658,7 +1800,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -1674,13 +1816,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -1688,36 +1829,44 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
-        ammTreasury.addSwapLiquidator(_liquidator);
+        _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         //when
         vm.prank(_liquidator);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_liquidator, 1);
 
         //then
         assertEq(
@@ -1730,7 +1879,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -1746,13 +1895,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -1760,34 +1908,42 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_buyer);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_buyer, 1);
 
         //then
         assertEq(
@@ -1800,7 +1956,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -1816,13 +1972,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -1830,34 +1985,42 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 24 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_buyer);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_buyer, 1);
 
         //then
         assertEq(
@@ -1870,7 +2033,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -1886,13 +2049,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -1900,36 +2062,44 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
-        ammTreasury.addSwapLiquidator(_liquidator);
+        _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         //when
         vm.prank(_liquidator);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_liquidator, 1);
 
         //then
         assertEq(
@@ -1942,7 +2112,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -1958,13 +2128,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -1972,34 +2141,42 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_buyer);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_buyer, 1);
 
         //then
         assertEq(
@@ -2012,7 +2189,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -2028,13 +2205,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -2042,35 +2218,43 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_community, 1);
 
         //then
         assertEq(
@@ -2083,7 +2267,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -2099,13 +2283,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -2113,35 +2296,43 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_community, 1);
 
         //then
         assertEq(
@@ -2154,7 +2345,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -2170,13 +2361,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -2184,35 +2374,43 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_community, 1);
 
         //then
         assertEq(
@@ -2225,7 +2423,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -2241,13 +2439,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -2255,34 +2452,42 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1300e14);
+        iporOracle.updateIndex(address(asset), 1290e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_community);
-        ammTreasury.closeSwapPayFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_community, 1);
 
         //then
         assertEq(
@@ -2295,14 +2500,14 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
-        assertEq(buyerBalanceAfter, 19841382938);
+        assertEq(buyerBalanceAfter, 19814030604);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
@@ -2313,49 +2518,50 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC; // TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC; //TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1295e14);
+        iporOracle.updateIndex(address(asset), 1290e14);
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
-
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
-
-        ammTreasury.addSwapLiquidator(_liquidator);
+        _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         //when
         vm.prank(_liquidator);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
 
         //then
         assertEq(
@@ -2373,7 +2579,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true, "Failed buyerBalanceAfter < buyerBalanceBefore");
-        assertEq(buyerBalanceAfter, 79952078, "Incorrect buyerBalanceAfter");
+        assertEq(buyerBalanceAfter, 69349343, "Incorrect buyerBalanceAfter");
         assertEq(
             liquidatorBalanceAfter - liquidatorBalanceBefore,
             25000000,
@@ -2387,13 +2593,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -2401,35 +2606,42 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1295e14);
+        iporOracle.updateIndex(address(asset), 1288e14);
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
-
-        ammTreasury.addSwapLiquidator(_liquidator);
+        _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         //when
         vm.prank(_liquidator);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
 
         //then
         assertEq(
@@ -2447,7 +2659,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 79943926);
+        assertEq(buyerBalanceAfter, 84699729);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
@@ -2455,13 +2667,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -2469,33 +2680,40 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1344e14);
+        iporOracle.updateIndex(address(asset), 1335e14);
 
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
-
         //when
         vm.prank(_buyer);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_buyer, 1);
 
         //then
         assertEq(
@@ -2508,13 +2726,13 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 82661982);
+        assertEq(buyerBalanceAfter, 100186232);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
@@ -2522,13 +2740,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -2536,33 +2753,41 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1340e14);
+        iporOracle.updateIndex(address(asset), 1335e14);
 
         vm.warp(100 + 28 days - 24 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_buyer);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_buyer, 1);
 
         //then
         assertEq(
@@ -2575,13 +2800,13 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 112026350);
+        assertEq(buyerBalanceAfter, 100177744);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
@@ -2589,13 +2814,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -2603,35 +2827,42 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1290e14);
+        iporOracle.updateIndex(address(asset), 1285e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
-
-        ammTreasury.addSwapLiquidator(_liquidator);
+        _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         //when
         vm.prank(_liquidator);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
 
         //then
         assertEq(
@@ -2644,13 +2875,13 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 88730383);
+        assertEq(buyerBalanceAfter, 78329240);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
@@ -2658,13 +2889,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -2672,33 +2902,40 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1290e14);
+        iporOracle.updateIndex(address(asset), 1285e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
-
         //when
         vm.prank(_buyer);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_buyer, 1);
 
         //then
         assertEq(
@@ -2711,13 +2948,13 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 113730383);
+        assertEq(buyerBalanceAfter, 103329240);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
@@ -2725,13 +2962,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -2739,34 +2975,42 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1300e14);
+        iporOracle.updateIndex(address(asset), 1290e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_community);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_community, 1);
 
         //then
         assertEq(
@@ -2779,14 +3023,14 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 12465316);
+        assertEq(buyerBalanceAfter, 39817650);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
@@ -2797,13 +3041,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -2811,34 +3054,42 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1305e14);
+        iporOracle.updateIndex(address(asset), 1295e14);
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_community);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_community, 1);
 
         //then
         assertEq(
@@ -2851,14 +3102,14 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 3913684);
+        assertEq(buyerBalanceAfter, 30951874);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
@@ -2871,13 +3122,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
 
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -2885,34 +3135,41 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1300e14);
+        iporOracle.updateIndex(address(asset), 1295e14);
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
-
         //when
         vm.prank(_community);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_community, 1);
 
         //then
         assertEq(
@@ -2925,14 +3182,14 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 41924697);
+        assertEq(buyerBalanceAfter, 30943640);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
@@ -2941,13 +3198,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -2955,36 +3211,44 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
-        ammTreasury.addSwapLiquidator(_liquidator);
+        _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         //when
         vm.prank(_liquidator);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
 
         //then
         assertEq(
@@ -2997,7 +3261,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3013,13 +3277,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -3027,36 +3290,43 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1400e14);
+        iporOracle.updateIndex(address(asset), 1380e14);
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
-
-        ammTreasury.addSwapLiquidator(_liquidator);
+        _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         //when
         vm.prank(_liquidator);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
 
         //then
         assertEq(
@@ -3069,7 +3339,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3085,13 +3355,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -3099,34 +3368,42 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_buyer);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_buyer, 1);
 
         //then
         assertEq(
@@ -3139,7 +3416,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3155,13 +3432,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -3169,34 +3445,42 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 24 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_buyer);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_buyer, 1);
 
         //then
         assertEq(
@@ -3209,7 +3493,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3225,13 +3509,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -3239,36 +3522,44 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
-        ammTreasury.addSwapLiquidator(_liquidator);
+        _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         //when
         vm.prank(_liquidator);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
 
         //then
         assertEq(
@@ -3281,7 +3572,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3297,13 +3588,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -3311,34 +3601,42 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_buyer);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_buyer, 1);
 
         //then
         assertEq(
@@ -3351,7 +3649,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3367,13 +3665,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -3381,35 +3678,43 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
 
         //then
         assertEq(
@@ -3422,7 +3727,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3438,13 +3743,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -3452,35 +3756,43 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
 
         //then
         assertEq(
@@ -3493,7 +3805,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3509,13 +3821,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -3523,35 +3834,43 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
 
         //then
         assertEq(
@@ -3564,7 +3883,7 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == iporSwap.collateral, true, "Failed absPayoff == iporSwap.collateral");
+        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3580,13 +3899,12 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         ///@dev 99% of payoff
         uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
@@ -3594,34 +3912,42 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
         ///@dev 99.5% of payoff
         uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
-        asset.approve(address(_iporProtocol.joseph), liquidityAmount);
-        _iporProtocol.joseph.provideLiquidity(liquidityAmount);
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
 
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(ammTreasury), totalAmount);
+        asset.approve(address(_iporProtocol.router), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
+        );
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1300e14);
+        iporOracle.updateIndex(address(asset), 1290e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            1
+        );
 
-        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_community);
-        ammTreasury.closeSwapReceiveFixed(1);
+        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_community, 1);
 
         //then
         assertEq(
@@ -3634,14 +3960,14 @@ contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < iporSwap.collateral, true, "Failed absPayoff < iporSwap.collateral");
+        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceBefore > buyerBalanceAfter, true, "Failed buyerBalanceBefore > buyerBalanceAfter");
-        assertEq(buyerBalanceAfter, 12465316);
+        assertEq(buyerBalanceAfter, 39817650);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }

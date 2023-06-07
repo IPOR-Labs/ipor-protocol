@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "contracts/amm/spread/ISpread28DaysLens.sol";
 
@@ -14,13 +14,13 @@ contract MockSpreadLens is ISpread28DaysLens {
     }
 
 
-    function calculatePayFixed28Days(
+    function calculateOfferedRatePayFixed28Days(
         IporTypes.SpreadInputs calldata spreadInputs
     ) external view returns (uint256 spreadValue) {
         spreadValue = 1;
     }
 
-    function calculateReceiveFixed28Days(
+    function calculateOfferedRateReceiveFixed28Days(
         IporTypes.SpreadInputs calldata spreadInputs
     ) external view returns (uint256 spreadValue) {
         spreadValue = 2;

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 /// @title Interface for interaction with AssetManagement smart contract - administration and maintenance part.
 interface IAssetManagementInternal {
@@ -64,32 +64,22 @@ interface IAssetManagementInternal {
     function removePauseGuardian(address _guardian) external;
 
     /// @notice Emmited when all AssetManagement's assets are migrated from old strategy to the new one. Function is available only by the Owner.
-    /// @param changedBy account address that has executed migrations
-    /// @param oldStrategy old strategy address where assets was before migration
     /// @param newStrategy new strategy address where assets was migrated
     /// @param amount final amount of assets which were migrated between strategies, represented in 18 decimals
     event AssetMigrated(
-        address changedBy,
-        address oldStrategy,
         address newStrategy,
         uint256 amount
     );
 
-    /// @notice Emmited when stratedy address has been changed by the smart contract Owner.
-    /// @param changedBy account address that has changed the strategy address
-    /// @param oldStrategy old strategy address
+    /// @notice Emitted when stratedy address has been changed by the smart contract Owner.
     /// @param newStrategy new strategy address
     /// @param newShareToken strategy share token's address
     event StrategyChanged(
-        address changedBy,
-        address oldStrategy,
         address newStrategy,
         address newShareToken
     );
 
     /// @notice Emmited when AmmTreasury address has been changed by the smart contract Owner.
-    /// @param changedBy account address that has changed AmmTreasury address
-    /// @param oldAmmTreasury old AmmTreasury address
     /// @param newAmmTreasury new AmmTreasury address
-    event AmmTreasuryChanged(address changedBy, address oldAmmTreasury, address newAmmTreasury);
+    event AmmTreasuryChanged(address newAmmTreasury);
 }

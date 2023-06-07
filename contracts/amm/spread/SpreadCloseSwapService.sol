@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "contracts/amm/libraries/types/AmmInternalTypes.sol";
 import "contracts/interfaces/types/AmmTypes.sol";
@@ -23,9 +23,10 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
         address usdc,
         address usdt
     ) {
-        require(dai != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI"));
-        require(usdc != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC"));
-        require(usdt != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT"));
+        require(dai != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI asset address cannot be 0"));
+        require(usdc != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC asset address cannot be 0"));
+        require(usdt != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT asset address cannot be 0"));
+
         _DAI = dai;
         _USDC = usdc;
         _USDT = usdt;
@@ -34,17 +35,17 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
     function updateTimeWeightedNotionalOnClose(
         address asset,
         uint256 direction,
-        AmmTypes.SwapDuration duration,
+        IporTypes.SwapTenor tenor,
         uint256 swapNotional,
         AmmInternalTypes.OpenSwapItem memory closedSwap,
         address ammStorageAddress
     ) external {
-        // @dev when timestamp is 0, it means that the swap was open in ipor-protocole v1 .
+        // @dev when timestamp is 0, it means that the swap was open in ipor-protocol v1 .
         if (closedSwap.openSwapTimestamp == 0) {
             return;
         }
-        uint256 maturity = IporSwapLogic.getMaturity(duration);
-        SpreadStorageLibs.StorageId storageId = _getStorageId(asset, maturity);
+        uint256 tenorInSeconds = IporSwapLogic.getTenorInSeconds(tenor);
+        SpreadStorageLibs.StorageId storageId = _getStorageId(asset, tenor);
         SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
             storageId
         );
@@ -60,7 +61,7 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
             swapNotional,
             // @dev timeOfLastUpdate should be greater than closedSwap.openSwapTimestamp
             timeOfLastUpdate - closedSwap.openSwapTimestamp,
-            maturity
+            tenorInSeconds
         );
 
         uint256 actualTimeWeightedNotionalToSave;
@@ -70,24 +71,24 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
 
         if (closedSwap.nextSwapId == 0) {
             AmmInternalTypes.OpenSwapItem memory lastOpenSwap = IAmmStorage(ammStorageAddress).getLastOpenedSwap(
-                duration,
+                tenor,
                 direction
             );
             uint256 swapTimePast = block.timestamp - uint256(lastOpenSwap.openSwapTimestamp);
-            if (maturity <= swapTimePast) {
+            if (tenorInSeconds <= swapTimePast) {
                 actualTimeWeightedNotionalToSave = 0;
                 swapTimePast = 0;
             }
             if (direction == 0) {
                 timeWeightedNotional.lastUpdateTimePayFixed = lastOpenSwap.openSwapTimestamp;
                 timeWeightedNotional.timeWeightedNotionalPayFixed =
-                    (actualTimeWeightedNotionalToSave * maturity) /
-                    (maturity - swapTimePast);
+                    (actualTimeWeightedNotionalToSave * tenorInSeconds) /
+                    (tenorInSeconds - swapTimePast);
             } else {
                 timeWeightedNotional.lastUpdateTimeReceiveFixed = lastOpenSwap.openSwapTimestamp;
                 timeWeightedNotional.timeWeightedNotionalReceiveFixed =
-                    (actualTimeWeightedNotionalToSave * maturity) /
-                    (maturity - swapTimePast);
+                    (actualTimeWeightedNotionalToSave * tenorInSeconds) /
+                    (tenorInSeconds - swapTimePast);
             }
         } else {
             if (direction == 0) {
@@ -100,36 +101,39 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
         SpreadStorageLibs.saveTimeWeightedNotional(storageId, timeWeightedNotional);
     }
 
-    function _getStorageId(address asset, uint256 maturity) internal returns (SpreadStorageLibs.StorageId storageId) {
+    function _getStorageId(address asset, IporTypes.SwapTenor tenor)
+        internal view
+        returns (SpreadStorageLibs.StorageId storageId)
+    {
         if (asset == _DAI) {
-            if (maturity == 28 days) {
+            if (tenor == IporTypes.SwapTenor.DAYS_28) {
                 storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai;
-            } else if (maturity == 60 days) {
+            } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
                 storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysDai;
-            } else if (maturity == 90 days) {
+            } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
                 storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysDai;
             }
         } else if (asset == _USDC) {
-            if (maturity == 28 days) {
+            if (tenor == IporTypes.SwapTenor.DAYS_28) {
                 storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysUsdc;
-            } else if (maturity == 60 days) {
+            } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
                 storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysUsdc;
-            } else if (maturity == 90 days) {
+            } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
                 storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysUsdc;
             }
         } else if (asset == _USDT) {
-            if (maturity == 28 days) {
+            if (tenor == IporTypes.SwapTenor.DAYS_28) {
                 storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysUsdt;
-            } else if (maturity == 60 days) {
+            } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
                 storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysUsdt;
-            } else if (maturity == 90 days) {
+            } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
                 storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysUsdt;
             }
         } else {
-            revert(string.concat(IporErrors.WRONG_ADDRESS, " asset"));
+            revert(IporErrors.WRONG_ADDRESS);
         }
         if (uint256(storageId) == 0) {
-            revert(string.concat(AmmErrors.WRONG_MATURITY, " maturity"));
+            revert(AmmErrors.UNSUPPORTED_SWAP_TENOR);
         }
     }
 }

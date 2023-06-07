@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
@@ -204,9 +204,8 @@ contract StrategyAave is StrategyCore, IStrategyAave {
      */
     function setStkAave(address newStkAave) external whenNotPaused onlyOwner {
         require(newStkAave != address(0), IporErrors.WRONG_ADDRESS);
-        address oldStkAave = _stkAave;
         _stkAave = newStkAave;
-        emit StkAaveChanged(_msgSender(), oldStkAave, newStkAave);
+        emit StkAaveChanged(newStkAave);
     }
 }
 

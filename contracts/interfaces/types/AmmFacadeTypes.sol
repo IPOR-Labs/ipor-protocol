@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 /// @title Structs used in comunication Darcy web application with Ipor Protocol
 /// @dev structs used in IAmmTreasuryFacadeDataProvider and IIporOracleFacadeDataProvider interfaces
@@ -44,9 +44,9 @@ library AmmFacadeTypes {
         uint256 liquidationDepositAmount;
         /// @notice Calculated Spread. Represented in 18 decimals.
         int256 spread;
-        /// @notice Maximum Liquidity Pool Utilization.
+        /// @notice Maximum Liquidity Pool Collateral Ratio.
         /// @dev It is a ratio of total collateral balance / liquidity pool balance
-        uint256 maxLpUtilizationRate;
+        uint256 maxLpCollateralRatio;
         /// @notice Maximum amount which can be in Liquidity Pool, represented in 18 decimals.
         uint256 maxLiquidityPoolBalance;
         /// @notice Maximum amount which can be contributed by one account in Liquidity Pool, represented in 18 decimals.
@@ -74,7 +74,7 @@ library AmmFacadeTypes {
         int256 payoff;
         /// @notice Moment when swap was opened.
         uint256 openTimestamp;
-        /// @notice Mopment when swap achieve its maturity.
+        /// @notice Moment when swap achieve its maturity.
         uint256 endTimestamp;
         /// @notice Liqudidation deposit value on day when swap was opened. Value represented in 18 decimals.
         uint256 liquidationDepositAmount;

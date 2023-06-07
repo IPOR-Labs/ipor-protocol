@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
@@ -430,8 +430,8 @@ contract DaiAmmTreasuryJosephSwitchImplementation is Test, TestCommons, ForkUtil
             getRiskManagementOracleAsset(
                 _owner,
                 assetAddress,
-                TestConstants.RMO_UTILIZATION_RATE_48_PER,
-                TestConstants.RMO_UTILIZATION_RATE_80_PER,
+                TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+                TestConstants.RMO_COLLATERAL_RATIO_80_PER,
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_SPREAD_0_1_PER
             );

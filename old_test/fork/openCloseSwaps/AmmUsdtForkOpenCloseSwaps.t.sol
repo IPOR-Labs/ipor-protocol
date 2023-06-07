@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
@@ -128,7 +128,7 @@ contract AmmUsdtForkOpenCloseSwaps is Test, TestCommons {
 
         // then
         AmmStorage ammStorage = usdtAmm.ammStorage();
-        IporTypes.IporSwapMemory memory swap = ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swap = ammStorage.getSwapPayFixed(1);
 
         assertEq(swap.id, 1);
         assertEq(swap.buyer, user);
@@ -161,7 +161,7 @@ contract AmmUsdtForkOpenCloseSwaps is Test, TestCommons {
 
         // then
         AmmStorage ammStorage = usdtAmm.ammStorage();
-        IporTypes.IporSwapMemory memory swap = ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swap = ammStorage.getSwapReceiveFixed(1);
 
         assertEq(swap.id, 1);
         assertEq(swap.buyer, user);
@@ -192,13 +192,13 @@ contract AmmUsdtForkOpenCloseSwaps is Test, TestCommons {
 
         vm.prank(userTwo);
         uint256 swapId = ammTreasury.openSwapPayFixed(100e6, 9e16, 10e18);
-        IporTypes.IporSwapMemory memory swapBefore = ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swapBefore = ammStorage.getSwapPayFixed(1);
 
         // when
         ammTreasury.closeSwapPayFixed(swapId);
 
         // then
-        IporTypes.IporSwapMemory memory swapAfter = ammStorage.getSwapPayFixed(1);
+        AmmTypes.Swap memory swapAfter = ammStorage.getSwapPayFixed(1);
 
         assertEq(swapBefore.id, swapAfter.id);
         assertEq(swapBefore.buyer, swapAfter.buyer);
@@ -235,13 +235,13 @@ contract AmmUsdtForkOpenCloseSwaps is Test, TestCommons {
 
         vm.prank(userTwo);
         uint256 swapId = ammTreasury.openSwapReceiveFixed(100e6, 1e16, 10e18);
-        IporTypes.IporSwapMemory memory swapBefore = ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swapBefore = ammStorage.getSwapReceiveFixed(1);
 
         // when
         ammTreasury.closeSwapReceiveFixed(swapId);
 
         // then
-        IporTypes.IporSwapMemory memory swapAfter = ammStorage.getSwapReceiveFixed(1);
+        AmmTypes.Swap memory swapAfter = ammStorage.getSwapReceiveFixed(1);
 
         assertEq(swapBefore.id, swapAfter.id);
         assertEq(swapBefore.buyer, swapAfter.buyer);

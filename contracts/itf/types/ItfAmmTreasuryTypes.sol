@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 library ItfAmmTreasuryTypes {
-    struct ItfUtilization {
-        uint256 maxLpUtilizationRate;
-        uint256 maxLpUtilizationPerLegRate;
+    struct ItfCollateralRatio {
+        uint256 maxLpCollateralRatio;
+        uint256 maxLpCollateralRatioPerLegRate;
     }
     struct ItfFees {
         uint256 openingFeeRate;

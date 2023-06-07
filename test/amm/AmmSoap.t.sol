@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
@@ -29,7 +29,6 @@ contract AmmSoapTest is TestCommons {
 
     function testShouldCalculateSoapWhenNoDerivativesSoapEqualZero() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -39,7 +38,6 @@ contract AmmSoapTest is TestCommons {
     }
 
     function testShouldCalculateSoapDAIPayFixedWhenAddPositionThenCalculate() public {
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -1100,7 +1098,6 @@ contract AmmSoapTest is TestCommons {
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
         _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE2;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 library IporOracleErrors {
     // 200-299- iporOracle
@@ -19,4 +19,7 @@ library IporOracleErrors {
 
     //@notice Address of algorithm used to calculate IPOR Index is not set
 //    string public constant IPOR_ALGORITHM_ADDRESS_NOT_SET = "IPOR_204";
+
+    //@notice Address is not valid oracle address
+    string public constant INVALID_ORACLE_ADDRESS = "IPOR_205";
 }

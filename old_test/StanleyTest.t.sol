@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "./TestCommons.sol";
 import {DataUtils} from "./utils/DataUtils.sol";
@@ -65,8 +65,8 @@ contract AssetManagementTest is TestCommons, DataUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_90_PER,
             TestConstants.RMO_NOTIONAL_1B,
             TestConstants.RMO_SPREAD_0_1_PER
         );
@@ -130,8 +130,8 @@ contract AssetManagementTest is TestCommons, DataUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_90_PER,
             TestConstants.RMO_NOTIONAL_1B,
             TestConstants.RMO_SPREAD_0_1_PER
         );
@@ -196,8 +196,8 @@ contract AssetManagementTest is TestCommons, DataUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_90_PER,
             TestConstants.RMO_NOTIONAL_1B,
             TestConstants.RMO_SPREAD_0_1_PER
         );
@@ -262,8 +262,8 @@ contract AssetManagementTest is TestCommons, DataUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_90_PER,
             TestConstants.RMO_NOTIONAL_1B,
             TestConstants.RMO_SPREAD_0_1_PER
         );

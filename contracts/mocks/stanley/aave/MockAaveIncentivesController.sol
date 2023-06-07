@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 // interfaces
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "../../../libraries/errors/IporErrors.sol";
 import "../../../vault/interfaces/aave/IAaveIncentivesController.sol";
 
 contract MockAaveIncentivesController is IAaveIncentivesController {
@@ -10,6 +11,8 @@ contract MockAaveIncentivesController is IAaveIncentivesController {
     address private _stkAaveMock;
 
     constructor(address stkAaveMock) {
+        require(stkAaveMock != address(0), string.concat(IporErrors.WRONG_ADDRESS, " stkAAVE address cannot be 0"));
+
         _stkAaveMock = stkAaveMock;
     }
 

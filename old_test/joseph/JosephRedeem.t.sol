@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
@@ -375,7 +375,7 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         assertEq(_iporProtocol.asset.balanceOf(_userThree), expectedBalancesUserThree.expectedTokenBalance);
     }
 
-    function testShouldRedeemWhenLiquidityPoolUtilizationNotExceededAndPayFixed() public {
+    function testShouldRedeemWhenLiquidityPoolCollateralRatioNotExceededAndPayFixed() public {
         // given
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -414,7 +414,7 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         assertEq(actualIpTokenBalanceSender, expectedIpTokenBalanceSender);
     }
 
-    function testShouldRedeemWhenLiquidityPoolUtilizationNotExceededAndReceiveFixed() public {
+    function testShouldRedeemWhenLiquidityPoolCollateralRatioNotExceededAndReceiveFixed() public {
         // given
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -447,7 +447,7 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         assertEq(actualIpTokenBalanceSender, expectedIpTokenBalanceSender);
     }
 
-    function testShouldRedeemWhenLiquidityPoolUtilizationNotExceededAndNotOpenPayFixedWhenMaxUtilizationExceeded()
+    function testShouldRedeemWhenLiquidityPoolCollateralRatioNotExceededAndNotOpenPayFixedWhenMaxCollateralRatioExceeded()
         public
     {
         // given
@@ -473,7 +473,7 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
 
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfRedeem(TestConstants.USD_10_000_18DEC, block.timestamp);
-        //show that currently liquidity pool utilization for opening position is achieved
+        //show that currently liquidity pool collateral ratio for opening position is achieved
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
         _iporProtocol.ammTreasury.openSwapPayFixed(
@@ -494,7 +494,7 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         assertEq(actualIpTokenBalanceSender, expectedIpTokenBalanceSender);
     }
 
-    function testShouldRedeemWhenLiquidityPoolUtilizationNotExceededAndNotOpenReceiveFixedWhenMaxUtilizationExceeded()
+    function testShouldRedeemWhenLiquidityPoolCollateralRatioNotExceededAndNotOpenReceiveFixedWhenMaxCollateralRatioExceeded()
         public
     {
         // given
@@ -521,7 +521,7 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfRedeem(TestConstants.USD_10_000_18DEC, block.timestamp);
 
-        //show that currently liquidity pool utilization for opening position is achieved
+        //show that currently liquidity pool collateral ratio for opening position is achieved
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
         _iporProtocol.ammTreasury.openSwapReceiveFixed(

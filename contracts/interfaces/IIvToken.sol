@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
@@ -37,12 +37,6 @@ interface IIvToken is IERC20 {
     event Burn(address indexed account, uint256 amount);
 
     /// @notice Emmited when AssetManagement's address is changed by the owner.
-    /// @param changedBy account address of entity that has changed AssetManagement's address
-    /// @param oldAssetManagement AssetManagement's old address
     /// @param newAssetManagement AssetManagement's new address
-    event AssetManagementChanged(
-        address indexed changedBy,
-        address indexed oldAssetManagement,
-        address indexed newAssetManagement
-    );
+    event AssetManagementChanged(address indexed newAssetManagement);
 }

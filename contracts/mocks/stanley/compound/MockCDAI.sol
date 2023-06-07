@@ -1,10 +1,11 @@
 //solhint-disable no-empty-blocks
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 // interfaces
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/math/IporMath.sol";
 import "../../../vault/interfaces/compound/CErc20Mock.sol";
 
@@ -22,6 +23,9 @@ contract MockCDAI is ERC20, CErc20Mock {
     address private _comptroller;
 
     constructor(address dai, address interestRateModel) public ERC20("cDAI", "cDAI") {
+        require(dai != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI asset address cannot be 0"));
+        require(interestRateModel != address(0), string.concat(IporErrors.WRONG_ADDRESS, " interest rate model address cannot be 0"));
+
         _dai = dai;
         _interestRateModel = interestRateModel;
         _exchangeRate = 200000000000000000;

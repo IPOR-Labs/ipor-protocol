@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "../libraries/errors/IporErrors.sol";
 
 /// @title IPOR Token in standard ERC20.
 contract IporToken is ERC20 {
@@ -19,6 +20,8 @@ contract IporToken is ERC20 {
         string memory symbol,
         address daoWalletAddress
     ) ERC20(name, symbol) {
+        require(daoWalletAddress != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAO wallet address cannot be 0"));
+
         _decimals = 18;
         _mint(daoWalletAddress, 100_000_000 * 1e18);
     }

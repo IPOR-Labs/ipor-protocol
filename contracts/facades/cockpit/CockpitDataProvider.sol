@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
@@ -114,7 +114,7 @@ contract CockpitDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgra
     function _createIporFront(address asset) internal view returns (CockpitTypes.IporFront memory iporFront) {
         (uint256 value, uint256 ibtPrice, uint256 date) = IIporOracle(_iporOracle).getIndex(asset);
 
-        iporFront = CockpitTypes.IporFront(IERC20MetadataUpgradeable(asset).symbol(), value, ibtPrice, 0, 0, date);
+        iporFront = CockpitTypes.IporFront(IERC20MetadataUpgradeable(asset).symbol(), value, ibtPrice, date);
     }
 
     //solhint-disable no-empty-blocks

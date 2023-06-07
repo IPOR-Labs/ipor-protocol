@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../../libraries/errors/AmmErrors.sol";
 import "../../interfaces/types/IporTypes.sol";
@@ -14,53 +14,32 @@ library IporSwapLogic {
     using InterestRates for uint256;
     using InterestRates for int256;
 
-    /// @param duration swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
-    /// @param totalAmount total amount represented in 18 decimals
+    /// @param tenor swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
+    /// @param wadTotalAmount total amount represented in 18 decimals
     /// @param leverage swap leverage, represented in 18 decimals
     /// @param liquidationDepositAmount liquidation deposit amount, represented in 18 decimals
     /// @param iporPublicationFeeAmount IPOR publication fee amount, represented in 18 decimals
     /// @param openingFeeRate opening fee rate, represented in 18 decimals
     function calculateSwapAmount(
-        AmmTypes.SwapDuration duration,
-        uint256 totalAmount,
+        IporTypes.SwapTenor tenor,
+        uint256 wadTotalAmount,
         uint256 leverage,
         uint256 liquidationDepositAmount,
         uint256 iporPublicationFeeAmount,
         uint256 openingFeeRate
-    )
-        internal
-        pure
-        returns (
-            uint256 collateral,
-            uint256 notional,
-            uint256 openingFee
-        )
-    {
-        uint256 availableAmount = totalAmount - liquidationDepositAmount - iporPublicationFeeAmount;
+    ) internal view returns (uint256 collateral, uint256 notional, uint256 openingFee) {
+        uint256 availableAmount = wadTotalAmount - liquidationDepositAmount - iporPublicationFeeAmount;
 
         collateral = IporMath.division(
             availableAmount * 1e18,
-            1e18 +
-                IporMath.division(leverage * openingFeeRate * getTimeToMaturityInDays(duration), 365 * 1e18)
+            1e18 + IporMath.division(leverage * openingFeeRate * getTenorInDays(tenor), 365 * 1e18)
         );
         notional = IporMath.division(leverage * collateral, 1e18);
         openingFee = availableAmount - collateral;
     }
 
-    function getTimeToMaturityInDays(AmmTypes.SwapDuration duration) internal pure returns (uint256) {
-        if (duration == AmmTypes.SwapDuration.DAYS_28) {
-            return 28;
-        } else if (duration == AmmTypes.SwapDuration.DAYS_60) {
-            return 60;
-        } else if (duration == AmmTypes.SwapDuration.DAYS_90) {
-            return 90;
-        } else {
-            revert(AmmErrors.UNSUPPORTED_SWAP_DURATION);
-        }
-    }
-
     function calculatePayoffPayFixed(
-        IporTypes.IporSwapMemory memory swap,
+        AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) internal pure returns (int256 swapValue) {
@@ -70,7 +49,7 @@ library IporSwapLogic {
     }
 
     function calculatePayoffReceiveFixed(
-        IporTypes.IporSwapMemory memory swap,
+        AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) internal pure returns (int256 swapValue) {
@@ -79,27 +58,55 @@ library IporSwapLogic {
         swapValue = _normalizeSwapValue(swap.collateral, interestFixed.toInt256() - interestFloating.toInt256());
     }
 
+    /// @notice Calculates the swap unwind value, virtual hedging position when trade close swap earlier than maturity day.
+    /// @param swap Swap structure
+    /// @param closingTimestamp moment when swap is closed, represented in seconds without 18 decimals
+    /// @param swapPayoffToDate swap payoff to date, represented in 18 decimals, this represents value of payoff
+    /// for particular swap at time when swap will be closed by trader.
+    /// @dev Equation for this calculation is:
+    /// time - number of seconds left to swap maturity divided by number of seconds in year
+    /// Opposite Leg Fixed Rate - calculated fixed rate of opposite leg of virtual swap
+    /// @dev UnwindValue   = Current Swap Payoff + Notional * (e^(Opposite Leg Fixed Rate * time) - e^(Swap Fixed Rate * time))
     function calculateSwapUnwindValue(
-        IporTypes.IporSwapMemory memory swap,
+        AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
         int256 swapPayoffToDate,
-        uint256 oppositeLegFixedRate,
-        uint256 openingFeeRateForSwapUnwind
+        uint256 oppositeLegFixedRate
     ) internal pure returns (int256 swapUnwindValue) {
-        uint256 endTimestamp = calculateSwapMaturity(swap);
+        uint256 endTimestamp = getSwapEndTimestamp(swap);
+
         require(closingTimestamp <= endTimestamp, AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE);
+
+        uint256 time = (endTimestamp - swap.openTimestamp) - (closingTimestamp - swap.openTimestamp);
 
         swapUnwindValue =
             swapPayoffToDate +
             swap.notional.toInt256().calculateContinuousCompoundInterestUsingRatePeriodMultiplicationInt(
-                (oppositeLegFixedRate.toInt256() - swap.fixedInterestRate.toInt256()) *
-                    ((endTimestamp - swap.openTimestamp) - (closingTimestamp - swap.openTimestamp)).toInt256()
+                (oppositeLegFixedRate * time).toInt256()
             ) -
-            openingFeeRateForSwapUnwind.toInt256();
+            swap.notional.toInt256().calculateContinuousCompoundInterestUsingRatePeriodMultiplicationInt(
+                (swap.fixedInterestRate * time).toInt256()
+            );
+    }
+
+    function calculateSwapUnwindOpeningFeeAmount(
+        AmmTypes.Swap memory swap,
+        uint256 closingTimestamp,
+        uint256 openingFeeRateCfg
+    ) internal pure returns (uint256 swapOpeningFeeAmount) {
+        swapOpeningFeeAmount = IporMath.division(
+            swap.notional *
+                openingFeeRateCfg *
+                IporMath.division(
+                    ((getSwapEndTimestamp(swap) - swap.openTimestamp) - (closingTimestamp - swap.openTimestamp)) * 1e18,
+                    365 days
+                ),
+            1e36
+        );
     }
 
     function calculateInterest(
-        IporTypes.IporSwapMemory memory swap,
+        AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) internal pure returns (uint256 interestFixed, uint256 interestFloating) {
@@ -148,26 +155,46 @@ library IporSwapLogic {
         }
     }
 
-    function calculateSwapMaturity(IporTypes.IporSwapMemory memory swap) internal pure returns (uint256) {
-        if (swap.duration == 0) {
+    function getSwapEndTimestamp(AmmTypes.Swap memory swap) internal pure returns (uint256) {
+        if (swap.tenor == IporTypes.SwapTenor.DAYS_28) {
             return swap.openTimestamp + 28 days;
-        } else if (swap.duration == 1) {
+        } else if (swap.tenor == IporTypes.SwapTenor.DAYS_60) {
             return swap.openTimestamp + 60 days;
-        } else if (swap.duration == 2) {
+        } else if (swap.tenor == IporTypes.SwapTenor.DAYS_90) {
             return swap.openTimestamp + 90 days;
         } else {
-            revert(AmmErrors.UNSUPPORTED_SWAP_DURATION);
+            revert(AmmErrors.UNSUPPORTED_SWAP_TENOR);
         }
     }
 
-    function getMaturity(AmmTypes.SwapDuration duration) internal pure returns (uint256) {
-        if (duration == AmmTypes.SwapDuration.DAYS_28) {
+    function getTenorInSeconds(IporTypes.SwapTenor tenor) internal pure returns (uint256) {
+        if (tenor == IporTypes.SwapTenor.DAYS_28) {
             return 28 days;
-        } else if (duration == AmmTypes.SwapDuration.DAYS_60) {
+        } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
             return 60 days;
-        } else if (duration == AmmTypes.SwapDuration.DAYS_90) {
+        } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
             return 90 days;
         }
-        revert(string.concat(AmmErrors.WRONG_MATURITY, " maturity"));
+        revert(AmmErrors.UNSUPPORTED_SWAP_TENOR);
+    }
+
+    function getTenorInDays(IporTypes.SwapTenor tenor) internal pure returns (uint256) {
+        if (tenor == IporTypes.SwapTenor.DAYS_28) {
+            return 28;
+        } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
+            return 60;
+        } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
+            return 90;
+        } else {
+            revert(AmmErrors.UNSUPPORTED_SWAP_TENOR);
+        }
+    }
+
+    function splitOpeningFeeAmount(
+        uint256 openingFeeAmount,
+        uint256 openingFeeForTreasurePortionRate
+    ) internal pure returns (uint256 liquidityPoolAmount, uint256 treasuryAmount) {
+        treasuryAmount = IporMath.division(openingFeeAmount * openingFeeForTreasurePortionRate, 1e18);
+        liquidityPoolAmount = openingFeeAmount - treasuryAmount;
     }
 }

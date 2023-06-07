@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 /// @title Types used in comunication with Cockpit - an internal webapp responsible for IPOR Protocol diagnosis and monitoring.
 /// @dev used by ICockpitDataProvider interface
@@ -25,12 +25,6 @@ library CockpitTypes {
         /// @notice Interest Bearing Token (IBT) Price
         /// @dev value represented in 18 decimals
         uint256 ibtPrice;
-        /// @notice Exponential Moving Average
-        /// @dev value represented in 18 decimals
-        uint256 exponentialMovingAverage;
-        /// @notice Exponential Weighted Moving Variance
-        /// @dev value represented in 18 decimals
-        uint256 exponentialWeightedMovingVariance;
         /// @notice Epoch timestamp of most recent IPOR publication
         /// @dev value represented in 18 decimals
         uint256 lastUpdateTimestamp;

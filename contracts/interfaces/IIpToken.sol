@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
@@ -13,7 +13,7 @@ interface IIpToken is IERC20 {
     /// @notice Sets Router's address. Owner only
     /// @dev only Router can mint or burn ipTokens. Function emits `RouterChanged` event.
     /// @param newRouter Router's address
-    function setRouter(address newRouter) external;
+    function setJoseph(address newRouter) external;
 
     /// @notice Creates the ipTokens in the `amount` given and assigns them to the `account`
     /// @dev Emits {Transfer} from ERC20 asset and {Mint} event from ipToken
@@ -38,12 +38,8 @@ interface IIpToken is IERC20 {
     event Burn(address indexed account, uint256 amount);
 
     /// @notice Emmited when Router address is changed by its owner.
-    /// @param changedBy account address that changed Router's address
-    /// @param oldRouter old address of Router
     /// @param newRouter new address of Router
     event RouterChanged(
-        address indexed changedBy,
-        address indexed oldRouter,
         address indexed newRouter
     );
 }

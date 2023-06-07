@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../utils/SwapUtils.sol";
 import "../utils/DataUtils.sol";
@@ -37,9 +37,9 @@ contract AmmTreasuryShouldCalculateMaxLeverageTest is Test, TestCommons, DataUti
             _iporProtocolDai,
             TestConstants.RMO_NOTIONAL_10B,
             TestConstants.RMO_NOTIONAL_2B,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_35_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_35_PER,
             1000 * 1e18,
             1000 * 1e18
         );
@@ -47,9 +47,9 @@ contract AmmTreasuryShouldCalculateMaxLeverageTest is Test, TestCommons, DataUti
             _iporProtocolDai,
             TestConstants.RMO_NOTIONAL_1B,
             TestConstants.RMO_NOTIONAL_100M,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_35_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_35_PER,
             1000 * 1e18,
             1000 * 1e18
         );
@@ -57,9 +57,9 @@ contract AmmTreasuryShouldCalculateMaxLeverageTest is Test, TestCommons, DataUti
             _iporProtocolDai,
             TestConstants.RMO_NOTIONAL_50M,
             TestConstants.RMO_NOTIONAL_10M,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_35_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_35_PER,
             1000 * 1e18,
             500 * 1e18
         );
@@ -67,9 +67,9 @@ contract AmmTreasuryShouldCalculateMaxLeverageTest is Test, TestCommons, DataUti
             _iporProtocolDai,
             TestConstants.RMO_NOTIONAL_50M,
             TestConstants.RMO_NOTIONAL_10M,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_35_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_35_PER,
             1000 * 1e18,
             500 * 1e18
         );
@@ -77,9 +77,9 @@ contract AmmTreasuryShouldCalculateMaxLeverageTest is Test, TestCommons, DataUti
             _iporProtocolDai,
             TestConstants.RMO_NOTIONAL_2M_220K,
             TestConstants.RMO_NOTIONAL_1M_500K,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_35_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_35_PER,
             111 * 1e18,
             75 * 1e18
         );
@@ -87,9 +87,9 @@ contract AmmTreasuryShouldCalculateMaxLeverageTest is Test, TestCommons, DataUti
             _iporProtocolDai,
             TestConstants.RMO_NOTIONAL_1M,
             TestConstants.RMO_NOTIONAL_100K,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_35_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_35_PER,
             50 * 1e18,
             10 * 1e18
         );
@@ -97,9 +97,9 @@ contract AmmTreasuryShouldCalculateMaxLeverageTest is Test, TestCommons, DataUti
             _iporProtocolUsdt,
             TestConstants.RMO_NOTIONAL_10B,
             TestConstants.RMO_NOTIONAL_2B,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_35_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_35_PER,
             1000 * 1e18,
             1000 * 1e18
         );
@@ -107,9 +107,9 @@ contract AmmTreasuryShouldCalculateMaxLeverageTest is Test, TestCommons, DataUti
             _iporProtocolUsdt,
             TestConstants.RMO_NOTIONAL_1B,
             TestConstants.RMO_NOTIONAL_100M,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_35_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_35_PER,
             1000 * 1e18,
             1000 * 1e18
         );
@@ -117,9 +117,9 @@ contract AmmTreasuryShouldCalculateMaxLeverageTest is Test, TestCommons, DataUti
             _iporProtocolUsdt,
             TestConstants.RMO_NOTIONAL_50M,
             TestConstants.RMO_NOTIONAL_10M,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_35_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_35_PER,
             1000 * 1e18,
             500 * 1e18
         );
@@ -127,9 +127,9 @@ contract AmmTreasuryShouldCalculateMaxLeverageTest is Test, TestCommons, DataUti
             _iporProtocolUsdt,
             TestConstants.RMO_NOTIONAL_50M,
             TestConstants.RMO_NOTIONAL_10M,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_35_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_35_PER,
             1000 * 1e18,
             500 * 1e18
         );
@@ -137,9 +137,9 @@ contract AmmTreasuryShouldCalculateMaxLeverageTest is Test, TestCommons, DataUti
             _iporProtocolUsdt,
             TestConstants.RMO_NOTIONAL_2M_220K,
             TestConstants.RMO_NOTIONAL_1M_500K,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_35_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_35_PER,
             111 * 1e18,
             75 * 1e18
         );
@@ -147,9 +147,9 @@ contract AmmTreasuryShouldCalculateMaxLeverageTest is Test, TestCommons, DataUti
             _iporProtocolUsdt,
             TestConstants.RMO_NOTIONAL_1M,
             TestConstants.RMO_NOTIONAL_100K,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_35_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_35_PER,
             50 * 1e18,
             10 * 1e18
         );
@@ -157,9 +157,9 @@ contract AmmTreasuryShouldCalculateMaxLeverageTest is Test, TestCommons, DataUti
             _iporProtocolUsdt,
             type(uint64).min,
             type(uint64).max,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_20_PER,
-            TestConstants.RMO_UTILIZATION_RATE_35_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_20_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_35_PER,
             10 * 1e18,
             1000 * 1e18
         );
@@ -168,8 +168,8 @@ contract AmmTreasuryShouldCalculateMaxLeverageTest is Test, TestCommons, DataUti
             type(uint64).min,
             type(uint64).max,
             0,
-            TestConstants.RMO_UTILIZATION_RATE_100_PER,
-            TestConstants.RMO_UTILIZATION_RATE_100_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_100_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_100_PER,
             10 * 1e18,
             1000 * 1e18
         );
@@ -178,8 +178,8 @@ contract AmmTreasuryShouldCalculateMaxLeverageTest is Test, TestCommons, DataUti
             type(uint64).min,
             type(uint64).max,
             0,
-            TestConstants.RMO_UTILIZATION_RATE_100_PER,
-            TestConstants.RMO_UTILIZATION_RATE_100_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_100_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_100_PER,
             10 * 1e18,
             1000 * 1e18
         );
@@ -189,9 +189,9 @@ contract AmmTreasuryShouldCalculateMaxLeverageTest is Test, TestCommons, DataUti
         BuilderUtils.IporProtocol memory iporProtocol,
         uint64 maxNotionalPayFixed,
         uint64 maxNotionalReceiveFixed,
-        uint16 maxUtilizationRatePayFixed,
-        uint16 maxUtilizationRateReceiveFixed,
-        uint16 maxUtilizationRate,
+        uint16 maxCollateralRatioPayFixed,
+        uint16 maxCollateralRatioReceiveFixed,
+        uint16 maxCollateralRatio,
         uint256 expectedMaxLeveragePayFixed,
         uint256 expectedMaxLeverageReceiveFixed
     ) internal {
@@ -202,9 +202,9 @@ contract AmmTreasuryShouldCalculateMaxLeverageTest is Test, TestCommons, DataUti
             address(iporProtocol.asset),
             maxNotionalPayFixed,
             maxNotionalReceiveFixed,
-            maxUtilizationRatePayFixed,
-            maxUtilizationRateReceiveFixed,
-            maxUtilizationRate
+            maxCollateralRatioPayFixed,
+            maxCollateralRatioReceiveFixed,
+            maxCollateralRatio
         );
 
         //when

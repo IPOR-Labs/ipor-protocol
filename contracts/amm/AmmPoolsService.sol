@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "../libraries/Constants.sol";
@@ -31,7 +31,7 @@ contract AmmPoolsService is IAmmPoolsService {
     address internal immutable _usdtAmmTreasury;
     address internal immutable _usdtAssetManagement;
     uint256 internal immutable _usdtRedeemFeeRate;
-    uint256 internal immutable _usdtRedeemLpMaxUtilizationRate;
+    uint256 internal immutable _usdtRedeemLpMaxCollateralRatio;
 
     address internal immutable _usdc;
     uint256 internal immutable _usdcDecimals;
@@ -40,7 +40,7 @@ contract AmmPoolsService is IAmmPoolsService {
     address internal immutable _usdcAmmTreasury;
     address internal immutable _usdcAssetManagement;
     uint256 internal immutable _usdcRedeemFeeRate;
-    uint256 internal immutable _usdcRedeemLpMaxUtilizationRate;
+    uint256 internal immutable _usdcRedeemLpMaxCollateralRatio;
 
     address internal immutable _dai;
     uint256 internal immutable _daiDecimals;
@@ -49,14 +49,14 @@ contract AmmPoolsService is IAmmPoolsService {
     address internal immutable _daiAmmTreasury;
     address internal immutable _daiAssetManagement;
     uint256 internal immutable _daiRedeemFeeRate;
-    uint256 internal immutable _daiRedeemLpMaxUtilizationRate;
+    uint256 internal immutable _daiRedeemLpMaxCollateralRatio;
 
     address internal immutable _iporOracle;
 
     constructor(
-        PoolConfiguration memory usdtPoolCfg,
-        PoolConfiguration memory usdcPoolCfg,
-        PoolConfiguration memory daiPoolCfg,
+        AmmPoolsServicePoolConfiguration memory usdtPoolCfg,
+        AmmPoolsServicePoolConfiguration memory usdcPoolCfg,
+        AmmPoolsServicePoolConfiguration memory daiPoolCfg,
         address iporOracle
     ) {
         require(usdtPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool asset"));
@@ -99,7 +99,7 @@ contract AmmPoolsService is IAmmPoolsService {
         _usdtAmmTreasury = usdtPoolCfg.ammTreasury;
         _usdtAssetManagement = usdtPoolCfg.assetManagement;
         _usdtRedeemFeeRate = usdtPoolCfg.redeemFeeRate;
-        _usdtRedeemLpMaxUtilizationRate = usdtPoolCfg.redeemLpMaxUtilizationRate;
+        _usdtRedeemLpMaxCollateralRatio = usdtPoolCfg.redeemLpMaxCollateralRatio;
 
         _usdc = usdcPoolCfg.asset;
         _usdcDecimals = usdcPoolCfg.decimals;
@@ -108,7 +108,7 @@ contract AmmPoolsService is IAmmPoolsService {
         _usdcAmmTreasury = usdcPoolCfg.ammTreasury;
         _usdcAssetManagement = usdcPoolCfg.assetManagement;
         _usdcRedeemFeeRate = usdcPoolCfg.redeemFeeRate;
-        _usdcRedeemLpMaxUtilizationRate = usdcPoolCfg.redeemLpMaxUtilizationRate;
+        _usdcRedeemLpMaxCollateralRatio = usdcPoolCfg.redeemLpMaxCollateralRatio;
 
         _dai = daiPoolCfg.asset;
         _daiDecimals = daiPoolCfg.decimals;
@@ -117,37 +117,37 @@ contract AmmPoolsService is IAmmPoolsService {
         _daiAmmTreasury = daiPoolCfg.ammTreasury;
         _daiAssetManagement = daiPoolCfg.assetManagement;
         _daiRedeemFeeRate = daiPoolCfg.redeemFeeRate;
-        _daiRedeemLpMaxUtilizationRate = daiPoolCfg.redeemLpMaxUtilizationRate;
+        _daiRedeemLpMaxCollateralRatio = daiPoolCfg.redeemLpMaxCollateralRatio;
 
         _iporOracle = iporOracle;
     }
 
-    function getAmmPoolServiceConfiguration(address asset) external view override returns (PoolConfiguration memory) {
+    function getAmmPoolServiceConfiguration(address asset) external view override returns (AmmPoolsServicePoolConfiguration memory) {
         return _getPoolConfiguration(asset);
     }
 
-    function provideLiquidityUsdt(address onBehalfOf, uint256 assetAmount) external override {
-        _provideLiquidity(_usdt, onBehalfOf, assetAmount);
+    function provideLiquidityUsdt(address beneficiary, uint256 assetAmount) external override {
+        _provideLiquidity(_usdt, beneficiary, assetAmount);
     }
 
-    function provideLiquidityUsdc(address onBehalfOf, uint256 assetAmount) external override {
-        _provideLiquidity(_usdc, onBehalfOf, assetAmount);
+    function provideLiquidityUsdc(address beneficiary, uint256 assetAmount) external override {
+        _provideLiquidity(_usdc, beneficiary, assetAmount);
     }
 
-    function provideLiquidityDai(address onBehalfOf, uint256 assetAmount) external override {
-        _provideLiquidity(_dai, onBehalfOf, assetAmount);
+    function provideLiquidityDai(address beneficiary, uint256 assetAmount) external override {
+        _provideLiquidity(_dai, beneficiary, assetAmount);
     }
 
-    function redeemFromAmmPoolUsdt(address onBehalfOf, uint256 ipTokenAmount) external override {
-        _redeem(_usdt, onBehalfOf, ipTokenAmount);
+    function redeemFromAmmPoolUsdt(address beneficiary, uint256 ipTokenAmount) external override {
+        _redeem(_usdt, beneficiary, ipTokenAmount);
     }
 
-    function redeemFromAmmPoolUsdc(address onBehalfOf, uint256 ipTokenAmount) external override {
-        _redeem(_usdc, onBehalfOf, ipTokenAmount);
+    function redeemFromAmmPoolUsdc(address beneficiary, uint256 ipTokenAmount) external override {
+        _redeem(_usdc, beneficiary, ipTokenAmount);
     }
 
-    function redeemFromAmmPoolDai(address onBehalfOf, uint256 ipTokenAmount) external override {
-        _redeem(_dai, onBehalfOf, ipTokenAmount);
+    function redeemFromAmmPoolDai(address beneficiary, uint256 ipTokenAmount) external override {
+        _redeem(_dai, beneficiary, ipTokenAmount);
     }
 
     function rebalanceBetweenAmmTreasuryAndAssetManagement(address asset) external override {
@@ -156,7 +156,7 @@ contract AmmPoolsService is IAmmPoolsService {
             AmmPoolsErrors.CALLER_NOT_APPOINTED_TO_REBALANCE
         );
 
-        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+        AmmPoolsServicePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
             poolCfg.asset
@@ -181,23 +181,23 @@ contract AmmPoolsService is IAmmPoolsService {
             uint256 assetAmount = wadAmmTreasuryAssetBalance -
                 IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18);
             if (assetAmount > 0) {
-                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagement(assetAmount);
+                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagementInternal(assetAmount);
             }
         } else {
             uint256 assetAmount = IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18) -
                 wadAmmTreasuryAssetBalance;
             if (assetAmount > 0) {
-                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagement(assetAmount);
+                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagementInternal(assetAmount);
             }
         }
     }
 
     function _provideLiquidity(
         address asset,
-        address onBehalfOf,
+        address beneficiary,
         uint256 assetAmount
     ) internal {
-        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+        AmmPoolsServicePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
             poolCfg.asset
         );
@@ -209,34 +209,32 @@ contract AmmPoolsService is IAmmPoolsService {
         model.ammTreasury = poolCfg.ammTreasury;
         model.assetManagement = poolCfg.assetManagement;
         model.iporOracle = _iporOracle;
-
         IporTypes.AmmBalancesMemory memory balance = model.getAccruedBalance();
-
         uint256 exchangeRate = model.getExchangeRate(balance.liquidityPool);
-
         require(exchangeRate > 0, AmmErrors.LIQUIDITY_POOL_IS_EMPTY);
 
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmount, poolCfg.decimals);
 
-        IAmmStorage(poolCfg.ammStorage).addLiquidity(
-            onBehalfOf,
+        IAmmStorage(poolCfg.ammStorage).addLiquidityInternal(
+            beneficiary,
             wadAssetAmount,
             uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
             uint256(ammPoolsParamsCfg.maxLpAccountContribution) * 1e18
         );
 
-        IERC20Upgradeable(poolCfg.asset).safeTransferFrom(msg.sender, poolCfg.ammTreasury, assetAmount);
+    IERC20Upgradeable(poolCfg.asset).safeTransferFrom(msg.sender, poolCfg.ammTreasury, assetAmount);
+
 
         uint256 ipTokenAmount = IporMath.division(wadAssetAmount * 1e18, exchangeRate);
 
-        IIpToken(poolCfg.ipToken).mint(onBehalfOf, ipTokenAmount);
+        IIpToken(poolCfg.ipToken).mint(beneficiary, ipTokenAmount);
 
         /// @dev Order of the following two functions is important, first safeTransferFrom, then rebalanceIfNeededAfterProvideLiquidity.
         _rebalanceIfNeededAfterProvideLiquidity(poolCfg, ammPoolsParamsCfg, balance.vault, wadAssetAmount);
 
         emit ProvideLiquidity(
             block.timestamp,
-            onBehalfOf,
+            beneficiary,
             poolCfg.ammTreasury,
             exchangeRate,
             wadAssetAmount,
@@ -246,10 +244,10 @@ contract AmmPoolsService is IAmmPoolsService {
 
     function _redeem(
         address asset,
-        address onBehalfOf,
+        address beneficiary,
         uint256 ipTokenAmount
     ) internal {
-        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+        AmmPoolsServicePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         require(
             ipTokenAmount > 0 && ipTokenAmount <= IIpToken(poolCfg.ipToken).balanceOf(msg.sender),
@@ -291,24 +289,24 @@ contract AmmPoolsService is IAmmPoolsService {
         _rebalanceIfNeededBeforeRedeem(poolCfg, wadAmmTreasuryErc20Balance, balance.vault, redeemMoney.wadRedeemAmount);
 
         require(
-            _calculateRedeemedUtilizationRate(
+            _calculateRedeemedCollateralRatio(
                 balance.liquidityPool,
                 balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
                 redeemMoney.wadRedeemAmount
-            ) <= poolCfg.redeemLpMaxUtilizationRate,
-            AmmPoolsErrors.REDEEM_LP_UTILIZATION_EXCEEDED
+            ) <= poolCfg.redeemLpMaxCollateralRatio,
+            AmmPoolsErrors.REDEEM_LP_COLLATERAL_RATIO_EXCEEDED
         );
 
         IIpToken(poolCfg.ipToken).burn(msg.sender, ipTokenAmount);
 
-        IAmmStorage(poolCfg.ammStorage).subtractLiquidity(redeemMoney.wadRedeemAmount);
+        IAmmStorage(poolCfg.ammStorage).subtractLiquidityInternal(redeemMoney.wadRedeemAmount);
 
-        IERC20Upgradeable(asset).safeTransferFrom(poolCfg.ammTreasury, onBehalfOf, redeemMoney.redeemAmount);
+        IERC20Upgradeable(asset).safeTransferFrom(poolCfg.ammTreasury, beneficiary, redeemMoney.redeemAmount);
 
         emit Redeem(
             block.timestamp,
             poolCfg.ammTreasury,
-            onBehalfOf,
+            beneficiary,
             exchangeRate,
             redeemMoney.wadAssetAmount,
             ipTokenAmount,
@@ -317,10 +315,10 @@ contract AmmPoolsService is IAmmPoolsService {
         );
     }
 
-    function _getPoolConfiguration(address asset) internal view returns (PoolConfiguration memory) {
+    function _getPoolConfiguration(address asset) internal view returns (AmmPoolsServicePoolConfiguration memory) {
         if (asset == _usdt) {
             return
-                PoolConfiguration({
+                AmmPoolsServicePoolConfiguration({
                     asset: _usdt,
                     decimals: _usdtDecimals,
                     ipToken: _usdtIpToken,
@@ -328,11 +326,11 @@ contract AmmPoolsService is IAmmPoolsService {
                     ammTreasury: _usdtAmmTreasury,
                     assetManagement: _usdtAssetManagement,
                     redeemFeeRate: _usdtRedeemFeeRate,
-                    redeemLpMaxUtilizationRate: _usdtRedeemLpMaxUtilizationRate
+                    redeemLpMaxCollateralRatio: _usdtRedeemLpMaxCollateralRatio
                 });
         } else if (asset == _usdc) {
             return
-                PoolConfiguration({
+                AmmPoolsServicePoolConfiguration({
                     asset: _usdc,
                     decimals: _usdcDecimals,
                     ipToken: _usdcIpToken,
@@ -340,11 +338,11 @@ contract AmmPoolsService is IAmmPoolsService {
                     ammTreasury: _usdcAmmTreasury,
                     assetManagement: _usdcAssetManagement,
                     redeemFeeRate: _usdcRedeemFeeRate,
-                    redeemLpMaxUtilizationRate: _usdcRedeemLpMaxUtilizationRate
+                    redeemLpMaxCollateralRatio: _usdcRedeemLpMaxCollateralRatio
                 });
         } else if (asset == _dai) {
             return
-                PoolConfiguration({
+                AmmPoolsServicePoolConfiguration({
                     asset: _dai,
                     decimals: _daiDecimals,
                     ipToken: _daiIpToken,
@@ -352,10 +350,10 @@ contract AmmPoolsService is IAmmPoolsService {
                     ammTreasury: _daiAmmTreasury,
                     assetManagement: _daiAssetManagement,
                     redeemFeeRate: _daiRedeemFeeRate,
-                    redeemLpMaxUtilizationRate: _daiRedeemLpMaxUtilizationRate
+                    redeemLpMaxCollateralRatio: _daiRedeemLpMaxCollateralRatio
                 });
         } else {
-            revert("AmmPoolsLens: asset not supported");
+            revert(IporErrors.ASSET_NOT_SUPPORTED);
         }
     }
 
@@ -368,7 +366,7 @@ contract AmmPoolsService is IAmmPoolsService {
         uint256 ipTokenAmount,
         uint256 exchangeRate,
         uint256 cfgRedeemFeeRate
-    ) internal view returns (AmmTypes.RedeemMoney memory redeemMoney) {
+    ) internal pure returns (AmmTypes.RedeemMoney memory redeemMoney) {
         uint256 wadAssetAmount = IporMath.division(ipTokenAmount * exchangeRate, 1e18);
         uint256 wadRedeemFee = IporMath.division(wadAssetAmount * cfgRedeemFeeRate, 1e18);
         uint256 redeemAmount = IporMath.convertWadToAssetDecimals(wadAssetAmount - wadRedeemFee, assetDecimals);
@@ -383,7 +381,7 @@ contract AmmPoolsService is IAmmPoolsService {
     }
 
     function _rebalanceIfNeededAfterProvideLiquidity(
-        PoolConfiguration memory poolCfg,
+        AmmPoolsServicePoolConfiguration memory poolCfg,
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg,
         uint256 vaultBalance,
         uint256 wadOperationAmount
@@ -402,7 +400,7 @@ contract AmmPoolsService is IAmmPoolsService {
             );
 
             if (rebalanceAmount > 0) {
-                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagement(rebalanceAmount.toUint256());
+                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagementInternal(rebalanceAmount.toUint256());
             }
         }
     }
@@ -416,7 +414,7 @@ contract AmmPoolsService is IAmmPoolsService {
         uint256 wadAmmTreasuryErc20BalanceAfterDeposit,
         uint256 vaultBalance,
         uint256 wadAmmTreasuryAndAssetManagementRatio
-    ) internal view returns (int256) {
+    ) internal pure returns (int256) {
         return
             IporMath.divisionInt(
                 (wadAmmTreasuryErc20BalanceAfterDeposit + vaultBalance).toInt256() *
@@ -426,7 +424,7 @@ contract AmmPoolsService is IAmmPoolsService {
     }
 
     function _rebalanceIfNeededBeforeRedeem(
-        PoolConfiguration memory poolCfg,
+        AmmPoolsServicePoolConfiguration memory poolCfg,
         uint256 wadAmmTreasuryErc20Balance,
         uint256 vaultBalance,
         uint256 wadOperationAmount
@@ -449,12 +447,12 @@ contract AmmPoolsService is IAmmPoolsService {
             );
 
             if (rebalanceAmount < 0) {
-                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagement((-rebalanceAmount).toUint256());
+                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagementInternal((-rebalanceAmount).toUint256());
             }
         }
     }
 
-    function _calculateRedeemedUtilizationRate(
+    function _calculateRedeemedCollateralRatio(
         uint256 totalLiquidityPoolBalance,
         uint256 totalCollateralBalance,
         uint256 redeemedAmount

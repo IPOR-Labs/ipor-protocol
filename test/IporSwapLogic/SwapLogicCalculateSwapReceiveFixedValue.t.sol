@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import {DataUtils} from "../utils/DataUtils.sol";
 import "../TestCommons.sol";
@@ -16,18 +16,18 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
 
     function testShouldCalculateInterestCase1() public {
         // given
-        IporTypes.IporSwapMemory memory swap = IporTypes.IporSwapMemory(
+        AmmTypes.Swap memory swap = AmmTypes.Swap(
             TestConstants.ZERO, // id
             _admin, // buyer
             block.timestamp, // openTimestamp
-            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp
+            IporTypes.SwapTenor.DAYS_28,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
             987030000000000000000, // ibtQuantity
             40000000000000000, // fixedInterestRate
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC, // liquidationDepositAmount
-            1 // state
+            IporTypes.SwapState.ACTIVE
         );
         // when
         int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(
@@ -39,18 +39,18 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
 
     function testShouldCalculateInterestCase2WhenSameTimestampAndIBTPriceIncreasesAnd18Decimals() public {
         // given
-        IporTypes.IporSwapMemory memory swap = IporTypes.IporSwapMemory(
+        AmmTypes.Swap memory swap = AmmTypes.Swap(
             TestConstants.ZERO, // id
             _admin, // buyer
             block.timestamp, // openTimestamp
-            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp
+            IporTypes.SwapTenor.DAYS_28,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
             987030000000000000000, // ibtQuantity
             TestConstants.PERCENTAGE_4_18DEC, // fixedInterestRate
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC, // liquidationDepositAmount
-            1 // state
+            IporTypes.SwapState.ACTIVE
         );
         // when
         int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(swap, swap.openTimestamp, 125 * TestConstants.D18);
@@ -60,18 +60,18 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
 
     function testShouldCalculateInterestWhen25DaysLaterIBTPriceHasNotChangedAnd18Decimals() public {
         // given
-        IporTypes.IporSwapMemory memory swap = IporTypes.IporSwapMemory(
+        AmmTypes.Swap memory swap = AmmTypes.Swap(
             TestConstants.ZERO, // id
             _admin, // buyer
             block.timestamp, // openTimestamp
-            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp
+            IporTypes.SwapTenor.DAYS_28,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
             987030000000000000000, // ibtQuantity
             TestConstants.PERCENTAGE_4_18DEC, // fixedInterestRate
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC, // liquidationDepositAmount
-            1 // state
+            IporTypes.SwapState.ACTIVE
         );
         // when
         int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(
@@ -83,18 +83,18 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
 
     function testShouldCalculateInterestWhen25DaysLaterIBTPriceHasChangedAnd18Decimals() public {
         // given
-        IporTypes.IporSwapMemory memory swap = IporTypes.IporSwapMemory(
+        AmmTypes.Swap memory swap = AmmTypes.Swap(
             TestConstants.ZERO, // id
             _admin, // buyer
             block.timestamp, // openTimestamp
-            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp
+            IporTypes.SwapTenor.DAYS_28,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
             987030000000000000000, // ibtQuantity
             TestConstants.PERCENTAGE_4_18DEC, // fixedInterestRate
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC, // liquidationDepositAmount
-            1 // state
+            IporTypes.SwapState.ACTIVE
         );
         // when
         int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(
@@ -108,18 +108,18 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
     public
     {
         // given
-        IporTypes.IporSwapMemory memory swap = IporTypes.IporSwapMemory(
+        AmmTypes.Swap memory swap = AmmTypes.Swap(
             TestConstants.ZERO, // id
             _admin, // buyer
             block.timestamp, // openTimestamp
-            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp
+            IporTypes.SwapTenor.DAYS_28,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             98703 * TestConstants.D18, // notional
             98703 * TestConstants.D16, // ibtQuantity
             TestConstants.PERCENTAGE_366_18DEC, // fixedInterestRate
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC, // liquidationDepositAmount
-            1 // state
+            IporTypes.SwapState.ACTIVE
         );
         // when
         int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(
@@ -131,18 +131,18 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
 
     function testShouldCalculateInterestWhen100DaysLaterIBTPriceHasNotChangedAnd18Decimals() public {
         // given
-        IporTypes.IporSwapMemory memory swap = IporTypes.IporSwapMemory(
+        AmmTypes.Swap memory swap = AmmTypes.Swap(
             TestConstants.ZERO, // id
             _admin, // buyer
             block.timestamp, // openTimestamp
-            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp
+            IporTypes.SwapTenor.DAYS_28,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
             987030000000000000000, // ibtQuantity
             TestConstants.PERCENTAGE_4_18DEC, // fixedInterestRate
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC, // liquidationDepositAmount
-            1 // state
+            IporTypes.SwapState.ACTIVE
         );
         // when
         int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(
@@ -154,18 +154,18 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
 
     function testShouldCalculateInterestWhen100DaysLaterIBTPriceHasChangedAnd18Decimals() public {
         // given
-        IporTypes.IporSwapMemory memory swap = IporTypes.IporSwapMemory(
+        AmmTypes.Swap memory swap = AmmTypes.Swap(
             TestConstants.ZERO, // id
             _admin, // buyer
             block.timestamp, // openTimestamp
-            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp
+            IporTypes.SwapTenor.DAYS_28,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
             987030000000000000000, // ibtQuantity
             TestConstants.PERCENTAGE_4_18DEC, // fixedInterestRate
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC, // liquidationDepositAmount
-            1 // state
+            IporTypes.SwapState.ACTIVE
         );
         // when
         int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(
@@ -177,18 +177,18 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
 
     function testShouldCalculateInterestWhen100DaysLaterIBTPriceHasChangedAnd6Decimals() public {
         // given
-        IporTypes.IporSwapMemory memory swap = IporTypes.IporSwapMemory(
+        AmmTypes.Swap memory swap = AmmTypes.Swap(
             TestConstants.ZERO, // id
             _admin, // buyer
             block.timestamp, // openTimestamp
-            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp
+            IporTypes.SwapTenor.DAYS_28,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
             987030000000000000000, // ibtQuantity
             TestConstants.PERCENTAGE_4_18DEC, // fixedInterestRate
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC, // liquidationDepositAmount
-            1 // state
+            IporTypes.SwapState.ACTIVE
         );
         // when
         int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(

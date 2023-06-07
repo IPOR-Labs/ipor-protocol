@@ -1,5 +1,5 @@
 //  SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "contracts/oracles/IporRiskManagementOracle.sol";
 import "../TestConstants.sol";
@@ -25,9 +25,9 @@ contract IporRiskManagementOracleBuilder is Test {
                 IporRiskManagementOracleTypes.RiskIndicators({
                     maxNotionalPayFixed: TestConstants.RMO_NOTIONAL_1B,
                     maxNotionalReceiveFixed: TestConstants.RMO_NOTIONAL_1B,
-                    maxUtilizationRatePayFixed: TestConstants.RMO_UTILIZATION_RATE_48_PER,
-                    maxUtilizationRateReceiveFixed: TestConstants.RMO_UTILIZATION_RATE_48_PER,
-                    maxUtilizationRate: TestConstants.RMO_UTILIZATION_RATE_90_PER
+                    maxCollateralRatioPayFixed: TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+                    maxCollateralRatioReceiveFixed: TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+                    maxCollateralRatio: TestConstants.RMO_COLLATERAL_RATIO_90_PER
                 }),
                 IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps({
                     spread28dPayFixed: TestConstants.RMO_SPREAD_0_1_PER,
@@ -83,9 +83,9 @@ contract IporRiskManagementOracleBuilder is Test {
             riskIndicators[i] = IporRiskManagementOracleTypes.RiskIndicators({
                 maxNotionalPayFixed: _riskIndicators[_assets[i]].maxNotionalPayFixed,
                 maxNotionalReceiveFixed: _riskIndicators[_assets[i]].maxNotionalReceiveFixed,
-                maxUtilizationRatePayFixed: _riskIndicators[_assets[i]].maxUtilizationRatePayFixed,
-                maxUtilizationRateReceiveFixed: _riskIndicators[_assets[i]].maxUtilizationRateReceiveFixed,
-                maxUtilizationRate: _riskIndicators[_assets[i]].maxUtilizationRate
+                maxCollateralRatioPayFixed: _riskIndicators[_assets[i]].maxCollateralRatioPayFixed,
+                maxCollateralRatioReceiveFixed: _riskIndicators[_assets[i]].maxCollateralRatioReceiveFixed,
+                maxCollateralRatio: _riskIndicators[_assets[i]].maxCollateralRatio
             });
             baseSpreadsAndFixedRateCaps[i] = IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps({
                 spread28dPayFixed: _baseSpreads[_assets[i]].spread28dPayFixed,

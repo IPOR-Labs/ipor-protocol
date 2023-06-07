@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "contracts/libraries/errors/IporErrors.sol";
 import "contracts/libraries/errors/AmmErrors.sol";
@@ -104,13 +104,13 @@ abstract contract MockJoseph is MockJosephInternal {
 
         IporTypes.AmmBalancesMemory memory balance = _getAmmTreasury().getAccruedBalance();
 
-        uint256 utilizationRate = _calculateRedeemedUtilizationRate(
+        uint256 collateralRatio = _calculateRedeemedCollateralRatio(
             balance.liquidityPool,
             balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
             wadRedeemAmount
         );
 
-        require(utilizationRate <= _getRedeemLpMaxUtilizationRate(), AmmPoolsErrors.REDEEM_LP_UTILIZATION_EXCEEDED);
+        require(collateralRatio <= _getRedeemLpMaxCollateralRatio(), AmmPoolsErrors.REDEEM_LP_COLLATERAL_RATIO_EXCEEDED);
 
         _getIpToken().burn(_msgSender(), ipTokenAmount);
 
@@ -130,7 +130,7 @@ abstract contract MockJoseph is MockJosephInternal {
         );
     }
 
-    function _calculateRedeemedUtilizationRate(
+    function _calculateRedeemedCollateralRatio(
         uint256 totalLiquidityPoolBalance,
         uint256 totalCollateralBalance,
         uint256 redeemedAmount

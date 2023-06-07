@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
@@ -36,7 +36,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         );
     }
 
-    function testShouldNotRedeemWhenLiquidityPoolUtilizationAlreadyExceededAndPayFixed() public {
+    function testShouldNotRedeemWhenLiquidityPoolCollateralRatioAlreadyExceededAndPayFixed() public {
         // given
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -60,7 +60,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
         //BEGIN HACK - subtract liquidity without  burn ipToken
         _iporProtocol.ammStorage.setJoseph(_admin);
-        _iporProtocol.ammStorage.subtractLiquidity(45000 * TestConstants.D18);
+        _iporProtocol.ammStorage.subtractLiquidityInternal(45000 * TestConstants.D18);
         _iporProtocol.ammStorage.setJoseph(address(_iporProtocol.joseph));
         //END HACK - subtract liquidity without  burn ipToken
 
@@ -76,7 +76,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         assertGt(actualCollateral, actualLiquidityPoolBalance);
     }
 
-    function testShouldNotRedeemWhenLiquidityPoolUtilizationAlreadyExceededAndReceiveFixed() public {
+    function testShouldNotRedeemWhenLiquidityPoolCollateralRatioAlreadyExceededAndReceiveFixed() public {
         // given
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -100,7 +100,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
         //BEGIN HACK - subtract liquidity without  burn ipToken
         _iporProtocol.ammStorage.setJoseph(_admin);
-        _iporProtocol.ammStorage.subtractLiquidity(45000 * TestConstants.D18);
+        _iporProtocol.ammStorage.subtractLiquidityInternal(45000 * TestConstants.D18);
         _iporProtocol.ammStorage.setJoseph(address(_iporProtocol.joseph));
         //END HACK - subtract liquidity without  burn ipToken
 
@@ -116,7 +116,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         assertGt(actualCollateral, actualLiquidityPoolBalance);
     }
 
-    function testShouldNotRedeemWhenLiquidityPoolUtilizationExceededAndPayFixed() public {
+    function testShouldNotRedeemWhenLiquidityPoolCollateralRatioExceededAndPayFixed() public {
         // given
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -150,7 +150,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         assertLt(actualCollateral, actualLiquidityPoolBalance);
     }
 
-    function testShouldNotRedeemWhenLiquidityPoolUtilizationExceededAndReceiveFixed() public {
+    function testShouldNotRedeemWhenLiquidityPoolCollateralRatioExceededAndReceiveFixed() public {
         // given
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -194,7 +194,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.ammStorage.setJoseph(_userOne);
 
         vm.prank(_userOne);
-        _iporProtocol.ammStorage.subtractLiquidity(TestConstants.USD_10_000_18DEC);
+        _iporProtocol.ammStorage.subtractLiquidityInternal(TestConstants.USD_10_000_18DEC);
         _iporProtocol.ammStorage.setJoseph(address(_iporProtocol.joseph));
 
         // when

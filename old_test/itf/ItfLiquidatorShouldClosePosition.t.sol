@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
@@ -71,7 +71,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
     function testShouldEmitCloseSwapEventWhenPayFixed() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
@@ -146,7 +145,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
     function testShouldEmitCloseSwapEventWhenReceiveFixed() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -220,7 +218,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
     function testShouldClose10PayFixedSwapsAnd10ReceiveFixedSwapsInOneTransactionCase1WhenAllAreOpened() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
 
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
@@ -283,7 +280,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
         // then
         for (uint256 i; i < volumeSwaps.volumePayFixedSwaps; ++i) {
-            IporTypes.IporSwapMemory memory iporPayFixedSwap = _iporProtocol.ammStorage.getSwapPayFixed(i + 1);
+            AmmTypes.Swap memory iporPayFixedSwap = _iporProtocol.ammStorage.getSwapPayFixed(i + 1);
             assertEq(iporPayFixedSwap.state, expectedSwapStatus);
         }
 
@@ -292,7 +289,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             i < volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps;
             ++i
         ) {
-            IporTypes.IporSwapMemory memory iporReceiveFixedSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(
+            AmmTypes.Swap memory iporReceiveFixedSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(
                 i + 1
             );
             assertEq(iporReceiveFixedSwap.state, expectedSwapStatus);
@@ -303,7 +300,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -412,7 +408,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
         // then
         for (uint256 i; i < volumeSwaps.volumePayFixedSwaps; ++i) {
-            IporTypes.IporSwapMemory memory iporPayFixedSwap = _iporProtocol.ammStorage.getSwapPayFixed(i + 1);
+            AmmTypes.Swap memory iporPayFixedSwap = _iporProtocol.ammStorage.getSwapPayFixed(i + 1);
             assertEq(iporPayFixedSwap.state, expectedSwapStatus);
         }
         for (
@@ -420,7 +416,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             i < volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps;
             ++i
         ) {
-            IporTypes.IporSwapMemory memory iporReceiveFixedSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(
+            AmmTypes.Swap memory iporReceiveFixedSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(
                 i + 1
             );
             assertEq(iporReceiveFixedSwap.state, expectedSwapStatus);
@@ -433,7 +429,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
                 volumeSwaps.volumePayFixedSwapsOpenLater;
             ++i
         ) {
-            IporTypes.IporSwapMemory memory iporPayFixedSwapOpenedLater = _iporProtocol.ammStorage.getSwapPayFixed(
+            AmmTypes.Swap memory iporPayFixedSwapOpenedLater = _iporProtocol.ammStorage.getSwapPayFixed(
                 i + 1
             );
             assertEq(iporPayFixedSwapOpenedLater.state, expectedSwapStatusOpenLater);
@@ -449,7 +445,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
                 volumeSwaps.volumeReceiveFixedSwapsOpenLater;
             ++i
         ) {
-            IporTypes.IporSwapMemory memory iporReceiveFixedSwapOpenedLater = _iporProtocol
+            AmmTypes.Swap memory iporReceiveFixedSwapOpenedLater = _iporProtocol
                 .ammStorage
                 .getSwapReceiveFixed(i + 1);
             assertEq(iporReceiveFixedSwapOpenedLater.state, expectedSwapStatusOpenLater);
@@ -460,7 +456,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -525,7 +520,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
         // then
         for (uint256 i; i < volumeSwaps.volumePayFixedSwaps; ++i) {
-            IporTypes.IporSwapMemory memory iporPayFixedSwap = _iporProtocol.ammStorage.getSwapPayFixed(i + 1);
+            AmmTypes.Swap memory iporPayFixedSwap = _iporProtocol.ammStorage.getSwapPayFixed(i + 1);
             assertEq(iporPayFixedSwap.state, expectedSwapStatus);
         }
         for (
@@ -533,14 +528,14 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             i < volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps;
             ++i
         ) {
-            IporTypes.IporSwapMemory memory iporReceiveFixedSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(
+            AmmTypes.Swap memory iporReceiveFixedSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(
                 i + 1
             );
             assertEq(iporReceiveFixedSwap.state, expectedSwapStatus);
         }
-        IporTypes.IporSwapMemory memory closedPayFixedSwap = _iporProtocol.ammStorage.getSwapPayFixed(3);
+        AmmTypes.Swap memory closedPayFixedSwap = _iporProtocol.ammStorage.getSwapPayFixed(3);
         assertEq(closedPayFixedSwap.state, expectedSwapStatus);
-        IporTypes.IporSwapMemory memory closedReceiveFixedSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(8);
+        AmmTypes.Swap memory closedReceiveFixedSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(8);
         assertEq(closedReceiveFixedSwap.state, expectedSwapStatus);
     }
 
@@ -548,7 +543,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -618,7 +612,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -696,7 +689,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -779,7 +771,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -857,7 +848,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
     function testShouldCommitTransactionEvenIfListsForClosingAreEmpty() public {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE3;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -884,7 +874,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -958,7 +947,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -980,7 +969,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -1060,7 +1048,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -1084,7 +1072,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -1165,7 +1152,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -1187,7 +1174,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -1268,7 +1254,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -1292,7 +1278,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -1377,7 +1362,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -1404,7 +1389,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE9;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -1480,7 +1464,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -1503,7 +1487,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -1579,7 +1562,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -1601,7 +1584,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -1681,7 +1663,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -1703,7 +1685,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE9;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -1779,7 +1760,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -1802,7 +1783,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -1880,7 +1860,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -1906,7 +1886,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -1983,7 +1962,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -2008,7 +1987,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -2085,7 +2063,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -2108,7 +2086,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -2184,7 +2161,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -2208,7 +2185,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -2287,7 +2263,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
             _userTwo,
             TestConstants.ZERO,
             50
@@ -2311,7 +2287,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.assetManagementImplementation = address(new MockCaseBaseAssetManagement());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -2391,7 +2366,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
         actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
         AmmStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.ammStorage.getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
+        (, AmmTypes.Swap[] memory swaps) = _iporProtocol.ammStorage.getSwapsReceiveFixed(
             _userTwo,
             TestConstants.ZERO,
             50

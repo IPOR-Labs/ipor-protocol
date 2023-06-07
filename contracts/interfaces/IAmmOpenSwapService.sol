@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../interfaces/types/AmmTypes.sol";
 
@@ -25,7 +25,7 @@ interface IAmmOpenSwapService {
         AmmTypes.IporSwapIndicator indicator
     );
 
-    struct PoolConfiguration {
+    struct AmmOpenSwapServicePoolConfiguration {
         address asset;
         uint256 decimals;
         address ammStorage;
@@ -38,255 +38,255 @@ interface IAmmOpenSwapService {
         uint256 openingFeeTreasuryPortionRate;
     }
 
-    function getPoolConfiguration(address asset) external view returns (PoolConfiguration memory);
+    function getAmmOpenSwapServicePoolConfiguration(address asset) external view returns (AmmOpenSwapServicePoolConfiguration memory);
 
-    /// @notice Open new swap pay fixed receive floating with maturity in 28 days for asset USDT.
-    /// @param onBehalfOf address of the account on behalf of which this swap is opened.
+    /// @notice Open new swap pay fixed receive floating with tenor in 28 days for asset USDT.
+    /// @param beneficiary address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
-    /// @dev Owner of that swap is the user with address `onBehalfOf`. Sender pays for the swap.
+    /// @dev Owner of that swap is the user with address `beneficiary`. Sender pays for the swap.
     function openSwapPayFixed28daysUsdt(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap pay fixed receive floating with maturity in 60 days for asset USDT.
-    /// @param onBehalfOf address of the account on behalf of which this swap is opened.
+    /// @notice Open new swap pay fixed receive floating with tenor in 60 days for asset USDT.
+    /// @param beneficiary address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
-    /// @dev Owner of that swap is the user with address `onBehalfOf`. Sender pays for the swap.
+    /// @dev Owner of that swap is the user with address `beneficiary`. Sender pays for the swap.
     function openSwapPayFixed60daysUsdt(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap pay fixed receive floating with maturity in 90 days for asset USDT.
-    /// @param onBehalfOf address of the account on behalf of which this swap is opened.
+    /// @notice Open new swap pay fixed receive floating with tenor in 90 days for asset USDT.
+    /// @param beneficiary address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
-    /// @dev Owner of that swap is the user with address `onBehalfOf`. Sender pays for the swap.
+    /// @dev Owner of that swap is the user with address `beneficiary`. Sender pays for the swap.
     function openSwapPayFixed90daysUsdt(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap receive fixed pay floating with maturity in 28 days for asset USDT.
-    /// @param onBehalfOf address of the account on behalf of which this swap is opened.
+    /// @notice Open new swap receive fixed pay floating with tenor in 28 days for asset USDT.
+    /// @param beneficiary address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
-    /// @dev Owner of that swap is the user with address `onBehalfOf`. Sender pays for the swap.
+    /// @dev Owner of that swap is the user with address `beneficiary`. Sender pays for the swap.
     function openSwapReceiveFixed28daysUsdt(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap receive fixed pay floating with maturity in 60 days for asset USDT.
-    /// @param onBehalfOf address of the account on behalf of which this swap is opened.
+    /// @notice Open new swap receive fixed pay floating with tenor in 60 days for asset USDT.
+    /// @param beneficiary address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
-    /// @dev Owner of that swap is the user with address `onBehalfOf`. Sender pays for the swap.
+    /// @dev Owner of that swap is the user with address `beneficiary`. Sender pays for the swap.
     function openSwapReceiveFixed60daysUsdt(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap receive fixed pay floating with maturity in 90 days for asset USDT.
-    /// @param onBehalfOf address of the account on behalf of which this swap is opened.
+    /// @notice Open new swap receive fixed pay floating with tenor in 90 days for asset USDT.
+    /// @param beneficiary address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
-    /// @dev Owner of that swap is the user with address `onBehalfOf`. Sender pays for the swap.
+    /// @dev Owner of that swap is the user with address `beneficiary`. Sender pays for the swap.
     function openSwapReceiveFixed90daysUsdt(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap pay fixed receive floating with maturity in 28 days for asset USDC.
-    /// @param onBehalfOf address of the account on behalf of which this swap is opened.
+    /// @notice Open new swap pay fixed receive floating with tenor in 28 days for asset USDC.
+    /// @param beneficiary address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
-    /// @dev Owner of that swap is the user with address `onBehalfOf`. Sender pays for the swap.
+    /// @dev Owner of that swap is the user with address `beneficiary`. Sender pays for the swap.
     function openSwapPayFixed28daysUsdc(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap pay fixed receive floating with maturity in 60 days for asset USDC.
-    /// @param onBehalfOf address of the account on behalf of which this swap is opened.
+    /// @notice Open new swap pay fixed receive floating with tenor in 60 days for asset USDC.
+    /// @param beneficiary address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
-    /// @dev Owner of that swap is the user with address `onBehalfOf`. Sender pays for the swap.
+    /// @dev Owner of that swap is the user with address `beneficiary`. Sender pays for the swap.
     function openSwapPayFixed60daysUsdc(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap pay fixed receive floating with maturity in 90 days for asset USDC.
-    /// @param onBehalfOf address of the account on behalf of which this swap is opened.
+    /// @notice Open new swap pay fixed receive floating with tenor in 90 days for asset USDC.
+    /// @param beneficiary address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
-    /// @dev Owner of that swap is the user with address `onBehalfOf`. Sender pays for the swap.
+    /// @dev Owner of that swap is the user with address `beneficiary`. Sender pays for the swap.
     function openSwapPayFixed90daysUsdc(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap receive fixed pay floating with maturity in 28 days for asset USDC.
-    /// @param onBehalfOf address of the account on behalf of which this swap is opened.
+    /// @notice Open new swap receive fixed pay floating with tenor in 28 days for asset USDC.
+    /// @param beneficiary address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
-    /// @dev Owner of that swap is the user with address `onBehalfOf`. Sender pays for the swap.
+    /// @dev Owner of that swap is the user with address `beneficiary`. Sender pays for the swap.
     function openSwapReceiveFixed28daysUsdc(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap receive fixed pay floating with maturity in 60 days for asset USDC.
-    /// @param onBehalfOf address of the account on behalf of which this swap is opened.
+    /// @notice Open new swap receive fixed pay floating with tenor in 60 days for asset USDC.
+    /// @param beneficiary address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
-    /// @dev Owner of that swap is the user with address `onBehalfOf`. Sender pays for the swap.
+    /// @dev Owner of that swap is the user with address `beneficiary`. Sender pays for the swap.
     function openSwapReceiveFixed60daysUsdc(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap receive fixed pay floating with maturity in 90 days for asset USDC.
-    /// @param onBehalfOf address of the account on behalf of which this swap is opened.
+    /// @notice Open new swap receive fixed pay floating with tenor in 90 days for asset USDC.
+    /// @param beneficiary address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
-    /// @dev Owner of that swap is the user with address `onBehalfOf`. Sender pays for the swap.
+    /// @dev Owner of that swap is the user with address `beneficiary`. Sender pays for the swap.
     function openSwapReceiveFixed90daysUsdc(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap pay fixed receive floating with maturity in 28 days for asset DAI.
-    /// @param onBehalfOf address of the account on behalf of which this swap is opened.
+    /// @notice Open new swap pay fixed receive floating with tenor in 28 days for asset DAI.
+    /// @param beneficiary address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
-    /// @dev Owner of that swap is the user with address `onBehalfOf`. Sender pays for the swap.
+    /// @dev Owner of that swap is the user with address `beneficiary`. Sender pays for the swap.
     function openSwapPayFixed28daysDai(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap pay fixed receive floating with maturity in 60 days for asset DAI.
-    /// @param onBehalfOf address of the account on behalf of which this swap is opened.
+    /// @notice Open new swap pay fixed receive floating with tenor in 60 days for asset DAI.
+    /// @param beneficiary address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
-    /// @dev Owner of that swap is the user with address `onBehalfOf`. Sender pays for the swap.
+    /// @dev Owner of that swap is the user with address `beneficiary`. Sender pays for the swap.
     function openSwapPayFixed60daysDai(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap pay fixed receive floating with maturity in 90 days for asset DAI.
-    /// @param onBehalfOf address of the account on behalf of which this swap is opened.
+    /// @notice Open new swap pay fixed receive floating with tenor in 90 days for asset DAI.
+    /// @param beneficiary address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
-    /// @dev Owner of that swap is the user with address `onBehalfOf`. Sender pays for the swap.
+    /// @dev Owner of that swap is the user with address `beneficiary`. Sender pays for the swap.
     function openSwapPayFixed90daysDai(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap receive fixed pay floating with maturity in 28 days for asset DAI.
-    /// @param onBehalfOf address of the account on behalf of which this swap is opened.
+    /// @notice Open new swap receive fixed pay floating with tenor in 28 days for asset DAI.
+    /// @param beneficiary address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
-    /// @dev Owner of that swap is the user with address `onBehalfOf`. Sender pays for the swap.
+    /// @dev Owner of that swap is the user with address `beneficiary`. Sender pays for the swap.
     function openSwapReceiveFixed28daysDai(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap receive fixed pay floating with maturity in 60 days for asset DAI.
-    /// @param onBehalfOf address of the account on behalf of which this swap is opened.
+    /// @notice Open new swap receive fixed pay floating with tenor in 60 days for asset DAI.
+    /// @param beneficiary address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
-    /// @dev Owner of that swap is the user with address `onBehalfOf`. Sender pays for the swap.
+    /// @dev Owner of that swap is the user with address `beneficiary`. Sender pays for the swap.
     function openSwapReceiveFixed60daysDai(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Open new swap receive fixed pay floating with maturity in 90 days for asset DAI.
-    /// @param onBehalfOf address of the account on behalf of which this swap is opened.
+    /// @notice Open new swap receive fixed pay floating with tenor in 90 days for asset DAI.
+    /// @param beneficiary address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
-    /// @dev Owner of that swap is the user with address `onBehalfOf`. Sender pays for the swap.
+    /// @dev Owner of that swap is the user with address `beneficiary`. Sender pays for the swap.
     function openSwapReceiveFixed90daysDai(
-        address onBehalfOf,
+        address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage

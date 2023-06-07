@@ -14,7 +14,7 @@ IPOR smart contracts
 -   Install `Foundry` from https://getfoundry.sh/
 -   Install `python3-pip`.
 -   Install `solc-select` using pip: `pip3 install solc-select`
--   Install `node` (v16.15.0) and `npm` (v8.5.5).
+-   Install `node` (v18.15.0) and `npm` (v9.5.0).
 -   Install `truffle` : `npm install -g truffle`
 -   Install `jq`
 -   Check truffle binary execution permission. Run `chmod +x truffle` in binary dir if execution flag is missing.

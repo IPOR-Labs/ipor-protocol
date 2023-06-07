@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../../../interfaces/types/IporTypes.sol";
 
@@ -31,8 +31,8 @@ library AmmInternalTypes {
     }
 
     struct OpenSwapRiskIndicators {
-        uint256 maxUtilizationRate;
-        uint256 maxUtilizationRatePerLeg;
+        uint256 maxCollateralRatio;
+        uint256 maxCollateralRatioPerLeg;
         uint256 maxLeveragePerLeg;
         int256 spread;
         uint256 fixedRateCap;

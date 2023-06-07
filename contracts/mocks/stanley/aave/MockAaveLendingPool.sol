@@ -1,9 +1,10 @@
 //solhint-disable
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 // interfaces
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "../../../libraries/errors/IporErrors.sol";
 import "../../../vault/interfaces/aave/AaveLendingPool.sol";
 import "../../../vault/interfaces/aave/DataTypesContract.sol";
 
@@ -16,6 +17,9 @@ contract MockAaveLendingPool is AaveLendingPool {
     uint128 private _currentLiquidityRate;
 
     constructor(address dai, address aDai) {
+        require(dai != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI asset address cannot be 0"));
+        require(aDai != address(0), string.concat(IporErrors.WRONG_ADDRESS, " aDAI asset address cannot be 0"));
+
         _dai = dai;
         _aDai = aDai;
     }

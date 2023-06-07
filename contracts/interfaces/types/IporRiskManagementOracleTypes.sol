@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 /// @title Structs used in IporRiskManagementOracle smart contract
 library IporRiskManagementOracleTypes {
@@ -9,14 +9,15 @@ library IporRiskManagementOracleTypes {
         uint256 maxNotionalPayFixed;
         /// @notice maximum notional value for receive fixed leg, 1 = 10k
         uint256 maxNotionalReceiveFixed;
-        /// @notice maximum utilization rate for pay fixed leg, 1 = 0.01%
-        uint256 maxUtilizationRatePayFixed;
-        /// @notice maximum utilization rate for receive fixed leg, 1 = 0.01%
-        uint256 maxUtilizationRateReceiveFixed;
-        /// @notice maximum utilization rate for both legs, 1 = 0.01%
-        uint256 maxUtilizationRate;
+        /// @notice maximum collateral ratio for pay fixed leg, 1 = 0.01%
+        uint256 maxCollateralRatioPayFixed;
+        /// @notice maximum collateral ratio for receive fixed leg, 1 = 0.01%
+        uint256 maxCollateralRatioReceiveFixed;
+        /// @notice maximum collateral ratio for both legs, 1 = 0.01%
+        uint256 maxCollateralRatio;
     }
 
+    // TODO Add documentation size of numbers
     //@notice Base Spreads And Fixed Rate Caps Structure for a given asset, both legs and all maturities
     struct BaseSpreadsAndFixedRateCaps {
         /// @notice spread for 28 days pay fixed swap

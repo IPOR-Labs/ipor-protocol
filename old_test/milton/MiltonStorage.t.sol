@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
@@ -142,7 +142,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.prank(_ammStorageAddress);
-        uint256 swapId = _iporProtocol.ammStorage.updateStorageWhenOpenSwapPayFixed(
+        uint256 swapId = _iporProtocol.ammStorage.updateStorageWhenOpenSwapPayFixedInternal(
             newSwap,
             iporPublicationFee
         );
@@ -167,7 +167,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_008");
         vm.prank(_userThree);
-        _iporProtocol.ammStorage.updateStorageWhenOpenSwapPayFixed(newSwap, iporPublicationFee);
+        _iporProtocol.ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap, iporPublicationFee);
     }
 
     function testShouldNotAddLiquidityWhenAssetAmountIsZero() public {
@@ -238,7 +238,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -262,7 +261,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.ammStorage.setAmmTreasury(_ammStorageAddress);
 
         vm.prank(address(_iporProtocol.ammTreasury));
-        IporTypes.IporSwapMemory memory derivativeItem = _iporProtocol
+        AmmTypes.Swap memory derivativeItem = _iporProtocol
             .ammStorage
             .getSwapPayFixed(1);
 
@@ -279,7 +278,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -303,7 +301,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.ammStorage.setAmmTreasury(_ammStorageAddress);
 
         vm.prank(address(_iporProtocol.ammTreasury));
-        IporTypes.IporSwapMemory memory derivativeItem = _iporProtocol
+        AmmTypes.Swap memory derivativeItem = _iporProtocol
             .ammStorage
             .getSwapPayFixed(1);
 
@@ -320,7 +318,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -342,7 +339,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         _iporProtocol.ammStorage.setAmmTreasury(_ammStorageAddress);
-        IporTypes.IporSwapMemory memory derivativeItem = _iporProtocol
+        AmmTypes.Swap memory derivativeItem = _iporProtocol
             .ammStorage
             .getSwapPayFixed(1);
 
@@ -358,7 +355,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapsPayFixedShouldFailWhenPageSizeIsEqualToZero() public {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -374,7 +370,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.expectRevert("IPOR_009");
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsPayFixed(_userTwo, TestConstants.ZERO, TestConstants.ZERO);
 
@@ -386,7 +382,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
     function testGetSwapsPayFixedShouldReturnEmptyListOfSwapsWhenZeroNumberOfSwapsAndOffsetZer0AndPageSize10()
         public
     {
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -401,7 +396,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsPayFixed(_userTwo, TestConstants.ZERO, 10);
 
@@ -414,7 +409,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -429,7 +423,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsPayFixed(_userTwo, 10, 10);
 
@@ -442,7 +436,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -465,7 +458,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsPayFixed(_userTwo, TestConstants.ZERO, 10);
 
@@ -478,7 +471,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -501,7 +493,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsPayFixed(_userTwo, 10, 10);
 
@@ -514,7 +506,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -537,7 +528,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsPayFixed(_userTwo, 20, 10);
 
@@ -550,7 +541,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -573,7 +563,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsPayFixed(_userTwo, 20, 10);
 
@@ -584,7 +574,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapsReceiveFixedShouldFailWhenPageSizeIsEqualToZero() public {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -608,7 +597,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.expectRevert("IPOR_009");
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsReceiveFixed(_userTwo, TestConstants.ZERO, TestConstants.ZERO);
 
@@ -621,7 +610,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -644,7 +632,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsReceiveFixed(_userTwo, TestConstants.ZERO, 10);
 
@@ -657,7 +645,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -672,7 +659,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsReceiveFixed(_userTwo, 10, 10);
 
@@ -685,7 +672,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -708,7 +694,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsReceiveFixed(_userTwo, 10, 10);
 
@@ -721,7 +707,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -744,7 +729,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsReceiveFixed(_userTwo, 10, 10);
 
@@ -757,7 +742,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -780,7 +764,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsReceiveFixed(_userTwo, 20, 10);
 
@@ -793,7 +777,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -816,7 +799,7 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+        (uint256 totalCount, AmmTypes.Swap[] memory swaps) = _iporProtocol
             .ammStorage
             .getSwapsReceiveFixed(_userTwo, 20, 10);
 
@@ -825,441 +808,8 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         assertEq(swaps.length, TestConstants.ZERO);
     }
 
-    function testGetSwapIdsPayFixedShouldFailWhenPageSizeIsEqualToZero() public {
-        //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-
-        vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_5_18DEC,
-            block.timestamp
-        );
-
-        vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
-
-        // when
-        vm.expectRevert("IPOR_009");
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.ammStorage.getSwapPayFixedIds(
-            _userTwo,
-            0,
-            0
-        );
-
-        // then
-        assertEq(totalCount, TestConstants.ZERO);
-        assertEq(ids.length, TestConstants.ZERO);
-    }
-
-    function testGetSwapIdsPayFixedShouldReturnEmptyListOfSwapsWhenZeroNumberOfSwapsAndOffsetZer0AndPageSize10()
-        public
-    {
-        //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-
-        vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_5_18DEC,
-            block.timestamp
-        );
-
-        vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
-
-        // when
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.ammStorage.getSwapPayFixedIds(
-            _userTwo,
-            TestConstants.ZERO,
-            10
-        );
-
-        // then
-        assertEq(totalCount, TestConstants.ZERO);
-        assertEq(ids.length, TestConstants.ZERO);
-    }
-
-    function testGetSwapIdsPayFixedShouldReturnEmptyListOfSwapsWhenUserPassesNonZeroOffsetAndDoesNotHaveAnySwaps()
-        public
-    {
-        //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-
-        vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_5_18DEC,
-            block.timestamp
-        );
-
-        vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
-
-        // when
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.ammStorage.getSwapPayFixedIds(
-            _userTwo,
-            10,
-            10
-        );
-
-        // then
-        assertEq(totalCount, TestConstants.ZERO);
-        assertEq(ids.length, TestConstants.ZERO);
-    }
-
-    function testGetSwapIdsPayFixedShouldReceiveLimitedSwapArrayWhen11NumberOfSwapsAndOffsetZeroAndPageSize10()
-        public
-    {
-        //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-
-        vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_5_18DEC,
-            block.timestamp
-        );
-
-        vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
-
-        iterateOpenSwapsPayFixed(
-            _userTwo,
-            _iporProtocol.ammTreasury,
-            11,
-            TestConstants.USD_100_6DEC,
-            TestConstants.LEVERAGE_18DEC
-        );
-
-        // when
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.ammStorage.getSwapPayFixedIds(
-            _userTwo,
-            TestConstants.ZERO,
-            10
-        );
-
-        // then
-        assertEq(totalCount, 11);
-        assertEq(ids.length, 10);
-    }
-
-    function testGetSwapIdsPayFixedShouldReceiveLimitedSwapArrayWhen22NumberOfSwapsAndOffset10AndPageSize10()
-        public
-    {
-        //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-
-        vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_5_18DEC,
-            block.timestamp
-        );
-
-        vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
-
-        iterateOpenSwapsPayFixed(
-            _userTwo,
-            _iporProtocol.ammTreasury,
-            22,
-            TestConstants.USD_100_6DEC,
-            TestConstants.LEVERAGE_18DEC
-        );
-
-        // when
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.ammStorage.getSwapPayFixedIds(
-            _userTwo,
-            10,
-            10
-        );
-
-        // then
-        assertEq(totalCount, 22);
-        assertEq(ids.length, 10);
-    }
-
-    function testGetSwapIdsPayFixedShouldReceiveRestOfSwapsOnlyWhen22NumberOfSwapsAndOffset20AndPageSize10()
-        public
-    {
-        //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-
-        vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_5_18DEC,
-            block.timestamp
-        );
-
-        vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
-
-        iterateOpenSwapsPayFixed(
-            _userTwo,
-            _iporProtocol.ammTreasury,
-            22,
-            TestConstants.USD_100_6DEC,
-            TestConstants.LEVERAGE_18DEC
-        );
-
-        // when
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.ammStorage.getSwapPayFixedIds(
-            _userTwo,
-            20,
-            10
-        );
-
-        // then
-        assertEq(totalCount, 22);
-        assertEq(ids.length, 2);
-    }
-
-    function testGetSwapIdsPayFixedShouldReceiveEmptyListOfSwapsOnlyWhen20NumberOfSwapsAndOffset20AndPageSize10()
-        public
-    {
-        //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-
-        vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_5_18DEC,
-            block.timestamp
-        );
-
-        vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
-
-        iterateOpenSwapsPayFixed(
-            _userTwo,
-            _iporProtocol.ammTreasury,
-            20,
-            TestConstants.USD_100_6DEC,
-            TestConstants.LEVERAGE_18DEC
-        );
-
-        // when
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.ammStorage.getSwapPayFixedIds(
-            _userTwo,
-            20,
-            10
-        );
-
-        // then
-        assertEq(totalCount, 20);
-        assertEq(ids.length, TestConstants.ZERO);
-    }
-
-    function testGetSwapIdsReceiveFixedShouldFailWhenPageSizeIsEqualToZero() public {
-        //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-
-        vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_5_18DEC,
-            block.timestamp
-        );
-
-        vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
-
-        // when
-        vm.expectRevert("IPOR_009");
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol
-            .ammStorage
-            .getSwapReceiveFixedIds(_userTwo, TestConstants.ZERO, TestConstants.ZERO);
-
-        // then
-        assertEq(totalCount, TestConstants.ZERO);
-        assertEq(ids.length, TestConstants.ZERO);
-    }
-
-    function testGetSwapIdsReceiveFixedShouldReturnEmptyListOfSwapsWhenZeroNumberOfSwapsAndOffsetZer0AndPageSize10()
-        public
-    {
-        //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-
-        vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_5_18DEC,
-            block.timestamp
-        );
-
-        vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
-
-        // when
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol
-            .ammStorage
-            .getSwapReceiveFixedIds(_userTwo, TestConstants.ZERO, 10);
-
-        // then
-        assertEq(totalCount, TestConstants.ZERO);
-        assertEq(ids.length, TestConstants.ZERO);
-    }
-
-    function testGetSwapIdsReceiveFixedShouldReturnEmptyListOfSwapsWhenUserPassesNonZeroOffsetAndDoesNotHaveAnySwaps()
-        public
-    {
-        //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-
-        vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_5_18DEC,
-            block.timestamp
-        );
-
-        vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
-
-        // when
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol
-            .ammStorage
-            .getSwapReceiveFixedIds(_userTwo, 10, 10);
-
-        // then
-        assertEq(totalCount, TestConstants.ZERO);
-        assertEq(ids.length, TestConstants.ZERO);
-    }
-
-    function testGetSwapIdsReceiveFixedShouldReceiveLimitedSwapArrayWhen11NumberOfSwapsAndOffset10AndPageSize10()
-        public
-    {
-        //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-
-        vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_5_18DEC,
-            block.timestamp
-        );
-
-        vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
-
-        iterateOpenSwapsReceiveFixed(
-            _userTwo,
-            _iporProtocol.ammTreasury,
-            11,
-            TestConstants.USD_100_6DEC,
-            TestConstants.LEVERAGE_18DEC
-        );
-
-        // when
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol
-            .ammStorage
-            .getSwapReceiveFixedIds(_userTwo, 10, 10);
-
-        // then
-        assertEq(totalCount, 11);
-        assertEq(ids.length, 1);
-    }
-
-    function testGetSwapIdsReceiveFixedShouldReceiveLimitedSwapArrayWhen22NumberOfSwapsAndOffset10AndPageSize10()
-        public
-    {
-        //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-
-        vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_5_18DEC,
-            block.timestamp
-        );
-
-        vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
-
-        iterateOpenSwapsReceiveFixed(
-            _userTwo,
-            _iporProtocol.ammTreasury,
-            22,
-            TestConstants.USD_100_6DEC,
-            TestConstants.LEVERAGE_18DEC
-        );
-
-        // when
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol
-            .ammStorage
-            .getSwapReceiveFixedIds(_userTwo, 10, 10);
-
-        // then
-        assertEq(totalCount, 22);
-        assertEq(ids.length, 10);
-    }
-
-    function testGetSwapIdsReceiveFixedShouldReceiveRestOfSwapsOnlyWhen22NumberOfSwapsAndOffset20AndPageSize10()
-        public
-    {
-        //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-
-        vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_5_18DEC,
-            block.timestamp
-        );
-
-        vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_6DEC);
-
-        iterateOpenSwapsReceiveFixed(
-            _userTwo,
-            _iporProtocol.ammTreasury,
-            22,
-            TestConstants.USD_100_6DEC,
-            TestConstants.LEVERAGE_18DEC
-        );
-
-        // when
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol
-            .ammStorage
-            .getSwapReceiveFixedIds(_userTwo, 20, 10);
-
-        // then
-        assertEq(totalCount, 22);
-        assertEq(ids.length, 2);
-    }
-
     function testGetSwapIdsShouldFailWhenPageSizeIsEqualToZero() public {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -1289,7 +839,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -1317,7 +866,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -1345,7 +893,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -1381,7 +928,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -1417,7 +963,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -1460,7 +1005,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -1503,7 +1047,6 @@ contract AmmStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         //given
-        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 

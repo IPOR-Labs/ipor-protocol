@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
@@ -53,7 +53,7 @@ contract AmmTreasuryUnwindSwap is TestCommons, DataUtils, SwapUtils {
         int256 swapPayoffToDate = 900 * 1e18;
         uint256 closingTimestamp = block.timestamp + 25 days;
 
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         swap.id = 1;
         swap.buyer = _buyer;
@@ -105,7 +105,7 @@ contract AmmTreasuryUnwindSwap is TestCommons, DataUtils, SwapUtils {
         int256 swapPayoffToDate = -180821917808219000000;
         uint256 closingTimestamp = block.timestamp + 11 days;
 
-        IporTypes.IporSwapMemory memory swap;
+        AmmTypes.Swap memory swap;
 
         swap.id = 1;
         swap.buyer = _buyer;

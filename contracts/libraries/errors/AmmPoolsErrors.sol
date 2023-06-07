@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 library AmmPoolsErrors {
     // 400-499-Amm Pools
@@ -9,7 +9,7 @@ library AmmPoolsErrors {
     //@notice Amount which should be burned is too low
     string public constant IP_TOKEN_BURN_AMOUNT_TOO_LOW = "IPOR_401";
 
-    string public constant REDEEM_LP_UTILIZATION_EXCEEDED = "IPOR_402";
+    string public constant REDEEM_LP_COLLATERAL_RATIO_EXCEEDED = "IPOR_402";
     //@notice User cannot redeem underlying tokens because ipToken on his balance is too low
     string public constant CANNOT_REDEEM_IP_TOKEN_TOO_LOW = "IPOR_403";
 

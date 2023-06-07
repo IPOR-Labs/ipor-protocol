@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 import "forge-std/console2.sol";
 import "forge-std/Test.sol";
 import "../TestConstants.sol";
@@ -44,52 +44,52 @@ contract IporRiskManagementOracleFactory is Test {
         //TODO: pure
         uint64 maxNotionalPayFixed = TestConstants.RMO_NOTIONAL_1B;
         uint64 maxNotionalReceiveFixed = TestConstants.RMO_NOTIONAL_1B;
-        uint16 maxUtilizationRatePayFixed = TestConstants.RMO_UTILIZATION_RATE_48_PER;
-        uint16 maxUtilizationRateReceiveFixed = TestConstants.RMO_UTILIZATION_RATE_48_PER;
-        uint16 maxUtilizationRate = TestConstants.RMO_UTILIZATION_RATE_90_PER;
+        uint16 maxCollateralRatioPayFixed = TestConstants.RMO_COLLATERAL_RATIO_48_PER;
+        uint16 maxCollateralRatioReceiveFixed = TestConstants.RMO_COLLATERAL_RATIO_48_PER;
+        uint16 maxCollateralRatio = TestConstants.RMO_COLLATERAL_RATIO_90_PER;
 
         if (initialParamsTestCase == BuilderUtils.IporRiskManagementOracleInitialParamsTestCase.CASE1) {
-            maxUtilizationRatePayFixed = 0;
-            maxUtilizationRateReceiveFixed = 0;
-            maxUtilizationRate = 0;
+            maxCollateralRatioPayFixed = 0;
+            maxCollateralRatioReceiveFixed = 0;
+            maxCollateralRatio = 0;
         } else if (initialParamsTestCase == BuilderUtils.IporRiskManagementOracleInitialParamsTestCase.CASE2) {
             maxNotionalPayFixed = 0;
             maxNotionalReceiveFixed = 0;
 
-            maxUtilizationRatePayFixed = TestConstants.RMO_UTILIZATION_RATE_20_PER;
-            maxUtilizationRateReceiveFixed = TestConstants.RMO_UTILIZATION_RATE_20_PER;
-            maxUtilizationRate = TestConstants.RMO_UTILIZATION_RATE_20_PER;
+            maxCollateralRatioPayFixed = TestConstants.RMO_COLLATERAL_RATIO_20_PER;
+            maxCollateralRatioReceiveFixed = TestConstants.RMO_COLLATERAL_RATIO_20_PER;
+            maxCollateralRatio = TestConstants.RMO_COLLATERAL_RATIO_20_PER;
         } else if (initialParamsTestCase == BuilderUtils.IporRiskManagementOracleInitialParamsTestCase.CASE3) {
             maxNotionalPayFixed = type(uint64).max;
             maxNotionalReceiveFixed = type(uint64).max;
 
-            maxUtilizationRatePayFixed = TestConstants.RMO_UTILIZATION_RATE_20_PER;
-            maxUtilizationRateReceiveFixed = TestConstants.RMO_UTILIZATION_RATE_20_PER;
-            maxUtilizationRate = TestConstants.RMO_UTILIZATION_RATE_20_PER;
+            maxCollateralRatioPayFixed = TestConstants.RMO_COLLATERAL_RATIO_20_PER;
+            maxCollateralRatioReceiveFixed = TestConstants.RMO_COLLATERAL_RATIO_20_PER;
+            maxCollateralRatio = TestConstants.RMO_COLLATERAL_RATIO_20_PER;
         } else if (initialParamsTestCase == BuilderUtils.IporRiskManagementOracleInitialParamsTestCase.CASE4) {
             maxNotionalPayFixed = type(uint64).max;
             maxNotionalReceiveFixed = type(uint64).max;
 
-            maxUtilizationRatePayFixed = TestConstants.RMO_UTILIZATION_RATE_MAX;
-            maxUtilizationRateReceiveFixed = TestConstants.RMO_UTILIZATION_RATE_MAX;
-            maxUtilizationRate = TestConstants.RMO_UTILIZATION_RATE_MAX;
+            maxCollateralRatioPayFixed = TestConstants.RMO_COLLATERAL_RATIO_MAX;
+            maxCollateralRatioReceiveFixed = TestConstants.RMO_COLLATERAL_RATIO_MAX;
+            maxCollateralRatio = TestConstants.RMO_COLLATERAL_RATIO_MAX;
         } else if (initialParamsTestCase == BuilderUtils.IporRiskManagementOracleInitialParamsTestCase.CASE5) {
-            maxUtilizationRatePayFixed = TestConstants.RMO_UTILIZATION_RATE_30_PER;
-            maxUtilizationRateReceiveFixed = TestConstants.RMO_UTILIZATION_RATE_30_PER;
-            maxUtilizationRate = TestConstants.RMO_UTILIZATION_RATE_80_PER;
+            maxCollateralRatioPayFixed = TestConstants.RMO_COLLATERAL_RATIO_30_PER;
+            maxCollateralRatioReceiveFixed = TestConstants.RMO_COLLATERAL_RATIO_30_PER;
+            maxCollateralRatio = TestConstants.RMO_COLLATERAL_RATIO_80_PER;
         } else if (initialParamsTestCase == BuilderUtils.IporRiskManagementOracleInitialParamsTestCase.CASE6) {
-            maxUtilizationRatePayFixed = TestConstants.RMO_UTILIZATION_RATE_48_PER;
-            maxUtilizationRateReceiveFixed = TestConstants.RMO_UTILIZATION_RATE_48_PER;
-            maxUtilizationRate = TestConstants.RMO_UTILIZATION_RATE_80_PER;
+            maxCollateralRatioPayFixed = TestConstants.RMO_COLLATERAL_RATIO_48_PER;
+            maxCollateralRatioReceiveFixed = TestConstants.RMO_COLLATERAL_RATIO_48_PER;
+            maxCollateralRatio = TestConstants.RMO_COLLATERAL_RATIO_80_PER;
         }
 
         return
             IporRiskManagementOracleTypes.RiskIndicators({
                 maxNotionalPayFixed: maxNotionalPayFixed,
                 maxNotionalReceiveFixed: maxNotionalReceiveFixed,
-                maxUtilizationRatePayFixed: maxUtilizationRatePayFixed,
-                maxUtilizationRateReceiveFixed: maxUtilizationRateReceiveFixed,
-                maxUtilizationRate: maxUtilizationRate
+                maxCollateralRatioPayFixed: maxCollateralRatioPayFixed,
+                maxCollateralRatioReceiveFixed: maxCollateralRatioReceiveFixed,
+                maxCollateralRatio: maxCollateralRatio
             });
     }
 

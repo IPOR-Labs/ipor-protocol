@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "./types/IporTypes.sol";
 import "./types/CockpitTypes.sol";
@@ -36,8 +36,8 @@ interface ICockpitDataProvider {
     function getMyAllowanceInAmmTreasury(address asset) external view returns (uint256);
 
     /// @notice Calculates spread value for a given asset based on a current AmmTreasury balance,
-    /// SOAP, utilization and IPOR Index indicators.
-    /// @param asset asset / stablecoin address
+    /// SOAP, collateral ratio and IPOR Index indicators.
+    /// @param asset asset / stable coin address
     /// @return spreadPayFixed Spread value for Pay Fixed leg for a given asset
     /// @return spreadReceiveFixed Spread value for Receive Fixed leg for a given asset
     function calculateSpread(address asset)

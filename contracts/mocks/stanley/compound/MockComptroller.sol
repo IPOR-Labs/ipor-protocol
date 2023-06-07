@@ -1,9 +1,10 @@
 //solhint-disable no-empty-blocks
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "../../../libraries/errors/IporErrors.sol";
 import "../../../vault/interfaces/compound/Comptroller.sol";
 
 contract MockComptroller is Comptroller {
@@ -17,6 +18,11 @@ contract MockComptroller is Comptroller {
         address cUSDC,
         address cDAI
     ) public {
+        require(COMP != address(0), string.concat(IporErrors.WRONG_ADDRESS, " COMP asset address cannot be 0"));
+        require(cUSDT != address(0), string.concat(IporErrors.WRONG_ADDRESS, " cUSDT asset address cannot be 0"));
+        require(cUSDC != address(0), string.concat(IporErrors.WRONG_ADDRESS, " cUSDC asset address cannot be 0"));
+        require(cDAI != address(0), string.concat(IporErrors.WRONG_ADDRESS, " cDAI asset address cannot be 0"));
+
         _COMP = COMP;
         _cTokens[cUSDT] = 1;
         _cTokens[cUSDC] = 1;

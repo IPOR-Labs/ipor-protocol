@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 import "../interfaces/IAmmStorage.sol";
 import "./types/ItfAmmTreasuryTypes.sol";
 import "../libraries/errors/AmmErrors.sol";
+import "../libraries/errors/IporErrors.sol";
 
 contract ItfLiquidator {
 
@@ -10,6 +11,9 @@ contract ItfLiquidator {
 //    IAmmStorage private _ammStorage;
 
     constructor(address ammTreasuryAddress, address ammStorage) {
+//        require(ammTreasuryAddress != address(0), string.concat(IporErrors.WRONG_ADDRESS, " AMM treasury address cannot be 0"));
+//        require(ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " AMM storage address cannot be 0"));
+
 //        _ammTreasury = ItfAmmTreasury(ammTreasuryAddress);
 //        _ammStorage = IAmmStorage(ammStorage);
     }
@@ -34,8 +38,8 @@ contract ItfLiquidator {
 //            payFixedClosedSwaps = new AmmTypes.IporSwapClosingResult[](payFixedSwapIdsLength);
 //            for (uint256 i; i < payFixedSwapIdsLength; ++i) {
 //                swapId = payFixedSwapIds[i];
-//                IporTypes.IporSwapMemory memory iporSwap = ammStorage.getSwapPayFixed(swapId);
-//                if (iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE)) {
+//                AmmTypes.Swap memory swap = ammStorage.getSwapPayFixed(swapId);
+//                if (swap.state == uint256(IporTypes.SwapState.ACTIVE)) {
 //                    try ammTreasury.itfCloseSwapPayFixed(swapId, closeTimestamp) {
 //                        payFixedClosedSwaps[i] = AmmTypes.IporSwapClosingResult(swapId, true);
 //                    } catch {
@@ -52,10 +56,10 @@ contract ItfLiquidator {
 //            );
 //            for (uint256 i; i < receiveFixedSwapIdsLength; ++i) {
 //                swapId = receiveFixedSwapIds[i];
-//                IporTypes.IporSwapMemory memory iporSwap = _ammStorage.getSwapReceiveFixed(
+//                AmmTypes.Swap memory swap = _ammStorage.getSwapReceiveFixed(
 //                    swapId
 //                );
-//                if (iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE)) {
+//                if (swap.state == uint256(IporTypes.SwapState.ACTIVE)) {
 //                    try ammTreasury.itfCloseSwapReceiveFixed(swapId, closeTimestamp) {
 //                        receiveFixedClosedSwaps[i] = AmmTypes.IporSwapClosingResult(
 //                            swapId,

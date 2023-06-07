@@ -1,9 +1,10 @@
 //solhint-disable
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "../../../libraries/errors/IporErrors.sol";
 import "../../../vault/interfaces/aave/AToken.sol";
 
 contract MockADAI is ERC20, AToken {
@@ -11,7 +12,11 @@ contract MockADAI is ERC20, AToken {
     address private _controller;
     uint256 private _price = 10**18;
 
-    constructor(address dai, address tokenOwner) ERC20("aDAI", "aDAI") {
+    constructor(
+        address dai, address tokenOwner) ERC20("aDAI", "aDAI") {
+        require(dai != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI asset address cannot be 0"));
+        require(tokenOwner != address(0), string.concat(IporErrors.WRONG_ADDRESS, " token owner address cannot be 0"));
+
         _dai = dai;
         _mint(address(this), 10**24); // 1.000.000 aDAI
         _mint(tokenOwner, 10**23); // 100.000 aDAI
