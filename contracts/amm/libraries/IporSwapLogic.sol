@@ -7,7 +7,6 @@ import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
 import "../../libraries/math/InterestRates.sol";
 import "../../interfaces/types/AmmTypes.sol";
-import "forge-std/console2.sol";
 
 library IporSwapLogic {
     using SafeCast for uint256;
