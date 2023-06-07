@@ -464,7 +464,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                     openingFeeTreasuryPortionRate: _daiOpeningFeeTreasuryPortionRate
                 });
         } else {
-            revert("Unsupported asset");
+            revert(IporErrors.ASSET_NOT_SUPPORTED);
         }
     }
 

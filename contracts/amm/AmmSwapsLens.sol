@@ -261,7 +261,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         } else if (asset == _daiAsset) {
             return IAmmStorage(_daiAmmStorage);
         } else {
-            revert("Unsupported asset");
+            revert(IporErrors.ASSET_NOT_SUPPORTED);
         }
     }
 
@@ -275,7 +275,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         } else if (asset == _daiAsset) {
             return SwapLensConfiguration({asset: _daiAsset, ammStorage: _daiAmmStorage, ammTreasury: _daiAmmTreasury});
         } else {
-            revert("SwapLensConfiguration: asset not supported");
+            revert(IporErrors.ASSET_NOT_SUPPORTED);
         }
     }
 }

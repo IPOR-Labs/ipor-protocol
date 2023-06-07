@@ -353,7 +353,7 @@ contract AmmPoolsService is IAmmPoolsService {
                     redeemLpMaxCollateralRatio: _daiRedeemLpMaxCollateralRatio
                 });
         } else {
-            revert("AmmPoolsLens: asset not supported");
+            revert(IporErrors.ASSET_NOT_SUPPORTED);
         }
     }
 
