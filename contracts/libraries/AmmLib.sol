@@ -45,18 +45,13 @@ library AmmLib {
         view
         returns (uint256)
     {
-        console2.log("getExchangeRateXXXXXX");
         (, , int256 soap) = getSOAP(model);
 
 
         int256 balance = liquidityPoolBalance.toInt256() - soap;
-        console2.log("soap:", (-soap).toUint256());
-        console2.log("getExchangeRateXXXXXX");
         require(balance >= 0, AmmErrors.SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW);
 
         uint256 ipTokenTotalSupply = IIpToken(model.ipToken).totalSupply();
-        console2.log("ipTokenTotalSupply:", ipTokenTotalSupply);
-        console2.log("alance.toUint256():", balance.toUint256());
         if (ipTokenTotalSupply > 0) {
             return IporMath.division(balance.toUint256() * 1e18, ipTokenTotalSupply);
         } else {
@@ -80,11 +75,8 @@ library AmmLib {
         ) = IAmmStorage(model.ammStorage).getSoapIndicators();
 
         uint256 ibtPrice = IIporOracle(model.iporOracle).calculateAccruedIbtPrice(model.asset, timestamp);
-        console2.log("ibtPrice", ibtPrice);
         soapPayFixed = indicatorsPayFixed.calculateSoapPayFixed(timestamp, ibtPrice);
-        console2.log("soapPayFixed", (-soapPayFixed).toUint256());
         soapReceiveFixed = indicatorsReceiveFixed.calculateSoapReceiveFixed(timestamp, ibtPrice);
-        console2.log("soapReceiveFixed", soapReceiveFixed.toUint256());
         soap = soapPayFixed + soapReceiveFixed;
     }
 
@@ -97,16 +89,12 @@ library AmmLib {
         IporTypes.AmmBalancesMemory memory accruedBalance = IAmmStorage(model.ammStorage).getBalance();
 
         uint256 actualVaultBalance = IAssetManagement(model.assetManagement).totalBalance(model.ammTreasury);
-        console2.log("getAccruedBalance.liquidityPool: ", accruedBalance.liquidityPool);
-        console2.log("actualVaultBalance             : ", actualVaultBalance);
-        console2.log("accruedBalance.vault             : ", accruedBalance.vault);
         int256 liquidityPool = accruedBalance.liquidityPool.toInt256() +
             actualVaultBalance.toInt256() -
             accruedBalance.vault.toInt256();
 
         require(liquidityPool >= 0, AmmErrors.LIQUIDITY_POOL_AMOUNT_TOO_LOW);
         accruedBalance.liquidityPool = liquidityPool.toUint256();
-        console2.log("accruedBalance.liquidityPool             : ", accruedBalance.liquidityPool);
         accruedBalance.vault = actualVaultBalance;
         return accruedBalance;
     }

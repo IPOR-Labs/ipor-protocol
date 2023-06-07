@@ -300,9 +300,9 @@ contract IporProtocolFactory is Test {
         amm.usdc.ivToken.setAssetManagement(address(amm.usdc.assetManagement));
         amm.dai.ivToken.setAssetManagement(address(amm.dai.assetManagement));
 
-        amm.usdt.ipToken.setRouter(address(amm.router));
-        amm.usdc.ipToken.setRouter(address(amm.router));
-        amm.dai.ipToken.setRouter(address(amm.router));
+        amm.usdt.ipToken.setJoseph(address(amm.router));
+        amm.usdc.ipToken.setJoseph(address(amm.router));
+        amm.dai.ipToken.setJoseph(address(amm.router));
 
         amm.usdt.assetManagement.setAmmTreasury((address(amm.usdt.ammTreasury)));
         amm.usdc.assetManagement.setAmmTreasury((address(amm.usdc.ammTreasury)));
@@ -439,7 +439,7 @@ contract IporProtocolFactory is Test {
         iporProtocol.assetManagement.setAmmTreasury((address(iporProtocol.ammTreasury)));
         iporProtocol.ammTreasury.setupMaxAllowanceForAsset(address(iporProtocol.assetManagement));
 
-        iporProtocol.ipToken.setRouter(address(iporProtocol.router));
+        iporProtocol.ipToken.setJoseph(address(iporProtocol.router));
         iporProtocol.ammTreasury.setupMaxAllowanceForAsset(address(iporProtocol.router));
 
         IAmmGovernanceService(address(iporProtocol.router)).setAmmPoolsParams(
@@ -554,7 +554,7 @@ contract IporProtocolFactory is Test {
         iporProtocol.assetManagement.setAmmTreasury((address(iporProtocol.ammTreasury)));
         iporProtocol.ammTreasury.setupMaxAllowanceForAsset(address(iporProtocol.assetManagement));
 
-        iporProtocol.ipToken.setRouter(address(iporProtocol.router));
+        iporProtocol.ipToken.setJoseph(address(iporProtocol.router));
         iporProtocol.ammTreasury.setupMaxAllowanceForAsset(address(iporProtocol.router));
 
         IAmmGovernanceService(address(iporProtocol.router)).setAmmPoolsParams(
@@ -668,7 +668,7 @@ contract IporProtocolFactory is Test {
         iporProtocol.assetManagement.setAmmTreasury((address(iporProtocol.ammTreasury)));
         iporProtocol.ammTreasury.setupMaxAllowanceForAsset(address(iporProtocol.assetManagement));
 
-        iporProtocol.ipToken.setRouter(address(iporProtocol.router));
+        iporProtocol.ipToken.setJoseph(address(iporProtocol.router));
         iporProtocol.ammTreasury.setupMaxAllowanceForAsset(address(iporProtocol.router));
 
         IAmmGovernanceService(address(iporProtocol.router)).setAmmPoolsParams(

@@ -213,13 +213,10 @@ contract AmmPoolsService is IAmmPoolsService {
         model.assetManagement = poolCfg.assetManagement;
         model.iporOracle = _iporOracle;
         IporTypes.AmmBalancesMemory memory balance = model.getAccruedBalance();
-        console2.log("XXXXXX: ", balance.liquidityPool);
-        uint256 exchangeRate = model.getExchangeRate(balance.liquidityPool); //todo Error !!!!
-        console2.log("XXXXXX");
+        uint256 exchangeRate = model.getExchangeRate(balance.liquidityPool);
         require(exchangeRate > 0, AmmErrors.LIQUIDITY_POOL_IS_EMPTY);
 
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmount, poolCfg.decimals);
-        console2.log("XXXXXX");
 
         IAmmStorage(poolCfg.ammStorage).addLiquidityInternal(
             beneficiary,
@@ -228,11 +225,12 @@ contract AmmPoolsService is IAmmPoolsService {
             uint256(ammPoolsParamsCfg.maxLpAccountContribution) * 1e18
         );
 
-        IERC20Upgradeable(poolCfg.asset).safeTransferFrom(msg.sender, poolCfg.ammTreasury, assetAmount);
+    IERC20Upgradeable(poolCfg.asset).safeTransferFrom(msg.sender, poolCfg.ammTreasury, assetAmount);
+
 
         uint256 ipTokenAmount = IporMath.division(wadAssetAmount * 1e18, exchangeRate);
 
-        IIpToken(poolCfg.ipToken).mintInternal(beneficiary, ipTokenAmount);
+        IIpToken(poolCfg.ipToken).mint(beneficiary, ipTokenAmount);
 
         /// @dev Order of the following two functions is important, first safeTransferFrom, then rebalanceIfNeededAfterProvideLiquidity.
         _rebalanceIfNeededAfterProvideLiquidity(poolCfg, ammPoolsParamsCfg, balance.vault, wadAssetAmount);
@@ -302,7 +300,7 @@ contract AmmPoolsService is IAmmPoolsService {
             AmmPoolsErrors.REDEEM_LP_COLLATERAL_RATIO_EXCEEDED
         );
 
-        IIpToken(poolCfg.ipToken).burnInternal(msg.sender, ipTokenAmount);
+        IIpToken(poolCfg.ipToken).burn(msg.sender, ipTokenAmount);
 
         IAmmStorage(poolCfg.ammStorage).subtractLiquidityInternal(redeemMoney.wadRedeemAmount);
 
