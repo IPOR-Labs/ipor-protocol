@@ -27,7 +27,25 @@ contract IporRiskManagementOracle is
 
     mapping(address => uint256) internal _updaters;
     mapping(address => IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage) internal _indicators;
-    //todo add comment about bits positions get from _baseSpreadsAndFixedRateCapsStorageToBytes32
+    
+    /// @dev 0 - 31 bytes - lastUpdateTimestamp - uint32 - number of seconds since 1970-01-01T00:00:00Z
+    /// @dev 32 - 55 bytes - baseSpread28dPayFixed - int24 - base spread for 28 days period for pay fixed leg, 
+    /// @dev    - on 32th position it is a sing - 1 means negative, 0 means positive
+    /// @dev 56 - 79 bytes - baseSpread28dReceiveFixed - int24 - base spread for 28 days period for receive fixed leg, 
+    /// @dev    - on 56 position it is a sing - 1 means negative, 0 means positive
+    /// @dev 80 - 103 bytes - baseSpread60dPayFixed - int24 - base spread for 60 days period for pay fixed leg, 
+    /// @dev    - on 80 position it is a sing - 1 means negative, 0 means positive
+    /// @dev 104 - 127 bytes - baseSpread60dReceiveFixed - int24 - base spread for 60 days period for receive fixed leg, 
+    /// @dev    - on 104 position it is a sing - 1 means negative, 0 means positive
+    /// @dev 128 - 151 bytes - baseSpread90dPayFixed - int24 - base spread for 90 days period for pay fixed leg,
+    /// @dev   - on 128 position it is a sing - 1 means negative, 0 means positive
+    /// @dev 152 - 175 bytes - baseSpread90dReceiveFixed - int24 - base spread for 90 days period for receive fixed leg,
+    /// @dev    - on 152 position it is a sing - 1 means negative, 0 means positive
+    /// @dev 176 - 187 bytes - fixedRateCap28dPayFixed - uint12 - fixed rate cap for 28 days period for pay fixed leg,
+    /// @dev 188 - 199 bytes - fixedRateCap28dReceiveFixed - uint12 - fixed rate cap for 28 days period for receive fixed leg,
+    /// @dev 200 - 211 bytes - fixedRateCap60dPayFixed - uint12 - fixed rate cap for 60 days period for pay fixed leg,
+    /// @dev 212 - 223 bytes - fixedRateCap60dReceiveFixed - uint12 - fixed rate cap for 60 days period for receive fixed leg,
+    /// @dev 224 - 235 bytes - fixedRateCap90dPayFixed - uint12 - fixed rate cap for 90 days period for pay fixed leg,
     mapping(address => bytes32) internal _baseSpreadsAndFixedRateCaps;
 
     modifier onlyUpdater() {
@@ -594,19 +612,19 @@ contract IporRiskManagementOracle is
         IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage memory toSave
     ) internal pure returns (bytes32 result) {
         require(toSave.lastUpdateTimestamp < type(uint32).max, "lastUpdateTimestamp overflow");
-        require(toSave.spread28dPayFixed < type(int256).max, "spread28dPayFixed overflow");
-        require(toSave.spread28dReceiveFixed < type(int256).max, "spread28dReceiveFixed overflow");
-        require(toSave.spread60dPayFixed < type(int256).max, "spread60dPayFixed overflow");
+        require(toSave.spread28dPayFixed < type(int24).max, "spread28dPayFixed overflow");
+        require(toSave.spread28dReceiveFixed < type(int24).max, "spread28dReceiveFixed overflow");
+        require(toSave.spread60dPayFixed < type(int24).max, "spread60dPayFixed overflow");
         require(
-            -type(int256).max < toSave.spread60dReceiveFixed && toSave.spread60dReceiveFixed < type(int256).max,
+            -type(int24).max < toSave.spread60dReceiveFixed && toSave.spread60dReceiveFixed < type(int256).max,
             "spread60dReceiveFixed overflow"
         );
         require(
-            -type(int256).max < toSave.spread90dPayFixed && toSave.spread90dPayFixed < type(int256).max,
+            -type(int24).max < toSave.spread90dPayFixed && toSave.spread90dPayFixed < type(int256).max,
             "spread90dPayFixed overflow"
         );
         require(
-            -type(int256).max < toSave.spread90dReceiveFixed && toSave.spread90dReceiveFixed < type(int256).max,
+            -type(int24).max < toSave.spread90dReceiveFixed && toSave.spread90dReceiveFixed < type(int256).max,
             "spread90dReceiveFixed overflow"
         );
         require(toSave.fixedRateCap28dPayFixed < 2 ** 12, "fixedRateCap28dPayFixed overflow");
