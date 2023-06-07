@@ -40,25 +40,34 @@ contract LocalDeployment is Script {
         address asset;
         address ipToken;
         address ivToken;
-        address ammStorage;
-        address assetManagement;
-        address strategyAave;
-        address strategyCompound;
+        address ammStorageProxy;
+        address ammStorageImpl;
+        address assetManagementProxy;
+        address assetManagementImpl;
+        address strategyAaveProxy;
+        address strategyAaveImpl;
+        address strategyCompoundProxy;
+        address strategyCompoundImpl;
         address aToken;
         address cToken;
-        address ammTreasury;
+        address ammTreasuryProxy;
+        address ammTreasuryImpl;
     }
 
-    struct Amm {
-        address router;
-        address spreadRouter;
-        address iporOracle;
+    struct System {
+        address routerProxy;
+        address routerImpl;
+        address spreadRouterProxy;
+        address spreadRouterImpl;
+        address iporOracleProxy;
+        address iporOracleImpl;
         address ammSwapsLens;
         address ammPoolsLens;
         address assetManagementLens;
         address ammOpenSwapService;
         address ammCloseSwapService;
-        address iporRiskManagementOracle;
+        address riskOracleProxy;
+        address riskOracleImpl;
         address ammPoolsService;
         address ammGovernanceService;
         IporProtocol usdt;
@@ -92,33 +101,33 @@ contract LocalDeployment is Script {
     }
 
     function run() public {
-        Amm memory amm;
+        System memory amm;
         vm.startBroadcast(_private_key);
         _getFullInstance(ammConfig, amm);
         vm.stopBroadcast();
         _toAddressesJson(amm);
     }
 
-    function _getFullInstance(AmmConfig memory cfg, Amm memory amm) public {
-        deployDummyIporProtocolRouter(amm);
-        deployDummyAmmTreasury(amm);
-        deployAssets(amm);
-        deployOracle(amm);
-        deployRiskOracle(amm);
-        deployIpTokens(amm);
-        deployIvTokens(amm);
-        deployStorage(amm);
-        deploySpreadRouter(amm);
-        deployAssetManagement(amm);
-        upgradeAmmTreasury(amm);
-        upgradeIporProtocolRouter(amm);
+    function _getFullInstance(AmmConfig memory cfg, System memory system) public {
+        deployDummyIporProtocolRouter(system);
+        deployDummyAmmTreasury(system);
+        deployAssets(system);
+        deployOracle(system);
+        deployRiskOracle(system);
+        deployIpTokens(system);
+        deployIvTokens(system);
+        deployStorage(system);
+        deploySpreadRouter(system);
+        deployAssetManagement(system);
+        upgradeAmmTreasury(system);
+        upgradeIporProtocolRouter(system);
     }
 
     function _preparePoolCfgForGovernanceService(
         address asset,
         address ammTreasury,
         address ammStorage
-    ) internal returns (IAmmGovernanceLens.PoolConfiguration memory poolCfg) {
+    ) internal view returns (IAmmGovernanceLens.PoolConfiguration memory poolCfg) {
         poolCfg = IAmmGovernanceLens.PoolConfiguration({
             asset: asset,
             assetDecimals: IERC20MetadataUpgradeable(asset).decimals(),
@@ -137,7 +146,7 @@ contract LocalDeployment is Script {
         address ammTreasury,
         address ammStorage,
         address assetManagement
-    ) internal returns (IAmmPoolsService.AmmPoolsServicePoolConfiguration memory poolCfg) {
+    ) internal view returns (IAmmPoolsService.AmmPoolsServicePoolConfiguration memory poolCfg) {
         poolCfg = IAmmPoolsService.AmmPoolsServicePoolConfiguration({
             asset: asset,
             decimals: IERC20MetadataUpgradeable(asset).decimals(),
@@ -192,11 +201,9 @@ contract LocalDeployment is Script {
         });
     }
 
-    function _getCurrentTimestamps(address[] memory assets)
-        internal
-        view
-        returns (uint32[] memory lastUpdateTimestamps)
-    {
+    function _getCurrentTimestamps(
+        address[] memory assets
+    ) internal view returns (uint32[] memory lastUpdateTimestamps) {
         lastUpdateTimestamps = new uint32[](assets.length);
 
         uint32 lastUpdateTimestamp = uint32(block.timestamp);
@@ -206,38 +213,40 @@ contract LocalDeployment is Script {
         }
     }
 
-    function deployOracle(Amm memory amm) public {
+    function deployOracle(System memory system) public {
         address[] memory assets = new address[](3);
-        assets[0] = address(amm.dai.asset);
-        assets[1] = address(amm.usdt.asset);
-        assets[2] = address(amm.usdc.asset);
+        assets[0] = address(system.dai.asset);
+        assets[1] = address(system.usdt.asset);
+        assets[2] = address(system.usdc.asset);
 
-        IporOracle iporOracleImplementation = new IporOracle(
-            address(amm.usdt.asset),
-            1e18,
-            address(amm.usdc.asset),
-            1e18,
-            address(amm.dai.asset),
-            1e18
+        system.iporOracleImpl = address(
+            new IporOracle(
+                address(system.usdt.asset),
+                1e18,
+                address(system.usdc.asset),
+                1e18,
+                address(system.dai.asset),
+                1e18
+            )
         );
 
         uint32[] memory lastUpdateTimestamps = _getCurrentTimestamps(assets);
 
-        amm.iporOracle = address(
+        system.iporOracleProxy = address(
             new ERC1967Proxy(
-                address(iporOracleImplementation),
+                system.iporOracleImpl,
                 abi.encodeWithSignature("initialize(address[],uint32[])", assets, lastUpdateTimestamps)
             )
         );
 
-        IIporOracle(amm.iporOracle).addUpdater(ammConfig.iporOracleUpdater);
+        IIporOracle(system.iporOracleProxy).addUpdater(ammConfig.iporOracleUpdater);
     }
 
-    function deployRiskOracle(Amm memory amm) public {
+    function deployRiskOracle(System memory system) public {
         address[] memory assets = new address[](3);
-        assets[0] = address(amm.dai.asset);
-        assets[1] = address(amm.usdt.asset);
-        assets[2] = address(amm.usdc.asset);
+        assets[0] = address(system.dai.asset);
+        assets[1] = address(system.usdt.asset);
+        assets[2] = address(system.usdc.asset);
 
         IporRiskManagementOracleTypes.RiskIndicators[]
             memory riskIndicators = new IporRiskManagementOracleTypes.RiskIndicators[](assets.length);
@@ -270,10 +279,12 @@ contract LocalDeployment is Script {
             });
         }
 
-        IporRiskManagementOracle riskOracleProxy = IporRiskManagementOracle(
+        system.riskOracleImpl = address(new IporRiskManagementOracle());
+
+        system.riskOracleProxy = address(
             address(
                 new ERC1967Proxy(
-                    address(new IporRiskManagementOracle()),
+                    system.riskOracleImpl,
                     abi.encodeWithSignature(
                         "initialize(address[],(uint256,uint256,uint256,uint256,uint256)[],(int256,int256,int256,int256,int256,int256,uint256,uint256,uint256,uint256,uint256,uint256)[])",
                         assets,
@@ -284,12 +295,10 @@ contract LocalDeployment is Script {
             )
         );
 
-        riskOracleProxy.addUpdater(ammConfig.iporRiskManagementOracleUpdater);
-
-        amm.iporRiskManagementOracle = address(riskOracleProxy);
+        IporRiskManagementOracle(system.riskOracleProxy).addUpdater(ammConfig.iporRiskManagementOracleUpdater);
     }
 
-    function deployDummyIporProtocolRouter(Amm memory amm) public {
+    function deployDummyIporProtocolRouter(System memory system) public {
         IporProtocolRouter.DeployedContracts memory deployedContracts = IporProtocolRouter.DeployedContracts({
             ammSwapsLens: defaultAnvilAddress,
             ammPoolsLens: defaultAnvilAddress,
@@ -304,454 +313,525 @@ contract LocalDeployment is Script {
             stakeService: defaultAnvilAddress
         });
 
-        amm.router = address(
-            new ERC1967Proxy(
-                address(new IporProtocolRouter(deployedContracts)),
-                abi.encodeWithSignature("initialize(bool)", false)
-            )
+        system.routerImpl = address(new IporProtocolRouter(deployedContracts));
+
+        system.routerProxy = address(
+            new ERC1967Proxy(system.routerImpl, abi.encodeWithSignature("initialize(bool)", false))
         );
     }
 
-    function deployIpTokens(Amm memory amm) public {
-        amm.usdt.ipToken = address(new IpToken("IP USDT", "ipUSDT", address(amm.usdt.asset)));
-        amm.usdc.ipToken = address(new IpToken("IP USDC", "ipUSDC", address(amm.usdc.asset)));
-        amm.dai.ipToken = address(new IpToken("IP DAI", "ipDAI", address(amm.dai.asset)));
+    function deployIpTokens(System memory system) public {
+        system.usdt.ipToken = address(new IpToken("IP USDT", "ipUSDT", address(system.usdt.asset)));
+        system.usdc.ipToken = address(new IpToken("IP USDC", "ipUSDC", address(system.usdc.asset)));
+        system.dai.ipToken = address(new IpToken("IP DAI", "ipDAI", address(system.dai.asset)));
 
-        IpToken(amm.usdt.ipToken).setRouter(amm.router);
-        IpToken(amm.usdc.ipToken).setRouter(amm.router);
-        IpToken(amm.dai.ipToken).setRouter(amm.router);
+        IpToken(system.usdt.ipToken).setRouter(system.routerProxy);
+        IpToken(system.usdc.ipToken).setRouter(system.routerProxy);
+        IpToken(system.dai.ipToken).setRouter(system.routerProxy);
     }
 
-    function deployIvTokens(Amm memory amm) public {
-        amm.usdt.ivToken = address(new IvToken("IV USDT", "ivUSDT", amm.usdt.asset));
-        amm.usdc.ivToken = address(new IvToken("IV USDC", "ivUSDC", amm.usdc.asset));
-        amm.dai.ivToken = address(new IvToken("IV DAI", "ivDAI", amm.dai.asset));
+    function deployIvTokens(System memory system) public {
+        system.usdt.ivToken = address(new IvToken("IV USDT", "ivUSDT", system.usdt.asset));
+        system.usdc.ivToken = address(new IvToken("IV USDC", "ivUSDC", system.usdc.asset));
+        system.dai.ivToken = address(new IvToken("IV DAI", "ivDAI", system.dai.asset));
     }
 
-    function deployAssets(Amm memory amm) public {
-        amm.usdt.asset = address(new MockTestnetToken("Mocked USDT", "USDT", TestConstants.TOTAL_SUPPLY_6_DECIMALS, 6));
-        amm.usdc.asset = address(new MockTestnetToken("Mocked USDC", "USDC", TestConstants.TOTAL_SUPPLY_6_DECIMALS, 6));
-        amm.dai.asset = address(new MockTestnetToken("Mocked DAI", "DAI", TestConstants.TOTAL_SUPPLY_18_DECIMALS, 18));
+    function deployAssets(System memory system) public {
+        system.usdt.asset = address(
+            new MockTestnetToken("Mocked USDT", "USDT", TestConstants.TOTAL_SUPPLY_6_DECIMALS, 6)
+        );
+        system.usdc.asset = address(
+            new MockTestnetToken("Mocked USDC", "USDC", TestConstants.TOTAL_SUPPLY_6_DECIMALS, 6)
+        );
+        system.dai.asset = address(
+            new MockTestnetToken("Mocked DAI", "DAI", TestConstants.TOTAL_SUPPLY_18_DECIMALS, 18)
+        );
     }
 
-    function deployDummyAmmTreasury(Amm memory amm) public {
-        AmmTreasury emptyImpl = new AmmTreasury(defaultAnvilAddress, 0, defaultAnvilAddress, defaultAnvilAddress, defaultAnvilAddress);
+    function deployDummyAmmTreasury(System memory system) public {
+        AmmTreasury emptyImpl = new AmmTreasury(
+            defaultAnvilAddress,
+            0,
+            defaultAnvilAddress,
+            defaultAnvilAddress,
+            defaultAnvilAddress
+        );
 
-        amm.usdt.ammTreasury = address(
+        system.usdt.ammTreasuryProxy = address(
             new ERC1967Proxy(address(emptyImpl), abi.encodeWithSignature("initialize(bool)", false))
         );
 
-        amm.usdc.ammTreasury = address(
+        system.usdc.ammTreasuryProxy = address(
             new ERC1967Proxy(address(emptyImpl), abi.encodeWithSignature("initialize(bool)", false))
         );
 
-        amm.dai.ammTreasury = address(
+        system.dai.ammTreasuryProxy = address(
             new ERC1967Proxy(address(emptyImpl), abi.encodeWithSignature("initialize(bool)", false))
         );
     }
 
-    function deployStorage(Amm memory amm) public {
-        amm.usdt.ammStorage = address(
-            new ERC1967Proxy(
-                address(new AmmStorage(address(amm.router), address(amm.usdt.ammTreasury))),
-                abi.encodeWithSignature("initialize()", "")
-            )
+    function deployStorage(System memory system) public {
+        system.usdt.ammStorageImpl = address(
+            new AmmStorage(address(system.routerProxy), address(system.usdt.ammTreasuryProxy))
+        );
+        system.usdt.ammStorageProxy = address(
+            new ERC1967Proxy(system.usdt.ammStorageImpl, abi.encodeWithSignature("initialize()", ""))
         );
 
-        amm.usdc.ammStorage = address(
-            new ERC1967Proxy(
-                address(new AmmStorage(address(amm.router), address(amm.usdc.ammTreasury))),
-                abi.encodeWithSignature("initialize()", "")
-            )
+        system.usdc.ammStorageImpl = address(
+            new AmmStorage(address(system.routerProxy), address(system.usdc.ammTreasuryProxy))
+        );
+        system.usdc.ammStorageProxy = address(
+            new ERC1967Proxy(system.usdc.ammStorageImpl, abi.encodeWithSignature("initialize()", ""))
         );
 
-        amm.dai.ammStorage = address(
-            new ERC1967Proxy(
-                address(new AmmStorage(address(amm.router), address(amm.dai.ammTreasury))),
-                abi.encodeWithSignature("initialize()", "")
-            )
+        system.dai.ammStorageImpl = address(
+            new AmmStorage(address(system.routerProxy), address(system.dai.ammTreasuryProxy))
+        );
+        system.dai.ammStorageProxy = address(
+            new ERC1967Proxy(system.dai.ammStorageImpl, abi.encodeWithSignature("initialize()", ""))
         );
     }
 
-    function deploySpreadRouter(Amm memory amm) public {
+    function deploySpreadRouter(System memory system) public {
         SpreadRouter.DeployedContracts memory deployedContracts;
-        deployedContracts.iporProtocolRouter = address(amm.router);
+        deployedContracts.iporProtocolRouter = address(system.routerProxy);
         deployedContracts.storageLens = address(new SpreadStorageLens());
         deployedContracts.spread28Days = address(
-            new Spread28Days(address(amm.dai.asset), address(amm.usdc.asset), address(amm.usdt.asset))
+            new Spread28Days(address(system.dai.asset), address(system.usdc.asset), address(system.usdt.asset))
         );
         deployedContracts.spread60Days = address(
-            new Spread60Days(address(amm.dai.asset), address(amm.usdc.asset), address(amm.usdt.asset))
+            new Spread60Days(address(system.dai.asset), address(system.usdc.asset), address(system.usdt.asset))
         );
         deployedContracts.spread90Days = address(
-            new Spread90Days(address(amm.dai.asset), address(amm.usdc.asset), address(amm.usdt.asset))
+            new Spread90Days(address(system.dai.asset), address(system.usdc.asset), address(system.usdt.asset))
         );
 
         deployedContracts.closeSwapService = address(
-            new SpreadCloseSwapService(address(amm.dai.asset), address(amm.usdc.asset), address(amm.usdt.asset))
+            new SpreadCloseSwapService(
+                address(system.dai.asset),
+                address(system.usdc.asset),
+                address(system.usdt.asset)
+            )
         );
 
-        amm.spreadRouter = address(
-            new ERC1967Proxy(
-                address(new SpreadRouter(deployedContracts)),
-                abi.encodeWithSignature("initialize(bool)", false)
-            )
+        system.spreadRouterImpl = address(new SpreadRouter(deployedContracts));
+        system.spreadRouterProxy = address(
+            new ERC1967Proxy(system.spreadRouterImpl, abi.encodeWithSignature("initialize(bool)", false))
         );
     }
 
-    function deployAssetManagement(Amm memory amm) public {
-        amm.usdt.aToken = address(new MockTestnetToken("Mocked Share aUSDT", "aUSDT", 0, 6));
-        amm.usdc.aToken = address(new MockTestnetToken("Mocked Share aUSDC", "aUSDC", 0, 6));
-        amm.dai.aToken = address(new MockTestnetToken("Mocked Share aDAI", "aDAI", 0, 18));
+    function deployAssetManagement(System memory system) public {
+        system.usdt.aToken = address(new MockTestnetToken("Mocked Share aUSDT", "aUSDT", 0, 6));
+        system.usdc.aToken = address(new MockTestnetToken("Mocked Share aUSDC", "aUSDC", 0, 6));
+        system.dai.aToken = address(new MockTestnetToken("Mocked Share aDAI", "aDAI", 0, 18));
 
-        amm.usdt.cToken = address(new MockTestnetToken("Mocked Share cUSDT", "cUSDT", 0, 6));
-        amm.usdc.cToken = address(new MockTestnetToken("Mocked Share cUSDC", "cUSDC", 0, 6));
-        amm.dai.cToken = address(new MockTestnetToken("Mocked Share cDAI", "cDAI", 0, 18));
+        system.usdt.cToken = address(new MockTestnetToken("Mocked Share cUSDT", "cUSDT", 0, 6));
+        system.usdc.cToken = address(new MockTestnetToken("Mocked Share cUSDC", "cUSDC", 0, 6));
+        system.dai.cToken = address(new MockTestnetToken("Mocked Share cDAI", "cDAI", 0, 18));
 
-        amm.usdt.strategyAave = address(
+        system.usdt.strategyAaveImpl = address(new MockTestnetStrategy());
+        system.usdt.strategyAaveProxy = address(
             new ERC1967Proxy(
-                address(new MockTestnetStrategy()),
-                abi.encodeWithSignature("initialize(address,address)", amm.usdt.asset, amm.usdt.aToken)
+                system.usdt.strategyAaveImpl,
+                abi.encodeWithSignature("initialize(address,address)", system.usdt.asset, system.usdt.aToken)
             )
         );
 
-        amm.usdt.strategyCompound = address(
+        system.usdt.strategyCompoundImpl = address(new MockTestnetStrategy());
+        system.usdt.strategyCompoundProxy = address(
             new ERC1967Proxy(
-                address(new MockTestnetStrategy()),
-                abi.encodeWithSignature("initialize(address,address)", amm.usdt.asset, amm.usdt.cToken)
+                system.usdt.strategyCompoundImpl,
+                abi.encodeWithSignature("initialize(address,address)", system.usdt.asset, system.usdt.cToken)
             )
         );
 
-        amm.usdc.strategyAave = address(
+        system.usdc.strategyAaveImpl = address(new MockTestnetStrategy());
+        system.usdc.strategyAaveProxy = address(
             new ERC1967Proxy(
-                address(new MockTestnetStrategy()),
-                abi.encodeWithSignature("initialize(address,address)", amm.usdc.asset, amm.usdc.aToken)
+                system.usdc.strategyAaveImpl,
+                abi.encodeWithSignature("initialize(address,address)", system.usdc.asset, system.usdc.aToken)
             )
         );
 
-        amm.usdc.strategyCompound = address(
+        system.usdc.strategyCompoundImpl = address(new MockTestnetStrategy());
+        system.usdc.strategyCompoundProxy = address(
             new ERC1967Proxy(
-                address(new MockTestnetStrategy()),
-                abi.encodeWithSignature("initialize(address,address)", amm.usdc.asset, amm.usdc.cToken)
+                system.usdc.strategyCompoundImpl,
+                abi.encodeWithSignature("initialize(address,address)", system.usdc.asset, system.usdc.cToken)
             )
         );
 
-        amm.dai.strategyAave = address(
+        system.dai.strategyAaveImpl = address(new MockTestnetStrategy());
+        system.dai.strategyAaveProxy = address(
             new ERC1967Proxy(
-                address(new MockTestnetStrategy()),
-                abi.encodeWithSignature("initialize(address,address)", amm.dai.asset, amm.dai.aToken)
+                system.dai.strategyAaveImpl,
+                abi.encodeWithSignature("initialize(address,address)", system.dai.asset, system.dai.aToken)
             )
         );
 
-        amm.dai.strategyCompound = address(
+        system.dai.strategyCompoundImpl = address(new MockTestnetStrategy());
+        system.dai.strategyCompoundProxy = address(
             new ERC1967Proxy(
-                address(new MockTestnetStrategy()),
-                abi.encodeWithSignature("initialize(address,address)", amm.dai.asset, amm.dai.cToken)
+                system.dai.strategyCompoundImpl,
+                abi.encodeWithSignature("initialize(address,address)", system.dai.asset, system.dai.cToken)
             )
         );
 
-        amm.usdt.assetManagement = address(
+        system.usdt.assetManagementImpl = address(new AssetManagementUsdt());
+        system.usdt.assetManagementProxy = address(
             new ERC1967Proxy(
-                address(new AssetManagementUsdt()),
+                system.usdt.assetManagementImpl,
                 abi.encodeWithSignature(
                     "initialize(address,address,address,address)",
-                    amm.usdt.asset,
-                    amm.usdt.ivToken,
-                    amm.usdt.strategyAave,
-                    amm.usdt.strategyCompound
+                    system.usdt.asset,
+                    system.usdt.ivToken,
+                    system.usdt.strategyAaveProxy,
+                    system.usdt.strategyCompoundProxy
                 )
             )
         );
 
-        amm.usdc.assetManagement = address(
+        system.usdc.assetManagementImpl = address(new AssetManagementUsdc());
+        system.usdc.assetManagementProxy = address(
             new ERC1967Proxy(
-                address(new AssetManagementUsdc()),
+                system.usdc.assetManagementImpl,
                 abi.encodeWithSignature(
                     "initialize(address,address,address,address)",
-                    amm.usdc.asset,
-                    amm.usdc.ivToken,
-                    amm.usdc.strategyAave,
-                    amm.usdc.strategyCompound
+                    system.usdc.asset,
+                    system.usdc.ivToken,
+                    system.usdc.strategyAaveProxy,
+                    system.usdc.strategyCompoundProxy
                 )
             )
         );
 
-        amm.dai.assetManagement = address(
+        system.dai.assetManagementImpl = address(new AssetManagementDai());
+        system.dai.assetManagementProxy = address(
             new ERC1967Proxy(
-                address(new AssetManagementDai()),
+                system.dai.assetManagementImpl,
                 abi.encodeWithSignature(
                     "initialize(address,address,address,address)",
-                    amm.dai.asset,
-                    amm.dai.ivToken,
-                    amm.dai.strategyAave,
-                    amm.dai.strategyCompound
+                    system.dai.asset,
+                    system.dai.ivToken,
+                    system.dai.strategyAaveProxy,
+                    system.dai.strategyCompoundProxy
                 )
             )
         );
 
-        IStrategy(amm.usdt.strategyAave).setAssetManagement(amm.usdt.assetManagement);
-        IStrategy(amm.usdc.strategyAave).setAssetManagement(amm.usdc.assetManagement);
-        IStrategy(amm.dai.strategyAave).setAssetManagement(amm.dai.assetManagement);
+        IStrategy(system.usdt.strategyAaveProxy).setAssetManagement(system.usdt.assetManagementProxy);
+        IStrategy(system.usdc.strategyAaveProxy).setAssetManagement(system.usdc.assetManagementProxy);
+        IStrategy(system.dai.strategyAaveProxy).setAssetManagement(system.dai.assetManagementProxy);
 
-        IStrategy(amm.usdt.strategyCompound).setAssetManagement(amm.usdt.assetManagement);
-        IStrategy(amm.usdc.strategyCompound).setAssetManagement(amm.usdc.assetManagement);
-        IStrategy(amm.dai.strategyCompound).setAssetManagement(amm.dai.assetManagement);
+        IStrategy(system.usdt.strategyCompoundProxy).setAssetManagement(system.usdt.assetManagementProxy);
+        IStrategy(system.usdc.strategyCompoundProxy).setAssetManagement(system.usdc.assetManagementProxy);
+        IStrategy(system.dai.strategyCompoundProxy).setAssetManagement(system.dai.assetManagementProxy);
     }
 
-    function upgradeAmmTreasury(Amm memory amm) public {
-        AmmTreasury(amm.usdt.ammTreasury).upgradeTo(
-            address(new AmmTreasury(amm.usdt.asset, 6, amm.usdt.ammStorage, amm.usdt.assetManagement, amm.router))
+    function upgradeAmmTreasury(System memory system) public {
+        system.usdt.ammTreasuryImpl = address(
+            new AmmTreasury(
+                system.usdt.asset,
+                6,
+                system.usdt.ammStorageProxy,
+                system.usdt.assetManagementProxy,
+                system.routerProxy
+            )
         );
+        AmmTreasury(system.usdt.ammTreasuryProxy).upgradeTo(system.usdt.ammTreasuryImpl);
 
-        AmmTreasury(amm.usdc.ammTreasury).upgradeTo(
-            address(new AmmTreasury(amm.usdc.asset, 6, amm.usdc.ammStorage, amm.usdc.assetManagement, amm.router))
+        system.usdc.ammTreasuryImpl = address(
+            new AmmTreasury(
+                system.usdc.asset,
+                6,
+                system.usdc.ammStorageProxy,
+                system.usdc.assetManagementProxy,
+                system.routerProxy
+            )
         );
+        AmmTreasury(system.usdc.ammTreasuryProxy).upgradeTo(system.usdc.ammTreasuryImpl);
 
-        AmmTreasury(amm.dai.ammTreasury).upgradeTo(
-            address(new AmmTreasury(amm.dai.asset, 18, amm.dai.ammStorage, amm.dai.assetManagement, amm.router))
+        system.dai.ammTreasuryImpl = address(
+            new AmmTreasury(
+                system.dai.asset,
+                18,
+                system.dai.ammStorageProxy,
+                system.dai.assetManagementProxy,
+                system.routerProxy
+            )
         );
+        AmmTreasury(system.dai.ammTreasuryProxy).upgradeTo(system.dai.ammTreasuryImpl);
     }
 
-    function upgradeIporProtocolRouter(Amm memory amm) public {
-        amm.ammSwapsLens = address(
+    function upgradeIporProtocolRouter(System memory system) public {
+        system.ammSwapsLens = address(
             new AmmSwapsLens(
                 IAmmSwapsLens.SwapLensConfiguration({
-                    asset: address(amm.usdt.asset),
-                    ammStorage: address(amm.usdt.ammStorage),
-                    ammTreasury: address(amm.usdt.ammTreasury)
+                    asset: address(system.usdt.asset),
+                    ammStorage: address(system.usdt.ammStorageProxy),
+                    ammTreasury: address(system.usdt.ammTreasuryProxy)
                 }),
                 IAmmSwapsLens.SwapLensConfiguration({
-                    asset: address(amm.usdc.asset),
-                    ammStorage: address(amm.usdc.ammStorage),
-                    ammTreasury: address(amm.usdc.ammTreasury)
+                    asset: address(system.usdc.asset),
+                    ammStorage: address(system.usdc.ammStorageProxy),
+                    ammTreasury: address(system.usdc.ammTreasuryProxy)
                 }),
                 IAmmSwapsLens.SwapLensConfiguration({
-                    asset: address(amm.dai.asset),
-                    ammStorage: address(amm.dai.ammStorage),
-                    ammTreasury: address(amm.dai.ammTreasury)
+                    asset: address(system.dai.asset),
+                    ammStorage: address(system.dai.ammStorageProxy),
+                    ammTreasury: address(system.dai.ammTreasuryProxy)
                 }),
-                IIporOracle(amm.iporOracle),
-                amm.iporRiskManagementOracle,
-                amm.router
+                IIporOracle(system.iporOracleProxy),
+                system.riskOracleProxy,
+                system.routerProxy
             )
         );
 
-        amm.ammPoolsLens = address(
+        system.ammPoolsLens = address(
             new AmmPoolsLens(
                 IAmmPoolsLens.AmmPoolsLensPoolConfiguration({
-                    asset: address(amm.usdt.asset),
+                    asset: address(system.usdt.asset),
                     decimals: 6,
-                    ipToken: address(amm.usdt.ipToken),
-                    ammStorage: address(amm.usdt.ammStorage),
-                    ammTreasury: address(amm.usdt.ammTreasury),
-                    assetManagement: address(amm.usdt.assetManagement)
+                    ipToken: address(system.usdt.ipToken),
+                    ammStorage: address(system.usdt.ammStorageProxy),
+                    ammTreasury: address(system.usdt.ammTreasuryProxy),
+                    assetManagement: address(system.usdt.assetManagementProxy)
                 }),
                 IAmmPoolsLens.AmmPoolsLensPoolConfiguration({
-                    asset: address(amm.usdc.asset),
+                    asset: address(system.usdc.asset),
                     decimals: 6,
-                    ipToken: address(amm.usdc.ipToken),
-                    ammStorage: address(amm.usdc.ammStorage),
-                    ammTreasury: address(amm.usdc.ammTreasury),
-                    assetManagement: address(amm.usdc.assetManagement)
+                    ipToken: address(system.usdc.ipToken),
+                    ammStorage: address(system.usdc.ammStorageProxy),
+                    ammTreasury: address(system.usdc.ammTreasuryProxy),
+                    assetManagement: address(system.usdc.assetManagementProxy)
                 }),
                 IAmmPoolsLens.AmmPoolsLensPoolConfiguration({
-                    asset: address(amm.dai.asset),
+                    asset: address(system.dai.asset),
                     decimals: 18,
-                    ipToken: address(amm.dai.ipToken),
-                    ammStorage: address(amm.dai.ammStorage),
-                    ammTreasury: address(amm.dai.ammTreasury),
-                    assetManagement: address(amm.dai.assetManagement)
+                    ipToken: address(system.dai.ipToken),
+                    ammStorage: address(system.dai.ammStorageProxy),
+                    ammTreasury: address(system.dai.ammTreasuryProxy),
+                    assetManagement: address(system.dai.assetManagementProxy)
                 }),
-                address(amm.iporOracle)
+                address(system.iporOracleProxy)
             )
         );
 
-        amm.assetManagementLens = address(
+        system.assetManagementLens = address(
             new AssetManagementLens(
                 IAssetManagementLens.AssetManagementConfiguration({
-                    asset: amm.usdt.asset,
+                    asset: system.usdt.asset,
                     decimals: 6,
-                    assetManagement: amm.usdt.assetManagement,
-                    ammTreasury: amm.usdt.ammTreasury
+                    assetManagement: system.usdt.assetManagementProxy,
+                    ammTreasury: system.usdt.ammTreasuryProxy
                 }),
                 IAssetManagementLens.AssetManagementConfiguration({
-                    asset: amm.usdc.asset,
+                    asset: system.usdc.asset,
                     decimals: 6,
-                    assetManagement: amm.usdc.assetManagement,
-                    ammTreasury: amm.usdc.ammTreasury
+                    assetManagement: system.usdc.assetManagementProxy,
+                    ammTreasury: system.usdc.ammTreasuryProxy
                 }),
                 IAssetManagementLens.AssetManagementConfiguration({
-                    asset: amm.dai.asset,
+                    asset: system.dai.asset,
                     decimals: 18,
-                    assetManagement: amm.dai.assetManagement,
-                    ammTreasury: amm.dai.ammTreasury
+                    assetManagement: system.dai.assetManagementProxy,
+                    ammTreasury: system.dai.ammTreasuryProxy
                 })
             )
         );
 
-        amm.ammOpenSwapService = address(
+        system.ammOpenSwapService = address(
             new AmmOpenSwapService({
                 usdtPoolCfg: _preparePoolCfgForOpenSwapService(
-                    address(amm.usdt.asset),
-                    address(amm.usdt.ammTreasury),
-                    address(amm.usdt.ammStorage)
+                    address(system.usdt.asset),
+                    address(system.usdt.ammTreasuryProxy),
+                    address(system.usdt.ammStorageProxy)
                 ),
                 usdcPoolCfg: _preparePoolCfgForOpenSwapService(
-                    address(amm.usdc.asset),
-                    address(amm.usdc.ammTreasury),
-                    address(amm.usdc.ammStorage)
+                    address(system.usdc.asset),
+                    address(system.usdc.ammTreasuryProxy),
+                    address(system.usdc.ammStorageProxy)
                 ),
                 daiPoolCfg: _preparePoolCfgForOpenSwapService(
-                    address(amm.dai.asset),
-                    address(amm.dai.ammTreasury),
-                    address(amm.dai.ammStorage)
+                    address(system.dai.asset),
+                    address(system.dai.ammTreasuryProxy),
+                    address(system.dai.ammStorageProxy)
                 ),
-                iporOracle: amm.iporOracle,
-                iporRiskManagementOracle: amm.iporRiskManagementOracle,
-                spreadRouter: amm.spreadRouter
+                iporOracle: system.iporOracleProxy,
+                iporRiskManagementOracle: system.riskOracleProxy,
+                spreadRouter: system.spreadRouterProxy
             })
         );
 
-        amm.ammCloseSwapService = address(
+        system.ammCloseSwapService = address(
             new AmmCloseSwapService({
                 usdtPoolCfg: _preparePoolCfgForCloseSwapService(
-                    address(amm.usdt.asset),
-                    address(amm.usdt.ammTreasury),
-                    address(amm.usdt.ammStorage),
-                    address(amm.usdt.assetManagement)
+                    address(system.usdt.asset),
+                    address(system.usdt.ammTreasuryProxy),
+                    address(system.usdt.ammStorageProxy),
+                    address(system.usdt.assetManagementProxy)
                 ),
                 usdcPoolCfg: _preparePoolCfgForCloseSwapService(
-                    address(amm.usdc.asset),
-                    address(amm.usdc.ammTreasury),
-                    address(amm.usdc.ammStorage),
-                    address(amm.usdc.assetManagement)
+                    address(system.usdc.asset),
+                    address(system.usdc.ammTreasuryProxy),
+                    address(system.usdc.ammStorageProxy),
+                    address(system.usdc.assetManagementProxy)
                 ),
                 daiPoolCfg: _preparePoolCfgForCloseSwapService(
-                    address(amm.dai.asset),
-                    address(amm.dai.ammTreasury),
-                    address(amm.dai.ammStorage),
-                    address(amm.dai.assetManagement)
+                    address(system.dai.asset),
+                    address(system.dai.ammTreasuryProxy),
+                    address(system.dai.ammStorageProxy),
+                    address(system.dai.assetManagementProxy)
                 ),
-                iporOracle: address(amm.iporOracle),
-                iporRiskManagementOracle: address(amm.iporRiskManagementOracle),
-                spreadRouter: address(amm.spreadRouter)
+                iporOracle: address(system.iporOracleProxy),
+                iporRiskManagementOracle: address(system.riskOracleProxy),
+                spreadRouter: address(system.spreadRouterProxy)
             })
         );
 
-        amm.ammPoolsService = address(
+        system.ammPoolsService = address(
             new AmmPoolsService({
                 usdtPoolCfg: _preparePoolCfgForPoolsService(
-                    address(amm.usdt.asset),
-                    address(amm.usdt.ipToken),
-                    address(amm.usdt.ammTreasury),
-                    address(amm.usdt.ammStorage),
-                    address(amm.usdt.assetManagement)
+                    address(system.usdt.asset),
+                    address(system.usdt.ipToken),
+                    address(system.usdt.ammTreasuryProxy),
+                    address(system.usdt.ammStorageProxy),
+                    address(system.usdt.assetManagementProxy)
                 ),
                 usdcPoolCfg: _preparePoolCfgForPoolsService(
-                    address(amm.usdc.asset),
-                    address(amm.usdc.ipToken),
-                    address(amm.usdc.ammTreasury),
-                    address(amm.usdc.ammStorage),
-                    address(amm.usdc.assetManagement)
+                    address(system.usdc.asset),
+                    address(system.usdc.ipToken),
+                    address(system.usdc.ammTreasuryProxy),
+                    address(system.usdc.ammStorageProxy),
+                    address(system.usdc.assetManagementProxy)
                 ),
                 daiPoolCfg: _preparePoolCfgForPoolsService(
-                    address(amm.dai.asset),
-                    address(amm.dai.ipToken),
-                    address(amm.dai.ammTreasury),
-                    address(amm.dai.ammStorage),
-                    address(amm.dai.assetManagement)
+                    address(system.dai.asset),
+                    address(system.dai.ipToken),
+                    address(system.dai.ammTreasuryProxy),
+                    address(system.dai.ammStorageProxy),
+                    address(system.dai.assetManagementProxy)
                 ),
-                iporOracle: address(amm.iporOracle)
+                iporOracle: address(system.iporOracleProxy)
             })
         );
 
-        amm.ammGovernanceService = address(
+        system.ammGovernanceService = address(
             new AmmGovernanceService({
                 usdtPoolCfg: _preparePoolCfgForGovernanceService(
-                    address(amm.usdt.asset),
-                    address(amm.usdt.ammTreasury),
-                    address(amm.usdt.ammStorage)
+                    address(system.usdt.asset),
+                    address(system.usdt.ammTreasuryProxy),
+                    address(system.usdt.ammStorageProxy)
                 ),
                 usdcPoolCfg: _preparePoolCfgForGovernanceService(
-                    address(amm.usdc.asset),
-                    address(amm.usdc.ammTreasury),
-                    address(amm.usdc.ammStorage)
+                    address(system.usdc.asset),
+                    address(system.usdc.ammTreasuryProxy),
+                    address(system.usdc.ammStorageProxy)
                 ),
                 daiPoolCfg: _preparePoolCfgForGovernanceService(
-                    address(amm.dai.asset),
-                    address(amm.dai.ammTreasury),
-                    address(amm.dai.ammStorage)
+                    address(system.dai.asset),
+                    address(system.dai.ammTreasuryProxy),
+                    address(system.dai.ammStorageProxy)
                 )
             })
         );
 
         IporProtocolRouter.DeployedContracts memory deployedContracts = IporProtocolRouter.DeployedContracts({
-            ammSwapsLens: amm.ammSwapsLens,
-            ammPoolsLens: amm.ammPoolsLens,
-            assetManagementLens: amm.assetManagementLens,
-            ammOpenSwapService: amm.ammOpenSwapService,
-            ammCloseSwapService: amm.ammCloseSwapService,
-            ammPoolsService: amm.ammPoolsService,
-            ammGovernanceService: amm.ammGovernanceService,
+            ammSwapsLens: system.ammSwapsLens,
+            ammPoolsLens: system.ammPoolsLens,
+            assetManagementLens: system.assetManagementLens,
+            ammOpenSwapService: system.ammOpenSwapService,
+            ammCloseSwapService: system.ammCloseSwapService,
+            ammPoolsService: system.ammPoolsService,
+            ammGovernanceService: system.ammGovernanceService,
             liquidityMiningLens: ammConfig.liquidityMiningLens,
             powerTokenLens: ammConfig.powerTokenLens,
             flowService: ammConfig.flowService,
             stakeService: ammConfig.stakeService
         });
 
-        IporProtocolRouter(amm.router).upgradeTo(address(new IporProtocolRouter(deployedContracts)));
+        system.routerImpl = address(new IporProtocolRouter(deployedContracts));
+        IporProtocolRouter(system.routerProxy).upgradeTo(system.routerImpl);
     }
 
-    function _toAddressesJson(Amm memory amm) internal {
+    function _toAddressesJson(System memory system) internal {
         string memory path = vm.projectRoot();
         string memory addressesJson = "";
 
-        vm.serializeAddress(addressesJson, "USDT", amm.usdt.asset);
-        vm.serializeAddress(addressesJson, "USDC", amm.usdc.asset);
-        vm.serializeAddress(addressesJson, "DAI", amm.dai.asset);
+        vm.serializeAddress(addressesJson, "USDT", system.usdt.asset);
+        vm.serializeAddress(addressesJson, "USDC", system.usdc.asset);
+        vm.serializeAddress(addressesJson, "DAI", system.dai.asset);
 
-        vm.serializeAddress(addressesJson, "ipUSDT", amm.usdt.ipToken);
-        vm.serializeAddress(addressesJson, "ipUSDC", amm.usdc.ipToken);
-        vm.serializeAddress(addressesJson, "ipDAI", amm.dai.ipToken);
+        vm.serializeAddress(addressesJson, "ipUSDT", system.usdt.ipToken);
+        vm.serializeAddress(addressesJson, "ipUSDC", system.usdc.ipToken);
+        vm.serializeAddress(addressesJson, "ipDAI", system.dai.ipToken);
 
-        vm.serializeAddress(addressesJson, "ivUSDT", amm.usdt.ivToken);
-        vm.serializeAddress(addressesJson, "ivUSDC", amm.usdc.ivToken);
-        vm.serializeAddress(addressesJson, "ivDAI", amm.dai.ivToken);
+        vm.serializeAddress(addressesJson, "ivUSDT", system.usdt.ivToken);
+        vm.serializeAddress(addressesJson, "ivUSDC", system.usdc.ivToken);
+        vm.serializeAddress(addressesJson, "ivDAI", system.dai.ivToken);
 
-        vm.serializeAddress(addressesJson, "aUSDT", amm.usdt.aToken);
-        vm.serializeAddress(addressesJson, "aUSDC", amm.usdc.aToken);
-        vm.serializeAddress(addressesJson, "aDAI", amm.dai.aToken);
+        vm.serializeAddress(addressesJson, "aUSDT", system.usdt.aToken);
+        vm.serializeAddress(addressesJson, "aUSDC", system.usdc.aToken);
+        vm.serializeAddress(addressesJson, "aDAI", system.dai.aToken);
 
-        vm.serializeAddress(addressesJson, "cUSDT", amm.usdt.cToken);
-        vm.serializeAddress(addressesJson, "cUSDC", amm.usdc.cToken);
-        vm.serializeAddress(addressesJson, "cDAI", amm.dai.cToken);
+        vm.serializeAddress(addressesJson, "cUSDT", system.usdt.cToken);
+        vm.serializeAddress(addressesJson, "cUSDC", system.usdc.cToken);
+        vm.serializeAddress(addressesJson, "cDAI", system.dai.cToken);
 
-        vm.serializeAddress(addressesJson, "StrategyCompoundUsdt", amm.usdt.strategyCompound);
-        vm.serializeAddress(addressesJson, "StrategyCompoundUsdc", amm.usdc.strategyCompound);
-        vm.serializeAddress(addressesJson, "StrategyCompoundDai", amm.dai.strategyCompound);
+        vm.serializeAddress(addressesJson, "StrategyCompoundUsdtProxy", system.usdt.strategyCompoundProxy);
+        vm.serializeAddress(addressesJson, "StrategyCompoundUsdcProxy", system.usdc.strategyCompoundProxy);
+        vm.serializeAddress(addressesJson, "StrategyCompoundDaiProxy", system.dai.strategyCompoundProxy);
 
-        vm.serializeAddress(addressesJson, "StrategyAaveUsdt", amm.usdt.strategyAave);
-        vm.serializeAddress(addressesJson, "StrategyAaveUsdc", amm.usdc.strategyAave);
-        vm.serializeAddress(addressesJson, "StrategyAaveDai", amm.dai.strategyAave);
+        vm.serializeAddress(addressesJson, "StrategyCompoundUsdtImpl", system.usdt.strategyCompoundImpl);
+        vm.serializeAddress(addressesJson, "StrategyCompoundUsdcImpl", system.usdc.strategyCompoundImpl);
+        vm.serializeAddress(addressesJson, "StrategyCompoundDaiImpl", system.dai.strategyCompoundImpl);
 
-        vm.serializeAddress(addressesJson, "AmmStorageUsdt", amm.usdt.ammStorage);
-        vm.serializeAddress(addressesJson, "AmmStorageUsdc", amm.usdc.ammStorage);
-        vm.serializeAddress(addressesJson, "AmmStorageDai", amm.dai.ammStorage);
+        vm.serializeAddress(addressesJson, "StrategyAaveUsdt", system.usdt.strategyAaveProxy);
+        vm.serializeAddress(addressesJson, "StrategyAaveUsdc", system.usdc.strategyAaveProxy);
+        vm.serializeAddress(addressesJson, "StrategyAaveDai", system.dai.strategyAaveProxy);
 
-        vm.serializeAddress(addressesJson, "AssetManagementUsdt", amm.usdt.assetManagement);
-        vm.serializeAddress(addressesJson, "AssetManagementUsdc", amm.usdc.assetManagement);
-        vm.serializeAddress(addressesJson, "AssetManagementDai", amm.dai.assetManagement);
+        vm.serializeAddress(addressesJson, "StrategyAaveUsdtImpl", system.usdt.strategyAaveImpl);
+        vm.serializeAddress(addressesJson, "StrategyAaveUsdcImpl", system.usdc.strategyAaveImpl);
+        vm.serializeAddress(addressesJson, "StrategyAaveDaiImpl", system.dai.strategyAaveImpl);
 
-        vm.serializeAddress(addressesJson, "AmmTreasuryUsdt", amm.usdt.ammTreasury);
-        vm.serializeAddress(addressesJson, "AmmTreasuryUsdc", amm.usdc.ammTreasury);
-        vm.serializeAddress(addressesJson, "AmmTreasuryDai", amm.dai.ammTreasury);
+        vm.serializeAddress(addressesJson, "AmmStorageUsdtProxy", system.usdt.ammStorageProxy);
+        vm.serializeAddress(addressesJson, "AmmStorageUsdcProxy", system.usdc.ammStorageProxy);
+        vm.serializeAddress(addressesJson, "AmmStorageDaiProxy", system.dai.ammStorageProxy);
 
-        vm.serializeAddress(addressesJson, "SpreadRouter", amm.spreadRouter);
-        vm.serializeAddress(addressesJson, "IporOracle", amm.iporOracle);
-        vm.serializeAddress(addressesJson, "IporRiskManagementOracle", amm.iporRiskManagementOracle);
+        vm.serializeAddress(addressesJson, "AmmStorageUsdtImpl", system.usdt.ammStorageImpl);
+        vm.serializeAddress(addressesJson, "AmmStorageUsdcImpl", system.usdc.ammStorageImpl);
+        vm.serializeAddress(addressesJson, "AmmStorageDaiImpl", system.dai.ammStorageImpl);
 
-        string memory finalJson = vm.serializeAddress(addressesJson, "IporProtocolRouter", amm.router);
+        vm.serializeAddress(addressesJson, "AssetManagementUsdtProxy", system.usdt.assetManagementProxy);
+        vm.serializeAddress(addressesJson, "AssetManagementUsdcProxy", system.usdc.assetManagementProxy);
+        vm.serializeAddress(addressesJson, "AssetManagementDaiProxy", system.dai.assetManagementProxy);
 
-        vm.writeJson(finalJson, string.concat(path, "/.ipor/", _env_profile,"-ipor-protocol-addresses.json"));
+        vm.serializeAddress(addressesJson, "AssetManagementUsdtImpl", system.usdt.assetManagementImpl);
+        vm.serializeAddress(addressesJson, "AssetManagementUsdcImpl", system.usdc.assetManagementImpl);
+        vm.serializeAddress(addressesJson, "AssetManagementDaiImpl", system.dai.assetManagementImpl);
+
+        vm.serializeAddress(addressesJson, "AmmTreasuryUsdtProxy", system.usdt.ammTreasuryProxy);
+        vm.serializeAddress(addressesJson, "AmmTreasuryUsdcProxy", system.usdc.ammTreasuryProxy);
+        vm.serializeAddress(addressesJson, "AmmTreasuryDaiProxy", system.dai.ammTreasuryProxy);
+
+        vm.serializeAddress(addressesJson, "AmmTreasuryUsdtImpl", system.usdt.ammTreasuryImpl);
+        vm.serializeAddress(addressesJson, "AmmTreasuryUsdcImpl", system.usdc.ammTreasuryImpl);
+        vm.serializeAddress(addressesJson, "AmmTreasuryDaiImpl", system.dai.ammTreasuryImpl);
+
+        vm.serializeAddress(addressesJson, "SpreadRouterProxy", system.spreadRouterProxy);
+        vm.serializeAddress(addressesJson, "IporOracleProxy", system.iporOracleProxy);
+        vm.serializeAddress(addressesJson, "IporRiskManagementOracleProxy", system.riskOracleProxy);
+
+        vm.serializeAddress(addressesJson, "SpreadRouterImpl", system.spreadRouterImpl);
+        vm.serializeAddress(addressesJson, "IporOracleImpl", system.iporOracleImpl);
+        vm.serializeAddress(addressesJson, "IporRiskManagementOracleImpl", system.riskOracleImpl);
+
+        vm.serializeAddress(addressesJson, "IporProtocolRouterProxy", system.routerProxy);
+        vm.serializeAddress(addressesJson, "IporProtocolRouterImpl", system.routerImpl);
+
+        string memory finalJson = vm.serializeAddress(addressesJson, "IporProtocolRouterProxy", system.routerProxy);
+
+        vm.writeJson(finalJson, string.concat(path, "/.ipor/", _env_profile, "-ipor-protocol-addresses.json"));
     }
 }
