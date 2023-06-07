@@ -55,6 +55,8 @@ contract TestForkCommons is Test {
     address public constant stanleyProxyUsdc = 0x7aa7b0B738C2570C2f9F892cB7cA5bB89b9BF260;
     address public constant stanleyProxyUsdt = 0x8e679C1d67Af0CD4b314896856f09ece9E64D6B5;
 
+    address public constant oracleUpdater = 0xC3A53976E9855d815A08f577C2BEef2a799470b7;
+
     // new contracts for v2
     address public iporRiskManagementOracleProxy;
     address public iporProtocolRouterProxy;
@@ -92,6 +94,8 @@ contract TestForkCommons is Test {
         _updateIporRouterImplementation();
         _switchMiltonStorageToAmmStorage();
         _switchMiltonToAmmTreasury();
+        _setUpIpTokens();
+        _setAmmPoolsParams();
     }
 
     function _updateIporRouterImplementation() internal {
@@ -339,10 +343,10 @@ contract TestForkCommons is Test {
                 6,
                 miltonStorageProxyUsdc,
                 miltonProxyUsdc,
-                10 * 1e6,
-                100_000 * 1e6,
+                10 * 1e18,
+                100_000 * 1e18,
                 25,
-                10 * 1e6,
+                10 * 1e18,
                 5e11,
                 5e14
             );
@@ -353,10 +357,10 @@ contract TestForkCommons is Test {
                 6,
                 miltonStorageProxyUsdt,
                 miltonProxyUsdt,
-                10 * 1e6,
-                100_000 * 1e6,
+                10 * 1e18,
+                100_000 * 1e18,
                 25,
-                10 * 1e6,
+                10 * 1e18,
                 5e11,
                 5e14
             );
@@ -567,6 +571,22 @@ contract TestForkCommons is Test {
         AmmTreasury(miltonProxyDai).upgradeTo(address(daiTreasuryImplementation));
         AmmTreasury(miltonProxyUsdc).upgradeTo(address(usdcTreasuryImplementation));
         AmmTreasury(miltonProxyUsdt).upgradeTo(address(usdtTreasuryImplementation));
+        vm.stopPrank();
+    }
+
+    function _setUpIpTokens() private {
+        vm.startPrank(owner);
+        IIpToken(ipDAI).setJoseph(iporProtocolRouterProxy);
+        IIpToken(ipUSDC).setJoseph(iporProtocolRouterProxy);
+        IIpToken(ipUSDT).setJoseph(iporProtocolRouterProxy);
+        vm.stopPrank();
+    }
+
+    function _setAmmPoolsParams() private {
+        vm.startPrank(owner);
+        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, type(uint32).max, 0,5000);
+        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(USDC, type(uint32).max, type(uint32).max, 0,5000);
+        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(USDT, type(uint32).max, type(uint32).max, 0,5000);
         vm.stopPrank();
     }
 
