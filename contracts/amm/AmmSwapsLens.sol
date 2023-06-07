@@ -23,7 +23,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
     address internal immutable _daiAmmStorage;
     address internal immutable _daiAmmTreasury;
 
-    IIporOracle internal immutable _iporOracle;
+    address internal immutable _iporOracle;
 
     address internal immutable _router;
 
@@ -33,7 +33,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         SwapLensConfiguration memory usdtCfg,
         SwapLensConfiguration memory usdcCfg,
         SwapLensConfiguration memory daiCfg,
-        IIporOracle iporOracle,
+        address iporOracle,
         address riskManagementOracle,
         address router
     ) {
@@ -117,14 +117,14 @@ contract AmmSwapsLens is IAmmSwapsLens {
     function getPayoffPayFixed(address asset, uint256 swapId) external view override returns (int256) {
         IAmmStorage ammStorage = _getAmmStorage(asset);
         AmmTypes.Swap memory swap = ammStorage.getSwap(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, swapId);
-        uint256 accruedIbtPrice = _iporOracle.calculateAccruedIbtPrice(asset, block.timestamp);
+        uint256 accruedIbtPrice = IIporOracle(_iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
         return swap.calculatePayoffPayFixed(block.timestamp, accruedIbtPrice);
     }
 
     function getPayoffReceiveFixed(address asset, uint256 swapId) external view override returns (int256) {
         IAmmStorage ammStorage = _getAmmStorage(asset);
         AmmTypes.Swap memory swap = ammStorage.getSwap(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, swapId);
-        uint256 accruedIbtPrice = _iporOracle.calculateAccruedIbtPrice(asset, block.timestamp);
+        uint256 accruedIbtPrice = IIporOracle(_iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
         return swap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
     }
 
@@ -142,7 +142,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         AmmTypes.AmmPoolCoreModel memory ammCoreModel;
         ammCoreModel.asset = asset;
         ammCoreModel.ammStorage = address(ammStorage);
-        ammCoreModel.iporOracle = address(_iporOracle);
+        ammCoreModel.iporOracle = _iporOracle;
         (soapPayFixed, soapReceiveFixed, soap) = ammCoreModel.getSOAP();
     }
 
@@ -201,7 +201,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         IAmmStorage ammStorage,
         AmmStorageTypes.IporSwapId[] memory swapIds
     ) internal view returns (IAmmSwapsLens.IporSwap[] memory swaps) {
-        uint256 accruedIbtPrice = _iporOracle.calculateAccruedIbtPrice(asset, block.timestamp);
+        uint256 accruedIbtPrice = IIporOracle(_iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
         uint256 swapCount = swapIds.length;
         IAmmSwapsLens.IporSwap[] memory mappedSwaps = new IAmmSwapsLens.IporSwap[](swapCount);
         for (uint256 i; i != swapCount; ) {

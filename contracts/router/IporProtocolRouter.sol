@@ -28,14 +28,14 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
     address public immutable AMM_SWAPS_LENS;
     address public immutable AMM_POOLS_LENS;
     address public immutable ASSET_MANAGEMENT_LENS;
-    address public immutable AMM_OPEN_SWAP_SERVICE_ADDRESS;
-    address public immutable AMM_CLOSE_SWAP_SERVICE_ADDRESS;
-    address public immutable AMM_POOLS_SERVICE_ADDRESS;
-    address public immutable AMM_GOVERNANCE_SERVICE_ADDRESS;
-    address public immutable LIQUIDITY_MINING_LENS_ADDRESS;
-    address public immutable POWER_TOKEN_LENS_ADDRESS;
-    address public immutable FLOW_SERVICE_ADDRESS;
-    address public immutable STAKE_SERVICE_ADDRESS;
+    address public immutable AMM_OPEN_SWAP_SERVICE;
+    address public immutable AMM_CLOSE_SWAP_SERVICE;
+    address public immutable AMM_POOLS_SERVICE;
+    address public immutable AMM_GOVERNANCE_SERVICE;
+    address public immutable LIQUIDITY_MINING_LENS;
+    address public immutable POWER_TOKEN_LENS;
+    address public immutable FLOW_SERVICE;
+    address public immutable STAKE_SERVICE;
 
     struct DeployedContracts {
         address ammSwapsLens;
@@ -108,14 +108,14 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
         AMM_SWAPS_LENS = deployedContracts.ammSwapsLens;
         AMM_POOLS_LENS = deployedContracts.ammPoolsLens;
         ASSET_MANAGEMENT_LENS = deployedContracts.assetManagementLens;
-        AMM_OPEN_SWAP_SERVICE_ADDRESS = deployedContracts.ammOpenSwapService;
-        AMM_CLOSE_SWAP_SERVICE_ADDRESS = deployedContracts.ammCloseSwapService;
-        AMM_POOLS_SERVICE_ADDRESS = deployedContracts.ammPoolsService;
-        AMM_GOVERNANCE_SERVICE_ADDRESS = deployedContracts.ammGovernanceService;
-        LIQUIDITY_MINING_LENS_ADDRESS = deployedContracts.liquidityMiningLens;
-        POWER_TOKEN_LENS_ADDRESS = deployedContracts.powerTokenLens;
-        FLOW_SERVICE_ADDRESS = deployedContracts.flowService;
-        STAKE_SERVICE_ADDRESS = deployedContracts.stakeService;
+        AMM_OPEN_SWAP_SERVICE = deployedContracts.ammOpenSwapService;
+        AMM_CLOSE_SWAP_SERVICE = deployedContracts.ammCloseSwapService;
+        AMM_POOLS_SERVICE = deployedContracts.ammPoolsService;
+        AMM_GOVERNANCE_SERVICE = deployedContracts.ammGovernanceService;
+        LIQUIDITY_MINING_LENS = deployedContracts.liquidityMiningLens;
+        POWER_TOKEN_LENS = deployedContracts.powerTokenLens;
+        FLOW_SERVICE = deployedContracts.flowService;
+        STAKE_SERVICE = deployedContracts.stakeService;
         _disableInitializers();
     }
 
@@ -143,7 +143,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             if (batchOperation == 0) {
                 _nonReentrantBefore;
             }
-            return AMM_OPEN_SWAP_SERVICE_ADDRESS;
+            return AMM_OPEN_SWAP_SERVICE;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapPayFixedUsdt.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapPayFixedUsdc.selector) ||
@@ -158,7 +158,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             if (batchOperation == 0) {
                 _nonReentrantBefore;
             }
-            return AMM_CLOSE_SWAP_SERVICE_ADDRESS;
+            return AMM_CLOSE_SWAP_SERVICE;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsService.provideLiquidityUsdt.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsService.provideLiquidityUsdc.selector) ||
@@ -171,7 +171,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             if (batchOperation == 0) {
                 _nonReentrantBefore;
             }
-            return AMM_POOLS_SERVICE_ADDRESS;
+            return AMM_POOLS_SERVICE;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenStakeService.stakeLpTokensToLiquidityMining.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenStakeService.unstakeLpTokensFromLiquidityMining.selector) ||
@@ -187,7 +187,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             if (batchOperation == 0) {
                 _nonReentrantBefore;
             }
-            return STAKE_SERVICE_ADDRESS;
+            return STAKE_SERVICE;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenFlowsService.delegatePwTokensToLiquidityMining.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenFlowsService.updateIndicatorsInLiquidityMining.selector) ||
@@ -197,7 +197,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             if (batchOperation == 0) {
                 _nonReentrantBefore;
             }
-            return FLOW_SERVICE_ADDRESS;
+            return FLOW_SERVICE;
         } else if (
             sig == IAmmGovernanceService.transferToTreasury.selector ||
             sig == IAmmGovernanceService.transferToCharlieTreasury.selector
@@ -205,7 +205,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             if (batchOperation == 0) {
                 _nonReentrantBefore;
             }
-            return AMM_GOVERNANCE_SERVICE_ADDRESS;
+            return AMM_GOVERNANCE_SERVICE;
         } else if (
             sig == IAmmGovernanceLens.isSwapLiquidator.selector ||
             sig == IAmmGovernanceLens.isAppointedToRebalanceInAmm.selector ||
@@ -214,7 +214,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             if (batchOperation == 0) {
                 _nonReentrantBefore;
             }
-            return AMM_GOVERNANCE_SERVICE_ADDRESS;
+            return AMM_GOVERNANCE_SERVICE;
         } else if (
             sig == IAmmGovernanceService.addSwapLiquidator.selector ||
             sig == IAmmGovernanceService.removeSwapLiquidator.selector ||
@@ -226,7 +226,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             sig == IAmmGovernanceService.setAmmPoolsParams.selector
         ) {
             _onlyOwner();
-            return AMM_GOVERNANCE_SERVICE_ADDRESS;
+            return AMM_GOVERNANCE_SERVICE;
         } else if (
             sig == IAmmCloseSwapService.emergencyCloseSwapPayFixedUsdt.selector ||
             sig == IAmmCloseSwapService.emergencyCloseSwapPayFixedUsdc.selector ||
@@ -242,7 +242,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             sig == IAmmCloseSwapService.emergencyCloseSwapsReceiveFixedDai.selector
         ) {
             _onlyOwner();
-            return AMM_CLOSE_SWAP_SERVICE_ADDRESS;
+            return AMM_CLOSE_SWAP_SERVICE;
         } else if (
             sig == IAmmSwapsLens.getSwaps.selector ||
             sig == IAmmSwapsLens.getPayoffPayFixed.selector ||
@@ -274,7 +274,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             sig == ILiquidityMiningLens.getGlobalIndicatorsFromLiquidityMining.selector ||
             sig == ILiquidityMiningLens.getAccountRewardsInLiquidityMining.selector
         ) {
-            return LIQUIDITY_MINING_LENS_ADDRESS;
+            return LIQUIDITY_MINING_LENS;
         } else if (
             sig == IPowerTokenLens.totalSupplyOfPwToken.selector ||
             sig == IPowerTokenLens.balanceOfPwToken.selector ||
@@ -285,9 +285,9 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             sig == IPowerTokenLens.getPwTokenExchangeRate.selector ||
             sig == IPowerTokenLens.getPwTokenTotalSupplyBase.selector
         ) {
-            return POWER_TOKEN_LENS_ADDRESS;
+            return POWER_TOKEN_LENS;
         } else if (sig == IAmmCloseSwapService.getAmmCloseSwapServicePoolConfiguration.selector) {
-            return AMM_CLOSE_SWAP_SERVICE_ADDRESS;
+            return AMM_CLOSE_SWAP_SERVICE;
         }
 
         revert(IporErrors.ROUTER_INVALID_SIGNATURE);
