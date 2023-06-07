@@ -7,6 +7,7 @@ import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
 import "../../libraries/math/InterestRates.sol";
 import "../../interfaces/types/AmmTypes.sol";
+import "forge-std/console2.sol";
 
 library IporSwapLogic {
     using SafeCast for uint256;
@@ -58,6 +59,15 @@ library IporSwapLogic {
         swapValue = _normalizeSwapValue(swap.collateral, interestFixed.toInt256() - interestFloating.toInt256());
     }
 
+    /// @notice Calculates the swap unwind value, virtual hedging position when trade close swap earlier than maturity day.
+    /// @param swap Swap structure
+    /// @param closingTimestamp moment when swap is closed, represented in seconds without 18 decimals
+    /// @param swapPayoffToDate swap payoff to date, represented in 18 decimals, this represents value of payoff
+    /// for particular swap at time when swap will be closed by trader.
+    /// @dev Equation for this calculation is:
+    /// time - number of seconds left to swap maturity divided by number of seconds in year
+    /// Opposite Leg Fixed Rate - calculated fixed rate of opposite leg of virtual swap
+    /// @dev UnwindValue   = Current Swap Payoff + Notional * (e^(Opposite Leg Fixed Rate * time) - e^(Swap Fixed Rate * time))
     function calculateSwapUnwindValue(
         AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
@@ -68,11 +78,15 @@ library IporSwapLogic {
 
         require(closingTimestamp <= endTimestamp, AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE);
 
+        uint256 time = (endTimestamp - swap.openTimestamp) - (closingTimestamp - swap.openTimestamp);
+
         swapUnwindValue =
             swapPayoffToDate +
             swap.notional.toInt256().calculateContinuousCompoundInterestUsingRatePeriodMultiplicationInt(
-                (oppositeLegFixedRate.toInt256() - swap.fixedInterestRate.toInt256()) *
-                    ((endTimestamp - swap.openTimestamp) - (closingTimestamp - swap.openTimestamp)).toInt256()
+                (oppositeLegFixedRate * time).toInt256()
+            ) -
+            swap.notional.toInt256().calculateContinuousCompoundInterestUsingRatePeriodMultiplicationInt(
+                (swap.fixedInterestRate * time).toInt256()
             );
     }
 
