@@ -244,8 +244,6 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             _onlyOwner();
             return AMM_CLOSE_SWAP_SERVICE;
         } else if (
-            sig == IAmmSwapsLens.getSwapsPayFixed.selector ||
-            sig == IAmmSwapsLens.getSwapsReceiveFixed.selector ||
             sig == IAmmSwapsLens.getSwaps.selector ||
             sig == IAmmSwapsLens.getPayoffPayFixed.selector ||
             sig == IAmmSwapsLens.getPayoffReceiveFixed.selector ||

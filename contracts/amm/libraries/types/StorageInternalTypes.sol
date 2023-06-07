@@ -63,7 +63,7 @@ library StorageInternalTypes {
         uint128 vault;
         /// @notice This balance is used to track the funds accounted for IporOracle subsidization.
         uint128 iporPublicationFee;
-        /// @notice Tresury is the balance that belongs to IPOR DAO and funds up to this amount can be transfered to the DAO-appinted multi-sig wallet.
+        /// @notice Treasury is the balance that belongs to IPOR DAO and funds up to this amount can be transferred to the DAO-appointed multi-sig wallet.
         /// this ballance is fed by part of the opening fee appointed by the DAO. For more information refer to the documentation:
         /// https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/ipor-swaps#fees
         uint128 treasury;
