@@ -58,14 +58,14 @@ library IporSwapLogic {
         swapValue = _normalizeSwapValue(swap.collateral, interestFixed.toInt256() - interestFloating.toInt256());
     }
 
-    /// @notice Calculates the swap unwind value, virtual hedging position when trade close swap earlier than maturity day.
+    /// @notice Calculates the swap unwind value, virtual hedging position needed when swaps is closed before the maturity day.
     /// @param swap Swap structure
     /// @param closingTimestamp moment when swap is closed, represented in seconds without 18 decimals
     /// @param swapPayoffToDate swap payoff to date, represented in 18 decimals, this represents value of payoff
-    /// for particular swap at time when swap will be closed by trader.
+    /// for particular swap at time when swap will be closed by the trader.
     /// @dev Equation for this calculation is:
-    /// time - number of seconds left to swap maturity divided by number of seconds in year
-    /// Opposite Leg Fixed Rate - calculated fixed rate of opposite leg of virtual swap
+    /// time - number of seconds left to swap until maturity divided by number of seconds in year
+    /// Opposite Leg Fixed Rate - calculated fixed rate of opposite leg used for the virtual swap
     /// @dev UnwindValue   = Current Swap Payoff + Notional * (e^(Opposite Leg Fixed Rate * time) - e^(Swap Fixed Rate * time))
     function calculateSwapUnwindValue(
         AmmTypes.Swap memory swap,

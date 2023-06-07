@@ -28,7 +28,7 @@ library LiquidityMiningTypes {
         /// @notice value describing amount of rewards issued per block,
         /// @dev It can be changed at most once per block, represented with 8 decimals
         uint32 rewardsPerBlock;
-        /// @notice amount of accrued rewards since inception
+        /// @notice amount of rewards accrued since inception
         /// @dev It can be changed at most once per block, represented with 18 decimals
         uint88 accruedRewards;
     }

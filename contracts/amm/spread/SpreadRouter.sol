@@ -122,13 +122,13 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
     function _delegate(address implementation) private {
         // solhint-disable-next-line no-inline-assembly
         assembly {
-            // Copy msg.data. We take full control of memory in this inline assembly
-            // block because it will not return to Solidity code. We overwrite the
-            // Solidity scratch pad at memory position 0.
+            // Copy msg.data. This inline assembly block takes thefull control of memory
+            // Because it will not return to Solidity code, 
+            // Solidity scratch pad at memory position 0 is overriden.
             calldatacopy(0, 0, calldatasize())
 
             // Call the implementation.
-            // out and outsize are 0 because we don't know the size yet.
+            // out and outsize are 0 since the size is not know at this point .
             let result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)
 
             // Copy the returned data.

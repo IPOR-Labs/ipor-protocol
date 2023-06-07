@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 
-/// @title Structs used in comunication Darcy web application with Ipor Protocol
+/// @title Structs used in comunication between web application and Ipor Protocol
 /// @dev structs used in IAmmTreasuryFacadeDataProvider and IIporOracleFacadeDataProvider interfaces
 library AmmFacadeTypes {
     /// @notice Technical struct which groups important addresses used in smart contract AmmTreasuryFacadeDataProvider,
@@ -14,7 +14,7 @@ library AmmFacadeTypes {
 
     }
 
-    /// @notice Struct which groups AmmTreasury balances required for frontedn
+    /// @notice Struct which groups AmmTreasury balances required by the webapp 
     struct Balance {
         /// @notice Liquiditiy Pool Balance. Represented in 18 decimals.
         uint256 liquidityPool;
@@ -28,7 +28,7 @@ library AmmFacadeTypes {
         uint256 totalCollateralReceiveFixed;
     }
 
-    /// @notice Struct describe configuration for one asset (stablecoin / underlying token).
+    /// @notice Struct describing configuration for one asset (stablecoin / underlying token).
     struct AssetConfiguration {
         /// @notice underlying token / stablecoin address
         address asset;
@@ -53,19 +53,19 @@ library AmmFacadeTypes {
         uint256 maxLpAccountContribution;
     }
 
-    /// @notice IPOR Swap structure used by facades.
+    /// @notice IPOR Swap structure used by the façades.
     struct IporSwap {
-        /// @notice Swap ID.
+        /// @notice Swap's ID.
         uint256 id;
-        /// @notice Swap asset (stablecoint / underlying token)
+        /// @notice Swap's asset (stablecoint / underlying token)
         address asset;
-        /// @notice Swap collateral, represented in 18 decimals.
+        /// @notice Swap's collateral, represented in 18 decimals.
         uint256 collateral;
         /// @notice Notional amount, represented in 18 decimals.
         uint256 notional;
-        /// @notice Swap leverage, represented in 18 decimals.
+        /// @notice Swap's leverage, represented in 18 decimals.
         uint256 leverage;
-        /// @notice Swap direction
+        /// @notice Swap's direction
         /// @dev 0 - Pay Fixed-Receive Floating, 1 - Receive Fixed - Pay Floading
         uint8 direction;
         /// @notice Fixed interest rate.

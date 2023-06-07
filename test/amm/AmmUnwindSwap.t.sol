@@ -136,8 +136,6 @@ contract AmmUnwindSwap is TestCommons {
             1
         );
 
-        console2.log("notional=", swapOne.notional);
-
         AmmTypes.Swap memory swapTwo = _iporProtocol.ammStorage.getSwap(
             AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             2

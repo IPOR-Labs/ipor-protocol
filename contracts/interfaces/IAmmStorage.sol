@@ -91,10 +91,10 @@ interface IAmmStorage {
         uint256 chunkSize
     ) external view returns (uint256 totalCount, AmmStorageTypes.IporSwapId[] memory ids);
 
-    /// @notice add liquidity to the Liquidity Pool. Function available only to Router.
-    /// @param account account address who execute request for redeem asset amount
+    /// @notice adds liquidity to the Liquidity Pool. Function available only to Router.
+    /// @param account account address executing request for redeem asset amount
     /// @param assetAmount amount of asset added to balance of Liquidity Pool, represented in 18 decimals
-    /// @param cfgMaxLiquidityPoolBalance max liquidity pool balance taken from Joseph configuration, represented in 18 decimals.
+    /// @param cfgMaxLiquidityPoolBalance max liquidity pool balance taken from AmmPoolsService configuration, represented in 18 decimals.
     /// @param cfgMaxLpAccountContribution max liquidity pool account contribution taken from AMM configuration, represented in 18 decimals.
     function addLiquidityInternal(
         address account,
@@ -155,21 +155,21 @@ interface IAmmStorage {
         uint256 closingTimestamp
     ) external returns (AmmInternalTypes.OpenSwapItem memory closedSwap);
 
-    /// @notice Updates the balance when Joseph withdraws AmmTreasury's assets from AssetManagement. Function is only available to AmmTreasury.
-    /// @param withdrawnAmount asset amount that was withdrawn from AssetManagement to AmmTreasury by Joseph, represented in 18 decimals.
+    /// @notice Updates the balance when AmmPoolsService withdraws AmmTreasury's assets from AssetManagement. Function is only available to AmmTreasury.
+    /// @param withdrawnAmount asset amount that was withdrawn from AssetManagement to AmmTreasury by AmmPoolsService, represented in 18 decimals.
     /// @param vaultBalance Asset Management Vault (AssetManagement) balance, represented in 18 decimals
     function updateStorageWhenWithdrawFromAssetManagement(uint256 withdrawnAmount, uint256 vaultBalance) external;
 
-    /// @notice Updates the balance when Joseph deposits AmmTreasury's assets to AssetManagement. Function is only available to AmmTreasury.
-    /// @param depositAmount asset amount deposited from AmmTreasury to AssetManagement by Joseph, represented in 18 decimals.
+    /// @notice Updates the balance when AmmPoolsService deposits AmmTreasury's assets to AssetManagement. Function is only available to AmmTreasury.
+    /// @param depositAmount asset amount deposited from AmmTreasury to AssetManagement by AmmPoolsService, represented in 18 decimals.
     /// @param vaultBalance actual Asset Management Vault(AssetManagement) balance , represented in 18 decimals
     function updateStorageWhenDepositToAssetManagement(uint256 depositAmount, uint256 vaultBalance) external;
 
-    /// @notice Updates the balance when Joseph transfers AmmTreasury's assets to Charlie Treasury's multisig wallet. Function is only available to Joseph.
+    /// @notice Updates the balance when AmmPoolsService transfers AmmTreasury's assets to Charlie Treasury's multisig wallet. Function is only available to AmmPoolsService.
     /// @param transferredAmount asset amount transferred to Charlie Treasury multisig wallet.
     function updateStorageWhenTransferToCharlieTreasuryInternal(uint256 transferredAmount) external;
 
-    /// @notice Updates the balance when Joseph transfers AmmTreasury's assets to Treasury's multisig wallet. Function is only available to Joseph.
+    /// @notice Updates the balance when AmmPoolsService transfers AmmTreasury's assets to Treasury's multisig wallet. Function is only available to AmmPoolsService.
     /// @param transferredAmount asset amount transferred to Treasury's multisig wallet.
     function updateStorageWhenTransferToTreasuryInternal(uint256 transferredAmount) external;
 
