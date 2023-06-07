@@ -135,7 +135,7 @@ contract AssetManagementLens is IAssetManagementLens {
                     ammTreasury: _daiAmmTreasury
                 });
         } else {
-            revert("AssetManagementsLens: asset not supported");
+            revert(IporErrors.ASSET_NOT_SUPPORTED);
         }
     }
 }
