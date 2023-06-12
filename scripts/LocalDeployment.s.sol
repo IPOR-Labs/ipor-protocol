@@ -29,6 +29,8 @@ import "@ipor-protocol/contracts/mocks/tokens/MockTestnetToken.sol";
 import "@ipor-protocol/contracts/amm/AmmStorage.sol";
 import "@ipor-protocol/contracts/amm/AmmTreasury.sol";
 import "@ipor-protocol/contracts/amm/spread/SpreadCloseSwapService.sol";
+import "@ipor-protocol/contracts/mocks/TestnetFaucet.sol";
+import "@ipor-protocol/contracts/tokens/IporToken.sol";
 
 // run:
 // $ anvil
@@ -55,6 +57,7 @@ contract LocalDeployment is Script {
     }
 
     struct System {
+        address iporToken;
         address routerProxy;
         address routerImpl;
         address spreadRouterProxy;
@@ -70,6 +73,8 @@ contract LocalDeployment is Script {
         address riskOracleImpl;
         address ammPoolsService;
         address ammGovernanceService;
+        address faucetProxy;
+        address faucetImpl;
         IporProtocol usdt;
         IporProtocol usdc;
         IporProtocol dai;
@@ -111,6 +116,7 @@ contract LocalDeployment is Script {
     function _getFullInstance(AmmConfig memory cfg, System memory system) public {
         deployDummyIporProtocolRouter(system);
         deployDummyAmmTreasury(system);
+        deployIporToken(system);
         deployAssets(system);
         deployOracle(system);
         deployRiskOracle(system);
@@ -421,7 +427,7 @@ contract LocalDeployment is Script {
         );
     }
 
-    function deployAssetManagement(System memory system) public {
+    function deployAssetManagement(System memory system) internal {
         system.usdt.aToken = address(new MockTestnetToken("Mocked Share aUSDT", "aUSDT", 0, 6));
         system.usdc.aToken = address(new MockTestnetToken("Mocked Share aUSDC", "aUSDC", 0, 6));
         system.dai.aToken = address(new MockTestnetToken("Mocked Share aDAI", "aDAI", 0, 18));
@@ -529,7 +535,7 @@ contract LocalDeployment is Script {
         IStrategy(system.dai.strategyCompoundProxy).setAssetManagement(system.dai.assetManagementProxy);
     }
 
-    function upgradeAmmTreasury(System memory system) public {
+    function upgradeAmmTreasury(System memory system) internal {
         system.usdt.ammTreasuryImpl = address(
             new AmmTreasury(
                 system.usdt.asset,
@@ -564,7 +570,7 @@ contract LocalDeployment is Script {
         AmmTreasury(system.dai.ammTreasuryProxy).upgradeTo(system.dai.ammTreasuryImpl);
     }
 
-    function upgradeIporProtocolRouter(System memory system) public {
+    function upgradeIporProtocolRouter(System memory system) internal {
         system.ammSwapsLens = address(
             new AmmSwapsLens(
                 IAmmSwapsLens.SwapLensConfiguration({
@@ -755,6 +761,26 @@ contract LocalDeployment is Script {
         IporProtocolRouter(system.routerProxy).upgradeTo(system.routerImpl);
     }
 
+    function deployFaucet(System memory system) internal {
+        system.faucetImpl = address(new TestnetFaucet());
+        system.faucetProxy = address(
+            new ERC1967Proxy(
+                system.faucetImpl,
+                abi.encodeWithSignature(
+                    "initialize(address,address,address,address)",
+                    system.dai.asset,
+                    system.usdc.asset,
+                    system.usdt.asset,
+                    system.iporToken
+                )
+            )
+        );
+    }
+
+    function deployIporToken(System memory system) internal {
+        system.iporToken = address(new IporToken("Ipor Token", "IPOR", defaultAnvilAddress));
+    }
+
     function _toAddressesJson(System memory system) internal {
         string memory path = vm.projectRoot();
         string memory addressesJson = "";
@@ -829,6 +855,10 @@ contract LocalDeployment is Script {
 
         vm.serializeAddress(addressesJson, "IporProtocolRouterProxy", system.routerProxy);
         vm.serializeAddress(addressesJson, "IporProtocolRouterImpl", system.routerImpl);
+
+        vm.serializeAddress(addressesJson, "IporToken", system.iporToken);
+        vm.serializeAddress(addressesJson, "FaucetImpl", system.faucetImpl);
+        vm.serializeAddress(addressesJson, "FaucetProxy", system.faucetProxy);
 
         string memory finalJson = vm.serializeAddress(addressesJson, "IporProtocolRouterProxy", system.routerProxy);
 
