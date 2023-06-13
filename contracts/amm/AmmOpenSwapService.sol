@@ -17,9 +17,9 @@ import "../interfaces/IAmmOpenSwapService.sol";
 import "./libraries/types/AmmInternalTypes.sol";
 import "../libraries/errors/AmmErrors.sol";
 import "./libraries/IporSwapLogic.sol";
-import "contracts/amm/spread/ISpread28Days.sol";
-import "contracts/amm/spread/ISpread60Days.sol";
-import "contracts/amm/spread/ISpread90Days.sol";
+import "@ipor-protocol/contracts/amm/spread/ISpread28Days.sol";
+import "@ipor-protocol/contracts/amm/spread/ISpread60Days.sol";
+import "@ipor-protocol/contracts/amm/spread/ISpread90Days.sol";
 
 contract AmmOpenSwapService is IAmmOpenSwapService {
     using Address for address;
