@@ -80,7 +80,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
     /**
      * @dev get current APY, represented in 18 decimals
      */
-    function getApr() external view override returns (uint256 apy) {
+    function getApy() external view override returns (uint256 apy) {
         address lendingPoolAddress = _provider.getLendingPool();
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
         AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(lendingPoolAddress);

@@ -29,7 +29,7 @@ contract StrategyAaveForkTest is TestForkCommons {
         StrategyAave strategyAave = _initStrategy(USDC, aUSDC);
 
         // when
-        uint256 apy = strategyAave.getApr();
+        uint256 apy = strategyAave.getApy();
         assertEq(apy, 24845273515971105);
     }
 
@@ -39,7 +39,7 @@ contract StrategyAaveForkTest is TestForkCommons {
         StrategyAave strategyAave = _initStrategy(USDT, aUSDT);
 
         // when
-        uint256 apy = strategyAave.getApr();
+        uint256 apy = strategyAave.getApy();
         assertEq(apy, 23181193471815983);
     }
 
@@ -49,7 +49,7 @@ contract StrategyAaveForkTest is TestForkCommons {
         StrategyAave strategyAave = _initStrategy(DAI, aDAI);
 
         // when
-        uint256 apy = strategyAave.getApr();
+        uint256 apy = strategyAave.getApy();
         assertEq(apy, 24934288929687418);
     }
 }

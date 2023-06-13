@@ -24,7 +24,7 @@ contract AssetManagementSnapshot is Script, Test {
     address public strategyAaveAsset;
     address public strategyAaveOwner;
     address public strategyAaveShareToken;
-    uint256 public strategyAaveApr;
+    uint256 public strategyAaveApy;
     uint256 public strategyAaveBalance;
     address public strategyAaveAssetManagement;
     address public strategyAaveTreasury;
@@ -35,7 +35,7 @@ contract AssetManagementSnapshot is Script, Test {
     address public strategyCompoundAsset;
     address public strategyCompoundOwner;
     address public strategyCompoundShareToken;
-    uint256 public strategyCompoundApr;
+    uint256 public strategyCompoundApy;
     uint256 public strategyCompoundBalance;
     address public strategyCompoundAssetManagement;
     address public strategyCompoundTreasury;
@@ -65,7 +65,7 @@ contract AssetManagementSnapshot is Script, Test {
         strategyAaveAsset = aaveStrategy.getAsset();
         strategyAaveOwner = aaveStrategy.owner();
         strategyAaveShareToken = aaveStrategy.getShareToken();
-        strategyAaveApr = aaveStrategy.getApr();
+        strategyAaveApy = aaveStrategy.getApy();
         strategyAaveBalance = aaveStrategy.balanceOf();
         strategyAaveAssetManagement = aaveStrategy.getAssetManagement();
         strategyAaveTreasury = aaveStrategy.getTreasury();
@@ -77,7 +77,7 @@ contract AssetManagementSnapshot is Script, Test {
         strategyCompoundAsset = compoundStrategy.getAsset();
         strategyCompoundOwner = compoundStrategy.owner();
         strategyCompoundShareToken = compoundStrategy.getShareToken();
-        strategyCompoundApr = compoundStrategy.getApr();
+        strategyCompoundApy = compoundStrategy.getApy();
         strategyCompoundBalance = compoundStrategy.balanceOf();
         strategyCompoundAssetManagement = compoundStrategy.getAssetManagement();
         strategyCompoundTreasury = compoundStrategy.getTreasury();
@@ -104,7 +104,7 @@ contract AssetManagementSnapshot is Script, Test {
         vm.serializeAddress(assetManagementJson, "strategyAaveAsset", strategyAaveAsset);
         vm.serializeAddress(assetManagementJson, "strategyAaveOwner", strategyAaveOwner);
         vm.serializeAddress(assetManagementJson, "strategyAaveShareToken", strategyAaveShareToken);
-        vm.serializeUint(assetManagementJson, "strategyAaveApr", strategyAaveApr);
+        vm.serializeUint(assetManagementJson, "strategyAaveApy", strategyAaveApy);
         vm.serializeUint(assetManagementJson, "strategyAaveBalance", strategyAaveBalance);
         vm.serializeAddress(assetManagementJson, "strategyAaveAssetManagement", strategyAaveAssetManagement);
         vm.serializeAddress(assetManagementJson, "strategyAaveTreasury", strategyAaveTreasury);
@@ -115,7 +115,7 @@ contract AssetManagementSnapshot is Script, Test {
         vm.serializeAddress(assetManagementJson, "strategyCompoundAsset", strategyCompoundAsset);
         vm.serializeAddress(assetManagementJson, "strategyCompoundOwner", strategyCompoundOwner);
         vm.serializeAddress(assetManagementJson, "strategyCompoundShareToken", strategyCompoundShareToken);
-        vm.serializeUint(assetManagementJson, "strategyCompoundApr", strategyCompoundApr);
+        vm.serializeUint(assetManagementJson, "strategyCompoundApy", strategyCompoundApy);
         vm.serializeUint(assetManagementJson, "strategyCompoundBalance", strategyCompoundBalance);
         vm.serializeAddress(assetManagementJson, "strategyCompoundAssetManagement", strategyCompoundAssetManagement);
         vm.serializeAddress(assetManagementJson, "strategyCompoundTreasury", strategyCompoundTreasury);
@@ -140,7 +140,7 @@ contract AssetManagementSnapshot is Script, Test {
         assertEq(assetManagementSnapshot1.assetManagementOwner(), assetManagementSnapshot1.assetManagementOwner());
         assertEq(assetManagementSnapshot1.strategyAaveOwner(), assetManagementSnapshot1.strategyAaveOwner());
         assertEq(assetManagementSnapshot1.strategyAaveShareToken(), assetManagementSnapshot1.strategyAaveShareToken());
-        assertEq(assetManagementSnapshot1.strategyAaveApr(), assetManagementSnapshot1.strategyAaveApr());
+        assertEq(assetManagementSnapshot1.strategyAaveApy(), assetManagementSnapshot1.strategyAaveApy());
         assertEq(assetManagementSnapshot1.strategyAaveBalance(), assetManagementSnapshot1.strategyAaveBalance());
         assertEq(assetManagementSnapshot1.strategyAaveAssetManagement(), assetManagementSnapshot1.strategyAaveAssetManagement());
         assertEq(assetManagementSnapshot1.strategyAaveTreasury(), assetManagementSnapshot1.strategyAaveTreasury());
@@ -149,7 +149,7 @@ contract AssetManagementSnapshot is Script, Test {
         assertEq(assetManagementSnapshot1.strategyCompoundAsset(), assetManagementSnapshot1.strategyCompoundAsset());
         assertEq(assetManagementSnapshot1.strategyCompoundOwner(), assetManagementSnapshot1.strategyCompoundOwner());
         assertEq(assetManagementSnapshot1.strategyCompoundShareToken(), assetManagementSnapshot1.strategyCompoundShareToken());
-        assertEq(assetManagementSnapshot1.strategyCompoundApr(), assetManagementSnapshot1.strategyCompoundApr());
+        assertEq(assetManagementSnapshot1.strategyCompoundApy(), assetManagementSnapshot1.strategyCompoundApy());
         assertEq(assetManagementSnapshot1.strategyCompoundBalance(), assetManagementSnapshot1.strategyCompoundBalance());
         assertEq(assetManagementSnapshot1.strategyCompoundAssetManagement(), assetManagementSnapshot1.strategyCompoundAssetManagement());
         assertEq(assetManagementSnapshot1.strategyCompoundTreasury(), assetManagementSnapshot1.strategyCompoundTreasury());

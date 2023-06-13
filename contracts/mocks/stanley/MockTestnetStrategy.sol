@@ -17,7 +17,7 @@ contract MockTestnetStrategy is StrategyCore {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     // in wad
-    uint256 private constant _APR = 35000000000000000;
+    uint256 private constant _APY = 35000000000000000;
     uint256 private _depositsBalance;
     uint256 private _lastUpdateBalance;
 
@@ -39,8 +39,8 @@ contract MockTestnetStrategy is StrategyCore {
         _shareToken = shareToken;
     }
 
-    function getApr() external pure override returns (uint256) {
-        return _APR;
+    function getApy() external pure override returns (uint256) {
+        return _APY;
     }
 
     function balanceOf() external view returns (uint256 newDepositsBalance) {
@@ -95,7 +95,7 @@ contract MockTestnetStrategy is StrategyCore {
 
     function _calculateNewBalance() internal view returns (uint256 newDepositsBalance) {
         uint256 depositsBalance = _depositsBalance;
-        uint256 percent = IporMath.division(_APR, Constants.YEAR_IN_SECONDS) *
+        uint256 percent = IporMath.division(_APY, Constants.YEAR_IN_SECONDS) *
             (block.timestamp - _lastUpdateBalance);
         newDepositsBalance = depositsBalance + IporMath.percentOf(depositsBalance, percent);
     }
