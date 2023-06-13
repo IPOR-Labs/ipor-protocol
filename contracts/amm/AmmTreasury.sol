@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
@@ -56,7 +56,7 @@ contract AmmTreasury is
 
     /// @notice Initialize the contract
     /// @param paused If true, the contract will be paused after initialization
-    /// @dev WARNING! AmmTreasury had old storage fields that are not used in the new version.
+    /// @dev WARNING! AmmTreasury has deprecated storage fields that are not used in V2.
     /// @dev Before reusing those slots, clear them in the initialize function.
     /// @dev List of removed fields:
     ///  - address _asset
@@ -103,18 +103,18 @@ contract AmmTreasury is
 
     /// @notice Joseph deposits to AssetManagement asset amount from AmmTreasury.
     /// @param assetAmount underlying token amount represented in 18 decimals
-    function depositToAssetManagement(uint256 assetAmount) external onlyRouter nonReentrant whenNotPaused {
+    function depositToAssetManagementInternal(uint256 assetAmount) external onlyRouter nonReentrant whenNotPaused {
         (uint256 vaultBalance, uint256 depositedAmount) = IAssetManagement(_assetManagement).deposit(assetAmount);
         IAmmStorage(_ammStorage).updateStorageWhenDepositToAssetManagement(depositedAmount, vaultBalance);
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
-    function withdrawFromAssetManagement(uint256 assetAmount) external nonReentrant onlyRouter whenNotPaused {
+    function withdrawFromAssetManagementInternal(uint256 assetAmount) external nonReentrant onlyRouter whenNotPaused {
         (uint256 withdrawnAmount, uint256 vaultBalance) = IAssetManagement(_assetManagement).withdraw(assetAmount);
         IAmmStorage(_ammStorage).updateStorageWhenWithdrawFromAssetManagement(withdrawnAmount, vaultBalance);
     }
 
-    function withdrawAllFromAssetManagement() external nonReentrant onlyRouter whenNotPaused {
+    function withdrawAllFromAssetManagementInternal() external nonReentrant onlyRouter whenNotPaused {
         (uint256 withdrawnAmount, uint256 vaultBalance) = IAssetManagement(_assetManagement).withdrawAll();
         IAmmStorage(_ammStorage).updateStorageWhenWithdrawFromAssetManagement(withdrawnAmount, vaultBalance);
     }

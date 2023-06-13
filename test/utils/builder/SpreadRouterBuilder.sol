@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "./BuilderUtils.sol";
 import "forge-std/Test.sol";
 import "../../utils/TestConstants.sol";
-import "../../mocks/MockSpreadCloseSwapService.sol";
 import "contracts/amm/spread/SpreadRouter.sol";
 import "contracts/amm/spread/Spread28Days.sol";
 import "contracts/amm/spread/Spread60Days.sol";
 import "contracts/amm/spread/Spread90Days.sol";
 import "contracts/amm/spread/SpreadStorageLens.sol";
 import "contracts/amm/spread/SpreadCloseSwapService.sol";
+import "../../mocks/MockSpreadCloseSwapService.sol";
 
 contract SpreadRouterBuilder is Test {
     struct BuilderData {
@@ -87,7 +87,7 @@ contract SpreadRouterBuilder is Test {
 
     function _buildImplementation() internal returns (address impl) {
         SpreadRouter.DeployedContracts memory deployedContracts;
-        deployedContracts.ammAddress = builderData.iporRouter;
+        deployedContracts.iporProtocolRouter = builderData.iporRouter;
         deployedContracts.storageLens = address(new SpreadStorageLens());
         deployedContracts.spread28Days = _buildSpread28Days();
         deployedContracts.spread60Days = _buildSpread60Days();
@@ -112,15 +112,15 @@ contract SpreadRouterBuilder is Test {
             return address(new MockSpreadXDays(TestConstants.PERCENTAGE_2_18DEC, TestConstants.ZERO));
         } else if (builderData.spread28DaysTestCase == BuilderUtils.Spread28DaysTestCase.CASE5) {
             return address(new MockSpreadXDays(TestConstants.PERCENTAGE_4_18DEC, TestConstants.PERCENTAGE_2_18DEC));
-        }else if (builderData.spread28DaysTestCase == BuilderUtils.Spread28DaysTestCase.CASE6) {
+        } else if (builderData.spread28DaysTestCase == BuilderUtils.Spread28DaysTestCase.CASE6) {
             return address(new MockSpreadXDays(41683900567904584, TestConstants.ZERO));
-        }else if (builderData.spread28DaysTestCase == BuilderUtils.Spread28DaysTestCase.CASE7) {
+        } else if (builderData.spread28DaysTestCase == BuilderUtils.Spread28DaysTestCase.CASE7) {
             return address(new MockSpreadXDays(TestConstants.ZERO, 38877399621396944));
-        }else if (builderData.spread28DaysTestCase == BuilderUtils.Spread28DaysTestCase.CASE8) {
+        } else if (builderData.spread28DaysTestCase == BuilderUtils.Spread28DaysTestCase.CASE8) {
             return address(new MockSpreadXDays(TestConstants.ZERO, TestConstants.PERCENTAGE_7_18DEC));
-        }else if (builderData.spread28DaysTestCase == BuilderUtils.Spread28DaysTestCase.CASE9) {
+        } else if (builderData.spread28DaysTestCase == BuilderUtils.Spread28DaysTestCase.CASE9) {
             return address(new MockSpreadXDays(TestConstants.ZERO, TestConstants.PERCENTAGE_49_18DEC));
-        }else if (builderData.spread28DaysTestCase == BuilderUtils.Spread28DaysTestCase.CASE10) {
+        } else if (builderData.spread28DaysTestCase == BuilderUtils.Spread28DaysTestCase.CASE10) {
             return address(new MockSpreadXDays(TestConstants.PERCENTAGE_51_18DEC, TestConstants.ZERO));
         }
 
@@ -146,9 +146,11 @@ contract SpreadRouterBuilder is Test {
 
         return address(new Spread90Days(builderData.dai, builderData.usdc, builderData.usdt));
     }
-// todo closeSwapSpreadService
+
     function _buildCloseSwapService() internal returns (address spread) {
+        //TODO: fix it
         return address(new MockSpreadCloseSwapService(builderData.dai, builderData.usdc, builderData.usdt));
+        ///return address(new SpreadCloseSwapService(builderData.dai, builderData.usdc, builderData.usdt));
     }
 
     function _constructProxy(address impl) internal returns (ERC1967Proxy proxy) {

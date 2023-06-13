@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 /// @title Struct used across various interfaces in IPOR Protocol.
 library IporTypes {
@@ -26,12 +26,6 @@ library IporTypes {
         /// https://ipor-labs.gitbook.io/ipor-labs/interest-rate-derivatives/ibt
         /// @dev value represented in 18 decimals
         uint256 ibtPrice;
-        /// @notice Exponential Moving Average
-        /// @dev value represented in 18 decimals
-        uint256 exponentialMovingAverage;
-        /// @notice Exponential Weighted Moving Variance
-        /// @dev value represented in 18 decimals
-        uint256 exponentialWeightedMovingVariance;
     }
 
     /// @notice Struct representing balances used internally for asset calculations

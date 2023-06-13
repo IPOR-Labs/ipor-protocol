@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "../libraries/Constants.sol";
@@ -181,13 +181,13 @@ contract AmmPoolsService is IAmmPoolsService {
             uint256 assetAmount = wadAmmTreasuryAssetBalance -
                 IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18);
             if (assetAmount > 0) {
-                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagement(assetAmount);
+                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagementInternal(assetAmount);
             }
         } else {
             uint256 assetAmount = IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18) -
                 wadAmmTreasuryAssetBalance;
             if (assetAmount > 0) {
-                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagement(assetAmount);
+                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagementInternal(assetAmount);
             }
         }
     }
@@ -209,23 +209,21 @@ contract AmmPoolsService is IAmmPoolsService {
         model.ammTreasury = poolCfg.ammTreasury;
         model.assetManagement = poolCfg.assetManagement;
         model.iporOracle = _iporOracle;
-
         IporTypes.AmmBalancesMemory memory balance = model.getAccruedBalance();
-
         uint256 exchangeRate = model.getExchangeRate(balance.liquidityPool);
-
         require(exchangeRate > 0, AmmErrors.LIQUIDITY_POOL_IS_EMPTY);
 
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmount, poolCfg.decimals);
 
-        IAmmStorage(poolCfg.ammStorage).addLiquidity(
+        IAmmStorage(poolCfg.ammStorage).addLiquidityInternal(
             beneficiary,
             wadAssetAmount,
             uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
             uint256(ammPoolsParamsCfg.maxLpAccountContribution) * 1e18
         );
 
-        IERC20Upgradeable(poolCfg.asset).safeTransferFrom(msg.sender, poolCfg.ammTreasury, assetAmount);
+    IERC20Upgradeable(poolCfg.asset).safeTransferFrom(msg.sender, poolCfg.ammTreasury, assetAmount);
+
 
         uint256 ipTokenAmount = IporMath.division(wadAssetAmount * 1e18, exchangeRate);
 
@@ -271,7 +269,7 @@ contract AmmPoolsService is IAmmPoolsService {
 
         require(exchangeRate > 0, AmmErrors.LIQUIDITY_POOL_IS_EMPTY);
 
-        AmmTypes.RedeemMoney memory redeemMoney = _calculateRedeemMoney(
+        AmmTypes.RedeemAmount memory redeemAmount = _calculateRedeemAmount(
             poolCfg.decimals,
             ipTokenAmount,
             exchangeRate,
@@ -284,36 +282,36 @@ contract AmmPoolsService is IAmmPoolsService {
         );
 
         require(
-            wadAmmTreasuryErc20Balance + balance.vault > redeemMoney.wadRedeemAmount,
+            wadAmmTreasuryErc20Balance + balance.vault > redeemAmount.wadRedeemAmount,
             AmmPoolsErrors.INSUFFICIENT_ERC20_BALANCE
         );
 
-        _rebalanceIfNeededBeforeRedeem(poolCfg, wadAmmTreasuryErc20Balance, balance.vault, redeemMoney.wadRedeemAmount);
+        _rebalanceIfNeededBeforeRedeem(poolCfg, wadAmmTreasuryErc20Balance, balance.vault, redeemAmount.wadRedeemAmount);
 
         require(
             _calculateRedeemedCollateralRatio(
                 balance.liquidityPool,
                 balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
-                redeemMoney.wadRedeemAmount
+                redeemAmount.wadRedeemAmount
             ) <= poolCfg.redeemLpMaxCollateralRatio,
             AmmPoolsErrors.REDEEM_LP_COLLATERAL_RATIO_EXCEEDED
         );
 
         IIpToken(poolCfg.ipToken).burn(msg.sender, ipTokenAmount);
 
-        IAmmStorage(poolCfg.ammStorage).subtractLiquidity(redeemMoney.wadRedeemAmount);
+        IAmmStorage(poolCfg.ammStorage).subtractLiquidityInternal(redeemAmount.wadRedeemAmount);
 
-        IERC20Upgradeable(asset).safeTransferFrom(poolCfg.ammTreasury, beneficiary, redeemMoney.redeemAmount);
+        IERC20Upgradeable(asset).safeTransferFrom(poolCfg.ammTreasury, beneficiary, redeemAmount.redeemAmount);
 
         emit Redeem(
             block.timestamp,
             poolCfg.ammTreasury,
             beneficiary,
             exchangeRate,
-            redeemMoney.wadAssetAmount,
+            redeemAmount.wadAssetAmount,
             ipTokenAmount,
-            redeemMoney.wadRedeemFee,
-            redeemMoney.wadRedeemAmount
+            redeemAmount.wadRedeemFee,
+            redeemAmount.wadRedeemAmount
         );
     }
 
@@ -355,26 +353,26 @@ contract AmmPoolsService is IAmmPoolsService {
                     redeemLpMaxCollateralRatio: _daiRedeemLpMaxCollateralRatio
                 });
         } else {
-            revert("AmmPoolsLens: asset not supported");
+            revert(IporErrors.ASSET_NOT_SUPPORTED);
         }
     }
 
-    /// @dev Calculate redeem money
+    /// @dev Calculate redeem amount
     /// @param ipTokenAmount Amount of ipToken to redeem
     /// @param exchangeRate Exchange rate of ipToken
-    /// @return redeemMoney Redeem money struct
-    function _calculateRedeemMoney(
+    /// @return redeemAmount Redeem struct
+    function _calculateRedeemAmount(
         uint256 assetDecimals,
         uint256 ipTokenAmount,
         uint256 exchangeRate,
         uint256 cfgRedeemFeeRate
-    ) internal view returns (AmmTypes.RedeemMoney memory redeemMoney) {
+    ) internal pure returns (AmmTypes.RedeemAmount memory redeemAmount) {
         uint256 wadAssetAmount = IporMath.division(ipTokenAmount * exchangeRate, 1e18);
         uint256 wadRedeemFee = IporMath.division(wadAssetAmount * cfgRedeemFeeRate, 1e18);
         uint256 redeemAmount = IporMath.convertWadToAssetDecimals(wadAssetAmount - wadRedeemFee, assetDecimals);
 
         return
-            AmmTypes.RedeemMoney({
+            AmmTypes.RedeemAmount({
                 wadAssetAmount: wadAssetAmount,
                 wadRedeemFee: wadRedeemFee,
                 redeemAmount: redeemAmount,
@@ -402,21 +400,21 @@ contract AmmPoolsService is IAmmPoolsService {
             );
 
             if (rebalanceAmount > 0) {
-                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagement(rebalanceAmount.toUint256());
+                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagementInternal(rebalanceAmount.toUint256());
             }
         }
     }
 
-    /// @notice Calculate rebalance amount for provide liquidity
+    /// @notice Calculate rebalance amount for liquidity provisioning
     /// @param asset Asset address (pool context)
-    /// @param wadAmmTreasuryErc20BalanceAfterDeposit AmmTreasury erc20 balance in wad, Notice: this is balance after provide liquidity operation!
+    /// @param wadAmmTreasuryErc20BalanceAfterDeposit AmmTreasury erc20 balance in wad, Notice: this balance is after providing liquidity operation!
     /// @param vaultBalance Vault balance in wad, AssetManagement's accrued balance.
     function _calculateRebalanceAmountAfterProvideLiquidity(
         address asset,
         uint256 wadAmmTreasuryErc20BalanceAfterDeposit,
         uint256 vaultBalance,
         uint256 wadAmmTreasuryAndAssetManagementRatio
-    ) internal view returns (int256) {
+    ) internal pure returns (int256) {
         return
             IporMath.divisionInt(
                 (wadAmmTreasuryErc20BalanceAfterDeposit + vaultBalance).toInt256() *
@@ -449,7 +447,7 @@ contract AmmPoolsService is IAmmPoolsService {
             );
 
             if (rebalanceAmount < 0) {
-                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagement((-rebalanceAmount).toUint256());
+                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagementInternal((-rebalanceAmount).toUint256());
             }
         }
     }

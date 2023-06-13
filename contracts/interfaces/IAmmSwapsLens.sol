@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "./types/IporTypes.sol";
 import "./types/AmmFacadeTypes.sol";
@@ -7,19 +7,19 @@ import "./types/AmmFacadeTypes.sol";
 interface IAmmSwapsLens {
     /// @notice IPOR Swap structure.
     struct IporSwap {
-        /// @notice Swap ID.
+        /// @notice Swap's ID.
         uint256 id;
-        /// @notice Swap asset (stablecoint / underlying token)
+        /// @notice Swap's asset (stablecoint / underlying token)
         address asset;
         /// @notice Swap's buyer
         address buyer;
-        /// @notice Swap collateral, represented in 18 decimals.
+        /// @notice Swap's collateral, represented in 18 decimals.
         uint256 collateral;
         /// @notice Notional amount, represented in 18 decimals.
         uint256 notional;
-        /// @notice Swap leverage, represented in 18 decimals.
+        /// @notice Swap's leverage, represented in 18 decimals.
         uint256 leverage;
-        /// @notice Swap direction
+        /// @notice Swap's direction
         /// @dev 0 - Pay Fixed-Receive Floating, 1 - Receive Fixed - Pay Floading
         uint256 direction;
         /// @notice Swap's notional amount denominated in the Interest Bearing Token (IBT)
@@ -49,34 +49,6 @@ interface IAmmSwapsLens {
         /// @notice Address of the AMM Treasury contract
         address ammTreasury;
     }
-
-    /// @notice Gets the list of active Pay Fixed Receive Floating swaps in AmmTreasury for a given asset and address
-    /// @param asset asset / stablecoin address
-    /// @param account account address for which list of swaps is scoped
-    /// @param offset offset for paging
-    /// @param chunkSize page size for paging
-    /// @return totalCount total number of active Pay Fixed swaps in AmmTreasury
-    /// @return swaps list of active swaps for a given filter
-    function getSwapsPayFixed(
-        address asset,
-        address account,
-        uint256 offset,
-        uint256 chunkSize
-    ) external view returns (uint256 totalCount, IporSwap[] memory swaps);
-
-    /// @notice Gets the list of active Receive Fixed Pay Floating Swaps in AmmTreasury for a given asset and address
-    /// @param asset asset / stablecoin address
-    /// @param account account address for which list of swaps is scoped
-    /// @param offset offset for paging
-    /// @param chunkSize page size for paging
-    /// @return totalCount total number of Receive Fixed swaps in AmmTreasury
-    /// @return swaps list of active swaps for a given filter
-    function getSwapsReceiveFixed(
-        address asset,
-        address account,
-        uint256 offset,
-        uint256 chunkSize
-    ) external view returns (uint256 totalCount, IporSwap[] memory swaps);
 
     /// @notice Gets active swaps for a given asset sender address (aka buyer).
     /// @param asset asset address

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
@@ -28,7 +28,7 @@ contract AmmPoolsServiceOnlyRebalanceTest is Test, TestCommons {
         address user = _getUserAddress(1);
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        bool isAppointedBefore = _iporProtocol.ammGovernanceService.isAppointedToRebalanceInAmm(
+        bool isAppointedBefore = _iporProtocol.ammGovernanceLens.isAppointedToRebalanceInAmm(
             address(_iporProtocol.asset),
             user
         );
@@ -37,7 +37,7 @@ contract AmmPoolsServiceOnlyRebalanceTest is Test, TestCommons {
         _iporProtocol.ammGovernanceService.addAppointedToRebalanceInAmm(address(_iporProtocol.asset), user);
 
         // then
-        bool isAppointedAfter = _iporProtocol.ammGovernanceService.isAppointedToRebalanceInAmm(
+        bool isAppointedAfter = _iporProtocol.ammGovernanceLens.isAppointedToRebalanceInAmm(
             address(_iporProtocol.asset),
             user
         );
@@ -52,7 +52,7 @@ contract AmmPoolsServiceOnlyRebalanceTest is Test, TestCommons {
         address user = _getUserAddress(1);
 
         _iporProtocol.ammGovernanceService.addAppointedToRebalanceInAmm(address(_iporProtocol.asset), user);
-        bool isAppointedBefore = _iporProtocol.ammGovernanceService.isAppointedToRebalanceInAmm(
+        bool isAppointedBefore = _iporProtocol.ammGovernanceLens.isAppointedToRebalanceInAmm(
             address(_iporProtocol.asset),
             user
         );
@@ -61,7 +61,7 @@ contract AmmPoolsServiceOnlyRebalanceTest is Test, TestCommons {
         _iporProtocol.ammGovernanceService.removeAppointedToRebalanceInAmm(address(_iporProtocol.asset), user);
 
         // then
-        bool isAppointedAfter = _iporProtocol.ammGovernanceService.isAppointedToRebalanceInAmm(
+        bool isAppointedAfter = _iporProtocol.ammGovernanceLens.isAppointedToRebalanceInAmm(
             address(_iporProtocol.asset),
             user
         );

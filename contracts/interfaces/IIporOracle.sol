@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "./types/IporTypes.sol";
 
@@ -15,7 +15,7 @@ interface IIporOracle {
     /// @param asset underlying / stablecoin address supported in Ipor Protocol
     /// @return value IPOR Index value for a given asset
     /// @return ibtPrice Interest Bearing Token Price for a given IPOR Index
-    /// @return lastUpdateTimestamp Last IPOR Index update done by Charlie off-chain service
+    /// @return lastUpdateTimestamp Last IPOR Index update done by off-chain service
     function getIndex(address asset)
         external
         view
@@ -67,7 +67,7 @@ interface IIporOracle {
 
     /// @notice Adds new asset which IPOR Protocol will support. Function available only for Owner.
     /// @param newAsset new asset address
-    /// @param updateTimestamp Time for which exponential moving average and exponential weighted moving variance was calculated
+    /// @param updateTimestamp Time when start to accrue interest for Interest Bearing Token price.
     function addAsset(address newAsset, uint256 updateTimestamp) external;
 
     /// @notice Removes asset which IPOR Protocol will not support. Function available only for Owner.

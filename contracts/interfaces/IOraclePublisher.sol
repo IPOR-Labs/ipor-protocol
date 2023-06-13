@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "./types/IporRiskManagementOracleTypes.sol";
 
-/// @title Interface for interaction with IporProtocol oracles.
+/// @title Interface for interacting with IporProtocol oracles.
 interface IOraclePublisher {
     /// @notice Returns current version of IOraclePublisher's
     /// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
@@ -16,7 +16,7 @@ interface IOraclePublisher {
     /// @param newUpdater new updater address
     function addUpdater(address newUpdater) external;
 
-    /// @notice Removes Updater. Function available only for Owner.
+    /// @notice Removes Updater. Function available only to Owner.
     /// @param updater updater address
     function removeUpdater(address updater) external;
 

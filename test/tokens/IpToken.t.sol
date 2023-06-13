@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
@@ -191,7 +191,7 @@ contract IpTokenTest is Test, TestCommons {
     function prepareIpToken() private returns (IpToken) {
         vm.startPrank(_admin);
         IpToken ipToken = new IpToken("IpToken", "IPT", DAI);
-        ipToken.setRouter(_router);
+        ipToken.setJoseph(_router);
         vm.stopPrank();
         return ipToken;
     }

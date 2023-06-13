@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../../../interfaces/types/IporTypes.sol";
 
-/// @notice The types used in AmmTreasury's interface.
+/// @notice The types used in the AmmTreasury's interface.
 /// @dev All values, where applicable, are represented in 18 decimals.
 library AmmInternalTypes {
     struct BeforeOpenSwapStruct {

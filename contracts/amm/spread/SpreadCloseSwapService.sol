@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "contracts/amm/libraries/types/AmmInternalTypes.sol";
 import "contracts/interfaces/types/AmmTypes.sol";
@@ -40,7 +40,7 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
         AmmInternalTypes.OpenSwapItem memory closedSwap,
         address ammStorageAddress
     ) external {
-        // @dev when timestamp is 0, it means that the swap was open in ipor-protocole v1 .
+        // @dev when timestamp is 0, it means that the swap was open in ipor-protocol v1 .
         if (closedSwap.openSwapTimestamp == 0) {
             return;
         }
@@ -102,7 +102,7 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
     }
 
     function _getStorageId(address asset, IporTypes.SwapTenor tenor)
-        internal
+        internal view
         returns (SpreadStorageLibs.StorageId storageId)
     {
         if (asset == _DAI) {

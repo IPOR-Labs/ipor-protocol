@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 import "contracts/interfaces/types/AmmFacadeTypes.sol";
@@ -71,7 +71,6 @@ contract AmmTreasuryFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils 
 
     function testShouldListConfigurationUsdtUsdcDai() public {
         //given
-        _ammCfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _ammCfg.iporRiskManagementOracleInitialParamsTestCase = BuilderUtils
             .IporRiskManagementOracleInitialParamsTestCase
             .CASE6;

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
@@ -149,9 +149,7 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
         accruedIpor = IporTypes.AccruedIpor(
             ipor.indexValue,
-            _calculateAccruedIbtPrice(asset, ipor, calculateTimestamp),
-            0,
-            0
+            _calculateAccruedIbtPrice(asset, ipor, calculateTimestamp)
         );
     }
 

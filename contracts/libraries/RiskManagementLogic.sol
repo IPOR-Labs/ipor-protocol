@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 
@@ -10,11 +10,15 @@ import "../interfaces/IIporRiskManagementOracle.sol";
 import "../interfaces/IAssetManagement.sol";
 import "../governance/AmmConfigurationManager.sol";
 import "../amm/libraries/types/AmmInternalTypes.sol";
+import "contracts/amm/spread/ISpread28DaysLens.sol";
+import "contracts/amm/spread/ISpread60DaysLens.sol";
+import "contracts/amm/spread/ISpread90DaysLens.sol";
+import "contracts/libraries/errors/AmmErrors.sol";
 
 library RiskManagementLogic {
     using Address for address;
 
-    struct SpreadQuoteContext {
+    struct SpreadOfferedRateContext {
         address asset;
         address ammStorage;
         address iporRiskManagementOracle;
@@ -23,30 +27,30 @@ library RiskManagementLogic {
         uint256 indexValue;
     }
 
-    function calculateQuote(
-        uint256 swapNotional,
+    function calculateOfferedRate(
         uint256 direction,
         IporTypes.SwapTenor tenor,
-        SpreadQuoteContext memory spreadQuoteCtx
+        uint256 swapNotional,
+        SpreadOfferedRateContext memory spreadOfferedRateCtx
     ) internal returns (uint256) {
-        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(spreadQuoteCtx.ammStorage)
+        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(spreadOfferedRateCtx.ammStorage)
             .getBalancesForOpenSwap();
 
         AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = getRiskIndicators(
-            spreadQuoteCtx.asset,
+            spreadOfferedRateCtx.asset,
             direction,
             tenor,
             balance.liquidityPool,
-            spreadQuoteCtx.minLeverage,
-            spreadQuoteCtx.iporRiskManagementOracle
+            spreadOfferedRateCtx.minLeverage,
+            spreadOfferedRateCtx.iporRiskManagementOracle
         );
 
         return
             abi.decode(
-                spreadQuoteCtx.spreadRouter.functionCall(
-                    abi.encodeWithSignature(
+                spreadOfferedRateCtx.spreadRouter.functionCall(
+                    abi.encodeWithSelector(
                         determineSpreadMethodSig(direction, tenor),
-                        spreadQuoteCtx.asset,
+                        spreadOfferedRateCtx.asset,
                         swapNotional,
                         riskIndicators.maxLeveragePerLeg,
                         riskIndicators.maxCollateralRatioPerLeg,
@@ -56,7 +60,8 @@ library RiskManagementLogic {
                         balance.liquidityPool,
                         balance.totalNotionalPayFixed,
                         balance.totalNotionalReceiveFixed,
-                        spreadQuoteCtx.indexValue
+                        spreadOfferedRateCtx.indexValue,
+                        riskIndicators.fixedRateCap
                     )
                 ),
                 (uint256)
@@ -94,39 +99,29 @@ library RiskManagementLogic {
         }
     }
 
-    function determineSpreadMethodSig(uint256 direction, IporTypes.SwapTenor tenor)
-        internal
-        pure
-        returns (string memory)
-    {
+    function determineSpreadMethodSig(uint256 direction, IporTypes.SwapTenor tenor) internal pure returns (bytes4) {
         if (direction == 0) {
             if (tenor == IporTypes.SwapTenor.DAYS_28) {
-                return
-                    "calculateOfferedRatePayFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
+                return ISpread28DaysLens.calculateOfferedRatePayFixed28Days.selector;
             } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
-                return
-                    "calculateOfferedRatePayFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
+                return ISpread60DaysLens.calculateOfferedRatePayFixed60Days.selector;
             } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
-                return
-                    "calculateOfferedRatePayFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
+                return ISpread90DaysLens.calculateOfferedRatePayFixed90Days.selector;
             } else {
-                revert("Invalid tenor");
+                revert(AmmErrors.UNSUPPORTED_SWAP_TENOR);
             }
         } else if (direction == 1) {
             if (tenor == IporTypes.SwapTenor.DAYS_28) {
-                return
-                    "calculateOfferedRateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
+                return ISpread28DaysLens.calculateOfferedRateReceiveFixed28Days.selector;
             } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
-                return
-                    "calculateOfferedRateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
+                return ISpread60DaysLens.calculateOfferedRateReceiveFixed60Days.selector;
             } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
-                return
-                    "calculateOfferedRateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
+                return ISpread90DaysLens.calculateOfferedRateReceiveFixed90Days.selector;
             } else {
-                revert("Invalid tenor");
+                revert(AmmErrors.UNSUPPORTED_SWAP_TENOR);
             }
         } else {
-            revert("Invalid direction");
+            revert(AmmErrors.UNSUPPORTED_DIRECTION);
         }
     }
 

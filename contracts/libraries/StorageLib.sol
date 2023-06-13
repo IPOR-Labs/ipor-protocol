@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 /// @title Storage ID's associated with the IPOR Protocol Router.
 library StorageLib {
@@ -12,6 +12,8 @@ library StorageLib {
         AppointedOwner,
         Paused,
         PauseGuardian,
+        ReentrancyStatus,
+        RouterFunctionPaused,
         AmmSwapsLiquidators,
         AmmPoolsAppointedToRebalance,
         AmmPoolsParams
@@ -26,6 +28,10 @@ library StorageLib {
     }
 
     struct PausedStorage {
+        uint256 value;
+    }
+
+    struct ReentrancyStatusStorage {
         uint256 value;
     }
 
@@ -61,6 +67,11 @@ library StorageLib {
         mapping(address => AmmPoolsParamsValue) value;
     }
 
+    /// @dev key - function sig, value - 1 if function is paused, 0 if not
+    struct RouterFunctionPausedStorage {
+        mapping(bytes4 => uint256) value;
+    }
+
     function getOwner() internal pure returns (OwnerStorage storage owner) {
         uint256 slot = _getStorageSlot(StorageId.Owner);
         assembly {
@@ -77,6 +88,19 @@ library StorageLib {
 
     function getPaused() internal pure returns (PausedStorage storage paused) {
         uint256 slot = _getStorageSlot(StorageId.Paused);
+        assembly {
+            paused.slot := slot
+        }
+    }
+    function getReentrancyStatus() internal pure returns (ReentrancyStatusStorage storage reentrancyStatus) {
+        uint256 slot = _getStorageSlot(StorageId.ReentrancyStatus);
+        assembly {
+            reentrancyStatus.slot := slot
+        }
+    }
+
+    function getRouterFunctionPaused() internal pure returns (RouterFunctionPausedStorage storage paused) {
+        uint256 slot = _getStorageSlot(StorageId.RouterFunctionPaused);
         assembly {
             paused.slot := slot
         }

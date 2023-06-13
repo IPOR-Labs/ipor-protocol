@@ -1,4 +1,4 @@
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "forge-std/Script.sol";
@@ -116,12 +116,16 @@ contract DevDeployment is Script {
         address asset,
         address ammTreasury,
         address ammStorage
-    ) internal returns (IAmmGovernanceService.PoolConfiguration memory poolCfg) {
-        poolCfg = IAmmGovernanceService.PoolConfiguration({
+    ) internal returns (IAmmGovernanceLens.PoolConfiguration memory poolCfg) {
+        poolCfg = IAmmGovernanceLens.PoolConfiguration({
             asset: asset,
             assetDecimals: IERC20MetadataUpgradeable(asset).decimals(),
             ammStorage: ammStorage,
-            ammTreasury: ammTreasury
+            ammTreasury: ammTreasury,
+            ammPoolsTreasury: asset, //TODO: fixit
+            ammPoolsTreasuryManager: asset, //TODO: fixit
+            ammCharlieTreasury: asset, //TODO: fixit
+            ammCharlieTreasuryManager: asset //TODO: fixit
         });
     }
 
@@ -131,8 +135,8 @@ contract DevDeployment is Script {
         address ammTreasury,
         address ammStorage,
         address assetManagement
-    ) internal returns (IAmmPoolsService.PoolConfiguration memory poolCfg) {
-        poolCfg = IAmmPoolsService.PoolConfiguration({
+    ) internal returns (IAmmPoolsService.AmmPoolsServicePoolConfiguration memory poolCfg) {
+        poolCfg = IAmmPoolsService.AmmPoolsServicePoolConfiguration({
             asset: asset,
             decimals: IERC20MetadataUpgradeable(asset).decimals(),
             ipToken: ipToken,
@@ -140,7 +144,7 @@ contract DevDeployment is Script {
             ammTreasury: ammTreasury,
             assetManagement: assetManagement,
             redeemFeeRate: 5 * 1e15,
-            redeemLpMaxUtilizationRate: 1e18
+            redeemLpMaxCollateralRatio: 1e18
         });
     }
 
@@ -149,8 +153,8 @@ contract DevDeployment is Script {
         address ammTreasury,
         address ammStorage,
         address assetManagement
-    ) internal returns (IAmmCloseSwapService.PoolConfiguration memory poolCfg) {
-        poolCfg = IAmmCloseSwapService.PoolConfiguration({
+    ) internal returns (IAmmCloseSwapService.AmmCloseSwapServicePoolConfiguration memory poolCfg) {
+        poolCfg = IAmmCloseSwapService.AmmCloseSwapServicePoolConfiguration({
             asset: address(asset),
             decimals: IERC20MetadataUpgradeable(asset).decimals(),
             ammStorage: ammStorage,
@@ -171,8 +175,8 @@ contract DevDeployment is Script {
         address asset,
         address ammTreasury,
         address ammStorage
-    ) internal returns (IAmmOpenSwapService.PoolConfiguration memory poolCfg) {
-        poolCfg = IAmmOpenSwapService.PoolConfiguration({
+    ) internal returns (IAmmOpenSwapService.AmmOpenSwapServicePoolConfiguration memory poolCfg) {
+        poolCfg = IAmmOpenSwapService.AmmOpenSwapServicePoolConfiguration({
             asset: asset,
             decimals: IERC20MetadataUpgradeable(asset).decimals(),
             ammStorage: ammStorage,
@@ -207,7 +211,6 @@ contract DevDeployment is Script {
         assets[2] = address(amm.usdc.asset);
 
         IporOracle iporOracleImplementation = new IporOracle(
-            address(0),
             address(amm.usdt.asset),
             1e18,
             address(amm.usdc.asset),
@@ -245,9 +248,9 @@ contract DevDeployment is Script {
             riskIndicators[i] = IporRiskManagementOracleTypes.RiskIndicators({
                 maxNotionalPayFixed: TestConstants.RMO_NOTIONAL_1B,
                 maxNotionalReceiveFixed: TestConstants.RMO_NOTIONAL_1B,
-                maxUtilizationRatePayFixed: TestConstants.RMO_UTILIZATION_RATE_48_PER,
-                maxUtilizationRateReceiveFixed: TestConstants.RMO_UTILIZATION_RATE_48_PER,
-                maxUtilizationRate: TestConstants.RMO_UTILIZATION_RATE_90_PER
+                maxCollateralRatioPayFixed: TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+                maxCollateralRatioReceiveFixed: TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+                maxCollateralRatio: TestConstants.RMO_COLLATERAL_RATIO_90_PER
             });
             baseSpreadsAndFixedRateCaps[i] = IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps({
                 spread28dPayFixed: TestConstants.RMO_SPREAD_0_1_PER,
@@ -359,7 +362,7 @@ contract DevDeployment is Script {
 
     function deploySpreadRouter(Amm memory amm) internal {
         SpreadRouter.DeployedContracts memory deployedContracts;
-        deployedContracts.ammAddress = address(amm.router);
+        deployedContracts.iporProtocolRouter = address(amm.router);
         deployedContracts.storageLens = address(new SpreadStorageLens());
         deployedContracts.spread28Days = address(
             new Spread28Days(address(amm.dai.asset), address(amm.usdc.asset), address(amm.usdt.asset))
@@ -369,6 +372,10 @@ contract DevDeployment is Script {
         );
         deployedContracts.spread90Days = address(
             new Spread90Days(address(amm.dai.asset), address(amm.usdc.asset), address(amm.usdt.asset))
+        );
+
+        deployedContracts.closeSwapService = address(
+            new SpreadCloseSwapService(address(amm.dai.asset), address(amm.usdc.asset), address(amm.usdt.asset))
         );
 
         amm.spreadRouter = address(
@@ -518,7 +525,7 @@ contract DevDeployment is Script {
 
         amm.ammPoolsLens = address(
             new AmmPoolsLens(
-                IAmmPoolsLens.PoolConfiguration({
+                IAmmPoolsLens.AmmPoolsLensPoolConfiguration({
                     asset: address(amm.usdt.asset),
                     decimals: 6,
                     ipToken: address(amm.usdt.ipToken),
@@ -526,7 +533,7 @@ contract DevDeployment is Script {
                     ammTreasury: address(amm.usdt.ammTreasury),
                     assetManagement: address(amm.usdt.assetManagement)
                 }),
-                IAmmPoolsLens.PoolConfiguration({
+                IAmmPoolsLens.AmmPoolsLensPoolConfiguration({
                     asset: address(amm.usdc.asset),
                     decimals: 6,
                     ipToken: address(amm.usdc.ipToken),
@@ -534,7 +541,7 @@ contract DevDeployment is Script {
                     ammTreasury: address(amm.usdc.ammTreasury),
                     assetManagement: address(amm.usdc.assetManagement)
                 }),
-                IAmmPoolsLens.PoolConfiguration({
+                IAmmPoolsLens.AmmPoolsLensPoolConfiguration({
                     asset: address(amm.dai.asset),
                     decimals: 18,
                     ipToken: address(amm.dai.ipToken),

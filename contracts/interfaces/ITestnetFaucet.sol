@@ -1,43 +1,43 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
-/// @title Interface for interaction with TestnetFaucet.
+/// @title Interface for interacting with TestnetFaucet.
 interface ITestnetFaucet {
 
-    /// @notice Return implementation version.
+    /// @notice Returns implementation version.
     function getVersion() external pure returns (uint256);
 
-    /// @notice Claim stable for amm system (Dai, Usdc, Usdt) it can be done ones every 24h.
+    /// @notice Claims stable for amm system (Dai, Usdc, Usdt) it can be done ones every 24h.
     /// First time transfer 100 000 otherwise 10 000
     /// @dev Emits `Claim` event from TestnetFaucet, {Transfer} event from ERC20 asset.
     function claim() external;
 
-    /// @notice Check if one can claim more stable
-    /// @return number of seconds user have to wait till he will be able to claim new stable
+    /// @notice Checks if one can claim more stable
+    /// @return number of seconds user havs to wait till they can claim new stable
     function couldClaimInSeconds() external view returns (uint256);
 
     function balanceOf(address asset) external view returns (uint256);
 
-    /// @notice Check if user has calim stables before
-    /// @return true if user calim before and false otherwise
+    /// @notice Checks if user had calimed stables before
+    /// @return true if user had calimed before, otherwise false 
     function hasClaimBefore() external view returns (bool);
 
-    /// @notice Add new asset to faucet,
-    /// @param asset address of asset to add to faucet
-    /// @param amount amount of asset to transfer when user claim
+    /// @notice Adds new asset to the faucet,
+    /// @param asset address of asset to be added to the faucet
+    /// @param amount amount of asset to transfer when user claims
     function addAsset(address asset, uint256 amount) external;
 
-    /// @notice update amount of asset to transfer when user claim
-    /// @param asset address of asset to add to faucet
-    /// @param amount amount of asset to transfer when user claim
+    /// @notice updates amount of asset to transfer when user claims
+    /// @param asset address of asset to be added to the faucet
+    /// @param amount amount of asset to transfer when user claims
     function updateAmountToTransfer(address asset, uint256 amount) external;
 
-    /// @notice amount of asset to transfer when user claim
+    /// @notice amount of asset to transfer when user claims
     /// @param asset address of asset to add to faucet
     function getAmountToTransfer(address asset) external view returns (uint256);
 
-    /// @notice transfer amount from faucet to user on asset, can be call only by owner
-    /// @param asset address of asset to transfer from faucet
+    /// @notice transfers amount from faucet to user on asset, can be call only by owner
+    /// @param asset address of asset to be transfered from faucet
     /// @param amount to transfer from faucet to user
     function transfer(address asset, uint256 amount) external;
 

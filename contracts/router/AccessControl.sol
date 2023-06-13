@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/StorageLib.sol";
@@ -36,6 +36,12 @@ contract AccessControl {
         _;
     }
 
+    modifier nonReentrant() {
+        _nonReentrantBefore();
+        _;
+        _nonReentrantAfter();
+    }
+
     function owner() external view returns (address) {
         return OwnerManager.getOwner();
     }
@@ -52,16 +58,28 @@ contract AccessControl {
         OwnerManager.renounceOwnership();
     }
 
-    function pause() external onlyPauseGuardian {
-        _pause();
+    function pause(bytes4[] calldata functionSigs) external onlyPauseGuardian {
+        uint256 len = functionSigs.length;
+        for (uint256 i; i < len; ) {
+            StorageLib.getRouterFunctionPaused().value[functionSigs[i]] = 1;
+            unchecked {
+                ++i;
+            }
+        }
     }
 
-    function unpause() external onlyOwner {
-        StorageLib.getPaused().value = 0;
+    function unpause(bytes4[] calldata functionSigs) external onlyOwner {
+        uint256 len = functionSigs.length;
+        for (uint256 i; i < len; ) {
+            StorageLib.getRouterFunctionPaused().value[functionSigs[i]] = 0;
+            unchecked {
+                ++i;
+            }
+        }
     }
 
-    function paused() external view returns (uint256) {
-        return uint256(StorageLib.getPaused().value);
+    function paused(bytes4 functionSig) external view returns (uint256) {
+        return StorageLib.getRouterFunctionPaused().value[functionSig];
     }
 
     function addPauseGuardian(address guardian) external onlyOwner {
@@ -76,19 +94,33 @@ contract AccessControl {
         return PauseManager.isPauseGuardian(guardian);
     }
 
+    function _checkFunctionSigAndIsNotPause(bytes4 functionSig, bytes4 expectedSig) internal view returns (bool) {
+        if (functionSig == expectedSig) {
+            require(StorageLib.getRouterFunctionPaused().value[functionSig] == 0, IporErrors.METHOD_PAUSED);
+            return true;
+        }
+        return false;
+    }
+
     function _onlyOwner() internal view {
-        require(address(StorageLib.getOwner().owner) == msg.sender, "Ownable: caller is not the owner");
+        require(address(StorageLib.getOwner().owner) == msg.sender, IporErrors.CALLER_NOT_OWNER);
     }
 
-    function _whenNotPaused() internal view {
-        require(uint256(StorageLib.getPaused().value) == 0, "Pausable: paused");
+    function _nonReentrantBefore() internal {
+        // On the first call to nonReentrant, _status will be _NOT_ENTERED
+        require(StorageLib.getReentrancyStatus().value != _ENTERED, IporErrors.REENTRANCY);
+
+        // Any calls to nonReentrant after this point will fail
+        StorageLib.getReentrancyStatus().value = _ENTERED;
     }
 
-    function _pause() internal {
-        StorageLib.getPaused().value = 1;
+    function _nonReentrantAfter() internal {
+        // By storing the original value once again, a refund is triggered (see
+        // https://eips.ethereum.org/EIPS/eip-2200)
+        if (StorageLib.getReentrancyStatus().value == _ENTERED) {
+            StorageLib.getReentrancyStatus().value = _NOT_ENTERED;
+        }
     }
 
-    function _nonReentrant() internal view {
-        require(_reentrancyStatus != _ENTERED, "ReentrancyGuard: reentrant call");
-    }
+
 }

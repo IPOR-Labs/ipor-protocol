@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "contracts/libraries/errors/AmmErrors.sol";
 import "contracts/libraries/errors/IporErrors.sol";
@@ -13,19 +13,19 @@ contract SpreadAccessControl {
 
     address internal immutable IPOR_PROTOCOL_ROUTER;
 
-    constructor(address ammAddress) {
-        require(ammAddress != address(0), string.concat(IporErrors.WRONG_ADDRESS, " AMM address cannot be 0"));
+    constructor(address iporProtocolRouter) {
+        require(iporProtocolRouter != address(0), string.concat(IporErrors.WRONG_ADDRESS, " AMM address cannot be 0"));
 
-        IPOR_PROTOCOL_ROUTER = ammAddress;
+        IPOR_PROTOCOL_ROUTER = iporProtocolRouter;
     }
 
-    /// @dev Throws error if called by any account other than the owner.
+    /// @dev Throws an error if called by any account other than the owner.
     modifier onlyOwner() {
         _onlyOwner();
         _;
     }
 
-    /// @dev Throws error if called by any account other than the appointed owner.
+    /// @dev Throws an error if called by any account other than the appointed owner.
     modifier onlyAppointedOwner() {
         require(
             address(SpreadStorageLibs.getAppointedOwner().appointedOwner) == msg.sender,
@@ -34,14 +34,14 @@ contract SpreadAccessControl {
         _;
     }
 
-    /// @dev Throws if called by any account other than the pause guardian.
+    /// @dev Throws and error if called by any account other than the pause guardian.
     modifier onlyPauseGuardian() {
         require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
         _;
     }
 
-    /// @notice Returns the address of the contract owner.
-    /// @return The address of the contract owner.
+    /// @notice Returns the address of the contract's owner.
+    /// @return The address of the contract's owner.
     function owner() external view returns (address) {
         return SpreadStorageLibs.getOwner().owner;
     }
@@ -56,7 +56,7 @@ contract SpreadAccessControl {
         emit AppointedToTransferOwnership(newAppointedOwner);
     }
 
-    /// @notice Confirms the transfer of ownership by the appointed owner.
+    /// @notice Confirms the transfer of the ownership by the appointed owner.
     /// @dev Only the appointed owner can call this function.
     function confirmTransferOwnership() public onlyAppointedOwner {
         SpreadStorageLibs.AppointedOwnerStorage storage appointedOwnerStorage = SpreadStorageLibs.getAppointedOwner();
@@ -117,12 +117,12 @@ contract SpreadAccessControl {
     }
 
     function _whenNotPaused() internal view {
-        require(uint256(SpreadStorageLibs.getPaused().value) == 0, "Pausable: paused");
+        require(uint256(SpreadStorageLibs.getPaused().value) == 0, IporErrors.METHOD_PAUSED);
     }
 
     /// @dev Internal function to check if the sender is the contract owner.
     function _onlyOwner() internal view {
-        require(address(SpreadStorageLibs.getOwner().owner) == msg.sender, "Ownable: caller is not the owner");
+        require(address(SpreadStorageLibs.getOwner().owner) == msg.sender, IporErrors.CALLER_NOT_OWNER);
     }
 
     function _pause() internal {
@@ -130,7 +130,7 @@ contract SpreadAccessControl {
     }
 
     /**
-     * @dev Transfers ownership of the contract to a new account (`newOwner`).
+     * @dev Transfers the ownership of the contract to a new account (`newOwner`).
      * Internal function without access restriction.
      */
     function _transferOwnership(address newOwner) internal virtual {

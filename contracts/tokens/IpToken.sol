@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -41,7 +41,7 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
         return _asset;
     }
 
-    function setRouter(address newRouter) external override onlyOwner {
+    function setJoseph(address newRouter) external override onlyOwner {
         require(newRouter != address(0), IporErrors.WRONG_ADDRESS);
         _router = newRouter;
         emit RouterChanged(newRouter);

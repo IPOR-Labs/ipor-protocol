@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../interfaces/types/AmmTypes.sol";
 
-/// @title Interface of the service that allows to open new swaps.
+/// @title Interface of the service allowing to open new swaps.
 interface IAmmOpenSwapService {
-    /// @notice Emitted when trader opens new swap.
+    /// @notice Emitted when the trader opens new swap.
     event OpenSwap(
         /// @notice swap ID.
         uint256 indexed swapId,
@@ -15,8 +15,8 @@ interface IAmmOpenSwapService {
         address asset,
         /// @notice swap direction
         AmmTypes.SwapDirection direction,
-        /// @notice money structure related with this swap
-        AmmTypes.OpenSwapMoney money,
+        /// @notice amounts structure related with this swap
+        AmmTypes.OpenSwapAmount amounts,
         /// @notice the moment when swap was opened
         uint256 openTimestamp,
         /// @notice the moment when swap will achieve maturity

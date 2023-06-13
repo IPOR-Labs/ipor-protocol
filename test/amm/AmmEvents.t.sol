@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
@@ -21,7 +21,7 @@ contract AmmEventsTest is TestCommons {
         /// @notice swap direction
         AmmTypes.SwapDirection direction,
         /// @notice money structure related with this swap
-        AmmTypes.OpenSwapMoney money,
+        AmmTypes.OpenSwapAmount amounts,
         /// @notice the moment when swap was opened
         uint256 openTimestamp,
         /// @notice the moment when swap will achieve maturity
@@ -80,7 +80,7 @@ contract AmmEventsTest is TestCommons {
             buyer: _userTwo,
             asset: address(_iporProtocol.asset),
             direction: AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-            money: AmmTypes.OpenSwapMoney({
+            amounts: AmmTypes.OpenSwapAmount({
                 totalAmount: TestConstants.USD_10_000_18DEC,
                 collateral: TestConstants.TC_COLLATERAL_18DEC,
                 notional: TestConstants.TC_NOTIONAL_18DEC,
@@ -126,7 +126,7 @@ contract AmmEventsTest is TestCommons {
             _userTwo, // buyer
             address(_iporProtocol.asset), // asset
             AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, // direction
-            AmmTypes.OpenSwapMoney({
+            AmmTypes.OpenSwapAmount({
                 totalAmount: TestConstants.USD_10_000_18DEC, // totalAmount
                 collateral: TestConstants.TC_COLLATERAL_18DEC, // collateral
                 notional: TestConstants.TC_NOTIONAL_18DEC, // notional
@@ -172,7 +172,7 @@ contract AmmEventsTest is TestCommons {
             _userTwo, // buyer
             address(_iporProtocol.asset), // asset
             AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, // direction
-            AmmTypes.OpenSwapMoney({
+            AmmTypes.OpenSwapAmount({
                 totalAmount: TestConstants.USD_10_000_18DEC, // totalAmount
                 collateral: TestConstants.TC_COLLATERAL_18DEC, // collateral
                 notional: TestConstants.TC_NOTIONAL_18DEC, // notional
@@ -180,7 +180,7 @@ contract AmmEventsTest is TestCommons {
                 openingFeeTreasuryAmount: TestConstants.ZERO, // openingFeeTreasuryAmount
                 iporPublicationFee: TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC, // iporPublicationFee
                 liquidationDepositAmount: TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC // liquidationDepositAmount
-            }), // money
+            }),
             block.timestamp, // openTimestamp
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
             AmmTypes.IporSwapIndicator({
@@ -218,7 +218,7 @@ contract AmmEventsTest is TestCommons {
             _userTwo, // buyer
             address(_iporProtocol.asset), // asset
             AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, // direction
-            AmmTypes.OpenSwapMoney({
+            AmmTypes.OpenSwapAmount({
                 totalAmount: TestConstants.USD_10_000_18DEC, // totalAmount
                 collateral: TestConstants.TC_COLLATERAL_18DEC, // collateral
                 notional: TestConstants.TC_NOTIONAL_18DEC, // notional
@@ -226,7 +226,7 @@ contract AmmEventsTest is TestCommons {
                 openingFeeTreasuryAmount: TestConstants.ZERO, // openingFeeTreasuryAmount
                 iporPublicationFee: TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC, // iporPublicationFee
                 liquidationDepositAmount: TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC // liquidationDepositAmount
-            }), // money
+            }),
             block.timestamp, // openTimestamp
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
             AmmTypes.IporSwapIndicator({

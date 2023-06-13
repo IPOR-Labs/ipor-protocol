@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 library IporErrors {
     // 000-199 - general codes
@@ -39,4 +39,9 @@ library IporErrors {
 
     /// @dev Only AMM Treasury can have access to function
     string public constant CALLER_NOT_AMM_TREASURY = "IPOR_013";
+    string public constant CALLER_NOT_OWNER = "IPOR_014";
+    string public constant METHOD_PAUSED = "IPOR_015";
+    string public constant REENTRANCY = "IPOR_016";
+    string public constant ASSET_NOT_SUPPORTED = "IPOR_017";
+
 }

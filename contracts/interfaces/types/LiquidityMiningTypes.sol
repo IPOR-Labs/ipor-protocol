@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 /// @title Structures used in the LiquidityMining.
 library LiquidityMiningTypes {
@@ -28,7 +28,7 @@ library LiquidityMiningTypes {
         /// @notice value describing amount of rewards issued per block,
         /// @dev It can be changed at most once per block, represented with 8 decimals
         uint32 rewardsPerBlock;
-        /// @notice amount of accrued rewards since inception
+        /// @notice amount of rewards accrued since inception
         /// @dev It can be changed at most once per block, represented with 18 decimals
         uint88 accruedRewards;
     }

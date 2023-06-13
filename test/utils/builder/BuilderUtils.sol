@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 import "../../../contracts/mocks/tokens/MockTestnetToken.sol";
 import "../../../contracts/tokens/IpToken.sol";
 import "../../../contracts/tokens/IvToken.sol";
@@ -22,6 +22,7 @@ contract BuilderUtils {
         IAmmOpenSwapService ammOpenSwapService;
         IAmmCloseSwapService ammCloseSwapService;
         IAmmGovernanceService ammGovernanceService;
+        IAmmGovernanceLens ammGovernanceLens;
         MockTestnetToken asset;
         IpToken ipToken;
         IvToken ivToken;
@@ -61,45 +62,9 @@ contract BuilderUtils {
 
     enum IporOracleInitialParamsTestCase {
         /// @dev lastUpdateTimestamp = block.timestamp
-        /// @dev exponentialMovingAverage = 3 * 1e16
-        /// @dev exponentialWeightedMovingVariance = 0
         DEFAULT,
         /// @dev lastUpdateTimestamp = 1
-        /// @dev exponentialMovingAverage = 1
-        /// @dev exponentialWeightedMovingVariance = 1
-        CASE1,
-        /// @dev lastUpdateTimestamp = block.timestamp
-        /// @dev exponentialMovingAverage = 8 * 1e16
-        /// @dev exponentialWeightedMovingVariance = 0
-        CASE2,
-        /// @dev lastUpdateTimestamp = block.timestamp
-        /// @dev exponentialMovingAverage = 50 * 1e16
-        /// @dev exponentialWeightedMovingVariance = 0
-        CASE3,
-        /// @dev lastUpdateTimestamp = block.timestamp
-        /// @dev exponentialMovingAverage = 120 * 1e16
-        /// @dev exponentialWeightedMovingVariance = 0
-        CASE4,
-        /// @dev lastUpdateTimestamp = block.timestamp
-        /// @dev exponentialMovingAverage = 5 * 1e16
-        /// @dev exponentialWeightedMovingVariance = 0
-        CASE5,
-        /// @dev lastUpdateTimestamp = block.timestamp
-        /// @dev exponentialMovingAverage = 160 * 1e16
-        /// @dev exponentialWeightedMovingVariance = 0
-        CASE6,
-        /// @dev lastUpdateTimestamp = block.timestamp
-        /// @dev exponentialMovingAverage = 0
-        /// @dev exponentialWeightedMovingVariance = 0
-        CASE7,
-        /// @dev lastUpdateTimestamp = block.timestamp
-        /// @dev exponentialMovingAverage = 6 * 1e16
-        /// @dev exponentialWeightedMovingVariance = 0
-        CASE8,
-        /// @dev lastUpdateTimestamp = block.timestamp
-        /// @dev exponentialMovingAverage = 150 * 1e16
-        /// @dev exponentialWeightedMovingVariance = 0
-        CASE9
+        CASE1
     }
 
     enum IporRiskManagementOracleInitialParamsTestCase {
@@ -135,7 +100,8 @@ contract BuilderUtils {
     enum AmmOpenSwapServiceTestCase {
         DEFAULT,
         CASE1,
-        CASE2
+        CASE2,
+        CASE3
     }
 
     enum AmmCloseSwapServiceTestCase {
@@ -162,6 +128,7 @@ contract BuilderUtils {
     }
 
     enum Spread28DaysTestCase {
+        /// @dev Real calculation
         DEFAULT,
         /// @dev Pay Fixed Quote Value 0%
         /// @dev Receive Fixed Quote Value 0%

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../libraries/Constants.sol";
 import "../libraries/math/IporMath.sol";
@@ -22,7 +22,7 @@ library AssetManagementLogic {
         uint256 vaultBalance,
         uint256 wadOperationAmount,
         uint256 wadAmmTreasuryAndAssetManagementRatioCfg
-    ) internal view returns (int256) {
+    ) internal pure returns (int256) {
         return
             IporMath.divisionInt(
                 (wadAmmErc20BalanceBeforeWithdraw.toInt256() +

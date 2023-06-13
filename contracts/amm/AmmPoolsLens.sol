@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/AmmLib.sol";
@@ -162,7 +162,7 @@ contract AmmPoolsLens is IAmmPoolsLens {
                     assetManagement: _daiAssetManagement
                 });
         } else {
-            revert("AmmPoolsLens: asset not supported");
+            revert(IporErrors.ASSET_NOT_SUPPORTED);
         }
     }
 }
