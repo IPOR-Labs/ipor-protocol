@@ -6,7 +6,7 @@ import "contracts/interfaces/types/AmmTypes.sol";
 import "contracts/interfaces/types/AmmStorageTypes.sol";
 import "contracts/amm/libraries/types/AmmInternalTypes.sol";
 
-/// @title Interface for interaction with AmmTreasury Storage smart contract, reposnsible for managing AMM storage.
+/// @title Interface for interaction with AmmTreasury Storage smart contract, responsible for managing AMM storage.
 interface IAmmStorage {
     /// @notice Returns current version of AmmTreasury Storage
     /// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
