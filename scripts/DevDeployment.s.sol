@@ -502,17 +502,17 @@ contract DevDeployment is Script {
     function deployFullRouter(Amm memory amm) internal {
         amm.ammSwapsLens = address(
             new AmmSwapsLens(
-                IAmmSwapsLens.SwapLensConfiguration({
+                IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(amm.usdt.asset),
                     ammStorage: address(amm.usdt.ammStorage),
                     ammTreasury: address(amm.usdt.ammTreasury)
                 }),
-                IAmmSwapsLens.SwapLensConfiguration({
+                IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(amm.usdc.asset),
                     ammStorage: address(amm.usdc.ammStorage),
                     ammTreasury: address(amm.usdc.ammTreasury)
                 }),
-                IAmmSwapsLens.SwapLensConfiguration({
+                IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(amm.dai.asset),
                     ammStorage: address(amm.dai.ammStorage),
                     ammTreasury: address(amm.dai.ammTreasury)

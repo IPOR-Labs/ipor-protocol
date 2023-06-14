@@ -3,7 +3,6 @@ pragma solidity 0.8.20;
 
 /// @title Interface for interacting with TestnetFaucet.
 interface ITestnetFaucet {
-
     /// @notice Returns implementation version.
     function getVersion() external pure returns (uint256);
 
@@ -19,7 +18,7 @@ interface ITestnetFaucet {
     function balanceOf(address asset) external view returns (uint256);
 
     /// @notice Checks if user had calimed stables before
-    /// @return true if user had calimed before, otherwise false 
+    /// @return true if user had calimed before, otherwise false
     function hasClaimBefore() external view returns (bool);
 
     /// @notice Adds new asset to the faucet,
@@ -51,11 +50,11 @@ interface ITestnetFaucet {
     );
 
     event TransferFailed(
-    /// @notice address to which stable were transfer
+        /// @notice address to which stable were transfer
         address to,
-    /// @notice underlying asset
+        /// @notice underlying asset
         address asset,
-    /// @notice amount of stable
+        /// @notice amount of stable
         uint256 amount
     );
 }

@@ -32,5 +32,8 @@ interface IPowerTokenFlowsService {
     /// @dev It requires that the length of `lpTokens` is equal to the length of `lpTokenAmounts`.
     /// @dev It reverts if either `lpTokens` or `lpTokenAmounts` arrays are empty.
     /// @dev It reverts if the total staked token amount to undelegate is not greater than zero.
-    function undelegatePwTokensToLiquidityMining(address[] calldata lpTokens, uint256[] calldata lpTokenAmounts) external;
+    function undelegatePwTokensToLiquidityMining(
+        address[] calldata lpTokens,
+        uint256[] calldata lpTokenAmounts
+    ) external;
 }

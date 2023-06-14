@@ -8,7 +8,5 @@ import "./IStrategy.sol";
 interface IStrategyCompound is IStrategy {
     /// @notice Emitted when blocks per day changed by Owner.
     /// @param newBlocksPerDay new value blocks per day
-    event BlocksPerDayChanged(
-        uint256 newBlocksPerDay
-    );
+    event BlocksPerDayChanged(uint256 newBlocksPerDay);
 }

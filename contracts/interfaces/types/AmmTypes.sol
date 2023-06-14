@@ -5,14 +5,23 @@ import "contracts/interfaces/types/IporTypes.sol";
 /// @title Types used in interfaces strictly related to AMM (Automated Market Maker).
 /// @dev Used by IAmmTreasury and IAmmStorage interfaces.
 library AmmTypes {
+    /// @notice Struct describing AMM Pool's core addresses.
     struct AmmPoolCoreModel {
+        /// @notice asset address
         address asset;
+        /// @notice asset decimals
         uint256 assetDecimals;
+        /// @notice ipToken address associated to the asset
         address ipToken;
+        /// @notice AMM Storage address
         address ammStorage;
+        /// @notice AMM Treasury address
         address ammTreasury;
+        /// @notice Asset Management address
         address assetManagement;
+        /// @notice IPOR Oracle address
         address iporOracle;
+        /// @notice IPOR Risk Management Oracle address
         address iporRiskManagementOracle;
     }
 
@@ -111,10 +120,16 @@ library AmmTypes {
         bool closed;
     }
 
+    /// @notice Technical structure used for storing information about amounts used during redeeming assets from liquidity pool.
     struct RedeemAmount {
+        /// @notice Asset amount represented in 18 decimals
+        /// @dev Asset amount is a sum of wadRedeemFee and wadRedeemAmount
         uint256 wadAssetAmount;
+        /// @notice Redeemed amount represented in decimals of asset
         uint256 redeemAmount;
+        /// @notice Redeem fee value represented in 18 decimals
         uint256 wadRedeemFee;
+        /// @notice Redeem amount represented in 18 decimals
         uint256 wadRedeemAmount;
     }
 

@@ -3,7 +3,6 @@ pragma solidity 0.8.20;
 import "./types/PowerTokenTypes.sol";
 
 interface IPowerTokenLens {
-
     /// @notice Gets the total supply of the Power Token.
     /// @dev Value is calculated in runtime using baseTotalSupply and internal exchange rate.
     /// @return Total supply of Power tokens, represented with 18 decimals

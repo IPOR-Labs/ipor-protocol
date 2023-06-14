@@ -5,7 +5,7 @@ import "../libraries/StorageLib.sol";
 /// @title Interface for interacting with AmmGovernanceLens. Interface responsible for reading data from AMM Governance.
 interface IAmmGovernanceLens {
     /// @notice Structure of common params described AMM Pool configuration
-    struct PoolConfiguration {
+    struct AmmGovernancePoolConfiguration {
         /// @notice address of asset which represents specific pool
         address asset;
         /// @notice asset decimals
@@ -27,7 +27,9 @@ interface IAmmGovernanceLens {
     /// @notice Gets the structure or common params described AMM Pool configuration
     /// @param asset Address of asset which represents specific pool
     /// @return poolConfiguration Structure of common params described AMM Pool configuration
-    function getAmmGovernanceServicePoolConfiguration(address asset) external view returns (PoolConfiguration memory);
+    function getAmmGovernancePoolConfiguration(
+        address asset
+    ) external view returns (AmmGovernancePoolConfiguration memory);
 
     /// @notice Flag which indicates if given account is an liquidator for given asset
     /// @param asset Address of asset which represents specific pool

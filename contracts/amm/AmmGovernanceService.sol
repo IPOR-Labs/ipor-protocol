@@ -45,9 +45,9 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     address internal immutable _daiAmmCharlieTreasuryManager;
 
     constructor(
-        PoolConfiguration memory usdtPoolCfg,
-        PoolConfiguration memory usdcPoolCfg,
-        PoolConfiguration memory daiPoolCfg
+        AmmGovernancePoolConfiguration memory usdtPoolCfg,
+        AmmGovernancePoolConfiguration memory usdcPoolCfg,
+        AmmGovernancePoolConfiguration memory daiPoolCfg
     ) {
         require(
             usdtPoolCfg.asset != address(0),
@@ -164,9 +164,9 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         _daiAmmCharlieTreasuryManager = daiPoolCfg.ammCharlieTreasuryManager;
     }
 
-    function getAmmGovernanceServicePoolConfiguration(
+    function getAmmGovernancePoolConfiguration(
         address asset
-    ) external view override returns (PoolConfiguration memory) {
+    ) external view override returns (AmmGovernancePoolConfiguration memory) {
         return _getPoolConfiguration(asset);
     }
 
@@ -183,7 +183,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     }
 
     function transferToTreasury(address asset, uint256 assetAmount) external override {
-        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+        AmmGovernancePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         require(msg.sender == poolCfg.ammPoolsTreasuryManager, AmmPoolsErrors.CALLER_NOT_TREASURY_MANAGER);
 
@@ -200,7 +200,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     }
 
     function transferToCharlieTreasury(address asset, uint256 assetAmount) external override {
-        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+        AmmGovernancePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         require(msg.sender == poolCfg.ammCharlieTreasuryManager, AmmPoolsErrors.CALLER_NOT_PUBLICATION_FEE_TRANSFERER);
 
@@ -260,10 +260,10 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         return AmmConfigurationManager.getAmmPoolsParams(asset);
     }
 
-    function _getPoolConfiguration(address asset) internal view returns (PoolConfiguration memory) {
+    function _getPoolConfiguration(address asset) internal view returns (AmmGovernancePoolConfiguration memory) {
         if (asset == _usdt) {
             return
-                PoolConfiguration({
+                AmmGovernancePoolConfiguration({
                     asset: _usdt,
                     decimals: _usdtDecimals,
                     ammStorage: _usdtAmmStorage,
@@ -275,7 +275,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
                 });
         } else if (asset == _usdc) {
             return
-                PoolConfiguration({
+                AmmGovernancePoolConfiguration({
                     asset: _usdc,
                     decimals: _usdcDecimals,
                     ammStorage: _usdcAmmStorage,
@@ -287,7 +287,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
                 });
         } else if (asset == _dai) {
             return
-                PoolConfiguration({
+                AmmGovernancePoolConfiguration({
                     asset: _dai,
                     decimals: _daiDecimals,
                     ammStorage: _daiAmmStorage,
