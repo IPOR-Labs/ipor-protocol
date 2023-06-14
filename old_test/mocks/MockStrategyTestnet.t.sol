@@ -61,13 +61,13 @@ contract MockStrategyTestnetTest is TestCommons, DataUtils {
 
     function testShouldReturnThreePointFiveAPR() public {
         // when
-        uint256 aprDai = _mockStrategyDai.getApr();
-        uint256 aprUsdt = _mockStrategyUsdt.getApr();
-        uint256 aprUsdc = _mockStrategyUsdc.getApr();
+        uint256 apyDai = _mockStrategyDai.getApy();
+        uint256 apyUsdt = _mockStrategyUsdt.getApy();
+        uint256 apyUsdc = _mockStrategyUsdc.getApy();
         // then
-        assertEq(aprDai, TestConstants.PERCENTAGE_3_5_18DEC);
-        assertEq(aprUsdt, TestConstants.PERCENTAGE_3_5_18DEC);
-        assertEq(aprUsdc, TestConstants.PERCENTAGE_3_5_18DEC);
+        assertEq(apyDai, TestConstants.PERCENTAGE_3_5_18DEC);
+        assertEq(apyUsdt, TestConstants.PERCENTAGE_3_5_18DEC);
+        assertEq(apyUsdc, TestConstants.PERCENTAGE_3_5_18DEC);
     }
 
     function testShouldDepositIntoStrategyWhen18Decimals() public {

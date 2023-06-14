@@ -17,7 +17,7 @@ contract VaultUsdtAaveTest is Test {
         // given
         uint256 amount = 1_000 * 1e6;
         UsdtAmm amm = new UsdtAmm(_admin);
-        amm.overrideCompoundStrategyWithZeroApr(_admin);
+        amm.overrideCompoundStrategyWithZeroApy(_admin);
         deal(amm.usdt(), address(amm.ammTreasury()), amount);
 
         uint256 ammTreasuryTotalBalanceOnAssetManagementBefore = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
@@ -40,7 +40,7 @@ contract VaultUsdtAaveTest is Test {
         // given
         uint256 amount = 1_000 * 1e6;
         UsdtAmm amm = new UsdtAmm(_admin);
-        amm.overrideCompoundStrategyWithZeroApr(_admin);
+        amm.overrideCompoundStrategyWithZeroApy(_admin);
         deal(amm.usdt(), address(amm.ammTreasury()), amount);
         vm.startPrank(_admin);
         amm.joseph().depositToAssetManagement(amount * 1e12);
@@ -66,7 +66,7 @@ contract VaultUsdtAaveTest is Test {
         uint256 amount = 20_000 * 1e6;
         UsdtAmm amm = new UsdtAmm(_admin);
         Joseph joseph = amm.joseph();
-        amm.overrideCompoundStrategyWithZeroApr(_admin);
+        amm.overrideCompoundStrategyWithZeroApy(_admin);
         deal(amm.usdt(), address(amm.ammTreasury()), amount);
         vm.startPrank(_admin);
         amm.joseph().depositToAssetManagement(20_000 * 1e18);
@@ -91,7 +91,7 @@ contract VaultUsdtAaveTest is Test {
         uint256 amount = 1_000 * 1e6;
         UsdtAmm amm = new UsdtAmm(_admin);
         Joseph joseph = amm.joseph();
-        amm.overrideCompoundStrategyWithZeroApr(_admin);
+        amm.overrideCompoundStrategyWithZeroApy(_admin);
         vm.startPrank(_admin);
         amm.strategyAave().addPauseGuardian(_admin);
         amm.strategyCompound().addPauseGuardian(_admin);
@@ -120,7 +120,7 @@ contract VaultUsdtAaveTest is Test {
         uint256 amount = 1_000 * 1e6;
         UsdtAmm amm = new UsdtAmm(_admin);
         Joseph joseph = amm.joseph();
-        amm.overrideCompoundStrategyWithZeroApr(_admin);
+        amm.overrideCompoundStrategyWithZeroApy(_admin);
         deal(amm.usdt(), address(amm.ammTreasury()), amount);
         vm.startPrank(_admin);
         amm.joseph().depositToAssetManagement(amount * 1e12);
@@ -150,7 +150,7 @@ contract VaultUsdtAaveTest is Test {
         uint256 amount = 1_000 * 1e6;
         UsdtAmm amm = new UsdtAmm(_admin);
         Joseph joseph = amm.joseph();
-        amm.overrideCompoundStrategyWithZeroApr(_admin);
+        amm.overrideCompoundStrategyWithZeroApy(_admin);
         vm.startPrank(_admin);
         amm.assetManagement().addPauseGuardian(_admin);
         amm.assetManagement().pause();
@@ -177,7 +177,7 @@ contract VaultUsdtAaveTest is Test {
         uint256 amount = 1_000 * 1e6;
         UsdtAmm amm = new UsdtAmm(_admin);
         Joseph joseph = amm.joseph();
-        amm.overrideCompoundStrategyWithZeroApr(_admin);
+        amm.overrideCompoundStrategyWithZeroApy(_admin);
         deal(amm.usdt(), address(amm.ammTreasury()), amount);
         vm.startPrank(_admin);
         amm.joseph().depositToAssetManagement(amount * 1e12);

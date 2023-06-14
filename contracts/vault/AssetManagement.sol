@@ -266,7 +266,7 @@ abstract contract AssetManagement is
         withdrawnAmount = IporMath.convertToWad(assetBalanceAssetManagement, _getDecimals());
     }
 
-    function migrateAssetToStrategyWithMaxApr() external whenNotPaused onlyOwner {
+    function migrateAssetToStrategyWithMaxApy() external whenNotPaused onlyOwner {
         (address strategyMaxApy, address strategyAave, address strategyCompound) = _getMaxApyStrategy();
 
         address from;
@@ -329,7 +329,7 @@ abstract contract AssetManagement is
         strategyCompound = _strategyCompound;
         strategyMaxApy = strategyAave;
 
-        if (IStrategy(strategyAave).getApr() < IStrategy(strategyCompound).getApr()) {
+        if (IStrategy(strategyAave).getApy() < IStrategy(strategyCompound).getApy()) {
             strategyMaxApy = strategyCompound;
         } else {
             strategyMaxApy = strategyAave;
