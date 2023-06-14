@@ -9,7 +9,7 @@ interface IAmmGovernanceLens {
         /// @notice address of asset which represents specific pool
         address asset;
         /// @notice asset decimals
-        uint256 assetDecimals;
+        uint256 decimals;
         /// @notice address of AMM Storage
         address ammStorage;
         /// @notice address of AMM Treasury

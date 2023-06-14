@@ -5,7 +5,6 @@ import "contracts/interfaces/types/IporTypes.sol";
 /// @title Types used in interfaces strictly related to AMM (Automated Market Maker).
 /// @dev Used by IAmmTreasury and IAmmStorage interfaces.
 library AmmTypes {
-
     struct AmmPoolCoreModel {
         address asset;
         uint256 assetDecimals;
@@ -84,7 +83,7 @@ library AmmTypes {
         IporTypes.SwapState state;
     }
 
-    /// @notice Struct representing assets (ie. stablecoin) related to Swap that is presently being opened.
+    /// @notice Struct representing amounts related to Swap that is presently being opened.
     /// @dev all values represented in 18 decimals
     struct OpenSwapAmount {
         /// @notice Total Amount of asset that is sent from buyer to AmmTreasury when opening swap.
@@ -128,7 +127,7 @@ library AmmTypes {
         PAY_FLOATING_RECEIVE_FIXED
     }
 
-    /// @notice Collection of swap attributes connected with IPOR Index
+    /// @notice Collection of swap attributes connected with IPOR Index and swap itself.
     /// @dev all values are in 18 decimals
     struct IporSwapIndicator {
         /// @notice IPOR Index value at the time of swap opening

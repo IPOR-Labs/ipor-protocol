@@ -3,6 +3,7 @@ pragma solidity 0.8.20;
 
 import "./types/IporTypes.sol";
 
+/// @title Interface responsible for reading the AMM Pools state and configuration.
 interface IAmmPoolsLens {
 
     /// @dev A struct to represent a pool configuration.

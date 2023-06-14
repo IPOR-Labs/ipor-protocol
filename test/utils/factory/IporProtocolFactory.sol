@@ -1463,7 +1463,7 @@ contract IporProtocolFactory is Test {
     {
         poolCfg = IAmmGovernanceLens.PoolConfiguration({
             asset: address(_fakeContract),
-            assetDecimals: 0,
+            decimals: 0,
             ammStorage: address(_fakeContract),
             ammTreasury: address(_fakeContract),
             ammPoolsTreasury: address(_fakeContract),
@@ -1539,7 +1539,7 @@ contract IporProtocolFactory is Test {
     ) internal returns (IAmmGovernanceLens.PoolConfiguration memory poolCfg) {
         poolCfg = IAmmGovernanceLens.PoolConfiguration({
             asset: asset,
-            assetDecimals: IERC20MetadataUpgradeable(asset).decimals(),
+            decimals: IERC20MetadataUpgradeable(asset).decimals(),
             ammStorage: ammStorage,
             ammTreasury: ammTreasury,
             ammPoolsTreasury: ammPoolsTreasury == address(0) ? _owner : ammPoolsTreasury,

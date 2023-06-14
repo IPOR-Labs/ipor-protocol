@@ -17,18 +17,18 @@ library IporSwapLogic {
     /// @param tenor swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
     /// @param wadTotalAmount total amount represented in 18 decimals
     /// @param leverage swap leverage, represented in 18 decimals
-    /// @param liquidationDepositAmount liquidation deposit amount, represented in 18 decimals
+    /// @param wadLiquidationDepositAmount liquidation deposit amount, represented in 18 decimals
     /// @param iporPublicationFeeAmount IPOR publication fee amount, represented in 18 decimals
     /// @param openingFeeRate opening fee rate, represented in 18 decimals
     function calculateSwapAmount(
         IporTypes.SwapTenor tenor,
         uint256 wadTotalAmount,
         uint256 leverage,
-        uint256 liquidationDepositAmount,
+        uint256 wadLiquidationDepositAmount,
         uint256 iporPublicationFeeAmount,
         uint256 openingFeeRate
     ) internal view returns (uint256 collateral, uint256 notional, uint256 openingFee) {
-        uint256 availableAmount = wadTotalAmount - liquidationDepositAmount - iporPublicationFeeAmount;
+        uint256 availableAmount = wadTotalAmount - wadLiquidationDepositAmount - iporPublicationFeeAmount;
 
         collateral = IporMath.division(
             availableAmount * 1e18,
