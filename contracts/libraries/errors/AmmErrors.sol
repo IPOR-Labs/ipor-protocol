@@ -50,7 +50,7 @@ library AmmErrors {
     string public constant SWAP_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL = "IPOR_314";
 
     /// @notice Number of swaps per leg which are going to be liquidated is too high, is higher than configured in AmmTreasury liquidation leg limit.
-    string public constant LIQUIDATION_LEG_LIMIT_EXCEEDED = "IPOR_315";
+    string public constant MAX_LENGTH_LIQUIDATED_SWAPS_PER_LEG_EXCEEDED = "IPOR_315";
 
     /// @notice Sum of SOAP and Liquidity Pool Balance is lower than zero.
     /// @dev SOAP can be negative, Sum of SOAP and Liquidity Pool Balance can be negative, but this is undesirable.

@@ -162,7 +162,7 @@ contract DevDeployment is Script {
             assetManagement: assetManagement,
             openingFeeRate: 5e14,
             openingFeeRateForSwapUnwind: 5e14,
-            liquidationLegLimit: 10,
+            maxLengthOfLiquidatedSwapsPerLeg: 10,
             timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
             timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
             minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,

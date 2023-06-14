@@ -12,7 +12,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         _iporSwapLogic = new MockIporSwapLogic();
     }
 
-    function testShouldCalculateSwapUnwindValueWithoutPayoffToDate() public {
+    function testShouldCalculateSwapUnwindAmountWithoutPayoffToDate() public {
         // given
         AmmTypes.Swap memory swap;
 
@@ -27,7 +27,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 5 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -38,7 +38,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         assertEq(virtualHedgingSwap, -63089187650935100324);
     }
 
-    function testShouldCalculateSwapUnwindValueWithoutPayoffToDateMoreDaysThanTenor() public {
+    function testShouldCalculateSwapUnwindAmountWithoutPayoffToDateMoreDaysThanTenor() public {
         // given
         AmmTypes.Swap memory swap;
 
@@ -54,7 +54,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         //when
         vm.expectRevert("IPOR_333");
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -62,7 +62,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         );
     }
 
-    function testShouldCalculateSwapUnwindValueWithPayoffToDate() public {
+    function testShouldCalculateSwapUnwindAmountWithPayoffToDate() public {
         // given
         AmmTypes.Swap memory swap;
 
@@ -78,7 +78,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 swapPayoffToDate = 0;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -104,7 +104,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -130,7 +130,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -156,7 +156,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -182,7 +182,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -208,7 +208,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -234,7 +234,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -260,7 +260,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -286,7 +286,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -312,7 +312,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -338,7 +338,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -364,7 +364,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -390,7 +390,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -416,7 +416,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -442,7 +442,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -468,7 +468,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -494,7 +494,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -520,7 +520,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -546,7 +546,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -572,7 +572,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -598,7 +598,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -624,7 +624,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -650,7 +650,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -676,7 +676,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 28 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -702,7 +702,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 28 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -728,7 +728,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 28 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -754,7 +754,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 28 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -780,7 +780,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 28 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -806,7 +806,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 28 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -833,7 +833,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -860,7 +860,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -887,7 +887,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -914,7 +914,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -941,7 +941,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,
@@ -968,7 +968,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,

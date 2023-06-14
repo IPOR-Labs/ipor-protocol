@@ -67,19 +67,19 @@ library IporSwapLogic {
     /// time - number of seconds left to swap until maturity divided by number of seconds in year
     /// Opposite Leg Fixed Rate - calculated fixed rate of opposite leg used for the virtual swap
     /// @dev UnwindValue   = Current Swap Payoff + Notional * (e^(Opposite Leg Fixed Rate * time) - e^(Swap Fixed Rate * time))
-    function calculateSwapUnwindValue(
+    function calculateSwapUnwindAmount(
         AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
         int256 swapPayoffToDate,
         uint256 oppositeLegFixedRate
-    ) internal pure returns (int256 swapUnwindValue) {
+    ) internal pure returns (int256 swapUnwindAmount) {
         uint256 endTimestamp = getSwapEndTimestamp(swap);
 
         require(closingTimestamp <= endTimestamp, AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE);
 
         uint256 time = (endTimestamp - swap.openTimestamp) - (closingTimestamp - swap.openTimestamp);
 
-        swapUnwindValue =
+        swapUnwindAmount =
             swapPayoffToDate +
             swap.notional.toInt256().calculateContinuousCompoundInterestUsingRatePeriodMultiplicationInt(
                 (oppositeLegFixedRate * time).toInt256()
