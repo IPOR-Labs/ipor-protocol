@@ -138,10 +138,16 @@ contract TestForkCommons is Test {
 
     function _switchImplementationOfIporOracle() private returns (uint256 versionBefore, uint256 versionAfter) {
         versionBefore = IporOracle(iporOracleProxy).getVersion();
-// todo fix złe wartości
+        // todo fix złe wartości
         IporTypes.AccruedIpor memory daiAccruedIpor = IporOracle(iporOracleProxy).getAccruedIndex(block.timestamp, DAI);
-        IporTypes.AccruedIpor memory usdcAccruedIpor = IporOracle(iporOracleProxy).getAccruedIndex(block.timestamp, USDC);
-        IporTypes.AccruedIpor memory usdtAccruedIpor = IporOracle(iporOracleProxy).getAccruedIndex(block.timestamp, USDT);
+        IporTypes.AccruedIpor memory usdcAccruedIpor = IporOracle(iporOracleProxy).getAccruedIndex(
+            block.timestamp,
+            USDC
+        );
+        IporTypes.AccruedIpor memory usdtAccruedIpor = IporOracle(iporOracleProxy).getAccruedIndex(
+            block.timestamp,
+            USDT
+        );
 
         console2.log("daiInitialIbtPrice", daiAccruedIpor.ibtPrice);
 
@@ -230,17 +236,17 @@ contract TestForkCommons is Test {
     }
 
     function _createAmmSwapsLens() private {
-        IAmmSwapsLens.SwapLensConfiguration memory daiConfig = IAmmSwapsLens.SwapLensConfiguration(
+        IAmmSwapsLens.SwapLensPoolConfiguration memory daiConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             DAI,
             miltonStorageProxyDai,
             miltonProxyDai
         );
-        IAmmSwapsLens.SwapLensConfiguration memory usdcConfig = IAmmSwapsLens.SwapLensConfiguration(
+        IAmmSwapsLens.SwapLensPoolConfiguration memory usdcConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             USDC,
             miltonStorageProxyUsdc,
             miltonProxyUsdc
         );
-        IAmmSwapsLens.SwapLensConfiguration memory usdtConfig = IAmmSwapsLens.SwapLensConfiguration(
+        IAmmSwapsLens.SwapLensPoolConfiguration memory usdtConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             USDT,
             miltonStorageProxyUsdt,
             miltonProxyUsdt
@@ -494,38 +500,41 @@ contract TestForkCommons is Test {
     }
 
     function _createAmmGovernanceService() private {
-        IAmmGovernanceLens.PoolConfiguration memory daiConfig = IAmmGovernanceLens.PoolConfiguration(
-            DAI,
-            18,
-            miltonStorageProxyDai,
-            miltonProxyDai,
-            _getUserAddress(123),
-            _getUserAddress(123),
-            _getUserAddress(123),
-            _getUserAddress(123)
-        );
+        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory daiConfig = IAmmGovernanceLens
+            .AmmGovernancePoolConfiguration(
+                DAI,
+                18,
+                miltonStorageProxyDai,
+                miltonProxyDai,
+                _getUserAddress(123),
+                _getUserAddress(123),
+                _getUserAddress(123),
+                _getUserAddress(123)
+            );
 
-        IAmmGovernanceLens.PoolConfiguration memory usdcConfig = IAmmGovernanceLens.PoolConfiguration(
-            USDC,
-            6,
-            miltonStorageProxyUsdc,
-            miltonProxyUsdc,
-            _getUserAddress(123),
-            _getUserAddress(123),
-            _getUserAddress(123),
-            _getUserAddress(123)
-        );
+        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory usdcConfig = IAmmGovernanceLens
+            .AmmGovernancePoolConfiguration(
+                USDC,
+                6,
+                miltonStorageProxyUsdc,
+                miltonProxyUsdc,
+                _getUserAddress(123),
+                _getUserAddress(123),
+                _getUserAddress(123),
+                _getUserAddress(123)
+            );
 
-        IAmmGovernanceLens.PoolConfiguration memory usdtConfig = IAmmGovernanceLens.PoolConfiguration(
-            USDT,
-            6,
-            miltonStorageProxyUsdt,
-            miltonProxyUsdt,
-            _getUserAddress(123),
-            _getUserAddress(123),
-            _getUserAddress(123),
-            _getUserAddress(123)
-        );
+        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory usdtConfig = IAmmGovernanceLens
+            .AmmGovernancePoolConfiguration(
+                USDT,
+                6,
+                miltonStorageProxyUsdt,
+                miltonProxyUsdt,
+                _getUserAddress(123),
+                _getUserAddress(123),
+                _getUserAddress(123),
+                _getUserAddress(123)
+            );
 
         ammGovernanceService = address(new AmmGovernanceService(usdtConfig, usdcConfig, daiConfig));
 
@@ -596,9 +605,27 @@ contract TestForkCommons is Test {
 
     function _setAmmPoolsParams() private {
         vm.startPrank(owner);
-        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, type(uint32).max, 0,5000);
-        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(USDC, type(uint32).max, type(uint32).max, 0,5000);
-        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(USDT, type(uint32).max, type(uint32).max, 0,5000);
+        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(
+            DAI,
+            type(uint32).max,
+            type(uint32).max,
+            0,
+            5000
+        );
+        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(
+            USDC,
+            type(uint32).max,
+            type(uint32).max,
+            0,
+            5000
+        );
+        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(
+            USDT,
+            type(uint32).max,
+            type(uint32).max,
+            0,
+            5000
+        );
         vm.stopPrank();
     }
 

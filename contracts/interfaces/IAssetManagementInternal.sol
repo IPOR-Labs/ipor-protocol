@@ -8,7 +8,7 @@ interface IAssetManagementInternal {
     /// @return current AssetManagement's version
     function getVersion() external pure returns (uint256);
 
-    /// @notice Gets asset / underlying token / stablecoin which is assocciated with this AssetManagement instance
+    /// @notice Gets asset / underlying token / stablecoin which is associated with this AssetManagement instance
     /// @return asset / underlying token / stablecoin address
     function getAsset() external view returns (address);
 

@@ -86,12 +86,7 @@ interface IStrategy {
     /// @param shareToken share token assocciated with one strategy
     /// @param treasury Treasury address where claimed tokens are transferred.
     /// @param amount S
-    event DoClaim(
-        address indexed claimedBy,
-        address indexed shareToken,
-        address indexed treasury,
-        uint256 amount
-    );
+    event DoClaim(address indexed claimedBy, address indexed shareToken, address indexed treasury, uint256 amount);
 
     /// @notice Emmited when Treasury address has changed
     /// @param newTreasury new Treasury address
@@ -99,7 +94,5 @@ interface IStrategy {
 
     /// @notice Emmited when Treasury Manager address has changed
     /// @param newTreasuryManager new Treasury Manager address
-    event TreasuryManagerChanged(
-        address newTreasuryManager
-    );
+    event TreasuryManagerChanged(address newTreasuryManager);
 }

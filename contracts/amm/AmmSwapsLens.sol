@@ -30,9 +30,9 @@ contract AmmSwapsLens is IAmmSwapsLens {
     address internal immutable _riskManagementOracle;
 
     constructor(
-        SwapLensConfiguration memory usdtCfg,
-        SwapLensConfiguration memory usdcCfg,
-        SwapLensConfiguration memory daiCfg,
+        SwapLensPoolConfiguration memory usdtCfg,
+        SwapLensPoolConfiguration memory usdcCfg,
+        SwapLensPoolConfiguration memory daiCfg,
         address iporOracle,
         address riskManagementOracle,
         address router
@@ -128,16 +128,9 @@ contract AmmSwapsLens is IAmmSwapsLens {
         return swap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
     }
 
-    function getSOAP(address asset)
-        external
-        view
-        override
-        returns (
-            int256 soapPayFixed,
-            int256 soapReceiveFixed,
-            int256 soap
-        )
-    {
+    function getSOAP(
+        address asset
+    ) external view override returns (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap) {
         IAmmStorage ammStorage = _getAmmStorage(asset);
         AmmTypes.AmmPoolCoreModel memory ammCoreModel;
         ammCoreModel.asset = asset;
@@ -146,11 +139,9 @@ contract AmmSwapsLens is IAmmSwapsLens {
         (soapPayFixed, soapReceiveFixed, soap) = ammCoreModel.getSOAP();
     }
 
-    function getBalancesForOpenSwap(address asset)
-        external
-        view
-        returns (IporTypes.AmmBalancesForOpenSwapMemory memory)
-    {
+    function getBalancesForOpenSwap(
+        address asset
+    ) external view returns (IporTypes.AmmBalancesForOpenSwapMemory memory) {
         IAmmStorage ammStorage = _getAmmStorage(asset);
         return ammStorage.getBalancesForOpenSwap();
     }
@@ -159,7 +150,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         address asset,
         uint256 direction,
         IporTypes.SwapTenor tenor
-    ) external view override returns (AmmFacadeTypes.AssetConfiguration memory) {
+    ) external view override returns (AssetConfiguration memory) {
         IAmmOpenSwapService.AmmOpenSwapServicePoolConfiguration memory openSwapPoolCfg = IAmmOpenSwapService(_router)
             .getAmmOpenSwapServicePoolConfiguration(asset);
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
@@ -182,7 +173,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         );
 
         return
-            AmmFacadeTypes.AssetConfiguration(
+            AssetConfiguration(
                 asset,
                 openSwapPoolCfg.minLeverage,
                 riskIndicators.maxLeveragePerLeg,
@@ -265,15 +256,24 @@ contract AmmSwapsLens is IAmmSwapsLens {
         }
     }
 
-    function _getSwapLensConfiguration(address asset) internal view returns (SwapLensConfiguration memory) {
+    function _getSwapLensPoolConfiguration(address asset) internal view returns (SwapLensPoolConfiguration memory) {
         if (asset == _usdtAsset) {
             return
-                SwapLensConfiguration({asset: _usdtAsset, ammStorage: _usdtAmmStorage, ammTreasury: _usdtAmmTreasury});
+                SwapLensPoolConfiguration({
+                    asset: _usdtAsset,
+                    ammStorage: _usdtAmmStorage,
+                    ammTreasury: _usdtAmmTreasury
+                });
         } else if (asset == _usdcAsset) {
             return
-                SwapLensConfiguration({asset: _usdcAsset, ammStorage: _usdcAmmStorage, ammTreasury: _usdcAmmTreasury});
+                SwapLensPoolConfiguration({
+                    asset: _usdcAsset,
+                    ammStorage: _usdcAmmStorage,
+                    ammTreasury: _usdcAmmTreasury
+                });
         } else if (asset == _daiAsset) {
-            return SwapLensConfiguration({asset: _daiAsset, ammStorage: _daiAmmStorage, ammTreasury: _daiAmmTreasury});
+            return
+                SwapLensPoolConfiguration({asset: _daiAsset, ammStorage: _daiAmmStorage, ammTreasury: _daiAmmTreasury});
         } else {
             revert(IporErrors.ASSET_NOT_SUPPORTED);
         }

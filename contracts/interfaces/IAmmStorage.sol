@@ -6,7 +6,7 @@ import "contracts/interfaces/types/AmmTypes.sol";
 import "contracts/interfaces/types/AmmStorageTypes.sol";
 import "contracts/amm/libraries/types/AmmInternalTypes.sol";
 
-/// @title Interface for interaction with AmmTreasury Storage smart contract, reposnsible for managing AMM storage.
+/// @title Interface for interaction with IPOR AMM Storage, responsible for managing AMM storage.
 interface IAmmStorage {
     /// @notice Returns current version of AmmTreasury Storage
     /// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
@@ -15,15 +15,20 @@ interface IAmmStorage {
 
     /// @notice Gets last swap ID.
     /// @dev swap ID is incremented when new position is opened, last swap ID is used in Pay Fixed and Receive Fixed swaps.
+    /// @dev ID is global for all swaps, no matter if they are Pay Fixed or Receive Fixed in tenor 28, 60 or 90 days.
     /// @return last swap ID, integer
     function getLastSwapId() external view returns (uint256);
 
+    /// @notice Gets last opened swap for a given tenor and direction.
+    /// @param tenor tenor of the swap
+    /// @param direction direction of the swap: 0 for Pay Fixed, 1 for Receive Fixed
+    /// @return last opened swap {AmmInternalTypes.OpenSwapItem}
     function getLastOpenedSwap(
         IporTypes.SwapTenor tenor,
         uint256 direction
     ) external view returns (AmmInternalTypes.OpenSwapItem memory);
 
-    /// @notice Gets balance struct
+    /// @notice Gets AMM balance struct
     /// @dev Balance contains:
     /// # Pay Fixed Total Collateral
     /// # Receive Fixed Total Collateral
@@ -45,6 +50,10 @@ interface IAmmStorage {
     /// @return balance structure {AmmStorageTypes.ExtendedBalancesMemory}
     function getExtendedBalance() external view returns (AmmStorageTypes.ExtendedBalancesMemory memory);
 
+    /// @notice gets SOAP indicators.
+    /// @dev SOAP is a Sum Of All Payouts.
+    /// @return indicatorsPayFixed structure {AmmStorageTypes.SoapIndicators} indicators for Pay Fixed swaps
+    /// @return indicatorsReceiveFixed structure {AmmStorageTypes.SoapIndicators} indicators for Receive Fixed swaps
     function getSoapIndicators()
         external
         view
@@ -53,6 +62,10 @@ interface IAmmStorage {
             AmmStorageTypes.SoapIndicators memory indicatorsReceiveFixed
         );
 
+    /// @notice Gets swap based on direction and swap ID.
+    /// @param direction direction of the swap: 0 for Pay Fixed, 1 for Receive Fixed
+    /// @param swapId swap ID
+    /// @return swap structure {AmmTypes.Swap}
     function getSwap(AmmTypes.SwapDirection direction, uint256 swapId) external view returns (AmmTypes.Swap memory);
 
     /// @notice Gets active Pay-Fixed swaps for a given account address.
@@ -96,6 +109,7 @@ interface IAmmStorage {
     /// @param assetAmount amount of asset added to balance of Liquidity Pool, represented in 18 decimals
     /// @param cfgMaxLiquidityPoolBalance max liquidity pool balance taken from AmmPoolsService configuration, represented in 18 decimals.
     /// @param cfgMaxLpAccountContribution max liquidity pool account contribution taken from AMM configuration, represented in 18 decimals.
+    /// @dev Function is only available to AmmPoolsService, can be executed only by IPOR Protocol Router as internal interaction.
     function addLiquidityInternal(
         address account,
         uint256 assetAmount,
@@ -105,9 +119,11 @@ interface IAmmStorage {
 
     /// @notice subtract liquidity from the Liquidity Pool. Function available only to Router.
     /// @param assetAmount amount of asset subtracted from Liquidity Pool, represented in 18 decimals
+    /// @dev Function is only available to AmmPoolsService, can be executed only by IPOR Protocol Router as internal interaction.
     function subtractLiquidityInternal(uint256 assetAmount) external;
 
-    /// @notice Updates structures in storage: balance, swaps, SOAP indicators when new Pay-Fixed swap is opened. Function available only to AmmTreasury.
+    /// @notice Updates structures in storage: balance, swaps, SOAP indicators when new Pay-Fixed swap is opened.
+    /// @dev Function is only available to AmmOpenSwapService, can be executed only by IPOR Protocol Router as internal interaction.
     /// @param newSwap new swap structure {AmmTypes.NewSwap}
     /// @param cfgIporPublicationFee publication fee amount taken from AmmTreasury configuration, represented in 18 decimals.
     /// @return new swap ID
@@ -116,7 +132,8 @@ interface IAmmStorage {
         uint256 cfgIporPublicationFee
     ) external returns (uint256);
 
-    /// @notice Updates structures in the storage: balance, swaps, SOAP indicators when new Receive-Fixed swap is opened. Function is only available to AmmTreasury.
+    /// @notice Updates structures in the storage: balance, swaps, SOAP indicators when new Receive-Fixed swap is opened.
+    /// @dev Function is only available to AmmOpenSwapService, can be executed only by IPOR Protocol Router as internal interaction.
     /// @param newSwap new swap structure {AmmTypes.NewSwap}
     /// @param cfgIporPublicationFee publication fee amount taken from AmmTreasury configuration, represented in 18 decimals.
     /// @return new swap ID
@@ -126,7 +143,7 @@ interface IAmmStorage {
     ) external returns (uint256);
 
     /// @notice Updates structures in the storage: balance, swaps, SOAP indicators when closing Pay-Fixed swap.
-    /// @dev This function is only available to AmmTreasury.
+    /// @dev Function is only available to AmmCloseSwapService, can be executed only by IPOR Protocol Router as internal interaction.
     /// @param swap The swap structure containing IPOR swap information.
     /// @param payoff The amount that the trader has earned or lost on the swap, represented in 18 decimals.
     ///              It can be negative.
@@ -141,7 +158,7 @@ interface IAmmStorage {
     ) external returns (AmmInternalTypes.OpenSwapItem memory closedSwap);
 
     /// @notice Updates structures in the storage: swaps, balances, SOAP indicators when closing Receive-Fixed swap.
-    /// @dev This function is only available to AmmTreasury.
+    /// @dev Function is only available to AmmCloseSwapService, can be executed only by IPOR Protocol Router as internal interaction.
     /// @param swap The swap structure containing IPOR swap information.
     /// @param payoff The amount that the trader has earned or lost on the swap, represented in 18 decimals.
     ///              It can be negative.
@@ -155,7 +172,8 @@ interface IAmmStorage {
         uint256 closingTimestamp
     ) external returns (AmmInternalTypes.OpenSwapItem memory closedSwap);
 
-    /// @notice Updates the balance when AmmPoolsService withdraws AmmTreasury's assets from AssetManagement. Function is only available to AmmTreasury.
+    /// @notice Updates the balance when AmmPoolsService withdraws AmmTreasury's assets from AssetManagement.
+    /// @dev Function is only available to AmmTreasury contract.
     /// @param withdrawnAmount asset amount that was withdrawn from AssetManagement to AmmTreasury by AmmPoolsService, represented in 18 decimals.
     /// @param vaultBalance Asset Management Vault (AssetManagement) balance, represented in 18 decimals
     function updateStorageWhenWithdrawFromAssetManagement(uint256 withdrawnAmount, uint256 vaultBalance) external;
@@ -165,19 +183,21 @@ interface IAmmStorage {
     /// @param vaultBalance actual Asset Management Vault(AssetManagement) balance , represented in 18 decimals
     function updateStorageWhenDepositToAssetManagement(uint256 depositAmount, uint256 vaultBalance) external;
 
-    /// @notice Updates the balance when AmmPoolsService transfers AmmTreasury's assets to Charlie Treasury's multisig wallet. Function is only available to AmmPoolsService.
+    /// @notice Updates the balance when AmmPoolsService transfers AmmTreasury's assets to Charlie Treasury's multisig wallet.
+    /// @dev Function is only available to AmmGovernanceService, can be executed only by IPOR Protocol Router as internal interaction.
     /// @param transferredAmount asset amount transferred to Charlie Treasury multisig wallet.
     function updateStorageWhenTransferToCharlieTreasuryInternal(uint256 transferredAmount) external;
 
-    /// @notice Updates the balance when AmmPoolsService transfers AmmTreasury's assets to Treasury's multisig wallet. Function is only available to AmmPoolsService.
+    /// @notice Updates the balance when AmmPoolsService transfers AmmTreasury's assets to Treasury's multisig wallet.
+    /// @dev Function is only available to AmmGovernanceService, can be executed only by IPOR Protocol Router as internal interaction.
     /// @param transferredAmount asset amount transferred to Treasury's multisig wallet.
     function updateStorageWhenTransferToTreasuryInternal(uint256 transferredAmount) external;
 
-    /// @notice Pauses current smart contract, it can be executed only by the Owner
+    /// @notice Pauses current smart contract, it can be executed only by the AmmStorage contract Owner
     /// @dev Emits {Paused} event from Amm Treasury.
     function pause() external;
 
-    /// @notice Unpauses current smart contract, it can be executed only by the Owner
+    /// @notice Unpauses current smart contract, it can be executed only by the AmmStorage contract Owner
     /// @dev Emits {Unpaused} event from AmmTreasury.
     function unpause() external;
 
@@ -185,8 +205,4 @@ interface IAmmStorage {
     /// @param account Account address for which to fetch the contribution.
     /// @return The amount of the account's contribution to the Liquidity Pool, represented in 18 decimals.
     function getLiquidityPoolAccountContribution(address account) external view returns (uint256);
-
-    /// @notice Emitted when AMM Treausury address has changed by the smart contract Owner.
-    /// @param newAmmTreasury new AmmTreasury's address
-    event AmmTreasuryChanged(address newAmmTreasury);
 }

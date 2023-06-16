@@ -60,13 +60,13 @@ contract MockIporSwapLogic {
         swapValue = IporSwapLogic.calculatePayoffReceiveFixed(swap, closingTimestamp, mdIbtPrice);
     }
 
-    function calculateSwapUnwindValue(
+    function calculateSwapUnwindAmount(
         AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
         int256 swapPayoffToDate,
         uint256 oppositeLegFixedRate
-    ) public pure returns (int256 swapUnwindValue) {
-        swapUnwindValue = IporSwapLogic.calculateSwapUnwindValue(
+    ) public pure returns (int256 swapUnwindAmount) {
+        swapUnwindAmount = IporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
             swapPayoffToDate,

@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /// @title Interface of IvToken, which is IPOR Vault Token managed by AssetManagement in IPOR Protocol for a given asset.
 interface IIvToken is IERC20 {
-    /// @notice Gets asset / stablecoin address which is assocciated with this IvToken smart contract instance
+    /// @notice Gets asset / stablecoin address which is associated with this IvToken smart contract instance
     /// @return asset / stablecoin address
     function getAsset() external view returns (address);
 
@@ -26,17 +26,17 @@ interface IIvToken is IERC20 {
     /// @param amount volume of ivTokens being destroyed
     function burn(address account, uint256 amount) external;
 
-    /// @notice Emmited when `amount` of ivTokens were minted and transferred to the`account`.
+    /// @notice Emitted when `amount` of ivTokens were minted and transferred to the`account`.
     /// @param account address where ivTokens are transferred after minting
     /// @param amount volume of ivTokens which will are being minted
     event Mint(address indexed account, uint256 amount);
 
-    /// @notice Emmited when the `amount` of ivTokens from `account` was burnt.
+    /// @notice Emitted when the `amount` of ivTokens from `account` was burnt.
     /// @param account address from where ivTokens are being burned
     /// @param amount of ivTokens being burned
     event Burn(address indexed account, uint256 amount);
 
-    /// @notice Emmited when AssetManagement's address is changed by the owner.
+    /// @notice Emitted when AssetManagement's address is changed by the owner.
     /// @param newAssetManagement AssetManagement's new address
     event AssetManagementChanged(address indexed newAssetManagement);
 }
