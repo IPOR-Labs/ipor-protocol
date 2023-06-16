@@ -261,8 +261,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             return AMM_POOLS_LENS;
         } else if (
             sig == IAssetManagementLens.balanceOfAmmTreasuryInAssetManagement.selector ||
-            sig == IAssetManagementLens.aaveBalanceOfInAssetManagement.selector ||
-            sig == IAssetManagementLens.compoundBalanceOfInAssetManagement.selector ||
+            sig == IAssetManagementLens.balanceOfStrategyAave.selector ||
+            sig == IAssetManagementLens.balanceOfStrategyCompound.selector ||
             sig == IAssetManagementLens.getIvTokenExchangeRate.selector
         ) {
             return ASSET_MANAGEMENT_LENS;
