@@ -18,8 +18,9 @@ import "contracts/interfaces/IAmmCloseSwapService.sol";
 import "contracts/interfaces/IAmmPoolsService.sol";
 import "contracts/interfaces/IPowerTokenFlowsService.sol";
 import "contracts/interfaces/IPowerTokenStakeService.sol";
+import "contracts/interfaces/IProxyImplementation.sol";
 
-contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
+contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementation {
     using Address for address;
 
     uint256 private constant SINGLE_OPERATION = 0;
@@ -343,6 +344,10 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
         __UUPSUpgradeable_init();
         OwnerManager.transferOwnership(msg.sender);
         StorageLib.getReentrancyStatus().value = _NOT_ENTERED;
+    }
+
+    function getImplementation() external view override returns (address) {
+        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
 
     //solhint-disable no-empty-blocks

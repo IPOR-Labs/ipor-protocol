@@ -2,6 +2,7 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "contracts/interfaces/IProxyImplementation.sol";
 import "./SpreadStorageLibs.sol";
 import "./SpreadAccessControl.sol";
 import "./ISpread28Days.sol";
@@ -13,7 +14,7 @@ import "./ISpread90DaysLens.sol";
 import "./ISpreadStorageLens.sol";
 import "./ISpreadCloseSwapService.sol";
 
-contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
+contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl, IProxyImplementation {
     address internal immutable SPREAD_28_DAYS;
     address internal immutable SPREAD_60_DAYS;
     address internal immutable SPREAD_90_DAYS;
@@ -115,6 +116,10 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
             return CLOSE_SWAP_SERVICE;
         }
         revert(AmmErrors.FUNCTION_NOT_SUPPORTED);
+    }
+
+    function getImplementation() external view override returns (address) {
+        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
 
     /// @dev Delegates the current call to `implementation`.

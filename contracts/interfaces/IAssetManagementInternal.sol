@@ -28,9 +28,9 @@ interface IAssetManagementInternal {
     /// @return Strategy Compound address
     function getStrategyCompound() external view returns (address);
 
-    /// @notice Transfers all asset in current strategy to strategy with the highest APR. Function available only for the Owner.
+    /// @notice Transfers all asset in current strategy to strategy with the highest APY. Function available only for the Owner.
     /// @dev Emits {Deposit} or {Withdraw} event from AssetManagement depending on current asset balance on AmmTreasury and AssetManagement. Emits {Transfer} from ERC20 asset.
-    function migrateAssetToStrategyWithMaxApr() external;
+    function migrateAssetToStrategyWithMaxApy() external;
 
     /// @notice Sets AAVE strategy address. Function available only for the Owner.
     /// @dev Emits {StrategyChanged} event

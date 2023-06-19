@@ -82,21 +82,21 @@ interface IAmmPoolsService {
     /// @dev Emits {ProvideLiquidity} event and transfers ERC20 tokens from the sender to the AmmTreasury,
     /// emits {Transfer} event from ERC20 asset, emits {Mint} event from ipToken.
     /// Transfers minted ipTokens to the beneficiary. Amount of transferred ipTokens is based on current ipToken exchange rate
-    /// @param beneficiary Account receiving receive ipUSDT liquidity tokens. 
+    /// @param beneficiary Account receiving receive ipUSDT liquidity tokens.
     /// @param assetAmount Amount of ERC20 tokens transferred from the sender to the AmmTreasury. Represented in decimals specific for asset. Value represented in 18 decimals.
     function provideLiquidityUsdt(address beneficiary, uint256 assetAmount) external;
 
     /// @notice Providing USDC to the AMM Liquidity Pool by the sender on behalf of beneficiary.
     /// @dev Emits {ProvideLiquidity} event and transfers ERC20 tokens from the sender to the AmmTreasury,
     /// emits {Transfer} event from ERC20 asset, emits {Mint} event from ipToken.
-    /// @param beneficiary Account receiving receive ipUSDT liquidity tokens. 
+    /// @param beneficiary Account receiving receive ipUSDT liquidity tokens.
     /// @param assetAmount Amount of ERC20 tokens transferred from the sender to the AmmTreasury. Represented in decimals specific for asset. Value represented in 18 decimals.
     function provideLiquidityUsdc(address beneficiary, uint256 assetAmount) external;
 
     /// @notice Providing DAI to the AMM Liquidity Pool by the sender on behalf of beneficiary.
     /// @dev Emits {ProvideLiquidity} event and transfers ERC20 tokens from the sender tothe AmmTreasury,
     /// emits {Transfer} event from ERC20 asset, emits {Mint} event from ipToken.
-    /// @param beneficiary Account receiving receive ipUSDT liquidity tokens. 
+    /// @param beneficiary Account receiving receive ipUSDT liquidity tokens.
     /// @param assetAmount Amount of ERC20 tokens transferred from the sender to the AmmTreasury. Represented in decimals specific for asset. Value represented in 18 decimals.
     /// @dev Value represented in 18 decimals.
     function provideLiquidityDai(address beneficiary, uint256 assetAmount) external;

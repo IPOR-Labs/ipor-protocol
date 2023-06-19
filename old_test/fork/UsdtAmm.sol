@@ -83,12 +83,12 @@ contract UsdtAmm is Test, TestCommons, IporRiskManagementOracleUtils {
         vm.stopPrank();
     }
 
-    function overrideAaveStrategyWithZeroApr(address owner) public {
+    function overrideAaveStrategyWithZeroApy(address owner) public {
         MockStrategy strategy = new MockStrategy();
         strategy.setAssetManagement(address(assetManagement));
         strategy.setBalance(0);
         strategy.setShareToken(aUsdt);
-        strategy.setApr(0);
+        strategy.setApy(0);
         strategy.setAsset(usdt);
         vm.prank(owner);
         assetManagement.setStrategyAave(address(strategy));
@@ -101,12 +101,12 @@ contract UsdtAmm is Test, TestCommons, IporRiskManagementOracleUtils {
         vm.stopPrank();
     }
 
-    function overrideCompoundStrategyWithZeroApr(address owner) public {
+    function overrideCompoundStrategyWithZeroApy(address owner) public {
         MockStrategy strategy = new MockStrategy();
         strategy.setAssetManagement(address(assetManagement));
         strategy.setBalance(0);
         strategy.setShareToken(cUsdt);
-        strategy.setApr(0);
+        strategy.setApy(0);
         strategy.setAsset(usdt);
         vm.prank(owner);
         assetManagement.setStrategyCompound(address(strategy));

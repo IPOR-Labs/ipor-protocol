@@ -43,7 +43,7 @@ interface IAmmGovernanceService {
 
     /// @notice Add an account to the list of addresses appointed to rebalance AMM for given asset. Action available only to the IPOR Protocol Owner.
     /// @param asset Address of asset representing specific pool
-    /// @param account Address of an account added to the list of addessesm appointed to rebalance in AMM
+    /// @param account Address of an account added to the list of addresses appointed to rebalance in AMM
     /// @dev Rebalancing the AMM is a process of moving liquidity between the AMM and the AssetManagement in the amount defined in param called "ammTreasuryAndAssetManagementRatio".
     function addAppointedToRebalanceInAmm(address asset, address account) external;
 

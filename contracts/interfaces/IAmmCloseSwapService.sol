@@ -53,7 +53,7 @@ interface IAmmCloseSwapService {
         uint256 openingFeeTreasuryPortionRateForSwapUnwind;
         /// @notice Max number of swaps (per leg) that can be liquidated in one call, represented without decimals
         uint256 maxLengthOfLiquidatedSwapsPerLeg;
-        /// @notice Time before maturity when the community is asslowed to close the swap, represented in seconds
+        /// @notice Time before maturity when the community is allowed to close the swap, represented in seconds
         uint256 timeBeforeMaturityAllowedToCloseSwapByCommunity;
         /// @notice Time before maturity then the swap owner can close it, represented in seconds
         uint256 timeBeforeMaturityAllowedToCloseSwapByBuyer;

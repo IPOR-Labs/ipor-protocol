@@ -16,9 +16,9 @@ interface IStrategy {
     /// @notice Returns strategy's share token address
     function getShareToken() external view returns (address);
 
-    /// @notice Gets annualised interest rate (APR) for this strategy.
-    /// @return APR value, represented in 18 decimals.
-    function getApr() external view returns (uint256);
+    /// @notice Gets annual percentage yield (APY) for this strategy.
+    /// @return APY value, represented in 18 decimals.
+    function getApy() external view returns (uint256);
 
     /// @notice Gets balance for given asset (underlying / stablecoin) allocated to this strategy.
     /// @return balance for given asset, represented in 18 decimals.
