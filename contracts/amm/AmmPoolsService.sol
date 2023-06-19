@@ -269,10 +269,7 @@ contract AmmPoolsService is IAmmPoolsService {
             poolCfg.redeemFeeRate
         );
 
-        require(
-            redeemAmount.wadAssetAmount > 0 && redeemAmount.wadRedeemAmount > 0,
-            AmmPoolsErrors.CANNOT_REDEEM_ASSET_AMOUNT_TOO_LOW
-        );
+        require(redeemAmount.wadAssetAmount > 0, AmmPoolsErrors.CANNOT_REDEEM_ASSET_AMOUNT_TOO_LOW);
 
         uint256 wadAmmTreasuryErc20Balance = IporMath.convertToWad(
             IERC20Upgradeable(poolCfg.asset).balanceOf(poolCfg.ammTreasury),
