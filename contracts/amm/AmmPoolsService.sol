@@ -16,6 +16,7 @@ import "../interfaces/IAmmTreasury.sol";
 import "../interfaces/IAmmPoolsService.sol";
 import "../interfaces/IAmmStorage.sol";
 import "../governance/AmmConfigurationManager.sol";
+import "forge-std/console2.sol";
 
 contract AmmPoolsService is IAmmPoolsService {
     using SafeCast for int256;
@@ -262,14 +263,17 @@ contract AmmPoolsService is IAmmPoolsService {
 
         require(exchangeRate > 0, AmmErrors.LIQUIDITY_POOL_IS_EMPTY);
 
-        AmmTypes.RedeemAmount memory redeemAmount = _calculateRedeemAmount(
+        AmmTypes.RedeemAmount memory redeemAmountStruct = _calculateRedeemAmount(
             poolCfg.decimals,
             ipTokenAmount,
             exchangeRate,
             poolCfg.redeemFeeRate
         );
 
-        require(redeemAmount.wadAssetAmount > 0, AmmPoolsErrors.CANNOT_REDEEM_ASSET_AMOUNT_TOO_LOW);
+        require(
+            redeemAmountStruct.redeemAmount > 0 && redeemAmountStruct.wadRedeemAmount > 0,
+            AmmPoolsErrors.CANNOT_REDEEM_ASSET_AMOUNT_TOO_LOW
+        );
 
         uint256 wadAmmTreasuryErc20Balance = IporMath.convertToWad(
             IERC20Upgradeable(poolCfg.asset).balanceOf(poolCfg.ammTreasury),
@@ -277,7 +281,7 @@ contract AmmPoolsService is IAmmPoolsService {
         );
 
         require(
-            wadAmmTreasuryErc20Balance + balance.vault > redeemAmount.wadRedeemAmount,
+            wadAmmTreasuryErc20Balance + balance.vault > redeemAmountStruct.wadRedeemAmount,
             AmmPoolsErrors.INSUFFICIENT_ERC20_BALANCE
         );
 
@@ -285,33 +289,33 @@ contract AmmPoolsService is IAmmPoolsService {
             poolCfg,
             wadAmmTreasuryErc20Balance,
             balance.vault,
-            redeemAmount.wadRedeemAmount
+            redeemAmountStruct.wadRedeemAmount
         );
 
         require(
             _calculateRedeemedCollateralRatio(
                 balance.liquidityPool,
                 balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
-                redeemAmount.wadRedeemAmount
+                redeemAmountStruct.wadRedeemAmount
             ) <= poolCfg.redeemLpMaxCollateralRatio,
             AmmPoolsErrors.REDEEM_LP_COLLATERAL_RATIO_EXCEEDED
         );
 
         IIpToken(poolCfg.ipToken).burn(msg.sender, ipTokenAmount);
 
-        IAmmStorage(poolCfg.ammStorage).subtractLiquidityInternal(redeemAmount.wadRedeemAmount);
+        IAmmStorage(poolCfg.ammStorage).subtractLiquidityInternal(redeemAmountStruct.wadRedeemAmount);
 
-        IERC20Upgradeable(asset).safeTransferFrom(poolCfg.ammTreasury, beneficiary, redeemAmount.redeemAmount);
+        IERC20Upgradeable(asset).safeTransferFrom(poolCfg.ammTreasury, beneficiary, redeemAmountStruct.redeemAmount);
 
         emit Redeem(
             block.timestamp,
             poolCfg.ammTreasury,
             beneficiary,
             exchangeRate,
-            redeemAmount.wadAssetAmount,
+            redeemAmountStruct.wadAssetAmount,
             ipTokenAmount,
-            redeemAmount.wadRedeemFee,
-            redeemAmount.wadRedeemAmount
+            redeemAmountStruct.wadRedeemFee,
+            redeemAmountStruct.wadRedeemAmount
         );
     }
 
