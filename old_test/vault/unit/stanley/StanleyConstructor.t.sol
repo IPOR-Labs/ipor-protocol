@@ -319,7 +319,7 @@ contract IporLogicTest is TestCommons, DataUtils {
         vm.expectRevert("Pausable: paused");
         assetManagementDai.withdrawAll();
         vm.expectRevert("Pausable: paused");
-        assetManagementDai.migrateAssetToStrategyWithMaxApr();
+        assetManagementDai.migrateAssetToStrategyWithMaxApy();
         vm.expectRevert("Pausable: paused");
         assetManagementDai.setStrategyAave(address(_mockStrategyAave));
         vm.expectRevert("Pausable: paused");

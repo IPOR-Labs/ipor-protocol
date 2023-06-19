@@ -10,13 +10,21 @@ import "@ipor-protocol/contracts/libraries/Constants.sol";
 import "@ipor-protocol/contracts/libraries/PaginationUtils.sol";
 import "@ipor-protocol/contracts/interfaces/types/AmmStorageTypes.sol";
 import "@ipor-protocol/contracts/interfaces/IAmmStorage.sol";
+import "@ipor-protocol/contracts/interfaces/IProxyImplementation.sol";
 import "@ipor-protocol/contracts/security/IporOwnableUpgradeable.sol";
 import "@ipor-protocol/contracts/amm/libraries/SoapIndicatorRebalanceLogic.sol";
 import "@ipor-protocol/contracts/amm/libraries/types/StorageInternalTypes.sol";
 import "@ipor-protocol/contracts/amm/libraries/types/AmmInternalTypes.sol";
 
 //@dev all stored values related to tokens are in 18 decimals.
-contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, IporOwnableUpgradeable, IAmmStorage {
+contract AmmStorage is
+    Initializable,
+    PausableUpgradeable,
+    UUPSUpgradeable,
+    IporOwnableUpgradeable,
+    IAmmStorage,
+    IProxyImplementation
+{
     using SafeCast for uint256;
     using SoapIndicatorRebalanceLogic for AmmStorageTypes.SoapIndicators;
 
@@ -388,6 +396,10 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
     function getLiquidityPoolAccountContribution(address account) external view returns (uint256) {
         return _liquidityPoolAccountContribution[account];
+    }
+
+    function getImplementation() external view override returns (address) {
+        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
 
     function _getPositions(

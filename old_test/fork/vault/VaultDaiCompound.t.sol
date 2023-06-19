@@ -17,7 +17,7 @@ contract VaultDaiCompoundTest is Test {
         // given
         uint256 amount = 1_000 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
-        amm.overrideAaveStrategyWithZeroApr(_admin);
+        amm.overrideAaveStrategyWithZeroApy(_admin);
         deal(amm.dai(), address(amm.ammTreasury()), amount);
 
         uint256 ammTreasuryTotalBalanceOnAssetManagementBefore = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
@@ -40,7 +40,7 @@ contract VaultDaiCompoundTest is Test {
         // given
         uint256 amount = 1_000 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
-        amm.overrideAaveStrategyWithZeroApr(_admin);
+        amm.overrideAaveStrategyWithZeroApy(_admin);
         deal(amm.dai(), address(amm.ammTreasury()), amount);
         vm.startPrank(_admin);
         amm.joseph().depositToAssetManagement(amount);
@@ -65,7 +65,7 @@ contract VaultDaiCompoundTest is Test {
         uint256 amount = 1_000 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
         Joseph joseph = amm.joseph();
-        amm.overrideAaveStrategyWithZeroApr(_admin);
+        amm.overrideAaveStrategyWithZeroApy(_admin);
         vm.startPrank(_admin);
         amm.strategyAave().addPauseGuardian(_admin);
         amm.strategyCompound().addPauseGuardian(_admin);
@@ -94,7 +94,7 @@ contract VaultDaiCompoundTest is Test {
         uint256 amount = 1_000 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
         Joseph joseph = amm.joseph();
-        amm.overrideAaveStrategyWithZeroApr(_admin);
+        amm.overrideAaveStrategyWithZeroApy(_admin);
         deal(amm.dai(), address(amm.ammTreasury()), amount);
         vm.startPrank(_admin);
         amm.joseph().depositToAssetManagement(amount);
@@ -124,7 +124,7 @@ contract VaultDaiCompoundTest is Test {
         uint256 amount = 1_000 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
         Joseph joseph = amm.joseph();
-        amm.overrideAaveStrategyWithZeroApr(_admin);
+        amm.overrideAaveStrategyWithZeroApy(_admin);
         vm.startPrank(_admin);
         amm.assetManagement().addPauseGuardian(_admin);
         amm.assetManagement().pause();
@@ -151,7 +151,7 @@ contract VaultDaiCompoundTest is Test {
         uint256 amount = 1_000 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
         Joseph joseph = amm.joseph();
-        amm.overrideAaveStrategyWithZeroApr(_admin);
+        amm.overrideAaveStrategyWithZeroApy(_admin);
         deal(amm.dai(), address(amm.ammTreasury()), amount);
         vm.startPrank(_admin);
         amm.joseph().depositToAssetManagement(amount);

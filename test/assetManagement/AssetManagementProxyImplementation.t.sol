@@ -8,12 +8,13 @@ import {MockTestnetToken} from "contracts/mocks/tokens/MockTestnetToken.sol";
 
 import {ItfAssetManagement18D} from "contracts/itf/ItfAssetManagement18D.sol";
 
+import "contracts/mocks/stanley/MockStrategy.sol";
+import "contracts/vault/AssetManagementDai.sol";
 import "../utils/builder/AssetManagementBuilder.sol";
-import "@ipor-protocol/contracts/mocks/stanley/MockStrategy.sol";
 import "../utils/builder/IvTokenBuilder.sol";
 import "../utils/builder/AssetBuilder.sol";
 
-contract AssetManagementMaxApyStrategyTest is TestCommons {
+contract AssetManagementProxyImplementationTest is TestCommons {
     AssetBuilder internal _assetBuilder = new AssetBuilder(address(this));
     IvTokenBuilder internal _ivTokenBuilder = new IvTokenBuilder(address(this));
     AssetManagementBuilder internal _assetManagementBuilder = new AssetManagementBuilder(address(this));
@@ -52,33 +53,29 @@ contract AssetManagementMaxApyStrategyTest is TestCommons {
             .build();
     }
 
-    function testShouldSelectAaveStrategy() public {
+    function testShouldReturnNonZeroAddress() public {
         // given
-        _strategyAaveDai.setApy(100000);
-        _strategyCompoundDai.setApy(99999);
+
         // when
-        (address strategyMaxApy, , ) = _assetManagementDai.getMaxApyStrategy();
+        address proxyImpl = _assetManagementDai.getImplementation();
         // then
-        assertEq(strategyMaxApy, address(_strategyAaveDai));
+        assertTrue(proxyImpl != address(0), "proxyImpl should not be zero address");
     }
 
-    function testShouldSelectAaveStrategyWhenAaveApyEqualsCompoundApy() public {
+    function testShouldUpdateImplementation() public {
         // given
-        _strategyAaveDai.setApy(10);
-        _strategyCompoundDai.setApy(10);
-        // when
-        (address strategyMaxApy, , ) = _assetManagementDai.getMaxApyStrategy();
-        // then
-        assertEq(strategyMaxApy, address(_strategyAaveDai));
-    }
+        address oldProxyImpl = _assetManagementDai.getImplementation();
+        address newImplementation = address(new AssetManagementDai());
 
-    function testShouldSelectCompoundStrategy() public {
-        // given
-        _strategyAaveDai.setApy(1000);
-        _strategyCompoundDai.setApy(99999);
         // when
-        (address strategyMaxApy, , ) = _assetManagementDai.getMaxApyStrategy();
+        _assetManagementDai.upgradeTo(newImplementation);
+
         // then
-        assertEq(strategyMaxApy, address(_strategyCompoundDai));
+        address newProxyImpl = _assetManagementDai.getImplementation();
+        assertTrue(
+            newProxyImpl == newImplementation,
+            "Implementation should be equal to newImplementation"
+        );
+        assertTrue(newProxyImpl != oldProxyImpl, "proxyImpl should be updated");
     }
 }

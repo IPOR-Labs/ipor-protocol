@@ -82,12 +82,12 @@ contract DaiAmm is Test, TestCommons, IporRiskManagementOracleUtils {
         vm.stopPrank();
     }
 
-    function overrideAaveStrategyWithZeroApr(address owner) public {
+    function overrideAaveStrategyWithZeroApy(address owner) public {
         MockStrategy strategy = new MockStrategy();
         strategy.setAssetManagement(address(assetManagement));
         strategy.setBalance(0);
         strategy.setShareToken(aDai);
-        strategy.setApr(0);
+        strategy.setApy(0);
         strategy.setAsset(dai);
         vm.prank(owner);
         assetManagement.setStrategyAave(address(strategy));
@@ -100,12 +100,12 @@ contract DaiAmm is Test, TestCommons, IporRiskManagementOracleUtils {
         vm.stopPrank();
     }
 
-    function overrideCompoundStrategyWithZeroApr(address owner) public {
+    function overrideCompoundStrategyWithZeroApy(address owner) public {
         MockStrategy strategy = new MockStrategy();
         strategy.setAssetManagement(address(assetManagement));
         strategy.setBalance(0);
         strategy.setShareToken(cDai);
-        strategy.setApr(0);
+        strategy.setApy(0);
         strategy.setAsset(dai);
         vm.prank(owner);
         assetManagement.setStrategyCompound(address(strategy));

@@ -162,24 +162,24 @@ contract AssetManagementDepositTest is TestCommons, DataUtils {
         _setupAssetManagement();
     }
 
-    function testShouldChangeAaveAPR() public {
+    function testShouldChangeAaveAPY() public {
         // given
-        uint256 apyBefore = _strategyAaveDai.getApr();
+        uint256 apyBefore = _strategyAaveDai.getApy();
         // when
         _lendingPoolAave.setCurrentLiquidityRate((TestConstants.RAY_UINT128 / 100) * 5);
         // then
-        uint256 apyAfter = _strategyAaveDai.getApr();
+        uint256 apyAfter = _strategyAaveDai.getApy();
         assertEq(apyBefore, 20000000000000000);
         assertEq(apyAfter, 50000000000000000);
     }
 
     function testShouldChangeCompoundAPR() public {
         // given
-        uint256 apyBefore = _strategyCompoundDai.getApr();
+        uint256 apyBefore = _strategyCompoundDai.getApy();
         // when
         _mockCDAI.setSupplyRate(uint128(10));
         // then
-        uint256 apyAfter = _strategyCompoundDai.getApr();
+        uint256 apyAfter = _strategyCompoundDai.getApy();
 		assertEq(apyBefore, 90148815177415640);
 		assertEq(apyAfter, 26280000);
     }
@@ -392,7 +392,7 @@ contract AssetManagementDepositTest is TestCommons, DataUtils {
         _assetManagementDai.deposit(TestConstants.USD_10_18DEC); // into Compound
         _lendingPoolAave.setCurrentLiquidityRate((TestConstants.RAY_UINT128 / 100) * 10);
         // when
-        _assetManagementDai.migrateAssetToStrategyWithMaxApr();
+        _assetManagementDai.migrateAssetToStrategyWithMaxApy();
         // then
         uint256 compoundBalance = _strategyCompoundDai.balanceOf();
         uint256 aaveBalance = _strategyAaveDai.balanceOf();
@@ -408,7 +408,7 @@ contract AssetManagementDepositTest is TestCommons, DataUtils {
         _assetManagementDai.deposit(TestConstants.USD_10_18DEC); // into Aave
         _lendingPoolAave.setCurrentLiquidityRate(TestConstants.RAY_UINT128 / 100);
         // when
-        _assetManagementDai.migrateAssetToStrategyWithMaxApr();
+        _assetManagementDai.migrateAssetToStrategyWithMaxApy();
         // then
         uint256 compoundBalance = _strategyCompoundDai.balanceOf();
         uint256 aaveBalance = _strategyAaveDai.balanceOf();

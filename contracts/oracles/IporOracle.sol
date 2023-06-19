@@ -8,22 +8,23 @@ import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/IporOracleErrors.sol";
-import "../interfaces/types/IporTypes.sol";
-import "../interfaces/types/IporOracleTypes.sol";
 import "../libraries/Constants.sol";
 import "../libraries/math/IporMath.sol";
+import "../libraries/math/InterestRates.sol";
+import "./libraries/IporLogic.sol";
+import "../interfaces/types/IporTypes.sol";
+import "../interfaces/types/IporOracleTypes.sol";
 import "../interfaces/IIporOracle.sol";
 import "../interfaces/IIporAlgorithm.sol";
+import "../interfaces/IProxyImplementation.sol";
 import "../security/IporOwnableUpgradeable.sol";
-import "./libraries/IporLogic.sol";
-import "../libraries/math/InterestRates.sol";
 
 /**
  * @title IPOR Index Oracle Contract
  *
  * @author IPOR Labs
  */
-contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, IporOwnableUpgradeable, IIporOracle {
+contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, IporOwnableUpgradeable, IIporOracle, IProxyImplementation {
     using SafeCast for uint256;
     using IporLogic for IporOracleTypes.IPOR;
 
@@ -213,6 +214,10 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
     function unpause() external override onlyOwner {
         _unpause();
+    }
+
+    function getImplementation() external view override returns (address) {
+        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
 
     function _updateIndexes(

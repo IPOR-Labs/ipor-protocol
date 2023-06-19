@@ -130,7 +130,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         _usdtAssetManagement = usdtPoolCfg.assetManagement;
         _usdtOpeningFeeRateForSwapUnwind = usdtPoolCfg.openingFeeRateForSwapUnwind;
         _usdtOpeningFeeTreasuryPortionRateForSwapUnwind = usdtPoolCfg.openingFeeTreasuryPortionRateForSwapUnwind;
-        _usdtLiquidationLegLimit = usdtPoolCfg.liquidationLegLimit;
+        _usdtLiquidationLegLimit = usdtPoolCfg.maxLengthOfLiquidatedSwapsPerLeg;
         _usdtTimeBeforeMaturityAllowedToCloseSwapByCommunity = usdtPoolCfg
             .timeBeforeMaturityAllowedToCloseSwapByCommunity;
         _usdtTimeBeforeMaturityAllowedToCloseSwapByBuyer = usdtPoolCfg.timeBeforeMaturityAllowedToCloseSwapByBuyer;
@@ -147,7 +147,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         _usdcAssetManagement = usdcPoolCfg.assetManagement;
         _usdcOpeningFeeRateForSwapUnwind = usdcPoolCfg.openingFeeRateForSwapUnwind;
         _usdcOpeningFeeTreasuryPortionRateForSwapUnwind = usdcPoolCfg.openingFeeTreasuryPortionRateForSwapUnwind;
-        _usdcLiquidationLegLimit = usdcPoolCfg.liquidationLegLimit;
+        _usdcLiquidationLegLimit = usdcPoolCfg.maxLengthOfLiquidatedSwapsPerLeg;
         _usdcTimeBeforeMaturityAllowedToCloseSwapByCommunity = usdcPoolCfg
             .timeBeforeMaturityAllowedToCloseSwapByCommunity;
         _usdcTimeBeforeMaturityAllowedToCloseSwapByBuyer = usdcPoolCfg.timeBeforeMaturityAllowedToCloseSwapByBuyer;
@@ -164,7 +164,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         _daiAssetManagement = daiPoolCfg.assetManagement;
         _daiOpeningFeeRateForSwapUnwind = daiPoolCfg.openingFeeRateForSwapUnwind;
         _daiOpeningFeeTreasuryPortionRateForSwapUnwind = daiPoolCfg.openingFeeTreasuryPortionRateForSwapUnwind;
-        _daiLiquidationLegLimit = daiPoolCfg.liquidationLegLimit;
+        _daiLiquidationLegLimit = daiPoolCfg.maxLengthOfLiquidatedSwapsPerLeg;
         _daiTimeBeforeMaturityAllowedToCloseSwapByCommunity = daiPoolCfg
             .timeBeforeMaturityAllowedToCloseSwapByCommunity;
         _daiTimeBeforeMaturityAllowedToCloseSwapByBuyer = daiPoolCfg.timeBeforeMaturityAllowedToCloseSwapByBuyer;
@@ -340,7 +340,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
                     assetManagement: _usdtAssetManagement,
                     openingFeeRateForSwapUnwind: _usdtOpeningFeeRateForSwapUnwind,
                     openingFeeTreasuryPortionRateForSwapUnwind: _usdtOpeningFeeTreasuryPortionRateForSwapUnwind,
-                    liquidationLegLimit: _usdtLiquidationLegLimit,
+                    maxLengthOfLiquidatedSwapsPerLeg: _usdtLiquidationLegLimit,
                     timeBeforeMaturityAllowedToCloseSwapByCommunity: _usdtTimeBeforeMaturityAllowedToCloseSwapByCommunity,
                     timeBeforeMaturityAllowedToCloseSwapByBuyer: _usdtTimeBeforeMaturityAllowedToCloseSwapByBuyer,
                     minLiquidationThresholdToCloseBeforeMaturityByCommunity: _usdtMinLiquidationThresholdToCloseBeforeMaturityByCommunity,
@@ -357,7 +357,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
                     assetManagement: _usdcAssetManagement,
                     openingFeeRateForSwapUnwind: _usdcOpeningFeeRateForSwapUnwind,
                     openingFeeTreasuryPortionRateForSwapUnwind: _usdcOpeningFeeTreasuryPortionRateForSwapUnwind,
-                    liquidationLegLimit: _usdcLiquidationLegLimit,
+                    maxLengthOfLiquidatedSwapsPerLeg: _usdcLiquidationLegLimit,
                     timeBeforeMaturityAllowedToCloseSwapByCommunity: _usdcTimeBeforeMaturityAllowedToCloseSwapByCommunity,
                     timeBeforeMaturityAllowedToCloseSwapByBuyer: _usdcTimeBeforeMaturityAllowedToCloseSwapByBuyer,
                     minLiquidationThresholdToCloseBeforeMaturityByCommunity: _usdcMinLiquidationThresholdToCloseBeforeMaturityByCommunity,
@@ -374,7 +374,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
                     assetManagement: _daiAssetManagement,
                     openingFeeRateForSwapUnwind: _daiOpeningFeeRateForSwapUnwind,
                     openingFeeTreasuryPortionRateForSwapUnwind: _daiOpeningFeeTreasuryPortionRateForSwapUnwind,
-                    liquidationLegLimit: _daiLiquidationLegLimit,
+                    maxLengthOfLiquidatedSwapsPerLeg: _daiLiquidationLegLimit,
                     timeBeforeMaturityAllowedToCloseSwapByCommunity: _daiTimeBeforeMaturityAllowedToCloseSwapByCommunity,
                     timeBeforeMaturityAllowedToCloseSwapByBuyer: _daiTimeBeforeMaturityAllowedToCloseSwapByBuyer,
                     minLiquidationThresholdToCloseBeforeMaturityByCommunity: _daiMinLiquidationThresholdToCloseBeforeMaturityByCommunity,
@@ -399,9 +399,9 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         )
     {
         require(
-            payFixedSwapIds.length <= poolCfg.liquidationLegLimit &&
-                receiveFixedSwapIds.length <= poolCfg.liquidationLegLimit,
-            AmmErrors.LIQUIDATION_LEG_LIMIT_EXCEEDED
+            payFixedSwapIds.length <= poolCfg.maxLengthOfLiquidatedSwapsPerLeg &&
+                receiveFixedSwapIds.length <= poolCfg.maxLengthOfLiquidatedSwapsPerLeg,
+            AmmErrors.MAX_LENGTH_LIQUIDATED_SWAPS_PER_LEG_EXCEEDED
         );
 
         uint256 payoutForLiquidatorPayFixed;
@@ -518,7 +518,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         AmmCloseSwapServicePoolConfiguration memory poolCfg
     ) internal returns (uint256 payoutForLiquidator, AmmTypes.IporSwapClosingResult[] memory closedSwaps) {
         uint256 swapIdsLength = swapIds.length;
-        require(swapIdsLength <= poolCfg.liquidationLegLimit, AmmErrors.LIQUIDATION_LEG_LIMIT_EXCEEDED);
+        require(swapIdsLength <= poolCfg.maxLengthOfLiquidatedSwapsPerLeg, AmmErrors.MAX_LENGTH_LIQUIDATED_SWAPS_PER_LEG_EXCEEDED);
 
         closedSwaps = new AmmTypes.IporSwapClosingResult[](swapIdsLength);
         AmmTypes.Swap memory swap;
@@ -647,7 +647,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
                 })
             );
 
-            int256 swapUnwindValue = swap.calculateSwapUnwindValue(
+            int256 swapUnwindAmount = swap.calculateSwapUnwindAmount(
                 closeTimestamp,
                 swapPayoffToDate,
                 oppositeLegFixedRate
@@ -663,12 +663,12 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
                 poolCfg.openingFeeTreasuryPortionRateForSwapUnwind
             );
 
-            payoff = swapPayoffToDate + swapUnwindValue - swapUnwindOpeningFeeAmount.toInt256();
+            payoff = swapPayoffToDate + swapUnwindAmount - swapUnwindOpeningFeeAmount.toInt256();
 
             emit SwapUnwind(
                 swap.id,
                 swapPayoffToDate,
-                swapUnwindValue,
+                swapUnwindAmount,
                 swapUnwindOpeningFeeLPAmount,
                 swapUnwindOpeningFeeTreasuryAmount
             );

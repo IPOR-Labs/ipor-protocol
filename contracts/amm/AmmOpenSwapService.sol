@@ -693,10 +693,10 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         );
 
         uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, poolCfg.decimals);
-        uint256 liquidationDepositAmountWad = poolCfg.liquidationDepositAmount * 1e18;
+        uint256 wadLiquidationDepositAmount = poolCfg.liquidationDepositAmount * 1e18;
 
         require(
-            wadTotalAmount > liquidationDepositAmountWad + poolCfg.iporPublicationFee,
+            wadTotalAmount > wadLiquidationDepositAmount + poolCfg.iporPublicationFee,
             AmmErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
 
@@ -704,7 +704,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             tenor,
             wadTotalAmount,
             leverage,
-            liquidationDepositAmountWad,
+            wadLiquidationDepositAmount,
             poolCfg.iporPublicationFee,
             poolCfg.openingFeeRate
         );
@@ -717,7 +717,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         require(collateral <= poolCfg.maxSwapCollateralAmount, AmmErrors.COLLATERAL_AMOUNT_TOO_HIGH);
 
         require(
-            wadTotalAmount > liquidationDepositAmountWad + poolCfg.iporPublicationFee + openingFeeAmount,
+            wadTotalAmount > wadLiquidationDepositAmount + poolCfg.iporPublicationFee + openingFeeAmount,
             AmmErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
         IporTypes.AccruedIpor memory accruedIndex = IIporOracle(_iporOracle).getAccruedIndex(

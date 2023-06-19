@@ -13,28 +13,28 @@ contract AssetManagementCompoundUsdcTest is Test {
         _admin = vm.rememberKey(1);
     }
 
-    function testShouldCompoundAprBeZeroAfterOverride() public {
+    function testShouldCompoundApyBeZeroAfterOverride() public {
         // given
         UsdcAmm amm = new UsdcAmm(_admin);
 
         // when
-        amm.overrideCompoundStrategyWithZeroApr(_admin);
+        amm.overrideCompoundStrategyWithZeroApy(_admin);
 
         // then
-        assertEq(IStrategy(amm.assetManagement().getStrategyCompound()).getApr(), 0, "strategyCompoundApr == 0");
+        assertEq(IStrategy(amm.assetManagement().getStrategyCompound()).getApy(), 0, "strategyCompoundApy == 0");
     }
 
-    function testShouldCompoundAprGreaterThanAaveApr() public {
+    function testShouldCompoundApyGreaterThanAaveApy() public {
         // given
         UsdcAmm amm = new UsdcAmm(_admin);
-        amm.overrideAaveStrategyWithZeroApr(_admin);
+        amm.overrideAaveStrategyWithZeroApy(_admin);
 
         // when
-        uint256 compoundApr = IStrategy(amm.assetManagement().getStrategyCompound()).getApr();
-        uint256 aaveApr = IStrategy(amm.assetManagement().getStrategyAave()).getApr();
+        uint256 compoundApy = IStrategy(amm.assetManagement().getStrategyCompound()).getApy();
+        uint256 aaveApy = IStrategy(amm.assetManagement().getStrategyAave()).getApy();
 
         // then
-        assertGt(compoundApr, aaveApr, "compoundApr > aaveApr");
+        assertGt(compoundApy, aaveApy, "compoundApy > aaveApy");
     }
 
     function testShouldAcceptDepositAndTransferTokensIntoCompound() public {
@@ -42,7 +42,7 @@ contract AssetManagementCompoundUsdcTest is Test {
         uint256 depositAmount = 10 * 1e6;
         UsdcAmm amm = new UsdcAmm(_admin);
         deal(amm.usdc(), address(amm.ammTreasury()), depositAmount);
-        amm.overrideAaveStrategyWithZeroApr(_admin);
+        amm.overrideAaveStrategyWithZeroApy(_admin);
 
         uint256 ammTreasuryIvTokenBefore = IvToken(amm.assetManagement().getIvToken()).balanceOf(address(amm.ammTreasury()));
         uint256 strategyBalanceBefore = IStrategy(amm.assetManagement().getStrategyCompound()).balanceOf();
@@ -80,7 +80,7 @@ contract AssetManagementCompoundUsdcTest is Test {
         uint256 depositAmount = 10 * 1e6;
         UsdcAmm amm = new UsdcAmm(_admin);
         deal(amm.usdc(), address(amm.ammTreasury()), 2 * depositAmount);
-        amm.overrideAaveStrategyWithZeroApr(_admin);
+        amm.overrideAaveStrategyWithZeroApy(_admin);
 
         uint256 ammTreasuryIvTokenBefore = IvToken(amm.assetManagement().getIvToken()).balanceOf(address(amm.ammTreasury()));
         uint256 strategyBalanceBefore = IStrategy(amm.assetManagement().getStrategyCompound()).balanceOf();
@@ -116,7 +116,7 @@ contract AssetManagementCompoundUsdcTest is Test {
         //given
         uint256 withdrawAmount = 10 * 1e6;
         UsdcAmm amm = new UsdcAmm(_admin);
-        amm.overrideAaveStrategyWithZeroApr(_admin);
+        amm.overrideAaveStrategyWithZeroApy(_admin);
 
         vm.startPrank(address(amm.ammTreasury()));
         deal(amm.usdc(), address(amm.ammTreasury()), withdrawAmount);
@@ -154,7 +154,7 @@ contract AssetManagementCompoundUsdcTest is Test {
         // given
         uint256 withdrawAmount = 100 * 1e6;
         UsdcAmm amm = new UsdcAmm(_admin);
-        amm.overrideAaveStrategyWithZeroApr(_admin);
+        amm.overrideAaveStrategyWithZeroApy(_admin);
 
         vm.startPrank(address(amm.ammTreasury()));
         deal(amm.usdc(), address(amm.ammTreasury()), withdrawAmount);
@@ -190,7 +190,7 @@ contract AssetManagementCompoundUsdcTest is Test {
         // given
         uint256 withdrawAmount = 10 * 1e6;
         UsdcAmm amm = new UsdcAmm(_admin);
-        amm.overrideAaveStrategyWithZeroApr(_admin);
+        amm.overrideAaveStrategyWithZeroApy(_admin);
 
         vm.startPrank(address(amm.ammTreasury()));
         deal(amm.usdc(), address(amm.ammTreasury()), withdrawAmount);
@@ -226,7 +226,7 @@ contract AssetManagementCompoundUsdcTest is Test {
         uint256 deposit_loss = 3e12;
         uint256 depositAmount = 100_000 * 1e6;
         UsdcAmm amm = new UsdcAmm(_admin);
-        amm.overrideAaveStrategyWithZeroApr(_admin);
+        amm.overrideAaveStrategyWithZeroApy(_admin);
 
         vm.startPrank(address(amm.ammTreasury()));
         deal(amm.usdc(), address(amm.ammTreasury()), depositAmount);
@@ -274,18 +274,18 @@ contract AssetManagementCompoundUsdcTest is Test {
         );
     }
 
-    function testShouldMigrateAssetToStrategyWithMaxAPR() public {
+    function testShouldMigrateAssetToStrategyWithMaxAPY() public {
         // given
         uint256 deposit_loss = 1e12;
         uint256 depositAmount = 10 * 1e6;
         UsdcAmm amm = new UsdcAmm(_admin);
-        amm.overrideCompoundStrategyWithZeroApr(_admin);
+        amm.overrideCompoundStrategyWithZeroApy(_admin);
         deal(amm.usdc(), address(amm.ammTreasury()), depositAmount);
         vm.startPrank(address(amm.ammTreasury()));
         amm.assetManagement().deposit(depositAmount * 1e12);
         vm.stopPrank();
         amm.restoreStrategies(_admin);
-        amm.overrideAaveStrategyWithZeroApr(_admin);
+        amm.overrideAaveStrategyWithZeroApy(_admin);
 
         uint256 ammTreasuryIvTokenBefore = IvToken(amm.assetManagement().getIvToken()).balanceOf(address(amm.ammTreasury()));
         uint256 strategyAaveBalanceBefore = IStrategy(amm.assetManagement().getStrategyAave()).balanceOf();
@@ -295,7 +295,7 @@ contract AssetManagementCompoundUsdcTest is Test {
 
         //when
         vm.startPrank(_admin);
-        amm.assetManagement().migrateAssetToStrategyWithMaxApr();
+        amm.assetManagement().migrateAssetToStrategyWithMaxApy();
 
         //then
         uint256 ammTreasuryIvTokenAfter = IvToken(amm.assetManagement().getIvToken()).balanceOf(address(amm.ammTreasury()));

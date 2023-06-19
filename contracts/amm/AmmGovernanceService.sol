@@ -45,9 +45,9 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     address internal immutable _daiAmmCharlieTreasuryManager;
 
     constructor(
-        PoolConfiguration memory usdtPoolCfg,
-        PoolConfiguration memory usdcPoolCfg,
-        PoolConfiguration memory daiPoolCfg
+        AmmGovernancePoolConfiguration memory usdtPoolCfg,
+        AmmGovernancePoolConfiguration memory usdcPoolCfg,
+        AmmGovernancePoolConfiguration memory daiPoolCfg
     ) {
         require(
             usdtPoolCfg.asset != address(0),
@@ -137,7 +137,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         );
 
         _usdt = usdtPoolCfg.asset;
-        _usdtDecimals = usdtPoolCfg.assetDecimals;
+        _usdtDecimals = usdtPoolCfg.decimals;
         _usdtAmmStorage = usdtPoolCfg.ammStorage;
         _usdtAmmTreasury = usdtPoolCfg.ammTreasury;
         _usdtAmmPoolsTreasury = usdtPoolCfg.ammPoolsTreasury;
@@ -146,7 +146,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         _usdtAmmCharlieTreasuryManager = usdtPoolCfg.ammCharlieTreasuryManager;
 
         _usdc = usdcPoolCfg.asset;
-        _usdcDecimals = usdcPoolCfg.assetDecimals;
+        _usdcDecimals = usdcPoolCfg.decimals;
         _usdcAmmStorage = usdcPoolCfg.ammStorage;
         _usdcAmmTreasury = usdcPoolCfg.ammTreasury;
         _usdcAmmPoolsTreasury = usdcPoolCfg.ammPoolsTreasury;
@@ -155,7 +155,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         _usdcAmmCharlieTreasuryManager = usdcPoolCfg.ammCharlieTreasuryManager;
 
         _dai = daiPoolCfg.asset;
-        _daiDecimals = daiPoolCfg.assetDecimals;
+        _daiDecimals = daiPoolCfg.decimals;
         _daiAmmStorage = daiPoolCfg.ammStorage;
         _daiAmmTreasury = daiPoolCfg.ammTreasury;
         _daiAmmPoolsTreasury = daiPoolCfg.ammPoolsTreasury;
@@ -164,12 +164,9 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         _daiAmmCharlieTreasuryManager = daiPoolCfg.ammCharlieTreasuryManager;
     }
 
-    function getAmmGovernanceServicePoolConfiguration(address asset)
-        external
-        view
-        override
-        returns (PoolConfiguration memory)
-    {
+    function getAmmGovernancePoolConfiguration(
+        address asset
+    ) external view override returns (AmmGovernancePoolConfiguration memory) {
         return _getPoolConfiguration(asset);
     }
 
@@ -186,12 +183,12 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     }
 
     function transferToTreasury(address asset, uint256 assetAmount) external override {
-        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+        AmmGovernancePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         require(msg.sender == poolCfg.ammPoolsTreasuryManager, AmmPoolsErrors.CALLER_NOT_TREASURY_MANAGER);
 
-        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(assetAmount, poolCfg.assetDecimals);
-        uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, poolCfg.assetDecimals);
+        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(assetAmount, poolCfg.decimals);
+        uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, poolCfg.decimals);
 
         IAmmStorage(poolCfg.ammStorage).updateStorageWhenTransferToTreasuryInternal(wadAssetAmount);
 
@@ -203,12 +200,12 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     }
 
     function transferToCharlieTreasury(address asset, uint256 assetAmount) external override {
-        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+        AmmGovernancePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         require(msg.sender == poolCfg.ammCharlieTreasuryManager, AmmPoolsErrors.CALLER_NOT_PUBLICATION_FEE_TRANSFERER);
 
-        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(assetAmount, poolCfg.assetDecimals);
-        uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, poolCfg.assetDecimals);
+        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(assetAmount, poolCfg.decimals);
+        uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, poolCfg.decimals);
 
         IAmmStorage(poolCfg.ammStorage).updateStorageWhenTransferToCharlieTreasuryInternal(wadAssetAmount);
 
@@ -263,12 +260,12 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         return AmmConfigurationManager.getAmmPoolsParams(asset);
     }
 
-    function _getPoolConfiguration(address asset) internal view returns (PoolConfiguration memory) {
+    function _getPoolConfiguration(address asset) internal view returns (AmmGovernancePoolConfiguration memory) {
         if (asset == _usdt) {
             return
-                PoolConfiguration({
+                AmmGovernancePoolConfiguration({
                     asset: _usdt,
-                    assetDecimals: _usdtDecimals,
+                    decimals: _usdtDecimals,
                     ammStorage: _usdtAmmStorage,
                     ammTreasury: _usdtAmmTreasury,
                     ammPoolsTreasury: _usdtAmmPoolsTreasury,
@@ -278,9 +275,9 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
                 });
         } else if (asset == _usdc) {
             return
-                PoolConfiguration({
+                AmmGovernancePoolConfiguration({
                     asset: _usdc,
-                    assetDecimals: _usdcDecimals,
+                    decimals: _usdcDecimals,
                     ammStorage: _usdcAmmStorage,
                     ammTreasury: _usdcAmmTreasury,
                     ammPoolsTreasury: _usdcAmmPoolsTreasury,
@@ -290,9 +287,9 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
                 });
         } else if (asset == _dai) {
             return
-                PoolConfiguration({
+                AmmGovernancePoolConfiguration({
                     asset: _dai,
-                    assetDecimals: _daiDecimals,
+                    decimals: _daiDecimals,
                     ammStorage: _daiAmmStorage,
                     ammTreasury: _daiAmmTreasury,
                     ammPoolsTreasury: _daiAmmPoolsTreasury,
