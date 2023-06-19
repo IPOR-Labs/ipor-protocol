@@ -15,6 +15,7 @@ contract RouterTest is TestCommons {
         router.upgradeTo(newImplementation);
 
         // then
+        assertTrue(router.getImplementation() == newImplementation, "Implementation should be equal to newImplementation");
         assertTrue(router.getImplementation() != oldImplementation, "Implementation should be changed");
     }
 }

@@ -72,6 +72,10 @@ contract AssetManagementProxyImplementationTest is TestCommons {
 
         // then
         address newProxyImpl = _assetManagementDai.getImplementation();
+        assertTrue(
+            newProxyImpl == newImplementation,
+            "Implementation should be equal to newImplementation"
+        );
         assertTrue(newProxyImpl != oldProxyImpl, "proxyImpl should be updated");
     }
 }
