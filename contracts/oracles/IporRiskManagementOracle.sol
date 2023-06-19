@@ -5,10 +5,11 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../interfaces/IIporRiskManagementOracle.sol";
-import "../security/IporOwnableUpgradeable.sol";
-import "./libraries/IporRiskManagementOracleStorageTypes.sol";
+import "../interfaces/IProxyImplementation.sol";
 import "../libraries/errors/IporRiskManagementOracleErrors.sol";
 import "../libraries/Constants.sol";
+import "./libraries/IporRiskManagementOracleStorageTypes.sol";
+import "../security/IporOwnableUpgradeable.sol";
 
 /**
  * @title Ipor Risk Management Oracle contract
@@ -20,7 +21,8 @@ contract IporRiskManagementOracle is
     PausableUpgradeable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-    IIporRiskManagementOracle
+    IIporRiskManagementOracle,
+IProxyImplementation
 {
     using SafeCast for uint256;
     using SafeCast for int256;
@@ -331,6 +333,10 @@ contract IporRiskManagementOracle is
         )
     {
         return _getFixedRateCaps(asset);
+    }
+
+    function getImplementation() external view override returns (address) {
+        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
 
     function _getFixedRateCaps(

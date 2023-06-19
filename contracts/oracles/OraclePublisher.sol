@@ -11,6 +11,7 @@ import "../libraries/errors/IporOracleErrors.sol";
 import "../interfaces/IIporOracle.sol";
 import "../interfaces/IIporRiskManagementOracle.sol";
 import "../interfaces/IOraclePublisher.sol";
+import "../interfaces/IProxyImplementation.sol";
 import "../security/IporOwnableUpgradeable.sol";
 
 /**
@@ -23,7 +24,8 @@ contract OraclePublisher is
     PausableUpgradeable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-    IOraclePublisher
+    IOraclePublisher,
+    IProxyImplementation
 {
     using Address for address;
 
@@ -96,6 +98,10 @@ contract OraclePublisher is
 
     function unpause() external override onlyOwner {
         _unpause();
+    }
+
+    function getImplementation() external view override returns (address) {
+        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
 
     //solhint-disable no-empty-blocks
