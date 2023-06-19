@@ -58,20 +58,20 @@ interface IAmmSwapsLens {
         uint256 minLeverage;
         /// @notice Maximum swap leverage value. Represented in 18 decimals.
         uint256 maxLeverage;
-        /// @notice Rate of collateral taken as a opening fee. Represented in 18 decimals.
+        /// @notice Rate of collateral charged as a opening fee. Represented in 18 decimals.
         uint256 openingFeeRate;
-        /// @notice IPOR publication fee amount taken from buyer when opening new swap. Represented in 18 decimals.
+        /// @notice IPOR publication fee amount collected from buyer when opening new swap. Represented in 18 decimals.
         uint256 iporPublicationFeeAmount;
-        /// @notice Liquidation deposit amount take from buyer when opening new swap. Represented in 18 decimals.
+        /// @notice Liquidation deposit amount collected from buyer when opening new swap. Represented in 18 decimals.
         uint256 liquidationDepositAmount;
         /// @notice Calculated Spread. Represented in 18 decimals.
         int256 spread;
         /// @notice Maximum Liquidity Pool Collateral Ratio.
         /// @dev It is a ratio of total collateral balance / liquidity pool balance
         uint256 maxLpCollateralRatio;
-        /// @notice Maximum amount which can be in Liquidity Pool, represented in 18 decimals.
+        /// @notice Maximum amount that can be in Liquidity Pool, represented in 18 decimals.
         uint256 maxLiquidityPoolBalance;
-        /// @notice Maximum amount which can be contributed by one account in Liquidity Pool, represented in 18 decimals.
+        /// @notice Maximum amount that can be contributed by one account in Liquidity Pool, represented in 18 decimals.
         uint256 maxLpAccountContribution;
     }
 
@@ -88,13 +88,13 @@ interface IAmmSwapsLens {
         uint256 chunkSize
     ) external view returns (uint256 totalCount, IporSwap[] memory swaps);
 
-    /// @notice Gets payoff for a pay fixed swap in a given asset for a given swap ID.
+    /// @notice Gets the swap's payoff for a pay-fixed, given asset and swap ID.
     /// @param asset asset address
     /// @param swapId swap ID
     /// @return payoff payoff for a pay fixed swap
     function getPayoffPayFixed(address asset, uint256 swapId) external view returns (int256 payoff);
 
-    /// @notice Gets payoff for a receive fixed swap in a given asset for a given swap ID.
+    /// @notice Gets the swap's payoff for a receive-fixed, given asset and swap ID.
     /// @param asset asset address
     /// @param swapId swap ID
     /// @return payoff payoff for a receive fixed swap
@@ -107,7 +107,7 @@ interface IAmmSwapsLens {
         address asset
     ) external view returns (IporTypes.AmmBalancesForOpenSwapMemory memory);
 
-    /// @notice Gets SOAP value for a given asset.
+    /// @notice Gets the SOAP value for a given asset.
     /// @param asset The address of the asset.
     /// @return soapPayFixed SOAP value for pay fixed swaps.
     /// @return soapReceiveFixed SOAP value for receive fixed swaps.

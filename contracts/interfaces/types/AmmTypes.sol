@@ -126,12 +126,10 @@ library AmmTypes {
         /// @dev Asset amount is a sum of wadRedeemFee and wadRedeemAmount
         uint256 wadAssetAmount;
         /// @notice Redeemed amount represented in decimals of asset
-        /// @dev Amount of ERC20 underlying asset that is transferred to the beneficiary
         uint256 redeemAmount;
         /// @notice Redeem fee value represented in 18 decimals
         uint256 wadRedeemFee;
-        /// @notice Redeem amount represented in 18 decimals.
-        /// @dev Representation in WAD, amount of ERC20 underlying asset that is transferred to the beneficiary
+        /// @notice Redeem amount represented in 18 decimals
         uint256 wadRedeemAmount;
     }
 

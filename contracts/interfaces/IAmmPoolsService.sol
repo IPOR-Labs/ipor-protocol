@@ -78,54 +78,55 @@ interface IAmmPoolsService {
         address asset
     ) external view returns (AmmPoolsServicePoolConfiguration memory);
 
-    /// @notice Provide liquidity to AMM Liquidity Pool for asset USDT by sender on behalf of beneficiary.
-    /// @dev Emits {ProvideLiquidity} event and transfers ERC20 tokens from sender to AmmTreasury,
+    /// @notice Providing USDT to the AMM Liquidity Pool by the sender on behalf of beneficiary.
+    /// @dev Emits {ProvideLiquidity} event and transfers ERC20 tokens from the sender to the AmmTreasury,
     /// emits {Transfer} event from ERC20 asset, emits {Mint} event from ipToken.
-    /// Transfers minted ipTokens to the beneficiary. Amount of transferred ipTokens is based on current ipToken exchange rate.
-    /// @param beneficiary Account which will receive ipUSDT tokens representing share in the liquidity pool.
-    /// @param assetAmount Amount of ERC20 tokens which are transferred from sender to AmmTreasury. Represented in decimals specific for asset.
+    /// Transfers minted ipTokens to the beneficiary. Amount of transferred ipTokens is based on current ipToken exchange rate
+    /// @param beneficiary Account receiving receive ipUSDT liquidity tokens.
+    /// @param assetAmount Amount of ERC20 tokens transferred from the sender to the AmmTreasury. Represented in decimals specific for asset. Value represented in 18 decimals.
     function provideLiquidityUsdt(address beneficiary, uint256 assetAmount) external;
 
-    /// @notice Provide liquidity to AMM Liquidity Pool for asset USDC by sender on behalf of beneficiary.
-    /// @dev Emits {ProvideLiquidity} event and transfers ERC20 tokens from sender to AmmTreasury,
+    /// @notice Providing USDC to the AMM Liquidity Pool by the sender on behalf of beneficiary.
+    /// @dev Emits {ProvideLiquidity} event and transfers ERC20 tokens from the sender to the AmmTreasury,
     /// emits {Transfer} event from ERC20 asset, emits {Mint} event from ipToken.
-    /// @param beneficiary Account which will receive ipUSDC tokens representing share in the liquidity pool.
-    /// @param assetAmount Amount of ERC20 tokens which are transferred from sender to AmmTreasury. Represented in decimals specific for asset.
+    /// @param beneficiary Account receiving receive ipUSDT liquidity tokens.
+    /// @param assetAmount Amount of ERC20 tokens transferred from the sender to the AmmTreasury. Represented in decimals specific for asset. Value represented in 18 decimals.
     function provideLiquidityUsdc(address beneficiary, uint256 assetAmount) external;
 
-    /// @notice Provide liquidity to AMM Liquidity Pool for asset DAI by sender on behalf of beneficiary.
-    /// @dev Emits {ProvideLiquidity} event and transfers ERC20 tokens from sender to AmmTreasury,
+    /// @notice Providing DAI to the AMM Liquidity Pool by the sender on behalf of beneficiary.
+    /// @dev Emits {ProvideLiquidity} event and transfers ERC20 tokens from the sender tothe AmmTreasury,
     /// emits {Transfer} event from ERC20 asset, emits {Mint} event from ipToken.
-    /// @param beneficiary Account which will receive ipDAI tokens representing share in the liquidity pool.
-    /// @param assetAmount Amount of ERC20 tokens which are transferred from sender to AmmTreasury. Represented in decimals specific for asset.
+    /// @param beneficiary Account receiving receive ipUSDT liquidity tokens.
+    /// @param assetAmount Amount of ERC20 tokens transferred from the sender to the AmmTreasury. Represented in decimals specific for asset. Value represented in 18 decimals.
+    /// @dev Value represented in 18 decimals.
     function provideLiquidityDai(address beneficiary, uint256 assetAmount) external;
 
     /// @notice Redeems `ipTokenAmount` ipUSDT for underlying asset
     /// @dev Emits {Redeem} event, emits {Transfer} event from ERC20 asset, emits {Burn} event from ipToken.
-    /// Transfers asset ERC20 tokens from AmmTreasury to beneficiary based on current exchange rate of ipUSDT.
-    /// @param beneficiary Account which will receive underlying asset tokens.
+    /// Transfers ERC20 tokens from the AmmTreasury to the beneficiary based on current exchange rate of ipUSDT.
+    /// @param beneficiary Account receiving underlying tokens.
     /// @param ipTokenAmount redeem amount of ipUSDT tokens, represented in 18 decimals.
-    /// @dev sender ipUSDT tokens are burned, asset USDT tokens are transferred to beneficiary.
+    /// @dev sender's ipUSDT tokens are burned, asset: USDT tokens are transferred to the beneficiary.
     function redeemFromAmmPoolUsdt(address beneficiary, uint256 ipTokenAmount) external;
 
     /// @notice Redeems `ipTokenAmount` ipUSDC for underlying asset
     /// @dev Emits {Redeem} event, emits {Transfer} event from ERC20 asset, emits {Burn} event from ipToken.
-    /// Transfers asset ERC20 tokens from AmmTreasury to beneficiary based on current exchange rate of ipUSDC.
-    /// @param beneficiary Account which will receive underlying asset tokens.
+    /// Transfers ERC20 tokens from the AmmTreasury to the beneficiary based on current exchange rate of ipUSDC.
+    /// @param beneficiary Account receiving underlying tokens.
     /// @param ipTokenAmount redeem amount of ipUSDC tokens, represented in 18 decimals.
-    /// @dev sender ipUSDC tokens are burned, asset USDC tokens are transferred to beneficiary.
+    /// @dev sender's ipUSDC tokens are burned, asset: USDC tokens are transferred to the beneficiary.
     function redeemFromAmmPoolUsdc(address beneficiary, uint256 ipTokenAmount) external;
 
     /// @notice Redeems `ipTokenAmount` ipDAI for underlying asset
     /// @dev Emits {Redeem} event, emits {Transfer} event from ERC20 asset, emits {Burn} event from ipToken.
-    /// Transfers asset ERC20 tokens from AmmTreasury to beneficiary based on current exchange rate of ipDAI.
-    /// @param beneficiary Account which will receive underlying asset tokens.
+    /// Transfers ERC20 tokens from the AmmTreasury to the beneficiary based on current exchange rate of ipDAI.
+    /// @param beneficiary Account receiving underlying tokens.
     /// @param ipTokenAmount redeem amount of ipDAI tokens, represented in 18 decimals.
-    /// @dev sender ipDAI tokens are burned, asset DAI tokens are transferred to beneficiary.
+    /// @dev sender's ipDAI tokens are burned, asset: DAI tokens are transferred to the beneficiary.
     function redeemFromAmmPoolDai(address beneficiary, uint256 ipTokenAmount) external;
 
-    /// @notice Rebalances given asset between AmmTreasury and AssetManagement, based on configuration stored
-    /// in field `AmmPoolsParamsValue.ammTreasuryAndAssetManagementRatio`.
+    /// @notice Rebalances given assets between the AmmTreasury and the AssetManagement, based on configuration stored
+    /// in the `AmmPoolsParamsValue.ammTreasuryAndAssetManagementRatio` field .
     /// @dev Emits {Deposit} or {Withdraw} event from AssetManagement depends on current asset balance on AmmTreasury and AssetManagement.
     /// @dev Emits {Mint} or {Burn} event from ivToken depends on current asset balance on AmmTreasury and AssetManagement.
     /// @dev Emits {Transfer} from ERC20 asset.

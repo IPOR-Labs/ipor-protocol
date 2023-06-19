@@ -21,7 +21,7 @@ interface IAmmCloseSwapService {
         uint256 transferredToLiquidator
     );
 
-    /// @notice Emitted when the trader closes the swap earlier than maturity or absolute value of swap payoff is less than 99% of the swap collateral.
+    /// @notice Emitted when the trader closes the swap before maturity or if the absolute value of the swap's payoff is less than 99% of the swap's collateral.
     event SwapUnwind(
         /// @notice swap ID.
         uint256 indexed swapId,
@@ -29,9 +29,9 @@ interface IAmmCloseSwapService {
         int256 swapPayoffToDate,
         /// @notice swap unwind amount, represented in 18 decimals
         int256 swapUnwindAmount,
-        /// @notice opening fee amount, part dedicated for liquidity pool, represented in 18 decimals
+        /// @notice opening fee amount, part earmarked for the liquidity pool, represented in 18 decimals
         uint256 openingFeeLPAmount,
-        /// @notice opening fee amount, part dedicated for treasury, represented in 18 decimals
+        /// @notice opening fee amount, part earmarked for the treasury, represented in 18 decimals
         uint256 openingFeeTreasuryAmount
     );
 
@@ -47,21 +47,21 @@ interface IAmmCloseSwapService {
         address ammTreasury;
         /// @notice Asset Management contract address
         address assetManagement;
-        /// @notice Opening Fee Rate for Swap Unwind, represented in 18 decimals, 1e18 = 100%
+        /// @notice Opening Fee Rate for unwinding the swap, represented in 18 decimals, 1e18 = 100%
         uint256 openingFeeRateForSwapUnwind;
-        /// @notice Opening Fee Rate for Swap Unwind, part dedicated for treasury, represented in 18 decimals, 1e18 = 100%
+        /// @notice Opening Fee Rate for unwinding the swap, part earmarked for the treasury, represented in 18 decimals, 1e18 = 100%
         uint256 openingFeeTreasuryPortionRateForSwapUnwind;
-        /// @notice Max length of liquidated swaps per leg, represented without decimals
+        /// @notice Max number of swaps (per leg) that can be liquidated in one call, represented without decimals
         uint256 maxLengthOfLiquidatedSwapsPerLeg;
-        /// @notice Time before maturity allowed to close swap by community, represented in seconds
+        /// @notice Time before maturity when the community is allowed to close the swap, represented in seconds
         uint256 timeBeforeMaturityAllowedToCloseSwapByCommunity;
-        /// @notice Time before maturity allowed to close swap by buyer, represented in seconds
+        /// @notice Time before maturity then the swap owner can close it, represented in seconds
         uint256 timeBeforeMaturityAllowedToCloseSwapByBuyer;
-        /// @notice Min liquidation threshold to close before maturity by community, represented in 18 decimals
+        /// @notice Min liquidation threshold allowing community to close the swap ahead of maturity, represented in 18 decimals
         uint256 minLiquidationThresholdToCloseBeforeMaturityByCommunity;
-        /// @notice Min liquidation threshold to close before maturity by buyer, represented in 18 decimals
+        /// @notice Min liquidation threshold allowing the owner to close the swap ahead of maturity, represented in 18 decimals
         uint256 minLiquidationThresholdToCloseBeforeMaturityByBuyer;
-        /// @notice Min leverage to close before maturity by community, represented in 18 decimals
+        /// @notice Min leverage of the virtual swap used in unwinding, represented in 18 decimals
         uint256 minLeverage;
     }
 
@@ -72,49 +72,49 @@ interface IAmmCloseSwapService {
         address asset
     ) external view returns (AmmCloseSwapServicePoolConfiguration memory);
 
-    /// @notice Close the swap for pay fixed leg in USDT asset (pool).
-    /// @param beneficiary account that will receive liquidation deposit.
+    /// @notice Closes the USDT pay-fixed swap.
+    /// @param beneficiary account - receiver of liquidation deposit.
     /// @param swapId swap ID.
-    /// @dev Swap payoff is always transferred to the owner of the swap (buyer).
+    /// @dev Swap payoff is always transferred to the swaps's owner.
     function closeSwapPayFixedUsdt(address beneficiary, uint256 swapId) external;
 
-    /// @notice Close the swap for pay fixed leg in USDC asset (pool).
-    /// @param beneficiary account that will receive liquidation deposit.
+    /// @notice Closes the USDC pay-fixed swap.
+    /// @param beneficiary account - receiver of liquidation deposit.
     /// @param swapId swap ID.
-    /// @dev Swap payoff is always transferred to the owner of the swap (buyer).
+    /// @dev Swap payoff is always transferred to the swaps's owner.
     function closeSwapPayFixedUsdc(address beneficiary, uint256 swapId) external;
 
-    /// @notice Close the swap for pay fixed leg in DAI asset (pool).
-    /// @param beneficiary account that will receive liquidation deposit.
+    /// @notice Closes the DAI pay-fixed swap.
+    /// @param beneficiary account - receiver of liquidation deposit.
     /// @param swapId swap ID.
-    /// @dev Swap payoff is always transferred to the owner of the swap (buyer).
+    /// @dev Swap payoff is always transferred to the swaps's owner.
     function closeSwapPayFixedDai(address beneficiary, uint256 swapId) external;
 
-    /// @notice Close the swap for receive fixed leg in USDT asset (pool).
-    /// @param beneficiary account that will receive liquidation deposit.
+    /// @notice Closes the USDT receive-fixed swap.
+    /// @param beneficiary account - receiver of liquidation deposit.
     /// @param swapId swap ID.
-    /// @dev Swap payoff is always transferred to the owner of the swap (buyer).
+    /// @dev Swap payoff is always transferred to the swaps's owner.
     function closeSwapReceiveFixedUsdt(address beneficiary, uint256 swapId) external;
 
-    /// @notice Close the swap for receive fixed leg in USDC asset (pool).
-    /// @param beneficiary account that will receive liquidation deposit.
+    /// @notice Closes the USDC receive-fixed swap.
+    /// @param beneficiary account - receiver of liquidation deposit.
     /// @param swapId swap ID.
-    /// @dev Swap payoff is always transferred to the owner of the swap (buyer).
+    /// @dev Swap payoff is always transferred to the swaps's owner.
     function closeSwapReceiveFixedUsdc(address beneficiary, uint256 swapId) external;
 
-    /// @notice Close the swap for receive fixed leg in DAI asset (pool).
-    /// @param beneficiary account that will receive liquidation deposit.
+    /// @notice Closes the DAI receive-fixed swap.
+    /// @param beneficiary account - receiver of liquidation deposit.
     /// @param swapId swap ID.
-    /// @dev Swap payoff is always transferred to the owner of the swap (buyer).
+    /// @dev Swap payoff is always transferred to the swaps's owner.
     function closeSwapReceiveFixedDai(address beneficiary, uint256 swapId) external;
 
-    /// @notice Close the swaps for pay fixed leg in USDT asset (pool) and receive fixed leg in USDT asset (pool).
-    /// @param beneficiary account that will receive liquidation deposit.
-    /// @param payFixedSwapIds array of pay fixed swap IDs.
-    /// @param receiveFixedSwapIds array of receive fixed swap IDs.
-    /// @dev Swap payoff is always transferred to the owner of the swap (buyer).
-    /// @return closedPayFixedSwaps array of closed pay fixed swaps.
-    /// @return closedReceiveFixedSwaps array of closed receive fixed swaps.
+    /// @notice Closes batch of USDT swaps on both legs.
+    /// @param beneficiary account - receiver of liquidation deposit.
+    /// @param payFixedSwapIds array of pay-fixed swap IDs.
+    /// @param receiveFixedSwapIds array of receive-fixed swap IDs.
+    /// @dev Swap payoff is always transferred to the swaps's owner.
+    /// @return closedPayFixedSwaps array of closed pay-fixed swaps.
+    /// @return closedReceiveFixedSwaps array of closed receive-fixed swaps.
     function closeSwapsUsdt(
         address beneficiary,
         uint256[] memory payFixedSwapIds,
@@ -126,13 +126,13 @@ interface IAmmCloseSwapService {
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
         );
 
-    /// @notice Close the swaps for pay fixed leg in USDC asset (pool) and receive fixed leg in USDC asset (pool).
-    /// @param beneficiary account that will receive liquidation deposit.
+    /// @notice Closes batch of USDC swaps on both legs.
+    /// @param beneficiary account - receiver of liquidation deposit.
     /// @param payFixedSwapIds array of pay fixed swap IDs.
     /// @param receiveFixedSwapIds array of receive fixed swap IDs.
-    /// @dev Swap payoff is always transferred to the owner of the swap (buyer).
-    /// @return closedPayFixedSwaps array of closed pay fixed swaps.
-    /// @return closedReceiveFixedSwaps array of closed receive fixed swaps.
+    /// @dev Swap payoff is always transferred to the swaps's owner.
+    /// @return closedPayFixedSwaps array of closed pay-fixed swaps.
+    /// @return closedReceiveFixedSwaps array of closed receive-fixed swaps.
     function closeSwapsUsdc(
         address beneficiary,
         uint256[] memory payFixedSwapIds,
@@ -144,13 +144,13 @@ interface IAmmCloseSwapService {
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
         );
 
-    /// @notice Close the swaps for pay fixed leg in DAI asset (pool) and receive fixed leg in DAI asset (pool).
-    /// @param beneficiary account that will receive liquidation deposit.
+    /// @notice Closes batch of DAI swaps on both legs.
+    /// @param beneficiary account - receiver of liquidation deposit.
     /// @param payFixedSwapIds array of pay fixed swap IDs.
     /// @param receiveFixedSwapIds array of receive fixed swap IDs.
-    /// @dev Swap payoff is always transferred to the owner of the swap (buyer).
-    /// @return closedPayFixedSwaps array of closed pay fixed swaps.
-    /// @return closedReceiveFixedSwaps array of closed receive fixed swaps.
+    /// @dev Swap payoff is always transferred to the swaps's owner.
+    /// @return closedPayFixedSwaps array of closed pay-fixed swaps.
+    /// @return closedReceiveFixedSwaps array of closed receive-fixed swaps.
     function closeSwapsDai(
         address beneficiary,
         uint256[] memory payFixedSwapIds,
@@ -162,79 +162,79 @@ interface IAmmCloseSwapService {
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
         );
 
-    /// @notice Emergency close the swap for pay fixed leg in USDT asset (pool).
+    /// @notice Closes the USDT pay-fixed swap in emergency mode.
     /// @param swapId swap ID.
-    /// @dev Any swap can be closed in any moment by IPOR Protocol Owner even if Protocol is paused.
+    /// @dev Swaps can be closed in emergency mode by the protocol owner even if protocol is paused.
     function emergencyCloseSwapPayFixedUsdt(uint256 swapId) external;
 
-    /// @notice Emergency close the swap for pay fixed leg in USDC asset (pool).
+    /// @notice Closes the USDC pay-fixed swap in emergency mode.
     /// @param swapId swap ID.
-    /// @dev Any swap can be closed in any moment by IPOR Protocol Owner even if Protocol is paused.
+    /// @dev Swaps can be closed in emergency mode by the protocol owner even if protocol is paused.
     function emergencyCloseSwapPayFixedUsdc(uint256 swapId) external;
 
-    /// @notice Emergency close the swap for pay fixed leg in DAI asset (pool).
+    /// @notice Closes the DAI pay-fixed swap in emergency mode.
     /// @param swapId swap ID.
-    /// @dev Any swap can be closed in any moment by IPOR Protocol Owner even if Protocol is paused.
+    /// @dev Swaps can be closed in emergency mode by the protocol owner even if protocol is paused.
     function emergencyCloseSwapPayFixedDai(uint256 swapId) external;
 
-    /// @notice Emergency close the swap for receive fixed leg in USDT asset (pool).
+    /// @notice Closes the USDT receive-fixed swap in emergency mode.
     /// @param swapId swap ID.
-    /// @dev Any swap can be closed in any moment by IPOR Protocol Owner even if Protocol is paused.
+    /// @dev Swaps can be closed in emergency mode by the protocol owner even if protocol is paused.
     function emergencyCloseSwapReceiveFixedUsdt(uint256 swapId) external;
 
-    /// @notice Emergency close the swap for receive fixed leg in USDC asset (pool).
+    /// @notice Closes the USDC receive-fixed swap in emergency mode.
     /// @param swapId swap ID.
-    /// @dev Any swap can be closed in any moment by IPOR Protocol Owner even if Protocol is paused.
+    /// @dev Swaps can be closed in emergency mode by the protocol owner even if protocol is paused.
     function emergencyCloseSwapReceiveFixedUsdc(uint256 swapId) external;
 
-    /// @notice Emergency close the swap for receive fixed leg in DAI asset (pool).
+    /// @notice Closes the DAI receive-fixed swap in emergency mode.
     /// @param swapId swap ID.
-    /// @dev Any swap can be closed in any moment by IPOR Protocol Owner even if Protocol is paused.
+    /// @dev Swaps can be closed in emergency mode by the protocol owner even if protocol is paused.
     function emergencyCloseSwapReceiveFixedDai(uint256 swapId) external;
 
-    /// @notice Emergency close the swaps for pay fixed leg in USDT asset (pool).
-    /// @param swapIds array of pay fixed swap IDs.
-    /// @dev Any swap can be closed in any moment by IPOR Protocol Owner even if Protocol is paused.
+    /// @notice Closes multiple USDT pay-fixed swap in emergency mode.
+    /// @param swapIds swap IDs.
+    /// @dev Swaps can be closed in emergency mode by the protocol owner even if protocol is paused.
     /// @return closedSwaps array of closed swaps.
     function emergencyCloseSwapsPayFixedUsdt(
         uint256[] memory swapIds
     ) external returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps);
 
-    /// @notice Emergency close the swaps for pay fixed leg in USDC asset (pool).
-    /// @param swapIds array of pay fixed swap IDs.
-    /// @dev Any swap can be closed in any moment by IPOR Protocol Owner even if Protocol is paused.
+    /// @notice Closes multiple USDC pay-fixed swap in emergency mode.
+    /// @param swapIds swap IDs.
+    /// @dev Swaps can be closed in emergency mode by the protocol owner even if protocol is paused.
     /// @return closedSwaps array of closed swaps.
     function emergencyCloseSwapsPayFixedUsdc(
         uint256[] memory swapIds
     ) external returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps);
 
-    /// @notice Emergency close the swaps for pay fixed leg in DAI asset (pool).
-    /// @param swapIds array of pay fixed swap IDs.
-    /// @dev Any swap can be closed in any moment by IPOR Protocol Owner even if Protocol is paused.
+    /// @notice Closes multiple DAI pay-fixed swap in emergency mode.
+    /// @param swapIds swap IDs.
+    /// @dev Swaps can be closed in emergency mode by the protocol owner even if protocol is paused.
     /// @return closedSwaps array of closed swaps.
     function emergencyCloseSwapsPayFixedDai(
         uint256[] memory swapIds
     ) external returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps);
 
-    /// @notice Emergency close the swaps for receive fixed leg in USDT asset (pool).
-    /// @param swapIds array of receive fixed swap IDs.
-    /// @dev Any swap can be closed in any moment by IPOR Protocol Owner even if Protocol is paused.
+    /// @notice Closes multiple USDT receive-fixed swap in emergency mode.
+    /// @param swapIds swap IDs.
+    /// @dev Swaps can be closed in emergency mode by the protocol owner even if protocol is paused.
     /// @return closedSwaps array of closed swaps.
     function emergencyCloseSwapsReceiveFixedUsdt(
         uint256[] memory swapIds
     ) external returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps);
 
-    /// @notice Emergency close the swaps for receive fixed leg in USDC asset (pool).
-    /// @param swapIds array of receive fixed swap IDs.
-    /// @dev Any swap can be closed in any moment by IPOR Protocol Owner even if Protocol is paused.
+    /// @notice Closes multiple USDC receive-fixed swap in emergency mode.
+    /// @param swapIds swap IDs.
+    /// @dev Swaps can be closed in emergency mode by the protocol owner even if protocol is paused.
     /// @return closedSwaps array of closed swaps.
     function emergencyCloseSwapsReceiveFixedUsdc(
         uint256[] memory swapIds
     ) external returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps);
 
-    /// @notice Emergency close the swaps for receive fixed leg in DAI asset (pool).
-    /// @param swapIds array of receive fixed swap IDs.
-    /// @dev Any swap can be closed in any moment by IPOR Protocol Owner even if Protocol is paused.
+    /// @notice Closes multiple DAI receive-fixed swap in emergency mode.
+    /// @param swapIds swap IDs.
+    /// @dev Swaps can be closed in emergency mode by the protocol owner even if protocol is paused.
     /// @return closedSwaps array of closed swaps.
     function emergencyCloseSwapsReceiveFixedDai(
         uint256[] memory swapIds
