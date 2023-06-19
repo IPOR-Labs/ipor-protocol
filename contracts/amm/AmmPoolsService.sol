@@ -122,7 +122,9 @@ contract AmmPoolsService is IAmmPoolsService {
         _iporOracle = iporOracle;
     }
 
-    function getAmmPoolServiceConfiguration(address asset) external view override returns (AmmPoolsServicePoolConfiguration memory) {
+    function getAmmPoolServiceConfiguration(
+        address asset
+    ) external view override returns (AmmPoolsServicePoolConfiguration memory) {
         return _getPoolConfiguration(asset);
     }
 
@@ -192,11 +194,7 @@ contract AmmPoolsService is IAmmPoolsService {
         }
     }
 
-    function _provideLiquidity(
-        address asset,
-        address beneficiary,
-        uint256 assetAmount
-    ) internal {
+    function _provideLiquidity(address asset, address beneficiary, uint256 assetAmount) internal {
         AmmPoolsServicePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
             poolCfg.asset
@@ -222,8 +220,7 @@ contract AmmPoolsService is IAmmPoolsService {
             uint256(ammPoolsParamsCfg.maxLpAccountContribution) * 1e18
         );
 
-    IERC20Upgradeable(poolCfg.asset).safeTransferFrom(msg.sender, poolCfg.ammTreasury, assetAmount);
-
+        IERC20Upgradeable(poolCfg.asset).safeTransferFrom(msg.sender, poolCfg.ammTreasury, assetAmount);
 
         uint256 ipTokenAmount = IporMath.division(wadAssetAmount * 1e18, exchangeRate);
 
@@ -242,11 +239,7 @@ contract AmmPoolsService is IAmmPoolsService {
         );
     }
 
-    function _redeem(
-        address asset,
-        address beneficiary,
-        uint256 ipTokenAmount
-    ) internal {
+    function _redeem(address asset, address beneficiary, uint256 ipTokenAmount) internal {
         AmmPoolsServicePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         require(
@@ -269,11 +262,16 @@ contract AmmPoolsService is IAmmPoolsService {
 
         require(exchangeRate > 0, AmmErrors.LIQUIDITY_POOL_IS_EMPTY);
 
-        AmmTypes.RedeemAmount memory redeemAmount = _calculateRedeemAmount(
+        AmmTypes.RedeemAmount memory redeemAmountStruct = _calculateRedeemAmount(
             poolCfg.decimals,
             ipTokenAmount,
             exchangeRate,
             poolCfg.redeemFeeRate
+        );
+
+        require(
+            redeemAmountStruct.redeemAmount > 0 && redeemAmountStruct.wadRedeemAmount > 0,
+            AmmPoolsErrors.CANNOT_REDEEM_ASSET_AMOUNT_TOO_LOW
         );
 
         uint256 wadAmmTreasuryErc20Balance = IporMath.convertToWad(
@@ -282,36 +280,41 @@ contract AmmPoolsService is IAmmPoolsService {
         );
 
         require(
-            wadAmmTreasuryErc20Balance + balance.vault > redeemAmount.wadRedeemAmount,
+            wadAmmTreasuryErc20Balance + balance.vault > redeemAmountStruct.wadRedeemAmount,
             AmmPoolsErrors.INSUFFICIENT_ERC20_BALANCE
         );
 
-        _rebalanceIfNeededBeforeRedeem(poolCfg, wadAmmTreasuryErc20Balance, balance.vault, redeemAmount.wadRedeemAmount);
+        _rebalanceIfNeededBeforeRedeem(
+            poolCfg,
+            wadAmmTreasuryErc20Balance,
+            balance.vault,
+            redeemAmountStruct.wadRedeemAmount
+        );
 
         require(
             _calculateRedeemedCollateralRatio(
                 balance.liquidityPool,
                 balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
-                redeemAmount.wadRedeemAmount
+                redeemAmountStruct.wadRedeemAmount
             ) <= poolCfg.redeemLpMaxCollateralRatio,
             AmmPoolsErrors.REDEEM_LP_COLLATERAL_RATIO_EXCEEDED
         );
 
         IIpToken(poolCfg.ipToken).burn(msg.sender, ipTokenAmount);
 
-        IAmmStorage(poolCfg.ammStorage).subtractLiquidityInternal(redeemAmount.wadRedeemAmount);
+        IAmmStorage(poolCfg.ammStorage).subtractLiquidityInternal(redeemAmountStruct.wadRedeemAmount);
 
-        IERC20Upgradeable(asset).safeTransferFrom(poolCfg.ammTreasury, beneficiary, redeemAmount.redeemAmount);
+        IERC20Upgradeable(asset).safeTransferFrom(poolCfg.ammTreasury, beneficiary, redeemAmountStruct.redeemAmount);
 
         emit Redeem(
             block.timestamp,
             poolCfg.ammTreasury,
             beneficiary,
             exchangeRate,
-            redeemAmount.wadAssetAmount,
+            redeemAmountStruct.wadAssetAmount,
             ipTokenAmount,
-            redeemAmount.wadRedeemFee,
-            redeemAmount.wadRedeemAmount
+            redeemAmountStruct.wadRedeemFee,
+            redeemAmountStruct.wadRedeemAmount
         );
     }
 

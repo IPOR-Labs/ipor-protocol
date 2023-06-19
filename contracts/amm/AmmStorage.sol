@@ -527,7 +527,6 @@ contract AmmStorage is
         if (payoff > 0) {
             /// @dev Buyer earns, AmmTreasury (LP) looses
             require(_balances.liquidityPool >= absPayoff, AmmErrors.CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW);
-
             /// @dev When AmmTreasury (LP) looses, then  always substract all payoff
             _balances.liquidityPool =
                 _balances.liquidityPool -
