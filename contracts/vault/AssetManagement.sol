@@ -11,12 +11,13 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/AssetManagementErrors.sol";
 import "../libraries/Constants.sol";
-import "../security/PauseManager.sol";
 import "../libraries/math/IporMath.sol";
 import "../interfaces/IIvToken.sol";
 import "../interfaces/IAssetManagementInternal.sol";
 import "../interfaces/IAssetManagement.sol";
 import "../interfaces/IStrategy.sol";
+import "../interfaces/IProxyImplementation.sol";
+import "../security/PauseManager.sol";
 import "../security/IporOwnableUpgradeable.sol";
 
 /// @title AssetManagement represents Asset Management module responsible for investing AmmTreasury's cash in external DeFi protocols.
@@ -27,7 +28,8 @@ abstract contract AssetManagement is
     UUPSUpgradeable,
     IporOwnableUpgradeable,
     IAssetManagement,
-    IAssetManagementInternal
+    IAssetManagementInternal,
+    IProxyImplementation
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -121,13 +123,9 @@ abstract contract AssetManagement is
      * @notice only AmmTreasury can deposit
      * @param amount underlying token amount represented in 18 decimals
      */
-    function deposit(uint256 amount)
-        external
-        override
-        whenNotPaused
-        onlyAmmTreasury
-        returns (uint256 vaultBalance, uint256 depositedAmount)
-    {
+    function deposit(
+        uint256 amount
+    ) external override whenNotPaused onlyAmmTreasury returns (uint256 vaultBalance, uint256 depositedAmount) {
         require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
         uint256 assetAmount = IporMath.convertWadToAssetDecimals(amount, _getDecimals());
         require(assetAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
@@ -154,13 +152,9 @@ abstract contract AssetManagement is
         vaultBalance = assetBalanceAaveStrategy + assetBalanceCompoundStrategy + depositedAmount;
     }
 
-    function withdraw(uint256 amount)
-        external
-        override
-        whenNotPaused
-        onlyAmmTreasury
-        returns (uint256 withdrawnAmount, uint256 vaultBalance)
-    {
+    function withdraw(
+        uint256 amount
+    ) external override whenNotPaused onlyAmmTreasury returns (uint256 withdrawnAmount, uint256 vaultBalance) {
         require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
         IIvToken ivToken = _ivToken;
@@ -313,17 +307,17 @@ abstract contract AssetManagement is
         _unpause();
     }
 
+    function getImplementation() external view override returns (address) {
+        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
+    }
+
     function _getDecimals() internal pure virtual returns (uint256);
 
     // Find highest apy strategy to deposit underlying asset
     function _getMaxApyStrategy()
         internal
         view
-        returns (
-            address strategyMaxApy,
-            address strategyAave,
-            address strategyCompound
-        )
+        returns (address strategyMaxApy, address strategyAave, address strategyCompound)
     {
         strategyAave = _strategyAave;
         strategyCompound = _strategyCompound;
@@ -343,11 +337,10 @@ abstract contract AssetManagement is
         return IporMath.division(_ivToken.balanceOf(who) * exchangeRate, 1e18);
     }
 
-    function _setStrategy(address oldStrategyAddress, address newStrategyAddress)
-        internal
-        nonReentrant
-        returns (address)
-    {
+    function _setStrategy(
+        address oldStrategyAddress,
+        address newStrategyAddress
+    ) internal nonReentrant returns (address) {
         require(newStrategyAddress != address(0), IporErrors.WRONG_ADDRESS);
 
         IERC20Upgradeable asset = IERC20Upgradeable(_asset);
@@ -438,7 +431,10 @@ abstract contract AssetManagement is
         }
     }
 
-    function _calcExchangeRate(IStrategy strategyAave, IStrategy strategyCompound)
+    function _calcExchangeRate(
+        IStrategy strategyAave,
+        IStrategy strategyCompound
+    )
         internal
         view
         returns (
@@ -466,15 +462,7 @@ abstract contract AssetManagement is
         uint256 amount,
         uint256 assetBalanceAaveStrategy,
         uint256 assetBalanceCompoundStrategy
-    )
-        internal
-        view
-        returns (
-            address,
-            uint256,
-            uint256
-        )
-    {
+    ) internal view returns (address, uint256, uint256) {
         (address strategyMaxApy, address strategyAave, address strategyCompound) = _getMaxApyStrategy();
 
         if (strategyMaxApy == strategyCompound && amount <= assetBalanceAaveStrategy) {
