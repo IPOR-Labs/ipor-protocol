@@ -54,8 +54,8 @@ contract AssetManagementMaxApyStrategyTest is TestCommons {
 
     function testShouldSelectAaveStrategy() public {
         // given
-        _strategyAaveDai.setApr(100000);
-        _strategyCompoundDai.setApr(99999);
+        _strategyAaveDai.setApy(100000);
+        _strategyCompoundDai.setApy(99999);
         // when
         (address strategyMaxApy, , ) = _assetManagementDai.getMaxApyStrategy();
         // then
@@ -64,8 +64,8 @@ contract AssetManagementMaxApyStrategyTest is TestCommons {
 
     function testShouldSelectAaveStrategyWhenAaveApyEqualsCompoundApy() public {
         // given
-        _strategyAaveDai.setApr(10);
-        _strategyCompoundDai.setApr(10);
+        _strategyAaveDai.setApy(10);
+        _strategyCompoundDai.setApy(10);
         // when
         (address strategyMaxApy, , ) = _assetManagementDai.getMaxApyStrategy();
         // then
@@ -74,8 +74,8 @@ contract AssetManagementMaxApyStrategyTest is TestCommons {
 
     function testShouldSelectCompoundStrategy() public {
         // given
-        _strategyAaveDai.setApr(1000);
-        _strategyCompoundDai.setApr(99999);
+        _strategyAaveDai.setApy(1000);
+        _strategyCompoundDai.setApy(99999);
         // when
         (address strategyMaxApy, , ) = _assetManagementDai.getMaxApyStrategy();
         // then

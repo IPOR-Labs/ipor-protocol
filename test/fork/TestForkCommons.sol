@@ -33,6 +33,10 @@ contract TestForkCommons is Test {
     address public constant USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
     address public constant USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
 
+    address public constant aDAI = 0x028171bCA77440897B824Ca71D1c56caC55b68A3;
+    address public constant aUSDC = 0xBcca60bB61934080951369a648Fb03DF4F96263C;
+    address public constant aUSDT = 0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811;
+
     address public constant ipDAI = 0x8537b194BFf354c4738E9F3C81d67E3371DaDAf8;
     address public constant ipUSDC = 0x7c0e72f431FD69560D951e4C04A4de3657621a88;
     address public constant ipUSDT = 0x9Bd2177027edEE300DC9F1fb88F24DB6e5e1edC6;
@@ -56,6 +60,11 @@ contract TestForkCommons is Test {
     address public constant stanleyProxyUsdt = 0x8e679C1d67Af0CD4b314896856f09ece9E64D6B5;
 
     address public constant oracleUpdater = 0xC3A53976E9855d815A08f577C2BEef2a799470b7;
+
+    address public constant AAVE = 0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9;
+    address public constant stakedAAVE = 0x4da27a545c0c5B758a6BA100e3a049001de870f5;
+    address public constant aaveLendingPoolAddressProvider = 0xB53C1a33016B2DC2fF3653530bfF1848a515c8c5;
+    address public constant aaveIncentivesController = 0xd784927Ff2f95ba542BfC824c8a8a98F3495f6b5;
 
     // new contracts for v2
     address public iporRiskManagementOracleProxy;

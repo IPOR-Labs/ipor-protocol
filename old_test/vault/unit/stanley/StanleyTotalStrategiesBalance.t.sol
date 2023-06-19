@@ -83,8 +83,8 @@ contract AssetManagementTotalStrategiesBalanceTest is TestCommons, DataUtils {
         // given
         uint256 expectedBalance = TestConstants.USD_10_000_18DEC;
         _daiMockedToken.approve(address(_assetManagementDai), expectedBalance);
-        _strategyAaveDai.setApr(555);
-        _strategyCompoundDai.setApr(444);
+        _strategyAaveDai.setApy(555);
+        _strategyCompoundDai.setApy(444);
         _assetManagementDai.deposit(expectedBalance);
         // when
         uint256 actualBalance = _assetManagementDai.totalBalance(_admin);
@@ -98,8 +98,8 @@ contract AssetManagementTotalStrategiesBalanceTest is TestCommons, DataUtils {
         // given
         uint256 expectedBalance = TestConstants.USD_10_000_18DEC;
         _daiMockedToken.approve(address(_assetManagementDai), expectedBalance);
-        _strategyAaveDai.setApr(33333333);
-        _strategyCompoundDai.setApr(55555555);
+        _strategyAaveDai.setApy(33333333);
+        _strategyCompoundDai.setApy(55555555);
         _assetManagementDai.deposit(expectedBalance);
         // when
         uint256 actualBalance = _assetManagementDai.totalBalance(_admin);
@@ -113,11 +113,11 @@ contract AssetManagementTotalStrategiesBalanceTest is TestCommons, DataUtils {
         // given
         uint256 expectedBalance = TestConstants.USD_20_000_18DEC;
         _daiMockedToken.approve(address(_assetManagementDai), expectedBalance);
-        _strategyAaveDai.setApr(33333333);
-        _strategyCompoundDai.setApr(55555555);
+        _strategyAaveDai.setApy(33333333);
+        _strategyCompoundDai.setApy(55555555);
         _assetManagementDai.deposit(TestConstants.USD_10_000_18DEC);
-        _strategyAaveDai.setApr(55555555);
-        _strategyCompoundDai.setApr(33333333);
+        _strategyAaveDai.setApy(55555555);
+        _strategyCompoundDai.setApy(33333333);
         _assetManagementDai.deposit(TestConstants.USD_10_000_18DEC);
         // when
         uint256 actualBalance = _assetManagementDai.totalBalance(_admin);
@@ -132,8 +132,8 @@ contract AssetManagementTotalStrategiesBalanceTest is TestCommons, DataUtils {
         uint256 expectedBalance18Decimals = TestConstants.USD_10_000_18DEC;
         uint256 expectedBalance6Decimals = TestConstants.USD_10_000_6DEC;
         _usdcMockedToken.approve(address(_assetManagementUsdc), expectedBalance6Decimals);
-        _strategyAaveUsdc.setApr(555);
-        _strategyCompoundUsdc.setApr(444);
+        _strategyAaveUsdc.setApy(555);
+        _strategyCompoundUsdc.setApy(444);
         _assetManagementUsdc.deposit(expectedBalance18Decimals);
         // when
         uint256 actualBalance = _assetManagementUsdc.totalBalance(_admin);
@@ -148,8 +148,8 @@ contract AssetManagementTotalStrategiesBalanceTest is TestCommons, DataUtils {
         uint256 expectedBalance18Decimals = TestConstants.USD_10_000_18DEC;
         uint256 expectedBalance6Decimals = TestConstants.USD_10_000_6DEC;
         _usdcMockedToken.approve(address(_assetManagementUsdc), expectedBalance6Decimals);
-        _strategyAaveUsdc.setApr(33333333);
-        _strategyCompoundUsdc.setApr(55555555);
+        _strategyAaveUsdc.setApy(33333333);
+        _strategyCompoundUsdc.setApy(55555555);
         _assetManagementUsdc.deposit(expectedBalance18Decimals);
         // when
         uint256 actualBalance = _assetManagementUsdc.totalBalance(_admin);
@@ -164,11 +164,11 @@ contract AssetManagementTotalStrategiesBalanceTest is TestCommons, DataUtils {
         uint256 expectedBalance18Decimals = TestConstants.USD_20_000_18DEC;
         uint256 expectedBalance6Decimals = TestConstants.USD_20_000_6DEC;
         _usdcMockedToken.approve(address(_assetManagementUsdc), expectedBalance6Decimals);
-        _strategyAaveUsdc.setApr(33333333);
-        _strategyCompoundUsdc.setApr(55555555);
+        _strategyAaveUsdc.setApy(33333333);
+        _strategyCompoundUsdc.setApy(55555555);
         _assetManagementUsdc.deposit(TestConstants.USD_10_000_18DEC);
-        _strategyAaveUsdc.setApr(55555555);
-        _strategyCompoundUsdc.setApr(33333333);
+        _strategyAaveUsdc.setApy(55555555);
+        _strategyCompoundUsdc.setApy(33333333);
         _assetManagementUsdc.deposit(TestConstants.USD_10_000_18DEC);
         // when
         uint256 actualBalance = _assetManagementUsdc.totalBalance(_admin);
