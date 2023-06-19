@@ -122,7 +122,9 @@ contract AmmPoolsService is IAmmPoolsService {
         _iporOracle = iporOracle;
     }
 
-    function getAmmPoolServiceConfiguration(address asset) external view override returns (AmmPoolsServicePoolConfiguration memory) {
+    function getAmmPoolServiceConfiguration(
+        address asset
+    ) external view override returns (AmmPoolsServicePoolConfiguration memory) {
         return _getPoolConfiguration(asset);
     }
 
@@ -192,11 +194,7 @@ contract AmmPoolsService is IAmmPoolsService {
         }
     }
 
-    function _provideLiquidity(
-        address asset,
-        address beneficiary,
-        uint256 assetAmount
-    ) internal {
+    function _provideLiquidity(address asset, address beneficiary, uint256 assetAmount) internal {
         AmmPoolsServicePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
             poolCfg.asset
@@ -222,8 +220,7 @@ contract AmmPoolsService is IAmmPoolsService {
             uint256(ammPoolsParamsCfg.maxLpAccountContribution) * 1e18
         );
 
-    IERC20Upgradeable(poolCfg.asset).safeTransferFrom(msg.sender, poolCfg.ammTreasury, assetAmount);
-
+        IERC20Upgradeable(poolCfg.asset).safeTransferFrom(msg.sender, poolCfg.ammTreasury, assetAmount);
 
         uint256 ipTokenAmount = IporMath.division(wadAssetAmount * 1e18, exchangeRate);
 
@@ -242,11 +239,7 @@ contract AmmPoolsService is IAmmPoolsService {
         );
     }
 
-    function _redeem(
-        address asset,
-        address beneficiary,
-        uint256 ipTokenAmount
-    ) internal {
+    function _redeem(address asset, address beneficiary, uint256 ipTokenAmount) internal {
         AmmPoolsServicePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         require(
@@ -276,6 +269,11 @@ contract AmmPoolsService is IAmmPoolsService {
             poolCfg.redeemFeeRate
         );
 
+        require(
+            redeemAmount.wadAssetAmount > 0 && redeemAmount.wadRedeemAmount > 0,
+            AmmPoolsErrors.CANNOT_REDEEM_ASSET_AMOUNT_TOO_LOW
+        );
+
         uint256 wadAmmTreasuryErc20Balance = IporMath.convertToWad(
             IERC20Upgradeable(poolCfg.asset).balanceOf(poolCfg.ammTreasury),
             poolCfg.decimals
@@ -286,7 +284,12 @@ contract AmmPoolsService is IAmmPoolsService {
             AmmPoolsErrors.INSUFFICIENT_ERC20_BALANCE
         );
 
-        _rebalanceIfNeededBeforeRedeem(poolCfg, wadAmmTreasuryErc20Balance, balance.vault, redeemAmount.wadRedeemAmount);
+        _rebalanceIfNeededBeforeRedeem(
+            poolCfg,
+            wadAmmTreasuryErc20Balance,
+            balance.vault,
+            redeemAmount.wadRedeemAmount
+        );
 
         require(
             _calculateRedeemedCollateralRatio(

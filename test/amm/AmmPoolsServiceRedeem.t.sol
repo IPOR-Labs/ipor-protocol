@@ -23,15 +23,7 @@ contract AmmPoolsServiceRedeemTest is TestCommons {
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
         _cfg.iporRiskManagementOracleUpdater = _userOne;
-
-        //        _cfg.spreadImplementation = address(
-        //            new MockSpreadModel(
-        //                TestConstants.PERCENTAGE_4_18DEC,
-        //                TestConstants.PERCENTAGE_2_18DEC,
-        //                TestConstants.ZERO_INT,
-        //                TestConstants.ZERO_INT
-        //            )
-        //        );
+        _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE5;
 
         _ammCfg.iporOracleUpdater = _userOne;
         _ammCfg.iporRiskManagementOracleUpdater = _userOne;
@@ -308,165 +300,166 @@ contract AmmPoolsServiceRedeemTest is TestCommons {
         assertEq(_iporProtocol.asset.balanceOf(_userThree), expectedTokenBalanceUserThree);
     }
 
-        function testShouldRedeemWhenLiquidityPoolCollateralRatioNotExceededAndPayFixed() public {
-            // given
-            _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+    function testShouldRedeemWhenLiquidityPoolCollateralRatioNotExceededAndPayFixed() public {
+        // given
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-            vm.prank(_userOne);
-            _iporProtocol.iporOracle.updateIndex(
-                address(_iporProtocol.asset),
-                TestConstants.PERCENTAGE_3_18DEC
-            );
+        vm.prank(_userOne);
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
 
-            vm.prank(_liquidityProvider);
-            _iporProtocol.joseph.provideLiquidity(TestConstants.USD_100_000_18DEC);
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_100_000_18DEC);
 
-            vm.prank(_userTwo);
-            _iporProtocol.ammTreasury.openSwapPayFixed(
-                27000 * TestConstants.D18,
-                9 * TestConstants.D17,
-                TestConstants.LEVERAGE_18DEC
-            );
+        vm.prank(_userTwo);
+        _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
+            _userTwo,
+            27000 * TestConstants.D18,
+            9 * TestConstants.D17,
+            TestConstants.LEVERAGE_18DEC
+        );
 
-            IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammTreasury.getAccruedBalance();
+        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getAmmBalance(
+            address(_iporProtocol.asset)
+        );
 
-            uint256 actualCollateral = balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed;
-            uint256 actualLiquidityPoolBalance = balance.liquidityPool;
-            uint256 expectedIpTokenBalanceSender = 49000 * TestConstants.D18;
+        uint256 actualCollateral = balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed;
+        uint256 actualLiquidityPoolBalance = balance.liquidityPool;
+        uint256 expectedIpTokenBalanceSender = 49000 * TestConstants.D18;
 
-            // when
-            vm.prank(_liquidityProvider);
-            _iporProtocol.joseph.itfRedeem(51000 * TestConstants.D18, block.timestamp);
+        // when
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.redeemFromAmmPoolDai(_liquidityProvider, 51000 * TestConstants.D18);
 
-            // then
+        // then
 
-            uint256 actualIpTokenBalanceSender = _iporProtocol.ipToken.balanceOf(_liquidityProvider);
-            assertLe(actualCollateral, actualLiquidityPoolBalance);
-            assertEq(actualIpTokenBalanceSender, expectedIpTokenBalanceSender);
-        }
-    //
-    //    function testShouldRedeemWhenLiquidityPoolCollateralRatioNotExceededAndReceiveFixed() public {
-    //        // given
-    //        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-    //
-    //        vm.prank(_userOne);
-    //        _iporProtocol.iporOracle.itfUpdateIndex(
-    //            address(_iporProtocol.asset),
-    //            TestConstants.PERCENTAGE_3_18DEC,
-    //            block.timestamp
-    //        );
-    //        vm.prank(_liquidityProvider);
-    //        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_100_000_18DEC);
-    //        vm.prank(_userTwo);
-    //        _iporProtocol.ammTreasury.openSwapReceiveFixed(
-    //            40000 * TestConstants.D18,
-    //            TestConstants.D16,
-    //            TestConstants.LEVERAGE_18DEC
-    //        );
-    //        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammTreasury.getAccruedBalance();
-    //        uint256 actualCollateral = balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed;
-    //        uint256 actualLiquidityPoolBalance = balance.liquidityPool;
-    //        uint256 expectedIpTokenBalanceSender = 49000 * TestConstants.D18;
-    //        // when
-    //        vm.prank(_liquidityProvider);
-    //        _iporProtocol.joseph.itfRedeem(51000 * TestConstants.D18, block.timestamp);
-    //        // then
-    //        //this line is not achieved if redeem failed
-    //        uint256 actualIpTokenBalanceSender = _iporProtocol.ipToken.balanceOf(_liquidityProvider);
-    //        assertLe(actualCollateral, actualLiquidityPoolBalance);
-    //        assertEq(actualIpTokenBalanceSender, expectedIpTokenBalanceSender);
-    //    }
-    //
-    //    function testShouldRedeemWhenLiquidityPoolCollateralRatioNotExceededAndNotOpenPayFixedWhenMaxCollateralRatioExceeded()
-    //        public
-    //    {
-    //        // given
-    //        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-    //
-    //        vm.prank(_userOne);
-    //        _iporProtocol.iporOracle.itfUpdateIndex(
-    //            address(_iporProtocol.asset),
-    //            TestConstants.PERCENTAGE_3_18DEC,
-    //            block.timestamp
-    //        );
-    //
-    //        vm.prank(_liquidityProvider);
-    //        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_100_000_18DEC);
-    //
-    //        vm.prank(_userTwo);
-    //        _iporProtocol.ammTreasury.openSwapPayFixed(
-    //            48000 * TestConstants.D18,
-    //            9 * TestConstants.D17,
-    //            TestConstants.LEVERAGE_18DEC
-    //        );
-    //
-    //        vm.prank(_liquidityProvider);
-    //        _iporProtocol.joseph.itfRedeem(TestConstants.USD_10_000_18DEC, block.timestamp);
-    //        //show that currently liquidity pool collateral ratio for opening position is achieved
-    //        vm.expectRevert("IPOR_303");
-    //        vm.prank(_userTwo);
-    //        _iporProtocol.ammTreasury.openSwapPayFixed(
-    //            50 * TestConstants.D18,
-    //            9 * TestConstants.D17,
-    //            TestConstants.LEVERAGE_18DEC
-    //        );
-    //
-    //        uint256 expectedIpTokenBalanceSender = 79700 * TestConstants.D18;
-    //
-    //        // when
-    //        vm.prank(_liquidityProvider);
-    //        _iporProtocol.joseph.itfRedeem(10300 * TestConstants.D18, block.timestamp);
-    //
-    //        // then
-    //        //this line is not achieved if redeem failed
-    //        uint256 actualIpTokenBalanceSender = _iporProtocol.ipToken.balanceOf(_liquidityProvider);
-    //        assertEq(actualIpTokenBalanceSender, expectedIpTokenBalanceSender);
-    //    }
-    //
-    //    function testShouldRedeemWhenLiquidityPoolCollateralRatioNotExceededAndNotOpenReceiveFixedWhenMaxCollateralRatioExceeded()
-    //        public
-    //    {
-    //        // given
-    //        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-    //
-    //        vm.prank(_userOne);
-    //        _iporProtocol.iporOracle.itfUpdateIndex(
-    //            address(_iporProtocol.asset),
-    //            TestConstants.PERCENTAGE_3_18DEC,
-    //            block.timestamp
-    //        );
-    //
-    //        vm.prank(_liquidityProvider);
-    //        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_100_000_18DEC);
-    //
-    //        vm.prank(_userTwo);
-    //        _iporProtocol.ammTreasury.openSwapReceiveFixed(
-    //            48000 * TestConstants.D18,
-    //            TestConstants.D16,
-    //            TestConstants.LEVERAGE_18DEC
-    //        );
-    //
-    //        vm.prank(_liquidityProvider);
-    //        _iporProtocol.joseph.itfRedeem(TestConstants.USD_10_000_18DEC, block.timestamp);
-    //
-    //        //show that currently liquidity pool collateral ratio for opening position is achieved
-    //        vm.expectRevert("IPOR_303");
-    //        vm.prank(_userTwo);
-    //        _iporProtocol.ammTreasury.openSwapReceiveFixed(
-    //            50 * TestConstants.D18,
-    //            9 * TestConstants.D17,
-    //            TestConstants.LEVERAGE_18DEC
-    //        );
-    //
-    //        uint256 expectedIpTokenBalanceSender = 79700 * TestConstants.D18;
-    //
-    //        // when
-    //        vm.prank(_liquidityProvider);
-    //        _iporProtocol.joseph.itfRedeem(10300 * TestConstants.D18, block.timestamp);
-    //
-    //        // then
-    //        //this line is not achieved if redeem failed
-    //        uint256 actualIpTokenBalanceSender = _iporProtocol.ipToken.balanceOf(_liquidityProvider);
-    //        assertEq(actualIpTokenBalanceSender, expectedIpTokenBalanceSender);
-    //    }
+        uint256 actualIpTokenBalanceSender = _iporProtocol.ipToken.balanceOf(_liquidityProvider);
+        assertLe(actualCollateral, actualLiquidityPoolBalance);
+        assertEq(actualIpTokenBalanceSender, expectedIpTokenBalanceSender);
+    }
+
+    function testShouldRedeemWhenLiquidityPoolCollateralRatioNotExceededAndReceiveFixed() public {
+        // given
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
+        vm.prank(_userOne);
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_100_000_18DEC);
+
+        vm.prank(_userTwo);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
+            _userTwo,
+            40000 * TestConstants.D18,
+            TestConstants.D16,
+            TestConstants.LEVERAGE_18DEC
+        );
+
+        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getAmmBalance(
+            address(_iporProtocol.asset)
+        );
+        uint256 actualCollateral = balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed;
+        uint256 actualLiquidityPoolBalance = balance.liquidityPool;
+        uint256 expectedIpTokenBalanceSender = 49000 * TestConstants.D18;
+
+        // when
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.redeemFromAmmPoolDai(_liquidityProvider, 51000 * TestConstants.D18);
+
+        // then
+        //this line is not achieved if redeem failed
+        uint256 actualIpTokenBalanceSender = _iporProtocol.ipToken.balanceOf(_liquidityProvider);
+        assertLe(actualCollateral, actualLiquidityPoolBalance);
+        assertEq(actualIpTokenBalanceSender, expectedIpTokenBalanceSender);
+    }
+
+    function testShouldRedeemWhenLiquidityPoolCollateralRatioNotExceededAndNotOpenPayFixedWhenMaxCollateralRatioExceeded()
+        public
+    {
+        // given
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
+        vm.prank(_userOne);
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_100_000_18DEC);
+
+        vm.prank(_userTwo);
+        _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
+            _userTwo,
+            48000 * TestConstants.D18,
+            9 * TestConstants.D17,
+            TestConstants.LEVERAGE_18DEC
+        );
+
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.redeemFromAmmPoolDai(_liquidityProvider, TestConstants.USD_10_000_18DEC);
+
+        //show that currently liquidity pool collateral ratio for opening position is achieved
+        vm.expectRevert("IPOR_303");
+        vm.prank(_userTwo);
+        _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
+            _userTwo,
+            50 * TestConstants.D18,
+            9 * TestConstants.D17,
+            TestConstants.LEVERAGE_18DEC
+        );
+
+        uint256 expectedIpTokenBalanceSender = 79700 * TestConstants.D18;
+
+        // when
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.redeemFromAmmPoolDai(_liquidityProvider, 10300 * TestConstants.D18);
+
+        // then
+        //this line is not achieved if redeem failed
+        uint256 actualIpTokenBalanceSender = _iporProtocol.ipToken.balanceOf(_liquidityProvider);
+        assertEq(actualIpTokenBalanceSender, expectedIpTokenBalanceSender);
+    }
+
+    function testShouldRedeemWhenLiquidityPoolCollateralRatioNotExceededAndNotOpenReceiveFixedWhenMaxCollateralRatioExceeded()
+        public
+    {
+        // given
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
+        vm.prank(_userOne);
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_100_000_18DEC);
+
+        vm.prank(_userTwo);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
+            _userTwo,
+            48000 * TestConstants.D18,
+            TestConstants.D16,
+            TestConstants.LEVERAGE_18DEC
+        );
+
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.redeemFromAmmPoolDai(_liquidityProvider, TestConstants.USD_10_000_18DEC);
+
+        //show that currently liquidity pool collateral ratio for opening position is achieved
+        vm.expectRevert("IPOR_303");
+        vm.prank(_userTwo);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
+            _userTwo,
+            50 * TestConstants.D18,
+            9 * TestConstants.D17,
+            TestConstants.LEVERAGE_18DEC
+        );
+
+        uint256 expectedIpTokenBalanceSender = 79700 * TestConstants.D18;
+
+        // when
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.redeemFromAmmPoolDai(_liquidityProvider, 10300 * TestConstants.D18);
+
+        // then
+        //this line is not achieved if redeem failed
+        uint256 actualIpTokenBalanceSender = _iporProtocol.ipToken.balanceOf(_liquidityProvider);
+        assertEq(actualIpTokenBalanceSender, expectedIpTokenBalanceSender);
+    }
 }
