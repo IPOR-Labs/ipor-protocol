@@ -49,26 +49,30 @@ interface IAmmSwapsLens {
         /// @notice Address of the AMM Treasury contract
         address ammTreasury;
     }
-
     /// @notice Struct describing configuration for one asset (pool)
-    struct AssetConfiguration {
-        /// @notice underlying token / stablecoin address
-        address asset;
-        /// @notice Minimal leverage value. Represented in 18 decimals.
-        uint256 minLeverage;
-        /// @notice Maximum swap leverage value. Represented in 18 decimals.
-        uint256 maxLeverage;
+    struct OpenSwapConfiguration {
         /// @notice Rate of collateral charged as a opening fee. Represented in 18 decimals.
         uint256 openingFeeRate;
         /// @notice IPOR publication fee amount collected from buyer when opening new swap. Represented in 18 decimals.
         uint256 iporPublicationFeeAmount;
         /// @notice Liquidation deposit amount collected from buyer when opening new swap. Represented in 18 decimals.
         uint256 liquidationDepositAmount;
-        /// @notice Calculated Spread. Represented in 18 decimals.
-        int256 spread;
-        /// @notice Maximum Liquidity Pool Collateral Ratio.
+        /// @notice Minimal leverage value. Represented in 18 decimals.
+        uint256 minLeverage;
+        /// @notice Maximum swap leverage value for Pay Fixed Swap. Represented in 18 decimals.
+        uint256 maxLeveragePayFixed;
+        /// @notice Maximum swap leverage value for Receive Fixed Swap. Represented in 18 decimals.
+        uint256 maxLeverageReceiveFixed;
+        /// @notice Maximum Liquidity Pool Collateral Ratio for Pay Fixed Swap.
         /// @dev It is a ratio of total collateral balance / liquidity pool balance
-        uint256 maxLpCollateralRatio;
+        uint256 maxCollateralRatioPayFixed;
+        /// @notice Maximum Liquidity Pool Collateral Ratio for Receive Fixed Swap.
+        /// @dev It is a ratio of total collateral balance / liquidity pool balance
+        uint256 maxCollateralRatioReceiveFixed;
+        /// @notice Calculated Spread for Pay Fixed direction Swap. Represented in 18 decimals.
+        int256 spreadPayFixed;
+        /// @notice Calculated Spread for Receive Fixed direction Swap. Represented in 18 decimals.
+        int256 spreadReceiveFixed;
         /// @notice Maximum amount that can be in Liquidity Pool, represented in 18 decimals.
         uint256 maxLiquidityPoolBalance;
         /// @notice Maximum amount that can be contributed by one account in Liquidity Pool, represented in 18 decimals.
@@ -115,15 +119,13 @@ interface IAmmSwapsLens {
     function getSOAP(address asset) external view returns (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap);
 
     /**
-     * @dev Returns the asset configuration details for a given asset, direction and tenor.
+     * @dev Returns the Configuration when open swap for a given asset and tenor.
      * @param asset The address of the asset.
-     * @param direction The direction of the swap (0 for pay fixed, 1 for receive fixed).
      * @param tenor The duration of the swap
-     * @return The asset configuration details.
+     * @return The open swap configuration details.
      */
-    function getAmmSwapsLensConfiguration(
+    function getOpenSwapConfiguration(
         address asset,
-        uint256 direction,
         IporTypes.SwapTenor tenor
-    ) external view returns (AssetConfiguration memory);
+    ) external view returns (OpenSwapConfiguration memory);
 }

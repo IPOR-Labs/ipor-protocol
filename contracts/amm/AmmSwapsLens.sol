@@ -146,42 +146,51 @@ contract AmmSwapsLens is IAmmSwapsLens {
         return ammStorage.getBalancesForOpenSwap();
     }
 
-    function getAmmSwapsLensConfiguration(
+    function getOpenSwapConfiguration(
         address asset,
-        uint256 direction,
         IporTypes.SwapTenor tenor
-    ) external view override returns (AssetConfiguration memory) {
-        IAmmOpenSwapService.AmmOpenSwapServicePoolConfiguration memory openSwapPoolCfg = IAmmOpenSwapService(_router)
+    ) external view override returns (OpenSwapConfiguration memory) {
+        IAmmOpenSwapService.AmmOpenSwapServicePoolConfiguration memory openSwapPoolCfg = IAmmOpenSwapService(address(this))
             .getAmmOpenSwapServicePoolConfiguration(asset);
+
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
             openSwapPoolCfg.asset
         );
 
-        (, , uint256 maxCollateralRatio, int256 spread, ) = IIporRiskManagementOracle(_riskManagementOracle)
-            .getOpenSwapParameters(asset, direction, tenor);
-
         IporTypes.AmmBalancesForOpenSwapMemory memory balances = IAmmStorage(openSwapPoolCfg.ammStorage)
             .getBalancesForOpenSwap();
 
-        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = RiskManagementLogic.getRiskIndicators(
+        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicatorsPayFixed = RiskManagementLogic.getRiskIndicators(
             asset,
-            direction,
+            0,
             tenor,
             balances.liquidityPool,
             openSwapPoolCfg.minLeverage,
             _riskManagementOracle
         );
 
-        return
-            AssetConfiguration(
+        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicatorsReceiveFixed = RiskManagementLogic
+            .getRiskIndicators(
                 asset,
+                1,
+                tenor,
+                balances.liquidityPool,
                 openSwapPoolCfg.minLeverage,
-                riskIndicators.maxLeveragePerLeg,
+                _riskManagementOracle
+            );
+
+        return
+            OpenSwapConfiguration(
                 openSwapPoolCfg.openingFeeRate,
                 openSwapPoolCfg.iporPublicationFee,
                 openSwapPoolCfg.liquidationDepositAmount,
-                spread,
-                maxCollateralRatio,
+                openSwapPoolCfg.minLeverage,
+                riskIndicatorsPayFixed.maxLeveragePerLeg,
+                riskIndicatorsReceiveFixed.maxLeveragePerLeg,
+                riskIndicatorsPayFixed.maxCollateralRatioPerLeg,
+                riskIndicatorsReceiveFixed.maxCollateralRatioPerLeg,
+                riskIndicatorsPayFixed.spread,
+                riskIndicatorsReceiveFixed.spread,
                 uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
                 uint256(ammPoolsParamsCfg.maxLpAccountContribution) * 1e18
             );

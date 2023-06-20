@@ -145,6 +145,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
                 _nonReentrantBefore;
             }
             return AMM_OPEN_SWAP_SERVICE;
+        } else if (sig == IAmmOpenSwapService.getAmmOpenSwapServicePoolConfiguration.selector) {
+            return AMM_OPEN_SWAP_SERVICE;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapPayFixedUsdt.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapPayFixedUsdc.selector) ||
@@ -250,7 +252,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             sig == IAmmSwapsLens.getPayoffReceiveFixed.selector ||
             sig == IAmmSwapsLens.getBalancesForOpenSwap.selector ||
             sig == IAmmSwapsLens.getSOAP.selector ||
-            sig == IAmmSwapsLens.getAmmSwapsLensConfiguration.selector
+            sig == IAmmSwapsLens.getOpenSwapConfiguration.selector
         ) {
             return AMM_SWAPS_LENS;
         } else if (
