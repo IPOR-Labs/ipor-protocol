@@ -73,12 +73,11 @@ jobs:
         if: ${{ always() }}
         needs:
             - notify
-            - build-sc
             - foundry-tests
             - trigger-external-jobs
         uses: ./.github/workflows/report-slack.yml
         secrets:
             SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         with:
-            success: ${{ needs.build-sc.result == 'success' && needs.foundry-tests.result == 'success' && needs.trigger-external-jobs.result == 'success' }}
+            success: ${{ needs.foundry-tests.result == 'success' && needs.trigger-external-jobs.result == 'success' }}
             slack-status-msg-id: ${{ needs.notify.outputs.slack-status-msg-id }}
