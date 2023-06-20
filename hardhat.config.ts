@@ -13,7 +13,6 @@ import "@typechain/hardhat";
 import "hardhat-abi-exporter";
 import networks from "./hardhat.network";
 import "@hardhat-docgen/core";
-import "@hardhat-docgen/markdown";
 
 let jobs = 2;
 
