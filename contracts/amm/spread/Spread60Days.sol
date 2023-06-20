@@ -2,8 +2,8 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "contracts/libraries/errors/IporOracleErrors.sol";
-import "contracts/libraries/errors/IporErrors.sol";
+import "@ipor-protocol/contracts/libraries/errors/IporOracleErrors.sol";
+import "@ipor-protocol/contracts/libraries/errors/IporErrors.sol";
 import "./ISpread60Days.sol";
 import "./ISpread60DaysLens.sol";
 import "./DemandSpreadLibs.sol";

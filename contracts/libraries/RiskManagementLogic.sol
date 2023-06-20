@@ -10,10 +10,10 @@ import "../interfaces/IIporRiskManagementOracle.sol";
 import "../interfaces/IAssetManagement.sol";
 import "../governance/AmmConfigurationManager.sol";
 import "../amm/libraries/types/AmmInternalTypes.sol";
-import "contracts/amm/spread/ISpread28DaysLens.sol";
-import "contracts/amm/spread/ISpread60DaysLens.sol";
-import "contracts/amm/spread/ISpread90DaysLens.sol";
-import "contracts/libraries/errors/AmmErrors.sol";
+import "@ipor-protocol/contracts/amm/spread/ISpread28DaysLens.sol";
+import "@ipor-protocol/contracts/amm/spread/ISpread60DaysLens.sol";
+import "@ipor-protocol/contracts/amm/spread/ISpread90DaysLens.sol";
+import "@ipor-protocol/contracts/libraries/errors/AmmErrors.sol";
 
 library RiskManagementLogic {
     using Address for address;

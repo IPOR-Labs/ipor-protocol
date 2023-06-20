@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "contracts/libraries/errors/AmmErrors.sol";
-import "contracts/libraries/Constants.sol";
-import "contracts/libraries/math/IporMath.sol";
-import "contracts/libraries/math/InterestRates.sol";
-import "contracts/interfaces/types/AmmStorageTypes.sol";
-import "contracts/amm/libraries/SoapIndicatorLogic.sol";
+import "@ipor-protocol/contracts/libraries/errors/AmmErrors.sol";
+import "@ipor-protocol/contracts/libraries/Constants.sol";
+import "@ipor-protocol/contracts/libraries/math/IporMath.sol";
+import "@ipor-protocol/contracts/libraries/math/InterestRates.sol";
+import "@ipor-protocol/contracts/interfaces/types/AmmStorageTypes.sol";
+import "@ipor-protocol/contracts/amm/libraries/SoapIndicatorLogic.sol";
 
 library SoapIndicatorRebalanceLogic {
     using SafeCast for uint256;

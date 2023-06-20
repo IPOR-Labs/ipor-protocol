@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "contracts/itf/ItfIporOracle.sol";
+import "@ipor-protocol/contracts/itf/ItfIporOracle.sol";
 import "../TestConstants.sol";
 import "forge-std/Test.sol";
 import "./BuilderUtils.sol";
