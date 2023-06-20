@@ -133,10 +133,10 @@ contract LocalDeployment is Script {
         address asset,
         address ammTreasury,
         address ammStorage
-    ) internal view returns (IAmmGovernanceLens.PoolConfiguration memory poolCfg) {
-        poolCfg = IAmmGovernanceLens.PoolConfiguration({
+    ) internal view returns (IAmmGovernanceLens.AmmGovernancePoolConfiguration memory poolCfg) {
+        poolCfg = IAmmGovernanceLens.AmmGovernancePoolConfiguration({
             asset: asset,
-            assetDecimals: IERC20MetadataUpgradeable(asset).decimals(),
+            decimals: IERC20MetadataUpgradeable(asset).decimals(),
             ammStorage: ammStorage,
             ammTreasury: ammTreasury,
             ammPoolsTreasury: asset, //TODO: fixit
@@ -177,9 +177,9 @@ contract LocalDeployment is Script {
             ammStorage: ammStorage,
             ammTreasury: ammTreasury,
             assetManagement: assetManagement,
-            openingFeeRate: 5e14,
             openingFeeRateForSwapUnwind: 5e14,
-            liquidationLegLimit: 10,
+            openingFeeTreasuryPortionRateForSwapUnwind: 5e14,
+            maxLengthOfLiquidatedSwapsPerLeg: 10,
             timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
             timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
             minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
@@ -331,9 +331,9 @@ contract LocalDeployment is Script {
         system.usdc.ipToken = address(new IpToken("IP USDC", "ipUSDC", address(system.usdc.asset)));
         system.dai.ipToken = address(new IpToken("IP DAI", "ipDAI", address(system.dai.asset)));
 
-        IpToken(system.usdt.ipToken).setRouter(system.routerProxy);
-        IpToken(system.usdc.ipToken).setRouter(system.routerProxy);
-        IpToken(system.dai.ipToken).setRouter(system.routerProxy);
+        IpToken(system.usdt.ipToken).setJoseph(system.routerProxy);
+        IpToken(system.usdc.ipToken).setJoseph(system.routerProxy);
+        IpToken(system.dai.ipToken).setJoseph(system.routerProxy);
     }
 
     function deployIvTokens(System memory system) public {
@@ -573,22 +573,22 @@ contract LocalDeployment is Script {
     function upgradeIporProtocolRouter(System memory system) internal {
         system.ammSwapsLens = address(
             new AmmSwapsLens(
-                IAmmSwapsLens.SwapLensConfiguration({
+                IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(system.usdt.asset),
                     ammStorage: address(system.usdt.ammStorageProxy),
                     ammTreasury: address(system.usdt.ammTreasuryProxy)
                 }),
-                IAmmSwapsLens.SwapLensConfiguration({
+                IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(system.usdc.asset),
                     ammStorage: address(system.usdc.ammStorageProxy),
                     ammTreasury: address(system.usdc.ammTreasuryProxy)
                 }),
-                IAmmSwapsLens.SwapLensConfiguration({
+                IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(system.dai.asset),
                     ammStorage: address(system.dai.ammStorageProxy),
                     ammTreasury: address(system.dai.ammTreasuryProxy)
                 }),
-                IIporOracle(system.iporOracleProxy),
+                system.iporOracleProxy,
                 system.riskOracleProxy,
                 system.routerProxy
             )
