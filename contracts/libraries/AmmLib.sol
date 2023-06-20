@@ -12,6 +12,8 @@ import "@ipor-protocol/contracts/interfaces/IIpToken.sol";
 import "@ipor-protocol/contracts/interfaces/IIporOracle.sol";
 import "@ipor-protocol/contracts/interfaces/IAmmStorage.sol";
 import "@ipor-protocol/contracts/interfaces/IAssetManagement.sol";
+import "@ipor-protocol/contracts/interfaces/IIporRiskManagementOracle.sol";
+import "../amm/libraries/types/AmmInternalTypes.sol";
 
 library AmmLib {
     using SafeCast for uint256;
@@ -94,5 +96,45 @@ library AmmLib {
         accruedBalance.liquidityPool = liquidityPool.toUint256();
         accruedBalance.vault = actualVaultBalance;
         return accruedBalance;
+    }
+
+    function getRiskIndicators(
+        AmmInternalTypes.RiskIndicatorsContext memory context,
+        uint256 direction
+    ) internal view returns (AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators) {
+        uint256 maxNotionalPerLeg;
+
+        (
+            maxNotionalPerLeg,
+            riskIndicators.maxCollateralRatioPerLeg,
+            riskIndicators.maxCollateralRatio,
+            riskIndicators.spread,
+            riskIndicators.fixedRateCap
+        ) = IIporRiskManagementOracle(context.iporRiskManagementOracle)
+            .getOpenSwapParameters(context.asset, direction, context.tenor);
+
+        uint256 maxCollateralPerLeg = IporMath.division(
+            context.liquidityPool * riskIndicators.maxCollateralRatioPerLeg,
+            1e18
+        );
+
+        if (maxCollateralPerLeg > 0) {
+            riskIndicators.maxLeveragePerLeg = _leverageInRange(
+                IporMath.division(maxNotionalPerLeg * 1e18, maxCollateralPerLeg),
+                context.minLeverage
+            );
+        } else {
+            riskIndicators.maxLeveragePerLeg = context.minLeverage;
+        }
+    }
+
+    function _leverageInRange(uint256 leverage, uint256 cfgMinLeverage) internal pure returns (uint256) {
+        if (leverage > Constants.WAD_LEVERAGE_1000) {
+            return Constants.WAD_LEVERAGE_1000;
+        } else if (leverage < cfgMinLeverage) {
+            return cfgMinLeverage;
+        } else {
+            return leverage;
+        }
     }
 }

@@ -90,12 +90,12 @@ contract TestForkCommons is Test {
         uint iporRiskManagementOracleVersion = _createIporRiskManagementOracle();
         _createEmptyRouterImplementation();
 
-        _createAmmSwapsLens();
         _createAmmPoolsLens();
         _createAssetManagementLens();
 
         _creatSpreadModule();
 
+        _createAmmSwapsLens();
         _createAmmOpenSwapService();
         _createAmmCloseSwapService();
         _createAmmPoolsService();
@@ -239,17 +239,20 @@ contract TestForkCommons is Test {
         IAmmSwapsLens.SwapLensPoolConfiguration memory daiConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             DAI,
             miltonStorageProxyDai,
-            miltonProxyDai
+            miltonProxyDai,
+            10 * 1e18
         );
         IAmmSwapsLens.SwapLensPoolConfiguration memory usdcConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             USDC,
             miltonStorageProxyUsdc,
-            miltonProxyUsdc
+            miltonProxyUsdc,
+            10 * 1e18
         );
         IAmmSwapsLens.SwapLensPoolConfiguration memory usdtConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             USDT,
             miltonStorageProxyUsdt,
-            miltonProxyUsdt
+            miltonProxyUsdt,
+            10 * 1e18
         );
 
         ammSwapsLens = address(
@@ -259,7 +262,8 @@ contract TestForkCommons is Test {
                 daiConfig,
                 iporOracleProxy,
                 iporRiskManagementOracleProxy,
-                iporProtocolRouterProxy
+                iporProtocolRouterProxy,
+                spreadRouter
             )
         );
         console2.log("ammSwapsLens: ", ammSwapsLens);

@@ -1,27 +1,36 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
+import "@openzeppelin/contracts/utils/Address.sol";
 import "../interfaces/IAmmSwapsLens.sol";
 import "./libraries/IporSwapLogic.sol";
 import "../libraries/AmmLib.sol";
 import "../interfaces/IAmmOpenSwapService.sol";
+import "../amm/spread/ISpread28DaysLens.sol";
+import "../amm/spread/ISpread60DaysLens.sol";
+import "../amm/spread/ISpread90DaysLens.sol";
 import "../libraries/RiskManagementLogic.sol";
 
 contract AmmSwapsLens is IAmmSwapsLens {
+    using Address for address;
     using IporSwapLogic for AmmTypes.Swap;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
+    using AmmLib for AmmInternalTypes.RiskIndicatorsContext;
 
     address internal immutable _usdtAsset;
     address internal immutable _usdtAmmStorage;
     address internal immutable _usdtAmmTreasury;
+    uint256 internal immutable _usdtMinLeverage;
 
     address internal immutable _usdcAsset;
     address internal immutable _usdcAmmStorage;
     address internal immutable _usdcAmmTreasury;
+    uint256 internal immutable _usdcMinLeverage;
 
     address internal immutable _daiAsset;
     address internal immutable _daiAmmStorage;
     address internal immutable _daiAmmTreasury;
+    uint256 internal immutable _daiMinLeverage;
 
     address internal immutable _iporOracle;
 
@@ -29,13 +38,16 @@ contract AmmSwapsLens is IAmmSwapsLens {
 
     address internal immutable _riskManagementOracle;
 
+    address internal immutable _spreadRouter;
+
     constructor(
         SwapLensPoolConfiguration memory usdtCfg,
         SwapLensPoolConfiguration memory usdcCfg,
         SwapLensPoolConfiguration memory daiCfg,
         address iporOracle,
         address riskManagementOracle,
-        address router
+        address router,
+        address spreadRouter
     ) {
         require(
             usdtCfg.asset != address(0),
@@ -82,21 +94,31 @@ contract AmmSwapsLens is IAmmSwapsLens {
         );
         require(router != address(0), string.concat(IporErrors.WRONG_ADDRESS, " router address cannot be 0"));
 
+        require(
+            spreadRouter != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " spreadRouter address cannot be 0")
+        );
+
+
         _usdtAsset = usdtCfg.asset;
         _usdtAmmStorage = usdtCfg.ammStorage;
         _usdtAmmTreasury = usdtCfg.ammTreasury;
+        _usdtMinLeverage = usdtCfg.minLeverage;
 
         _usdcAsset = usdcCfg.asset;
         _usdcAmmStorage = usdcCfg.ammStorage;
         _usdcAmmTreasury = usdcCfg.ammTreasury;
+        _usdcMinLeverage = usdcCfg.minLeverage;
 
         _daiAsset = daiCfg.asset;
         _daiAmmStorage = daiCfg.ammStorage;
         _daiAmmTreasury = daiCfg.ammTreasury;
+        _daiMinLeverage = daiCfg.minLeverage;
 
         _iporOracle = iporOracle;
         _riskManagementOracle = riskManagementOracle;
         _router = router;
+        _spreadRouter = spreadRouter;
     }
 
     function getSwaps(
@@ -137,6 +159,100 @@ contract AmmSwapsLens is IAmmSwapsLens {
         ammCoreModel.ammStorage = address(ammStorage);
         ammCoreModel.iporOracle = _iporOracle;
         (soapPayFixed, soapReceiveFixed, soap) = ammCoreModel.getSOAP();
+    }
+
+    function getOfferedRate(
+        address asset,
+        IporTypes.SwapTenor tenor,
+        uint256 notional
+    ) external override returns (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed) {
+        require(notional > 0, AmmErrors.INVALID_NOTIONAL);
+
+        SwapLensPoolConfiguration memory poolCfg = _getSwapLensPoolConfiguration(asset);
+
+        (bytes4 payFixedSig, bytes4 receiveFixedSig) = _getSpreadRouterSignatures(tenor);
+        (uint256 indexValue,,) = IIporOracle(_iporOracle).getIndex(asset);
+        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(poolCfg.ammStorage)
+            .getBalancesForOpenSwap();
+
+        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicatorsPayFixed = _getRiskIndicators(
+            asset,
+            tenor,
+            balance.liquidityPool,
+            poolCfg.minLeverage,
+            0
+        );
+        AmmInternalTypes.SpreadContext memory spreadContextPayFixed;
+        spreadContextPayFixed.asset = asset;
+        spreadContextPayFixed.spreadFunctionSig = payFixedSig;
+        spreadContextPayFixed.tenor = tenor;
+        spreadContextPayFixed.notional = notional;
+        spreadContextPayFixed.minLeverage = poolCfg.minLeverage;
+        spreadContextPayFixed.indexValue = indexValue;
+        spreadContextPayFixed.riskIndicators = riskIndicatorsPayFixed;
+        spreadContextPayFixed.balance = balance;
+        offeredRatePayFixed = _getOfferedRatePerLeg(spreadContextPayFixed);
+
+        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicatorsReceiveFixed = _getRiskIndicators(
+            asset,
+            tenor,
+            balance.liquidityPool,
+            poolCfg.minLeverage,
+            1
+        );
+        AmmInternalTypes.SpreadContext memory spreadContextReceiveFixed;
+        spreadContextReceiveFixed.asset = asset;
+        spreadContextReceiveFixed.spreadFunctionSig = payFixedSig;
+        spreadContextReceiveFixed.tenor = tenor;
+        spreadContextReceiveFixed.notional = notional;
+        spreadContextReceiveFixed.minLeverage = poolCfg.minLeverage;
+        spreadContextReceiveFixed.indexValue = indexValue;
+        spreadContextReceiveFixed.riskIndicators = riskIndicatorsReceiveFixed;
+        spreadContextReceiveFixed.balance = balance;
+        offeredRateReceiveFixed = _getOfferedRatePerLeg(spreadContextReceiveFixed);
+    }
+
+    function _getOfferedRatePerLeg(
+        AmmInternalTypes.SpreadContext memory spreadContext
+    ) internal returns (uint256 offeredRate) {
+        offeredRate = abi.decode(
+            _spreadRouter.functionCall(
+                abi.encodeWithSelector(
+                    spreadContext.spreadFunctionSig,
+                    spreadContext.asset,
+                    spreadContext.notional,
+                    spreadContext.riskIndicators.maxLeveragePerLeg,
+                    spreadContext.riskIndicators.maxCollateralRatioPerLeg,
+                    spreadContext.riskIndicators.spread,
+                    spreadContext.balance.totalCollateralPayFixed,
+                    spreadContext.balance.totalCollateralReceiveFixed,
+                    spreadContext.balance.liquidityPool,
+                    spreadContext.balance.totalNotionalPayFixed,
+                    spreadContext.balance.totalNotionalReceiveFixed,
+                    spreadContext.indexValue,
+                    spreadContext.riskIndicators.fixedRateCap
+                )
+            ),
+            (uint256)
+        );
+    }
+
+    function _getRiskIndicators(
+        address asset,
+        IporTypes.SwapTenor tenor,
+        uint256 liquidityPool,
+        uint256 minLeverage,
+        uint256 direction
+    ) internal returns (AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators) {
+        AmmInternalTypes.RiskIndicatorsContext memory riskIndicatorsContext;
+
+        riskIndicatorsContext.asset = asset;
+        riskIndicatorsContext.iporRiskManagementOracle = _riskManagementOracle;
+        riskIndicatorsContext.tenor = tenor;
+        riskIndicatorsContext.liquidityPool = liquidityPool;
+        riskIndicatorsContext.minLeverage = minLeverage;
+
+        riskIndicators = riskIndicatorsContext.getRiskIndicators(direction);
     }
 
     function getBalancesForOpenSwap(
@@ -262,20 +378,44 @@ contract AmmSwapsLens is IAmmSwapsLens {
                 SwapLensPoolConfiguration({
                     asset: _usdtAsset,
                     ammStorage: _usdtAmmStorage,
-                    ammTreasury: _usdtAmmTreasury
+                    ammTreasury: _usdtAmmTreasury,
+                    minLeverage : _usdtMinLeverage
                 });
         } else if (asset == _usdcAsset) {
             return
                 SwapLensPoolConfiguration({
                     asset: _usdcAsset,
                     ammStorage: _usdcAmmStorage,
-                    ammTreasury: _usdcAmmTreasury
+                    ammTreasury: _usdcAmmTreasury,
+                    minLeverage : _usdcMinLeverage
                 });
         } else if (asset == _daiAsset) {
             return
-                SwapLensPoolConfiguration({asset: _daiAsset, ammStorage: _daiAmmStorage, ammTreasury: _daiAmmTreasury});
+                SwapLensPoolConfiguration({
+                    asset: _daiAsset,
+                    ammStorage: _daiAmmStorage,
+                    ammTreasury: _daiAmmTreasury,
+                    minLeverage : _daiMinLeverage
+                });
         } else {
             revert(IporErrors.ASSET_NOT_SUPPORTED);
+        }
+    }
+
+    function _getSpreadRouterSignatures(
+        IporTypes.SwapTenor tenor
+    ) internal view returns (bytes4 payFixedSig, bytes4 receiveFixedSig) {
+        if (tenor == IporTypes.SwapTenor.DAYS_28) {
+            payFixedSig = ISpread28DaysLens.calculateOfferedRatePayFixed28Days.selector;
+            receiveFixedSig = ISpread28DaysLens.calculateOfferedRateReceiveFixed28Days.selector;
+        } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
+            payFixedSig = ISpread60DaysLens.calculateOfferedRatePayFixed60Days.selector;
+            receiveFixedSig = ISpread60DaysLens.calculateOfferedRateReceiveFixed60Days.selector;
+        } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
+            payFixedSig = ISpread90DaysLens.calculateOfferedRatePayFixed90Days.selector;
+            receiveFixedSig = ISpread90DaysLens.calculateOfferedRateReceiveFixed90Days.selector;
+        } else {
+            revert(AmmErrors.UNSUPPORTED_SWAP_TENOR);
         }
     }
 }
