@@ -9,7 +9,7 @@ import {MockTestnetToken} from "contracts/mocks/tokens/MockTestnetToken.sol";
 import {ItfAssetManagement18D} from "contracts/itf/ItfAssetManagement18D.sol";
 
 import "../utils/builder/AssetManagementBuilder.sol";
-import "contracts/mocks/stanley/MockStrategy.sol";
+import "@ipor-protocol/contracts/mocks/stanley/MockStrategy.sol";
 import "../utils/builder/IvTokenBuilder.sol";
 import "../utils/builder/AssetBuilder.sol";
 

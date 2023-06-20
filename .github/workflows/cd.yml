@@ -1,85 +1,85 @@
 name: CD
 
 on:
-    push:
-        branches:
-            - main
-            - develop
-            - v2-draft
+  push:
+    branches:
+      - main
+      - develop
+      - v2-draft
 jobs:
-    notify:
-        uses: ./.github/workflows/notify-slack.yml
-        secrets:
-            SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+  notify:
+    uses: ./.github/workflows/notify-slack.yml
+    secrets:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-    foundry-tests:
-        needs: notify
-        uses: ./.github/workflows/foundry-tests.yml
-        secrets:
-            FORK_URL: ${{ secrets.PROVIDER_URL }}
-        with:
-            test-options: '--no-match-path "test/fork/*"'
-            fork-test-options: '--match-path "test/fork/*"'
+  foundry-tests:
+    needs: notify
+    uses: ./.github/workflows/foundry-tests.yml
+    secrets:
+      FORK_URL: ${{ secrets.PROVIDER_URL }}
+    with:
+      test-options: '--no-match-path "test/fork/*"'
+      fork-test-options: '--match-path "test/fork/*"'
 
-#    trigger-external-jobs:
-#        needs: notify
-#        runs-on: ubuntu-latest
-#        steps:
-#
-#            - name: Trigger build containers
-#              # from tag: v1.6.5
-#              uses: convictional/trigger-workflow-and-wait@f69fa9eedd3c62a599220f4d5745230e237904be
-#              with:
-#                  owner: IPOR-Labs
-#                  repo: ${{ secrets.BUILD_CONTAINERS_REPO }}
-#                  github_token: ${{ secrets.TOKEN_RUN_BUILD_CONTAINERS }}
-#                  workflow_file_name: cd.yml
-#                  ref: main
-#                  client_payload: >-
-#                      {
-#                      "src-sha": "${{ github.sha }}",
-#                      "src-actor": "${{ github.triggering_actor }}",
-#                      "src-repository": "${{ github.repository }}",
-#                      "src-workflow": "${{ github.workflow }}",
-#                      "src-run-url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
-#                      }
-#                  wait_interval: 0
-#                  propagate_failure: false
-#                  trigger_workflow: true
-#                  wait_workflow: false
-#
-#            - name: Trigger build jar
-#              # from tag: v1.6.5
-#              uses: convictional/trigger-workflow-and-wait@f69fa9eedd3c62a599220f4d5745230e237904be
-#              with:
-#                  owner: IPOR-Labs
-#                  repo: ${{ secrets.BUILD_JAR_REPO }}
-#                  github_token: ${{ secrets.TOKEN_RUN_BUILD_JAR }}
-#                  workflow_file_name: cd.yml
-#                  ref: main
-#                  client_payload: >-
-#                      {
-#                      "src-sha": "${{ github.sha }}",
-#                      "src-actor": "${{ github.triggering_actor }}",
-#                      "src-repository": "${{ github.repository }}",
-#                      "src-workflow": "${{ github.workflow }}",
-#                      "src-run-url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
-#                      }
-#                  wait_interval: 0
-#                  propagate_failure: false
-#                  trigger_workflow: true
-#                  wait_workflow: false
+  #    trigger-external-jobs:
+  #        needs: notify
+  #        runs-on: ubuntu-latest
+  #        steps:
+  #
+  #            - name: Trigger build containers
+  #              # from tag: v1.6.5
+  #              uses: convictional/trigger-workflow-and-wait@f69fa9eedd3c62a599220f4d5745230e237904be
+  #              with:
+  #                  owner: IPOR-Labs
+  #                  repo: ${{ secrets.BUILD_CONTAINERS_REPO }}
+  #                  github_token: ${{ secrets.TOKEN_RUN_BUILD_CONTAINERS }}
+  #                  workflow_file_name: cd.yml
+  #                  ref: main
+  #                  client_payload: >-
+  #                      {
+  #                      "src-sha": "${{ github.sha }}",
+  #                      "src-actor": "${{ github.triggering_actor }}",
+  #                      "src-repository": "${{ github.repository }}",
+  #                      "src-workflow": "${{ github.workflow }}",
+  #                      "src-run-url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
+  #                      }
+  #                  wait_interval: 0
+  #                  propagate_failure: false
+  #                  trigger_workflow: true
+  #                  wait_workflow: false
+  #
+  #            - name: Trigger build jar
+  #              # from tag: v1.6.5
+  #              uses: convictional/trigger-workflow-and-wait@f69fa9eedd3c62a599220f4d5745230e237904be
+  #              with:
+  #                  owner: IPOR-Labs
+  #                  repo: ${{ secrets.BUILD_JAR_REPO }}
+  #                  github_token: ${{ secrets.TOKEN_RUN_BUILD_JAR }}
+  #                  workflow_file_name: cd.yml
+  #                  ref: main
+  #                  client_payload: >-
+  #                      {
+  #                      "src-sha": "${{ github.sha }}",
+  #                      "src-actor": "${{ github.triggering_actor }}",
+  #                      "src-repository": "${{ github.repository }}",
+  #                      "src-workflow": "${{ github.workflow }}",
+  #                      "src-run-url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
+  #                      }
+  #                  wait_interval: 0
+  #                  propagate_failure: false
+  #                  trigger_workflow: true
+  #                  wait_workflow: false
 
-    report:
-        if: ${{ always() }}
-        needs:
-            - notify
-            - foundry-tests
-#            - trigger-external-jobs
-        uses: ./.github/workflows/report-slack.yml
-        secrets:
-            SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        with:
-            #success: ${{ needs.build-sc.result == 'success' && needs.foundry-tests.result == 'success' && needs.trigger-external-jobs.result == 'success' }}
-            success: ${{ needs.foundry-tests.result == 'success' }}
-            slack-status-msg-id: ${{ needs.notify.outputs.slack-status-msg-id }}
+  report:
+    if: ${{ always() }}
+    needs:
+      - notify
+      - foundry-tests
+    #            - trigger-external-jobs
+    uses: ./.github/workflows/report-slack.yml
+    secrets:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+    with:
+      #success: ${{ needs.foundry-tests.result == 'success' && needs.trigger-external-jobs.result == 'success' }}
+      success: ${{ needs.foundry-tests.result == 'success' }}
+      slack-status-msg-id: ${{ needs.notify.outputs.slack-status-msg-id }}

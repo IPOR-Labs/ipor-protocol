@@ -8,10 +8,10 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/errors/AssetManagementErrors.sol";
 
-import "contracts/security/IporOwnableUpgradeable.sol";
-import "contracts/security/PauseManager.sol";
-import "contracts/interfaces/IStrategy.sol";
-import "contracts/interfaces/IProxyImplementation.sol";
+import "@ipor-protocol/contracts/security/IporOwnableUpgradeable.sol";
+import "@ipor-protocol/contracts/security/PauseManager.sol";
+import "@ipor-protocol/contracts/interfaces/IStrategy.sol";
+import "@ipor-protocol/contracts/interfaces/IProxyImplementation.sol";
 
 abstract contract StrategyCore is
     Initializable,

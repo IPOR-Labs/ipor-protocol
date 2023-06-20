@@ -11,8 +11,8 @@ remappings = [
     'eth-gas-reporter/=node_modules/eth-gas-reporter/',
     'ds-test/=lib/forge-std/lib/ds-test/src/',
     'forge-std/=lib/forge-std/src/',
-    'contracts/=contracts/',
-    'scripts/=scripts/'
+    '@ipor-protocol/contracts/=contracts/',
+    '@ipor-protocol/test/=test/'
 ]
 optimizer_runs = 500
 ignored_error_codes = [5667, 9302, 2462, 5574, 8760]
