@@ -41,7 +41,9 @@ interface IIporRiskManagementOracle {
     /// @return maxCollateralRatioReceiveFixed maximum collateral ratio for receive fixed leg
     /// @return maxCollateralRatio maximum collateral ratio for both legs
     /// @return lastUpdateTimestamp Last risk indicators update done by off-chain service
-    function getRiskIndicators(address asset)
+    function getRiskIndicators(
+        address asset
+    )
         external
         view
         returns (
@@ -62,7 +64,9 @@ interface IIporRiskManagementOracle {
     /// @return spread60dReceiveFixed spread for 60 days receive fixed swap
     /// @return spread90dPayFixed spread for 90 days pay fixed swap
     /// @return spread90dReceiveFixed spread for 90 days receive fixed swap
-    function getBaseSpreads(address asset)
+    function getBaseSpreads(
+        address asset
+    )
         external
         view
         returns (
@@ -84,7 +88,9 @@ interface IIporRiskManagementOracle {
     /// @return fixedRateCap60dReceiveFixed fixed rate cap for 60 days receive fixed swap
     /// @return fixedRateCap90dPayFixed fixed rate cap for 90 days pay fixed swap
     /// @return fixedRateCap90dReceiveFixed fixed rate cap for 90 days receive fixed swap
-    function getFixedRateCaps(address asset)
+    function getFixedRateCaps(
+        address asset
+    )
         external
         view
         returns (

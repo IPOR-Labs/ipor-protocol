@@ -4,18 +4,20 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
-import "../interfaces/types/IporOracleFacadeTypes.sol";
 import "../libraries/Constants.sol";
 import "../libraries/math/IporMath.sol";
 import "../interfaces/IIporOracle.sol";
+import "../interfaces/types/IporOracleFacadeTypes.sol";
 import "../interfaces/IIporOracleFacadeDataProvider.sol";
+import "../interfaces/IProxyImplementation.sol";
 import "../security/IporOwnableUpgradeable.sol";
 
 contract IporOracleFacadeDataProvider is
     Initializable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-    IIporOracleFacadeDataProvider
+    IIporOracleFacadeDataProvider,
+    IProxyImplementation
 {
     address private _iporOracle;
     address[] internal _assets;
@@ -49,6 +51,10 @@ contract IporOracleFacadeDataProvider is
             }
         }
         return indexes;
+    }
+
+    function getImplementation() external view override returns (address) {
+        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
 
     function _getIporOracle() internal view virtual returns (address) {

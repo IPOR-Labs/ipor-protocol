@@ -20,7 +20,7 @@ contract AmmUnwindSwap is TestCommons {
     event SwapUnwind(
         uint256 indexed swapId,
         int256 swapPayoffToDate,
-        int256 swapUnwindValue,
+        int256 swapUnwindAmount,
         uint256 openingFeeLPAmount,
         uint256 openingFeeTreasuryAmount
     );
@@ -43,7 +43,7 @@ contract AmmUnwindSwap is TestCommons {
         uint256 leverage = 100 * 10 ** 18;
 
         int256 expectedSwapPayoffToDate = -254213052927823196669;
-        int256 expectedSwapUnwindValue = -1366359843923722381006;
+        int256 expectedSwapUnwindAmount = -1366359843923722381006;
         uint256 expectedOpeningFeeLpAmount = 29145104043000041192;
         uint256 expectedOpeningFeeTreasuryAmount = 14579841942471256;
 
@@ -76,14 +76,14 @@ contract AmmUnwindSwap is TestCommons {
         emit SwapUnwind(
             swap.id,
             expectedSwapPayoffToDate,
-            expectedSwapUnwindValue,
+            expectedSwapUnwindAmount,
             expectedOpeningFeeLpAmount,
             expectedOpeningFeeTreasuryAmount
         );
         _iporProtocol.ammCloseSwapService.closeSwapPayFixedDai(_buyer, 1);
 
         //then
-        assertGe(payoff, expectedSwapUnwindValue);
+        assertGe(payoff, expectedSwapUnwindAmount);
     }
 
     function testShouldUnwindPayFixedWhenCloseTwoPositionInDifferentMoment() public {
@@ -96,12 +96,12 @@ contract AmmUnwindSwap is TestCommons {
         uint256 leverage = 100 * 10 ** 18;
 
         int256 expectedSwapPayoffToDateOne = -13299129121611997911;
-        int256 expectedSwapUnwindValueOne = -16139194942451368026;
+        int256 expectedSwapUnwindAmountOne = -16139194942451368026;
         uint256 expectedOpeningFeeLpAmountOne = 29145104043000041192;
         uint256 expectedOpeningFeeTreasuryAmountOne = 14579841942471256;
 
         int256 expectedSwapPayoffToDateTwo = -43675964363614309616;
-        int256 expectedSwapUnwindValueTwo = -48644627546906928945;
+        int256 expectedSwapUnwindAmountTwo = -48644627546906928945;
         uint256 expectedOpeningFeeLpAmountTwo = 16473326053178158123;
         uint256 expectedOpeningFeeTreasuryAmountTwo = 8240783418298228;
 
@@ -148,7 +148,7 @@ contract AmmUnwindSwap is TestCommons {
         emit SwapUnwind(
             swapOne.id,
             expectedSwapPayoffToDateOne,
-            expectedSwapUnwindValueOne,
+            expectedSwapUnwindAmountOne,
             expectedOpeningFeeLpAmountOne,
             expectedOpeningFeeTreasuryAmountOne
         );
@@ -160,7 +160,7 @@ contract AmmUnwindSwap is TestCommons {
         emit SwapUnwind(
             swapTwo.id,
             expectedSwapPayoffToDateTwo,
-            expectedSwapUnwindValueTwo,
+            expectedSwapUnwindAmountTwo,
             expectedOpeningFeeLpAmountTwo,
             expectedOpeningFeeTreasuryAmountTwo
         );
@@ -177,12 +177,12 @@ contract AmmUnwindSwap is TestCommons {
         uint256 leverage = 100 * 10 ** 18;
 
         int256 expectedSwapPayoffToDateOne = 12065905511771631746;
-        int256 expectedSwapUnwindValueOne = 14905962631666875568;
+        int256 expectedSwapUnwindAmountOne = 14905962631666875568;
         uint256 expectedOpeningFeeLpAmountOne = 29145104043000041192;
         uint256 expectedOpeningFeeTreasuryAmountOne = 14579841942471256;
 
         int256 expectedSwapPayoffToDateTwo = 32472470598307779236;
-        int256 expectedSwapUnwindValueTwo = 37441114868747785307;
+        int256 expectedSwapUnwindAmountTwo = 37441114868747785307;
         uint256 expectedOpeningFeeLpAmountTwo = 16473326053178158123;
         uint256 expectedOpeningFeeTreasuryAmountTwo = 8240783418298228;
 
@@ -230,7 +230,7 @@ contract AmmUnwindSwap is TestCommons {
         emit SwapUnwind(
             swapOne.id,
             expectedSwapPayoffToDateOne,
-            expectedSwapUnwindValueOne,
+            expectedSwapUnwindAmountOne,
             expectedOpeningFeeLpAmountOne,
             expectedOpeningFeeTreasuryAmountOne
         );
@@ -242,7 +242,7 @@ contract AmmUnwindSwap is TestCommons {
         emit SwapUnwind(
             swapTwo.id,
             expectedSwapPayoffToDateTwo,
-            expectedSwapUnwindValueTwo,
+            expectedSwapUnwindAmountTwo,
             expectedOpeningFeeLpAmountTwo,
             expectedOpeningFeeTreasuryAmountTwo
         );

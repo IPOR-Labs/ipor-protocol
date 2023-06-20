@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 /// @title Interface for interaction with AssetManagement smart contract.
-/// @notice AssetManagement is reposnsible for delegating assets stored in AmmTreasury to money markets where they can earn interest.
+/// @notice AssetManagement is responsible for delegating assets stored in AmmTreasury to money markets where they can earn interest.
 interface IAssetManagement {
     /// @notice Gets total balance of account `who`,  transferred assets to AssetManagement.
     /// @param who Account for which total balance is returned.
@@ -19,9 +19,7 @@ interface IAssetManagement {
     /// @param amount amount deposited by AmmTreasury to AssetManagement.
     /// @return vaultBalance current balance including amount deposited on AssetManagement.
     /// @return depositedAmount final deposited amount.
-    function deposit(uint256 amount)
-        external
-        returns (uint256 vaultBalance, uint256 depositedAmount);
+    function deposit(uint256 amount) external returns (uint256 vaultBalance, uint256 depositedAmount);
 
     /// @notice Withdraws declared amount of asset from AssetManagement to AmmTreasury. Function available only for AmmTreasury.
     /// @dev Emits {Withdraw} event from AssetManagement, emits {Burn} event from ivToken, emits {Transfer} event from ERC20 asset.
@@ -29,9 +27,7 @@ interface IAssetManagement {
     /// @param amount deposited amount of underlying asset
     /// @return withdrawnAmount final withdrawn amount of asset from AssetManagement, can be different than input amount due to passing time.
     /// @return vaultBalance current asset balance on AssetManagement
-    function withdraw(uint256 amount)
-        external
-        returns (uint256 withdrawnAmount, uint256 vaultBalance);
+    function withdraw(uint256 amount) external returns (uint256 withdrawnAmount, uint256 vaultBalance);
 
     /// @notice Withdraws all of the asset from AssetManagement to AmmTreasury. Function available only for AmmTreasury.
     /// @dev Emits {Withdraw} event from AssetManagement, emits {Burn} event from ivToken, emits {Transfer} event from ERC20 asset.
@@ -40,7 +36,7 @@ interface IAssetManagement {
     /// @return vaultBalance current asset's balance on AssetManagement
     function withdrawAll() external returns (uint256 withdrawnAmount, uint256 vaultBalance);
 
-    /// @notice Emmited after AmmTreasury has executed deposit function.
+    /// @notice Emitted after AmmTreasury has executed deposit function.
     /// @param timestamp moment when deposit function was executed
     /// @param from account address from which assets are transferred
     /// @param to account address where assets are transferred to
@@ -56,7 +52,7 @@ interface IAssetManagement {
         uint256 ivTokenAmount
     );
 
-    /// @notice Emmited when AmmTreasury executes withdraw function.
+    /// @notice Emitted when AmmTreasury executes withdraw function.
     /// @param timestamp moment when deposit was executed
     /// @param from account address from which assets are transferred
     /// @param to account address where assets are transferred to

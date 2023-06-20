@@ -8,9 +8,10 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/errors/AssetManagementErrors.sol";
 
-import "../../security/IporOwnableUpgradeable.sol";
-import "../../security/PauseManager.sol";
-import "../../interfaces/IStrategy.sol";
+import "contracts/security/IporOwnableUpgradeable.sol";
+import "contracts/security/PauseManager.sol";
+import "contracts/interfaces/IStrategy.sol";
+import "contracts/interfaces/IProxyImplementation.sol";
 
 abstract contract StrategyCore is
     Initializable,
@@ -18,7 +19,8 @@ abstract contract StrategyCore is
     ReentrancyGuardUpgradeable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-    IStrategy
+    IStrategy,
+IProxyImplementation
 {
     address internal _asset;
     address internal _shareToken;
@@ -92,6 +94,10 @@ abstract contract StrategyCore is
 
     function unpause() external override onlyOwner {
         _unpause();
+    }
+
+    function getImplementation() external view override returns (address) {
+        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
 
     //solhint-disable no-empty-blocks

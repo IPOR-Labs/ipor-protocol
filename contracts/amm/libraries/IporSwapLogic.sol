@@ -17,18 +17,18 @@ library IporSwapLogic {
     /// @param tenor swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
     /// @param wadTotalAmount total amount represented in 18 decimals
     /// @param leverage swap leverage, represented in 18 decimals
-    /// @param liquidationDepositAmount liquidation deposit amount, represented in 18 decimals
+    /// @param wadLiquidationDepositAmount liquidation deposit amount, represented in 18 decimals
     /// @param iporPublicationFeeAmount IPOR publication fee amount, represented in 18 decimals
     /// @param openingFeeRate opening fee rate, represented in 18 decimals
     function calculateSwapAmount(
         IporTypes.SwapTenor tenor,
         uint256 wadTotalAmount,
         uint256 leverage,
-        uint256 liquidationDepositAmount,
+        uint256 wadLiquidationDepositAmount,
         uint256 iporPublicationFeeAmount,
         uint256 openingFeeRate
     ) internal view returns (uint256 collateral, uint256 notional, uint256 openingFee) {
-        uint256 availableAmount = wadTotalAmount - liquidationDepositAmount - iporPublicationFeeAmount;
+        uint256 availableAmount = wadTotalAmount - wadLiquidationDepositAmount - iporPublicationFeeAmount;
 
         collateral = IporMath.division(
             availableAmount * 1e18,
@@ -67,19 +67,19 @@ library IporSwapLogic {
     /// time - number of seconds left to swap until maturity divided by number of seconds in year
     /// Opposite Leg Fixed Rate - calculated fixed rate of opposite leg used for the virtual swap
     /// @dev UnwindValue   = Current Swap Payoff + Notional * (e^(Opposite Leg Fixed Rate * time) - e^(Swap Fixed Rate * time))
-    function calculateSwapUnwindValue(
+    function calculateSwapUnwindAmount(
         AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
         int256 swapPayoffToDate,
         uint256 oppositeLegFixedRate
-    ) internal pure returns (int256 swapUnwindValue) {
+    ) internal pure returns (int256 swapUnwindAmount) {
         uint256 endTimestamp = getSwapEndTimestamp(swap);
 
         require(closingTimestamp <= endTimestamp, AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE);
 
         uint256 time = (endTimestamp - swap.openTimestamp) - (closingTimestamp - swap.openTimestamp);
 
-        swapUnwindValue =
+        swapUnwindAmount =
             swapPayoffToDate +
             swap.notional.toInt256().calculateContinuousCompoundInterestUsingRatePeriodMultiplicationInt(
                 (oppositeLegFixedRate * time).toInt256()

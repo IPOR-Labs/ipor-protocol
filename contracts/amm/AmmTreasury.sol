@@ -15,6 +15,7 @@ import "../libraries/Constants.sol";
 import "../interfaces/IAmmTreasury.sol";
 import "../interfaces/IAmmStorage.sol";
 import "../interfaces/IAssetManagement.sol";
+import "../interfaces/IProxyImplementation.sol";
 import "../security/IporOwnableUpgradeable.sol";
 
 contract AmmTreasury is
@@ -23,7 +24,8 @@ contract AmmTreasury is
     ReentrancyGuardUpgradeable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-    IAmmTreasury
+    IAmmTreasury,
+IProxyImplementation
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -129,6 +131,10 @@ contract AmmTreasury is
 
     function setupMaxAllowanceForAsset(address spender) external override onlyOwner whenNotPaused {
         IERC20Upgradeable(_asset).safeIncreaseAllowance(spender, Constants.MAX_VALUE);
+    }
+
+    function getImplementation() external view override returns (address) {
+        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
 
     /**

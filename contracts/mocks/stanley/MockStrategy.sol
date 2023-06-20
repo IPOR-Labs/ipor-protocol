@@ -8,7 +8,7 @@ contract MockStrategy is IStrategy {
     address private _assetManagement;
     uint256 private _balance;
     address private _shareTokens;
-    uint256 private _apr;
+    uint256 private _apy;
     address private _asset;
     address private _owner;
     address private _treasury;
@@ -44,12 +44,12 @@ contract MockStrategy is IStrategy {
         _asset = asset;
     }
 
-    function getApr() external view returns (uint256) {
-        return _apr;
+    function getApy() external view returns (uint256) {
+        return _apy;
     }
 
-    function setApr(uint256 apy) external {
-        _apr = apy;
+    function setApy(uint256 apy) external {
+        _apy = apy;
     }
 
     function balanceOf() external view returns (uint256) {

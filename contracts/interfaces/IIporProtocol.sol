@@ -14,6 +14,7 @@ import "./IAmmGovernanceService.sol";
 import "./IPowerTokenStakeService.sol";
 import "./IPowerTokenFlowsService.sol";
 
+/// @title Interface for interaction with IPOR protocol. Interface combines all IPOR protocol services and lenses.
 interface IIporProtocol is
     IAmmSwapsLens,
     IAmmPoolsLens,

@@ -693,17 +693,17 @@ contract IporProtocolFactory is Test {
 
         deployerContracts.ammSwapsLens = address(
             new AmmSwapsLens(
-                IAmmSwapsLens.SwapLensConfiguration({
+                IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(amm.usdt.asset),
                     ammStorage: address(amm.usdt.ammStorage),
                     ammTreasury: address(amm.usdt.ammTreasury)
                 }),
-                IAmmSwapsLens.SwapLensConfiguration({
+                IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(amm.usdc.asset),
                     ammStorage: address(amm.usdc.ammStorage),
                     ammTreasury: address(amm.usdc.ammTreasury)
                 }),
-                IAmmSwapsLens.SwapLensConfiguration({
+                IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(amm.dai.asset),
                     ammStorage: address(amm.dai.ammStorage),
                     ammTreasury: address(amm.dai.ammTreasury)
@@ -944,17 +944,17 @@ contract IporProtocolFactory is Test {
 
         deployerContracts.ammSwapsLens = address(
             new AmmSwapsLens(
-                IAmmSwapsLens.SwapLensConfiguration({
+                IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(iporProtocol.asset),
                     ammStorage: address(iporProtocol.ammStorage),
                     ammTreasury: address(iporProtocol.ammTreasury)
                 }),
-                IAmmSwapsLens.SwapLensConfiguration({
+                IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: _fakeContract,
                     ammStorage: _fakeContract,
                     ammTreasury: _fakeContract
                 }),
-                IAmmSwapsLens.SwapLensConfiguration({
+                IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: _fakeContract,
                     ammStorage: _fakeContract,
                     ammTreasury: _fakeContract
@@ -1119,17 +1119,17 @@ contract IporProtocolFactory is Test {
 
         deployerContracts.ammSwapsLens = address(
             new AmmSwapsLens(
-                IAmmSwapsLens.SwapLensConfiguration({
+                IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: _fakeContract,
                     ammStorage: _fakeContract,
                     ammTreasury: _fakeContract
                 }),
-                IAmmSwapsLens.SwapLensConfiguration({
+                IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(iporProtocol.asset),
                     ammStorage: address(iporProtocol.ammStorage),
                     ammTreasury: address(iporProtocol.ammTreasury)
                 }),
-                IAmmSwapsLens.SwapLensConfiguration({
+                IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: _fakeContract,
                     ammStorage: _fakeContract,
                     ammTreasury: _fakeContract
@@ -1294,17 +1294,17 @@ contract IporProtocolFactory is Test {
 
         deployerContracts.ammSwapsLens = address(
             new AmmSwapsLens(
-                IAmmSwapsLens.SwapLensConfiguration({
+                IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: _fakeContract,
                     ammStorage: _fakeContract,
                     ammTreasury: _fakeContract
                 }),
-                IAmmSwapsLens.SwapLensConfiguration({
+                IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: _fakeContract,
                     ammStorage: _fakeContract,
                     ammTreasury: _fakeContract
                 }),
-                IAmmSwapsLens.SwapLensConfiguration({
+                IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(iporProtocol.asset),
                     ammStorage: address(iporProtocol.ammStorage),
                     ammTreasury: address(iporProtocol.ammTreasury)
@@ -1459,11 +1459,11 @@ contract IporProtocolFactory is Test {
 
     function _prepareFakePoolCfgForGovernanceService()
         internal
-        returns (IAmmGovernanceLens.PoolConfiguration memory poolCfg)
+        returns (IAmmGovernanceLens.AmmGovernancePoolConfiguration memory poolCfg)
     {
-        poolCfg = IAmmGovernanceLens.PoolConfiguration({
+        poolCfg = IAmmGovernanceLens.AmmGovernancePoolConfiguration({
             asset: address(_fakeContract),
-            assetDecimals: 0,
+            decimals: 0,
             ammStorage: address(_fakeContract),
             ammTreasury: address(_fakeContract),
             ammPoolsTreasury: address(_fakeContract),
@@ -1501,7 +1501,7 @@ contract IporProtocolFactory is Test {
             assetManagement: address(_fakeContract),
             openingFeeRateForSwapUnwind: 0,
             openingFeeTreasuryPortionRateForSwapUnwind: 0,
-            liquidationLegLimit: 0,
+            maxLengthOfLiquidatedSwapsPerLeg: 0,
             timeBeforeMaturityAllowedToCloseSwapByCommunity: 0,
             timeBeforeMaturityAllowedToCloseSwapByBuyer: 0,
             minLiquidationThresholdToCloseBeforeMaturityByCommunity: 0,
@@ -1536,10 +1536,10 @@ contract IporProtocolFactory is Test {
         address ammPoolsTreasuryManager,
         address ammCharlieTreasury,
         address ammCharlieTreasuryManager
-    ) internal returns (IAmmGovernanceLens.PoolConfiguration memory poolCfg) {
-        poolCfg = IAmmGovernanceLens.PoolConfiguration({
+    ) internal returns (IAmmGovernanceLens.AmmGovernancePoolConfiguration memory poolCfg) {
+        poolCfg = IAmmGovernanceLens.AmmGovernancePoolConfiguration({
             asset: asset,
-            assetDecimals: IERC20MetadataUpgradeable(asset).decimals(),
+            decimals: IERC20MetadataUpgradeable(asset).decimals(),
             ammStorage: ammStorage,
             ammTreasury: ammTreasury,
             ammPoolsTreasury: ammPoolsTreasury == address(0) ? _owner : ammPoolsTreasury,
@@ -1598,7 +1598,7 @@ contract IporProtocolFactory is Test {
                 assetManagement: assetManagement,
                 openingFeeRateForSwapUnwind: 5 * 1e14,
                 openingFeeTreasuryPortionRateForSwapUnwind: 5 * 1e14,
-                liquidationLegLimit: 10,
+                maxLengthOfLiquidatedSwapsPerLeg: 10,
                 timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
                 timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
                 minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
@@ -1614,7 +1614,7 @@ contract IporProtocolFactory is Test {
                 assetManagement: assetManagement,
                 openingFeeRateForSwapUnwind: 5 * 1e14,
                 openingFeeTreasuryPortionRateForSwapUnwind: 5 * 1e14,
-                liquidationLegLimit: 10,
+                maxLengthOfLiquidatedSwapsPerLeg: 10,
                 timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
                 timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
                 minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,

@@ -16,9 +16,9 @@ interface IStrategy {
     /// @notice Returns strategy's share token address
     function getShareToken() external view returns (address);
 
-    /// @notice Gets annualised interest rate (APR) for this strategy.
-    /// @return APR value, represented in 18 decimals.
-    function getApr() external view returns (uint256);
+    /// @notice Gets annual percentage yield (APY) for this strategy.
+    /// @return APY value, represented in 18 decimals.
+    function getApy() external view returns (uint256);
 
     /// @notice Gets balance for given asset (underlying / stablecoin) allocated to this strategy.
     /// @return balance for given asset, represented in 18 decimals.
@@ -86,12 +86,7 @@ interface IStrategy {
     /// @param shareToken share token assocciated with one strategy
     /// @param treasury Treasury address where claimed tokens are transferred.
     /// @param amount S
-    event DoClaim(
-        address indexed claimedBy,
-        address indexed shareToken,
-        address indexed treasury,
-        uint256 amount
-    );
+    event DoClaim(address indexed claimedBy, address indexed shareToken, address indexed treasury, uint256 amount);
 
     /// @notice Emmited when Treasury address has changed
     /// @param newTreasury new Treasury address
@@ -99,7 +94,5 @@ interface IStrategy {
 
     /// @notice Emmited when Treasury Manager address has changed
     /// @param newTreasuryManager new Treasury Manager address
-    event TreasuryManagerChanged(
-        address newTreasuryManager
-    );
+    event TreasuryManagerChanged(address newTreasuryManager);
 }

@@ -40,8 +40,5 @@ interface ICockpitDataProvider {
     /// @param asset asset / stable coin address
     /// @return spreadPayFixed Spread value for Pay Fixed leg for a given asset
     /// @return spreadReceiveFixed Spread value for Receive Fixed leg for a given asset
-    function calculateSpread(address asset)
-        external
-        view
-        returns (int256 spreadPayFixed, int256 spreadReceiveFixed);
+    function calculateSpread(address asset) external view returns (int256 spreadPayFixed, int256 spreadReceiveFixed);
 }

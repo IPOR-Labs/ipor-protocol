@@ -10,13 +10,21 @@ import "contracts/libraries/Constants.sol";
 import "contracts/libraries/PaginationUtils.sol";
 import "contracts/interfaces/types/AmmStorageTypes.sol";
 import "contracts/interfaces/IAmmStorage.sol";
+import "contracts/interfaces/IProxyImplementation.sol";
 import "contracts/security/IporOwnableUpgradeable.sol";
 import "contracts/amm/libraries/SoapIndicatorRebalanceLogic.sol";
 import "contracts/amm/libraries/types/StorageInternalTypes.sol";
 import "contracts/amm/libraries/types/AmmInternalTypes.sol";
 
 //@dev all stored values related to tokens are in 18 decimals.
-contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, IporOwnableUpgradeable, IAmmStorage {
+contract AmmStorage is
+    Initializable,
+    PausableUpgradeable,
+    UUPSUpgradeable,
+    IporOwnableUpgradeable,
+    IAmmStorage,
+    IProxyImplementation
+{
     using SafeCast for uint256;
     using SoapIndicatorRebalanceLogic for AmmStorageTypes.SoapIndicators;
 
@@ -390,6 +398,10 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         return _liquidityPoolAccountContribution[account];
     }
 
+    function getImplementation() external view override returns (address) {
+        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
+    }
+
     function _getPositions(
         mapping(uint32 => StorageInternalTypes.Swap) storage swaps,
         uint32[] storage ids,
@@ -515,7 +527,6 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         if (payoff > 0) {
             /// @dev Buyer earns, AmmTreasury (LP) looses
             require(_balances.liquidityPool >= absPayoff, AmmErrors.CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW);
-
             /// @dev When AmmTreasury (LP) looses, then  always substract all payoff
             _balances.liquidityPool =
                 _balances.liquidityPool -

@@ -25,7 +25,7 @@ interface IIporOracle {
             uint256 lastUpdateTimestamp
         );
 
-    /// @notice Gets accrued IPOR Index indicators for a given timestamp and asset .
+    /// @notice Gets accrued IPOR Index indicators for a given timestamp and asset.
     /// @param calculateTimestamp time of accrued IPOR Index calculation
     /// @param asset underlying / stablecoin address supported by IPOR Protocol.
     /// @return accruedIpor structure {IporTypes.AccruedIpor}
