@@ -94,7 +94,6 @@ contract AmmSwapsLens is IAmmSwapsLens {
             string.concat(IporErrors.WRONG_ADDRESS, " spreadRouter address cannot be 0")
         );
 
-
         _usdtAsset = usdtCfg.asset;
         _usdtAmmStorage = usdtCfg.ammStorage;
         _usdtAmmTreasury = usdtCfg.ammTreasury;
@@ -117,7 +116,6 @@ contract AmmSwapsLens is IAmmSwapsLens {
 
     function getSwapLensPoolConfiguration(address asset) external view returns (SwapLensPoolConfiguration memory) {
         return _getSwapLensPoolConfiguration(asset);
-        _spreadRouter = spreadRouter;
     }
 
     function getSwaps(
@@ -170,11 +168,12 @@ contract AmmSwapsLens is IAmmSwapsLens {
         SwapLensPoolConfiguration memory poolCfg = _getSwapLensPoolConfiguration(asset);
 
         (bytes4 payFixedSig, bytes4 receiveFixedSig) = _getSpreadRouterSignatures(tenor);
-        (uint256 indexValue,,) = IIporOracle(_iporOracle).getIndex(asset);
+        (uint256 indexValue, , ) = IIporOracle(_iporOracle).getIndex(asset);
+
         IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(poolCfg.ammStorage)
             .getBalancesForOpenSwap();
 
-        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicatorsPayFixed = _getRiskIndicators(
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicatorsPayFixed = _getRiskIndicators(
             asset,
             tenor,
             balance.liquidityPool,
@@ -192,7 +191,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         spreadContextPayFixed.balance = balance;
         offeredRatePayFixed = _getOfferedRatePerLeg(spreadContextPayFixed);
 
-        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicatorsReceiveFixed = _getRiskIndicators(
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicatorsReceiveFixed = _getRiskIndicators(
             asset,
             tenor,
             balance.liquidityPool,
@@ -222,7 +221,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
                     spreadContext.notional,
                     spreadContext.riskIndicators.maxLeveragePerLeg,
                     spreadContext.riskIndicators.maxCollateralRatioPerLeg,
-                    spreadContext.riskIndicators.spread,
+                    spreadContext.riskIndicators.baseSpread,
                     spreadContext.balance.totalCollateralPayFixed,
                     spreadContext.balance.totalCollateralReceiveFixed,
                     spreadContext.balance.liquidityPool,
@@ -242,7 +241,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         uint256 liquidityPoolBalance,
         uint256 minLeverage,
         uint256 direction
-    ) internal returns (AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators) {
+    ) internal returns (AmmTypes.OpenSwapRiskIndicators memory riskIndicators) {
         AmmInternalTypes.RiskIndicatorsContext memory riskIndicatorsContext;
 
         riskIndicatorsContext.asset = asset;

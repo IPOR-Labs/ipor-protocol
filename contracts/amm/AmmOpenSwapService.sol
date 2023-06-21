@@ -491,11 +491,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 
-        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
-            ctx,
-            balance.liquidityPool,
-            0
-        );
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(ctx, balance.liquidityPool, 0);
 
         _validateLiquidityPoolCollateralRatioAndSwapLeverage(
             balance.liquidityPool,
@@ -594,11 +590,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralReceiveFixed = balance.totalCollateralReceiveFixed + bosStruct.collateral;
 
-        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
-            ctx,
-            balance.liquidityPool,
-            1
-        );
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(ctx, balance.liquidityPool, 1);
 
         _validateLiquidityPoolCollateralRatioAndSwapLeverage(
             balance.liquidityPool,
@@ -741,7 +733,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         Context memory ctx,
         uint256 liquidityPoolBalance,
         uint256 direction
-    ) internal view virtual returns (AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators) {
+    ) internal view virtual returns (AmmTypes.OpenSwapRiskIndicators memory riskIndicators) {
         AmmInternalTypes.RiskIndicatorsContext memory riskIndicatorsContext;
         riskIndicatorsContext.asset = ctx.poolCfg.asset;
         riskIndicatorsContext.iporRiskManagementOracle = _iporRiskManagementOracle;
