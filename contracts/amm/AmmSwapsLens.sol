@@ -114,7 +114,9 @@ contract AmmSwapsLens is IAmmSwapsLens {
         _spreadRouter = spreadRouter;
     }
 
-    function getSwapLensPoolConfiguration(address asset) external view returns (SwapLensPoolConfiguration memory) {
+    function getSwapLensPoolConfiguration(
+        address asset
+    ) external view override returns (SwapLensPoolConfiguration memory) {
         return _getSwapLensPoolConfiguration(asset);
     }
 
