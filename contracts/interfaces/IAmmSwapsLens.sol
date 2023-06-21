@@ -53,43 +53,6 @@ interface IAmmSwapsLens {
         uint256 minLeverage;
     }
 
-    /// @notice Struct describing configuration for one asset (pool)
-    struct AssetConfiguration {
-        /// @notice underlying token / stablecoin address
-        address asset;
-        /// @notice Minimal leverage value. Represented in 18 decimals.
-        uint256 minLeverage;
-    }
-    /// @notice Struct describing configuration for one asset (pool)
-    struct OpenSwapConfiguration {
-        /// @notice Rate of collateral charged as a opening fee. Represented in 18 decimals.
-        uint256 openingFeeRate;
-        /// @notice IPOR publication fee amount collected from buyer when opening new swap. Represented in 18 decimals.
-        uint256 iporPublicationFeeAmount;
-        /// @notice Liquidation deposit amount collected from buyer when opening new swap. Represented in 18 decimals.
-        uint256 liquidationDepositAmount;
-        /// @notice Minimal leverage value. Represented in 18 decimals.
-        uint256 minLeverage;
-        /// @notice Maximum swap leverage value for Pay Fixed Swap. Represented in 18 decimals.
-        uint256 maxLeveragePayFixed;
-        /// @notice Maximum swap leverage value for Receive Fixed Swap. Represented in 18 decimals.
-        uint256 maxLeverageReceiveFixed;
-        /// @notice Maximum Liquidity Pool Collateral Ratio for Pay Fixed Swap.
-        /// @dev It is a ratio of total collateral balance / liquidity pool balance
-        uint256 maxCollateralRatioPayFixed;
-        /// @notice Maximum Liquidity Pool Collateral Ratio for Receive Fixed Swap.
-        /// @dev It is a ratio of total collateral balance / liquidity pool balance
-        uint256 maxCollateralRatioReceiveFixed;
-        /// @notice Calculated Spread for Pay Fixed direction Swap. Represented in 18 decimals.
-        int256 spreadPayFixed;
-        /// @notice Calculated Spread for Receive Fixed direction Swap. Represented in 18 decimals.
-        int256 spreadReceiveFixed;
-        /// @notice Maximum amount that can be in Liquidity Pool, represented in 18 decimals.
-        uint256 maxLiquidityPoolBalance;
-        /// @notice Maximum amount that can be contributed by one account in Liquidity Pool, represented in 18 decimals.
-        uint256 maxLpAccountContribution;
-    }
-
     /// @notice Gets pool configuration for AmmSwapsLens
     /// @param asset asset address
     /// @return SwapLensPoolConfiguration pool configuration
