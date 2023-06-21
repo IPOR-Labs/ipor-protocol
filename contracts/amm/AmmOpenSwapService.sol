@@ -738,14 +738,14 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
 
     function _getRiskIndicators(
         Context memory ctx,
-        uint256 liquidityPool,
+        uint256 liquidityPoolBalance,
         uint256 direction
     ) internal view virtual returns (AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators) {
         AmmInternalTypes.RiskIndicatorsContext memory riskIndicatorsContext;
         riskIndicatorsContext.asset = ctx.poolCfg.asset;
         riskIndicatorsContext.iporRiskManagementOracle = _iporRiskManagementOracle;
         riskIndicatorsContext.tenor = ctx.tenor;
-        riskIndicatorsContext.liquidityPool = liquidityPool;
+        riskIndicatorsContext.liquidityPoolBalance = liquidityPoolBalance;
         riskIndicatorsContext.minLeverage = ctx.poolCfg.minLeverage;
 
         riskIndicators = riskIndicatorsContext.getRiskIndicators(direction);

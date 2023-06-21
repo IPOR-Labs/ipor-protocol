@@ -240,7 +240,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
     function _getRiskIndicators(
         address asset,
         IporTypes.SwapTenor tenor,
-        uint256 liquidityPool,
+        uint256 liquidityPoolBalance,
         uint256 minLeverage,
         uint256 direction
     ) internal returns (AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators) {
@@ -249,7 +249,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         riskIndicatorsContext.asset = asset;
         riskIndicatorsContext.iporRiskManagementOracle = _riskManagementOracle;
         riskIndicatorsContext.tenor = tenor;
-        riskIndicatorsContext.liquidityPool = liquidityPool;
+        riskIndicatorsContext.liquidityPoolBalance = liquidityPoolBalance;
         riskIndicatorsContext.minLeverage = minLeverage;
 
         riskIndicators = riskIndicatorsContext.getRiskIndicators(direction);

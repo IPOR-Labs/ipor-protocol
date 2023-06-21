@@ -34,7 +34,7 @@ library AmmInternalTypes {
         address asset;
         address iporRiskManagementOracle;
         IporTypes.SwapTenor tenor;
-        uint256 liquidityPool;
+        uint256 liquidityPoolBalance;
         uint256 minLeverage;
     }
 

@@ -114,7 +114,7 @@ library AmmLib {
             .getOpenSwapParameters(context.asset, direction, context.tenor);
 
         uint256 maxCollateralPerLeg = IporMath.division(
-            context.liquidityPool * riskIndicators.maxCollateralRatioPerLeg,
+            context.liquidityPoolBalance * riskIndicators.maxCollateralRatioPerLeg,
             1e18
         );
 
