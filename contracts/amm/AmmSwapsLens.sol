@@ -14,19 +14,19 @@ contract AmmSwapsLens is IAmmSwapsLens {
     address internal immutable _usdtAsset;
     address internal immutable _usdtAmmStorage;
     address internal immutable _usdtAmmTreasury;
+    uint256 internal immutable _usdtMinLeverage;
 
     address internal immutable _usdcAsset;
     address internal immutable _usdcAmmStorage;
     address internal immutable _usdcAmmTreasury;
+    uint256 internal immutable _usdcMinLeverage;
 
     address internal immutable _daiAsset;
     address internal immutable _daiAmmStorage;
     address internal immutable _daiAmmTreasury;
+    uint256 internal immutable _daiMinLeverage;
 
     address internal immutable _iporOracle;
-
-    address internal immutable _router;
-
     address internal immutable _riskManagementOracle;
 
     constructor(
@@ -34,8 +34,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         SwapLensPoolConfiguration memory usdcCfg,
         SwapLensPoolConfiguration memory daiCfg,
         address iporOracle,
-        address riskManagementOracle,
-        address router
+        address riskManagementOracle
     ) {
         require(
             usdtCfg.asset != address(0),
@@ -80,23 +79,28 @@ contract AmmSwapsLens is IAmmSwapsLens {
             riskManagementOracle != address(0),
             string.concat(IporErrors.WRONG_ADDRESS, " riskManagementOracle address cannot be 0")
         );
-        require(router != address(0), string.concat(IporErrors.WRONG_ADDRESS, " router address cannot be 0"));
 
         _usdtAsset = usdtCfg.asset;
         _usdtAmmStorage = usdtCfg.ammStorage;
         _usdtAmmTreasury = usdtCfg.ammTreasury;
+        _usdtMinLeverage = usdtCfg.minLeverage;
 
         _usdcAsset = usdcCfg.asset;
         _usdcAmmStorage = usdcCfg.ammStorage;
         _usdcAmmTreasury = usdcCfg.ammTreasury;
+        _usdcMinLeverage = usdcCfg.minLeverage;
 
         _daiAsset = daiCfg.asset;
         _daiAmmStorage = daiCfg.ammStorage;
         _daiAmmTreasury = daiCfg.ammTreasury;
+        _daiMinLeverage = daiCfg.minLeverage;
 
         _iporOracle = iporOracle;
         _riskManagementOracle = riskManagementOracle;
-        _router = router;
+    }
+
+    function getSwapLensPoolConfiguration(address asset) external view returns (SwapLensPoolConfiguration memory) {
+        return _getSwapLensPoolConfiguration(asset);
     }
 
     function getSwaps(
@@ -146,54 +150,24 @@ contract AmmSwapsLens is IAmmSwapsLens {
         return ammStorage.getBalancesForOpenSwap();
     }
 
-    function getOpenSwapConfiguration(
+    function getOpenSwapRiskIndicators(
         address asset,
+        uint256 direction,
         IporTypes.SwapTenor tenor
-    ) external view override returns (OpenSwapConfiguration memory) {
-        IAmmOpenSwapService.AmmOpenSwapServicePoolConfiguration memory openSwapPoolCfg = IAmmOpenSwapService(address(this))
-            .getAmmOpenSwapServicePoolConfiguration(asset);
+    ) external view override returns (AmmTypes.OpenSwapRiskIndicators memory riskIndicators) {
+        SwapLensPoolConfiguration memory swapLensPoolCfg = _getSwapLensPoolConfiguration(asset);
 
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
-            openSwapPoolCfg.asset
-        );
-
-        IporTypes.AmmBalancesForOpenSwapMemory memory balances = IAmmStorage(openSwapPoolCfg.ammStorage)
+        IporTypes.AmmBalancesForOpenSwapMemory memory balances = IAmmStorage(swapLensPoolCfg.ammStorage)
             .getBalancesForOpenSwap();
 
-        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicatorsPayFixed = RiskManagementLogic.getRiskIndicators(
+        riskIndicators = RiskManagementLogic.getRiskIndicators(
             asset,
-            0,
+            direction,
             tenor,
             balances.liquidityPool,
-            openSwapPoolCfg.minLeverage,
+            swapLensPoolCfg.minLeverage,
             _riskManagementOracle
         );
-
-        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicatorsReceiveFixed = RiskManagementLogic
-            .getRiskIndicators(
-                asset,
-                1,
-                tenor,
-                balances.liquidityPool,
-                openSwapPoolCfg.minLeverage,
-                _riskManagementOracle
-            );
-
-        return
-            OpenSwapConfiguration(
-                openSwapPoolCfg.openingFeeRate,
-                openSwapPoolCfg.iporPublicationFee,
-                openSwapPoolCfg.liquidationDepositAmount,
-                openSwapPoolCfg.minLeverage,
-                riskIndicatorsPayFixed.maxLeveragePerLeg,
-                riskIndicatorsReceiveFixed.maxLeveragePerLeg,
-                riskIndicatorsPayFixed.maxCollateralRatioPerLeg,
-                riskIndicatorsReceiveFixed.maxCollateralRatioPerLeg,
-                riskIndicatorsPayFixed.spread,
-                riskIndicatorsReceiveFixed.spread,
-                uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
-                uint256(ammPoolsParamsCfg.maxLpAccountContribution) * 1e18
-            );
     }
 
     function _mapSwaps(
@@ -271,18 +245,25 @@ contract AmmSwapsLens is IAmmSwapsLens {
                 SwapLensPoolConfiguration({
                     asset: _usdtAsset,
                     ammStorage: _usdtAmmStorage,
-                    ammTreasury: _usdtAmmTreasury
+                    ammTreasury: _usdtAmmTreasury,
+                    minLeverage: _usdtMinLeverage
                 });
         } else if (asset == _usdcAsset) {
             return
                 SwapLensPoolConfiguration({
                     asset: _usdcAsset,
                     ammStorage: _usdcAmmStorage,
-                    ammTreasury: _usdcAmmTreasury
+                    ammTreasury: _usdcAmmTreasury,
+                    minLeverage: _usdcMinLeverage
                 });
         } else if (asset == _daiAsset) {
             return
-                SwapLensPoolConfiguration({asset: _daiAsset, ammStorage: _daiAmmStorage, ammTreasury: _daiAmmTreasury});
+                SwapLensPoolConfiguration({
+                    asset: _daiAsset,
+                    ammStorage: _daiAmmStorage,
+                    ammTreasury: _daiAmmTreasury,
+                    minLeverage: _daiMinLeverage
+                });
         } else {
             revert(IporErrors.ASSET_NOT_SUPPORTED);
         }

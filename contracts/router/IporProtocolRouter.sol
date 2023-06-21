@@ -13,6 +13,7 @@ import "@ipor-protocol/contracts/interfaces/IPowerTokenLens.sol";
 import "@ipor-protocol/contracts/interfaces/ILiquidityMiningLens.sol";
 import "@ipor-protocol/contracts/interfaces/IAmmGovernanceService.sol";
 import "@ipor-protocol/contracts/interfaces/IAmmGovernanceLens.sol";
+import "@ipor-protocol/contracts/interfaces/IAmmOpenSwapLens.sol";
 import "@ipor-protocol/contracts/interfaces/IAmmOpenSwapService.sol";
 import "@ipor-protocol/contracts/interfaces/IAmmCloseSwapService.sol";
 import "@ipor-protocol/contracts/interfaces/IAmmPoolsService.sol";
@@ -145,8 +146,6 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
                 _nonReentrantBefore;
             }
             return AMM_OPEN_SWAP_SERVICE;
-        } else if (sig == IAmmOpenSwapService.getAmmOpenSwapServicePoolConfiguration.selector) {
-            return AMM_OPEN_SWAP_SERVICE;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapPayFixedUsdt.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapPayFixedUsdc.selector) ||
@@ -210,15 +209,6 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             }
             return AMM_GOVERNANCE_SERVICE;
         } else if (
-            sig == IAmmGovernanceLens.isSwapLiquidator.selector ||
-            sig == IAmmGovernanceLens.isAppointedToRebalanceInAmm.selector ||
-            sig == IAmmGovernanceLens.getAmmPoolsParams.selector
-        ) {
-            if (batchOperation == 0) {
-                _nonReentrantBefore;
-            }
-            return AMM_GOVERNANCE_SERVICE;
-        } else if (
             sig == IAmmGovernanceService.addSwapLiquidator.selector ||
             sig == IAmmGovernanceService.removeSwapLiquidator.selector ||
             sig == IAmmGovernanceService.addAppointedToRebalanceInAmm.selector ||
@@ -247,12 +237,23 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             _onlyOwner();
             return AMM_CLOSE_SWAP_SERVICE;
         } else if (
+            sig == IAmmGovernanceLens.isSwapLiquidator.selector ||
+            sig == IAmmGovernanceLens.isAppointedToRebalanceInAmm.selector ||
+            sig == IAmmGovernanceLens.getAmmPoolsParams.selector
+        ) {
+            if (batchOperation == 0) {
+                _nonReentrantBefore;
+            }
+            return AMM_GOVERNANCE_SERVICE;
+        } else if (sig == IAmmOpenSwapLens.getAmmOpenSwapServicePoolConfiguration.selector) {
+            return AMM_OPEN_SWAP_SERVICE;
+        } else if (
             sig == IAmmSwapsLens.getSwaps.selector ||
             sig == IAmmSwapsLens.getPayoffPayFixed.selector ||
             sig == IAmmSwapsLens.getPayoffReceiveFixed.selector ||
             sig == IAmmSwapsLens.getBalancesForOpenSwap.selector ||
             sig == IAmmSwapsLens.getSOAP.selector ||
-            sig == IAmmSwapsLens.getOpenSwapConfiguration.selector
+            sig == IAmmSwapsLens.getOpenSwapRiskIndicators.selector
         ) {
             return AMM_SWAPS_LENS;
         } else if (

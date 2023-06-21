@@ -40,8 +40,7 @@ contract IporRiskManagementOracleFactory is Test {
 
     function _constructIndicatorsBasedOnInitialParamTestCase(
         BuilderUtils.IporRiskManagementOracleInitialParamsTestCase initialParamsTestCase
-    ) internal view returns (IporRiskManagementOracleTypes.RiskIndicators memory riskIndicators) {
-        //TODO: pure
+    ) internal pure returns (IporRiskManagementOracleTypes.RiskIndicators memory riskIndicators) {
         uint64 maxNotionalPayFixed = TestConstants.RMO_NOTIONAL_1B;
         uint64 maxNotionalReceiveFixed = TestConstants.RMO_NOTIONAL_1B;
         uint16 maxCollateralRatioPayFixed = TestConstants.RMO_COLLATERAL_RATIO_48_PER;

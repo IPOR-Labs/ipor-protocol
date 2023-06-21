@@ -13,15 +13,16 @@ import "../libraries/errors/AmmErrors.sol";
 import "../interfaces/IIporOracle.sol";
 import "../interfaces/IAmmStorage.sol";
 import "../interfaces/IIporRiskManagementOracle.sol";
-import "../interfaces/IAmmOpenSwapService.sol";
-import "./libraries/types/AmmInternalTypes.sol";
-import "../libraries/errors/AmmErrors.sol";
-import "./libraries/IporSwapLogic.sol";
+import "@ipor-protocol/contracts/interfaces/IAmmOpenSwapService.sol";
+import "@ipor-protocol/contracts/interfaces/IAmmOpenSwapLens.sol";
+import "@ipor-protocol/contracts/libraries/errors/AmmErrors.sol";
+import "@ipor-protocol/contracts/amm/libraries/types/AmmInternalTypes.sol";
+import "@ipor-protocol/contracts/amm/libraries/IporSwapLogic.sol";
 import "@ipor-protocol/contracts/amm/spread/ISpread28Days.sol";
 import "@ipor-protocol/contracts/amm/spread/ISpread60Days.sol";
 import "@ipor-protocol/contracts/amm/spread/ISpread90Days.sol";
 
-contract AmmOpenSwapService is IAmmOpenSwapService {
+contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
     using Address for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -488,7 +489,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 
-        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
             ctx.poolCfg.asset,
             0,
             ctx.tenor,
@@ -515,7 +516,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                     bosStruct.notional,
                     riskIndicators.maxLeveragePerLeg,
                     riskIndicators.maxCollateralRatioPerLeg,
-                    riskIndicators.spread,
+                    riskIndicators.baseSpread,
                     balance.totalCollateralPayFixed,
                     balance.totalCollateralReceiveFixed,
                     balance.liquidityPool,
@@ -593,7 +594,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralReceiveFixed = balance.totalCollateralReceiveFixed + bosStruct.collateral;
 
-        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
             ctx.poolCfg.asset,
             1,
             ctx.tenor,
@@ -620,7 +621,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                     bosStruct.notional,
                     riskIndicators.maxLeveragePerLeg,
                     riskIndicators.maxCollateralRatioPerLeg,
-                    riskIndicators.spread,
+                    riskIndicators.baseSpread,
                     balance.totalCollateralPayFixed,
                     balance.totalCollateralReceiveFixed,
                     balance.liquidityPool,
@@ -744,14 +745,14 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         IporTypes.SwapTenor tenor,
         uint256 liquidityPool,
         uint256 cfgMinLeverage
-    ) internal view virtual returns (AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators) {
+    ) internal view virtual returns (AmmTypes.OpenSwapRiskIndicators memory riskIndicators) {
         uint256 maxNotionalPerLeg;
 
         (
             maxNotionalPerLeg,
             riskIndicators.maxCollateralRatioPerLeg,
             riskIndicators.maxCollateralRatio,
-            riskIndicators.spread,
+            riskIndicators.baseSpread,
             riskIndicators.fixedRateCap
         ) = IIporRiskManagementOracle(_iporRiskManagementOracle).getOpenSwapParameters(asset, direction, tenor);
 

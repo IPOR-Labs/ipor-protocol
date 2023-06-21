@@ -5,7 +5,6 @@ import "./types/IporTypes.sol";
 
 /// @title Interface responsible for reading the AMM Pools state and configuration.
 interface IAmmPoolsLens {
-
     /// @dev A struct to represent a pool configuration.
     /// @param asset The address of the asset.
     /// @param decimals The number of decimal places the asset uses.
@@ -43,5 +42,4 @@ interface IAmmPoolsLens {
     /// @param account The address of the account for which to fetch the contribution.
     /// @return uint256 The account's contribution to the Liquidity Pool, represented in 18 decimals.
     function getLiquidityPoolAccountContribution(address asset, address account) external view returns (uint256);
-
 }

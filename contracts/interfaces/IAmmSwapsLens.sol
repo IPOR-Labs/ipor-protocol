@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 
-import "./types/IporTypes.sol";
+import "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
+import "@ipor-protocol/contracts/interfaces/types/AmmTypes.sol";
 
 /// @title AmmSwapsLens interface responsible for reading data related with swaps.
 interface IAmmSwapsLens {
@@ -48,6 +49,8 @@ interface IAmmSwapsLens {
         address ammStorage;
         /// @notice Address of the AMM Treasury contract
         address ammTreasury;
+        /// @notice Min leverage
+        uint256 minLeverage;
     }
     /// @notice Struct describing configuration for one asset (pool)
     struct OpenSwapConfiguration {
@@ -78,6 +81,11 @@ interface IAmmSwapsLens {
         /// @notice Maximum amount that can be contributed by one account in Liquidity Pool, represented in 18 decimals.
         uint256 maxLpAccountContribution;
     }
+
+    /// @notice Gets pool configuration for AmmSwapsLens
+    /// @param asset asset address
+    /// @return SwapLensPoolConfiguration pool configuration
+    function getSwapLensPoolConfiguration(address asset) external view returns (SwapLensPoolConfiguration memory);
 
     /// @notice Gets active swaps for a given asset sender address (aka buyer).
     /// @param asset asset address
@@ -119,13 +127,15 @@ interface IAmmSwapsLens {
     function getSOAP(address asset) external view returns (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap);
 
     /**
-     * @dev Returns the Configuration when open swap for a given asset and tenor.
+     * @dev Returns the Risk indicators when open swap for a given asse, direction and tenor.
      * @param asset The address of the asset.
+     * @param direction The direction of the swap
      * @param tenor The duration of the swap
-     * @return The open swap configuration details.
+     * @return riskIndicators The open swap configuration details.
      */
-    function getOpenSwapConfiguration(
+    function getOpenSwapRiskIndicators(
         address asset,
+        uint256 direction,
         IporTypes.SwapTenor tenor
-    ) external view returns (OpenSwapConfiguration memory);
+    ) external view returns (AmmTypes.OpenSwapRiskIndicators memory riskIndicators);
 }

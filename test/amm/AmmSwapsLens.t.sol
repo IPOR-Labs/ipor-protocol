@@ -6,6 +6,7 @@ import "../utils/TestConstants.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "contracts/tokens/IpToken.sol";
 import "contracts/interfaces/types/IporTypes.sol";
+import "contracts/interfaces/types/AmmTypes.sol";
 
 contract AmmSwapsLensTest is TestCommons {
     IporProtocolFactory.IporProtocolConfig private _cfg;
@@ -24,7 +25,7 @@ contract AmmSwapsLensTest is TestCommons {
         _cfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
-    function testGetOpenSwapConfigurationSimpleCase() public {
+    function testGetOpenSwapRiskIndicatorsPayFixedSimpleCase() public {
         // given
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -34,27 +35,17 @@ contract AmmSwapsLensTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityDai(_admin, liquidityAmount);
 
         //when
-        IAmmSwapsLens.OpenSwapConfiguration memory openSwapCfg = _iporProtocol.ammSwapsLens.getOpenSwapConfiguration(
+        AmmTypes.OpenSwapRiskIndicators memory openSwapCfg = _iporProtocol.ammSwapsLens.getOpenSwapRiskIndicators(
             address(_iporProtocol.asset),
+            0,
             IporTypes.SwapTenor.DAYS_28
         );
 
         //then
-        assertEq(openSwapCfg.openingFeeRate, 1e16);
-        assertEq(openSwapCfg.iporPublicationFeeAmount, 10 * 1e18);
-        assertEq(openSwapCfg.liquidationDepositAmount, 25);
-        assertEq(openSwapCfg.minLeverage, 10 * 1e18);
-
-        assertEq(openSwapCfg.maxCollateralRatioPayFixed, 48e16);
-        assertEq(openSwapCfg.maxCollateralRatioReceiveFixed, 48e16);
-
-        assertEq(openSwapCfg.spreadPayFixed, 1e15);
-        assertEq(openSwapCfg.spreadReceiveFixed, 1e15);
-
-        assertEq(openSwapCfg.maxLeveragePayFixed, 1000 * 1e18);
-        assertEq(openSwapCfg.maxLeverageReceiveFixed, 1000 * 1e18);
-
-        assertEq(openSwapCfg.maxLiquidityPoolBalance, 1_000_000_000 * 1e18);
-        assertEq(openSwapCfg.maxLpAccountContribution, 1_000_000_000 * 1e18);
+        assertEq(openSwapCfg.maxCollateralRatio, 9 * 1e17, "maxCollateralRatio");
+        assertEq(openSwapCfg.maxCollateralRatioPerLeg, 48 * 1e16, "maxCollateralRatioPerLeg");
+        assertEq(openSwapCfg.maxLeveragePerLeg, 1000 * 1e18, "maxLeveragePerLeg");
+        assertEq(openSwapCfg.baseSpread, 1e15, "spread");
+        assertEq(openSwapCfg.fixedRateCap, 2e16, "fixedRateCap");
     }
 }

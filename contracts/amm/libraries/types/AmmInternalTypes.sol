@@ -30,14 +30,6 @@ library AmmInternalTypes {
         IporTypes.AccruedIpor accruedIpor;
     }
 
-    struct OpenSwapRiskIndicators {
-        uint256 maxCollateralRatio;
-        uint256 maxCollateralRatioPerLeg;
-        uint256 maxLeveragePerLeg;
-        int256 spread;
-        uint256 fixedRateCap;
-    }
-
     struct OpenSwapItem {
         uint32 swapId;
         uint32 nextSwapId;
