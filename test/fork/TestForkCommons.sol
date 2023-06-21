@@ -91,12 +91,12 @@ contract TestForkCommons is Test {
         uint iporRiskManagementOracleVersion = _createIporRiskManagementOracle();
         _createEmptyRouterImplementation();
 
-        _createAmmSwapsLens();
         _createAmmPoolsLens();
         _createAssetManagementLens();
 
         _creatSpreadModule();
 
+        _createAmmSwapsLens();
         _createAmmOpenSwapService();
         _createAmmCloseSwapService();
         _createAmmPoolsService();
@@ -257,7 +257,14 @@ contract TestForkCommons is Test {
         );
 
         ammSwapsLens = address(
-            new AmmSwapsLens(usdtConfig, usdcConfig, daiConfig, iporOracleProxy, iporRiskManagementOracleProxy)
+            new AmmSwapsLens(
+                usdtConfig,
+                usdcConfig,
+                daiConfig,
+                iporOracleProxy,
+                iporRiskManagementOracleProxy,
+                spreadRouter
+            )
         );
         console2.log("ammSwapsLens: ", ammSwapsLens);
     }

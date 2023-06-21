@@ -712,7 +712,8 @@ contract IporProtocolFactory is Test {
                     minLeverage: 10 * 1e18
                 }),
                 address(amm.iporOracle),
-                address(amm.iporRiskManagementOracle)
+                address(amm.iporRiskManagementOracle),
+                address(amm.spreadRouter)
             )
         );
 
@@ -965,7 +966,8 @@ contract IporProtocolFactory is Test {
                     minLeverage: 0
                 }),
                 address(iporProtocol.iporOracle),
-                address(iporProtocol.iporRiskManagementOracle)
+                address(iporProtocol.iporRiskManagementOracle),
+                address(iporProtocol.spreadRouter)
             )
         );
 
@@ -1142,7 +1144,8 @@ contract IporProtocolFactory is Test {
                     minLeverage: 0
                 }),
                 address(iporProtocol.iporOracle),
-                address(iporProtocol.iporRiskManagementOracle)
+                address(iporProtocol.iporRiskManagementOracle),
+                address(iporProtocol.spreadRouter)
             )
         );
 
@@ -1319,7 +1322,8 @@ contract IporProtocolFactory is Test {
                     minLeverage: 10 * 1e18
                 }),
                 address(iporProtocol.iporOracle),
-                address(iporProtocol.iporRiskManagementOracle)
+                address(iporProtocol.iporRiskManagementOracle),
+                address(iporProtocol.spreadRouter)
             )
         );
 
