@@ -48,6 +48,8 @@ interface IAmmSwapsLens {
         address ammStorage;
         /// @notice Address of the AMM Treasury contract
         address ammTreasury;
+        /// @notice minimum leverage, represented in 18 decimals.
+        uint256 minLeverage;
     }
 
     /// @notice Struct describing configuration for one asset (pool)
@@ -113,6 +115,18 @@ interface IAmmSwapsLens {
     /// @return soapReceiveFixed SOAP value for receive fixed swaps.
     /// @return soap SOAP value which is a sum of soapPayFixed and soapReceiveFixed.
     function getSOAP(address asset) external view returns (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap);
+
+    /// @notice Gets the offered rate value for a given asset, tenor and notional.
+    /// @param asset The address of the asset.
+    /// @param tenor The duration of the swap.
+    /// @param notional The notional amount of the swap, represented in 18 decimals.
+    /// @return offeredRatePayFixed The offered rate for pay fixed swaps.
+    /// @return offeredRateReceiveFixed The offered rate for receive fixed swaps.
+    function getOfferedRate(
+        address asset,
+        IporTypes.SwapTenor tenor,
+        uint256 notional
+    ) external returns (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed);
 
     /**
      * @dev Returns the asset configuration details for a given asset, direction and tenor.

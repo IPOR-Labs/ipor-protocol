@@ -12,6 +12,8 @@ import "@ipor-protocol/contracts/amm/AmmCloseSwapService.sol";
 import "@ipor-protocol/contracts/amm/AmmPoolsService.sol";
 import "@ipor-protocol/contracts/interfaces/IIporOracle.sol";
 import "@ipor-protocol/contracts/oracles/IporOracle.sol";
+import "@ipor-protocol/contracts/interfaces/IOraclePublisher.sol";
+import "@ipor-protocol/contracts/oracles/OraclePublisher.sol";
 import "@ipor-protocol/contracts/amm/spread/SpreadRouter.sol";
 import "@ipor-protocol/contracts/oracles/IporRiskManagementOracle.sol";
 import "@ipor-protocol/test/utils/TestConstants.sol";
@@ -64,6 +66,8 @@ contract LocalDeployment is Script {
         address spreadRouterImpl;
         address iporOracleProxy;
         address iporOracleImpl;
+        address oraclePublisherProxy;
+        address oraclePublisherImpl;
         address ammSwapsLens;
         address ammPoolsLens;
         address assetManagementLens;
@@ -81,8 +85,7 @@ contract LocalDeployment is Script {
     }
 
     struct AmmConfig {
-        address iporOracleUpdater;
-        address iporRiskManagementOracleUpdater;
+        address oraclePublisherUpdater;
         address powerTokenLens;
         address liquidityMiningLens;
         address flowService;
@@ -97,8 +100,7 @@ contract LocalDeployment is Script {
     function setUp() public {
         _private_key = vm.envUint("SC_ADMIN_PRIV_KEY");
         _env_profile = vm.envString("ENV_PROFILE");
-        ammConfig.iporOracleUpdater = vm.envAddress("SC_MIGRATION_IPOR_INDEX_UPDATER_ADDRESS");
-        ammConfig.iporRiskManagementOracleUpdater = vm.envAddress("SC_MIGRATION_IPOR_INDEX_UPDATER_ADDRESS");
+        ammConfig.oraclePublisherUpdater = vm.envAddress("SC_MIGRATION_ORACLE_UPDATER_ADDRESS");
         ammConfig.powerTokenLens = vm.envAddress("SC_POWER_TOKEN_LENS_ADDRESS");
         ammConfig.liquidityMiningLens = vm.envAddress("SC_LIQUIDITY_MINING_LENS_ADDRESS");
         ammConfig.flowService = vm.envAddress("SC_POWER_TOKEN_FLOW_SERVICE_ADDRESS");
@@ -120,6 +122,7 @@ contract LocalDeployment is Script {
         deployAssets(system);
         deployOracle(system);
         deployRiskOracle(system);
+        deployOraclePublisher(system);
         deployIpTokens(system);
         deployIvTokens(system);
         deployStorage(system);
@@ -244,8 +247,6 @@ contract LocalDeployment is Script {
                 abi.encodeWithSignature("initialize(address[],uint32[])", assets, lastUpdateTimestamps)
             )
         );
-
-        IIporOracle(system.iporOracleProxy).addUpdater(ammConfig.iporOracleUpdater);
     }
 
     function deployRiskOracle(System memory system) public {
@@ -300,8 +301,18 @@ contract LocalDeployment is Script {
                 )
             )
         );
+    }
 
-        IporRiskManagementOracle(system.riskOracleProxy).addUpdater(ammConfig.iporRiskManagementOracleUpdater);
+    function deployOraclePublisher(System memory system) public {
+        system.oraclePublisherImpl = address(new OraclePublisher(system.iporOracleProxy, system.riskOracleProxy));
+
+        system.oraclePublisherProxy = address(
+            new ERC1967Proxy(system.oraclePublisherImpl, abi.encodeWithSignature("initialize()"))
+        );
+
+        IporOracle(system.iporOracleProxy).addUpdater(system.oraclePublisherProxy);
+        IporRiskManagementOracle(system.riskOracleProxy).addUpdater(system.oraclePublisherProxy);
+        OraclePublisher(system.oraclePublisherProxy).addUpdater(ammConfig.oraclePublisherUpdater);
     }
 
     function deployDummyIporProtocolRouter(System memory system) public {
@@ -576,21 +587,25 @@ contract LocalDeployment is Script {
                 IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(system.usdt.asset),
                     ammStorage: address(system.usdt.ammStorageProxy),
-                    ammTreasury: address(system.usdt.ammTreasuryProxy)
+                    ammTreasury: address(system.usdt.ammTreasuryProxy),
+                    minLeverage: 10 * 1e18
                 }),
                 IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(system.usdc.asset),
                     ammStorage: address(system.usdc.ammStorageProxy),
-                    ammTreasury: address(system.usdc.ammTreasuryProxy)
+                    ammTreasury: address(system.usdc.ammTreasuryProxy),
+                    minLeverage: 10 * 1e18
                 }),
                 IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(system.dai.asset),
                     ammStorage: address(system.dai.ammStorageProxy),
-                    ammTreasury: address(system.dai.ammTreasuryProxy)
+                    ammTreasury: address(system.dai.ammTreasuryProxy),
+                    minLeverage: 10 * 1e18
                 }),
                 system.iporOracleProxy,
                 system.riskOracleProxy,
-                system.routerProxy
+                system.routerProxy,
+                system.spreadRouterProxy
             )
         );
 

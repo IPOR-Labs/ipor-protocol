@@ -30,12 +30,31 @@ library AmmInternalTypes {
         IporTypes.AccruedIpor accruedIpor;
     }
 
+    struct RiskIndicatorsContext {
+        address asset;
+        address iporRiskManagementOracle;
+        IporTypes.SwapTenor tenor;
+        uint256 liquidityPoolBalance;
+        uint256 minLeverage;
+    }
+
     struct OpenSwapRiskIndicators {
         uint256 maxCollateralRatio;
         uint256 maxCollateralRatioPerLeg;
         uint256 maxLeveragePerLeg;
         int256 spread;
         uint256 fixedRateCap;
+    }
+
+    struct SpreadContext {
+        address asset;
+        bytes4 spreadFunctionSig;
+        IporTypes.SwapTenor tenor;
+        uint256 notional;
+        uint256 minLeverage;
+        uint256 indexValue;
+        AmmInternalTypes.OpenSwapRiskIndicators riskIndicators;
+        IporTypes.AmmBalancesForOpenSwapMemory balance;
     }
 
     struct OpenSwapItem {
