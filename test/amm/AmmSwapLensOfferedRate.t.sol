@@ -21,8 +21,6 @@ contract AmmSwapLensOfferedRateTest is TestCommons {
         _cfg.iporOracleUpdater = _userOne;
         _cfg.iporRiskManagementOracleUpdater = _userOne;
 
-        //        _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE0;
-
         _ammCfg.iporOracleUpdater = _userOne;
         _ammCfg.iporRiskManagementOracleUpdater = _userOne;
     }
@@ -45,7 +43,7 @@ contract AmmSwapLensOfferedRateTest is TestCommons {
         );
         // then
         assertEq(offeredRatePayFixed, 31001860119047619);
-        assertEq(offeredRateReceiveFixed, 35001860119047619);
+        assertEq(offeredRateReceiveFixed, 30998139880952381);
     }
 
     function testShouldCalculateOfferedRateForFirstBigSwap28Days() public {
@@ -74,7 +72,7 @@ contract AmmSwapLensOfferedRateTest is TestCommons {
         );
         // then
         assertEq(offeredRatePayFixed, 31569274010076428);
-        assertEq(offeredRateReceiveFixed, 35569274010076428);
+        assertEq(offeredRateReceiveFixed, 31000000000000000);
     }
 
     function testShouldCalculateOfferedRateForSecondSwap28Days() public {
@@ -95,7 +93,7 @@ contract AmmSwapLensOfferedRateTest is TestCommons {
         );
         // then
         assertEq(offeredRatePayFixed, 181000000000000000);
-        assertEq(offeredRateReceiveFixed, 185000000000000000);
+        assertEq(offeredRateReceiveFixed, 0);
     }
 
     function testShouldCalculateOfferedRateForFirstSwap60Days() public {
@@ -116,7 +114,7 @@ contract AmmSwapLensOfferedRateTest is TestCommons {
         );
         // then
         assertEq(offeredRatePayFixed, 31001860119047619);
-        assertEq(offeredRateReceiveFixed, 35001860119047619);
+        assertEq(offeredRateReceiveFixed, 30998139880952381);
     }
 
     function testShouldCalculateOfferedRateForFirstSwap90Days() public {
@@ -137,6 +135,6 @@ contract AmmSwapLensOfferedRateTest is TestCommons {
         );
         // then
         assertEq(offeredRatePayFixed, 31001860119047619);
-        assertEq(offeredRateReceiveFixed, 35001860119047619);
+        assertEq(offeredRateReceiveFixed, 30998139880952381);
     }
 }

@@ -202,7 +202,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         );
         AmmInternalTypes.SpreadContext memory spreadContextReceiveFixed;
         spreadContextReceiveFixed.asset = asset;
-        spreadContextReceiveFixed.spreadFunctionSig = payFixedSig;
+        spreadContextReceiveFixed.spreadFunctionSig = receiveFixedSig;
         spreadContextReceiveFixed.tenor = tenor;
         spreadContextReceiveFixed.notional = notional;
         spreadContextReceiveFixed.minLeverage = poolCfg.minLeverage;
