@@ -181,7 +181,7 @@ contract LocalDeployment is Script {
             ammTreasury: ammTreasury,
             assetManagement: assetManagement,
             openingFeeRateForSwapUnwind: 5e14,
-            openingFeeTreasuryPortionRateForSwapUnwind: 5 * 1e14,
+            openingFeeTreasuryPortionRateForSwapUnwind: 5e14,
             maxLengthOfLiquidatedSwapsPerLeg: 10,
             timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
             timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
