@@ -256,8 +256,14 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         );
     }
 
-    function getAmmPoolsParams(address asset) external view override returns (StorageLib.AmmPoolsParamsValue memory) {
-        return AmmConfigurationManager.getAmmPoolsParams(asset);
+    function getAmmPoolsParams(address asset) external view override returns (AmmPoolsParamsConfiguration memory cfg) {
+        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(asset);
+        cfg = AmmPoolsParamsConfiguration({
+            maxLiquidityPoolBalance: uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
+            maxLpAccountContribution: uint256(ammPoolsParamsCfg.maxLpAccountContribution) * 1e18,
+            autoRebalanceThresholdInThousands: ammPoolsParamsCfg.autoRebalanceThresholdInThousands,
+            ammTreasuryAndAssetManagementRatio: ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio
+        });
     }
 
     function _getPoolConfiguration(address asset) internal view returns (AmmGovernancePoolConfiguration memory) {

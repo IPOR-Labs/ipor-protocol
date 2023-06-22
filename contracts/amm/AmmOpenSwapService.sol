@@ -13,17 +13,20 @@ import "../libraries/errors/AmmErrors.sol";
 import "../interfaces/IIporOracle.sol";
 import "../interfaces/IAmmStorage.sol";
 import "../interfaces/IIporRiskManagementOracle.sol";
-import "../interfaces/IAmmOpenSwapService.sol";
-import "./libraries/types/AmmInternalTypes.sol";
+import "@ipor-protocol/contracts/interfaces/IAmmOpenSwapService.sol";
+import "@ipor-protocol/contracts/interfaces/IAmmOpenSwapLens.sol";
+import "@ipor-protocol/contracts/libraries/AmmLib.sol";
 import "../libraries/errors/AmmErrors.sol";
-import "./libraries/IporSwapLogic.sol";
+import "@ipor-protocol/contracts/amm/libraries/types/AmmInternalTypes.sol";
+import "@ipor-protocol/contracts/amm/libraries/IporSwapLogic.sol";
 import "@ipor-protocol/contracts/amm/spread/ISpread28Days.sol";
 import "@ipor-protocol/contracts/amm/spread/ISpread60Days.sol";
 import "@ipor-protocol/contracts/amm/spread/ISpread90Days.sol";
 
-contract AmmOpenSwapService is IAmmOpenSwapService {
+contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
     using Address for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
+    using AmmLib for AmmInternalTypes.RiskIndicatorsContext;
 
     address internal immutable _usdt;
     uint256 internal immutable _usdtDecimals;
@@ -488,13 +491,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 
-        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
-            ctx.poolCfg.asset,
-            0,
-            ctx.tenor,
-            balance.liquidityPool,
-            ctx.poolCfg.minLeverage
-        );
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(ctx, balance.liquidityPool, 0);
 
         _validateLiquidityPoolCollateralRatioAndSwapLeverage(
             balance.liquidityPool,
@@ -515,7 +512,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                     bosStruct.notional,
                     riskIndicators.maxLeveragePerLeg,
                     riskIndicators.maxCollateralRatioPerLeg,
-                    riskIndicators.spread,
+                    riskIndicators.baseSpread,
                     balance.totalCollateralPayFixed,
                     balance.totalCollateralReceiveFixed,
                     balance.liquidityPool,
@@ -590,16 +587,11 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
 
         IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(ctx.poolCfg.ammStorage)
             .getBalancesForOpenSwap();
+
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralReceiveFixed = balance.totalCollateralReceiveFixed + bosStruct.collateral;
 
-        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
-            ctx.poolCfg.asset,
-            1,
-            ctx.tenor,
-            balance.liquidityPool,
-            ctx.poolCfg.minLeverage
-        );
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(ctx, balance.liquidityPool, 1);
 
         _validateLiquidityPoolCollateralRatioAndSwapLeverage(
             balance.liquidityPool,
@@ -620,7 +612,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                     bosStruct.notional,
                     riskIndicators.maxLeveragePerLeg,
                     riskIndicators.maxCollateralRatioPerLeg,
-                    riskIndicators.spread,
+                    riskIndicators.baseSpread,
                     balance.totalCollateralPayFixed,
                     balance.totalCollateralReceiveFixed,
                     balance.liquidityPool,
@@ -739,42 +731,18 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function _getRiskIndicators(
-        address asset,
-        uint256 direction,
-        IporTypes.SwapTenor tenor,
-        uint256 liquidityPool,
-        uint256 cfgMinLeverage
-    ) internal view virtual returns (AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators) {
-        uint256 maxNotionalPerLeg;
+        Context memory ctx,
+        uint256 liquidityPoolBalance,
+        uint256 direction
+    ) internal view virtual returns (AmmTypes.OpenSwapRiskIndicators memory riskIndicators) {
+        AmmInternalTypes.RiskIndicatorsContext memory riskIndicatorsContext;
+        riskIndicatorsContext.asset = ctx.poolCfg.asset;
+        riskIndicatorsContext.iporRiskManagementOracle = _iporRiskManagementOracle;
+        riskIndicatorsContext.tenor = ctx.tenor;
+        riskIndicatorsContext.liquidityPoolBalance = liquidityPoolBalance;
+        riskIndicatorsContext.minLeverage = ctx.poolCfg.minLeverage;
 
-        (
-            maxNotionalPerLeg,
-            riskIndicators.maxCollateralRatioPerLeg,
-            riskIndicators.maxCollateralRatio,
-            riskIndicators.spread,
-            riskIndicators.fixedRateCap
-        ) = IIporRiskManagementOracle(_iporRiskManagementOracle).getOpenSwapParameters(asset, direction, tenor);
-
-        uint256 maxCollateralPerLeg = IporMath.division(liquidityPool * riskIndicators.maxCollateralRatioPerLeg, 1e18);
-
-        if (maxCollateralPerLeg > 0) {
-            riskIndicators.maxLeveragePerLeg = _leverageInRange(
-                IporMath.division(maxNotionalPerLeg * 1e18, maxCollateralPerLeg),
-                cfgMinLeverage
-            );
-        } else {
-            riskIndicators.maxLeveragePerLeg = cfgMinLeverage;
-        }
-    }
-
-    function _leverageInRange(uint256 leverage, uint256 cfgMinLeverage) internal pure returns (uint256) {
-        if (leverage > Constants.WAD_LEVERAGE_1000) {
-            return Constants.WAD_LEVERAGE_1000;
-        } else if (leverage < cfgMinLeverage) {
-            return cfgMinLeverage;
-        } else {
-            return leverage;
-        }
+        riskIndicators = riskIndicatorsContext.getRiskIndicators(direction);
     }
 
     function _emitOpenSwapEvent(

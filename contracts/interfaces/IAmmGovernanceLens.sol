@@ -24,6 +24,21 @@ interface IAmmGovernanceLens {
         address ammCharlieTreasuryManager;
     }
 
+    /// @dev A struct to represent a pool's parameters configuration.
+    struct AmmPoolsParamsConfiguration {
+        /// @dev max liquidity pool balance in the asset pool, represented in 18 decimals
+        uint256 maxLiquidityPoolBalance;
+        /// @dev  max lp account contribution in the asset pool, represented in 18 decimals
+        uint256 maxLpAccountContribution;
+        /// @dev The threshold for auto-rebalancing the pool. Value represented without 18 decimals.
+        /// Value represents multiplication of 1000.
+        uint256 autoRebalanceThresholdInThousands;
+        /// @dev asset management ratio, represented without 18 decimals, value represents percentage with 2 decimals
+        /// 65% = 6500, 99,99% = 9999, this is a percentage which stay in Amm Treasury in opposite to Asset Management
+        /// based on AMM Treasury balance (100%).
+        uint256 ammTreasuryAndAssetManagementRatio;
+    }
+
     /// @notice Gets the structure or common params described AMM Pool configuration
     /// @param asset Address of asset which represents specific pool
     /// @return poolConfiguration Structure of common params described AMM Pool configuration
@@ -46,5 +61,5 @@ interface IAmmGovernanceLens {
     /// @notice Gets the structure or common params described AMM Pool configuration
     /// @param asset Address of asset which represents specific pool
     /// @return ammPoolsParams Structure of common params described AMM Pool configuration
-    function getAmmPoolsParams(address asset) external view returns (StorageLib.AmmPoolsParamsValue memory);
+    function getAmmPoolsParams(address asset) external view returns (AmmPoolsParamsConfiguration memory);
 }
