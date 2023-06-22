@@ -38,9 +38,18 @@ contract AmmPoolsLens is IAmmPoolsLens {
         AmmPoolsLensPoolConfiguration memory daiPoolCfg,
         address iporOracle
     ) {
-        require(usdtPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool asset address cannot be 0"));
-        require(usdtPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ipToken address cannot be 0"));
-        require(usdtPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammStorage address cannot be 0"));
+        require(
+            usdtPoolCfg.asset != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool asset address cannot be 0")
+        );
+        require(
+            usdtPoolCfg.ipToken != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ipToken address cannot be 0")
+        );
+        require(
+            usdtPoolCfg.ammStorage != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammStorage address cannot be 0")
+        );
         require(
             usdtPoolCfg.ammTreasury != address(0),
             string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammTreasury address cannot be 0")
@@ -50,9 +59,18 @@ contract AmmPoolsLens is IAmmPoolsLens {
             string.concat(IporErrors.WRONG_ADDRESS, " USDT pool assetManagement address cannot be 0")
         );
 
-        require(usdcPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool asset address cannot be 0"));
-        require(usdcPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ipToken address cannot be 0"));
-        require(usdcPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammStorage address cannot be 0"));
+        require(
+            usdcPoolCfg.asset != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool asset address cannot be 0")
+        );
+        require(
+            usdcPoolCfg.ipToken != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ipToken address cannot be 0")
+        );
+        require(
+            usdcPoolCfg.ammStorage != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammStorage address cannot be 0")
+        );
         require(
             usdcPoolCfg.ammTreasury != address(0),
             string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammTreasury address cannot be 0")
@@ -62,10 +80,22 @@ contract AmmPoolsLens is IAmmPoolsLens {
             string.concat(IporErrors.WRONG_ADDRESS, " USDC pool assetManagement address cannot be 0")
         );
 
-        require(daiPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool asset address cannot be 0"));
-        require(daiPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ipToken address cannot be 0"));
-        require(daiPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammStorage address cannot be 0"));
-        require(daiPoolCfg.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammTreasury address cannot be 0"));
+        require(
+            daiPoolCfg.asset != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " DAI pool asset address cannot be 0")
+        );
+        require(
+            daiPoolCfg.ipToken != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ipToken address cannot be 0")
+        );
+        require(
+            daiPoolCfg.ammStorage != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammStorage address cannot be 0")
+        );
+        require(
+            daiPoolCfg.ammTreasury != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammTreasury address cannot be 0")
+        );
         require(
             daiPoolCfg.assetManagement != address(0),
             string.concat(IporErrors.WRONG_ADDRESS, " DAI pool assetManagement address cannot be 0")
@@ -97,7 +127,9 @@ contract AmmPoolsLens is IAmmPoolsLens {
         _iporOracle = iporOracle;
     }
 
-    function getAmmPoolsLensConfiguration(address asset) external view override returns (AmmPoolsLensPoolConfiguration memory) {
+    function getAmmPoolsLensConfiguration(
+        address asset
+    ) external view override returns (AmmPoolsLensPoolConfiguration memory) {
         return _getPoolConfiguration(asset);
     }
 

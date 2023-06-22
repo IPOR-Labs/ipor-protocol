@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "contracts/amm/spread/CalculateTimeWeightedNotionalLibs.sol";
+import "@ipor-protocol/contracts/amm/spread/CalculateTimeWeightedNotionalLibs.sol";
 import "../TestCommons.sol";
 
 contract CalculateWeightedNotionalLibsTest is TestCommons {

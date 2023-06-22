@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
-import "contracts/tokens/IpToken.sol";
+import "@ipor-protocol/contracts/tokens/IpToken.sol";
 import "forge-std/console2.sol";
 
 contract AmmPoolsNotExchangeRate is TestCommons {

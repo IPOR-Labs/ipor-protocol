@@ -3,8 +3,8 @@ pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "forge-std/console2.sol";
-import "contracts/mocks/tokens/MockTestnetToken.sol";
-import "contracts/mocks/tokens/MockTestnetToken.sol";
+import "@ipor-protocol/contracts/mocks/tokens/MockTestnetToken.sol";
+import "@ipor-protocol/contracts/mocks/tokens/MockTestnetToken.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "./utils/factory/IporProtocolFactory.sol";
 

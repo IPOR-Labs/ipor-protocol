@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
-import "contracts/interfaces/types/IporTypes.sol";
+import "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
 
 /// @title Types used in interfaces strictly related to AMM (Automated Market Maker).
 /// @dev Used by IAmmTreasury and IAmmStorage interfaces.
@@ -154,5 +154,19 @@ library AmmTypes {
         /// @notice Fixed interest rate at which the position has been opened,
         /// it is quote from spread documentation
         uint256 fixedInterestRate;
+    }
+
+    /// @notice Risk indicators calculated for swap opening
+    struct OpenSwapRiskIndicators {
+        /// @notice Maximum collateral ratio in general
+        uint256 maxCollateralRatio;
+        /// @notice Maximum collateral ratio for a given leg
+        uint256 maxCollateralRatioPerLeg;
+        /// @notice Maximum leverage for a given leg
+        uint256 maxLeveragePerLeg;
+        /// @notice Base Spread for a given leg (without demand part)
+        int256 baseSpread;
+        /// @notice Fixed rate cap
+        uint256 fixedRateCap;
     }
 }

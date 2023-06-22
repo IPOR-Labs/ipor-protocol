@@ -1,8 +1,20 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.20;
-import "./types/PowerTokenTypes.sol";
 
 interface IPowerTokenLens {
+
+    struct PwTokenCooldown {
+        // @dev The timestamp when the account can redeem Power Tokens
+        uint256 endTimestamp;
+        // @dev The amount of Power Tokens which can be redeemed without fee when the cooldown reaches `endTimestamp`
+        uint256 pwTokenAmount;
+    }
+
+    struct UpdateStakedToken {
+        address beneficiary;
+        uint256 stakedTokenAmount;
+    }
+
     /// @notice Gets the total supply of the Power Token.
     /// @dev Value is calculated in runtime using baseTotalSupply and internal exchange rate.
     /// @return Total supply of Power tokens, represented with 18 decimals
@@ -25,11 +37,11 @@ interface IPowerTokenLens {
     function getPwTokenUnstakeFee() external view returns (uint256);
 
     /// @notice Gets the state of the active cooldown for the sender.
-    /// @dev If PowerTokenTypes.PowerTokenCoolDown contains only zeros it represents no active cool down.
+    /// @dev If PowerTokenCoolDown contains only zeros it represents no active cool down.
     /// Struct containing information on when the cooldown end and what is the quantity of the Power Tokens locked.
     /// @param account account address that owns Power Tokens in the cooldown
-    /// @return Object PowerTokenTypes.PowerTokenCoolDown represents active cool down
-    function getPwTokensInCooldown(address account) external view returns (PowerTokenTypes.PwTokenCooldown memory);
+    /// @return Object PowerTokenCoolDown represents active cool down
+    function getPwTokensInCooldown(address account) external view returns (PwTokenCooldown memory);
 
     /// @notice Gets the power token cool down time in seconds.
     /// @return uint256 cool down time in seconds

@@ -9,11 +9,11 @@ import "../interfaces/IAmmStorage.sol";
 import "../interfaces/IIporRiskManagementOracle.sol";
 import "../interfaces/IAssetManagement.sol";
 import "../governance/AmmConfigurationManager.sol";
-import "../amm/libraries/types/AmmInternalTypes.sol";
-import "contracts/amm/spread/ISpread28DaysLens.sol";
-import "contracts/amm/spread/ISpread60DaysLens.sol";
-import "contracts/amm/spread/ISpread90DaysLens.sol";
-import "contracts/libraries/errors/AmmErrors.sol";
+import "../interfaces/types/AmmTypes.sol";
+import "@ipor-protocol/contracts/amm/spread/ISpread28DaysLens.sol";
+import "@ipor-protocol/contracts/amm/spread/ISpread60DaysLens.sol";
+import "@ipor-protocol/contracts/amm/spread/ISpread90DaysLens.sol";
+import "@ipor-protocol/contracts/libraries/errors/AmmErrors.sol";
 
 library RiskManagementLogic {
     using Address for address;
@@ -36,7 +36,7 @@ library RiskManagementLogic {
         IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(spreadOfferedRateCtx.ammStorage)
             .getBalancesForOpenSwap();
 
-        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = getRiskIndicators(
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicators = getRiskIndicators(
             spreadOfferedRateCtx.asset,
             direction,
             tenor,
@@ -54,7 +54,7 @@ library RiskManagementLogic {
                         swapNotional,
                         riskIndicators.maxLeveragePerLeg,
                         riskIndicators.maxCollateralRatioPerLeg,
-                        riskIndicators.spread,
+                        riskIndicators.baseSpread,
                         balance.totalCollateralPayFixed,
                         balance.totalCollateralReceiveFixed,
                         balance.liquidityPool,
@@ -75,15 +75,14 @@ library RiskManagementLogic {
         uint256 liquidityPool,
         uint256 cfgMinLeverage,
         address cfgIporRiskManagementOracle
-    ) internal view returns (AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators) {
+    ) internal view returns (AmmTypes.OpenSwapRiskIndicators memory riskIndicators) {
         uint256 maxNotionalPerLeg;
-        uint256 maxCollateralRatio;
 
         (
             maxNotionalPerLeg,
             riskIndicators.maxCollateralRatioPerLeg,
-            maxCollateralRatio,
-            riskIndicators.spread,
+            riskIndicators.maxCollateralRatio,
+            riskIndicators.baseSpread,
             riskIndicators.fixedRateCap
         ) = IIporRiskManagementOracle(cfgIporRiskManagementOracle).getOpenSwapParameters(asset, direction, tenor);
 

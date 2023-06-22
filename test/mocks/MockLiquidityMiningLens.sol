@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "contracts/interfaces/ILiquidityMiningLens.sol";
+import "@ipor-protocol/contracts/interfaces/ILiquidityMiningLens.sol";
 import "../utils/builder/BuilderUtils.sol";
 
 contract MockLiquidityMiningLens is ILiquidityMiningLens {
@@ -18,30 +18,30 @@ contract MockLiquidityMiningLens is ILiquidityMiningLens {
     function balanceOfPowerTokensDelegatedToLiquidityMining(address account, address[] memory lpTokens)
         external
         view
-        returns (LiquidityMiningTypes.DelegatedPwTokenBalance[] memory balances)
+        returns (DelegatedPwTokenBalance[] memory balances)
     {}
 
     function getAccruedRewardsInLiquidityMining(address[] calldata lpTokens)
         external
         view
-        returns (LiquidityMiningTypes.AccruedRewardsResult[] memory result)
+        returns (AccruedRewardsResult[] memory result)
     {}
 
     function getAccountRewardsInLiquidityMining(address account, address[] calldata lpTokens)
         external
         view
-        returns (LiquidityMiningTypes.AccountRewardResult[] memory)
+        returns (AccountRewardResult[] memory)
     {}
 
     function getGlobalIndicatorsFromLiquidityMining(address[] memory lpTokens)
         external
         view
-        returns (LiquidityMiningTypes.GlobalIndicatorsResult[] memory)
+        returns (GlobalIndicatorsResult[] memory)
     {}
 
     function getAccountIndicatorsFromLiquidityMining(address account, address[] memory lpTokens)
         external
         view
-        returns (LiquidityMiningTypes.AccountIndicatorsResult[] memory)
+        returns (AccountIndicatorsResult[] memory)
     {}
 }

@@ -9,6 +9,7 @@ import "contracts/oracles/libraries/IporRiskManagementOracleStorageTypes.sol";
 import "../mocks/EmptyRouterImplementation.sol";
 import "contracts/router/IporProtocolRouter.sol";
 import "contracts/interfaces/IAmmSwapsLens.sol";
+import "contracts/interfaces/IAmmOpenSwapLens.sol";
 import "../../contracts/amm/AmmSwapsLens.sol";
 import "../../contracts/amm/AmmPoolsLens.sol";
 import "../../contracts/amm/AssetManagementLens.sol";
@@ -90,12 +91,12 @@ contract TestForkCommons is Test {
         uint iporRiskManagementOracleVersion = _createIporRiskManagementOracle();
         _createEmptyRouterImplementation();
 
-        _createAmmSwapsLens();
         _createAmmPoolsLens();
         _createAssetManagementLens();
 
         _creatSpreadModule();
 
+        _createAmmSwapsLens();
         _createAmmOpenSwapService();
         _createAmmCloseSwapService();
         _createAmmPoolsService();
@@ -239,17 +240,20 @@ contract TestForkCommons is Test {
         IAmmSwapsLens.SwapLensPoolConfiguration memory daiConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             DAI,
             miltonStorageProxyDai,
-            miltonProxyDai
+            miltonProxyDai,
+            10 * 1e18
         );
         IAmmSwapsLens.SwapLensPoolConfiguration memory usdcConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             USDC,
             miltonStorageProxyUsdc,
-            miltonProxyUsdc
+            miltonProxyUsdc,
+            10 * 1e18
         );
         IAmmSwapsLens.SwapLensPoolConfiguration memory usdtConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             USDT,
             miltonStorageProxyUsdt,
-            miltonProxyUsdt
+            miltonProxyUsdt,
+            10 * 1e18
         );
 
         ammSwapsLens = address(
@@ -259,7 +263,7 @@ contract TestForkCommons is Test {
                 daiConfig,
                 iporOracleProxy,
                 iporRiskManagementOracleProxy,
-                iporProtocolRouterProxy
+                spreadRouter
             )
         );
         console2.log("ammSwapsLens: ", ammSwapsLens);
@@ -338,7 +342,7 @@ contract TestForkCommons is Test {
     }
 
     function _createAmmOpenSwapService() private {
-        IAmmOpenSwapService.AmmOpenSwapServicePoolConfiguration memory daiConfig = IAmmOpenSwapService
+        IAmmOpenSwapLens.AmmOpenSwapServicePoolConfiguration memory daiConfig = IAmmOpenSwapLens
             .AmmOpenSwapServicePoolConfiguration(
                 DAI,
                 18,
@@ -352,7 +356,7 @@ contract TestForkCommons is Test {
                 5e17
             );
 
-        IAmmOpenSwapService.AmmOpenSwapServicePoolConfiguration memory usdcConfig = IAmmOpenSwapService
+        IAmmOpenSwapLens.AmmOpenSwapServicePoolConfiguration memory usdcConfig = IAmmOpenSwapLens
             .AmmOpenSwapServicePoolConfiguration(
                 USDC,
                 6,
@@ -366,7 +370,7 @@ contract TestForkCommons is Test {
                 5e14
             );
 
-        IAmmOpenSwapService.AmmOpenSwapServicePoolConfiguration memory usdtConfig = IAmmOpenSwapService
+        IAmmOpenSwapLens.AmmOpenSwapServicePoolConfiguration memory usdtConfig = IAmmOpenSwapLens
             .AmmOpenSwapServicePoolConfiguration(
                 USDT,
                 6,

@@ -4,9 +4,9 @@ pragma solidity 0.8.20;
 import "../TestCommons.sol";
 import "./SpreadBaseTestUtils.sol";
 import "./SpreadTestSystem.sol";
-import "contracts/amm/spread/ISpreadCloseSwapService.sol";
-import "contracts/amm/spread/ISpreadStorageLens.sol";
-import "contracts/amm/libraries/types/AmmInternalTypes.sol";
+import "@ipor-protocol/contracts/amm/spread/ISpreadCloseSwapService.sol";
+import "@ipor-protocol/contracts/amm/spread/ISpreadStorageLens.sol";
+import "@ipor-protocol/contracts/amm/libraries/types/AmmInternalTypes.sol";
 
 contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
     using SafeCast for uint256;

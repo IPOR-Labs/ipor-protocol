@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "contracts/interfaces/IProxyImplementation.sol";
+import "@ipor-protocol/contracts/interfaces/IProxyImplementation.sol";
 import "./SpreadStorageLibs.sol";
 import "./SpreadAccessControl.sol";
 import "./ISpread28Days.sol";
@@ -128,7 +128,7 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl, IProxyImplementat
         // solhint-disable-next-line no-inline-assembly
         assembly {
             // Copy msg.data. This inline assembly block takes thefull control of memory
-            // Because it will not return to Solidity code, 
+            // Because it will not return to Solidity code,
             // Solidity scratch pad at memory position 0 is overriden.
             calldatacopy(0, 0, calldatasize())
 

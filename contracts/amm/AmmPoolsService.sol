@@ -372,14 +372,14 @@ contract AmmPoolsService is IAmmPoolsService {
     ) internal pure returns (AmmTypes.RedeemAmount memory redeemAmount) {
         uint256 wadAssetAmount = IporMath.division(ipTokenAmount * exchangeRate, 1e18);
         uint256 wadRedeemFee = IporMath.division(wadAssetAmount * cfgRedeemFeeRate, 1e18);
-        uint256 redeemAmount = IporMath.convertWadToAssetDecimals(wadAssetAmount - wadRedeemFee, assetDecimals);
+        uint256 redeemAmountLocal = IporMath.convertWadToAssetDecimals(wadAssetAmount - wadRedeemFee, assetDecimals);
 
         return
             AmmTypes.RedeemAmount({
                 wadAssetAmount: wadAssetAmount,
                 wadRedeemFee: wadRedeemFee,
-                redeemAmount: redeemAmount,
-                wadRedeemAmount: IporMath.convertToWad(redeemAmount, assetDecimals)
+                redeemAmount: redeemAmountLocal,
+                wadRedeemAmount: IporMath.convertToWad(redeemAmountLocal, assetDecimals)
             });
     }
 
