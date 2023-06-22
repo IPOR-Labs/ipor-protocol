@@ -10,13 +10,13 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "../libraries/errors/IporErrors.sol";
-import "../libraries/Constants.sol";
-import "../interfaces/IAmmTreasury.sol";
-import "../interfaces/IAmmStorage.sol";
-import "../interfaces/IAssetManagement.sol";
-import "../interfaces/IProxyImplementation.sol";
-import "../security/IporOwnableUpgradeable.sol";
+import "@ipor-protocol/contracts/interfaces/IAmmTreasury.sol";
+import "@ipor-protocol/contracts/interfaces/IAmmStorage.sol";
+import "@ipor-protocol/contracts/interfaces/IAssetManagement.sol";
+import "@ipor-protocol/contracts/interfaces/IProxyImplementation.sol";
+import "@ipor-protocol/contracts/libraries/Constants.sol";
+import "@ipor-protocol/contracts/libraries/errors/IporErrors.sol";
+import "@ipor-protocol/contracts/security/IporOwnableUpgradeable.sol";
 
 contract AmmTreasury is
     Initializable,
@@ -25,7 +25,7 @@ contract AmmTreasury is
     UUPSUpgradeable,
     IporOwnableUpgradeable,
     IAmmTreasury,
-IProxyImplementation
+    IProxyImplementation
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -35,16 +35,13 @@ IProxyImplementation
     address internal immutable _assetManagement;
     address internal immutable _router;
 
-    constructor(
-        address asset,
-        uint256 decimals,
-        address ammStorage,
-        address assetManagement,
-        address router
-    ) {
+    constructor(address asset, uint256 decimals, address ammStorage, address assetManagement, address router) {
         require(asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " asset address cannot be 0"));
         require(ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " AMM storage address cannot be 0"));
-        require(assetManagement != address(0), string.concat(IporErrors.WRONG_ADDRESS, " asset management address cannot be 0"));
+        require(
+            assetManagement != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " asset management address cannot be 0")
+        );
         require(router != address(0), string.concat(IporErrors.WRONG_ADDRESS, " router address cannot be 0"));
 
         _asset = asset;
@@ -88,13 +85,7 @@ IProxyImplementation
         external
         view
         override
-        returns (
-            address asset,
-            uint256 decimals,
-            address ammStorage,
-            address assetManagement,
-            address router
-        )
+        returns (address asset, uint256 decimals, address ammStorage, address assetManagement, address router)
     {
         return (_asset, _decimals, _ammStorage, _assetManagement, _router);
     }

@@ -4,8 +4,6 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
-import "@ipor-protocol/contracts/libraries/errors/IporErrors.sol";
-import "@ipor-protocol/contracts/router/AccessControl.sol";
 import "@ipor-protocol/contracts/interfaces/IAmmSwapsLens.sol";
 import "@ipor-protocol/contracts/interfaces/IAmmPoolsLens.sol";
 import "@ipor-protocol/contracts/interfaces/IAssetManagementLens.sol";
@@ -20,6 +18,8 @@ import "@ipor-protocol/contracts/interfaces/IAmmPoolsService.sol";
 import "@ipor-protocol/contracts/interfaces/IPowerTokenFlowsService.sol";
 import "@ipor-protocol/contracts/interfaces/IPowerTokenStakeService.sol";
 import "@ipor-protocol/contracts/interfaces/IProxyImplementation.sol";
+import "@ipor-protocol/contracts/libraries/errors/IporErrors.sol";
+import "@ipor-protocol/contracts/router/AccessControl.sol";
 
 contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementation {
     using Address for address;

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "../libraries/errors/IporErrors.sol";
-import "../libraries/AmmLib.sol";
-import "../interfaces/types/AmmTypes.sol";
-import "../interfaces/IAmmPoolsLens.sol";
+import "@ipor-protocol/contracts/interfaces/types/AmmTypes.sol";
+import "@ipor-protocol/contracts/interfaces/IAmmPoolsLens.sol";
+import "@ipor-protocol/contracts/libraries/errors/IporErrors.sol";
+import "@ipor-protocol/contracts/libraries/AmmLib.sol";
 
 contract AmmPoolsLens is IAmmPoolsLens {
     using AmmLib for AmmTypes.AmmPoolCoreModel;

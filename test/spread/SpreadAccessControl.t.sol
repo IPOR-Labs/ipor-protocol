@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
-import "./SpreadTestSystem.sol";
+import "@ipor-protocol/test/spread/SpreadTestSystem.sol";
 
 contract SpreadAccessControlTest is TestCommons {
     SpreadTestSystem internal  _spreadTestSystem;

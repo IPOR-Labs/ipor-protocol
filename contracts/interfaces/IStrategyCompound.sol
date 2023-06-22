@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "./IStrategy.sol";
+import "@ipor-protocol/contracts/interfaces/IStrategy.sol";
 
 /// @title Interface for interacting with Compound.
 /// @notice It standarises the calls made by the asset management to the external DeFi protocol.

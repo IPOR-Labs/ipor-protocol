@@ -4,7 +4,7 @@ pragma solidity 0.8.20;
 import "@ipor-protocol/contracts/libraries/errors/AmmErrors.sol";
 import "@ipor-protocol/contracts/libraries/errors/IporErrors.sol";
 import "@ipor-protocol/contracts/security/PauseManager.sol";
-import "./SpreadStorageLibs.sol";
+import "@ipor-protocol/contracts/amm/spread/SpreadStorageLibs.sol";
 
 
 contract SpreadAccessControl {

@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 import "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
-import "./SpreadTypes.sol";
+import "@ipor-protocol/contracts/amm/spread/SpreadTypes.sol";
 
 interface ISpreadStorageLens {
     function getTimeWeightedNotional(

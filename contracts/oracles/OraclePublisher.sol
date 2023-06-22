@@ -6,13 +6,13 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "../libraries/errors/IporErrors.sol";
-import "../libraries/errors/IporOracleErrors.sol";
-import "../interfaces/IIporOracle.sol";
-import "../interfaces/IIporRiskManagementOracle.sol";
-import "../interfaces/IOraclePublisher.sol";
-import "../interfaces/IProxyImplementation.sol";
-import "../security/IporOwnableUpgradeable.sol";
+import "@ipor-protocol/contracts/interfaces/IIporOracle.sol";
+import "@ipor-protocol/contracts/interfaces/IIporRiskManagementOracle.sol";
+import "@ipor-protocol/contracts/interfaces/IOraclePublisher.sol";
+import "@ipor-protocol/contracts/interfaces/IProxyImplementation.sol";
+import "@ipor-protocol/contracts/libraries/errors/IporErrors.sol";
+import "@ipor-protocol/contracts/libraries/errors/IporOracleErrors.sol";
+import "@ipor-protocol/contracts/security/IporOwnableUpgradeable.sol";
 
 /**
  * @title IPOR Oracle Publisher contract

@@ -6,15 +6,15 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
-import "@ipor-protocol/contracts/libraries/Constants.sol";
-import "@ipor-protocol/contracts/libraries/PaginationUtils.sol";
 import "@ipor-protocol/contracts/interfaces/types/AmmStorageTypes.sol";
 import "@ipor-protocol/contracts/interfaces/IAmmStorage.sol";
 import "@ipor-protocol/contracts/interfaces/IProxyImplementation.sol";
-import "@ipor-protocol/contracts/security/IporOwnableUpgradeable.sol";
+import "@ipor-protocol/contracts/libraries/Constants.sol";
+import "@ipor-protocol/contracts/libraries/PaginationUtils.sol";
 import "@ipor-protocol/contracts/amm/libraries/SoapIndicatorRebalanceLogic.sol";
 import "@ipor-protocol/contracts/amm/libraries/types/StorageInternalTypes.sol";
 import "@ipor-protocol/contracts/amm/libraries/types/AmmInternalTypes.sol";
+import "@ipor-protocol/contracts/security/IporOwnableUpgradeable.sol";
 
 //@dev all stored values related to tokens are in 18 decimals.
 contract AmmStorage is

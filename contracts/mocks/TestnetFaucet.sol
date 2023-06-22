@@ -8,9 +8,9 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "../security/IporOwnableUpgradeable.sol";
-import "../libraries/errors/MocksErrors.sol";
-import "../interfaces/ITestnetFaucet.sol";
+import "@ipor-protocol/contracts/security/IporOwnableUpgradeable.sol";
+import "@ipor-protocol/contracts/libraries/errors/MocksErrors.sol";
+import "@ipor-protocol/contracts/interfaces/ITestnetFaucet.sol";
 
 contract TestnetFaucet is
     Initializable,

@@ -2,20 +2,20 @@
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "../libraries/Constants.sol";
-import "../libraries/errors/IporErrors.sol";
-import "../libraries/errors/AmmErrors.sol";
-import "../libraries/errors/AmmPoolsErrors.sol";
-import "../libraries/math/IporMath.sol";
-import "../libraries/AssetManagementLogic.sol";
-import "../libraries/AmmLib.sol";
-import "../interfaces/types/IporTypes.sol";
-import "../interfaces/types/AmmTypes.sol";
-import "../interfaces/IIpToken.sol";
-import "../interfaces/IAmmTreasury.sol";
-import "../interfaces/IAmmPoolsService.sol";
-import "../interfaces/IAmmStorage.sol";
-import "../governance/AmmConfigurationManager.sol";
+import "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
+import "@ipor-protocol/contracts/interfaces/types/AmmTypes.sol";
+import "@ipor-protocol/contracts/interfaces/IIpToken.sol";
+import "@ipor-protocol/contracts/interfaces/IAmmTreasury.sol";
+import "@ipor-protocol/contracts/interfaces/IAmmPoolsService.sol";
+import "@ipor-protocol/contracts/interfaces/IAmmStorage.sol";
+import "@ipor-protocol/contracts/libraries/Constants.sol";
+import "@ipor-protocol/contracts/libraries/errors/IporErrors.sol";
+import "@ipor-protocol/contracts/libraries/errors/AmmErrors.sol";
+import "@ipor-protocol/contracts/libraries/errors/AmmPoolsErrors.sol";
+import "@ipor-protocol/contracts/libraries/math/IporMath.sol";
+import "@ipor-protocol/contracts/libraries/AssetManagementLogic.sol";
+import "@ipor-protocol/contracts/libraries/AmmLib.sol";
+import "@ipor-protocol/contracts/governance/AmmConfigurationManager.sol";
 
 contract AmmPoolsService is IAmmPoolsService {
     using SafeCast for int256;

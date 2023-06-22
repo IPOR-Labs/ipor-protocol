@@ -10,7 +10,7 @@ import "contracts/tokens/IporToken.sol";
 import "contracts/mocks/TestnetFaucet.sol";
 import "contracts/interfaces/ITestnetFaucet.sol";
 import "./MockOldTestnetFaucet.sol";
-import "./IMockProxy.sol";
+import "@ipor-protocol/contracts/interfaces/types/IMockProxy.sol";
 
 contract TestnetFaucetTest is Test, TestCommons {
     struct BalanceUserAndFaucet {

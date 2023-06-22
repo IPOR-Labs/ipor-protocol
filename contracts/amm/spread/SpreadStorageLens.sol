@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "../../interfaces/types/IporTypes.sol";
-import "./SpreadTypes.sol";
-import "./ISpreadStorageLens.sol";
-import "./SpreadStorageLibs.sol";
+import "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
+import "@ipor-protocol/contracts/amm/spread/ISpreadStorageLens.sol";
+import "@ipor-protocol/contracts/amm/spread/SpreadTypes.sol";
+import "@ipor-protocol/contracts/amm/spread/SpreadStorageLibs.sol";
 
 contract SpreadStorageLens is ISpreadStorageLens {
     function getTimeWeightedNotional()

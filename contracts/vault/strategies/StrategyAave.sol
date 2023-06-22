@@ -9,15 +9,15 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../../libraries/errors/AssetManagementErrors.sol";
-import "../../libraries/math/IporMath.sol";
-import "../../interfaces/IStrategyAave.sol";
-import "../../security/IporOwnableUpgradeable.sol";
-import "../interfaces/aave/AaveLendingPoolV2.sol";
-import "../interfaces/aave/AaveLendingPoolProviderV2.sol";
-import "../interfaces/aave/AaveIncentivesInterface.sol";
-import "../interfaces/aave/StakedAaveInterface.sol";
-import "./StrategyCore.sol";
+import "@ipor-protocol/contracts/interfaces/IStrategyAave.sol";
+import "@ipor-protocol/contracts/vault/interfaces/aave/AaveLendingPoolV2.sol";
+import "@ipor-protocol/contracts/vault/interfaces/aave/AaveLendingPoolProviderV2.sol";
+import "@ipor-protocol/contracts/vault/interfaces/aave/AaveIncentivesInterface.sol";
+import "@ipor-protocol/contracts/vault/interfaces/aave/StakedAaveInterface.sol";
+import "@ipor-protocol/contracts/libraries/math/IporMath.sol";
+import "@ipor-protocol/contracts/libraries/errors/AssetManagementErrors.sol";
+import "@ipor-protocol/contracts/security/IporOwnableUpgradeable.sol";
+import "@ipor-protocol/contracts/vault/strategies/StrategyCore.sol";
 
 contract StrategyAave is StrategyCore, IStrategyAave {
     using SafeCast for uint256;
@@ -86,7 +86,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(lendingPoolAddress);
 
         DataTypesContract.ReserveData memory reserveData = lendingPool.getReserveData(_asset);
-        uint256 apr = IporMath.division(reserveData.currentLiquidityRate, (10**9));
+        uint256 apr = IporMath.division(reserveData.currentLiquidityRate, (10 ** 9));
         apy = aprToApy(apr);
     }
 
@@ -144,13 +144,9 @@ contract StrategyAave is StrategyCore, IStrategyAave {
      * @notice deposit can only done by owner.
      * @param wadAmount amount to deposit in _aave lending.
      */
-    function deposit(uint256 wadAmount)
-        external
-        override
-        whenNotPaused
-        onlyAssetManagement
-        returns (uint256 depositedAmount)
-    {
+    function deposit(
+        uint256 wadAmount
+    ) external override whenNotPaused onlyAssetManagement returns (uint256 depositedAmount) {
         address asset = _asset;
         uint256 assetDecimals = IERC20Metadata(asset).decimals();
 
@@ -170,13 +166,9 @@ contract StrategyAave is StrategyCore, IStrategyAave {
      * @notice withdraw can only done by AssetManagement.
      * @param wadAmount amount to withdraw from _aave lending.
      */
-    function withdraw(uint256 wadAmount)
-        external
-        override
-        whenNotPaused
-        onlyAssetManagement
-        returns (uint256 withdrawnAmount)
-    {
+    function withdraw(
+        uint256 wadAmount
+    ) external override whenNotPaused onlyAssetManagement returns (uint256 withdrawnAmount) {
         address asset = _asset;
         uint256 assetDecimals = IERC20Metadata(asset).decimals();
         uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);

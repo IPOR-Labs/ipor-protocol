@@ -5,7 +5,7 @@ import "./TestForkCommons.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "contracts/interfaces/IAmmGovernanceService.sol";
 import "contracts/interfaces/IIpToken.sol";
-import "./IAsset.sol";
+import "@ipor-protocol/test/fork/IAsset.sol";
 
 contract FirstForkTest is TestForkCommons {
     function testDAI() public {

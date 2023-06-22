@@ -17,7 +17,7 @@ import "contracts/amm/AmmTreasuryUsdt.sol";
 import "contracts/amm/spread/AmmTreasurySpreadModelUsdt.sol";
 import "contracts/amm/spread/AmmTreasurySpreadModel.sol";
 import "contracts/mocks/assetManagement/MockStrategy.sol";
-import "./IAsset.sol";
+import "@ipor-protocol/contracts/interfaces/types/IAsset.sol";
 import "contracts/vault/interfaces/aave/IAaveIncentivesController.sol";
 import "../utils/IporRiskManagementOracleUtils.sol";
 import "../utils/TestConstants.sol";

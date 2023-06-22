@@ -5,20 +5,20 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
+import "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
+import "@ipor-protocol/contracts/interfaces/types/AmmTypes.sol";
+import "@ipor-protocol/contracts/interfaces/IIporOracle.sol";
+import "@ipor-protocol/contracts/interfaces/IAmmTreasury.sol";
+import "@ipor-protocol/contracts/interfaces/IAmmCloseSwapService.sol";
 import "@ipor-protocol/contracts/amm/spread/ISpreadCloseSwapService.sol";
-import "../libraries/math/IporMath.sol";
-import "../libraries/errors/IporErrors.sol";
-import "../security/OwnerManager.sol";
-import "../libraries/AmmLib.sol";
-import "../libraries/AssetManagementLogic.sol";
-import "../libraries/RiskManagementLogic.sol";
-import "../amm/libraries/IporSwapLogic.sol";
-import "../governance/AmmConfigurationManager.sol";
-import "../interfaces/types/IporTypes.sol";
-import "../interfaces/types/AmmTypes.sol";
-import "../interfaces/IIporOracle.sol";
-import "../interfaces/IAmmTreasury.sol";
-import "../interfaces/IAmmCloseSwapService.sol";
+import "@ipor-protocol/contracts/libraries/errors/IporErrors.sol";
+import "@ipor-protocol/contracts/governance/AmmConfigurationManager.sol";
+import "@ipor-protocol/contracts/security/OwnerManager.sol";
+import "@ipor-protocol/contracts/libraries/math/IporMath.sol";
+import "@ipor-protocol/contracts/libraries/AmmLib.sol";
+import "@ipor-protocol/contracts/libraries/AssetManagementLogic.sol";
+import "@ipor-protocol/contracts/libraries/RiskManagementLogic.sol";
+import "@ipor-protocol/contracts/amm/libraries/IporSwapLogic.sol";
 
 contract AmmCloseSwapService is IAmmCloseSwapService {
     using Address for address;
@@ -518,7 +518,10 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         AmmCloseSwapServicePoolConfiguration memory poolCfg
     ) internal returns (uint256 payoutForLiquidator, AmmTypes.IporSwapClosingResult[] memory closedSwaps) {
         uint256 swapIdsLength = swapIds.length;
-        require(swapIdsLength <= poolCfg.maxLengthOfLiquidatedSwapsPerLeg, AmmErrors.MAX_LENGTH_LIQUIDATED_SWAPS_PER_LEG_EXCEEDED);
+        require(
+            swapIdsLength <= poolCfg.maxLengthOfLiquidatedSwapsPerLeg,
+            AmmErrors.MAX_LENGTH_LIQUIDATED_SWAPS_PER_LEG_EXCEEDED
+        );
 
         closedSwaps = new AmmTypes.IporSwapClosingResult[](swapIdsLength);
         AmmTypes.Swap memory swap;

@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "../TestCommons.sol";
 import "contracts/amm/pool/Joseph.sol";
 import "contracts/amm/AmmTreasury.sol";
-import "./IAsset.sol";
+import "@ipor-protocol/contracts/interfaces/types/IAsset.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract ForkUtils is Test, TestCommons {

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "../libraries/errors/IporErrors.sol";
-import "../interfaces/IAssetManagementLens.sol";
-import "../interfaces/IAssetManagement.sol";
-import "../interfaces/IAssetManagementInternal.sol";
-import "../interfaces/IStrategy.sol";
+import "@ipor-protocol/contracts/interfaces/IAssetManagementLens.sol";
+import "@ipor-protocol/contracts/interfaces/IAssetManagement.sol";
+import "@ipor-protocol/contracts/interfaces/IAssetManagementInternal.sol";
+import "@ipor-protocol/contracts/interfaces/IStrategy.sol";
+import "@ipor-protocol/contracts/libraries/errors/IporErrors.sol";
 
 contract AssetManagementLens is IAssetManagementLens {
     address internal immutable _usdt;
@@ -85,7 +85,10 @@ contract AssetManagementLens is IAssetManagementLens {
 
     function balanceOfAmmTreasuryInAssetManagement(address asset) external view returns (uint256) {
         AssetManagementConfiguration memory assetManagementConfiguration = _getAssetManagementConfiguration(asset);
-        return IAssetManagement(assetManagementConfiguration.assetManagement).totalBalance(assetManagementConfiguration.ammTreasury);
+        return
+            IAssetManagement(assetManagementConfiguration.assetManagement).totalBalance(
+                assetManagementConfiguration.ammTreasury
+            );
     }
 
     function getIvTokenExchangeRate(address asset) external view returns (uint256) {
@@ -95,21 +98,23 @@ contract AssetManagementLens is IAssetManagementLens {
 
     function balanceOfStrategyAave(address asset) external view returns (uint256) {
         AssetManagementConfiguration memory assetManagementConfiguration = _getAssetManagementConfiguration(asset);
-        IAssetManagementInternal assetManagement = IAssetManagementInternal(assetManagementConfiguration.assetManagement);
+        IAssetManagementInternal assetManagement = IAssetManagementInternal(
+            assetManagementConfiguration.assetManagement
+        );
         return IStrategy(assetManagement.getStrategyAave()).balanceOf();
     }
 
     function balanceOfStrategyCompound(address asset) external view returns (uint256) {
         AssetManagementConfiguration memory assetManagementConfiguration = _getAssetManagementConfiguration(asset);
-        IAssetManagementInternal assetManagement = IAssetManagementInternal(assetManagementConfiguration.assetManagement);
+        IAssetManagementInternal assetManagement = IAssetManagementInternal(
+            assetManagementConfiguration.assetManagement
+        );
         return IStrategy(assetManagement.getStrategyCompound()).balanceOf();
     }
 
-    function _getAssetManagementConfiguration(address asset)
-        internal
-        view
-        returns (AssetManagementConfiguration memory)
-    {
+    function _getAssetManagementConfiguration(
+        address asset
+    ) internal view returns (AssetManagementConfiguration memory) {
         if (asset == _usdt) {
             return
                 AssetManagementConfiguration({

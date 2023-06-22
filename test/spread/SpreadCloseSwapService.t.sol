@@ -2,8 +2,8 @@
 pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
-import "./SpreadBaseTestUtils.sol";
-import "./SpreadTestSystem.sol";
+import "@ipor-protocol/test/spread/SpreadBaseTestUtils.sol";
+import "@ipor-protocol/test/spread/SpreadTestSystem.sol";
 import "@ipor-protocol/contracts/amm/spread/ISpreadCloseSwapService.sol";
 import "@ipor-protocol/contracts/amm/spread/ISpreadStorageLens.sol";
 import "@ipor-protocol/contracts/amm/libraries/types/AmmInternalTypes.sol";

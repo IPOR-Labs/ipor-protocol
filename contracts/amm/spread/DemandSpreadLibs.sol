@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 import "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
-import "./CalculateTimeWeightedNotionalLibs.sol";
+import "@ipor-protocol/contracts/amm/spread/CalculateTimeWeightedNotionalLibs.sol";
 
 library DemandSpreadLibs {
     /// @notice DTO for the Weighted Notional

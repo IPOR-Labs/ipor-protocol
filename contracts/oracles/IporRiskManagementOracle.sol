@@ -4,12 +4,12 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "../interfaces/IIporRiskManagementOracle.sol";
-import "../interfaces/IProxyImplementation.sol";
-import "../libraries/errors/IporRiskManagementOracleErrors.sol";
-import "../libraries/Constants.sol";
-import "./libraries/IporRiskManagementOracleStorageTypes.sol";
-import "../security/IporOwnableUpgradeable.sol";
+import "@ipor-protocol/contracts/interfaces/IIporRiskManagementOracle.sol";
+import "@ipor-protocol/contracts/interfaces/IProxyImplementation.sol";
+import "@ipor-protocol/contracts/libraries/errors/IporRiskManagementOracleErrors.sol";
+import "@ipor-protocol/contracts/libraries/Constants.sol";
+import "@ipor-protocol/contracts/oracles/libraries/IporRiskManagementOracleStorageTypes.sol";
+import "@ipor-protocol/contracts/security/IporOwnableUpgradeable.sol";
 
 /**
  * @title Ipor Risk Management Oracle contract
@@ -22,22 +22,22 @@ contract IporRiskManagementOracle is
     UUPSUpgradeable,
     IporOwnableUpgradeable,
     IIporRiskManagementOracle,
-IProxyImplementation
+    IProxyImplementation
 {
     using SafeCast for uint256;
     using SafeCast for int256;
 
     mapping(address => uint256) internal _updaters;
     mapping(address => IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage) internal _indicators;
-    
+
     /// @dev 0 - 31 bytes - lastUpdateTimestamp - uint32 - number of seconds since 1970-01-01T00:00:00Z
-    /// @dev 32 - 55 bytes - baseSpread28dPayFixed - int24 - base spread for 28 days period for pay fixed leg, 
+    /// @dev 32 - 55 bytes - baseSpread28dPayFixed - int24 - base spread for 28 days period for pay fixed leg,
     /// @dev    - on 32th position it is a sing - 1 means negative, 0 means positive
-    /// @dev 56 - 79 bytes - baseSpread28dReceiveFixed - int24 - base spread for 28 days period for receive fixed leg, 
+    /// @dev 56 - 79 bytes - baseSpread28dReceiveFixed - int24 - base spread for 28 days period for receive fixed leg,
     /// @dev    - on 56 position it is a sing - 1 means negative, 0 means positive
-    /// @dev 80 - 103 bytes - baseSpread60dPayFixed - int24 - base spread for 60 days period for pay fixed leg, 
+    /// @dev 80 - 103 bytes - baseSpread60dPayFixed - int24 - base spread for 60 days period for pay fixed leg,
     /// @dev    - on 80 position it is a sing - 1 means negative, 0 means positive
-    /// @dev 104 - 127 bytes - baseSpread60dReceiveFixed - int24 - base spread for 60 days period for receive fixed leg, 
+    /// @dev 104 - 127 bytes - baseSpread60dReceiveFixed - int24 - base spread for 60 days period for receive fixed leg,
     /// @dev    - on 104 position it is a sing - 1 means negative, 0 means positive
     /// @dev 128 - 151 bytes - baseSpread90dPayFixed - int24 - base spread for 90 days period for pay fixed leg,
     /// @dev   - on 128 position it is a sing - 1 means negative, 0 means positive

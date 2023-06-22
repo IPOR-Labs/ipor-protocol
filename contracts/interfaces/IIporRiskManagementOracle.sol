@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 import "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
-import "./types/IporRiskManagementOracleTypes.sol";
+import "@ipor-protocol/contracts/interfaces/types/IporRiskManagementOracleTypes.sol";
 
 interface IIporRiskManagementOracle {
     /// @notice Returns current version of IIporRiskManagementOracle's

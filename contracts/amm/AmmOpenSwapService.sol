@@ -6,22 +6,22 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 
-import "../libraries/Constants.sol";
-import "../libraries/math/IporMath.sol";
-import "../libraries/errors/IporErrors.sol";
-import "../libraries/errors/AmmErrors.sol";
-import "../interfaces/IIporOracle.sol";
-import "../interfaces/IAmmStorage.sol";
-import "../interfaces/IIporRiskManagementOracle.sol";
+import "@ipor-protocol/contracts/interfaces/IIporOracle.sol";
+import "@ipor-protocol/contracts/interfaces/IAmmStorage.sol";
+import "@ipor-protocol/contracts/interfaces/IIporRiskManagementOracle.sol";
 import "@ipor-protocol/contracts/interfaces/IAmmOpenSwapService.sol";
 import "@ipor-protocol/contracts/interfaces/IAmmOpenSwapLens.sol";
-import "@ipor-protocol/contracts/libraries/AmmLib.sol";
-import "../libraries/errors/AmmErrors.sol";
-import "@ipor-protocol/contracts/amm/libraries/types/AmmInternalTypes.sol";
-import "@ipor-protocol/contracts/amm/libraries/IporSwapLogic.sol";
 import "@ipor-protocol/contracts/amm/spread/ISpread28Days.sol";
 import "@ipor-protocol/contracts/amm/spread/ISpread60Days.sol";
 import "@ipor-protocol/contracts/amm/spread/ISpread90Days.sol";
+import "@ipor-protocol/contracts/libraries/Constants.sol";
+import "@ipor-protocol/contracts/libraries/math/IporMath.sol";
+import "@ipor-protocol/contracts/libraries/errors/IporErrors.sol";
+import "@ipor-protocol/contracts/libraries/errors/AmmErrors.sol";
+import "@ipor-protocol/contracts/libraries/errors/AmmErrors.sol";
+import "@ipor-protocol/contracts/libraries/AmmLib.sol";
+import "@ipor-protocol/contracts/amm/libraries/types/AmmInternalTypes.sol";
+import "@ipor-protocol/contracts/amm/libraries/IporSwapLogic.sol";
 
 contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
     using Address for address;

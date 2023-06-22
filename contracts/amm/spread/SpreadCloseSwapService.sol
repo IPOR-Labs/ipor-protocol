@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "@ipor-protocol/contracts/amm/libraries/types/AmmInternalTypes.sol";
 import "@ipor-protocol/contracts/interfaces/types/AmmTypes.sol";
 import "@ipor-protocol/contracts/interfaces/IAmmStorage.sol";
+import "@ipor-protocol/contracts/amm/spread/ISpreadCloseSwapService.sol";
 import "@ipor-protocol/contracts/libraries/errors/IporErrors.sol";
 import "@ipor-protocol/contracts/libraries/errors/AmmErrors.sol";
+import "@ipor-protocol/contracts/amm/libraries/types/AmmInternalTypes.sol";
 import "@ipor-protocol/contracts/amm/libraries/IporSwapLogic.sol";
-import "./ISpreadCloseSwapService.sol";
-import "./SpreadStorageLibs.sol";
-import "./CalculateTimeWeightedNotionalLibs.sol";
+import "@ipor-protocol/contracts/amm/spread/SpreadStorageLibs.sol";
+import "@ipor-protocol/contracts/amm/spread/CalculateTimeWeightedNotionalLibs.sol";
 
 contract SpreadCloseSwapService is ISpreadCloseSwapService {
     using SafeCast for uint256;

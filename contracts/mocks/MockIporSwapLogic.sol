@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "../interfaces/types/IporTypes.sol";
-import "../amm/libraries/IporSwapLogic.sol";
+import "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
+import "@ipor-protocol/contracts/amm/libraries/IporSwapLogic.sol";
 
 contract MockIporSwapLogic {
     function calculateSwapAmount(

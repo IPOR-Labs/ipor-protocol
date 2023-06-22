@@ -2,10 +2,10 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "../interfaces/IIporAlgorithm.sol";
-import "../interfaces/IIporOracle.sol";
-import "../security/IporOwnableUpgradeable.sol";
-import "../libraries/errors/IporErrors.sol";
+import "@ipor-protocol/contracts/interfaces/IIporAlgorithm.sol";
+import "@ipor-protocol/contracts/interfaces/IIporOracle.sol";
+import "@ipor-protocol/contracts/security/IporOwnableUpgradeable.sol";
+import "@ipor-protocol/contracts/libraries/errors/IporErrors.sol";
 
 /// @title MockIporWeighted calculation algorithm.
 contract MockIporWeighted is IporOwnableUpgradeable, UUPSUpgradeable, IIporAlgorithm {

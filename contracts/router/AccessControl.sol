@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.20;
 
-import "../libraries/errors/IporErrors.sol";
-import "../libraries/StorageLib.sol";
-import "../security/PauseManager.sol";
-import "../security/OwnerManager.sol";
+import "@ipor-protocol/contracts/libraries/errors/IporErrors.sol";
+import "@ipor-protocol/contracts/libraries/StorageLib.sol";
+import "@ipor-protocol/contracts/security/PauseManager.sol";
+import "@ipor-protocol/contracts/security/OwnerManager.sol";
 
 contract AccessControl {
     uint256 internal constant _NOT_ENTERED = 1;

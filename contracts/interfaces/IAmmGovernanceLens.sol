@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
-import "../libraries/StorageLib.sol";
+import "@ipor-protocol/contracts/libraries/StorageLib.sol";
 
 /// @title Interface for interacting with AmmGovernanceLens. Interface responsible for reading data from AMM Governance.
 interface IAmmGovernanceLens {
