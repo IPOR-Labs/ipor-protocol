@@ -9,6 +9,7 @@ import "contracts/oracles/libraries/IporRiskManagementOracleStorageTypes.sol";
 import "../mocks/EmptyRouterImplementation.sol";
 import "contracts/router/IporProtocolRouter.sol";
 import "contracts/interfaces/IAmmSwapsLens.sol";
+import "contracts/interfaces/IAmmOpenSwapLens.sol";
 import "../../contracts/amm/AmmSwapsLens.sol";
 import "../../contracts/amm/AmmPoolsLens.sol";
 import "../../contracts/amm/AssetManagementLens.sol";
@@ -262,7 +263,6 @@ contract TestForkCommons is Test {
                 daiConfig,
                 iporOracleProxy,
                 iporRiskManagementOracleProxy,
-                iporProtocolRouterProxy,
                 spreadRouter
             )
         );
@@ -342,7 +342,7 @@ contract TestForkCommons is Test {
     }
 
     function _createAmmOpenSwapService() private {
-        IAmmOpenSwapService.AmmOpenSwapServicePoolConfiguration memory daiConfig = IAmmOpenSwapService
+        IAmmOpenSwapLens.AmmOpenSwapServicePoolConfiguration memory daiConfig = IAmmOpenSwapLens
             .AmmOpenSwapServicePoolConfiguration(
                 DAI,
                 18,
@@ -356,7 +356,7 @@ contract TestForkCommons is Test {
                 5e17
             );
 
-        IAmmOpenSwapService.AmmOpenSwapServicePoolConfiguration memory usdcConfig = IAmmOpenSwapService
+        IAmmOpenSwapLens.AmmOpenSwapServicePoolConfiguration memory usdcConfig = IAmmOpenSwapLens
             .AmmOpenSwapServicePoolConfiguration(
                 USDC,
                 6,
@@ -370,7 +370,7 @@ contract TestForkCommons is Test {
                 5e14
             );
 
-        IAmmOpenSwapService.AmmOpenSwapServicePoolConfiguration memory usdtConfig = IAmmOpenSwapService
+        IAmmOpenSwapLens.AmmOpenSwapServicePoolConfiguration memory usdtConfig = IAmmOpenSwapLens
             .AmmOpenSwapServicePoolConfiguration(
                 USDT,
                 6,

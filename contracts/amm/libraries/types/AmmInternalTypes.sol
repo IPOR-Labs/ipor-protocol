@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "../../../interfaces/types/IporTypes.sol";
+import "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
+import "@ipor-protocol/contracts/interfaces/types/AmmTypes.sol";
 
 /// @notice The types used in the AmmTreasury's interface.
 /// @dev All values, where applicable, are represented in 18 decimals.
@@ -38,14 +39,6 @@ library AmmInternalTypes {
         uint256 minLeverage;
     }
 
-    struct OpenSwapRiskIndicators {
-        uint256 maxCollateralRatio;
-        uint256 maxCollateralRatioPerLeg;
-        uint256 maxLeveragePerLeg;
-        int256 spread;
-        uint256 fixedRateCap;
-    }
-
     struct SpreadContext {
         address asset;
         bytes4 spreadFunctionSig;
@@ -53,7 +46,7 @@ library AmmInternalTypes {
         uint256 notional;
         uint256 minLeverage;
         uint256 indexValue;
-        AmmInternalTypes.OpenSwapRiskIndicators riskIndicators;
+        AmmTypes.OpenSwapRiskIndicators riskIndicators;
         IporTypes.AmmBalancesForOpenSwapMemory balance;
     }
 

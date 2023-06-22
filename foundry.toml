@@ -14,6 +14,6 @@ remappings = [
     '@ipor-protocol/contracts/=contracts/',
     '@ipor-protocol/test/=test/'
 ]
-optimizer_runs = 500
+optimizer_runs = 800
 ignored_error_codes = [5667, 9302, 2462, 5574, 8760]
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config

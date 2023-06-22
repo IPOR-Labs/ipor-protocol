@@ -13,16 +13,17 @@ import "../libraries/errors/AmmErrors.sol";
 import "../interfaces/IIporOracle.sol";
 import "../interfaces/IAmmStorage.sol";
 import "../interfaces/IIporRiskManagementOracle.sol";
-import "../interfaces/IAmmOpenSwapService.sol";
-import "./libraries/types/AmmInternalTypes.sol";
-import "../libraries/AmmLib.sol";
+import "@ipor-protocol/contracts/interfaces/IAmmOpenSwapService.sol";
+import "@ipor-protocol/contracts/interfaces/IAmmOpenSwapLens.sol";
+import "@ipor-protocol/contracts/libraries/AmmLib.sol";
 import "../libraries/errors/AmmErrors.sol";
-import "./libraries/IporSwapLogic.sol";
+import "@ipor-protocol/contracts/amm/libraries/types/AmmInternalTypes.sol";
+import "@ipor-protocol/contracts/amm/libraries/IporSwapLogic.sol";
 import "@ipor-protocol/contracts/amm/spread/ISpread28Days.sol";
 import "@ipor-protocol/contracts/amm/spread/ISpread60Days.sol";
 import "@ipor-protocol/contracts/amm/spread/ISpread90Days.sol";
 
-contract AmmOpenSwapService is IAmmOpenSwapService {
+contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
     using Address for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using AmmLib for AmmInternalTypes.RiskIndicatorsContext;
@@ -490,11 +491,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 
-        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
-            ctx,
-            balance.liquidityPool,
-            0
-        );
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(ctx, balance.liquidityPool, 0);
 
         _validateLiquidityPoolCollateralRatioAndSwapLeverage(
             balance.liquidityPool,
@@ -515,7 +512,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                     bosStruct.notional,
                     riskIndicators.maxLeveragePerLeg,
                     riskIndicators.maxCollateralRatioPerLeg,
-                    riskIndicators.spread,
+                    riskIndicators.baseSpread,
                     balance.totalCollateralPayFixed,
                     balance.totalCollateralReceiveFixed,
                     balance.liquidityPool,
@@ -590,14 +587,11 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
 
         IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(ctx.poolCfg.ammStorage)
             .getBalancesForOpenSwap();
+
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralReceiveFixed = balance.totalCollateralReceiveFixed + bosStruct.collateral;
 
-        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
-            ctx,
-            balance.liquidityPool,
-            1
-        );
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(ctx, balance.liquidityPool, 1);
 
         _validateLiquidityPoolCollateralRatioAndSwapLeverage(
             balance.liquidityPool,
@@ -618,7 +612,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                     bosStruct.notional,
                     riskIndicators.maxLeveragePerLeg,
                     riskIndicators.maxCollateralRatioPerLeg,
-                    riskIndicators.spread,
+                    riskIndicators.baseSpread,
                     balance.totalCollateralPayFixed,
                     balance.totalCollateralReceiveFixed,
                     balance.liquidityPool,
@@ -740,7 +734,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         Context memory ctx,
         uint256 liquidityPoolBalance,
         uint256 direction
-    ) internal view virtual returns (AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators) {
+    ) internal view virtual returns (AmmTypes.OpenSwapRiskIndicators memory riskIndicators) {
         AmmInternalTypes.RiskIndicatorsContext memory riskIndicatorsContext;
         riskIndicatorsContext.asset = ctx.poolCfg.asset;
         riskIndicatorsContext.iporRiskManagementOracle = _iporRiskManagementOracle;

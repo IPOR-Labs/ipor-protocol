@@ -38,7 +38,7 @@ import "@ipor-protocol/contracts/tokens/IporToken.sol";
 // $ anvil
 // get private key from anvil then set SC_ADMIN_PRIV_KEY variable in .env file
 // then run:
-// $ forge script scripts/DeployLocal.s.sol --fork-url http://127.0.0.1:8545 --broadcast
+// $ forge script scripts/LocalDeployment.s.sol --fork-url http://127.0.0.1:8545 --broadcast
 contract LocalDeployment is Script {
     struct IporProtocol {
         address asset;
@@ -195,8 +195,8 @@ contract LocalDeployment is Script {
         address asset,
         address ammTreasury,
         address ammStorage
-    ) internal view returns (IAmmOpenSwapService.AmmOpenSwapServicePoolConfiguration memory poolCfg) {
-        poolCfg = IAmmOpenSwapService.AmmOpenSwapServicePoolConfiguration({
+    ) internal view returns (IAmmOpenSwapLens.AmmOpenSwapServicePoolConfiguration memory poolCfg) {
+        poolCfg = IAmmOpenSwapLens.AmmOpenSwapServicePoolConfiguration({
             asset: asset,
             decimals: IERC20MetadataUpgradeable(asset).decimals(),
             ammStorage: ammStorage,
@@ -604,7 +604,6 @@ contract LocalDeployment is Script {
                 }),
                 system.iporOracleProxy,
                 system.riskOracleProxy,
-                system.routerProxy,
                 system.spreadRouterProxy
             )
         );
