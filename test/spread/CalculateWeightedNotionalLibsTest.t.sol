@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@ipor-protocol/contracts/amm/spread/CalculateTimeWeightedNotionalLibs.sol";
-import "../TestCommons.sol";
+import "@ipor-protocol/test/TestCommons.sol";
 
 contract CalculateWeightedNotionalLibsTest is TestCommons {
     SpreadStorageLibs.StorageId internal _storageIdIterationItem;

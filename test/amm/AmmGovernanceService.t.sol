@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 import "@ipor-protocol/contracts/interfaces/IAmmGovernanceLens.sol";
-import "../TestCommons.sol";
+import "@ipor-protocol/test/TestCommons.sol";
 import "../utils/TestConstants.sol";
 
 contract AmmGovernanceServiceTest is TestCommons {

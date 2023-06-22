@@ -2,8 +2,8 @@
 pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
-import "../TestCommons.sol";
-import "@ipor-protocol/contracts/mocks/tokens/MockTestnetToken.sol";
+import "@ipor-protocol/test/TestCommons.sol";
+import "@ipor-protocol/test/mocks/tokens/MockTestnetToken.sol";
 import "@ipor-protocol/contracts/amm/AmmStorage.sol";
 
 contract AmmPoolsServiceOnlyRebalanceTest is Test, TestCommons {

@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "forge-std/Test.sol";
-import "contracts/security/PauseManager.sol";
-import "contracts/vault/AssetManagementUsdc.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "contracts/mocks/tokens/MockTestnetToken.sol";
-import "contracts/tokens/IvToken.sol";
-import "contracts/mocks/assetManagement/MockTestnetStrategy.sol";
-import "contracts/vault/strategies/StrategyAave.sol";
-import "contracts/vault/strategies/StrategyCompound.sol";
+import "@ipor-protocol/contracts/tokens/IvToken.sol";
+import "@ipor-protocol/contracts/security/PauseManager.sol";
+import "@ipor-protocol/contracts/vault/AssetManagementUsdc.sol";
+import "@ipor-protocol/test/mocks/tokens/MockTestnetToken.sol";
+import "@ipor-protocol/contracts/vault/strategies/StrategyAave.sol";
+import "@ipor-protocol/contracts/vault/strategies/StrategyCompound.sol";
+import "forge-std/Test.sol";
+import "@ipor-protocol/test/mocks/assetManagement/MockTestnetStrategy.sol";
 
 contract StrategyPauseManagerTest is Test {
     address private _owner;

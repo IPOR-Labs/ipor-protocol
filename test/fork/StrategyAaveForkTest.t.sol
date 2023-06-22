@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 import "./TestForkCommons.sol";
-import "../../contracts/vault/strategies/StrategyAave.sol";
+import "@ipor-protocol/contracts/vault/strategies/StrategyAave.sol";
 
 contract StrategyAaveForkTest is TestForkCommons {
 

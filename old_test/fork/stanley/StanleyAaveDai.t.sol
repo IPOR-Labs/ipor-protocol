@@ -2,8 +2,8 @@
 pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
-import "contracts/vault/AssetManagementDai.sol";
-import "contracts/tokens/IvToken.sol";
+import "@ipor-protocol/contracts/vault/AssetManagementDai.sol";
+import "@ipor-protocol/contracts/tokens/IvToken.sol";
 import "../DaiAmm.sol";
 
 contract AssetManagementAaveDaiTest is Test {

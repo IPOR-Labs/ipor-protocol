@@ -4,7 +4,7 @@ pragma solidity 0.8.20;
 import "../utils/SwapUtils.sol";
 import "../utils/DataUtils.sol";
 import "../utils/TestConstants.sol";
-import "../TestCommons.sol";
+import "@ipor-protocol/test/TestCommons.sol";
 
 contract AmmTreasuryShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;

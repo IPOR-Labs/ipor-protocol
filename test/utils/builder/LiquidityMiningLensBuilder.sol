@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 import "forge-std/Test.sol";
 import "@ipor-protocol/contracts/interfaces/ILiquidityMiningLens.sol";
-import "../../mocks/MockLiquidityMiningLens.sol";
+import "@ipor-protocol/test/mocks/MockLiquidityMiningLens.sol";
 
 contract LiquidityMiningLensBuilder is Test {
 

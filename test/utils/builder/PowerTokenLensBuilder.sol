@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 import "forge-std/Test.sol";
 import "@ipor-protocol/contracts/interfaces/IPowerTokenLens.sol";
-import "../../mocks/MockPowerTokenLens.sol";
+import "@ipor-protocol/test/mocks/MockPowerTokenLens.sol";
 import "./BuilderUtils.sol";
 
 contract PowerTokenLensBuilder is Test {

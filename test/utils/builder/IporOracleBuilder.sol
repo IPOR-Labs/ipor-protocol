@@ -5,7 +5,7 @@ import "@ipor-protocol/contracts/itf/ItfIporOracle.sol";
 import "../TestConstants.sol";
 import "forge-std/Test.sol";
 import "./BuilderUtils.sol";
-import "../../mocks/EmptyIporOracleImplementation.sol";
+import "@ipor-protocol/test/mocks/EmptyIporOracleImplementation.sol";
 
 contract IporOracleBuilder is Test {
     struct BuilderData {

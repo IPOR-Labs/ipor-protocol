@@ -2,32 +2,32 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "contracts/itf/ItfAssetManagement.sol";
-import "contracts/itf/ItfAssetManagement6D.sol";
-import "contracts/itf/ItfAssetManagement18D.sol";
-import "contracts/tokens/IvToken.sol";
-import "contracts/vault/strategies/StrategyAave.sol";
-import "contracts/vault/AssetManagementDai.sol";
-import "contracts/vault/AssetManagementUsdc.sol";
-import "contracts/mocks/tokens/MockTestnetToken.sol";
-import "contracts/mocks/tokens/AAVEMockedToken.sol";
-import "contracts/mocks/assetManagement/MockCase2AssetManagement.sol";
-import "contracts/mocks/assetManagement/aave/aTokens/MockAUsdt.sol";
-import "contracts/mocks/assetManagement/aave/aTokens/MockAUsdc.sol";
-import "contracts/mocks/assetManagement/aave/aTokens/MockADai.sol";
-import "contracts/mocks/assetManagement/aave/MockADAI.sol";
-import "contracts/mocks/assetManagement/aave/MockADAI.sol";
-import "contracts/mocks/assetManagement/aave/MockLendingPoolAave.sol";
-import "contracts/mocks/assetManagement/aave/MockProviderAave.sol";
-import "contracts/mocks/assetManagement/aave/MockStakedAave.sol";
-import "contracts/mocks/assetManagement/aave/MockAaveIncentivesController.sol";
-import "contracts/mocks/assetManagement/compound/MockWhitePaper.sol";
-import "contracts/mocks/assetManagement/compound/MockCToken.sol";
-import "contracts/mocks/assetManagement/compound/MockComptroller.sol";
-import "contracts/mocks/assetManagement/MockTestnetStrategy.sol";
+import "@ipor-protocol/contracts/itf/ItfAssetManagement.sol";
+import "@ipor-protocol/contracts/itf/ItfAssetManagement6D.sol";
+import "@ipor-protocol/contracts/itf/ItfAssetManagement18D.sol";
+import "@ipor-protocol/contracts/tokens/IvToken.sol";
+import "@ipor-protocol/contracts/vault/strategies/StrategyAave.sol";
+import "@ipor-protocol/contracts/vault/AssetManagementDai.sol";
+import "@ipor-protocol/contracts/vault/AssetManagementUsdc.sol";
+import "@ipor-protocol/test/mocks/tokens/MockTestnetToken.sol";
+import "@ipor-protocol/test/mocks/tokens/AAVEMockedToken.sol";
+import "@ipor-protocol/test/mocks/assetManagement/MockCase2AssetManagement.sol";
+import "@ipor-protocol/test/mocks/assetManagement/aave/aTokens/MockAUsdt.sol";
+import "@ipor-protocol/test/mocks/assetManagement/aave/aTokens/MockAUsdc.sol";
+import "@ipor-protocol/test/mocks/assetManagement/aave/aTokens/MockADai.sol";
+import "@ipor-protocol/test/mocks/assetManagement/aave/MockADAI.sol";
+import "@ipor-protocol/test/mocks/assetManagement/aave/MockADAI.sol";
+import "@ipor-protocol/test/mocks/assetManagement/aave/MockLendingPoolAave.sol";
+import "@ipor-protocol/test/mocks/assetManagement/aave/MockProviderAave.sol";
+import "@ipor-protocol/test/mocks/assetManagement/aave/MockStakedAave.sol";
+import "@ipor-protocol/test/mocks/assetManagement/aave/MockAaveIncentivesController.sol";
+import "@ipor-protocol/test/mocks/assetManagement/compound/MockWhitePaper.sol";
+import "@ipor-protocol/test/mocks/assetManagement/compound/MockCToken.sol";
+import "@ipor-protocol/test/mocks/assetManagement/compound/MockComptroller.sol";
+import "@ipor-protocol/test/mocks/assetManagement/MockTestnetStrategy.sol";
 
-import "contracts/mocks/tokens/MockedCOMPToken.sol";
-import "contracts/vault/strategies/StrategyCompound.sol";
+import "@ipor-protocol/test/mocks/tokens/MockedCOMPToken.sol";
+import "@ipor-protocol/contracts/vault/strategies/StrategyCompound.sol";
 
 contract AssetManagementUtils {
     function getTokenAUsdt() public returns (MockAUsdt) {

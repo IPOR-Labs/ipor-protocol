@@ -5,7 +5,7 @@ import "@ipor-protocol/contracts/oracles/IporRiskManagementOracle.sol";
 import "../TestConstants.sol";
 import "forge-std/Test.sol";
 import "./BuilderUtils.sol";
-import "../../../contracts/interfaces/types/IporRiskManagementOracleTypes.sol";
+import "@ipor-protocol/contracts/interfaces/types/IporRiskManagementOracleTypes.sol";
 
 contract IporRiskManagementOracleBuilder is Test {
     address[] private _assets;

@@ -5,10 +5,10 @@ import "forge-std/console2.sol";
 import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "contracts/interfaces/types/IporTypes.sol";
-import "contracts/interfaces/types/AmmStorageTypes.sol";
-import "contracts/interfaces/IAmmStorage.sol";
-import "contracts/amm/AmmStorage.sol";
+import "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
+import "@ipor-protocol/contracts/interfaces/types/AmmStorageTypes.sol";
+import "@ipor-protocol/contracts/interfaces/IAmmStorage.sol";
+import "@ipor-protocol/contracts/amm/AmmStorage.sol";
 import "forge-std/Test.sol";
 
 contract AmmStorageSnapshot is Script, Test {

@@ -4,9 +4,9 @@ pragma solidity 0.8.20;
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "contracts/itf/ItfIporOracle.sol";
-import "contracts/mocks/MockIporWeighted.sol";
-import "contracts/mocks/MockIporWeighted.sol";
+import "@ipor-protocol/contracts/itf/ItfIporOracle.sol";
+import "@ipor-protocol/test/mocks/MockIporWeighted.sol";
+import "@ipor-protocol/test/mocks/MockIporWeighted.sol";
 
 contract IporOracleUtils is Test {
     struct OracleParams {

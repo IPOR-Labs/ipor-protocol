@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 // interfaces
-import "../../../libraries/errors/IporErrors.sol";
+import "@ipor-protocol/contracts/libraries/errors/IporErrors.sol";
 
 contract MockProviderAave {
     address private _lendingPool;

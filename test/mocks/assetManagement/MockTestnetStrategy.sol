@@ -7,10 +7,10 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
-import "@ipor-protocol/contracts/security/IporOwnableUpgradeable.sol";
-import "../../vault/strategies/StrategyCore.sol";
-import "@ipor-protocol/contracts/libraries/math/IporMath.sol";
 import "@ipor-protocol/contracts/libraries/Constants.sol";
+import "@ipor-protocol/contracts/libraries/math/IporMath.sol";
+import "@ipor-protocol/contracts/security/IporOwnableUpgradeable.sol";
+import "@ipor-protocol/contracts/vault/strategies/StrategyCore.sol";
 
 // simple mock for total _balance tests
 contract MockTestnetStrategy is StrategyCore {
@@ -47,12 +47,7 @@ contract MockTestnetStrategy is StrategyCore {
         return _calculateNewBalance();
     }
 
-    function deposit(uint256 wadAmount)
-        external
-        override
-        onlyAssetManagement
-        returns (uint256 depositedAmount)
-    {
+    function deposit(uint256 wadAmount) external override onlyAssetManagement returns (uint256 depositedAmount) {
         address asset = _asset;
         uint256 assetDecimals = IERC20Metadata(asset).decimals();
 
@@ -68,10 +63,7 @@ contract MockTestnetStrategy is StrategyCore {
 
     function withdraw(uint256 wadAmount) external override onlyAssetManagement returns (uint256) {
         address asset = _asset;
-        uint256 amount = IporMath.convertWadToAssetDecimals(
-            wadAmount,
-            IERC20Metadata(asset).decimals()
-        );
+        uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, IERC20Metadata(asset).decimals());
         uint256 newDepositsBalance = _calculateNewBalance() -
             IporMath.convertToWad(amount, IERC20Metadata(asset).decimals());
         _depositsBalance = newDepositsBalance;
@@ -95,8 +87,7 @@ contract MockTestnetStrategy is StrategyCore {
 
     function _calculateNewBalance() internal view returns (uint256 newDepositsBalance) {
         uint256 depositsBalance = _depositsBalance;
-        uint256 percent = IporMath.division(_APY, Constants.YEAR_IN_SECONDS) *
-            (block.timestamp - _lastUpdateBalance);
+        uint256 percent = IporMath.division(_APY, Constants.YEAR_IN_SECONDS) * (block.timestamp - _lastUpdateBalance);
         newDepositsBalance = depositsBalance + IporMath.percentOf(depositsBalance, percent);
     }
 }

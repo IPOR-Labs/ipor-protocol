@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.20;
 
-import "../../amm/AmmStorage.sol";
+import "@ipor-protocol/contracts/amm/AmmStorage.sol";
 
 contract MockAmmStorage is AmmStorage {
     constructor(

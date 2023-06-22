@@ -4,11 +4,11 @@ pragma solidity 0.8.20;
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "../TestCommons.sol";
-import "contracts/mocks/tokens/MockTestnetToken.sol";
-import "contracts/tokens/IporToken.sol";
-import "contracts/mocks/TestnetFaucet.sol";
-import "contracts/interfaces/ITestnetFaucet.sol";
+import "@ipor-protocol/test/TestCommons.sol";
+import "@ipor-protocol/test/mocks/tokens/MockTestnetToken.sol";
+import "@ipor-protocol/contracts/tokens/IporToken.sol";
+import "@ipor-protocol/test/mocks/TestnetFaucet.sol";
+import "@ipor-protocol/contracts/interfaces/ITestnetFaucet.sol";
 import "./MockOldTestnetFaucet.sol";
 import "@ipor-protocol/contracts/interfaces/types/IMockProxy.sol";
 

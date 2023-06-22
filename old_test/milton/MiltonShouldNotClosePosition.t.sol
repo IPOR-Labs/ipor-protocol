@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "../TestCommons.sol";
+import "@ipor-protocol/test/TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
-import "contracts/mocks/spread/MockSpreadModel.sol";
+import "@ipor-protocol/test/mocks/spread/MockSpreadModel.sol";
 
 contract AmmTreasuryShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;

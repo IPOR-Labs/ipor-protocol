@@ -2,11 +2,11 @@
 pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
-import "../TestCommons.sol";
+import "@ipor-protocol/test/TestCommons.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import {IporTypes} from "contracts/interfaces/types/IporTypes.sol";
-import "../../contracts/oracles/IporOracle.sol";
-import "../../contracts/mocks/tokens/MockTestnetToken.sol";
+import {IporTypes} from "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
+import "@ipor-protocol/contracts/oracles/IporOracle.sol";
+import "@ipor-protocol/test/mocks/tokens/MockTestnetToken.sol";
 
 contract IporOracleTest is TestCommons {
     using stdStorage for StdStorage;

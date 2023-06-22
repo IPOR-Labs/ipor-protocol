@@ -6,15 +6,15 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "contracts/libraries/errors/IporErrors.sol";
-import "contracts/libraries/errors/IporOracleErrors.sol";
-import "contracts/interfaces/types/IporTypes.sol";
-import "contracts/interfaces/types/IporOracleTypes.sol";
-import "contracts/libraries/Constants.sol";
-import "contracts/libraries/math/IporMath.sol";
-import "contracts/interfaces/IIporOracle.sol";
-import "contracts/security/IporOwnableUpgradeable.sol";
-import "contracts/oracles/libraries/IporLogic.sol";
+import "@ipor-protocol/contracts/libraries/errors/IporErrors.sol";
+import "@ipor-protocol/contracts/libraries/errors/IporOracleErrors.sol";
+import "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
+import "@ipor-protocol/contracts/interfaces/types/IporOracleTypes.sol";
+import "@ipor-protocol/contracts/libraries/Constants.sol";
+import "@ipor-protocol/contracts/libraries/math/IporMath.sol";
+import "@ipor-protocol/contracts/interfaces/IIporOracle.sol";
+import "@ipor-protocol/contracts/security/IporOwnableUpgradeable.sol";
+import "@ipor-protocol/contracts/oracles/libraries/IporLogic.sol";
 
 /**
  * @title IPOR Index Oracle Contract

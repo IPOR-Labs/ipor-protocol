@@ -21,18 +21,20 @@ import "@ipor-protocol/contracts/amm/spread/SpreadStorageLens.sol";
 import "@ipor-protocol/contracts/amm/spread/Spread28Days.sol";
 import "@ipor-protocol/contracts/amm/spread/Spread60Days.sol";
 import "@ipor-protocol/contracts/amm/spread/Spread90Days.sol";
-import "@ipor-protocol/contracts/mocks/stanley/MockTestnetStrategy.sol";
+
 import "@ipor-protocol/contracts/vault/AssetManagementUsdt.sol";
 import "@ipor-protocol/contracts/vault/AssetManagementUsdc.sol";
 import "@ipor-protocol/contracts/vault/AssetManagementDai.sol";
 import "@ipor-protocol/contracts/tokens/IpToken.sol";
 import "@ipor-protocol/contracts/tokens/IvToken.sol";
-import "@ipor-protocol/contracts/mocks/tokens/MockTestnetToken.sol";
+import "@ipor-protocol/test/mocks/tokens/MockTestnetToken.sol";
 import "@ipor-protocol/contracts/amm/AmmStorage.sol";
 import "@ipor-protocol/contracts/amm/AmmTreasury.sol";
 import "@ipor-protocol/contracts/amm/spread/SpreadCloseSwapService.sol";
-import "@ipor-protocol/contracts/mocks/TestnetFaucet.sol";
+import "@ipor-protocol/test/mocks/TestnetFaucet.sol";
 import "@ipor-protocol/contracts/tokens/IporToken.sol";
+
+import "@ipor-protocol/test/mocks/assetManagement/MockTestnetStrategy.sol";
 
 // run:
 // $ anvil

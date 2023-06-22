@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "../../../TestCommons.sol";
+import "@ipor-protocol/test/TestCommons.sol";
 import {DataUtils} from "../../../utils/DataUtils.sol";
 import {AssetManagementUtils} from "../../../utils/AssetManagementUtils.sol";
-import "../../../utils/TestConstants.sol";
-import "contracts/amm/AmmStorage.sol";
-import "contracts/itf/ItfIporOracle.sol";
-import "contracts/tokens/IpToken.sol";
-import "contracts/mocks/tokens/MockTestnetToken.sol";
-import "contracts/mocks/tokens/MockedCOMPToken.sol";
-import "contracts/mocks/assetManagement/compound/MockWhitePaper.sol";
-import "contracts/mocks/assetManagement/compound/MockCToken.sol";
-import "contracts/mocks/assetManagement/compound/MockComptroller.sol";
-import "contracts/vault/strategies/StrategyCompound.sol";
+import "@ipor-protocol/test/utils/TestConstants.sol";
+import "@ipor-protocol/contracts/amm/AmmStorage.sol";
+import "@ipor-protocol/contracts/itf/ItfIporOracle.sol";
+import "@ipor-protocol/contracts/tokens/IpToken.sol";
+import "@ipor-protocol/test/mocks/tokens/MockTestnetToken.sol";
+import "@ipor-protocol/test/mocks/tokens/MockedCOMPToken.sol";
+import "@ipor-protocol/test/mocks/assetManagement/compound/MockWhitePaper.sol";
+import "@ipor-protocol/test/mocks/assetManagement/compound/MockCToken.sol";
+import "@ipor-protocol/test/mocks/assetManagement/compound/MockComptroller.sol";
+import "@ipor-protocol/contracts/vault/strategies/StrategyCompound.sol";
 
 contract CompoundPausableTest is TestCommons, DataUtils {
     MockTestnetToken internal _usdtMockedToken;
