@@ -4,13 +4,13 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
-import "@ipor-protocol/contracts/libraries/Constants.sol";
-import "@ipor-protocol/contracts/libraries/math/IporMath.sol";
-import "@ipor-protocol/contracts/interfaces/IIporOracle.sol";
-import "@ipor-protocol/contracts/interfaces/types/IporOracleFacadeTypes.sol";
-import "@ipor-protocol/contracts/interfaces/IIporOracleFacadeDataProvider.sol";
-import "@ipor-protocol/contracts/interfaces/IProxyImplementation.sol";
-import "@ipor-protocol/contracts/security/IporOwnableUpgradeable.sol";
+import "contracts/libraries/Constants.sol";
+import "contracts/libraries/math/IporMath.sol";
+import "contracts/interfaces/IIporOracle.sol";
+import "contracts/interfaces/types/IporOracleFacadeTypes.sol";
+import "contracts/interfaces/IIporOracleFacadeDataProvider.sol";
+import "contracts/interfaces/IProxyImplementation.sol";
+import "contracts/security/IporOwnableUpgradeable.sol";
 
 contract IporOracleFacadeDataProvider is
     Initializable,

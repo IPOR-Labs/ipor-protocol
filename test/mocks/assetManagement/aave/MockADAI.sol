@@ -4,8 +4,8 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@ipor-protocol/contracts/libraries/errors/IporErrors.sol";
-import "@ipor-protocol/contracts/vault/interfaces/aave/AToken.sol";
+import "contracts/libraries/errors/IporErrors.sol";
+import "contracts/vault/interfaces/aave/AToken.sol";
 
 contract MockADAI is ERC20, AToken {
     address private _dai;

@@ -5,9 +5,9 @@ import "forge-std/console2.sol";
 import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
-import "@ipor-protocol/contracts/amm/AmmTreasury.sol";
-import "@ipor-protocol/contracts/facades/AmmTreasuryFacadeDataProvider.sol";
+import "contracts/interfaces/types/IporTypes.sol";
+import "contracts/amm/AmmTreasury.sol";
+import "contracts/facades/AmmTreasuryFacadeDataProvider.sol";
 import "forge-std/Test.sol";
 
 contract AmmTreasurySnapshot is Script, Test {

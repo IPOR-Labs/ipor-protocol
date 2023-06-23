@@ -4,22 +4,22 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
-import "@ipor-protocol/contracts/interfaces/IAmmSwapsLens.sol";
-import "@ipor-protocol/contracts/interfaces/IAmmPoolsLens.sol";
-import "@ipor-protocol/contracts/interfaces/IAssetManagementLens.sol";
-import "@ipor-protocol/contracts/interfaces/IPowerTokenLens.sol";
-import "@ipor-protocol/contracts/interfaces/ILiquidityMiningLens.sol";
-import "@ipor-protocol/contracts/interfaces/IAmmGovernanceService.sol";
-import "@ipor-protocol/contracts/interfaces/IAmmGovernanceLens.sol";
-import "@ipor-protocol/contracts/interfaces/IAmmOpenSwapLens.sol";
-import "@ipor-protocol/contracts/interfaces/IAmmOpenSwapService.sol";
-import "@ipor-protocol/contracts/interfaces/IAmmCloseSwapService.sol";
-import "@ipor-protocol/contracts/interfaces/IAmmPoolsService.sol";
-import "@ipor-protocol/contracts/interfaces/IPowerTokenFlowsService.sol";
-import "@ipor-protocol/contracts/interfaces/IPowerTokenStakeService.sol";
-import "@ipor-protocol/contracts/interfaces/IProxyImplementation.sol";
-import "@ipor-protocol/contracts/libraries/errors/IporErrors.sol";
-import "@ipor-protocol/contracts/router/AccessControl.sol";
+import "contracts/interfaces/IAmmSwapsLens.sol";
+import "contracts/interfaces/IAmmPoolsLens.sol";
+import "contracts/interfaces/IAssetManagementLens.sol";
+import "contracts/interfaces/IPowerTokenLens.sol";
+import "contracts/interfaces/ILiquidityMiningLens.sol";
+import "contracts/interfaces/IAmmGovernanceService.sol";
+import "contracts/interfaces/IAmmGovernanceLens.sol";
+import "contracts/interfaces/IAmmOpenSwapLens.sol";
+import "contracts/interfaces/IAmmOpenSwapService.sol";
+import "contracts/interfaces/IAmmCloseSwapService.sol";
+import "contracts/interfaces/IAmmPoolsService.sol";
+import "contracts/interfaces/IPowerTokenFlowsService.sol";
+import "contracts/interfaces/IPowerTokenStakeService.sol";
+import "contracts/interfaces/IProxyImplementation.sol";
+import "contracts/libraries/errors/IporErrors.sol";
+import "contracts/router/AccessControl.sol";
 
 contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementation {
     using Address for address;

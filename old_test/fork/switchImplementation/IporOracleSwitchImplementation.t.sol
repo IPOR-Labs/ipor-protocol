@@ -4,9 +4,9 @@ pragma solidity 0.8.20;
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
-import "@ipor-protocol/test/TestCommons.sol";
-import "@ipor-protocol/contracts/security/IporOwnable.sol";
-import "@ipor-protocol/contracts/libraries/errors/IporErrors.sol";
+import "test/TestCommons.sol";
+import "contracts/security/IporOwnable.sol";
+import "contracts/libraries/errors/IporErrors.sol";
 import "./snapshots/IporOracleSnapshot.sol";
 
 contract SwitchIporOracleImplementation is Test, TestCommons {

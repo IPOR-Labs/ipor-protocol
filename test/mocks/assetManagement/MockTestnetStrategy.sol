@@ -7,10 +7,10 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
-import "@ipor-protocol/contracts/libraries/Constants.sol";
-import "@ipor-protocol/contracts/libraries/math/IporMath.sol";
-import "@ipor-protocol/contracts/security/IporOwnableUpgradeable.sol";
-import "@ipor-protocol/contracts/vault/strategies/StrategyCore.sol";
+import "contracts/libraries/Constants.sol";
+import "contracts/libraries/math/IporMath.sol";
+import "contracts/security/IporOwnableUpgradeable.sol";
+import "contracts/vault/strategies/StrategyCore.sol";
 
 // simple mock for total _balance tests
 contract MockTestnetStrategy is StrategyCore {

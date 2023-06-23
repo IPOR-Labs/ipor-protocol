@@ -5,8 +5,8 @@ import "forge-std/console2.sol";
 import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "@ipor-protocol/contracts/vault/AssetManagement.sol";
-import "@ipor-protocol/contracts/vault/strategies/StrategyCore.sol";
+import "contracts/vault/AssetManagement.sol";
+import "contracts/vault/strategies/StrategyCore.sol";
 import "forge-std/Test.sol";
 
 contract AssetManagementSnapshot is Script, Test {

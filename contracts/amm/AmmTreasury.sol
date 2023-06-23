@@ -10,13 +10,13 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@ipor-protocol/contracts/interfaces/IAmmTreasury.sol";
-import "@ipor-protocol/contracts/interfaces/IAmmStorage.sol";
-import "@ipor-protocol/contracts/interfaces/IAssetManagement.sol";
-import "@ipor-protocol/contracts/interfaces/IProxyImplementation.sol";
-import "@ipor-protocol/contracts/libraries/Constants.sol";
-import "@ipor-protocol/contracts/libraries/errors/IporErrors.sol";
-import "@ipor-protocol/contracts/security/IporOwnableUpgradeable.sol";
+import "contracts/interfaces/IAmmTreasury.sol";
+import "contracts/interfaces/IAmmStorage.sol";
+import "contracts/interfaces/IAssetManagement.sol";
+import "contracts/interfaces/IProxyImplementation.sol";
+import "contracts/libraries/Constants.sol";
+import "contracts/libraries/errors/IporErrors.sol";
+import "contracts/security/IporOwnableUpgradeable.sol";
 
 contract AmmTreasury is
     Initializable,

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "@ipor-protocol/contracts/interfaces/IPowerTokenLens.sol";
+import "contracts/interfaces/IPowerTokenLens.sol";
 import "../utils/builder/BuilderUtils.sol";
 
 contract MockPowerTokenLens is IPowerTokenLens {

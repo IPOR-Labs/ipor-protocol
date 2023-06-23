@@ -2,8 +2,8 @@
 pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
-import "@ipor-protocol/contracts/security/PauseManager.sol";
-import "@ipor-protocol/test/mocks/tokens/MockTestnetToken.sol";
+import "contracts/security/PauseManager.sol";
+import "test/mocks/tokens/MockTestnetToken.sol";
 
 contract PauseManagerTest is Test {
     address internal _owner;

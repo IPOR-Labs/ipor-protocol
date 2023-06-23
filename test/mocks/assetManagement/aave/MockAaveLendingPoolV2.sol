@@ -4,10 +4,10 @@ pragma solidity 0.8.20;
 
 // interfaces
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@ipor-protocol/contracts/libraries/errors/IporErrors.sol";
-import "@ipor-protocol/contracts/vault/interfaces/aave/AaveLendingPoolV2.sol";
-import "@ipor-protocol/contracts/vault/interfaces/aave/DataTypesContract.sol";
-import "@ipor-protocol/contracts/vault/interfaces/aave/AToken.sol";
+import "contracts/libraries/errors/IporErrors.sol";
+import "contracts/vault/interfaces/aave/AaveLendingPoolV2.sol";
+import "contracts/vault/interfaces/aave/DataTypesContract.sol";
+import "contracts/vault/interfaces/aave/AToken.sol";
 import "./MockADAI.sol";
 
 contract MockAaveLendingPoolV2 is AaveLendingPoolV2 {

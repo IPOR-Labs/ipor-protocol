@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 import "./BuilderUtils.sol";
-import "@ipor-protocol/test/mocks/tokens/MockTestnetToken.sol";
-import "@ipor-protocol/test/utils/TestConstants.sol";
+import "test/mocks/tokens/MockTestnetToken.sol";
+import "test/utils/TestConstants.sol";
 import "forge-std/Test.sol";
 
 contract AssetBuilder is Test {

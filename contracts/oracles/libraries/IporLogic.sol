@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.20;
 
-import "@ipor-protocol/contracts/interfaces/types/IporOracleTypes.sol";
-import "@ipor-protocol/contracts/libraries/Constants.sol";
-import "@ipor-protocol/contracts/libraries/math/IporMath.sol";
-import "@ipor-protocol/contracts/libraries/errors/IporOracleErrors.sol";
-import "@ipor-protocol/contracts/libraries/errors/AmmErrors.sol";
+import "contracts/interfaces/types/IporOracleTypes.sol";
+import "contracts/libraries/Constants.sol";
+import "contracts/libraries/math/IporMath.sol";
+import "contracts/libraries/errors/IporOracleErrors.sol";
+import "contracts/libraries/errors/AmmErrors.sol";
 
 library IporLogic {
     function accrueQuasiIbtPrice(IporOracleTypes.IPOR memory ipor, uint256 accrueTimestamp)

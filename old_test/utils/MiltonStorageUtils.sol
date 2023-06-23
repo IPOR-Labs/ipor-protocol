@@ -5,9 +5,9 @@ import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../utils/TestConstants.sol";
-import "@ipor-protocol/contracts/interfaces/IAmmStorage.sol";
-import "@ipor-protocol/contracts/amm/AmmStorage.sol";
-import "@ipor-protocol/contracts/interfaces/types/AmmTypes.sol";
+import "contracts/interfaces/IAmmStorage.sol";
+import "contracts/amm/AmmStorage.sol";
+import "contracts/interfaces/types/AmmTypes.sol";
 
 contract AmmStorageUtils is Test {
     struct AmmStorages {

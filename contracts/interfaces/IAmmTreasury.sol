@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
-import "@ipor-protocol/contracts/interfaces/types/AmmTypes.sol";
+import "contracts/interfaces/types/IporTypes.sol";
+import "contracts/interfaces/types/AmmTypes.sol";
 
 /// @title Interface for interaction with AmmTreasury, smart contract responsible for storing assets treasury for AMM
 interface IAmmTreasury {

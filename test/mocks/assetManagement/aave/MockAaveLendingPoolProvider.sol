@@ -3,7 +3,7 @@
 pragma solidity 0.8.20;
 
 // interfaces
-import "@ipor-protocol/contracts/vault/interfaces/aave/AaveLendingPoolProviderV2.sol";
+import "contracts/vault/interfaces/aave/AaveLendingPoolProviderV2.sol";
 
 contract MockAaveLendingPoolProvider is AaveLendingPoolProviderV2 {
     address private _pool;

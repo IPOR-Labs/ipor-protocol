@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
-import "@ipor-protocol/test/mocks/tokens/MockTestnetToken.sol";
-import "@ipor-protocol/contracts/tokens/IpToken.sol";
-import "@ipor-protocol/contracts/tokens/IvToken.sol";
-import "@ipor-protocol/contracts/itf/ItfIporOracle.sol";
-import "@ipor-protocol/contracts/oracles/IporRiskManagementOracle.sol";
-import "@ipor-protocol/test/mocks/MockIporWeighted.sol";
-import "@ipor-protocol/contracts/amm/AmmStorage.sol";
-import "@ipor-protocol/contracts/amm/AmmTreasury.sol";
-import "@ipor-protocol/contracts/amm/spread/SpreadRouter.sol";
-import "@ipor-protocol/contracts/itf/ItfAssetManagement.sol";
-import "@ipor-protocol/contracts/router/IporProtocolRouter.sol";
-import "@ipor-protocol/test/mocks/MockSpreadXDays.sol";
+import "test/mocks/tokens/MockTestnetToken.sol";
+import "contracts/tokens/IpToken.sol";
+import "contracts/tokens/IvToken.sol";
+import "contracts/itf/ItfIporOracle.sol";
+import "contracts/oracles/IporRiskManagementOracle.sol";
+import "test/mocks/MockIporWeighted.sol";
+import "contracts/amm/AmmStorage.sol";
+import "contracts/amm/AmmTreasury.sol";
+import "contracts/amm/spread/SpreadRouter.sol";
+import "contracts/itf/ItfAssetManagement.sol";
+import "contracts/router/IporProtocolRouter.sol";
+import "test/mocks/MockSpreadXDays.sol";
 
 contract BuilderUtils {
     struct IporProtocol {

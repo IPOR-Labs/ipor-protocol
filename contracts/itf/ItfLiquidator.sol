@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
-import "@ipor-protocol/contracts/interfaces/IAmmStorage.sol";
-import "@ipor-protocol/contracts/itf/types/ItfAmmTreasuryTypes.sol";
-import "@ipor-protocol/contracts/libraries/errors/AmmErrors.sol";
-import "@ipor-protocol/contracts/libraries/errors/IporErrors.sol";
+import "contracts/interfaces/IAmmStorage.sol";
+import "contracts/itf/types/ItfAmmTreasuryTypes.sol";
+import "contracts/libraries/errors/AmmErrors.sol";
+import "contracts/libraries/errors/IporErrors.sol";
 
 contract ItfLiquidator {
 

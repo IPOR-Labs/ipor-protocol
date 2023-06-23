@@ -8,7 +8,7 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@ipor-protocol/contracts/security/IporOwnableUpgradeable.sol";
+import "contracts/security/IporOwnableUpgradeable.sol";
 
 /// @dev for testing purposes
 contract EmptyAmmTreasuryImplementation is

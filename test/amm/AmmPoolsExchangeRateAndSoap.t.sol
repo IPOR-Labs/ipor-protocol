@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "@ipor-protocol/test/TestCommons.sol";
+import "test/TestCommons.sol";
 import "../utils/TestConstants.sol";
-import "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
+import "contracts/interfaces/types/IporTypes.sol";
 
 contract AmmPoolsExchangeRateAndSoap is TestCommons {
     IporProtocolFactory.IporProtocolConfig private _cfg;

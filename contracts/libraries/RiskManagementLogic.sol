@@ -3,17 +3,17 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 
-import "@ipor-protocol/contracts/interfaces/types/AmmTypes.sol";
-import "@ipor-protocol/contracts/interfaces/IAmmStorage.sol";
-import "@ipor-protocol/contracts/interfaces/IIporRiskManagementOracle.sol";
-import "@ipor-protocol/contracts/interfaces/IAssetManagement.sol";
-import "@ipor-protocol/contracts/amm/spread/ISpread28DaysLens.sol";
-import "@ipor-protocol/contracts/amm/spread/ISpread60DaysLens.sol";
-import "@ipor-protocol/contracts/amm/spread/ISpread90DaysLens.sol";
-import "@ipor-protocol/contracts/libraries/Constants.sol";
-import "@ipor-protocol/contracts/libraries/errors/AmmErrors.sol";
-import "@ipor-protocol/contracts/libraries/math/IporMath.sol";
-import "@ipor-protocol/contracts/governance/AmmConfigurationManager.sol";
+import "contracts/interfaces/types/AmmTypes.sol";
+import "contracts/interfaces/IAmmStorage.sol";
+import "contracts/interfaces/IIporRiskManagementOracle.sol";
+import "contracts/interfaces/IAssetManagement.sol";
+import "contracts/amm/spread/ISpread28DaysLens.sol";
+import "contracts/amm/spread/ISpread60DaysLens.sol";
+import "contracts/amm/spread/ISpread90DaysLens.sol";
+import "contracts/libraries/Constants.sol";
+import "contracts/libraries/errors/AmmErrors.sol";
+import "contracts/libraries/math/IporMath.sol";
+import "contracts/governance/AmmConfigurationManager.sol";
 
 library RiskManagementLogic {
     using Address for address;

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "@ipor-protocol/test/TestCommons.sol";
+import "test/TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {AssetManagementUtils} from "../utils/AssetManagementUtils.sol";
 import {TestConstants} from "../utils/TestConstants.sol";

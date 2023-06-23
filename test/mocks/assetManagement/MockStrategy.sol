@@ -1,7 +1,7 @@
 //solhint-disable no-empty-blocks
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.20;
-import "@ipor-protocol/contracts/interfaces/IStrategy.sol";
+import "contracts/interfaces/IStrategy.sol";
 
 // simple mock for total _balance tests
 contract MockStrategy is IStrategy {

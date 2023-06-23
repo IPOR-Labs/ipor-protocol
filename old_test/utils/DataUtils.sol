@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
-import "@ipor-protocol/test/TestCommons.sol";
+import "test/TestCommons.sol";
 import "../utils/TestConstants.sol";
 import {IporOracleUtils} from "../utils/IporOracleUtils.sol";
 import {AmmTreasuryUtils} from "../utils/AmmTreasuryUtils.sol";
@@ -10,19 +10,19 @@ import {AmmStorageUtils} from "../utils/AmmStorageUtils.sol";
 import {JosephUtils} from "../utils/JosephUtils.sol";
 import {AssetManagementUtils} from "../utils/AssetManagementUtils.sol";
 import {IporRiskManagementOracleUtils} from "../utils/IporRiskManagementOracleUtils.sol";
-import "@ipor-protocol/contracts/amm/AmmStorage.sol";
-import "@ipor-protocol/contracts/libraries/Constants.sol";
-import "@ipor-protocol/test/mocks/tokens/MockTestnetToken.sol";
-import "@ipor-protocol/test/mocks/spread/MockSpreadModel.sol";
-import "@ipor-protocol/test/mocks/assetManagement/MockCaseBaseAssetManagement.sol";
-import "@ipor-protocol/contracts/interfaces/IIporRiskManagementOracle.sol";
-import "@ipor-protocol/contracts/itf/ItfIporOracle.sol";
-import "@ipor-protocol/contracts/itf/ItfAmmTreasury.sol";
-import "@ipor-protocol/contracts/itf/ItfAssetManagement.sol";
-import "@ipor-protocol/contracts/itf/ItfJoseph.sol";
-import "@ipor-protocol/contracts/itf/ItfIporOracle.sol";
-import "@ipor-protocol/contracts/tokens/IpToken.sol";
-import "@ipor-protocol/test/mocks/MockIporWeighted.sol";
+import "contracts/amm/AmmStorage.sol";
+import "contracts/libraries/Constants.sol";
+import "test/mocks/tokens/MockTestnetToken.sol";
+import "test/mocks/spread/MockSpreadModel.sol";
+import "test/mocks/assetManagement/MockCaseBaseAssetManagement.sol";
+import "contracts/interfaces/IIporRiskManagementOracle.sol";
+import "contracts/itf/ItfIporOracle.sol";
+import "contracts/itf/ItfAmmTreasury.sol";
+import "contracts/itf/ItfAssetManagement.sol";
+import "contracts/itf/ItfJoseph.sol";
+import "contracts/itf/ItfIporOracle.sol";
+import "contracts/tokens/IpToken.sol";
+import "test/mocks/MockIporWeighted.sol";
 
 contract DataUtils is
     Test,

@@ -3,10 +3,10 @@ pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-import "@ipor-protocol/test/TestCommons.sol";
-import "@ipor-protocol/contracts/amm/pool/Joseph.sol";
-import "@ipor-protocol/contracts/amm/AmmTreasury.sol";
-import "@ipor-protocol/contracts/interfaces/types/IAsset.sol";
+import "test/TestCommons.sol";
+import "contracts/amm/pool/Joseph.sol";
+import "contracts/amm/AmmTreasury.sol";
+import "contracts/interfaces/types/IAsset.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract ForkUtils is Test, TestCommons {

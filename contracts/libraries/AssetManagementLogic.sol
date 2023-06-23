@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "@ipor-protocol/contracts/interfaces/IAmmStorage.sol";
-import "@ipor-protocol/contracts/interfaces/IAssetManagement.sol";
-import "@ipor-protocol/contracts/libraries/Constants.sol";
-import "@ipor-protocol/contracts/libraries/math/IporMath.sol";
-import "@ipor-protocol/contracts/governance/AmmConfigurationManager.sol";
+import "contracts/interfaces/IAmmStorage.sol";
+import "contracts/interfaces/IAssetManagement.sol";
+import "contracts/libraries/Constants.sol";
+import "contracts/libraries/math/IporMath.sol";
+import "contracts/governance/AmmConfigurationManager.sol";
 
 library AssetManagementLogic {
     using SafeCast for uint256;

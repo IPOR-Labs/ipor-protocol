@@ -3,13 +3,13 @@ pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "@ipor-protocol/contracts/interfaces/IAmmTreasuryFacadeDataProvider.sol";
-import "@ipor-protocol/contracts/interfaces/IAmmStorage.sol";
-import "@ipor-protocol/contracts/interfaces/IAmmTreasury.sol";
-import "@ipor-protocol/contracts/facades/AmmTreasuryFacadeDataProvider.sol";
-import "@ipor-protocol/test/mocks/ammTreasury/MockAmmTreasury.sol";
-import "@ipor-protocol/test/mocks/spread/MockSpreadModel.sol";
-import "@ipor-protocol/test/mocks/ammTreasury/MockAmmTreasury.sol";
+import "contracts/interfaces/IAmmTreasuryFacadeDataProvider.sol";
+import "contracts/interfaces/IAmmStorage.sol";
+import "contracts/interfaces/IAmmTreasury.sol";
+import "contracts/facades/AmmTreasuryFacadeDataProvider.sol";
+import "test/mocks/ammTreasury/MockAmmTreasury.sol";
+import "test/mocks/spread/MockSpreadModel.sol";
+import "test/mocks/ammTreasury/MockAmmTreasury.sol";
 
 contract AmmTreasuryUtils is Test {
     struct ExpectedAmmTreasuryBalances {

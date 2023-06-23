@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "@ipor-protocol/contracts/amm/spread/ISpread28DaysLens.sol";
+import "contracts/amm/spread/ISpread28DaysLens.sol";
 
 contract MockSpreadLens is ISpread28DaysLens {
     function getSupportedAssets() external view returns (address[] memory) {

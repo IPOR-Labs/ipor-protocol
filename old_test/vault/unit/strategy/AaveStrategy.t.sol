@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "@ipor-protocol/test/TestCommons.sol";
+import "test/TestCommons.sol";
 import {DataUtils} from "../../../utils/DataUtils.sol";
 import {AssetManagementUtils} from "../../../utils/AssetManagementUtils.sol";
 import {TestConstants} from "../../../utils/TestConstants.sol";
-import "@ipor-protocol/contracts/vault/strategies/StrategyAave.sol";
-import "@ipor-protocol/test/mocks/tokens/MockTestnetToken.sol";
-import "@ipor-protocol/test/mocks/tokens/AAVEMockedToken.sol";
-import "@ipor-protocol/test/mocks/assetManagement/aave/aTokens/MockAUsdt.sol";
-import "@ipor-protocol/test/mocks/assetManagement/aave/aTokens/MockAUsdc.sol";
-import "@ipor-protocol/test/mocks/assetManagement/aave/aTokens/MockADai.sol";
-import "@ipor-protocol/test/mocks/assetManagement/aave/MockLendingPoolAave.sol";
-import "@ipor-protocol/test/mocks/assetManagement/aave/MockProviderAave.sol";
-import "@ipor-protocol/test/mocks/assetManagement/aave/MockStakedAave.sol";
-import "@ipor-protocol/test/mocks/assetManagement/aave/MockAaveIncentivesController.sol";
+import "contracts/vault/strategies/StrategyAave.sol";
+import "test/mocks/tokens/MockTestnetToken.sol";
+import "test/mocks/tokens/AAVEMockedToken.sol";
+import "test/mocks/assetManagement/aave/aTokens/MockAUsdt.sol";
+import "test/mocks/assetManagement/aave/aTokens/MockAUsdc.sol";
+import "test/mocks/assetManagement/aave/aTokens/MockADai.sol";
+import "test/mocks/assetManagement/aave/MockLendingPoolAave.sol";
+import "test/mocks/assetManagement/aave/MockProviderAave.sol";
+import "test/mocks/assetManagement/aave/MockStakedAave.sol";
+import "test/mocks/assetManagement/aave/MockAaveIncentivesController.sol";
 
 contract AaveStrategyTest is TestCommons, DataUtils {
     MockTestnetToken internal _usdtMockedToken;

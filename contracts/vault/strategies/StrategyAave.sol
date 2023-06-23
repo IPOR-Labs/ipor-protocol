@@ -9,15 +9,15 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@ipor-protocol/contracts/interfaces/IStrategyAave.sol";
-import "@ipor-protocol/contracts/vault/interfaces/aave/AaveLendingPoolV2.sol";
-import "@ipor-protocol/contracts/vault/interfaces/aave/AaveLendingPoolProviderV2.sol";
-import "@ipor-protocol/contracts/vault/interfaces/aave/AaveIncentivesInterface.sol";
-import "@ipor-protocol/contracts/vault/interfaces/aave/StakedAaveInterface.sol";
-import "@ipor-protocol/contracts/libraries/math/IporMath.sol";
-import "@ipor-protocol/contracts/libraries/errors/AssetManagementErrors.sol";
-import "@ipor-protocol/contracts/security/IporOwnableUpgradeable.sol";
-import "@ipor-protocol/contracts/vault/strategies/StrategyCore.sol";
+import "contracts/interfaces/IStrategyAave.sol";
+import "contracts/vault/interfaces/aave/AaveLendingPoolV2.sol";
+import "contracts/vault/interfaces/aave/AaveLendingPoolProviderV2.sol";
+import "contracts/vault/interfaces/aave/AaveIncentivesInterface.sol";
+import "contracts/vault/interfaces/aave/StakedAaveInterface.sol";
+import "contracts/libraries/math/IporMath.sol";
+import "contracts/libraries/errors/AssetManagementErrors.sol";
+import "contracts/security/IporOwnableUpgradeable.sol";
+import "contracts/vault/strategies/StrategyCore.sol";
 
 contract StrategyAave is StrategyCore, IStrategyAave {
     using SafeCast for uint256;

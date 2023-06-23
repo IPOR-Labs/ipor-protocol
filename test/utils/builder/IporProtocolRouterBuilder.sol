@@ -4,9 +4,9 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "./BuilderUtils.sol";
 import "forge-std/Test.sol";
-import "@ipor-protocol/test/utils/TestConstants.sol";
-import "@ipor-protocol/test/mocks/EmptyRouterImplementation.sol";
-import "@ipor-protocol/contracts/router/IporProtocolRouter.sol";
+import "test/utils/TestConstants.sol";
+import "test/mocks/EmptyRouterImplementation.sol";
+import "contracts/router/IporProtocolRouter.sol";
 
 contract IporProtocolRouterBuilder is Test {
     struct BuilderData {

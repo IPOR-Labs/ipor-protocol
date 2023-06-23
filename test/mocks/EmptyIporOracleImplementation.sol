@@ -4,8 +4,8 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "@ipor-protocol/contracts/security/IporOwnableUpgradeable.sol";
-import "@ipor-protocol/contracts/interfaces/types/IporOracleTypes.sol";
+import "contracts/security/IporOwnableUpgradeable.sol";
+import "contracts/interfaces/types/IporOracleTypes.sol";
 
 /// @dev for testing purposes
 contract EmptyIporOracleImplementation is Initializable, PausableUpgradeable, UUPSUpgradeable, IporOwnableUpgradeable {

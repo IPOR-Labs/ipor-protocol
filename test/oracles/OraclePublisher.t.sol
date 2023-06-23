@@ -3,12 +3,12 @@ pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "@ipor-protocol/test/TestCommons.sol";
+import "test/TestCommons.sol";
 import "../utils/TestConstants.sol";
-import "@ipor-protocol/contracts/oracles/IporRiskManagementOracle.sol";
-import "@ipor-protocol/contracts/interfaces/IIporRiskManagementOracle.sol";
-import "@ipor-protocol/contracts/interfaces/types/IporRiskManagementOracleTypes.sol";
-import "@ipor-protocol/contracts/oracles/OraclePublisher.sol";
+import "contracts/oracles/IporRiskManagementOracle.sol";
+import "contracts/interfaces/IIporRiskManagementOracle.sol";
+import "contracts/interfaces/types/IporRiskManagementOracleTypes.sol";
+import "contracts/oracles/OraclePublisher.sol";
 
 contract OraclePublisherTest is Test, TestCommons {
     uint256 private _blockTimestamp = 1625097600;

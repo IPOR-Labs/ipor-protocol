@@ -2,10 +2,10 @@
 pragma solidity 0.8.20;
 
 import {DataUtils} from "../utils/DataUtils.sol";
-import "@ipor-protocol/test/TestCommons.sol";
+import "test/TestCommons.sol";
 import "../utils/TestConstants.sol";
-import "@ipor-protocol/test/mocks/MockIporSwapLogic.sol";
-import "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
+import "test/mocks/MockIporSwapLogic.sol";
+import "contracts/interfaces/types/IporTypes.sol";
 
 contract IporSwapLogicCalculateSwapPayFixedValue is TestCommons, DataUtils {
     MockIporSwapLogic internal _iporSwapLogic;

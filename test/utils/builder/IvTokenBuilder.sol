@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 import "forge-std/Test.sol";
-import "@ipor-protocol/contracts/tokens/IvToken.sol";
+import "contracts/tokens/IvToken.sol";
 
 contract IvTokenBuilder is Test {
     struct BuilderData {

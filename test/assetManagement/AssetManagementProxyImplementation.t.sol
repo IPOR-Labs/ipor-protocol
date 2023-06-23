@@ -3,10 +3,10 @@ pragma solidity 0.8.20;
 
 import {TestCommons} from "../TestCommons.sol";
 import {IvToken} from "@ipor-protocol/contracts/tokens/IvToken.sol";
-import "@ipor-protocol/contracts/vault/AssetManagementDai.sol";
+import "contracts/vault/AssetManagementDai.sol";
 import {ItfAssetManagement18D} from "@ipor-protocol/contracts/itf/ItfAssetManagement18D.sol";
-import "@ipor-protocol/test/mocks/assetManagement/MockStrategy.sol";
-import "@ipor-protocol/test/mocks/tokens/MockTestnetToken.sol";
+import "test/mocks/assetManagement/MockStrategy.sol";
+import "test/mocks/tokens/MockTestnetToken.sol";
 import "../utils/builder/AssetManagementBuilder.sol";
 import "../utils/builder/IvTokenBuilder.sol";
 import "../utils/builder/AssetBuilder.sol";

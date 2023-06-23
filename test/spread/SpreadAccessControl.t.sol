@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "@ipor-protocol/test/TestCommons.sol";
-import "@ipor-protocol/test/spread/SpreadTestSystem.sol";
+import "test/TestCommons.sol";
+import "test/spread/SpreadTestSystem.sol";
 
 contract SpreadAccessControlTest is TestCommons {
     SpreadTestSystem internal  _spreadTestSystem;

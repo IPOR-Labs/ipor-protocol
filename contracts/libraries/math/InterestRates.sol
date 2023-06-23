@@ -3,8 +3,8 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "abdk-libraries-solidity/ABDKMathQuad.sol";
-import "@ipor-protocol/contracts/libraries/math/IporMath.sol";
-import "@ipor-protocol/contracts/libraries/Constants.sol";
+import "contracts/libraries/math/IporMath.sol";
+import "contracts/libraries/Constants.sol";
 
 library InterestRates {
     using SafeCast for uint256;

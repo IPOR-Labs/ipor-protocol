@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 
-import "@ipor-protocol/contracts/amm/spread/SpreadStorageLibs.sol";
+import "contracts/amm/spread/SpreadStorageLibs.sol";
 
 library SpreadTypes {
     /// @notice structure used to save the weighted notional for the 28 days into storage

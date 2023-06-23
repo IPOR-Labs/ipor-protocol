@@ -2,8 +2,8 @@
 pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
-import "@ipor-protocol/contracts/vault/AssetManagementUsdc.sol";
-import "@ipor-protocol/contracts/tokens/IvToken.sol";
+import "contracts/vault/AssetManagementUsdc.sol";
+import "contracts/tokens/IvToken.sol";
 import "../UsdcAmm.sol";
 
 contract AssetManagementAaveUsdcTest is Test {

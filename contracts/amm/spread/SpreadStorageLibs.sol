@@ -3,9 +3,9 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
-import "@ipor-protocol/contracts/libraries/math/IporMath.sol";
-import "@ipor-protocol/contracts/libraries/errors/AmmErrors.sol";
-import "@ipor-protocol/contracts/amm/spread/SpreadTypes.sol";
+import "contracts/libraries/math/IporMath.sol";
+import "contracts/libraries/errors/AmmErrors.sol";
+import "contracts/amm/spread/SpreadTypes.sol";
 
 library SpreadStorageLibs {
     using SafeCast for uint256;

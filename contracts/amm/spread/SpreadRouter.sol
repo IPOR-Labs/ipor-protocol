@@ -2,17 +2,17 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@ipor-protocol/contracts/interfaces/IProxyImplementation.sol";
-import "@ipor-protocol/contracts/amm/spread/ISpread28Days.sol";
-import "@ipor-protocol/contracts/amm/spread/ISpread60Days.sol";
-import "@ipor-protocol/contracts/amm/spread/ISpread90Days.sol";
-import "@ipor-protocol/contracts/amm/spread/ISpread28DaysLens.sol";
-import "@ipor-protocol/contracts/amm/spread/ISpread60DaysLens.sol";
-import "@ipor-protocol/contracts/amm/spread/ISpread90DaysLens.sol";
-import "@ipor-protocol/contracts/amm/spread/ISpreadStorageLens.sol";
-import "@ipor-protocol/contracts/amm/spread/ISpreadCloseSwapService.sol";
-import "@ipor-protocol/contracts/amm/spread/SpreadAccessControl.sol";
-import "@ipor-protocol/contracts/amm/spread/SpreadStorageLibs.sol";
+import "contracts/interfaces/IProxyImplementation.sol";
+import "contracts/amm/spread/ISpread28Days.sol";
+import "contracts/amm/spread/ISpread60Days.sol";
+import "contracts/amm/spread/ISpread90Days.sol";
+import "contracts/amm/spread/ISpread28DaysLens.sol";
+import "contracts/amm/spread/ISpread60DaysLens.sol";
+import "contracts/amm/spread/ISpread90DaysLens.sol";
+import "contracts/amm/spread/ISpreadStorageLens.sol";
+import "contracts/amm/spread/ISpreadCloseSwapService.sol";
+import "contracts/amm/spread/SpreadAccessControl.sol";
+import "contracts/amm/spread/SpreadStorageLibs.sol";
 
 contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl, IProxyImplementation {
     address internal immutable SPREAD_28_DAYS;

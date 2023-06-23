@@ -2,12 +2,12 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "@ipor-protocol/contracts/security/PauseManager.sol";
-import "@ipor-protocol/contracts/vault/AssetManagementUsdc.sol";
-import "@ipor-protocol/contracts/tokens/IvToken.sol";
-import "@ipor-protocol/test/mocks/assetManagement/MockTestnetStrategy.sol";
+import "contracts/security/PauseManager.sol";
+import "contracts/vault/AssetManagementUsdc.sol";
+import "contracts/tokens/IvToken.sol";
+import "test/mocks/assetManagement/MockTestnetStrategy.sol";
 import "forge-std/Test.sol";
-import "@ipor-protocol/test/mocks/tokens/MockTestnetToken.sol";
+import "test/mocks/tokens/MockTestnetToken.sol";
 
 contract AssetManagementPauseManagerTest is Test {
     address private _owner;
