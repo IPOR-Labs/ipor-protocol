@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
-import "test/mocks/tokens/MockTestnetToken.sol";
 import "contracts/tokens/IpToken.sol";
 import "contracts/tokens/IvToken.sol";
 import "contracts/itf/ItfIporOracle.sol";
@@ -11,7 +10,9 @@ import "contracts/amm/AmmTreasury.sol";
 import "contracts/amm/spread/SpreadRouter.sol";
 import "contracts/itf/ItfAssetManagement.sol";
 import "contracts/router/IporProtocolRouter.sol";
+import "contracts/interfaces/IAmmOpenSwapLens.sol";
 import "test/mocks/MockSpreadXDays.sol";
+import "test/mocks/tokens/MockTestnetToken.sol";
 
 contract BuilderUtils {
     struct IporProtocol {
@@ -19,6 +20,7 @@ contract BuilderUtils {
         IAmmSwapsLens ammSwapsLens;
         IAmmPoolsService ammPoolsService;
         IAmmPoolsLens ammPoolsLens;
+        IAmmOpenSwapLens ammOpenSwapLens;
         IAmmOpenSwapService ammOpenSwapService;
         IAmmCloseSwapService ammCloseSwapService;
         IAmmGovernanceService ammGovernanceService;

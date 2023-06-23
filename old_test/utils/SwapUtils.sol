@@ -46,11 +46,7 @@ contract SwapUtils is Test {
         for (uint256 i; i < numberIterations; ++i) {
             uint256 acceptableFixedInterestRate = 1 * TestConstants.D16;
             vm.prank(user);
-            ammTreasury.openSwapReceiveFixed(
-                totalAmount, // totalAmount
-                acceptableFixedInterestRate, // acceptableFixedInterestRate
-                leverage // leverage
-            );
+            ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
         }
     }
 
@@ -58,14 +54,7 @@ contract SwapUtils is Test {
         address from,
         uint256 calculateTimestamp,
         ItfAmmTreasury ammTreasury
-    )
-        public
-        returns (
-            int256,
-            int256,
-            int256
-        )
-    {
+    ) public returns (int256, int256, int256) {
         vm.prank(from);
         (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap) = ammTreasury.itfCalculateSoap(calculateTimestamp);
         return (soapPayFixed, soapReceiveFixed, soap);

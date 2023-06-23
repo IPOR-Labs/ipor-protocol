@@ -45,50 +45,18 @@ contract TestCommons is Test {
         users[4] = userFive;
         return users;
     }
-//
-//    function iterateOpenSwapsPayFixed(
-//        address user,
-//        ItfAmmTreasury ammTreasury,
-//        uint256 numberIterations,
-//        uint256 totalAmount,
-//        uint256 leverage
-//    ) public {
-//        for (uint256 i; i < numberIterations; ++i) {
-//            if (i % 2 == 0) {
-//                uint256 acceptableFixedInterestRate = 9 * TestConstants.D17;
-//                vm.prank(user);
-//                ammTreasury.openSwapPayFixed(
-//                    totalAmount, // totalAmount
-//                    acceptableFixedInterestRate, // acceptableFixedInterestRate
-//                    leverage // leverage
-//                );
-//            } else {
-//                uint256 acceptableFixedInterestRate = 1 * TestConstants.D17;
-//                vm.prank(user);
-//                ammTreasury.openSwapPayFixed(
-//                    totalAmount, // totalAmount
-//                    acceptableFixedInterestRate, // acceptableFixedInterestRate
-//                    leverage // leverage
-//                );
-//            }
-//        }
-//    }
-//
-//    function iterateOpenSwapsReceiveFixed(
-//        address user,
-//        ItfAmmTreasury ammTreasury,
-//        uint256 numberIterations,
-//        uint256 totalAmount,
-//        uint256 leverage
-//    ) public {
-//        for (uint256 i; i < numberIterations; ++i) {
-//            uint256 acceptableFixedInterestRate = 1 * TestConstants.D16;
-//            vm.prank(user);
-//            ammTreasury.openSwapReceiveFixed(
-//                totalAmount, // totalAmount
-//                acceptableFixedInterestRate, // acceptableFixedInterestRate
-//                leverage // leverage
-//            );
-//        }
-//    }
+
+    function prepareSwapPayFixedStruct18DecSimpleCase1(address buyer) public view returns (AmmTypes.NewSwap memory) {
+        AmmTypes.NewSwap memory newSwap;
+        newSwap.buyer = buyer;
+        newSwap.openTimestamp = block.timestamp;
+        newSwap.collateral = TestConstants.USD_1_000_18DEC;
+        newSwap.notional = TestConstants.USD_5_000_18DEC;
+        newSwap.ibtQuantity = 123;
+        newSwap.fixedInterestRate = 234;
+        newSwap.liquidationDepositAmount = 20;
+        newSwap.openingFeeLPAmount = TestConstants.USD_1_500_18DEC;
+        newSwap.openingFeeTreasuryAmount = TestConstants.USD_1_500_18DEC;
+        return newSwap;
+    }
 }
