@@ -121,7 +121,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         _disableInitializers();
     }
 
-    function getRouterImplementation(bytes4 sig, uint256 batchOperation) public returns (address) {
+    function _getRouterImplementation(bytes4 sig, uint256 batchOperation) internal returns (address) {
         if (
             _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapService.openSwapPayFixed60daysUsdt.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapService.openSwapPayFixed28daysUsdt.selector) ||
@@ -143,7 +143,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapService.openSwapReceiveFixed90daysDai.selector)
         ) {
             if (batchOperation == 0) {
-                _nonReentrantBefore;
+                _nonReentrantBefore();
             }
             return AMM_OPEN_SWAP_SERVICE;
         } else if (
@@ -158,7 +158,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapsDai.selector)
         ) {
             if (batchOperation == 0) {
-                _nonReentrantBefore;
+                _nonReentrantBefore();
             }
             return AMM_CLOSE_SWAP_SERVICE;
         } else if (
@@ -171,7 +171,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsService.rebalanceBetweenAmmTreasuryAndAssetManagement.selector)
         ) {
             if (batchOperation == 0) {
-                _nonReentrantBefore;
+                _nonReentrantBefore();
             }
             return AMM_POOLS_SERVICE;
         } else if (
@@ -187,7 +187,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenStakeService.redeemPwToken.selector)
         ) {
             if (batchOperation == 0) {
-                _nonReentrantBefore;
+                _nonReentrantBefore();
             }
             return STAKE_SERVICE;
         } else if (
@@ -197,7 +197,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenFlowsService.claimRewardsFromLiquidityMining.selector)
         ) {
             if (batchOperation == 0) {
-                _nonReentrantBefore;
+                _nonReentrantBefore();
             }
             return FLOW_SERVICE;
         } else if (
@@ -205,7 +205,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             sig == IAmmGovernanceService.transferToCharlieTreasury.selector
         ) {
             if (batchOperation == 0) {
-                _nonReentrantBefore;
+                _nonReentrantBefore();
             }
             return AMM_GOVERNANCE_SERVICE;
         } else if (
@@ -241,9 +241,6 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             sig == IAmmGovernanceLens.isAppointedToRebalanceInAmm.selector ||
             sig == IAmmGovernanceLens.getAmmPoolsParams.selector
         ) {
-            if (batchOperation == 0) {
-                _nonReentrantBefore;
-            }
             return AMM_GOVERNANCE_SERVICE;
         } else if (sig == IAmmOpenSwapLens.getAmmOpenSwapServicePoolConfiguration.selector) {
             return AMM_OPEN_SWAP_SERVICE;
@@ -299,7 +296,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
     }
 
     fallback() external {
-        _delegate(getRouterImplementation(msg.sig, SINGLE_OPERATION));
+        _delegate(_getRouterImplementation(msg.sig, SINGLE_OPERATION));
     }
 
     /// @dev Delegates the current call to `implementation`.
@@ -336,7 +333,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
     function batchExecutor(bytes[] calldata calls) external nonReentrant {
         uint256 length = calls.length;
         for (uint256 i; i != length; ) {
-            address implementation = getRouterImplementation(bytes4(calls[i][:4]), BATCH_OPERATION);
+            address implementation = _getRouterImplementation(bytes4(calls[i][:4]), BATCH_OPERATION);
             implementation.functionDelegateCall(calls[i]);
             unchecked {
                 ++i;
