@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "../../../TestCommons.sol";
+import "test/TestCommons.sol";
 import {DataUtils} from "../../../utils/DataUtils.sol";
 import {AssetManagementUtils} from "../../../utils/AssetManagementUtils.sol";
-import "../../../utils/TestConstants.sol";
+import "test/utils/TestConstants.sol";
 import "contracts/amm/AmmStorage.sol";
 import "contracts/itf/ItfIporOracle.sol";
 import "contracts/tokens/IpToken.sol";
-import "contracts/mocks/tokens/MockTestnetToken.sol";
-import "contracts/mocks/tokens/MockedCOMPToken.sol";
-import "contracts/mocks/assetManagement/compound/MockWhitePaper.sol";
-import "contracts/mocks/assetManagement/compound/MockCToken.sol";
-import "contracts/mocks/assetManagement/compound/MockComptroller.sol";
+import "test/mocks/tokens/MockTestnetToken.sol";
+import "test/mocks/tokens/MockedCOMPToken.sol";
+import "test/mocks/assetManagement/compound/MockWhitePaper.sol";
+import "test/mocks/assetManagement/compound/MockCToken.sol";
+import "test/mocks/assetManagement/compound/MockComptroller.sol";
 import "contracts/vault/strategies/StrategyCompound.sol";
 
 contract CompoundPausableTest is TestCommons, DataUtils {

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 import "forge-std/Test.sol";
-import "@ipor-protocol/contracts/interfaces/ILiquidityMiningLens.sol";
-import "../../mocks/MockLiquidityMiningLens.sol";
+import "contracts/interfaces/ILiquidityMiningLens.sol";
+import "test/mocks/MockLiquidityMiningLens.sol";
 
 contract LiquidityMiningLensBuilder is Test {
 

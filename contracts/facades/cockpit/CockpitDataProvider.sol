@@ -5,12 +5,12 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20Metadat
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "../../interfaces/types/CockpitTypes.sol";
-import "../../libraries/Constants.sol";
-import "../../interfaces/IIporOracle.sol";
-import "../../interfaces/IAmmTreasury.sol";
-import "../../interfaces/ICockpitDataProvider.sol";
-import "../../security/IporOwnableUpgradeable.sol";
+import "contracts/interfaces/types/CockpitTypes.sol";
+import "contracts/libraries/Constants.sol";
+import "contracts/interfaces/IIporOracle.sol";
+import "contracts/interfaces/IAmmTreasury.sol";
+import "contracts/interfaces/ICockpitDataProvider.sol";
+import "contracts/security/IporOwnableUpgradeable.sol";
 
 contract CockpitDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeable, ICockpitDataProvider {
     address internal _iporOracle;

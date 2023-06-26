@@ -4,9 +4,9 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "../libraries/errors/AssetManagementErrors.sol";
-import "../interfaces/IIvToken.sol";
-import "../security/IporOwnable.sol";
+import "contracts/interfaces/IIvToken.sol";
+import "contracts/libraries/errors/AssetManagementErrors.sol";
+import "contracts/security/IporOwnable.sol";
 
 contract IvToken is IporOwnable, IIvToken, ERC20 {
     using SafeERC20 for IERC20;

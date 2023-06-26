@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "../TestCommons.sol";
+import "test/TestCommons.sol";
 import "../utils/TestConstants.sol";
 
 contract AmmSwapLensOfferedRateTest is TestCommons {

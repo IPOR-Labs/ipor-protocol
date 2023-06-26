@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
-import "../TestCommons.sol";
+import "test/TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import "contracts/libraries/math/IporMath.sol";
 import "contracts/libraries/Constants.sol";

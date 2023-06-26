@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 import "forge-std/Test.sol";
-import "../TestCommons.sol";
+import "test/TestCommons.sol";
 import "../utils/TestConstants.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import "contracts/libraries/math/IporMath.sol";
 import "contracts/libraries/Constants.sol";
 import "contracts/itf/ItfIporOracle.sol";
-import "contracts/mocks/tokens/MockTestnetToken.sol";
+import "test/mocks/tokens/MockTestnetToken.sol";
 
 contract AmmClosingSwaps is Test, TestCommons, DataUtils {
     address internal _buyer;

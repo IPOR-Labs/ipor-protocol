@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
-import "./CalculateTimeWeightedNotionalLibs.sol";
+import "contracts/interfaces/types/IporTypes.sol";
+import "contracts/amm/spread/CalculateTimeWeightedNotionalLibs.sol";
 
 library DemandSpreadLibs {
     /// @notice DTO for the Weighted Notional

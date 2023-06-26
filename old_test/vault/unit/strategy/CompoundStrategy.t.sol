@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "../../../TestCommons.sol";
+import "test/TestCommons.sol";
 import {DataUtils} from "../../../utils/DataUtils.sol";
 import {TestConstants} from "../../../utils/TestConstants.sol";
 import "contracts/vault/strategies/StrategyCompound.sol";
-import "contracts/mocks/tokens/MockedCOMPToken.sol";
-import "contracts/mocks/tokens/MockTestnetToken.sol";
-import "contracts/mocks/assetManagement/compound/MockCToken.sol";
-import "contracts/mocks/assetManagement/compound/MockComptroller.sol";
-import "contracts/mocks/assetManagement/compound/MockWhitePaper.sol";
+import "test/mocks/tokens/MockedCOMPToken.sol";
+import "test/mocks/tokens/MockTestnetToken.sol";
+import "test/mocks/assetManagement/compound/MockCToken.sol";
+import "test/mocks/assetManagement/compound/MockComptroller.sol";
+import "test/mocks/assetManagement/compound/MockWhitePaper.sol";
 
 contract CompoundStrategyTest is TestCommons, DataUtils {
     MockTestnetToken internal _usdtMockedToken;

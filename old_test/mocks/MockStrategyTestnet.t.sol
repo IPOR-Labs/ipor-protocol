@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "../TestCommons.sol";
+import "test/TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {AssetManagementUtils} from "../utils/AssetManagementUtils.sol";
 import {TestConstants} from "../utils/TestConstants.sol";
-import {MockTestnetStrategy} from "contracts/mocks/assetManagement/MockTestnetStrategy.sol";
-import {MockTestnetToken} from "contracts/mocks/tokens/MockTestnetToken.sol";
+import {MockTestnetStrategy} from "@ipor-protocol/test/mocks/assetManagement/MockTestnetStrategy.sol";
+import {MockTestnetToken} from "@ipor-protocol/test/mocks/tokens/MockTestnetToken.sol";
 
 contract MockStrategyTestnetTest is TestCommons, DataUtils {
     MockTestnetStrategy internal _mockStrategyDai;

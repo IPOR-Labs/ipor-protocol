@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
+import "contracts/interfaces/types/IporTypes.sol";
 
 interface ISpread28Days {
     /// @notice Calculates the quote value for pay fixed 28-day period based on the provided spread inputs.

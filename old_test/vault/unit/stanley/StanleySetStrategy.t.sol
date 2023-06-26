@@ -4,10 +4,10 @@ pragma solidity 0.8.20;
 import {TestCommons} from "../../../TestCommons.sol";
 import {DataUtils} from "../../../utils/DataUtils.sol";
 import {TestConstants} from "../../../utils/TestConstants.sol";
-import {MockStrategy} from "contracts/mocks/assetManagement/MockStrategy.sol";
-import {AssetManagementDai} from "contracts/vault/AssetManagementDai.sol";
-import {MockTestnetToken} from "contracts/mocks/tokens/MockTestnetToken.sol";
-import {IvToken} from "contracts/tokens/IvToken.sol";
+import {MockStrategy} from "@ipor-protocol/test/mocks/assetManagement/MockStrategy.sol";
+import {AssetManagementDai} from "@ipor-protocol/contracts/vault/AssetManagementDai.sol";
+import {MockTestnetToken} from "@ipor-protocol/test/mocks/tokens/MockTestnetToken.sol";
+import {IvToken} from "@ipor-protocol/contracts/tokens/IvToken.sol";
 
 contract AssetManagementSetStrategyTest is TestCommons, DataUtils {
     MockStrategy internal _strategyAaveDai;

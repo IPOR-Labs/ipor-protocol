@@ -2,14 +2,11 @@
 pragma solidity 0.8.20;
 
 import {TestCommons} from "../TestCommons.sol";
-
-import {IvToken} from "contracts/tokens/IvToken.sol";
-import {MockTestnetToken} from "contracts/mocks/tokens/MockTestnetToken.sol";
-
-import {ItfAssetManagement18D} from "contracts/itf/ItfAssetManagement18D.sol";
-
-import "contracts/mocks/stanley/MockStrategy.sol";
+import {IvToken} from "@ipor-protocol/contracts/tokens/IvToken.sol";
 import "contracts/vault/AssetManagementDai.sol";
+import {ItfAssetManagement18D} from "@ipor-protocol/contracts/itf/ItfAssetManagement18D.sol";
+import "test/mocks/assetManagement/MockStrategy.sol";
+import "test/mocks/tokens/MockTestnetToken.sol";
 import "../utils/builder/AssetManagementBuilder.sol";
 import "../utils/builder/IvTokenBuilder.sol";
 import "../utils/builder/AssetBuilder.sol";
@@ -72,10 +69,7 @@ contract AssetManagementProxyImplementationTest is TestCommons {
 
         // then
         address newProxyImpl = _assetManagementDai.getImplementation();
-        assertTrue(
-            newProxyImpl == newImplementation,
-            "Implementation should be equal to newImplementation"
-        );
+        assertTrue(newProxyImpl == newImplementation, "Implementation should be equal to newImplementation");
         assertTrue(newProxyImpl != oldProxyImpl, "proxyImpl should be updated");
     }
 }

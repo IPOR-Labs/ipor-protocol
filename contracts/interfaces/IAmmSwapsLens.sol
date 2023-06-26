@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 
-import "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
-import "@ipor-protocol/contracts/interfaces/types/AmmTypes.sol";
+import "contracts/interfaces/types/IporTypes.sol";
+import "contracts/interfaces/types/AmmTypes.sol";
 
 /// @title AmmSwapsLens interface responsible for reading data related with swaps.
 interface IAmmSwapsLens {

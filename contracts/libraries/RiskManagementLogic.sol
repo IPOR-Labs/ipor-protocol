@@ -3,17 +3,17 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 
-import "../libraries/Constants.sol";
-import "../libraries/math/IporMath.sol";
-import "../interfaces/IAmmStorage.sol";
-import "../interfaces/IIporRiskManagementOracle.sol";
-import "../interfaces/IAssetManagement.sol";
-import "../governance/AmmConfigurationManager.sol";
-import "../interfaces/types/AmmTypes.sol";
-import "@ipor-protocol/contracts/amm/spread/ISpread28DaysLens.sol";
-import "@ipor-protocol/contracts/amm/spread/ISpread60DaysLens.sol";
-import "@ipor-protocol/contracts/amm/spread/ISpread90DaysLens.sol";
-import "@ipor-protocol/contracts/libraries/errors/AmmErrors.sol";
+import "contracts/interfaces/types/AmmTypes.sol";
+import "contracts/interfaces/IAmmStorage.sol";
+import "contracts/interfaces/IIporRiskManagementOracle.sol";
+import "contracts/interfaces/IAssetManagement.sol";
+import "contracts/amm/spread/ISpread28DaysLens.sol";
+import "contracts/amm/spread/ISpread60DaysLens.sol";
+import "contracts/amm/spread/ISpread90DaysLens.sol";
+import "contracts/libraries/Constants.sol";
+import "contracts/libraries/errors/AmmErrors.sol";
+import "contracts/libraries/math/IporMath.sol";
+import "contracts/governance/AmmConfigurationManager.sol";
 
 library RiskManagementLogic {
     using Address for address;

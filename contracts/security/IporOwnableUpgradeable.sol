@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "../libraries/errors/IporErrors.sol";
+import "contracts/libraries/errors/IporErrors.sol";
 
 abstract contract IporOwnableUpgradeable is OwnableUpgradeable {
     address private _appointedOwner;

@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "../TestCommons.sol";
+import "test/TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
-import "contracts/mocks/spread/MockSpreadModel.sol";
+import "test/mocks/spread/MockSpreadModel.sol";
 import "contracts/amm/AmmStorage.sol";
 import "contracts/itf/ItfLiquidator.sol";
 import "contracts/interfaces/types/IporTypes.sol";
 import "contracts/interfaces/types/AmmTypes.sol";
 import "../utils/builder/BuilderUtils.sol";
-import {MockCaseBaseAssetManagement} from "contracts/mocks/assetManagement/MockCaseBaseAssetManagement.sol";
+import {MockCaseBaseAssetManagement} from "@ipor-protocol/test/mocks/assetManagement/MockCaseBaseAssetManagement.sol";
 
 contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;

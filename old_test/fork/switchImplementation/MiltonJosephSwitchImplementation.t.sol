@@ -4,7 +4,7 @@ pragma solidity 0.8.20;
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
-import "../../TestCommons.sol";
+import "test/TestCommons.sol";
 import "./snapshots/AmmTreasurySnapshot.sol";
 import "contracts/amm/AmmTreasury.sol";
 import "contracts/amm/AmmTreasuryDai.sol";
@@ -18,8 +18,8 @@ import "contracts/amm/AmmTreasuryUsdc.sol";
 import "contracts/amm/pool/JosephUsdc.sol";
 import "contracts/amm/AmmTreasuryUsdt.sol";
 import "contracts/amm/pool/JosephUsdt.sol";
-import "../../utils/IporRiskManagementOracleUtils.sol";
-import "../../utils/TestConstants.sol";
+import "test/utils/IporRiskManagementOracleUtils.sol";
+import "test/utils/TestConstants.sol";
 
 contract DaiAmmTreasuryJosephSwitchImplementation is Test, TestCommons, ForkUtils, IporRiskManagementOracleUtils {
     address private _dai = 0x6B175474E89094C44Da98b954EedeAC495271d0F;

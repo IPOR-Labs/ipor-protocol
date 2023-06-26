@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "../../../interfaces/types/AmmTypes.sol";
+import "contracts/interfaces/types/AmmTypes.sol";
 
 /// @notice Structs used in the AmmStorage interface
 library StorageInternalTypes {
@@ -87,6 +87,4 @@ library StorageInternalTypes {
         /// @notice EPOCH timestamp of when the most recent rebalancing took place
         uint32 rebalanceTimestamp;
     }
-
-
 }

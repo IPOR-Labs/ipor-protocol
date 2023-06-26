@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 
-import "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
-import "./types/IporRiskManagementOracleTypes.sol";
+import "contracts/interfaces/types/IporTypes.sol";
+import "contracts/interfaces/types/IporRiskManagementOracleTypes.sol";
 
 interface IIporRiskManagementOracle {
     /// @notice Returns current version of IIporRiskManagementOracle's

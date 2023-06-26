@@ -2,9 +2,9 @@
 pragma solidity 0.8.20;
 
 import "./TestCommons.sol";
-import "@ipor-protocol/contracts/oracles/libraries/IporLogic.sol";
+import "contracts/oracles/libraries/IporLogic.sol";
 import "./utils/TestConstants.sol";
-import "@ipor-protocol/contracts/interfaces/types/IporOracleTypes.sol";
+import "contracts/interfaces/types/IporOracleTypes.sol";
 
 contract IporLogicTest is TestCommons {
     function testShouldAccrueIbtPrice18Decimals() public {

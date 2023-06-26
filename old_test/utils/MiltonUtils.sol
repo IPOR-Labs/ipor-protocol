@@ -7,9 +7,9 @@ import "contracts/interfaces/IAmmTreasuryFacadeDataProvider.sol";
 import "contracts/interfaces/IAmmStorage.sol";
 import "contracts/interfaces/IAmmTreasury.sol";
 import "contracts/facades/AmmTreasuryFacadeDataProvider.sol";
-import "contracts/mocks/ammTreasury/MockAmmTreasury.sol";
-import "contracts/mocks/spread/MockSpreadModel.sol";
-import "contracts/mocks/ammTreasury/MockAmmTreasury.sol";
+import "test/mocks/ammTreasury/MockAmmTreasury.sol";
+import "test/mocks/spread/MockSpreadModel.sol";
+import "test/mocks/ammTreasury/MockAmmTreasury.sol";
 
 contract AmmTreasuryUtils is Test {
     struct ExpectedAmmTreasuryBalances {

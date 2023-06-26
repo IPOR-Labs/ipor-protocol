@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "../libraries/StorageLib.sol";
-import "../libraries/errors/IporErrors.sol";
+import "contracts/libraries/StorageLib.sol";
+import "contracts/libraries/errors/IporErrors.sol";
 
 library OwnerManager {
     event AppointedToTransferOwnership(address indexed appointedOwner);

@@ -4,13 +4,13 @@ pragma solidity 0.8.20;
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "../TestCommons.sol";
-import "contracts/mocks/tokens/MockTestnetToken.sol";
+import "test/TestCommons.sol";
+import "test/mocks/tokens/MockTestnetToken.sol";
 import "contracts/tokens/IporToken.sol";
-import "contracts/mocks/TestnetFaucet.sol";
+import "test/mocks/TestnetFaucet.sol";
 import "contracts/interfaces/ITestnetFaucet.sol";
 import "./MockOldTestnetFaucet.sol";
-import "./IMockProxy.sol";
+import "contracts/interfaces/types/IMockProxy.sol";
 
 contract TestnetFaucetTest is Test, TestCommons {
     struct BalanceUserAndFaucet {

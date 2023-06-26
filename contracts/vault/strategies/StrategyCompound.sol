@@ -5,12 +5,12 @@ import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
-import "../../libraries/Constants.sol";
-import "../../libraries/math/IporMath.sol";
-import "../../interfaces/IStrategyCompound.sol";
-import "../interfaces/compound/CErc20.sol";
-import "../interfaces/compound/ComptrollerInterface.sol";
-import "./StrategyCore.sol";
+import "contracts/interfaces/IStrategyCompound.sol";
+import "contracts/vault/interfaces/compound/CErc20.sol";
+import "contracts/vault/interfaces/compound/ComptrollerInterface.sol";
+import "contracts/libraries/Constants.sol";
+import "contracts/libraries/math/IporMath.sol";
+import "contracts/vault/strategies/StrategyCore.sol";
 
 contract StrategyCompound is StrategyCore, IStrategyCompound {
     using SafeERC20Upgradeable for IERC20Upgradeable;

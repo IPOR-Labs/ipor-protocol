@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
-import "@ipor-protocol/contracts/interfaces/types/AmmTypes.sol";
-import "@ipor-protocol/contracts/interfaces/types/AmmStorageTypes.sol";
-import "@ipor-protocol/contracts/amm/libraries/types/AmmInternalTypes.sol";
+import "contracts/interfaces/types/IporTypes.sol";
+import "contracts/interfaces/types/AmmTypes.sol";
+import "contracts/interfaces/types/AmmStorageTypes.sol";
+import "contracts/amm/libraries/types/AmmInternalTypes.sol";
 
 /// @title Interface for interaction with the IPOR AMM Storage, contract responsible for managing AMM storage.
 interface IAmmStorage {

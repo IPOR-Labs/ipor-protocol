@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "../../libraries/errors/AmmErrors.sol";
-import "../../interfaces/types/IporTypes.sol";
-import "../../libraries/Constants.sol";
-import "../../libraries/math/IporMath.sol";
-import "../../libraries/math/InterestRates.sol";
-import "../../interfaces/types/AmmTypes.sol";
+import "contracts/interfaces/types/IporTypes.sol";
+import "contracts/interfaces/types/AmmTypes.sol";
+import "contracts/libraries/Constants.sol";
+import "contracts/libraries/math/IporMath.sol";
+import "contracts/libraries/math/InterestRates.sol";
+import "contracts/libraries/errors/AmmErrors.sol";
 
 library IporSwapLogic {
     using SafeCast for uint256;

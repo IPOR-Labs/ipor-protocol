@@ -6,13 +6,13 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 
-import "@ipor-protocol/contracts/libraries/math/IporMath.sol";
-import "@ipor-protocol/contracts/libraries/errors/AmmPoolsErrors.sol";
-import "@ipor-protocol/contracts/interfaces/IAmmTreasury.sol";
-import "@ipor-protocol/contracts/interfaces/IAmmStorage.sol";
-import "@ipor-protocol/contracts/interfaces/IAmmGovernanceService.sol";
-import "@ipor-protocol/contracts/interfaces/IAmmGovernanceLens.sol";
-import "@ipor-protocol/contracts/governance/AmmConfigurationManager.sol";
+import "contracts/interfaces/IAmmTreasury.sol";
+import "contracts/interfaces/IAmmStorage.sol";
+import "contracts/interfaces/IAmmGovernanceService.sol";
+import "contracts/interfaces/IAmmGovernanceLens.sol";
+import "contracts/libraries/math/IporMath.sol";
+import "contracts/libraries/errors/AmmPoolsErrors.sol";
+import "contracts/governance/AmmConfigurationManager.sol";
 
 contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     using SafeERC20Upgradeable for IERC20Upgradeable;
