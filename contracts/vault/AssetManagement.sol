@@ -8,17 +8,16 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "contracts/interfaces/IProxyImplementation.sol";
-import "contracts/interfaces/IIvToken.sol";
-import "contracts/interfaces/IStrategy.sol";
-import "contracts/interfaces/IAssetManagementInternal.sol";
-import "contracts/interfaces/IAssetManagement.sol";
-import "contracts/libraries/Constants.sol";
-import "contracts/libraries/math/IporMath.sol";
-import "contracts/libraries/errors/IporErrors.sol";
-import "contracts/libraries/errors/AssetManagementErrors.sol";
-import "contracts/security/IporOwnableUpgradeable.sol";
-import "contracts/security/PauseManager.sol";
+import "../interfaces/IProxyImplementation.sol";
+import "../interfaces/IIvToken.sol";
+import "../interfaces/IStrategy.sol";
+import "../interfaces/IAssetManagementInternal.sol";
+import "../interfaces/IAssetManagement.sol";
+import "../libraries/math/IporMath.sol";
+import "../libraries/errors/IporErrors.sol";
+import "../libraries/errors/AssetManagementErrors.sol";
+import "../security/IporOwnableUpgradeable.sol";
+import "../security/PauseManager.sol";
 
 /// @title AssetManagement represents Asset Management module responsible for investing AmmTreasury's cash in external DeFi protocols.
 abstract contract AssetManagement is

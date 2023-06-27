@@ -2,23 +2,21 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
-import "contracts/interfaces/types/IporTypes.sol";
-import "contracts/interfaces/types/AmmTypes.sol";
-import "contracts/interfaces/IIporOracle.sol";
-import "contracts/interfaces/IAmmTreasury.sol";
-import "contracts/interfaces/IAmmCloseSwapService.sol";
-import "contracts/amm/spread/ISpreadCloseSwapService.sol";
-import "contracts/libraries/errors/IporErrors.sol";
-import "contracts/governance/AmmConfigurationManager.sol";
-import "contracts/security/OwnerManager.sol";
-import "contracts/libraries/math/IporMath.sol";
-import "contracts/libraries/AmmLib.sol";
-import "contracts/libraries/AssetManagementLogic.sol";
-import "contracts/libraries/RiskManagementLogic.sol";
-import "contracts/amm/libraries/IporSwapLogic.sol";
+import "../interfaces/types/IporTypes.sol";
+import "../interfaces/types/AmmTypes.sol";
+import "../interfaces/IIporOracle.sol";
+import "../interfaces/IAmmTreasury.sol";
+import "../interfaces/IAmmCloseSwapService.sol";
+import "./spread/ISpreadCloseSwapService.sol";
+import "../libraries/errors/IporErrors.sol";
+import "../governance/AmmConfigurationManager.sol";
+import "../security/OwnerManager.sol";
+import "../libraries/math/IporMath.sol";
+import "../libraries/AmmLib.sol";
+import "../libraries/AssetManagementLogic.sol";
+import "../libraries/RiskManagementLogic.sol";
+import "./libraries/IporSwapLogic.sol";
 
 contract AmmCloseSwapService is IAmmCloseSwapService {
     using Address for address;

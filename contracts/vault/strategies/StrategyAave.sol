@@ -1,23 +1,18 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "contracts/interfaces/IStrategyAave.sol";
-import "contracts/vault/interfaces/aave/AaveLendingPoolV2.sol";
-import "contracts/vault/interfaces/aave/AaveLendingPoolProviderV2.sol";
-import "contracts/vault/interfaces/aave/AaveIncentivesInterface.sol";
-import "contracts/vault/interfaces/aave/StakedAaveInterface.sol";
-import "contracts/libraries/math/IporMath.sol";
-import "contracts/libraries/errors/AssetManagementErrors.sol";
-import "contracts/security/IporOwnableUpgradeable.sol";
-import "contracts/vault/strategies/StrategyCore.sol";
+import "../../interfaces/IStrategyAave.sol";
+import "../interfaces/aave/AaveLendingPoolV2.sol";
+import "../interfaces/aave/AaveLendingPoolProviderV2.sol";
+import "../interfaces/aave/AaveIncentivesInterface.sol";
+import "../interfaces/aave/StakedAaveInterface.sol";
+import "../../libraries/math/IporMath.sol";
+import "../../libraries/errors/AssetManagementErrors.sol";
+import "./StrategyCore.sol";
 
 contract StrategyAave is StrategyCore, IStrategyAave {
     using SafeCast for uint256;

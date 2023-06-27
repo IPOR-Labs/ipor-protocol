@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 
-import "contracts/interfaces/types/IporTypes.sol";
-import "contracts/interfaces/types/CockpitTypes.sol";
+import "./types/CockpitTypes.sol";
 
 /// @title Interface of IPOR Protocol for interaction with external diagnostics web applications
 interface ICockpitDataProvider {

@@ -2,13 +2,13 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "contracts/amm/spread/ISpread90Days.sol";
-import "contracts/amm/spread/ISpread90DaysLens.sol";
-import "contracts/libraries/errors/IporOracleErrors.sol";
-import "contracts/libraries/errors/IporErrors.sol";
-import "contracts/amm/spread/DemandSpreadLibs.sol";
-import "contracts/amm/spread/SpreadStorageLibs.sol";
-import "contracts/amm/spread/OfferedRateCalculationLibs.sol";
+import "../../amm/spread/ISpread90Days.sol";
+import "../../amm/spread/ISpread90DaysLens.sol";
+import "../../libraries/errors/IporOracleErrors.sol";
+import "../../libraries/errors/IporErrors.sol";
+import "../../amm/spread/DemandSpreadLibs.sol";
+import "../../amm/spread/SpreadStorageLibs.sol";
+import "../../amm/spread/OfferedRateCalculationLibs.sol";
 
 contract Spread90Days is ISpread90Days, ISpread90DaysLens {
     using SafeCast for uint256;

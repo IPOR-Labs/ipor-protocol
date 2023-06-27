@@ -5,14 +5,11 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "contracts/interfaces/IIporOracle.sol";
-import "contracts/interfaces/IIporRiskManagementOracle.sol";
-import "contracts/interfaces/IOraclePublisher.sol";
-import "contracts/interfaces/IProxyImplementation.sol";
-import "contracts/libraries/errors/IporErrors.sol";
-import "contracts/libraries/errors/IporOracleErrors.sol";
-import "contracts/security/IporOwnableUpgradeable.sol";
+import "../interfaces/IOraclePublisher.sol";
+import "../interfaces/IProxyImplementation.sol";
+import "../libraries/errors/IporErrors.sol";
+import "../libraries/errors/IporOracleErrors.sol";
+import "../security/IporOwnableUpgradeable.sol";
 
 /**
  * @title IPOR Oracle Publisher contract

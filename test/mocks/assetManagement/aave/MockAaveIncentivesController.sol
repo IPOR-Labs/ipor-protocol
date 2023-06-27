@@ -3,8 +3,8 @@ pragma solidity 0.8.20;
 
 // interfaces
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "contracts/libraries/errors/IporErrors.sol";
-import "contracts/vault/interfaces/aave/IAaveIncentivesController.sol";
+import "../../../../contracts/libraries/errors/IporErrors.sol";
+import "../../../../contracts/vault/interfaces/aave/IAaveIncentivesController.sol";
 
 contract MockAaveIncentivesController is IAaveIncentivesController {
     uint256 private _rewards;

@@ -3,7 +3,6 @@ pragma solidity 0.8.20;
 import "forge-std/Test.sol";
 
 import "../builder/IporOracleBuilder.sol";
-import "test/mocks/EmptyRouterImplementation.sol";
 
 contract IporOracleFactory is Test {
     address internal _owner;

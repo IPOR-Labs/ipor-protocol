@@ -2,26 +2,23 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 
-import "contracts/interfaces/IIporOracle.sol";
-import "contracts/interfaces/IAmmStorage.sol";
-import "contracts/interfaces/IIporRiskManagementOracle.sol";
-import "contracts/interfaces/IAmmOpenSwapService.sol";
-import "contracts/interfaces/IAmmOpenSwapLens.sol";
-import "contracts/amm/spread/ISpread28Days.sol";
-import "contracts/amm/spread/ISpread60Days.sol";
-import "contracts/amm/spread/ISpread90Days.sol";
-import "contracts/libraries/Constants.sol";
-import "contracts/libraries/math/IporMath.sol";
-import "contracts/libraries/errors/IporErrors.sol";
-import "contracts/libraries/errors/AmmErrors.sol";
-import "contracts/libraries/errors/AmmErrors.sol";
-import "contracts/libraries/AmmLib.sol";
-import "contracts/amm/libraries/types/AmmInternalTypes.sol";
-import "contracts/amm/libraries/IporSwapLogic.sol";
+import "../interfaces/IIporOracle.sol";
+import "../interfaces/IAmmStorage.sol";
+import "../interfaces/IAmmOpenSwapService.sol";
+import "../interfaces/IAmmOpenSwapLens.sol";
+import "./spread/ISpread28Days.sol";
+import "./spread/ISpread60Days.sol";
+import "./spread/ISpread90Days.sol";
+import "../libraries/Constants.sol";
+import "../libraries/math/IporMath.sol";
+import "../libraries/errors/IporErrors.sol";
+import "../libraries/errors/AmmErrors.sol";
+import "../libraries/errors/AmmErrors.sol";
+import "../libraries/AmmLib.sol";
+import "./libraries/types/AmmInternalTypes.sol";
+import "./libraries/IporSwapLogic.sol";
 
 contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
     using Address for address;

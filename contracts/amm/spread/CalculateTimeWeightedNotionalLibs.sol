@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "contracts/libraries/math/IporMath.sol";
-import "contracts/amm/spread/SpreadTypes.sol";
-import "contracts/amm/spread/SpreadStorageLibs.sol";
+import "../../libraries/math/IporMath.sol";
+import "../../amm/spread/SpreadTypes.sol";
+import "../../amm/spread/SpreadStorageLibs.sol";
 
 library CalculateTimeWeightedNotionalLibs {
     /// @notice calculate amm lp depth

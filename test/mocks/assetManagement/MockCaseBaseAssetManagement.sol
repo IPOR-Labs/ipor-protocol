@@ -4,10 +4,9 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-import "contracts/libraries/errors/IporErrors.sol";
-import "contracts/libraries/Constants.sol";
-import "contracts/libraries/math/IporMath.sol";
-import "contracts/interfaces/IAssetManagement.sol";
+import "../../../contracts/libraries/errors/IporErrors.sol";
+import "../../../contracts/libraries/math/IporMath.sol";
+import "../../../contracts/interfaces/IAssetManagement.sol";
 
 contract MockCaseBaseAssetManagement is IAssetManagement {
     using SafeERC20 for IERC20;

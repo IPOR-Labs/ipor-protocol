@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.20;
 
-import "contracts/vault/interfaces/compound/WhitePaperInterestRateModel.sol";
-import "contracts/security/IporOwnable.sol";
+import "../../../../contracts/vault/interfaces/compound/WhitePaperInterestRateModel.sol";
+import "../../../../contracts/security/IporOwnable.sol";
 
 contract MockWhitePaper is WhitePaperInterestRateModel, IporOwnable {
     uint256 private _borrowRate;

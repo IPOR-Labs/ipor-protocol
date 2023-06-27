@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "contracts/libraries/Constants.sol";
-import "contracts/libraries/errors/IporErrors.sol";
-import "contracts/libraries/errors/AmmPoolsErrors.sol";
-import "contracts/libraries/StorageLib.sol";
+import "../libraries/errors/IporErrors.sol";
+import "../libraries/errors/AmmPoolsErrors.sol";
+import "../libraries/StorageLib.sol";
 
 library AmmConfigurationManager {
     /// @notice Emitted when new liquidator is added to the list of SwapLiquidators.

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "contracts/interfaces/IAmmGovernanceLens.sol";
-import "test/TestCommons.sol";
+import "../../contracts/interfaces/IAmmGovernanceLens.sol";
+import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
 
 contract AmmGovernanceServiceTest is TestCommons {

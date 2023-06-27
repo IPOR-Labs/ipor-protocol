@@ -4,20 +4,18 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "contracts/interfaces/types/IporTypes.sol";
-import "contracts/interfaces/types/IporOracleTypes.sol";
-import "contracts/interfaces/IIporOracle.sol";
-import "contracts/interfaces/IIporAlgorithm.sol";
-import "contracts/interfaces/IProxyImplementation.sol";
-import "contracts/libraries/errors/IporErrors.sol";
-import "contracts/libraries/errors/IporOracleErrors.sol";
-import "contracts/libraries/Constants.sol";
-import "contracts/libraries/math/IporMath.sol";
-import "contracts/libraries/math/InterestRates.sol";
-import "contracts/oracles/libraries/IporLogic.sol";
-import "contracts/security/IporOwnableUpgradeable.sol";
+import "../interfaces/types/IporTypes.sol";
+import "../interfaces/types/IporOracleTypes.sol";
+import "../interfaces/IIporOracle.sol";
+import "../interfaces/IProxyImplementation.sol";
+import "../libraries/errors/IporErrors.sol";
+import "../libraries/errors/IporOracleErrors.sol";
+import "../libraries/Constants.sol";
+import "../libraries/math/IporMath.sol";
+import "../libraries/math/InterestRates.sol";
+import "./libraries/IporLogic.sol";
+import "../security/IporOwnableUpgradeable.sol";
 
 /**
  * @title IPOR Index Oracle Contract

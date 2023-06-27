@@ -2,17 +2,15 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 
-import "contracts/interfaces/IAmmTreasury.sol";
-import "contracts/interfaces/IAmmStorage.sol";
-import "contracts/interfaces/IAmmGovernanceService.sol";
-import "contracts/interfaces/IAmmGovernanceLens.sol";
-import "contracts/libraries/math/IporMath.sol";
-import "contracts/libraries/errors/AmmPoolsErrors.sol";
-import "contracts/governance/AmmConfigurationManager.sol";
+import "../interfaces/IAmmTreasury.sol";
+import "../interfaces/IAmmStorage.sol";
+import "../interfaces/IAmmGovernanceService.sol";
+import "../interfaces/IAmmGovernanceLens.sol";
+import "../libraries/math/IporMath.sol";
+import "../libraries/errors/AmmPoolsErrors.sol";
+import "../governance/AmmConfigurationManager.sol";
 
 contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     using SafeERC20Upgradeable for IERC20Upgradeable;

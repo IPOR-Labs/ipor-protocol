@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "test/TestCommons.sol";
-import "contracts/amm/spread/SpreadRouter.sol";
+import "../TestCommons.sol";
+import "../../contracts/amm/spread/SpreadRouter.sol";
 import "./MockSpreadServices.sol";
-import "contracts/interfaces/types/IporTypes.sol";
+import "../../contracts/interfaces/types/IporTypes.sol";
 
 contract SpreadRouterTest is TestCommons {
     address internal _owner;

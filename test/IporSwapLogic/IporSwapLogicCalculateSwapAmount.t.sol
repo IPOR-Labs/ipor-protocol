@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "forge-std/console2.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
-import "test/TestCommons.sol";
-import "../utils/TestConstants.sol";
-import "test/mocks/MockIporSwapLogic.sol";
+import "../TestCommons.sol";
+import "../mocks/MockIporSwapLogic.sol";
 
 contract IporSwapLogicCalculateInterest is TestCommons, DataUtils {
     MockIporSwapLogic internal _iporSwapLogic;
