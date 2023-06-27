@@ -12,6 +12,7 @@ import "../../../contracts/amm/spread/Spread90Days.sol";
 import "../../../contracts/amm/spread/SpreadStorageLens.sol";
 import "../../../contracts/amm/spread/SpreadCloseSwapService.sol";
 import "../../mocks/MockSpreadCloseSwapService.sol";
+import "../../mocks/MockSpreadXDays.sol";
 
 contract SpreadRouterBuilder is Test {
     struct BuilderData {

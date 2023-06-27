@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
+import "forge-std/Test.sol";
 import "../../contracts/amm/spread/ISpreadCloseSwapService.sol";
 import "../../contracts/libraries/errors/IporErrors.sol";
 
-contract MockSpreadCloseSwapService is ISpreadCloseSwapService {
+contract MockSpreadCloseSwapService is Test, ISpreadCloseSwapService {
     address internal immutable _DAI;
     address internal immutable _USDC;
     address internal immutable _USDT;
