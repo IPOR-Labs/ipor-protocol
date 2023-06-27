@@ -14,7 +14,7 @@ import "../libraries/PaginationUtils.sol";
 import "./libraries/SoapIndicatorRebalanceLogic.sol";
 import "./libraries/types/StorageInternalTypes.sol";
 import "./libraries/types/AmmInternalTypes.sol";
-import "contracts/security/IporOwnableUpgradeable.sol";
+import "../security/IporOwnableUpgradeable.sol";
 
 //@dev all stored values related to tokens are in 18 decimals.
 contract AmmStorage is

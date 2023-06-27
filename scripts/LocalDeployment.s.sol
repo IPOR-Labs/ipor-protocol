@@ -32,7 +32,7 @@ import "../contracts/amm/spread/SpreadCloseSwapService.sol";
 import "../test/mocks/TestnetFaucet.sol";
 import "../contracts/tokens/IporToken.sol";
 
-import "./test/mocks/assetManagement/MockTestnetStrategy.sol";
+import "../test/mocks/assetManagement/MockTestnetStrategy.sol";
 
 // run:
 // $ anvil
