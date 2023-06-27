@@ -1713,7 +1713,6 @@ contract IporProtocolFactory is Test {
         if (iporProtocol.asset.decimals() == 18) {
             for (uint256 i; i < cfg.approvalsForUsers.length; ++i) {
                 vm.startPrank(cfg.approvalsForUsers[i]);
-                //                iporProtocol.asset.approve(address(iporProtocol.joseph), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
                 iporProtocol.asset.approve(address(iporProtocol.router), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
                 vm.stopPrank();
                 deal(address(iporProtocol.asset), cfg.approvalsForUsers[i], TestConstants.USER_SUPPLY_10MLN_18DEC);
@@ -1721,7 +1720,6 @@ contract IporProtocolFactory is Test {
         } else if (iporProtocol.asset.decimals() == 6) {
             for (uint256 i; i < cfg.approvalsForUsers.length; ++i) {
                 vm.startPrank(cfg.approvalsForUsers[i]);
-                //                iporProtocol.asset.approve(address(iporProtocol.joseph), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
                 iporProtocol.asset.approve(address(iporProtocol.router), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
                 vm.stopPrank();
                 deal(address(iporProtocol.asset), cfg.approvalsForUsers[i], TestConstants.USER_SUPPLY_10MLN_6DEC);
