@@ -426,4 +426,30 @@ contract IporProtocolRouterTest is TestCommons {
         assertEq(swaps[0].state, 1, "state");
         assertEq(swaps[0].buyer, _userOne, "buyer");
     }
+
+    function testReentranceInBatchSimpleCase() public {
+        //given
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
+        bytes memory calldataProvideLiquidity = abi.encodeWithSignature(
+            "provideLiquidityDai(address,uint256)",
+            _userOne,
+            TestConstants.USD_28_000_18DEC
+        );
+
+        bytes[] memory reentrancyCalls = new bytes[](1);
+        reentrancyCalls[0] = calldataProvideLiquidity;
+
+        bytes memory calldataOpenSwap = abi.encodeWithSignature("batchExecutor(bytes[])", reentrancyCalls);
+
+        bytes[] memory requestData = new bytes[](2);
+        requestData[0] = calldataProvideLiquidity;
+        requestData[1] = calldataOpenSwap;
+
+        vm.prank(_userOne);
+        //then
+        vm.expectRevert("IPOR_012");
+        // when
+        _iporProtocol.router.batchExecutor(requestData);
+    }
 }
