@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "forge-std/Test.sol";
-import "contracts/tokens/IpToken.sol";
-import "contracts/tokens/IporToken.sol";
-import "test/TestCommons.sol";
+import "../../contracts/tokens/IporToken.sol";
+import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
 
-contract IporTokenTest is Test, TestCommons {
+contract IporTokenTest is TestCommons {
     address internal _dao;
     address internal DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
 

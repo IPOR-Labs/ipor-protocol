@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "forge-std/Test.sol";
-import "test/TestCommons.sol";
-import "contracts/tokens/IpToken.sol";
+import "../TestCommons.sol";
+import "../../contracts/tokens/IpToken.sol";
 import "../utils/TestConstants.sol";
 
-contract IpTokenTest is Test, TestCommons {
+contract IpTokenTest is TestCommons {
     address internal _user1;
     address internal _user2;
     address internal _router;

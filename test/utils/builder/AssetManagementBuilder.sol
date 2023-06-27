@@ -1,16 +1,14 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "test/mocks/MockIporWeighted.sol";
-import "test/mocks/tokens/MockTestnetToken.sol";
-import "contracts/tokens/IvToken.sol";
-import "contracts/itf/ItfAssetManagement6D.sol";
+import "../../../contracts/tokens/IvToken.sol";
+import "../../../contracts/itf/ItfAssetManagement6D.sol";
 
 import "./BuilderUtils.sol";
 import "./StrategyAaveBuilder.sol";
 import "./StrategyCompoundBuilder.sol";
-import "contracts/itf/ItfAssetManagement.sol";
-import "contracts/itf/ItfAssetManagement18D.sol";
+import "../../../contracts/itf/ItfAssetManagement.sol";
+import "../../../contracts/itf/ItfAssetManagement18D.sol";
 import "forge-std/Test.sol";
 
 contract AssetManagementBuilder is Test {

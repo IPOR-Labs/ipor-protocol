@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 
-import "contracts/interfaces/types/AmmTypes.sol";
-
 /// @title Interface responsible for managing liquidity in the AMM Pools.
 interface IAmmPoolsService {
     /// @notice A struct to represent a pool configuration in AmmPoolsService.

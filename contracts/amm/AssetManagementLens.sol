@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "contracts/interfaces/IAssetManagementLens.sol";
-import "contracts/interfaces/IAssetManagement.sol";
-import "contracts/interfaces/IAssetManagementInternal.sol";
-import "contracts/interfaces/IStrategy.sol";
-import "contracts/libraries/errors/IporErrors.sol";
+import "../interfaces/IAssetManagementLens.sol";
+import "../interfaces/IAssetManagement.sol";
+import "../interfaces/IAssetManagementInternal.sol";
+import "../interfaces/IStrategy.sol";
+import "../libraries/errors/IporErrors.sol";
 
 contract AssetManagementLens is IAssetManagementLens {
     address internal immutable _usdt;

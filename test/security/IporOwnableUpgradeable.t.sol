@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "forge-std/Test.sol";
-import "test/TestCommons.sol";
-import "test/security/IporOwnableUpgradeableInstance.sol";
-import "contracts/libraries/errors/IporErrors.sol";
+import "../TestCommons.sol";
+import "../security/IporOwnableUpgradeableInstance.sol";
+import "../../contracts/libraries/errors/IporErrors.sol";
 
 contract IporOwnableUpgradeableTest is TestCommons {
     IporOwnableUpgradeableInstance internal _iporOwnableUpgradeable;

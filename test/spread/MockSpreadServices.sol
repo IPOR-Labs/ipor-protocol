@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "contracts/amm/spread/ISpread28Days.sol";
-import "contracts/amm/spread/ISpread60Days.sol";
-import "contracts/amm/spread/ISpread90Days.sol";
-import "contracts/amm/spread/ISpreadCloseSwapService.sol";
-import "contracts/amm/spread/ISpread28DaysLens.sol";
-import "contracts/amm/spread/ISpread60DaysLens.sol";
-import "contracts/amm/spread/ISpread90DaysLens.sol";
+import "../../contracts/amm/spread/ISpread28Days.sol";
+import "../../contracts/amm/spread/ISpread60Days.sol";
+import "../../contracts/amm/spread/ISpread90Days.sol";
+import "../../contracts/amm/spread/ISpreadCloseSwapService.sol";
+import "../../contracts/amm/spread/ISpread28DaysLens.sol";
+import "../../contracts/amm/spread/ISpread60DaysLens.sol";
+import "../../contracts/amm/spread/ISpread90DaysLens.sol";
 
 contract MockSpreadServices is
     ISpread28Days,

@@ -1,16 +1,14 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "test/TestCommons.sol";
+import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
-import "contracts/oracles/IporRiskManagementOracle.sol";
-import "contracts/interfaces/IIporRiskManagementOracle.sol";
-import "contracts/interfaces/types/IporRiskManagementOracleTypes.sol";
-import "contracts/oracles/OraclePublisher.sol";
+import "../../contracts/oracles/IporRiskManagementOracle.sol";
+import "../../contracts/interfaces/types/IporRiskManagementOracleTypes.sol";
+import "../../contracts/oracles/OraclePublisher.sol";
 
-contract OraclePublisherTest is Test, TestCommons {
+contract OraclePublisherTest is TestCommons {
     uint256 private _blockTimestamp = 1625097600;
     uint256 private _blockTimestamp2 = _blockTimestamp + 1 days;
 

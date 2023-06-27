@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "forge-std/Test.sol";
-import "test/TestCommons.sol";
+import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
-import "contracts/interfaces/types/AmmTypes.sol";
+import "../../contracts/interfaces/types/AmmTypes.sol";
 
 contract AmmEventsTest is TestCommons {
     IporProtocolFactory.IporProtocolConfig private _cfg;

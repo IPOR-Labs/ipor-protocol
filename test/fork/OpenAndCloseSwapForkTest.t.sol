@@ -3,8 +3,6 @@ pragma solidity 0.8.20;
 
 import "./TestForkCommons.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "contracts/interfaces/IAmmGovernanceService.sol";
-import "contracts/interfaces/IIpToken.sol";
 
 contract OpenSwapForkTest is TestForkCommons {
     function test28D() public {

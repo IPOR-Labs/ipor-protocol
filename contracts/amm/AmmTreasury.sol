@@ -1,22 +1,19 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "contracts/interfaces/IAmmTreasury.sol";
-import "contracts/interfaces/IAmmStorage.sol";
-import "contracts/interfaces/IAssetManagement.sol";
-import "contracts/interfaces/IProxyImplementation.sol";
-import "contracts/libraries/Constants.sol";
-import "contracts/libraries/errors/IporErrors.sol";
-import "contracts/security/IporOwnableUpgradeable.sol";
+import "../interfaces/IAmmTreasury.sol";
+import "../interfaces/IAmmStorage.sol";
+import "../interfaces/IAssetManagement.sol";
+import "../interfaces/IProxyImplementation.sol";
+import "../libraries/Constants.sol";
+import "../libraries/errors/IporErrors.sol";
+import "../security/IporOwnableUpgradeable.sol";
 
 contract AmmTreasury is
     Initializable,
