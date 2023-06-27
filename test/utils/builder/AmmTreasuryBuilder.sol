@@ -2,9 +2,10 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "./BuilderUtils.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "forge-std/Test.sol";
-import "test/mocks/EmptyAmmTreasuryImplementation.sol";
+import "../../mocks/EmptyAmmTreasuryImplementation.sol";
+import "../../../contracts/amm/AmmTreasury.sol";
 
 contract AmmTreasuryBuilder is Test {
     struct BuilderData {

@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "test/TestCommons.sol";
-import "test/spread/SpreadBaseTestUtils.sol";
-import "test/spread/SpreadTestSystem.sol";
-import "contracts/amm/spread/ISpreadCloseSwapService.sol";
-import "contracts/amm/spread/ISpreadStorageLens.sol";
-import "contracts/amm/libraries/types/AmmInternalTypes.sol";
+import "./SpreadBaseTestUtils.sol";
+import "./SpreadTestSystem.sol";
+import "../../contracts/amm/spread/ISpreadCloseSwapService.sol";
+import "../../contracts/amm/spread/ISpreadStorageLens.sol";
+import "../../contracts/amm/libraries/types/AmmInternalTypes.sol";
 
 contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
     using SafeCast for uint256;

@@ -2,18 +2,18 @@
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
-import "contracts/interfaces/types/AmmTypes.sol";
-import "contracts/interfaces/types/AmmStorageTypes.sol";
-import "contracts/interfaces/IIpToken.sol";
-import "contracts/interfaces/IIporOracle.sol";
-import "contracts/interfaces/IAmmStorage.sol";
-import "contracts/interfaces/IAssetManagement.sol";
-import "contracts/interfaces/IIporRiskManagementOracle.sol";
-import "contracts/libraries/Constants.sol";
-import "contracts/libraries/math/IporMath.sol";
-import "contracts/libraries/errors/IporErrors.sol";
-import "contracts/libraries/errors/AmmErrors.sol";
-import "contracts/amm/libraries/SoapIndicatorLogic.sol";
+import "../interfaces/types/AmmTypes.sol";
+import "../interfaces/types/AmmStorageTypes.sol";
+import "../interfaces/IIpToken.sol";
+import "../interfaces/IIporOracle.sol";
+import "../interfaces/IAmmStorage.sol";
+import "../interfaces/IAssetManagement.sol";
+import "../interfaces/IIporRiskManagementOracle.sol";
+import "./Constants.sol";
+import "./math/IporMath.sol";
+import "./errors/IporErrors.sol";
+import "./errors/AmmErrors.sol";
+import "../amm/libraries/SoapIndicatorLogic.sol";
 
 library AmmLib {
     using SafeCast for uint256;

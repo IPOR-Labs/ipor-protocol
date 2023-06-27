@@ -4,22 +4,22 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
-import "contracts/interfaces/IAmmSwapsLens.sol";
-import "contracts/interfaces/IAmmPoolsLens.sol";
-import "contracts/interfaces/IAssetManagementLens.sol";
-import "contracts/interfaces/IPowerTokenLens.sol";
-import "contracts/interfaces/ILiquidityMiningLens.sol";
-import "contracts/interfaces/IAmmGovernanceService.sol";
-import "contracts/interfaces/IAmmGovernanceLens.sol";
-import "contracts/interfaces/IAmmOpenSwapLens.sol";
-import "contracts/interfaces/IAmmOpenSwapService.sol";
-import "contracts/interfaces/IAmmCloseSwapService.sol";
-import "contracts/interfaces/IAmmPoolsService.sol";
-import "contracts/interfaces/IPowerTokenFlowsService.sol";
-import "contracts/interfaces/IPowerTokenStakeService.sol";
-import "contracts/interfaces/IProxyImplementation.sol";
-import "contracts/libraries/errors/IporErrors.sol";
-import "contracts/router/AccessControl.sol";
+import "../interfaces/IAmmSwapsLens.sol";
+import "../interfaces/IAmmPoolsLens.sol";
+import "../interfaces/IAssetManagementLens.sol";
+import "../interfaces/IPowerTokenLens.sol";
+import "../interfaces/ILiquidityMiningLens.sol";
+import "../interfaces/IAmmGovernanceService.sol";
+import "../interfaces/IAmmGovernanceLens.sol";
+import "../interfaces/IAmmOpenSwapLens.sol";
+import "../interfaces/IAmmOpenSwapService.sol";
+import "../interfaces/IAmmCloseSwapService.sol";
+import "../interfaces/IAmmPoolsService.sol";
+import "../interfaces/IPowerTokenFlowsService.sol";
+import "../interfaces/IPowerTokenStakeService.sol";
+import "../interfaces/IProxyImplementation.sol";
+import "../libraries/errors/IporErrors.sol";
+import "./AccessControl.sol";
 
 contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementation {
     using Address for address;

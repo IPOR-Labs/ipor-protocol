@@ -1,12 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "forge-std/Test.sol";
-import "test/TestCommons.sol";
-import "test/mocks/tokens/MockTestnetToken.sol";
-import "contracts/amm/AmmStorage.sol";
+import "../TestCommons.sol";
 
-contract AmmPoolsServiceOnlyRebalanceTest is Test, TestCommons {
+contract AmmPoolsServiceOnlyRebalanceTest is TestCommons {
     IporProtocolFactory.IporProtocolConfig private _cfg;
     BuilderUtils.IporProtocol internal _iporProtocol;
 

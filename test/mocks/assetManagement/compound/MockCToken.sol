@@ -5,10 +5,9 @@ pragma solidity 0.8.20;
 // interfaces
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "contracts/libraries/errors/IporErrors.sol";
-import "contracts/libraries/Constants.sol";
-import "contracts/libraries/math/IporMath.sol";
-import "contracts/vault/interfaces/compound/CErc20Mock.sol";
+import "../../../../contracts/libraries/errors/IporErrors.sol";
+import "../../../../contracts/libraries/math/IporMath.sol";
+import "../../../../contracts/vault/interfaces/compound/CErc20Mock.sol";
 
 contract MockCToken is ERC20, CErc20Mock {
     address private _asset;

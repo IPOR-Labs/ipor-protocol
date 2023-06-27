@@ -4,9 +4,8 @@ pragma solidity 0.8.20;
 import "forge-std/Test.sol";
 import "./TestCommons.sol";
 import "./utils/TestConstants.sol";
-import "contracts/amm/libraries/types/StorageInternalTypes.sol";
-import "contracts/amm/libraries/SoapIndicatorLogic.sol";
-import "contracts/amm/libraries/SoapIndicatorRebalanceLogic.sol";
+import "../contracts/amm/libraries/SoapIndicatorLogic.sol";
+import "../contracts/amm/libraries/SoapIndicatorRebalanceLogic.sol";
 
 contract SoapIndicatorLogicTest is TestCommons {
     struct ExpectedBalances {

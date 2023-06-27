@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "test/TestCommons.sol";
+import "../TestCommons.sol";
 
 abstract contract SpreadBaseTestUtils is TestCommons {
     address internal _dai;

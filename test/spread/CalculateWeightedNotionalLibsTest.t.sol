@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "@openzeppelin/contracts/utils/Strings.sol";
-import "contracts/amm/spread/CalculateTimeWeightedNotionalLibs.sol";
-import "test/TestCommons.sol";
+import "../../contracts/amm/spread/CalculateTimeWeightedNotionalLibs.sol";
+import "../TestCommons.sol";
 
 contract CalculateWeightedNotionalLibsTest is TestCommons {
     SpreadStorageLibs.StorageId internal _storageIdIterationItem;

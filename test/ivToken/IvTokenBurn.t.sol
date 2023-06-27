@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "forge-std/Test.sol";
-import "test/TestCommons.sol";
-import "contracts/libraries/Constants.sol";
-import "contracts/tokens/IvToken.sol";
+import "../TestCommons.sol";
+import "../../contracts/tokens/IvToken.sol";
 
 contract IvTokenBurnTest is TestCommons {
     IvToken internal _ivToken;

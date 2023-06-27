@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
-import "contracts/libraries/math/InterestRates.sol";
+import "../../../contracts/libraries/math/InterestRates.sol";
 
 contract InterestRatesTest is Test {
     using InterestRates for uint256;

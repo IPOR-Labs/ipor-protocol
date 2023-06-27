@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "contracts/interfaces/types/IporTypes.sol";
-import "contracts/interfaces/types/AmmTypes.sol";
+import "../../../interfaces/types/IporTypes.sol";
+import "../../../interfaces/types/AmmTypes.sol";
 
 /// @notice The types used in the AmmTreasury's interface.
 /// @dev All values, where applicable, are represented in 18 decimals.

@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
-import "contracts/libraries/StorageLib.sol";
 
 /// @title Interface for interacting with the AmmGovernanceService. Interface responsible for managing AMM Pools.
 interface IAmmGovernanceService {

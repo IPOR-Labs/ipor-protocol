@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "contracts/amm/spread/SpreadStorageLibs.sol";
-import "contracts/amm/spread/SpreadTypes.sol";
+import "../../contracts/amm/spread/SpreadStorageLibs.sol";
+import "../../contracts/amm/spread/SpreadTypes.sol";
 
 contract MockSpreadStorage {
     function saveWeightedNotional(

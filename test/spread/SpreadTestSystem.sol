@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "test/TestCommons.sol";
-import "contracts/amm/spread/Spread28Days.sol";
-import "contracts/amm/spread/Spread60Days.sol";
-import "contracts/amm/spread/Spread90Days.sol";
-import "contracts/amm/spread/SpreadStorageLens.sol";
-import "contracts/amm/spread/SpreadRouter.sol";
-import "contracts/amm/spread/SpreadCloseSwapService.sol";
-import "contracts/amm/AmmStorage.sol";
+import "../TestCommons.sol";
+import "../../contracts/amm/spread/Spread28Days.sol";
+import "../../contracts/amm/spread/Spread60Days.sol";
+import "../../contracts/amm/spread/Spread90Days.sol";
+import "../../contracts/amm/spread/SpreadStorageLens.sol";
+import "../../contracts/amm/spread/SpreadRouter.sol";
+import "../../contracts/amm/spread/SpreadCloseSwapService.sol";
+import "../../contracts/amm/AmmStorage.sol";
 
 contract SpreadTestSystem is TestCommons {
     address public owner;

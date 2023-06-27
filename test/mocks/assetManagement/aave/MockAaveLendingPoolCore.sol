@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 // interfaces
-import "contracts/vault/interfaces/aave/AaveLendingPoolCore.sol";
+import "../../../../contracts/vault/interfaces/aave/AaveLendingPoolCore.sol";
 
 contract MockAaveLendingPoolCore is AaveLendingPoolCore {
     address private _reserve;

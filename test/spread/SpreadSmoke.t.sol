@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "forge-std/Test.sol";
-import "test/TestCommons.sol";
-import "test/spread/SpreadTestSystem.sol";
+import "../TestCommons.sol";
+import "./SpreadTestSystem.sol";
 
 contract SpreadSmokeTest is TestCommons {
     SpreadTestSystem internal _spreadTestSystem;

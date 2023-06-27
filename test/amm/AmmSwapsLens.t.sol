@@ -1,12 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "test/TestCommons.sol";
-import "../utils/TestConstants.sol";
-import "test/mocks/tokens/MockTestnetToken.sol";
-import "contracts/tokens/IpToken.sol";
-import "contracts/interfaces/types/IporTypes.sol";
-import "contracts/interfaces/types/AmmTypes.sol";
+import "../TestCommons.sol";
+import "../../contracts/interfaces/types/IporTypes.sol";
+import "../../contracts/interfaces/types/AmmTypes.sol";
 
 contract AmmSwapsLensTest is TestCommons {
     IporProtocolFactory.IporProtocolConfig private _cfg;

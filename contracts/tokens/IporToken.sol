@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "contracts/libraries/errors/IporErrors.sol";
+import "../libraries/errors/IporErrors.sol";
 
 /// @title IPOR Token in standard ERC20.
 contract IporToken is ERC20 {

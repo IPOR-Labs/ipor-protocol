@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "test/TestCommons.sol";
-import "test/utils/TestConstants.sol";
-import "contracts/amm/AmmStorage.sol";
-import "contracts/interfaces/types/AmmTypes.sol";
-import "contracts/interfaces/types/AmmStorageTypes.sol";
-import "contracts/interfaces/types/IporTypes.sol";
+import "../TestCommons.sol";
+import "../utils/TestConstants.sol";
+import "../../contracts/amm/AmmStorage.sol";
+import "../../contracts/interfaces/types/AmmTypes.sol";
+import "../../contracts/interfaces/types/AmmStorageTypes.sol";
 
 contract AmmStorageTest is TestCommons {
     IporProtocolFactory.IporProtocolConfig private _cfg;

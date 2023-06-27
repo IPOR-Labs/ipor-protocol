@@ -4,12 +4,11 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "contracts/interfaces/IIporRiskManagementOracle.sol";
-import "contracts/interfaces/IProxyImplementation.sol";
-import "contracts/libraries/errors/IporRiskManagementOracleErrors.sol";
-import "contracts/libraries/Constants.sol";
-import "contracts/oracles/libraries/IporRiskManagementOracleStorageTypes.sol";
-import "contracts/security/IporOwnableUpgradeable.sol";
+import "../interfaces/IIporRiskManagementOracle.sol";
+import "../interfaces/IProxyImplementation.sol";
+import "../libraries/errors/IporRiskManagementOracleErrors.sol";
+import "./libraries/IporRiskManagementOracleStorageTypes.sol";
+import "../security/IporOwnableUpgradeable.sol";
 
 /**
  * @title Ipor Risk Management Oracle contract

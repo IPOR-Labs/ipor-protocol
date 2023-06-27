@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "contracts/interfaces/types/AmmTypes.sol";
-import "contracts/amm/libraries/types/AmmInternalTypes.sol";
-import "contracts/amm/spread/SpreadTypes.sol";
+import "../../amm/libraries/types/AmmInternalTypes.sol";
 
 interface ISpreadCloseSwapService {
     /// @notice Updates the time-weighted notional on swap closure.
