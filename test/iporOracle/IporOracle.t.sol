@@ -143,7 +143,6 @@ contract IporOracleTest is TestCommons {
         assertEq(_iporOracle.calculateAccruedIbtPrice(address(_daiTestnetToken), block.timestamp), 1030454533953516858); //lost precision at 18th decimal place
     }
 
-
     function testShouldCalculateDifferentInterestBearingTokenPriceOneSecondPeriodSameIporIndexValue18DecimalsAsset()
         public
     {
@@ -663,5 +662,62 @@ contract IporOracleTest is TestCommons {
         );
         (bool status, ) = address(_iporOracle).call{value: msg.value}("");
         assertTrue(!status);
+    }
+
+    function testShouldCalculateDifferentInterestBearingTokenPriceOneSecondPeriodSameIporIndexValue6DecimalsAsset()
+        public
+    {
+        // given
+        uint256 updateDate = _blockTimestamp + 60 * 60;
+
+        vm.warp(updateDate);
+        _iporOracle.updateIndex(address(_usdcTestnetToken), 5e16);
+
+        updateDate++;
+
+        (uint256 iporIndexBefore, uint256 ibtPriceBefore, ) = _iporOracle.getIndex(address(_usdcTestnetToken));
+
+        vm.warp(updateDate);
+
+        // when
+        _iporOracle.updateIndex(address(_usdcTestnetToken), 5e16);
+
+        // then
+        (uint256 iporIndexAfter, uint256 ibtPriceAfter, ) = _iporOracle.getIndex(address(_usdcTestnetToken));
+
+        assertEq(iporIndexBefore, 5e16);
+        assertEq(iporIndexAfter, 5e16);
+
+        assertEq(iporIndexAfter, iporIndexBefore);
+
+        assertEq(ibtPriceBefore != ibtPriceAfter, true);
+    }
+
+    function testShouldCalculateNextAfterNextInterestBearingTokenPriceHalfYearAndThreeMonthsSnapshots() public {
+        // given
+        uint256 indexValueOne = 5e16;
+        uint256 indexValueTwo = 6e16;
+        uint256 iporIndexThirdValue = 7e16;
+        uint256 expectedIbtPrice = 1040810774192388227;
+
+        uint256 updateDate = _blockTimestamp + 60 * 60;
+        vm.warp(updateDate);
+        _iporOracle.updateIndex(address(_usdtTestnetToken), indexValueOne);
+
+        updateDate += (365 * 24 * 60 * 60) / 2;
+        vm.warp(updateDate);
+        _iporOracle.updateIndex(address(_usdtTestnetToken), indexValueTwo);
+
+        updateDate += (365 * 24 * 60 * 60) / 4;
+        vm.warp(updateDate);
+
+        // when
+        _iporOracle.updateIndex(address(_usdtTestnetToken), iporIndexThirdValue);
+
+        // then
+        (uint256 iporIndexAfter, uint256 ibtPriceAfter, ) = _iporOracle.getIndex(address(_usdtTestnetToken));
+
+        assertEq(iporIndexAfter, iporIndexThirdValue);
+        assertEq(ibtPriceAfter, expectedIbtPrice);
     }
 }
