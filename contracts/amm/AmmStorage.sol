@@ -15,6 +15,7 @@ import "./libraries/SoapIndicatorRebalanceLogic.sol";
 import "./libraries/types/StorageInternalTypes.sol";
 import "./libraries/types/AmmInternalTypes.sol";
 import "../security/IporOwnableUpgradeable.sol";
+import "../libraries/IporContractValidator.sol";
 
 //@dev all stored values related to tokens are in 18 decimals.
 contract AmmStorage is
@@ -25,11 +26,12 @@ contract AmmStorage is
     IAmmStorage,
     IProxyImplementation
 {
+    using IporContractValidator for address;
     using SafeCast for uint256;
     using SoapIndicatorRebalanceLogic for AmmStorageTypes.SoapIndicators;
 
-    address private immutable IPOR_PROTOCOL_ROUTER;
-    address private immutable AMM_TREASURY;
+    address private immutable _iporProtocolRouter;
+    address private immutable _ammTreasury;
 
     uint32 private _lastSwapId;
 
@@ -50,28 +52,19 @@ contract AmmStorage is
     mapping(IporTypes.SwapTenor => AmmInternalTypes.OpenSwapList) private _openedSwapsReceiveFixed;
 
     modifier onlyRouter() {
-        require(_msgSender() == IPOR_PROTOCOL_ROUTER, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
+        require(_msgSender() == _iporProtocolRouter, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
         _;
     }
 
     modifier onlyAmmTreasury() {
-        require(_msgSender() == AMM_TREASURY, IporErrors.CALLER_NOT_AMM_TREASURY);
+        require(_msgSender() == _ammTreasury, IporErrors.CALLER_NOT_AMM_TREASURY);
         _;
     }
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(address iporProtocolRouterInput, address ammTreasury) {
-        require(
-            iporProtocolRouterInput != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " IPOR protocol router address cannot be 0")
-        );
-        require(
-            ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " AMM treasury address cannot be 0")
-        );
-
-        IPOR_PROTOCOL_ROUTER = iporProtocolRouterInput;
-        AMM_TREASURY = ammTreasury;
+        _iporProtocolRouter = iporProtocolRouterInput.checkAddress();
+        _ammTreasury = ammTreasury.checkAddress();
         _disableInitializers();
     }
 

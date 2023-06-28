@@ -15,8 +15,10 @@ import "../libraries/math/IporMath.sol";
 import "../libraries/AssetManagementLogic.sol";
 import "../libraries/AmmLib.sol";
 import "../governance/AmmConfigurationManager.sol";
+import "../libraries/IporContractValidator.sol";
 
 contract AmmPoolsService is IAmmPoolsService {
+    using IporContractValidator for address;
     using SafeCast for int256;
     using SafeCast for uint256;
     using SafeCast for uint32;
@@ -58,67 +60,34 @@ contract AmmPoolsService is IAmmPoolsService {
         AmmPoolsServicePoolConfiguration memory daiPoolCfg,
         address iporOracle
     ) {
-        require(usdtPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool asset"));
-        require(usdtPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ipToken"));
-        require(usdtPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammStorage"));
-        require(
-            usdtPoolCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammTreasury")
-        );
-        require(
-            usdtPoolCfg.assetManagement != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool assetManagement")
-        );
-
-        require(usdcPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool asset"));
-        require(usdcPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ipToken"));
-        require(usdcPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammStorage"));
-        require(
-            usdcPoolCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammTreasury")
-        );
-        require(
-            usdcPoolCfg.assetManagement != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool assetManagement")
-        );
-
-        require(daiPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool asset"));
-        require(daiPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ipToken"));
-        require(daiPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammStorage"));
-        require(daiPoolCfg.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammTreasury"));
-        require(
-            daiPoolCfg.assetManagement != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " DAI pool assetManagement")
-        );
-
-        _usdt = usdtPoolCfg.asset;
+        _usdt = usdtPoolCfg.asset.checkAddress();
         _usdtDecimals = usdtPoolCfg.decimals;
-        _usdtIpToken = usdtPoolCfg.ipToken;
-        _usdtAmmStorage = usdtPoolCfg.ammStorage;
-        _usdtAmmTreasury = usdtPoolCfg.ammTreasury;
-        _usdtAssetManagement = usdtPoolCfg.assetManagement;
+        _usdtIpToken = usdtPoolCfg.ipToken.checkAddress();
+        _usdtAmmStorage = usdtPoolCfg.ammStorage.checkAddress();
+        _usdtAmmTreasury = usdtPoolCfg.ammTreasury.checkAddress();
+        _usdtAssetManagement = usdtPoolCfg.assetManagement.checkAddress();
         _usdtRedeemFeeRate = usdtPoolCfg.redeemFeeRate;
         _usdtRedeemLpMaxCollateralRatio = usdtPoolCfg.redeemLpMaxCollateralRatio;
 
-        _usdc = usdcPoolCfg.asset;
+        _usdc = usdcPoolCfg.asset.checkAddress();
         _usdcDecimals = usdcPoolCfg.decimals;
-        _usdcIpToken = usdcPoolCfg.ipToken;
-        _usdcAmmStorage = usdcPoolCfg.ammStorage;
-        _usdcAmmTreasury = usdcPoolCfg.ammTreasury;
-        _usdcAssetManagement = usdcPoolCfg.assetManagement;
+        _usdcIpToken = usdcPoolCfg.ipToken.checkAddress();
+        _usdcAmmStorage = usdcPoolCfg.ammStorage.checkAddress();
+        _usdcAmmTreasury = usdcPoolCfg.ammTreasury.checkAddress();
+        _usdcAssetManagement = usdcPoolCfg.assetManagement.checkAddress();
         _usdcRedeemFeeRate = usdcPoolCfg.redeemFeeRate;
         _usdcRedeemLpMaxCollateralRatio = usdcPoolCfg.redeemLpMaxCollateralRatio;
 
-        _dai = daiPoolCfg.asset;
+        _dai = daiPoolCfg.asset.checkAddress();
         _daiDecimals = daiPoolCfg.decimals;
-        _daiIpToken = daiPoolCfg.ipToken;
-        _daiAmmStorage = daiPoolCfg.ammStorage;
-        _daiAmmTreasury = daiPoolCfg.ammTreasury;
-        _daiAssetManagement = daiPoolCfg.assetManagement;
+        _daiIpToken = daiPoolCfg.ipToken.checkAddress();
+        _daiAmmStorage = daiPoolCfg.ammStorage.checkAddress();
+        _daiAmmTreasury = daiPoolCfg.ammTreasury.checkAddress();
+        _daiAssetManagement = daiPoolCfg.assetManagement.checkAddress();
         _daiRedeemFeeRate = daiPoolCfg.redeemFeeRate;
         _daiRedeemLpMaxCollateralRatio = daiPoolCfg.redeemLpMaxCollateralRatio;
 
-        _iporOracle = iporOracle;
+        _iporOracle = iporOracle.checkAddress();
     }
 
     function getAmmPoolServiceConfiguration(

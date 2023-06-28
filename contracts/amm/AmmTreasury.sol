@@ -14,6 +14,7 @@ import "../interfaces/IProxyImplementation.sol";
 import "../libraries/Constants.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../security/IporOwnableUpgradeable.sol";
+import "../libraries/IporContractValidator.sol";
 
 contract AmmTreasury is
     Initializable,
@@ -24,6 +25,7 @@ contract AmmTreasury is
     IAmmTreasury,
     IProxyImplementation
 {
+    using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     address internal immutable _asset;
@@ -33,19 +35,11 @@ contract AmmTreasury is
     address internal immutable _router;
 
     constructor(address asset, uint256 decimals, address ammStorage, address assetManagement, address router) {
-        require(asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " asset address cannot be 0"));
-        require(ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " AMM storage address cannot be 0"));
-        require(
-            assetManagement != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " asset management address cannot be 0")
-        );
-        require(router != address(0), string.concat(IporErrors.WRONG_ADDRESS, " router address cannot be 0"));
-
-        _asset = asset;
+        _asset = asset.checkAddress();
         _decimals = decimals;
-        _ammStorage = ammStorage;
-        _assetManagement = assetManagement;
-        _router = router;
+        _ammStorage = ammStorage.checkAddress();
+        _assetManagement = assetManagement.checkAddress();
+        _router = router.checkAddress();
 
         _disableInitializers();
     }

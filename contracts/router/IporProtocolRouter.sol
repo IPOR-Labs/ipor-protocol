@@ -19,10 +19,12 @@ import "../interfaces/IPowerTokenFlowsService.sol";
 import "../interfaces/IPowerTokenStakeService.sol";
 import "../interfaces/IProxyImplementation.sol";
 import "../libraries/errors/IporErrors.sol";
+import "../libraries/IporContractValidator.sol";
 import "./AccessControl.sol";
 
 contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementation {
     using Address for address;
+    using IporContractValidator for address;
 
     uint256 private constant SINGLE_OPERATION = 0;
     uint256 private constant BATCH_OPERATION = 1;
@@ -54,17 +56,17 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
     }
 
     constructor(DeployedContracts memory deployedContracts) {
-        _ammSwapsLens = _checkAddress(deployedContracts.ammSwapsLens);
-        _ammPoolsLens = _checkAddress(deployedContracts.ammPoolsLens);
-        _ammManagementLens = _checkAddress(deployedContracts.assetManagementLens);
-        _ammOpenSwapService = _checkAddress(deployedContracts.ammOpenSwapService);
-        _ammCloseSwapService = _checkAddress(deployedContracts.ammCloseSwapService);
-        _ammPoolsService = _checkAddress(deployedContracts.ammPoolsService);
-        _ammGovernanceService = _checkAddress(deployedContracts.ammGovernanceService);
-        _liquidityMiningLens = _checkAddress(deployedContracts.liquidityMiningLens);
-        _powerTokenLens = _checkAddress(deployedContracts.powerTokenLens);
-        _flowService = _checkAddress(deployedContracts.flowService);
-        _stakeService = _checkAddress(deployedContracts.stakeService);
+        _ammSwapsLens = deployedContracts.ammSwapsLens.checkAddress();
+        _ammPoolsLens = deployedContracts.ammPoolsLens.checkAddress();
+        _ammManagementLens = deployedContracts.assetManagementLens.checkAddress();
+        _ammOpenSwapService = deployedContracts.ammOpenSwapService.checkAddress();
+        _ammCloseSwapService = deployedContracts.ammCloseSwapService.checkAddress();
+        _ammPoolsService = deployedContracts.ammPoolsService.checkAddress();
+        _ammGovernanceService = deployedContracts.ammGovernanceService.checkAddress();
+        _liquidityMiningLens = deployedContracts.liquidityMiningLens.checkAddress();
+        _powerTokenLens = deployedContracts.powerTokenLens.checkAddress();
+        _flowService = deployedContracts.flowService.checkAddress();
+        _stakeService = deployedContracts.stakeService.checkAddress();
         _disableInitializers();
     }
 
@@ -313,11 +315,6 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
                 return(0, returndatasize())
             }
         }
-    }
-
-    function _checkAddress(address addr) private pure returns (address) {
-        require(addr != address(0), IporErrors.WRONG_ADDRESS);
-        return addr;
     }
 
     //solhint-disable no-empty-blocks
