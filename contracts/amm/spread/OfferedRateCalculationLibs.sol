@@ -8,12 +8,12 @@ library OfferedRateCalculationLibs {
     using SafeCast for int256;
 
     function calculatePayFixedOfferedRate(
-        uint256 indexValue,
-        int256 baseSpread,
+        uint256 iporIndexValue,
+        int256 baseSpreadPerLeg,
         uint256 demandSpread,
         uint256 payFixedMinCap
     ) internal pure returns (uint256 offeredRate) {
-        int256 baseOfferedRate = indexValue.toInt256() + baseSpread;
+        int256 baseOfferedRate = iporIndexValue.toInt256() + baseSpreadPerLeg;
 
         if (baseOfferedRate > payFixedMinCap.toInt256()) {
             offeredRate = baseOfferedRate.toUint256() + demandSpread;
@@ -23,12 +23,12 @@ library OfferedRateCalculationLibs {
     }
 
     function calculateReceiveFixedOfferedRate(
-        uint256 indexValue,
-        int256 baseSpread,
+        uint256 iporIndexValue,
+        int256 baseSpreadPerLeg,
         uint256 demandSpread,
         uint256 receiveFixedMaxCap
     ) internal pure returns (uint256 offeredRate) {
-        int256 baseOfferedRate = indexValue.toInt256() + baseSpread;
+        int256 baseOfferedRate = iporIndexValue.toInt256() + baseSpreadPerLeg;
 
         int256 temp;
         if (baseOfferedRate < receiveFixedMaxCap.toInt256()) {

@@ -42,7 +42,7 @@ contract AmmSwapsLensTest is TestCommons {
         assertEq(openSwapCfg.maxCollateralRatio, 9 * 1e17, "maxCollateralRatio");
         assertEq(openSwapCfg.maxCollateralRatioPerLeg, 48 * 1e16, "maxCollateralRatioPerLeg");
         assertEq(openSwapCfg.maxLeveragePerLeg, 1000 * 1e18, "maxLeveragePerLeg");
-        assertEq(openSwapCfg.baseSpread, 1e15, "spread");
-        assertEq(openSwapCfg.fixedRateCap, 2e16, "fixedRateCap");
+        assertEq(openSwapCfg.baseSpreadPerLeg, 1e15, "spread");
+        assertEq(openSwapCfg.fixedRateCapPerLeg, 2e16, "fixedRateCap");
     }
 }

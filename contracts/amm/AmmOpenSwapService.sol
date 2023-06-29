@@ -486,14 +486,14 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                     bosStruct.notional,
                     riskIndicators.maxLeveragePerLeg,
                     riskIndicators.maxCollateralRatioPerLeg,
-                    riskIndicators.baseSpread,
+                    riskIndicators.baseSpreadPerLeg,
                     balance.totalCollateralPayFixed,
                     balance.totalCollateralReceiveFixed,
                     balance.liquidityPool,
                     balance.totalNotionalPayFixed,
                     balance.totalNotionalReceiveFixed,
                     bosStruct.accruedIpor.indexValue,
-                    riskIndicators.fixedRateCap
+                    riskIndicators.fixedRateCapPerLeg
                 )
             ),
             (uint256)
@@ -586,14 +586,14 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                     bosStruct.notional,
                     riskIndicators.maxLeveragePerLeg,
                     riskIndicators.maxCollateralRatioPerLeg,
-                    riskIndicators.baseSpread,
+                    riskIndicators.baseSpreadPerLeg,
                     balance.totalCollateralPayFixed,
                     balance.totalCollateralReceiveFixed,
                     balance.liquidityPool,
                     balance.totalNotionalPayFixed,
                     balance.totalNotionalReceiveFixed,
                     bosStruct.accruedIpor.indexValue,
-                    riskIndicators.fixedRateCap
+                    riskIndicators.fixedRateCapPerLeg
                 )
             ),
             (uint256)

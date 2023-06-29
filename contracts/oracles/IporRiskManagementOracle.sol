@@ -154,13 +154,19 @@ contract IporRiskManagementOracle is
             uint256 maxNotionalPerLeg,
             uint256 maxCollateralRatioPerLeg,
             uint256 maxCollateralRatio,
-            int256 spread,
-            uint256 fixedRateCap
+            int256 baseSpreadPerLeg,
+            uint256 fixedRateCapPerLeg
         )
     {
         (maxNotionalPerLeg, maxCollateralRatioPerLeg, maxCollateralRatio) = _getRiskIndicatorsPerLeg(asset, direction);
-        (spread, fixedRateCap) = _getSpread(asset, direction, tenor);
-        return (maxNotionalPerLeg, maxCollateralRatioPerLeg, maxCollateralRatio, spread * 1e12, fixedRateCap * 1e14);
+        (baseSpreadPerLeg, fixedRateCapPerLeg) = _getSpread(asset, direction, tenor);
+        return (
+            maxNotionalPerLeg,
+            maxCollateralRatioPerLeg,
+            maxCollateralRatio,
+            baseSpreadPerLeg * 1e12,
+            fixedRateCapPerLeg * 1e14
+        );
     }
 
     function _getRiskIndicatorsPerLeg(
@@ -187,7 +193,7 @@ contract IporRiskManagementOracle is
         address asset,
         uint256 direction,
         IporTypes.SwapTenor tenor
-    ) internal view returns (int256 spread, uint256 fixedRateCap) {
+    ) internal view returns (int256, uint256) {
         IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage
             memory baseSpreadsAndFixedRateCaps = _bytes32ToBaseSpreadsAndFixedRateCapsStorage(
                 _baseSpreadsAndFixedRateCaps[asset]

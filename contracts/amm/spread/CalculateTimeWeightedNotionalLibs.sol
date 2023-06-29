@@ -7,18 +7,18 @@ import "../../amm/spread/SpreadStorageLibs.sol";
 
 library CalculateTimeWeightedNotionalLibs {
     /// @notice calculate amm lp depth
-    /// @param lpBalance lp balance
+    /// @param liquidityPoolBalance liquidity pool balance
     /// @param totalCollateralPayFixed total collateral pay fixed
     /// @param totalCollateralReceiveFixed total collateral receive fixed
     function calculateLpDepth(
-        uint256 lpBalance,
+        uint256 liquidityPoolBalance,
         uint256 totalCollateralPayFixed,
         uint256 totalCollateralReceiveFixed
     ) internal pure returns (uint256 lpDepth) {
         if (totalCollateralPayFixed >= totalCollateralReceiveFixed) {
-            lpDepth = lpBalance + totalCollateralReceiveFixed - totalCollateralPayFixed;
+            lpDepth = liquidityPoolBalance + totalCollateralReceiveFixed - totalCollateralPayFixed;
         } else {
-            lpDepth = lpBalance + totalCollateralPayFixed - totalCollateralReceiveFixed;
+            lpDepth = liquidityPoolBalance + totalCollateralPayFixed - totalCollateralReceiveFixed;
         }
     }
 
@@ -98,30 +98,30 @@ library CalculateTimeWeightedNotionalLibs {
     }
 
     /// @notice Calculates the time-weighted notional values for the pay fixed and receive fixed legs.
-    /// @param storageIds The array of storage IDs representing the time-weighted notional storage locations.
-    /// @param maturities The array of maturities corresponding to each storage ID.
+    /// @param timeWeightedNotionalStorageIds The array of storage IDs representing the time-weighted notional storage locations.
+    /// @param tenorsInSeconds The array of maturities corresponding to each storage ID.
     /// @return timeWeightedNotionalPayFixed The aggregated time-weighted notional value for the pay fixed leg.
     /// @return timeWeightedNotionalReceiveFixed The aggregated time-weighted notional value for the receive fixed leg.
     /// @dev This function is internal and used to calculate the aggregated time-weighted notional values for multiple storage IDs and maturities.
     function getTimeWeightedNotional(
-        SpreadStorageLibs.StorageId[] memory storageIds,
-        uint256[] memory maturities
+        SpreadStorageLibs.StorageId[] memory timeWeightedNotionalStorageIds,
+        uint256[] memory tenorsInSeconds
     ) internal view returns (uint256 timeWeightedNotionalPayFixed, uint256 timeWeightedNotionalReceiveFixed) {
-        uint256 length = storageIds.length;
+        uint256 length = timeWeightedNotionalStorageIds.length;
         for (uint256 i; i != length; ) {
             SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional = SpreadStorageLibs
-                .getTimeWeightedNotional(storageIds[i]);
+                .getTimeWeightedNotional(timeWeightedNotionalStorageIds[i]);
             uint256 timeWeightedNotionalPayFixedTemp = calculateTimeWeightedNotional(
                 timeWeightedNotional.timeWeightedNotionalPayFixed,
                 block.timestamp - timeWeightedNotional.lastUpdateTimePayFixed,
-                maturities[i]
+                tenorsInSeconds[i]
             );
             timeWeightedNotionalPayFixed = timeWeightedNotionalPayFixed + timeWeightedNotionalPayFixedTemp;
 
             uint256 timeWeightedNotionalReceiveFixedTemp = calculateTimeWeightedNotional(
                 timeWeightedNotional.timeWeightedNotionalReceiveFixed,
                 block.timestamp - timeWeightedNotional.lastUpdateTimeReceiveFixed,
-                maturities[i]
+                tenorsInSeconds[i]
             );
             timeWeightedNotionalReceiveFixed = timeWeightedNotionalReceiveFixedTemp + timeWeightedNotionalReceiveFixed;
             unchecked {
