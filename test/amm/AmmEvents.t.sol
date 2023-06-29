@@ -278,8 +278,13 @@ contract AmmEventsTest is TestCommons {
             19955412124333030204016,
             TestConstants.ZERO
         );
+
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         vm.warp(block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedDai(_userTwo, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
     }
 
     function testShouldEmitEventWhenClosePayFixedSwap6DecimalsAndTakerClosedSwap() public {
@@ -315,8 +320,13 @@ contract AmmEventsTest is TestCommons {
             19955412124000000000000,
             TestConstants.ZERO
         );
+
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         vm.warp(block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_userTwo, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds);
     }
 
     function testShouldEmitEventWhenClosePayFixedSwap6DecimalsAndNotTakerClosedSwap() public {
@@ -356,7 +366,11 @@ contract AmmEventsTest is TestCommons {
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC
         );
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         vm.warp(block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_userThree, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userThree, swapPfIds, swapRfIds);
     }
 }

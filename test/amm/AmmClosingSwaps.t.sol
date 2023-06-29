@@ -113,9 +113,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         vm.warp(200);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_admin);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_admin, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_admin, swapPfIds, swapRfIds);
 
         //then
         AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
@@ -163,9 +167,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 24 hours);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_buyer, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -213,9 +221,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 20 hours);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_buyer, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -257,9 +269,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_community, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -303,9 +319,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 30 minutes);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_community, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -351,9 +371,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_liquidator, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -398,10 +422,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_liquidator, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -442,9 +470,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 seconds);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_buyer, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -485,10 +517,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_community, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community,swapPfIds, swapRfIds);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -529,10 +565,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 seconds);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_community, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -573,10 +613,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_liquidator, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -617,9 +661,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         vm.warp(200);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_admin);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_admin, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_admin, swapPfIds, swapRfIds);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -660,9 +708,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 24 hours);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_buyer, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -703,9 +755,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 20 hours);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_buyer, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -747,9 +803,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_community, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -793,9 +853,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 30 minutes);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_community, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -841,9 +905,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -888,10 +956,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -932,9 +1004,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 seconds);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_buyer, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -975,10 +1051,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_community, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -1019,10 +1099,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 seconds);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_community, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -1063,10 +1147,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours - 1);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -1108,9 +1196,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_liquidator, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator,swapPfIds, swapRfIds);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -1174,9 +1266,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 absPayoff = IporMath.absoluteValue(payoff);
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_liquidator, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator,swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -1251,9 +1347,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 absPayoff = IporMath.absoluteValue(payoff);
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_liquidator, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -1325,9 +1425,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_buyer, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -1399,9 +1503,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_buyer, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -1474,9 +1582,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 absPayoff = IporMath.absoluteValue(payoff);
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_liquidator, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -1548,9 +1660,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_buyer, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -1625,9 +1741,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_community, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -1704,9 +1824,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_community, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -1783,9 +1907,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_liquidator, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -1862,9 +1990,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_liquidator, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -1939,9 +2071,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_buyer, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -2016,9 +2152,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_buyer, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -2095,9 +2235,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_liquidator, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -2172,9 +2316,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_buyer, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -2249,10 +2397,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_community, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -2327,10 +2479,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_community, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -2405,10 +2561,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_community, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -2483,9 +2643,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         //when
         vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_community, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -2557,9 +2721,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 absPayoff = IporMath.absoluteValue(payoff);
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -2637,9 +2805,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 absPayoff = IporMath.absoluteValue(payoff);
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -2709,9 +2881,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
+
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_buyer, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -2783,9 +2960,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_buyer, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -2858,9 +3039,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 absPayoff = IporMath.absoluteValue(payoff);
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -2931,9 +3116,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
+
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_buyer, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -3006,9 +3196,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_community, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -3085,9 +3279,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_community, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -3165,9 +3363,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
+
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_community, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -3244,9 +3447,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -3322,9 +3529,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 absPayoff = IporMath.absoluteValue(payoff);
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -3399,9 +3610,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_buyer, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer,swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -3476,9 +3691,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_buyer, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -3555,9 +3774,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -3632,9 +3855,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_buyer, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer,swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -3709,10 +3936,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -3787,10 +4018,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -3865,10 +4100,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_liquidator, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
 
         //then
         assertEq(
@@ -3943,9 +4182,13 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         //when
         vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_community, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
 
         //then
         assertEq(

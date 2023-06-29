@@ -186,8 +186,12 @@ contract AmmSoapTest is TestCommons {
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         // when
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedDai(_userTwo, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
 
         (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
 
@@ -226,8 +230,13 @@ contract AmmSoapTest is TestCommons {
         );
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
+
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         // when
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedDai(_userTwo, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
 
         (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
 
@@ -399,8 +408,12 @@ contract AmmSoapTest is TestCommons {
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         // when
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedDai(_userTwo, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
         (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
 
         // then
@@ -441,8 +454,13 @@ contract AmmSoapTest is TestCommons {
         );
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
+
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 2;
+
         // when
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedDai(_userTwo, 2);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
 
         // then
         (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
@@ -499,8 +517,12 @@ contract AmmSoapTest is TestCommons {
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
 
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
         // when
-        ammUsdt.ammCloseSwapService.closeSwapReceiveFixedUsdt(_userTwo, 1);
+        ammUsdt.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds);
 
         // then
         (, , int256 soapUsdt) = ammUsdt.ammSwapsLens.getSOAP(address(ammUsdt.asset));
@@ -915,8 +937,12 @@ contract AmmSoapTest is TestCommons {
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
 
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedDai(_userTwo, 1);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedDai(_userTwo, 2);
+        uint256[] memory swapPfIds = new uint256[](2);
+        swapPfIds[0] = 1;
+        swapPfIds[1] = 2;
+        uint256[] memory swapRfIds = new uint256[](0);
+
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
@@ -971,8 +997,12 @@ contract AmmSoapTest is TestCommons {
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
 
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedDai(_userTwo, 1);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedDai(_userTwo, 2);
+        uint256[] memory swapPfIds = new uint256[](2);
+        swapPfIds[0] = 1;
+        swapPfIds[1] = 2;
+        uint256[] memory swapRfIds = new uint256[](0);
+
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
@@ -1029,8 +1059,12 @@ contract AmmSoapTest is TestCommons {
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
 
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedDai(_userTwo, 1);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedDai(_userTwo, 2);
+        uint256[] memory swapPfIds = new uint256[](2);
+        swapPfIds[0] = 1;
+        swapPfIds[1] = 2;
+        uint256[] memory swapRfIds = new uint256[](0);
+
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
@@ -1085,8 +1119,12 @@ contract AmmSoapTest is TestCommons {
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
 
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedDai(_userTwo, 1);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedDai(_userTwo, 2);
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](2);
+        swapRfIds[0] = 1;
+        swapRfIds[1] = 2;
+
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
@@ -1142,8 +1180,12 @@ contract AmmSoapTest is TestCommons {
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
 
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedDai(_userTwo, 1);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedDai(_userTwo, 2);
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](2);
+        swapRfIds[0] = 1;
+        swapRfIds[1] = 2;
+
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
@@ -1200,8 +1242,12 @@ contract AmmSoapTest is TestCommons {
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
 
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_userTwo, 1);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_userTwo, 2);
+        uint256[] memory swapPfIds = new uint256[](2);
+        swapPfIds[0] = 1;
+        swapPfIds[1] = 2;
+        uint256[] memory swapRfIds = new uint256[](0);
+
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds);
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
@@ -1257,8 +1303,12 @@ contract AmmSoapTest is TestCommons {
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
 
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_userTwo, 1);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedUsdt(_userTwo, 2);
+        uint256[] memory swapPfIds = new uint256[](2);
+        swapPfIds[0] = 1;
+        swapPfIds[1] = 2;
+        uint256[] memory swapRfIds = new uint256[](0);
+
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds);
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
@@ -1316,8 +1366,12 @@ contract AmmSoapTest is TestCommons {
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
 
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_userTwo, 1);
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedUsdt(_userTwo, 2);
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](2);
+        swapRfIds[0] = 1;
+        swapRfIds[1] = 2;
+
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds);
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));

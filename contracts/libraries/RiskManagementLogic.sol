@@ -30,7 +30,7 @@ library RiskManagementLogic {
         IporTypes.SwapTenor tenor,
         uint256 swapNotional,
         SpreadOfferedRateContext memory spreadOfferedRateCtx
-    ) internal returns (uint256) {
+    ) internal view returns (uint256) {
         IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(spreadOfferedRateCtx.ammStorage)
             .getBalancesForOpenSwap();
 
@@ -45,7 +45,7 @@ library RiskManagementLogic {
 
         return
             abi.decode(
-                spreadOfferedRateCtx.spreadRouter.functionCall(
+                spreadOfferedRateCtx.spreadRouter.functionStaticCall(
                     abi.encodeWithSelector(
                         determineSpreadMethodSig(direction, tenor),
                         spreadOfferedRateCtx.asset,

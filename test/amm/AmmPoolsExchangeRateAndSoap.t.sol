@@ -499,9 +499,13 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         int256 actualSOAPPlusLiquidityPoolBalanceBeforeClose = int256(liquidityPoolBalanceBeforeClose.liquidityPool) -
             soapAfter56DaysBeforeClose;
 
+        uint256[] memory swapPfIds = new uint256[](2);
+        swapPfIds[0] = 1;
+        swapPfIds[1] = 2;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         // when
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedDai(_userTwo, 1);
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedDai(_userTwo, 2);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
 
         // then
         (, , int256 soapAfter56DaysAfterClose) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));

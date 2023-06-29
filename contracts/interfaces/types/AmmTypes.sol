@@ -141,6 +141,20 @@ library AmmTypes {
         /// @notice When taking the "short" position the trader will pay a floating rate and receive a fixed rate.
         PAY_FLOATING_RECEIVE_FIXED
     }
+    /// @notice List of closable statuses for a given swap
+    /// @dev Closable status is a one of the following values:
+    /// 0 - Swap is closable
+    /// 1 - Swap is already closed
+    /// 2 - Swap state required Buyer or Liquidator to close. Sender is not Buyer nor Liquidator.
+    /// 3 - Cannot close swap, closing is too early for Buyer
+    /// 4 - Cannot close swap, closing is too early for Community
+    enum SwapClosableStatus {
+        SWAP_IS_CLOSABLE,
+        SWAP_ALREADY_CLOSED,
+        SWAP_REQUIRED_BUYER_OR_LIQUIDATOR_TO_CLOSE,
+        SWAP_CANNOT_CLOSE_CLOSING_TOO_EARLY_FOR_BUYER,
+        SWAP_CANNOT_CLOSE_CLOSING_TOO_EARLY_FOR_COMMUNITY
+    }
 
     /// @notice Collection of swap attributes connected with IPOR Index and swap itself.
     /// @dev all values are in 18 decimals
@@ -168,5 +182,23 @@ library AmmTypes {
         int256 baseSpread;
         /// @notice Fixed rate cap
         uint256 fixedRateCap;
+    }
+
+    /// @notice Structure containing information about swap's closing status, unwind values and payoff for a given swap and time.
+    struct ClosingSwapDetails {
+        /// @notice Swap's closing status
+        AmmTypes.SwapClosableStatus closableStatus;
+        /// @notice Flag indicating if swap unwind is required
+        bool swapUnwindRequired;
+        /// @notice Swap's unwind amount
+        int256 swapUnwindAmount;
+        /// @notice Unwind opening fee amount it is a sum of `swapUnwindOpeningFeeLPAmount` and `swapUnwindOpeningFeeTreasuryAmount`
+        uint256 swapUnwindOpeningFeeAmount;
+        /// @notice Part of unwind opening fee allocated as a profit of the Liquidity Pool
+        uint256 swapUnwindOpeningFeeLPAmount;
+        /// @notice Part of unwind opening fee allocated in Treasury Balance
+        uint256 swapUnwindOpeningFeeTreasuryAmount;
+        /// @notice Final payoff which takes into account the swap unwind and limits the payoff to the collateral amount. Represented in 18 decimals.
+        int256 payoff;
     }
 }
