@@ -26,7 +26,7 @@ library IporSwapLogic {
         uint256 wadLiquidationDepositAmount,
         uint256 iporPublicationFeeAmount,
         uint256 openingFeeRate
-    ) internal view returns (uint256 collateral, uint256 notional, uint256 openingFee) {
+    ) internal pure returns (uint256 collateral, uint256 notional, uint256 openingFee) {
         uint256 availableAmount = wadTotalAmount - wadLiquidationDepositAmount - iporPublicationFeeAmount;
 
         collateral = IporMath.division(
@@ -44,7 +44,7 @@ library IporSwapLogic {
     ) internal pure returns (int256 swapValue) {
         (uint256 interestFixed, uint256 interestFloating) = calculateInterest(swap, closingTimestamp, mdIbtPrice);
 
-        swapValue = _normalizeSwapValue(swap.collateral, interestFloating.toInt256() - interestFixed.toInt256());
+        swapValue = normalizeSwapValue(swap.collateral, interestFloating.toInt256() - interestFixed.toInt256());
     }
 
     function calculatePayoffReceiveFixed(
@@ -54,7 +54,7 @@ library IporSwapLogic {
     ) internal pure returns (int256 swapValue) {
         (uint256 interestFixed, uint256 interestFloating) = calculateInterest(swap, closingTimestamp, mdIbtPrice);
 
-        swapValue = _normalizeSwapValue(swap.collateral, interestFixed.toInt256() - interestFloating.toInt256());
+        swapValue = normalizeSwapValue(swap.collateral, interestFixed.toInt256() - interestFloating.toInt256());
     }
 
     /// @notice Calculates the swap unwind value, virtual hedging position needed when swaps is closed before the maturity day.
@@ -136,7 +136,7 @@ library IporSwapLogic {
         return IporMath.division(ibtQuantity * ibtCurrentPrice, 1e18);
     }
 
-    function _normalizeSwapValue(uint256 collateral, int256 swapValue) private pure returns (int256) {
+    function normalizeSwapValue(uint256 collateral, int256 swapValue) internal pure returns (int256) {
         int256 intCollateral = collateral.toInt256();
 
         if (swapValue > 0) {

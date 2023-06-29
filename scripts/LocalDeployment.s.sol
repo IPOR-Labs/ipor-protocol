@@ -173,8 +173,8 @@ contract LocalDeployment is Script {
         address ammTreasury,
         address ammStorage,
         address assetManagement
-    ) internal view returns (IAmmCloseSwapService.AmmCloseSwapServicePoolConfiguration memory poolCfg) {
-        poolCfg = IAmmCloseSwapService.AmmCloseSwapServicePoolConfiguration({
+    ) internal view returns (IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg) {
+        poolCfg = IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration({
             asset: address(asset),
             decimals: IERC20MetadataUpgradeable(asset).decimals(),
             ammStorage: ammStorage,

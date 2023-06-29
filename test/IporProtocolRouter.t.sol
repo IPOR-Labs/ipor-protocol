@@ -72,44 +72,17 @@ contract IporProtocolRouterTest is TestCommons {
         vm.expectRevert("IPOR_014");
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(address(_iporProtocol.asset), 1, 1, 1, 1);
 
-        vm.expectRevert("IPOR_014");
-        _iporProtocol.ammCloseSwapService.emergencyCloseSwapPayFixedUsdt(1);
-
-        vm.expectRevert("IPOR_014");
-        _iporProtocol.ammCloseSwapService.emergencyCloseSwapPayFixedUsdc(1);
-
-        vm.expectRevert("IPOR_014");
-        _iporProtocol.ammCloseSwapService.emergencyCloseSwapPayFixedDai(1);
-
-        vm.expectRevert("IPOR_014");
-        _iporProtocol.ammCloseSwapService.emergencyCloseSwapReceiveFixedUsdt(1);
-
-        vm.expectRevert("IPOR_014");
-        _iporProtocol.ammCloseSwapService.emergencyCloseSwapReceiveFixedUsdc(1);
-
-        vm.expectRevert("IPOR_014");
-        _iporProtocol.ammCloseSwapService.emergencyCloseSwapReceiveFixedDai(1);
-
         uint256[] memory swapIds = new uint256[](1);
         swapIds[0] = 1;
 
         vm.expectRevert("IPOR_014");
-        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsPayFixedUsdt(swapIds);
+        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsUsdt(swapIds, swapIds);
 
         vm.expectRevert("IPOR_014");
-        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsPayFixedUsdc(swapIds);
+        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsUsdc(swapIds, swapIds);
 
         vm.expectRevert("IPOR_014");
-        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsPayFixedDai(swapIds);
-
-        vm.expectRevert("IPOR_014");
-        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsReceiveFixedUsdt(swapIds);
-
-        vm.expectRevert("IPOR_014");
-        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsReceiveFixedUsdc(swapIds);
-
-        vm.expectRevert("IPOR_014");
-        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsReceiveFixedDai(swapIds);
+        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsDai(swapIds, swapIds);
 
         vm.stopPrank();
     }
@@ -181,22 +154,13 @@ contract IporProtocolRouterTest is TestCommons {
             TestConstants.LEVERAGE_18DEC
         );
 
-        amm.usdt.ammCloseSwapService.emergencyCloseSwapPayFixedUsdt(1);
-        amm.usdc.ammCloseSwapService.emergencyCloseSwapPayFixedUsdc(1);
-        amm.dai.ammCloseSwapService.emergencyCloseSwapPayFixedDai(1);
-        amm.usdt.ammCloseSwapService.emergencyCloseSwapReceiveFixedUsdt(2);
-        amm.usdc.ammCloseSwapService.emergencyCloseSwapReceiveFixedUsdc(2);
-        amm.dai.ammCloseSwapService.emergencyCloseSwapReceiveFixedDai(2);
-
-        uint256[] memory swapIds = new uint256[](1);
-        swapIds[0] = 1;
-
-        amm.usdt.ammCloseSwapService.emergencyCloseSwapsPayFixedUsdt(swapIds);
-        amm.usdc.ammCloseSwapService.emergencyCloseSwapsPayFixedUsdc(swapIds);
-        amm.dai.ammCloseSwapService.emergencyCloseSwapsPayFixedDai(swapIds);
-        amm.usdt.ammCloseSwapService.emergencyCloseSwapsReceiveFixedUsdt(swapIds);
-        amm.usdc.ammCloseSwapService.emergencyCloseSwapsReceiveFixedUsdc(swapIds);
-        amm.dai.ammCloseSwapService.emergencyCloseSwapsReceiveFixedDai(swapIds);
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 2;
+        amm.usdt.ammCloseSwapService.emergencyCloseSwapsUsdt(swapPfIds, swapRfIds);
+        amm.usdc.ammCloseSwapService.emergencyCloseSwapsUsdc(swapPfIds, swapRfIds);
+        amm.dai.ammCloseSwapService.emergencyCloseSwapsDai(swapPfIds, swapRfIds);
 
         vm.stopPrank();
     }

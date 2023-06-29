@@ -14,6 +14,7 @@ import "../interfaces/IAmmGovernanceLens.sol";
 import "../interfaces/IAmmOpenSwapLens.sol";
 import "../interfaces/IAmmOpenSwapService.sol";
 import "../interfaces/IAmmCloseSwapService.sol";
+import "../interfaces/IAmmCloseSwapLens.sol";
 import "../interfaces/IAmmPoolsService.sol";
 import "../interfaces/IPowerTokenFlowsService.sol";
 import "../interfaces/IPowerTokenStakeService.sol";
@@ -138,12 +139,6 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             }
             return _ammOpenSwapService;
         } else if (
-            _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapPayFixedUsdt.selector) ||
-            _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapPayFixedUsdc.selector) ||
-            _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapPayFixedDai.selector) ||
-            _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapReceiveFixedUsdt.selector) ||
-            _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapReceiveFixedUsdc.selector) ||
-            _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapReceiveFixedDai.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapsUsdt.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapsUsdc.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapsDai.selector)
@@ -212,18 +207,9 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             _onlyOwner();
             return _ammGovernanceService;
         } else if (
-            sig == IAmmCloseSwapService.emergencyCloseSwapPayFixedUsdt.selector ||
-            sig == IAmmCloseSwapService.emergencyCloseSwapPayFixedUsdc.selector ||
-            sig == IAmmCloseSwapService.emergencyCloseSwapPayFixedDai.selector ||
-            sig == IAmmCloseSwapService.emergencyCloseSwapReceiveFixedUsdt.selector ||
-            sig == IAmmCloseSwapService.emergencyCloseSwapReceiveFixedUsdc.selector ||
-            sig == IAmmCloseSwapService.emergencyCloseSwapReceiveFixedDai.selector ||
-            sig == IAmmCloseSwapService.emergencyCloseSwapsPayFixedUsdt.selector ||
-            sig == IAmmCloseSwapService.emergencyCloseSwapsPayFixedUsdc.selector ||
-            sig == IAmmCloseSwapService.emergencyCloseSwapsPayFixedDai.selector ||
-            sig == IAmmCloseSwapService.emergencyCloseSwapsReceiveFixedUsdt.selector ||
-            sig == IAmmCloseSwapService.emergencyCloseSwapsReceiveFixedUsdc.selector ||
-            sig == IAmmCloseSwapService.emergencyCloseSwapsReceiveFixedDai.selector
+            sig == IAmmCloseSwapService.emergencyCloseSwapsUsdt.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapsUsdc.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapsDai.selector
         ) {
             _onlyOwner();
             return _ammCloseSwapService;
@@ -280,7 +266,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             sig == IPowerTokenLens.getPwTokenTotalSupplyBase.selector
         ) {
             return _powerTokenLens;
-        } else if (sig == IAmmCloseSwapService.getAmmCloseSwapServicePoolConfiguration.selector) {
+        } else if (sig == IAmmCloseSwapLens.getAmmCloseSwapServicePoolConfiguration.selector) {
             return _ammCloseSwapService;
         }
 

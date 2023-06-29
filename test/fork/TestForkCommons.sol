@@ -9,6 +9,7 @@ import "../mocks/EmptyRouterImplementation.sol";
 import "../../contracts/router/IporProtocolRouter.sol";
 import "../../contracts/interfaces/IAmmSwapsLens.sol";
 import "../../contracts/interfaces/IAmmOpenSwapLens.sol";
+import "../../contracts/interfaces/IAmmCloseSwapLens.sol";
 import "../../contracts/amm/AmmSwapsLens.sol";
 import "../../contracts/amm/AmmPoolsLens.sol";
 import "../../contracts/amm/AssetManagementLens.sol";
@@ -398,7 +399,7 @@ contract TestForkCommons is Test {
     }
 
     function _createAmmCloseSwapService() private {
-        IAmmCloseSwapService.AmmCloseSwapServicePoolConfiguration memory daiConfig = IAmmCloseSwapService
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory daiConfig = IAmmCloseSwapLens
             .AmmCloseSwapServicePoolConfiguration(
                 DAI,
                 18,
@@ -415,7 +416,7 @@ contract TestForkCommons is Test {
                 10 * 1e18
             );
 
-        IAmmCloseSwapService.AmmCloseSwapServicePoolConfiguration memory usdcConfig = IAmmCloseSwapService
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory usdcConfig = IAmmCloseSwapLens
             .AmmCloseSwapServicePoolConfiguration(
                 USDC,
                 6,
@@ -432,7 +433,7 @@ contract TestForkCommons is Test {
                 10 * 1e6
             );
 
-        IAmmCloseSwapService.AmmCloseSwapServicePoolConfiguration memory usdtConfig = IAmmCloseSwapService
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory usdtConfig = IAmmCloseSwapLens
             .AmmCloseSwapServicePoolConfiguration(
                 USDT,
                 6,

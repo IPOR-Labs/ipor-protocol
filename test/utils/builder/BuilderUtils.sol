@@ -11,6 +11,7 @@ import "../../../contracts/amm/spread/SpreadRouter.sol";
 import "../../../contracts/itf/ItfAssetManagement.sol";
 import "../../../contracts/router/IporProtocolRouter.sol";
 import "../../../contracts/interfaces/IAmmOpenSwapLens.sol";
+import "../../../contracts/interfaces/IAmmCloseSwapLens.sol";
 import "../../mocks/tokens/MockTestnetToken.sol";
 
 contract BuilderUtils {
@@ -20,6 +21,7 @@ contract BuilderUtils {
         IAmmPoolsService ammPoolsService;
         IAmmPoolsLens ammPoolsLens;
         IAmmOpenSwapLens ammOpenSwapLens;
+        IAmmCloseSwapLens ammCloseSwapLens;
         IAmmOpenSwapService ammOpenSwapService;
         IAmmCloseSwapService ammCloseSwapService;
         IAmmGovernanceService ammGovernanceService;

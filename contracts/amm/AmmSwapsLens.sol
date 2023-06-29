@@ -195,7 +195,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         uint256 liquidityPoolBalance,
         uint256 minLeverage,
         uint256 direction
-    ) internal returns (AmmTypes.OpenSwapRiskIndicators memory riskIndicators) {
+    ) internal view returns (AmmTypes.OpenSwapRiskIndicators memory riskIndicators) {
         AmmInternalTypes.RiskIndicatorsContext memory riskIndicatorsContext;
 
         riskIndicatorsContext.asset = asset;
@@ -335,7 +335,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
 
     function _getSpreadRouterSignatures(
         IporTypes.SwapTenor tenor
-    ) internal view returns (bytes4 payFixedSig, bytes4 receiveFixedSig) {
+    ) internal pure returns (bytes4 payFixedSig, bytes4 receiveFixedSig) {
         if (tenor == IporTypes.SwapTenor.DAYS_28) {
             payFixedSig = ISpread28DaysLens.calculateOfferedRatePayFixed28Days.selector;
             receiveFixedSig = ISpread28DaysLens.calculateOfferedRateReceiveFixed28Days.selector;

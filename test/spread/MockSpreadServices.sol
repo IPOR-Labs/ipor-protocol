@@ -65,27 +65,26 @@ contract MockSpreadServices is
         return;
     }
 
-    function calculateOfferedRatePayFixed28Days(IporTypes.SpreadInputs calldata spreadInputs)
-    external
-    override
-    returns (uint256 quoteValue){
-        return 280;}
+    function calculateOfferedRatePayFixed28Days(
+        IporTypes.SpreadInputs calldata spreadInputs
+    ) external view override returns (uint256 quoteValue) {
+        return 280;
+    }
 
-    function calculateOfferedRateReceiveFixed28Days(IporTypes.SpreadInputs calldata spreadInputs)
-    external
-    override
-    returns (uint256 quoteValue){
+    function calculateOfferedRateReceiveFixed28Days(
+        IporTypes.SpreadInputs calldata spreadInputs
+    ) external view override returns (uint256 quoteValue) {
         return 281;
     }
 
-    function spreadFunction28DaysConfig() external pure override returns (uint256[] memory){
+    function spreadFunction28DaysConfig() external pure override returns (uint256[] memory) {
         uint256[] memory mock = new uint256[](20);
         return mock;
     }
 
     function calculateOfferedRatePayFixed60Days(
         IporTypes.SpreadInputs calldata spreadInputs
-    ) external override returns (uint256 quoteValue){
+    ) external override returns (uint256 quoteValue) {
         return 600;
     }
 
@@ -95,24 +94,24 @@ contract MockSpreadServices is
         return 601;
     }
 
-    function spreadFunction60DaysConfig() external pure override returns (uint256[] memory){
+    function spreadFunction60DaysConfig() external pure override returns (uint256[] memory) {
         uint256[] memory mock = new uint256[](20);
         return mock;
     }
 
     function calculateOfferedRatePayFixed90Days(
         IporTypes.SpreadInputs calldata spreadInputs
-    ) external override returns (uint256 quoteValue){
+    ) external override returns (uint256 quoteValue) {
         return 900;
     }
 
     function calculateOfferedRateReceiveFixed90Days(
         IporTypes.SpreadInputs calldata spreadInputs
-    ) external override returns (uint256 quoteValue){
+    ) external override returns (uint256 quoteValue) {
         return 901;
     }
 
-    function spreadFunction90DaysConfig() external pure override returns (uint256[] memory){
+    function spreadFunction90DaysConfig() external pure override returns (uint256[] memory) {
         uint256[] memory mock = new uint256[](20);
         return mock;
     }

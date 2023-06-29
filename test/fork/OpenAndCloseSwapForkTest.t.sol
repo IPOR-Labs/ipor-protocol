@@ -72,8 +72,12 @@ contract OpenSwapForkTest is TestForkCommons {
         console2.log("swapAfter28Days.leverage", swapAfter28Days.leverage);
         console2.logInt(swapAfter28Days.payoff);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = swapAfter28Days.id;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         vm.prank(user);
-        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapPayFixedDai(user, swapAfter28Days.id);
+        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
 
         uint256 balanceDaiAfterCloseSwap = ERC20(DAI).balanceOf(user);
 
@@ -147,8 +151,12 @@ contract OpenSwapForkTest is TestForkCommons {
         console2.log("swapAfter60Days.leverage", swapAfter60Days.leverage);
         console2.logInt(swapAfter60Days.payoff);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = swapAfter60Days.id;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         vm.prank(user);
-        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapPayFixedDai(user, swapAfter60Days.id);
+        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
 
         uint256 balanceDaiAfterCloseSwap = ERC20(DAI).balanceOf(user);
 
@@ -222,8 +230,12 @@ contract OpenSwapForkTest is TestForkCommons {
         console2.log("swapAfter90Days.leverage", swapAfter90Days.leverage);
         console2.logInt(swapAfter90Days.payoff);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = swapAfter90Days.id;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         vm.prank(user);
-        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapPayFixedDai(user, swapAfter90Days.id);
+        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds,swapRfIds);
 
         uint256 balanceDaiAfterCloseSwap = ERC20(DAI).balanceOf(user);
 
@@ -300,8 +312,12 @@ contract OpenSwapForkTest is TestForkCommons {
         console2.log("swapAfter28Days.leverage", swapAfter28Days.leverage);
         console2.logInt(swapAfter28Days.payoff);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = swapAfter28Days.id;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         vm.prank(user);
-        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapPayFixedDai(user, swapAfter28Days.id);
+        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
 
         uint256 balanceDaiAfterCloseSwap = ERC20(DAI).balanceOf(user);
 
@@ -375,8 +391,12 @@ contract OpenSwapForkTest is TestForkCommons {
         console2.log("swapAfter28Days.leverage", swapAfter28Days.leverage);
         console2.logInt(swapAfter28Days.payoff);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = swapAfter28Days.id;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         vm.prank(user);
-        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapPayFixedUsdc(user, swapAfter28Days.id);
+        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsUsdc(user, swapPfIds, swapRfIds);
 
         uint256 balanceUsdcAfterCloseSwap = ERC20(USDC).balanceOf(user);
 
@@ -450,8 +470,12 @@ contract OpenSwapForkTest is TestForkCommons {
         console2.log("swapAfter60Days.leverage", swapAfter60Days.leverage);
         console2.logInt(swapAfter60Days.payoff);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = swapAfter60Days.id;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         vm.prank(user);
-        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapPayFixedUsdc(user, swapAfter60Days.id);
+        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsUsdc(user, swapPfIds, swapRfIds);
 
         uint256 balanceUsdcAfterCloseSwap = ERC20(USDC).balanceOf(user);
 
@@ -525,8 +549,12 @@ contract OpenSwapForkTest is TestForkCommons {
         console2.log("swapAfter90Days.leverage", swapAfter90Days.leverage);
         console2.logInt(swapAfter90Days.payoff);
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = swapAfter90Days.id;
+        uint256[] memory swapRfIds = new uint256[](0);
+
         vm.prank(user);
-        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapPayFixedUsdc(user, swapAfter90Days.id);
+        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsUsdc(user, swapPfIds, swapRfIds);
 
         uint256 balanceUsdcAfterCloseSwap = ERC20(USDC).balanceOf(user);
 
