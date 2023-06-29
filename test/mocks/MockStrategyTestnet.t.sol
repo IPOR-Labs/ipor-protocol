@@ -2,13 +2,11 @@
 pragma solidity 0.8.20;
 
 import "test/TestCommons.sol";
-import {DataUtils} from "../utils/DataUtils.sol";
-import {AssetManagementUtils} from "../utils/AssetManagementUtils.sol";
 import {TestConstants} from "../utils/TestConstants.sol";
 import {MockTestnetStrategy} from "@ipor-protocol/test/mocks/assetManagement/MockTestnetStrategy.sol";
 import {MockTestnetToken} from "@ipor-protocol/test/mocks/tokens/MockTestnetToken.sol";
 
-contract MockStrategyTestnetTest is TestCommons, DataUtils {
+contract MockStrategyTestnetTest is TestCommons {
     MockTestnetStrategy internal _mockStrategyDai;
     MockTestnetStrategy internal _mockStrategyUsdt;
     MockTestnetStrategy internal _mockStrategyUsdc;
@@ -17,6 +15,8 @@ contract MockStrategyTestnetTest is TestCommons, DataUtils {
     MockTestnetToken internal _usdcMockedToken;
     MockTestnetToken internal _shareToken18Decimals;
     MockTestnetToken internal _shareToken6Decimals;
+
+    AssetBuilder internal _assetBuilder = new AssetBuilder(address(this));
 
     function setStrategiesAssetManagement(address assetManagement) public {
         _mockStrategyDai.setAssetManagement(assetManagement);
@@ -40,11 +40,21 @@ contract MockStrategyTestnetTest is TestCommons, DataUtils {
     }
 
     function setUp() public {
-        _daiMockedToken = getTokenDai();
-        _usdtMockedToken = getTokenUsdt();
-        _usdcMockedToken = getTokenUsdc();
-        _shareToken18Decimals = getTokenDai();
-        _shareToken6Decimals = getTokenUsdt();
+        _assetBuilder.withDAI();
+        _daiMockedToken = _assetBuilder.build();
+
+        _assetBuilder.withUSDT();
+        _usdtMockedToken = _assetBuilder.build();
+
+        _assetBuilder.withUSDC();
+        _usdcMockedToken = _assetBuilder.build();
+
+        _assetBuilder.withDAI();
+        _shareToken18Decimals = _assetBuilder.build();
+
+        _assetBuilder.withUSDT();
+        _shareToken6Decimals = _assetBuilder.build();
+
         _mockStrategyDai = getMockTestnetStrategy(address(_daiMockedToken), address(_shareToken18Decimals));
         _mockStrategyUsdt = getMockTestnetStrategy(address(_usdtMockedToken), address(_shareToken6Decimals));
         _mockStrategyUsdc = getMockTestnetStrategy(address(_usdcMockedToken), address(_shareToken6Decimals));
@@ -212,5 +222,14 @@ contract MockStrategyTestnetTest is TestCommons, DataUtils {
         vm.expectRevert("IPOR_501");
         vm.prank(_userOne);
         _mockStrategyUsdc.deposit(depositAmount);
+    }
+
+    function getMockTestnetStrategy(address asset, address shareToken) public returns (MockTestnetStrategy) {
+        MockTestnetStrategy strategyImpl = new MockTestnetStrategy();
+        ERC1967Proxy strategyProxy = new ERC1967Proxy(
+            address(strategyImpl),
+            abi.encodeWithSignature("initialize(address,address)", asset, shareToken)
+        );
+        return MockTestnetStrategy(address(strategyProxy));
     }
 }

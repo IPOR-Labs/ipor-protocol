@@ -5,18 +5,18 @@ import "../../libraries/errors/AmmErrors.sol";
 import "../../libraries/errors/IporErrors.sol";
 import "../../security/PauseManager.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
-
+import "../../libraries/IporContractValidator.sol";
 
 contract SpreadAccessControl {
+    using IporContractValidator for address;
+
     event AppointedToTransferOwnership(address indexed appointedOwner);
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
-    address internal immutable IPOR_PROTOCOL_ROUTER;
+    address internal immutable _iporProtocolRouter;
 
     constructor(address iporProtocolRouter) {
-        require(iporProtocolRouter != address(0), string.concat(IporErrors.WRONG_ADDRESS, " AMM address cannot be 0"));
-
-        IPOR_PROTOCOL_ROUTER = iporProtocolRouter;
+        _iporProtocolRouter = iporProtocolRouter.checkAddress();
     }
 
     /// @dev Throws an error if called by any account other than the owner.
@@ -113,7 +113,7 @@ contract SpreadAccessControl {
 
     /// @dev Internal function to check if the sender is the AMM address.
     function _onlyIporProtocolRouter() internal view {
-        require(msg.sender == IPOR_PROTOCOL_ROUTER, AmmErrors.SENDER_NOT_AMM);
+        require(msg.sender == _iporProtocolRouter, AmmErrors.SENDER_NOT_AMM);
     }
 
     function _whenNotPaused() internal view {

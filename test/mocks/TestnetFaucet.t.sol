@@ -10,7 +10,7 @@ import "contracts/tokens/IporToken.sol";
 import "test/mocks/TestnetFaucet.sol";
 import "contracts/interfaces/ITestnetFaucet.sol";
 import "./MockOldTestnetFaucet.sol";
-import "contracts/interfaces/types/IMockProxy.sol";
+import "./IMockProxy.sol";
 
 contract TestnetFaucetTest is Test, TestCommons {
     struct BalanceUserAndFaucet {
@@ -33,7 +33,6 @@ contract TestnetFaucetTest is Test, TestCommons {
         uint256 amount
     );
 
-    address private _userOne;
     MockTestnetToken private _daiTestnetToken;
     MockTestnetToken private _usdcTestnetToken;
     MockTestnetToken private _usdtTestnetToken;
@@ -247,7 +246,7 @@ contract TestnetFaucetTest is Test, TestCommons {
         // then
         uint256 versionAfter = testnetFaucet.getVersion();
         assertEq(versionBefore, 1);
-        assertEq(versionAfter, 2);
+        assertEq(versionAfter, 2000);
     }
 
     function testShouldNotBeAbleToClaimAfterUpdateImplementationWhenDontWait24h() public {

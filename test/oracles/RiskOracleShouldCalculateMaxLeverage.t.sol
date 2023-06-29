@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "../utils/SwapUtils.sol";
-import "../utils/DataUtils.sol";
 import "../utils/TestConstants.sol";
 import "test/TestCommons.sol";
 
-contract AmmTreasuryShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
+contract RiskOracleShouldCalculateMaxLeverageTest is TestCommons {
     IporProtocolFactory.IporProtocolConfig private _cfg;
 
     BuilderUtils.IporProtocol internal _iporProtocolDai;
@@ -26,10 +24,10 @@ contract AmmTreasuryShouldCalculateMaxLeverageTest is Test, TestCommons, DataUti
         _iporProtocolDai = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocolUsdt = _iporProtocolFactory.getUsdtInstance(_cfg);
 
-        _iporProtocolDai.asset.approve(address(_iporProtocolDai.joseph), TestConstants.USD_100_000_18DEC);
-        _iporProtocolDai.joseph.provideLiquidity(TestConstants.USD_100_000_18DEC);
-        _iporProtocolUsdt.asset.approve(address(_iporProtocolUsdt.joseph), TestConstants.USD_100_000_6DEC);
-        _iporProtocolUsdt.joseph.provideLiquidity(TestConstants.USD_100_000_6DEC);
+        _iporProtocolDai.asset.approve(address(_iporProtocolDai.router), TestConstants.USD_100_000_18DEC);
+        _iporProtocolDai.ammPoolsService.provideLiquidityDai(_admin, TestConstants.USD_100_000_18DEC);
+        _iporProtocolUsdt.asset.approve(address(_iporProtocolUsdt.router), TestConstants.USD_100_000_6DEC);
+        _iporProtocolUsdt.ammPoolsService.provideLiquidityUsdt(_admin, TestConstants.USD_100_000_6DEC);
     }
 
     function testShouldCalculateMaxLeverage() public {
@@ -208,10 +206,16 @@ contract AmmTreasuryShouldCalculateMaxLeverageTest is Test, TestCommons, DataUti
         );
 
         //when
-        (uint256 maxLeveragePayFixed, uint256 maxLeverageReceiveFixed) = iporProtocol.ammTreasury.getMaxLeverage();
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicatorsPayFixed = iporProtocol
+            .ammSwapsLens
+            .getOpenSwapRiskIndicators(address(iporProtocol.asset), 0, IporTypes.SwapTenor.DAYS_28);
+
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicatorsReceiveFixed = iporProtocol
+            .ammSwapsLens
+            .getOpenSwapRiskIndicators(address(iporProtocol.asset), 1, IporTypes.SwapTenor.DAYS_28);
 
         //then
-        assertEq(maxLeveragePayFixed, expectedMaxLeveragePayFixed);
-        assertEq(maxLeverageReceiveFixed, expectedMaxLeverageReceiveFixed);
+        assertEq(riskIndicatorsPayFixed.maxLeveragePerLeg, expectedMaxLeveragePayFixed);
+        assertEq(riskIndicatorsReceiveFixed.maxLeveragePerLeg, expectedMaxLeverageReceiveFixed);
     }
 }

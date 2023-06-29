@@ -9,23 +9,21 @@ import "../../libraries/errors/IporErrors.sol";
 import "../../amm/spread/DemandSpreadLibs.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
 import "../../amm/spread/OfferedRateCalculationLibs.sol";
+import "../../libraries/IporContractValidator.sol";
 
 contract Spread28Days is ISpread28Days, ISpread28DaysLens {
+    using IporContractValidator for address;
     using SafeCast for uint256;
     using SafeCast for int256;
 
-    address internal immutable _DAI;
-    address internal immutable _USDC;
-    address internal immutable _USDT;
+    address internal immutable _dai;
+    address internal immutable _usdc;
+    address internal immutable _usdt;
 
     constructor(address dai, address usdc, address usdt) {
-        require(dai != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI asset address cannot be 0"));
-        require(usdc != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC asset address cannot be 0"));
-        require(usdt != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT asset address cannot be 0"));
-
-        _DAI = dai;
-        _USDC = usdc;
-        _USDT = usdt;
+        _dai = dai.checkAddress();
+        _usdc = usdc.checkAddress();
+        _usdt = usdt.checkAddress();
     }
 
     function calculateAndUpdateOfferedRatePayFixed28Days(
@@ -74,9 +72,9 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
 
     function getSupportedAssets() external view returns (address[] memory) {
         address[] memory assets = new address[](3);
-        assets[0] = _DAI;
-        assets[1] = _USDC;
-        assets[2] = _USDT;
+        assets[0] = _dai;
+        assets[1] = _usdc;
+        assets[2] = _usdt;
         return assets;
     }
 
@@ -155,19 +153,19 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         inputData.maturities[1] = 60 days;
         inputData.maturities[2] = 90 days;
 
-        if (spreadInputs.asset == _USDC) {
+        if (spreadInputs.asset == _usdc) {
             inputData.storageIds[0] = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysUsdc;
             inputData.storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysUsdc;
             inputData.storageIds[1] = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysUsdc;
             inputData.storageIds[2] = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysUsdc;
             return inputData;
-        } else if (spreadInputs.asset == _USDT) {
+        } else if (spreadInputs.asset == _usdt) {
             inputData.storageIds[0] = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysUsdt;
             inputData.storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysUsdt;
             inputData.storageIds[1] = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysUsdt;
             inputData.storageIds[2] = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysUsdt;
             return inputData;
-        } else if (spreadInputs.asset == _DAI) {
+        } else if (spreadInputs.asset == _dai) {
             inputData.storageIds[0] = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai;
             inputData.storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai;
             inputData.storageIds[1] = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysDai;

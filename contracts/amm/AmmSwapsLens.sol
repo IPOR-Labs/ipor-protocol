@@ -9,9 +9,11 @@ import "./spread/ISpread90DaysLens.sol";
 import "../libraries/AmmLib.sol";
 import "../libraries/RiskManagementLogic.sol";
 import "./libraries/IporSwapLogic.sol";
+import "../libraries/IporContractValidator.sol";
 
 contract AmmSwapsLens is IAmmSwapsLens {
     using Address for address;
+    using IporContractValidator for address;
     using IporSwapLogic for AmmTypes.Swap;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
     using AmmLib for AmmInternalTypes.RiskIndicatorsContext;
@@ -44,73 +46,24 @@ contract AmmSwapsLens is IAmmSwapsLens {
         address riskManagementOracle,
         address spreadRouter
     ) {
-        require(
-            usdtCfg.asset != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDT asset address cannot be 0")
-        );
-        require(
-            usdtCfg.ammStorage != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDT ammStorage address cannot be 0")
-        );
-        require(
-            usdtCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDT ammTreasury address cannot be 0")
-        );
-
-        require(
-            usdcCfg.asset != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC asset address cannot be 0")
-        );
-        require(
-            usdcCfg.ammStorage != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC ammStorage address cannot be 0")
-        );
-        require(
-            usdcCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC ammTreasury address cannot be 0")
-        );
-
-        require(daiCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI asset address cannot be 0"));
-        require(
-            daiCfg.ammStorage != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " DAI ammStorage address cannot be 0")
-        );
-        require(
-            daiCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " DAI ammTreasury address cannot be 0")
-        );
-        require(
-            address(iporOracle) != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " iporOracle address cannot be 0")
-        );
-        require(
-            riskManagementOracle != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " riskManagementOracle address cannot be 0")
-        );
-
-        require(
-            spreadRouter != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " spreadRouter address cannot be 0")
-        );
-
-        _usdtAsset = usdtCfg.asset;
-        _usdtAmmStorage = usdtCfg.ammStorage;
-        _usdtAmmTreasury = usdtCfg.ammTreasury;
+        _usdtAsset = usdtCfg.asset.checkAddress();
+        _usdtAmmStorage = usdtCfg.ammStorage.checkAddress();
+        _usdtAmmTreasury = usdtCfg.ammTreasury.checkAddress();
         _usdtMinLeverage = usdtCfg.minLeverage;
 
-        _usdcAsset = usdcCfg.asset;
-        _usdcAmmStorage = usdcCfg.ammStorage;
-        _usdcAmmTreasury = usdcCfg.ammTreasury;
+        _usdcAsset = usdcCfg.asset.checkAddress();
+        _usdcAmmStorage = usdcCfg.ammStorage.checkAddress();
+        _usdcAmmTreasury = usdcCfg.ammTreasury.checkAddress();
         _usdcMinLeverage = usdcCfg.minLeverage;
 
-        _daiAsset = daiCfg.asset;
-        _daiAmmStorage = daiCfg.ammStorage;
-        _daiAmmTreasury = daiCfg.ammTreasury;
+        _daiAsset = daiCfg.asset.checkAddress();
+        _daiAmmStorage = daiCfg.ammStorage.checkAddress();
+        _daiAmmTreasury = daiCfg.ammTreasury.checkAddress();
         _daiMinLeverage = daiCfg.minLeverage;
 
-        _iporOracle = iporOracle;
-        _riskManagementOracle = riskManagementOracle;
-        _spreadRouter = spreadRouter;
+        _iporOracle = iporOracle.checkAddress();
+        _riskManagementOracle = riskManagementOracle.checkAddress();
+        _spreadRouter = spreadRouter.checkAddress();
     }
 
     function getSwapLensPoolConfiguration(

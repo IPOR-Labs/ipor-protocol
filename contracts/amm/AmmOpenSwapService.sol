@@ -19,9 +19,11 @@ import "../libraries/errors/AmmErrors.sol";
 import "../libraries/AmmLib.sol";
 import "./libraries/types/AmmInternalTypes.sol";
 import "./libraries/IporSwapLogic.sol";
+import "../libraries/IporContractValidator.sol";
 
 contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
     using Address for address;
+    using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using AmmLib for AmmInternalTypes.RiskIndicatorsContext;
 
@@ -78,35 +80,10 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         address iporRiskManagementOracle,
         address spreadRouter
     ) {
-        require(usdtPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool asset"));
-        require(usdtPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammStorage"));
-        require(
-            usdtPoolCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammTreasury")
-        );
-
-        require(usdcPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool asset"));
-        require(usdcPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammStorage"));
-        require(
-            usdcPoolCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammTreasury")
-        );
-
-        require(daiPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool asset"));
-        require(daiPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammStorage"));
-        require(daiPoolCfg.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammTreasury"));
-
-        require(iporOracle != address(0), string.concat(IporErrors.WRONG_ADDRESS, " iporOracle"));
-        require(
-            iporRiskManagementOracle != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " iporRiskManagementOracle")
-        );
-        require(spreadRouter != address(0), string.concat(IporErrors.WRONG_ADDRESS, " spreadRouter"));
-
-        _usdt = usdtPoolCfg.asset;
+        _usdt = usdtPoolCfg.asset.checkAddress();
         _usdtDecimals = usdtPoolCfg.decimals;
-        _usdtAmmStorage = usdtPoolCfg.ammStorage;
-        _usdtAmmTreasury = usdtPoolCfg.ammTreasury;
+        _usdtAmmStorage = usdtPoolCfg.ammStorage.checkAddress();
+        _usdtAmmTreasury = usdtPoolCfg.ammTreasury.checkAddress();
         _usdtIporPublicationFee = usdtPoolCfg.iporPublicationFee;
         _usdtMaxSwapCollateralAmount = usdtPoolCfg.maxSwapCollateralAmount;
         _usdtLiquidationDepositAmount = usdtPoolCfg.liquidationDepositAmount;
@@ -114,10 +91,10 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         _usdtOpeningFeeRate = usdtPoolCfg.openingFeeRate;
         _usdtOpeningFeeTreasuryPortionRate = usdtPoolCfg.openingFeeTreasuryPortionRate;
 
-        _usdc = usdcPoolCfg.asset;
+        _usdc = usdcPoolCfg.asset.checkAddress();
         _usdcDecimals = usdcPoolCfg.decimals;
-        _usdcAmmStorage = usdcPoolCfg.ammStorage;
-        _usdcAmmTreasury = usdcPoolCfg.ammTreasury;
+        _usdcAmmStorage = usdcPoolCfg.ammStorage.checkAddress();
+        _usdcAmmTreasury = usdcPoolCfg.ammTreasury.checkAddress();
         _usdcIporPublicationFee = usdcPoolCfg.iporPublicationFee;
         _usdcMaxSwapCollateralAmount = usdcPoolCfg.maxSwapCollateralAmount;
         _usdcLiquidationDepositAmount = usdcPoolCfg.liquidationDepositAmount;
@@ -125,10 +102,10 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         _usdcOpeningFeeRate = usdcPoolCfg.openingFeeRate;
         _usdcOpeningFeeTreasuryPortionRate = usdcPoolCfg.openingFeeTreasuryPortionRate;
 
-        _dai = daiPoolCfg.asset;
+        _dai = daiPoolCfg.asset.checkAddress();
         _daiDecimals = daiPoolCfg.decimals;
-        _daiAmmStorage = daiPoolCfg.ammStorage;
-        _daiAmmTreasury = daiPoolCfg.ammTreasury;
+        _daiAmmStorage = daiPoolCfg.ammStorage.checkAddress();
+        _daiAmmTreasury = daiPoolCfg.ammTreasury.checkAddress();
         _daiIporPublicationFee = daiPoolCfg.iporPublicationFee;
         _daiMaxSwapCollateralAmount = daiPoolCfg.maxSwapCollateralAmount;
         _daiLiquidationDepositAmount = daiPoolCfg.liquidationDepositAmount;
@@ -136,9 +113,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         _daiOpeningFeeRate = daiPoolCfg.openingFeeRate;
         _daiOpeningFeeTreasuryPortionRate = daiPoolCfg.openingFeeTreasuryPortionRate;
 
-        _iporOracle = iporOracle;
-        _iporRiskManagementOracle = iporRiskManagementOracle;
-        _spreadRouter = spreadRouter;
+        _iporOracle = iporOracle.checkAddress();
+        _iporRiskManagementOracle = iporRiskManagementOracle.checkAddress();
+        _spreadRouter = spreadRouter.checkAddress();
     }
 
     function getAmmOpenSwapServicePoolConfiguration(

@@ -17,9 +17,11 @@ import "../libraries/AmmLib.sol";
 import "../libraries/AssetManagementLogic.sol";
 import "../libraries/RiskManagementLogic.sol";
 import "./libraries/IporSwapLogic.sol";
+import "../libraries/IporContractValidator.sol";
 
 contract AmmCloseSwapService is IAmmCloseSwapService {
     using Address for address;
+    using IporContractValidator for address;
     using SafeCast for uint256;
     using SafeCast for int256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -83,49 +85,11 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         address iporRiskManagementOracle,
         address spreadRouter
     ) {
-        require(usdtPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool asset"));
-        require(usdtPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammStorage"));
-        require(
-            usdtPoolCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammTreasury")
-        );
-        require(
-            usdtPoolCfg.assetManagement != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool assetManagement")
-        );
-
-        require(usdcPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool asset"));
-        require(usdcPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammStorage"));
-        require(
-            usdcPoolCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammTreasury")
-        );
-        require(
-            usdcPoolCfg.assetManagement != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool assetManagement")
-        );
-
-        require(daiPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool asset"));
-        require(daiPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammStorage"));
-        require(daiPoolCfg.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammTreasury"));
-
-        require(
-            daiPoolCfg.assetManagement != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " DAI pool assetManagement")
-        );
-
-        require(iporOracle != address(0), string.concat(IporErrors.WRONG_ADDRESS, " iporOracle"));
-        require(
-            iporRiskManagementOracle != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " iporRiskManagementOracle")
-        );
-        require(spreadRouter != address(0), string.concat(IporErrors.WRONG_ADDRESS, " spreadRouter"));
-
-        _usdt = usdtPoolCfg.asset;
+        _usdt = usdtPoolCfg.asset.checkAddress();
         _usdtDecimals = usdtPoolCfg.decimals;
-        _usdtAmmStorage = usdtPoolCfg.ammStorage;
-        _usdtAmmTreasury = usdtPoolCfg.ammTreasury;
-        _usdtAssetManagement = usdtPoolCfg.assetManagement;
+        _usdtAmmStorage = usdtPoolCfg.ammStorage.checkAddress();
+        _usdtAmmTreasury = usdtPoolCfg.ammTreasury.checkAddress();
+        _usdtAssetManagement = usdtPoolCfg.assetManagement.checkAddress();
         _usdtOpeningFeeRateForSwapUnwind = usdtPoolCfg.openingFeeRateForSwapUnwind;
         _usdtOpeningFeeTreasuryPortionRateForSwapUnwind = usdtPoolCfg.openingFeeTreasuryPortionRateForSwapUnwind;
         _usdtLiquidationLegLimit = usdtPoolCfg.maxLengthOfLiquidatedSwapsPerLeg;
@@ -138,11 +102,11 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             .minLiquidationThresholdToCloseBeforeMaturityByBuyer;
         _usdtMinLeverage = usdtPoolCfg.minLeverage;
 
-        _usdc = usdcPoolCfg.asset;
+        _usdc = usdcPoolCfg.asset.checkAddress();
         _usdcDecimals = usdcPoolCfg.decimals;
-        _usdcAmmStorage = usdcPoolCfg.ammStorage;
-        _usdcAmmTreasury = usdcPoolCfg.ammTreasury;
-        _usdcAssetManagement = usdcPoolCfg.assetManagement;
+        _usdcAmmStorage = usdcPoolCfg.ammStorage.checkAddress();
+        _usdcAmmTreasury = usdcPoolCfg.ammTreasury.checkAddress();
+        _usdcAssetManagement = usdcPoolCfg.assetManagement.checkAddress();
         _usdcOpeningFeeRateForSwapUnwind = usdcPoolCfg.openingFeeRateForSwapUnwind;
         _usdcOpeningFeeTreasuryPortionRateForSwapUnwind = usdcPoolCfg.openingFeeTreasuryPortionRateForSwapUnwind;
         _usdcLiquidationLegLimit = usdcPoolCfg.maxLengthOfLiquidatedSwapsPerLeg;
@@ -155,11 +119,11 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             .minLiquidationThresholdToCloseBeforeMaturityByBuyer;
         _usdcMinLeverage = usdcPoolCfg.minLeverage;
 
-        _dai = daiPoolCfg.asset;
+        _dai = daiPoolCfg.asset.checkAddress();
         _daiDecimals = daiPoolCfg.decimals;
-        _daiAmmStorage = daiPoolCfg.ammStorage;
-        _daiAmmTreasury = daiPoolCfg.ammTreasury;
-        _daiAssetManagement = daiPoolCfg.assetManagement;
+        _daiAmmStorage = daiPoolCfg.ammStorage.checkAddress();
+        _daiAmmTreasury = daiPoolCfg.ammTreasury.checkAddress();
+        _daiAssetManagement = daiPoolCfg.assetManagement.checkAddress();
         _daiOpeningFeeRateForSwapUnwind = daiPoolCfg.openingFeeRateForSwapUnwind;
         _daiOpeningFeeTreasuryPortionRateForSwapUnwind = daiPoolCfg.openingFeeTreasuryPortionRateForSwapUnwind;
         _daiLiquidationLegLimit = daiPoolCfg.maxLengthOfLiquidatedSwapsPerLeg;
@@ -172,9 +136,9 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             .minLiquidationThresholdToCloseBeforeMaturityByBuyer;
         _daiMinLeverage = daiPoolCfg.minLeverage;
 
-        _iporOracle = iporOracle;
-        _iporRiskManagementOracle = iporRiskManagementOracle;
-        _spreadRouter = spreadRouter;
+        _iporOracle = iporOracle.checkAddress();
+        _iporRiskManagementOracle = iporRiskManagementOracle.checkAddress();
+        _spreadRouter = spreadRouter.checkAddress();
     }
 
     function getAmmCloseSwapServicePoolConfiguration(

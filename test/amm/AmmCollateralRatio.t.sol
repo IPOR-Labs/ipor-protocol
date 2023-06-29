@@ -2,13 +2,11 @@
 pragma solidity 0.8.20;
 
 import "test/TestCommons.sol";
-import {DataUtils} from "../utils/DataUtils.sol";
-import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
 
 import "contracts/amm/AmmStorage.sol";
 
-contract AmmTreasuryCollateralRatioTest is TestCommons, DataUtils, SwapUtils {
+contract AmmCollateralRatioTest is TestCommons {
     IporProtocolFactory.IporProtocolConfig private _cfg;
     BuilderUtils.IporProtocol internal _iporProtocol;
 
@@ -29,25 +27,19 @@ contract AmmTreasuryCollateralRatioTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-
-        _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
+        _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE1;
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_3_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
 
         // when
         vm.prank(_userTwo);
-        _iporProtocol.ammTreasury.openSwapPayFixed(
+        _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
+            _userTwo,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -58,25 +50,19 @@ contract AmmTreasuryCollateralRatioTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-
-        _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
+        _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE2;
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_3_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
 
         // when
         vm.prank(_userTwo);
-        _iporProtocol.ammTreasury.openSwapReceiveFixed(
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
+            _userTwo,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -87,24 +73,18 @@ contract AmmTreasuryCollateralRatioTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE6;
-
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-
-        _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
+        _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE1;
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_3_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_100_000_18DEC);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_100_000_18DEC);
 
         // when
         vm.prank(_userTwo);
-        _iporProtocol.ammTreasury.openSwapPayFixed(
+        _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
+            _userTwo,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -115,25 +95,19 @@ contract AmmTreasuryCollateralRatioTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE6;
-
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-
-        _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
+        _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE2;
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_3_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_100_000_18DEC);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_100_000_18DEC);
 
         // when
         vm.prank(_userTwo);
-        _iporProtocol.ammTreasury.openSwapReceiveFixed(
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
+            _userTwo,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -144,24 +118,19 @@ contract AmmTreasuryCollateralRatioTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_3_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
 
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        _iporProtocol.ammTreasury.openSwapPayFixed(
+        _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
+            _userTwo,
             14000 * TestConstants.D18,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -172,7 +141,6 @@ contract AmmTreasuryCollateralRatioTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE6;
         _cfg.iporRiskManagementOracleInitialParamsTestCase = BuilderUtils
             .IporRiskManagementOracleInitialParamsTestCase
             .CASE5;
@@ -180,19 +148,16 @@ contract AmmTreasuryCollateralRatioTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_3_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
 
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        _iporProtocol.ammTreasury.openSwapPayFixed(
+        _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
+            _userTwo,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -203,24 +168,19 @@ contract AmmTreasuryCollateralRatioTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
-
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_3_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
 
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        _iporProtocol.ammTreasury.openSwapReceiveFixed(
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
+            _userTwo,
             14000 * TestConstants.D18,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -231,7 +191,6 @@ contract AmmTreasuryCollateralRatioTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE6;
         _cfg.iporRiskManagementOracleInitialParamsTestCase = BuilderUtils
             .IporRiskManagementOracleInitialParamsTestCase
             .CASE5;
@@ -239,19 +198,16 @@ contract AmmTreasuryCollateralRatioTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.itfUpdateIndex(
-            address(_iporProtocol.asset),
-            TestConstants.PERCENTAGE_3_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
 
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        _iporProtocol.ammTreasury.openSwapReceiveFixed(
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
+            _userTwo,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC

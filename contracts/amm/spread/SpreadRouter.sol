@@ -13,13 +13,16 @@ import "../../amm/spread/ISpreadStorageLens.sol";
 import "../../amm/spread/ISpreadCloseSwapService.sol";
 import "../../amm/spread/SpreadAccessControl.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
+import "../../libraries/IporContractValidator.sol";
 
 contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl, IProxyImplementation {
-    address internal immutable SPREAD_28_DAYS;
-    address internal immutable SPREAD_60_DAYS;
-    address internal immutable SPREAD_90_DAYS;
-    address internal immutable CLOSE_SWAP_SERVICE;
-    address internal immutable STORAGE_LENS;
+    using IporContractValidator for address;
+
+    address internal immutable _spread28Days;
+    address internal immutable _spread60Days;
+    address internal immutable _spread90Days;
+    address internal immutable _closeSwapService;
+    address internal immutable _storageLens;
 
     struct DeployedContracts {
         address iporProtocolRouter;
@@ -31,20 +34,11 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl, IProxyImplementat
     }
 
     constructor(DeployedContracts memory deployedContracts) SpreadAccessControl(deployedContracts.iporProtocolRouter) {
-        require(deployedContracts.spread28Days != address(0), string.concat(IporErrors.WRONG_ADDRESS, " spread28Days"));
-        require(deployedContracts.spread60Days != address(0), string.concat(IporErrors.WRONG_ADDRESS, " spread60Days"));
-        require(deployedContracts.spread90Days != address(0), string.concat(IporErrors.WRONG_ADDRESS, " spread90Days"));
-        require(deployedContracts.storageLens != address(0), string.concat(IporErrors.WRONG_ADDRESS, " storageLens"));
-        require(
-            deployedContracts.closeSwapService != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " closeSwapService")
-        );
-
-        SPREAD_28_DAYS = deployedContracts.spread28Days;
-        SPREAD_60_DAYS = deployedContracts.spread60Days;
-        SPREAD_90_DAYS = deployedContracts.spread90Days;
-        STORAGE_LENS = deployedContracts.storageLens;
-        CLOSE_SWAP_SERVICE = deployedContracts.closeSwapService;
+        _spread28Days = deployedContracts.spread28Days.checkAddress();
+        _spread60Days = deployedContracts.spread60Days.checkAddress();
+        _spread90Days = deployedContracts.spread90Days.checkAddress();
+        _storageLens = deployedContracts.storageLens.checkAddress();
+        _closeSwapService = deployedContracts.closeSwapService.checkAddress();
 
         _disableInitializers();
     }
@@ -60,12 +54,12 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl, IProxyImplementat
     }
 
     function getConfiguration() external view returns (DeployedContracts memory deployedContracts) {
-        deployedContracts.iporProtocolRouter = IPOR_PROTOCOL_ROUTER;
-        deployedContracts.spread28Days = SPREAD_28_DAYS;
-        deployedContracts.spread60Days = SPREAD_60_DAYS;
-        deployedContracts.spread90Days = SPREAD_90_DAYS;
-        deployedContracts.storageLens = STORAGE_LENS;
-        deployedContracts.closeSwapService = CLOSE_SWAP_SERVICE;
+        deployedContracts.iporProtocolRouter = _iporProtocolRouter;
+        deployedContracts.spread28Days = _spread28Days;
+        deployedContracts.spread60Days = _spread60Days;
+        deployedContracts.spread90Days = _spread90Days;
+        deployedContracts.storageLens = _storageLens;
+        deployedContracts.closeSwapService = _closeSwapService;
     }
 
     function getRouterImplementation(bytes4 sig) public view returns (address) {
@@ -75,45 +69,45 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl, IProxyImplementat
         ) {
             _onlyIporProtocolRouter();
             _whenNotPaused();
-            return SPREAD_28_DAYS;
+            return _spread28Days;
         } else if (
             sig == ISpread60Days.calculateAndUpdateOfferedRatePayFixed60Days.selector ||
             sig == ISpread60Days.calculateAndUpdateOfferedRateReceiveFixed60Days.selector
         ) {
             _onlyIporProtocolRouter();
             _whenNotPaused();
-            return SPREAD_60_DAYS;
+            return _spread60Days;
         } else if (
             sig == ISpread90Days.calculateAndUpdateOfferedRatePayFixed90Days.selector ||
             sig == ISpread90Days.calculateAndUpdateOfferedRateReceiveFixed90Days.selector
         ) {
             _onlyIporProtocolRouter();
             _whenNotPaused();
-            return SPREAD_90_DAYS;
+            return _spread90Days;
         } else if (
             sig == ISpread28DaysLens.calculateOfferedRatePayFixed28Days.selector ||
             sig == ISpread28DaysLens.calculateOfferedRateReceiveFixed28Days.selector ||
             sig == ISpread28DaysLens.spreadFunction28DaysConfig.selector
         ) {
-            return SPREAD_28_DAYS;
+            return _spread28Days;
         } else if (
             sig == ISpread60DaysLens.calculateOfferedRatePayFixed60Days.selector ||
             sig == ISpread60DaysLens.calculateOfferedRateReceiveFixed60Days.selector ||
             sig == ISpread60DaysLens.spreadFunction60DaysConfig.selector
         ) {
-            return SPREAD_60_DAYS;
+            return _spread60Days;
         } else if (
             sig == ISpread90DaysLens.calculateOfferedRatePayFixed90Days.selector ||
             sig == ISpread90DaysLens.calculateOfferedRateReceiveFixed90Days.selector ||
             sig == ISpread90DaysLens.spreadFunction90DaysConfig.selector
         ) {
-            return SPREAD_90_DAYS;
+            return _spread90Days;
         } else if (sig == ISpreadStorageLens.getTimeWeightedNotional.selector) {
-            return STORAGE_LENS;
+            return _storageLens;
         } else if (sig == ISpreadCloseSwapService.updateTimeWeightedNotionalOnClose.selector) {
             _onlyIporProtocolRouter();
             _whenNotPaused();
-            return CLOSE_SWAP_SERVICE;
+            return _closeSwapService;
         }
         revert(AmmErrors.FUNCTION_NOT_SUPPORTED);
     }
