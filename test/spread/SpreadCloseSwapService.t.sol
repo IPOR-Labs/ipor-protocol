@@ -27,16 +27,16 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeverage: 1_000e18,
+            maxLeveragePerLeg: 1_000e18,
             maxLpCollateralRatioPerLegRate: 1e18,
-            baseSpread: 0,
+            baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
-            liquidityPool: 1_000_000e18,
+            liquidityPoolBalance: 1_000_000e18,
             totalNotionalPayFixed: 100_000e18,
             totalNotionalReceiveFixed: 100_000e18,
-            indexValue: 1e16,
-            cap: 0 //todo
+            iporIndexValue: 1e16,
+            fixedRateCapPerLeg: 0 //todo
         });
         uint256 openSwapTimeStamp = block.timestamp + 100 days;
         AmmInternalTypes.OpenSwapItem memory closedSwap = AmmInternalTypes.OpenSwapItem(
@@ -48,7 +48,9 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
 
         vm.warp(openSwapTimeStamp);
         vm.prank(_ammAddress);
-        uint256 payFixed28Open = ISpread28Days(_routerAddress).calculateAndUpdateOfferedRatePayFixed28Days(spreadInputsOpen);
+        uint256 payFixed28Open = ISpread28Days(_routerAddress).calculateAndUpdateOfferedRatePayFixed28Days(
+            spreadInputsOpen
+        );
 
         SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseBefore = ISpreadStorageLens(
             _routerAddress
@@ -91,16 +93,16 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeverage: 1_000e18,
+            maxLeveragePerLeg: 1_000e18,
             maxLpCollateralRatioPerLegRate: 1e18,
-            baseSpread: 0,
+            baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
-            liquidityPool: 1_000_000e18,
+            liquidityPoolBalance: 1_000_000e18,
             totalNotionalPayFixed: 100_000e18,
             totalNotionalReceiveFixed: 100_000e18,
-            indexValue: 1e16,
-            cap: 0 //todo
+            iporIndexValue: 1e16,
+            fixedRateCapPerLeg: 0 //todo
         });
         uint256 openSwapTimeStamp = block.timestamp + 100 days;
         AmmInternalTypes.OpenSwapItem memory closedSwap = AmmInternalTypes.OpenSwapItem(
@@ -112,7 +114,9 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
 
         vm.warp(openSwapTimeStamp);
         vm.prank(_ammAddress);
-        uint256 payFixed28Open = ISpread28Days(_routerAddress).calculateAndUpdateOfferedRateReceiveFixed28Days(spreadInputsOpen);
+        uint256 payFixed28Open = ISpread28Days(_routerAddress).calculateAndUpdateOfferedRateReceiveFixed28Days(
+            spreadInputsOpen
+        );
 
         SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseBefore = ISpreadStorageLens(
             _routerAddress
@@ -156,16 +160,16 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeverage: 1_000e18,
+            maxLeveragePerLeg: 1_000e18,
             maxLpCollateralRatioPerLegRate: 1e18,
-            baseSpread: 0,
+            baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
-            liquidityPool: 1_000_000e18,
+            liquidityPoolBalance: 1_000_000e18,
             totalNotionalPayFixed: 100_000e18,
             totalNotionalReceiveFixed: 100_000e18,
-            indexValue: 1e16,
-            cap: 0 //todo
+            iporIndexValue: 1e16,
+            fixedRateCapPerLeg: 0 //todo
         });
         AmmInternalTypes.OpenSwapItem memory closedSwap = AmmInternalTypes.OpenSwapItem(
             10,
@@ -223,16 +227,16 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeverage: 1_000e18,
+            maxLeveragePerLeg: 1_000e18,
             maxLpCollateralRatioPerLegRate: 1e18,
-            baseSpread: 0,
+            baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
-            liquidityPool: 1_000_000e18,
+            liquidityPoolBalance: 1_000_000e18,
             totalNotionalPayFixed: 100_000e18,
             totalNotionalReceiveFixed: 100_000e18,
-            indexValue: 1e16,
-            cap: 0 //todo
+            iporIndexValue: 1e16,
+            fixedRateCapPerLeg: 0 //todo
         });
         AmmInternalTypes.OpenSwapItem memory closedSwap = AmmInternalTypes.OpenSwapItem(
             10,
@@ -291,16 +295,16 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeverage: 1_000e18,
+            maxLeveragePerLeg: 1_000e18,
             maxLpCollateralRatioPerLegRate: 1e18,
-            baseSpread: 0,
+            baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
-            liquidityPool: 1_000_000e18,
+            liquidityPoolBalance: 1_000_000e18,
             totalNotionalPayFixed: 100_000e18,
             totalNotionalReceiveFixed: 100_000e18,
-            indexValue: 1e16,
-            cap: 0 //todo
+            iporIndexValue: 1e16,
+            fixedRateCapPerLeg: 0 //todo
         });
 
         vm.warp(1000 days);
@@ -395,27 +399,27 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         );
         assertTrue(
             timeWeightedNotionalResponseBeforeOpenLastSwap[0].timeWeightedNotional.lastUpdateTimeReceiveFixed ==
-            86832000,
+                86832000,
             "timeWeightedNotionalResponseBeforeOpenLastSwap[0].timeWeightedNotional.lastUpdateTimeReceiveFixed != 86832000"
         );
         assertTrue(
             timeWeightedNotionalResponseAfterOpenLastSwap[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed ==
-            24961000000000000000000,
+                24961000000000000000000,
             "timeWeightedNotionalResponseAfterOpenLastSwap[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed != 24961000000000000000000"
         );
         assertTrue(
             timeWeightedNotionalResponseAfterOpenLastSwap[0].timeWeightedNotional.lastUpdateTimeReceiveFixed ==
-            87264000,
+                87264000,
             "timeWeightedNotionalResponseAfterOpenLastSwap[0].timeWeightedNotional.lastUpdateTimeReceiveFixed != 87264000"
         );
         assertTrue(
             timeWeightedNotionalResponseAfterCloseLastSwap[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed ==
-            18213000000000000000000,
+                18213000000000000000000,
             "timeWeightedNotionalResponseAfterCloseLastSwap[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed != 18213000000000000000000"
         );
         assertTrue(
             timeWeightedNotionalResponseAfterCloseLastSwap[0].timeWeightedNotional.lastUpdateTimeReceiveFixed ==
-            86832000,
+                86832000,
             "timeWeightedNotionalResponseAfterCloseLastSwap[0].timeWeightedNotional.lastUpdateTimeReceiveFixed != 87264000"
         );
     }
@@ -428,16 +432,16 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeverage: 1_000e18,
+            maxLeveragePerLeg: 1_000e18,
             maxLpCollateralRatioPerLegRate: 1e18,
-            baseSpread: 0,
+            baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
-            liquidityPool: 1_000_000e18,
+            liquidityPoolBalance: 1_000_000e18,
             totalNotionalPayFixed: 100_000e18,
             totalNotionalReceiveFixed: 100_000e18,
-            indexValue: 1e16,
-            cap: 0 //todo
+            iporIndexValue: 1e16,
+            fixedRateCapPerLeg: 0 //todo
         });
 
         vm.warp(1000 days);
@@ -531,28 +535,25 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
             "timeWeightedNotionalResponseBeforeOpenLastSwap[0].timeWeightedNotional.timeWeightedNotionalPayFixed != 18214000000000000000000"
         );
         assertTrue(
-            timeWeightedNotionalResponseBeforeOpenLastSwap[0].timeWeightedNotional.lastUpdateTimePayFixed ==
-            86832000,
+            timeWeightedNotionalResponseBeforeOpenLastSwap[0].timeWeightedNotional.lastUpdateTimePayFixed == 86832000,
             "timeWeightedNotionalResponseBeforeOpenLastSwap[0].timeWeightedNotional.lastUpdateTimePayFixed != 86832000"
         );
         assertTrue(
             timeWeightedNotionalResponseAfterOpenLastSwap[0].timeWeightedNotional.timeWeightedNotionalPayFixed ==
-            24961000000000000000000,
+                24961000000000000000000,
             "timeWeightedNotionalResponseAfterOpenLastSwap[0].timeWeightedNotional.timeWeightedNotionalPayFixed != 24961000000000000000000"
         );
         assertTrue(
-            timeWeightedNotionalResponseAfterOpenLastSwap[0].timeWeightedNotional.lastUpdateTimePayFixed ==
-            87264000,
+            timeWeightedNotionalResponseAfterOpenLastSwap[0].timeWeightedNotional.lastUpdateTimePayFixed == 87264000,
             "timeWeightedNotionalResponseAfterOpenLastSwap[0].timeWeightedNotional.lastUpdateTimePayFixed != 87264000"
         );
         assertTrue(
             timeWeightedNotionalResponseAfterCloseLastSwap[0].timeWeightedNotional.timeWeightedNotionalPayFixed ==
-            18213000000000000000000,
+                18213000000000000000000,
             "timeWeightedNotionalResponseAfterCloseLastSwap[0].timeWeightedNotional.timeWeightedNotionalPayFixed != 18213000000000000000000"
         );
         assertTrue(
-            timeWeightedNotionalResponseAfterCloseLastSwap[0].timeWeightedNotional.lastUpdateTimePayFixed ==
-            86832000,
+            timeWeightedNotionalResponseAfterCloseLastSwap[0].timeWeightedNotional.lastUpdateTimePayFixed == 86832000,
             "timeWeightedNotionalResponseAfterCloseLastSwap[0].timeWeightedNotional.lastUpdateTimePayFixed != 87264000"
         );
     }

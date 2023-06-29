@@ -61,24 +61,24 @@ library IporTypes {
         /// @notice Swap's notional value
         uint256 swapNotional;
         /// @notice Maximum leverage
-        uint256 maxLeverage;
+        uint256 maxLeveragePerLeg;
         /// @notice Maximum LP Collateral Ratio per leg rate
         uint256 maxLpCollateralRatioPerLegRate;
         /// @notice Base spread
-        int256 baseSpread;
+        int256 baseSpreadPerLeg;
         /// @notice Swap's balance for Pay Fixed leg
         uint256 totalCollateralPayFixed;
         /// @notice Swap's balance for Receive Fixed leg
         uint256 totalCollateralReceiveFixed;
         /// @notice Liquidity Pool's Balance
-        uint256 liquidityPool;
+        uint256 liquidityPoolBalance;
         /// @notice Swap's notional balance for Pay Fixed leg
         uint256 totalNotionalPayFixed;
         /// @notice Swap's notional balance for Receive Fixed leg
         uint256 totalNotionalReceiveFixed;
         /// @notice Ipor index value at the time of swap creation
-        uint256 indexValue;
-        // @notice cap for offered rate without demandSpread in 18 decimals
-        uint256 cap;
+        uint256 iporIndexValue;
+        // @notice fixed rate cap for given leg for offered rate without demandSpread in 18 decimals
+        uint256 fixedRateCapPerLeg;
     }
 }

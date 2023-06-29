@@ -17,7 +17,8 @@ interface IIporRiskManagementOracle {
     /// @return maxNotionalPerLeg maximum notional value for given leg
     /// @return maxCollateralRatioPerLeg maximum collateral ratio for given leg
     /// @return maxCollateralRatio maximum collateral ratio for both legs
-    /// @return spread spread for given direction and tenor
+    /// @return baseSpreadPerLeg spread for given direction and tenor
+    /// @return fixedRateCapPerLeg fixed rate cap for given direction and tenor
     function getOpenSwapParameters(
         address asset,
         uint256 direction,
@@ -29,8 +30,8 @@ interface IIporRiskManagementOracle {
             uint256 maxNotionalPerLeg,
             uint256 maxCollateralRatioPerLeg,
             uint256 maxCollateralRatio,
-            int256 spread,
-            uint256 fixedRateCap
+            int256 baseSpreadPerLeg,
+            uint256 fixedRateCapPerLeg
         );
 
     /// @notice Gets risk indicators for a given asset. Amounts and rates represented in 18 decimals.

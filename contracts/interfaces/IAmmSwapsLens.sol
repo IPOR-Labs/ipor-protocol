@@ -95,7 +95,7 @@ interface IAmmSwapsLens {
     /// @return soapPayFixed SOAP value for pay fixed swaps.
     /// @return soapReceiveFixed SOAP value for receive fixed swaps.
     /// @return soap SOAP value which is a sum of soapPayFixed and soapReceiveFixed.
-    function getSOAP(address asset) external view returns (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap);
+    function getSoap(address asset) external view returns (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap);
 
     /// @notice Gets the offered rate value for a given asset, tenor and notional.
     /// @param asset The address of the asset.

@@ -227,7 +227,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             sig == IAmmSwapsLens.getPayoffPayFixed.selector ||
             sig == IAmmSwapsLens.getPayoffReceiveFixed.selector ||
             sig == IAmmSwapsLens.getBalancesForOpenSwap.selector ||
-            sig == IAmmSwapsLens.getSOAP.selector ||
+            sig == IAmmSwapsLens.getSoap.selector ||
             sig == IAmmSwapsLens.getOpenSwapRiskIndicators.selector ||
             sig == IAmmSwapsLens.getOfferedRate.selector
         ) {

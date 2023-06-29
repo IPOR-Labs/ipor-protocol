@@ -98,8 +98,8 @@ library AmmLib {
             maxNotionalPerLeg,
             riskIndicators.maxCollateralRatioPerLeg,
             riskIndicators.maxCollateralRatio,
-            riskIndicators.baseSpread,
-            riskIndicators.fixedRateCap
+            riskIndicators.baseSpreadPerLeg,
+            riskIndicators.fixedRateCapPerLeg
         ) = IIporRiskManagementOracle(context.iporRiskManagementOracle).getOpenSwapParameters(
             context.asset,
             direction,

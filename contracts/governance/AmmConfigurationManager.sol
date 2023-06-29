@@ -9,17 +9,9 @@ library AmmConfigurationManager {
     /// @notice Emitted when new liquidator is added to the list of SwapLiquidators.
     /// @param asset address of the asset (pool)
     /// @param liquidator address of the new liquidator
-    event AmmSwapsLiquidatorChanged(
-        address indexed asset,
-        address indexed liquidator,
-        bool status
-    );
+    event AmmSwapsLiquidatorChanged(address indexed asset, address indexed liquidator, bool status);
 
-    event AmmAppointedToRebalanceChanged(
-        address indexed asset,
-        address indexed account,
-        bool status
-    );
+    event AmmAppointedToRebalanceChanged(address indexed asset, address indexed account, bool status);
 
     event AmmPoolsParamsChanged(
         address indexed asset,

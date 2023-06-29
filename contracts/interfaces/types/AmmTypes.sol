@@ -179,9 +179,9 @@ library AmmTypes {
         /// @notice Maximum leverage for a given leg
         uint256 maxLeveragePerLeg;
         /// @notice Base Spread for a given leg (without demand part)
-        int256 baseSpread;
+        int256 baseSpreadPerLeg;
         /// @notice Fixed rate cap
-        uint256 fixedRateCap;
+        uint256 fixedRateCapPerLeg;
     }
 
     /// @notice Structure containing information about swap's closing status, unwind values and payoff for a given swap and time.

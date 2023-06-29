@@ -121,6 +121,4 @@ contract AccessControl {
             StorageLib.getReentrancyStatus().value = _NOT_ENTERED;
         }
     }
-
-
 }

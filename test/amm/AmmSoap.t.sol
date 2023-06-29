@@ -32,7 +32,7 @@ contract AmmSoapTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
-        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
         // then
         assertEq(soap, TestConstants.ZERO_INT);
     }
@@ -56,7 +56,7 @@ contract AmmSoapTest is TestCommons {
         );
 
         // when
-        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         // then
         assertEq(soap, TestConstants.ZERO_INT);
@@ -91,7 +91,7 @@ contract AmmSoapTest is TestCommons {
         vm.warp(100 + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
 
         // when
-        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         // then
         assertEq(soap, expectedSoapBalance);
@@ -120,7 +120,7 @@ contract AmmSoapTest is TestCommons {
         int256 expectedSoapBalance = -TestConstants.ZERO_INT;
 
         // when
-        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         // then
         assertEq(soap, expectedSoapBalance);
@@ -154,7 +154,7 @@ contract AmmSoapTest is TestCommons {
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
 
         // when
-        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         // then
         assertEq(soap, expectedSoapBalance);
@@ -193,7 +193,7 @@ contract AmmSoapTest is TestCommons {
         // when
         _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
 
-        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         // then
         assertEq(soap, expectedSoapBalance);
@@ -238,7 +238,7 @@ contract AmmSoapTest is TestCommons {
         // when
         _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
 
-        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         // then
         assertEq(soap, expectedSoapBalance);
@@ -277,7 +277,7 @@ contract AmmSoapTest is TestCommons {
         );
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
-        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         // then
         assertEq(soap, expectedSoapBalance);
@@ -316,7 +316,7 @@ contract AmmSoapTest is TestCommons {
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
 
-        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         // then
         assertEq(soap, expectedSoapBalance);
@@ -365,8 +365,8 @@ contract AmmSoapTest is TestCommons {
         );
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
-        (, , int256 soapUsdt) = amm.usdt.ammSwapsLens.getSOAP(address(amm.usdt.asset));
-        (, , int256 soapDai) = amm.dai.ammSwapsLens.getSOAP(address(amm.dai.asset));
+        (, , int256 soapUsdt) = amm.usdt.ammSwapsLens.getSoap(address(amm.usdt.asset));
+        (, , int256 soapDai) = amm.dai.ammSwapsLens.getSoap(address(amm.dai.asset));
 
         // then
         assertEq(soapUsdt, expectedSoapUsdt, "incorrect soapUsdt");
@@ -414,7 +414,7 @@ contract AmmSoapTest is TestCommons {
 
         // when
         _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
-        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         // then
         assertEq(soap, expectedSoapBalance);
@@ -463,7 +463,7 @@ contract AmmSoapTest is TestCommons {
         _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
 
         // then
-        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
         assertEq(soap, expectedSoapBalance);
     }
 
@@ -525,8 +525,8 @@ contract AmmSoapTest is TestCommons {
         ammUsdt.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds);
 
         // then
-        (, , int256 soapUsdt) = ammUsdt.ammSwapsLens.getSOAP(address(ammUsdt.asset));
-        (, , int256 soapDai) = ammDai.ammSwapsLens.getSOAP(address(ammDai.asset));
+        (, , int256 soapUsdt) = ammUsdt.ammSwapsLens.getSoap(address(ammUsdt.asset));
+        (, , int256 soapDai) = ammDai.ammSwapsLens.getSoap(address(ammDai.asset));
 
         assertEq(soapUsdt, expectedSoapUsdt, "incorrect soapUsdt");
         assertEq(soapDai, expectedSoapDai, "incorrect soapDai");
@@ -567,7 +567,7 @@ contract AmmSoapTest is TestCommons {
         vm.stopPrank();
 
         // when
-        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         // then
         assertEq(soap, expectedSoapBalance);
@@ -608,7 +608,7 @@ contract AmmSoapTest is TestCommons {
         vm.stopPrank();
 
         // when
-        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         // then
         assertEq(soap, expectedSoapBalance);
@@ -654,11 +654,11 @@ contract AmmSoapTest is TestCommons {
 
         // then
         vm.warp(currentTimestamp + TestConstants.PERIOD_28_DAYS_IN_SECONDS);
-        (, , int256 soap28Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap28Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
         assertEq(soap28Days, expectedSoapBalanceAfter28Days);
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
-        (, , int256 soap50Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap50Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
         assertEq(soap50Days, expectedSoapBalanceAfter50Days);
     }
 
@@ -701,7 +701,7 @@ contract AmmSoapTest is TestCommons {
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
         // then
-        (, , int256 soap50Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap50Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
         assertEq(soap50Days, expectedSoapBalanceAfter50Days);
     }
 
@@ -749,7 +749,7 @@ contract AmmSoapTest is TestCommons {
         _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
 
         // then
-        (, , int256 soap50Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap50Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
         assertEq(soap50Days, expectedSoapBalanceAfter50Days);
     }
 
@@ -780,19 +780,19 @@ contract AmmSoapTest is TestCommons {
         );
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
-        (, , int256 soapBeforeUpdateIndex) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soapBeforeUpdateIndex) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
         vm.prank(_userOne);
         _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
-        (, , int256 soapAfterUpdateIndex25Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soapAfterUpdateIndex25Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         vm.prank(_userOne);
         _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
 
-        (, , int256 soapAfterUpdateIndex50Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soapAfterUpdateIndex50Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         // then
         int256 expectedSoapBeforeUpdateIndex = -136118718029856335219;
@@ -835,7 +835,7 @@ contract AmmSoapTest is TestCommons {
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_1_DAY_IN_SECONDS + 100);
 
-        (, , int256 soapRightAfterOpenedPayFixedSwap) = _iporProtocol.ammSwapsLens.getSOAP(
+        (, , int256 soapRightAfterOpenedPayFixedSwap) = _iporProtocol.ammSwapsLens.getSoap(
             address(_iporProtocol.asset)
         );
 
@@ -885,7 +885,7 @@ contract AmmSoapTest is TestCommons {
         vm.prank(_userOne);
         _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
 
-        (, , int256 soap50Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap50Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         // then
         assertEq(soap50Days, expectedSoap50Days);
@@ -945,7 +945,7 @@ contract AmmSoapTest is TestCommons {
         _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
 
         // then
-        (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
         assertEq(soap75Days, expectedSoap75Days);
     }
 
@@ -1005,7 +1005,7 @@ contract AmmSoapTest is TestCommons {
         _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
 
         // then
-        (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         assertEq(soap75Days, expectedSoap75Days);
     }
@@ -1067,7 +1067,7 @@ contract AmmSoapTest is TestCommons {
         _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
 
         // then
-        (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
         assertEq(soap75Days, expectedSoap75Days);
     }
 
@@ -1127,7 +1127,7 @@ contract AmmSoapTest is TestCommons {
         _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
 
         // then
-        (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         assertEq(soap75Days, expectedSoap75Days);
     }
@@ -1188,7 +1188,7 @@ contract AmmSoapTest is TestCommons {
         _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
 
         // then
-        (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
         assertEq(soap75Days, expectedSoap75Days);
     }
 
@@ -1250,7 +1250,7 @@ contract AmmSoapTest is TestCommons {
         _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds);
 
         // then
-        (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         assertEq(soap75Days, expectedSoap75Days);
     }
@@ -1311,7 +1311,7 @@ contract AmmSoapTest is TestCommons {
         _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds);
 
         // then
-        (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         assertEq(soap75Days, expectedSoap75Days);
     }
@@ -1374,7 +1374,7 @@ contract AmmSoapTest is TestCommons {
         _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds);
 
         // then
-        (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSOAP(address(_iporProtocol.asset));
+        (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         assertEq(soap75Days, expectedSoap75Days);
     }

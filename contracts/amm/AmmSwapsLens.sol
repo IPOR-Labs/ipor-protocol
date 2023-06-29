@@ -101,7 +101,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         return swap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
     }
 
-    function getSOAP(
+    function getSoap(
         address asset
     ) external view override returns (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap) {
         IAmmStorage ammStorage = _getAmmStorage(asset);
@@ -175,14 +175,14 @@ contract AmmSwapsLens is IAmmSwapsLens {
                     spreadContext.notional,
                     spreadContext.riskIndicators.maxLeveragePerLeg,
                     spreadContext.riskIndicators.maxCollateralRatioPerLeg,
-                    spreadContext.riskIndicators.baseSpread,
+                    spreadContext.riskIndicators.baseSpreadPerLeg,
                     spreadContext.balance.totalCollateralPayFixed,
                     spreadContext.balance.totalCollateralReceiveFixed,
                     spreadContext.balance.liquidityPool,
                     spreadContext.balance.totalNotionalPayFixed,
                     spreadContext.balance.totalNotionalReceiveFixed,
                     spreadContext.indexValue,
-                    spreadContext.riskIndicators.fixedRateCap
+                    spreadContext.riskIndicators.fixedRateCapPerLeg
                 )
             ),
             (uint256)
