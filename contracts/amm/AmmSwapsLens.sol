@@ -101,7 +101,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         return swap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
     }
 
-    function getSOAP(
+    function getSoap(
         address asset
     ) external view override returns (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap) {
         IAmmStorage ammStorage = _getAmmStorage(asset);

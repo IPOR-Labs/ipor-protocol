@@ -395,6 +395,34 @@ contract AmmStorage is
         return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
 
+    function getSoapIndicators()
+        external
+        view
+        returns (
+            AmmStorageTypes.SoapIndicators memory indicatorsPayFixed,
+            AmmStorageTypes.SoapIndicators memory indicatorsReceiveFixed
+        )
+    {
+        StorageInternalTypes.SoapIndicatorsStorage memory soapIndicatorsPayFixed = _soapIndicatorsPayFixed;
+        StorageInternalTypes.SoapIndicatorsStorage memory soapIndicatorsReceiveFixed = _soapIndicatorsReceiveFixed;
+
+        indicatorsPayFixed = AmmStorageTypes.SoapIndicators({
+            hypotheticalInterestCumulative: soapIndicatorsPayFixed.hypotheticalInterestCumulative,
+            totalNotional: soapIndicatorsPayFixed.totalNotional,
+            totalIbtQuantity: soapIndicatorsPayFixed.totalIbtQuantity,
+            averageInterestRate: soapIndicatorsPayFixed.averageInterestRate,
+            rebalanceTimestamp: soapIndicatorsPayFixed.rebalanceTimestamp
+        });
+
+        indicatorsReceiveFixed = AmmStorageTypes.SoapIndicators({
+            hypotheticalInterestCumulative: soapIndicatorsReceiveFixed.hypotheticalInterestCumulative,
+            totalNotional: soapIndicatorsReceiveFixed.totalNotional,
+            totalIbtQuantity: soapIndicatorsReceiveFixed.totalIbtQuantity,
+            averageInterestRate: soapIndicatorsReceiveFixed.averageInterestRate,
+            rebalanceTimestamp: soapIndicatorsReceiveFixed.rebalanceTimestamp
+        });
+    }
+
     function _getPositions(
         mapping(uint32 => StorageInternalTypes.Swap) storage swaps,
         uint32[] storage ids,
@@ -428,34 +456,6 @@ contract AmmStorage is
             }
         }
         return derivatives;
-    }
-
-    function getSoapIndicators()
-        external
-        view
-        returns (
-            AmmStorageTypes.SoapIndicators memory indicatorsPayFixed,
-            AmmStorageTypes.SoapIndicators memory indicatorsReceiveFixed
-        )
-    {
-        StorageInternalTypes.SoapIndicatorsStorage memory soapIndicatorsPayFixed = _soapIndicatorsPayFixed;
-        StorageInternalTypes.SoapIndicatorsStorage memory soapIndicatorsReceiveFixed = _soapIndicatorsReceiveFixed;
-
-        indicatorsPayFixed = AmmStorageTypes.SoapIndicators({
-            hypotheticalInterestCumulative: soapIndicatorsPayFixed.hypotheticalInterestCumulative,
-            totalNotional: soapIndicatorsPayFixed.totalNotional,
-            totalIbtQuantity: soapIndicatorsPayFixed.totalIbtQuantity,
-            averageInterestRate: soapIndicatorsPayFixed.averageInterestRate,
-            rebalanceTimestamp: soapIndicatorsPayFixed.rebalanceTimestamp
-        });
-
-        indicatorsReceiveFixed = AmmStorageTypes.SoapIndicators({
-            hypotheticalInterestCumulative: soapIndicatorsReceiveFixed.hypotheticalInterestCumulative,
-            totalNotional: soapIndicatorsReceiveFixed.totalNotional,
-            totalIbtQuantity: soapIndicatorsReceiveFixed.totalIbtQuantity,
-            averageInterestRate: soapIndicatorsReceiveFixed.averageInterestRate,
-            rebalanceTimestamp: soapIndicatorsReceiveFixed.rebalanceTimestamp
-        });
     }
 
     function _updateBalancesWhenOpenSwapPayFixed(
