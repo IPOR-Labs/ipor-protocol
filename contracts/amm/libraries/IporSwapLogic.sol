@@ -26,7 +26,7 @@ library IporSwapLogic {
         uint256 wadLiquidationDepositAmount,
         uint256 iporPublicationFeeAmount,
         uint256 openingFeeRate
-    ) internal view returns (uint256 collateral, uint256 notional, uint256 openingFee) {
+    ) internal pure returns (uint256 collateral, uint256 notional, uint256 openingFee) {
         uint256 availableAmount = wadTotalAmount - wadLiquidationDepositAmount - iporPublicationFeeAmount;
 
         collateral = IporMath.division(
