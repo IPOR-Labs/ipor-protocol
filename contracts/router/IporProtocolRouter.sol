@@ -216,7 +216,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         } else if (
             sig == IAmmGovernanceLens.isSwapLiquidator.selector ||
             sig == IAmmGovernanceLens.isAppointedToRebalanceInAmm.selector ||
-            sig == IAmmGovernanceLens.getAmmPoolsParams.selector
+            sig == IAmmGovernanceLens.getAmmPoolsParams.selector ||
+            sig == IAmmGovernanceLens.getAmmGovernancePoolConfiguration.selector
         ) {
             return _ammGovernanceService;
         } else if (sig == IAmmOpenSwapLens.getAmmOpenSwapServicePoolConfiguration.selector) {
