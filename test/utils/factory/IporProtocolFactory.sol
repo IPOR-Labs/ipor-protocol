@@ -4,7 +4,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20Metadat
 import "forge-std/Test.sol";
 import "../../../contracts/tokens/IpToken.sol";
 import "../../../contracts/tokens/IvToken.sol";
-import "../../../contracts/itf/ItfIporOracle.sol";
+import "../../../contracts/oracles/IporOracle.sol";
 
 import "../builder/AssetBuilder.sol";
 import "../builder/IpTokenBuilder.sol";
@@ -43,7 +43,7 @@ contract IporProtocolFactory is Test {
     struct Amm {
         IporProtocolRouter router;
         SpreadRouter spreadRouter;
-        ItfIporOracle iporOracle;
+        IporOracle iporOracle;
         MockIporWeighted iporWeighted;
         IporRiskManagementOracle iporRiskManagementOracle;
         BuilderUtils.IporProtocol usdt;

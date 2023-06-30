@@ -29,7 +29,7 @@ contract IporOracleFactory is Test {
         address updater,
         BuilderUtils.IporOracleInitialParamsTestCase initialParamsTestCase,
         IporOracleConstructorParams memory constructorParams
-    ) public returns (ItfIporOracle) {
+    ) public returns (IporOracle) {
         iporOracleBuilder.withAssets(assets);
 
         uint32[] memory lastUpdateTimestamps = _constructIndicatorsBasedOnInitialParamTestCase(
@@ -50,7 +50,7 @@ contract IporOracleFactory is Test {
 
         iporOracleBuilder.withIporOracleImplementation(address(iporOracleImpl));
 
-        ItfIporOracle iporOracle = iporOracleBuilder.build();
+        IporOracle iporOracle = iporOracleBuilder.build();
 
         vm.prank(_owner);
         iporOracle.addUpdater(updater);
@@ -61,7 +61,7 @@ contract IporOracleFactory is Test {
     function getEmptyInstance(
         address[] memory assets,
         BuilderUtils.IporOracleInitialParamsTestCase initialParamsTestCase
-    ) public returns (ItfIporOracle) {
+    ) public returns (IporOracle) {
         iporOracleBuilder.withAssets(assets);
         uint32[] memory lastUpdateTimestamps = _constructIndicatorsBasedOnInitialParamTestCase(
             assets,

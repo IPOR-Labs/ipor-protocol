@@ -4,7 +4,7 @@ pragma solidity 0.8.20;
 /// @title Interface for interaction with AssetManagement smart contract - administration and maintenance part.
 interface IAssetManagementInternal {
     /// @notice Returns current version of AssetManagement
-	/// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
+    /// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
     /// @return current AssetManagement's version
     function getVersion() external pure returns (uint256);
 
@@ -27,6 +27,15 @@ interface IAssetManagementInternal {
     /// @notice Gets Strategy Compound address
     /// @return Strategy Compound address
     function getStrategyCompound() external view returns (address);
+
+    /// @notice Gets current Strategy which has the highest APY
+    /// @return strategyMaxApy address of the Strategy with the highest APY
+    /// @return strategyAave address of the AAVE Strategy
+    /// @return strategyCompound address of the Compound Strategy
+    function getMaxApyStrategy()
+        external
+        view
+        returns (address strategyMaxApy, address strategyAave, address strategyCompound);
 
     /// @notice Transfers all asset in current strategy to strategy with the highest APY. Function available only for the Owner.
     /// @dev Emits {Deposit} or {Withdraw} event from AssetManagement depending on current asset balance on AmmTreasury and AssetManagement. Emits {Transfer} from ERC20 asset.
@@ -66,18 +75,12 @@ interface IAssetManagementInternal {
     /// @notice Emmited when all AssetManagement's assets are migrated from old strategy to the new one. Function is available only by the Owner.
     /// @param newStrategy new strategy address where assets was migrated
     /// @param amount final amount of assets which were migrated between strategies, represented in 18 decimals
-    event AssetMigrated(
-        address newStrategy,
-        uint256 amount
-    );
+    event AssetMigrated(address newStrategy, uint256 amount);
 
     /// @notice Emitted when stratedy address has been changed by the smart contract Owner.
     /// @param newStrategy new strategy address
     /// @param newShareToken strategy share token's address
-    event StrategyChanged(
-        address newStrategy,
-        address newShareToken
-    );
+    event StrategyChanged(address newStrategy, address newShareToken);
 
     /// @notice Emmited when AmmTreasury address has been changed by the smart contract Owner.
     /// @param newAmmTreasury new AmmTreasury address
