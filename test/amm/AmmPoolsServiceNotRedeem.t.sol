@@ -193,7 +193,7 @@ contract AmmPoolsServiceNotRedeem is TestCommons {
 
         // when
         vm.prank(_liquidityProvider);
-        vm.expectRevert("IPOR_410");
+        vm.expectRevert("IPOR_409");
         _iporProtocol.ammPoolsService.redeemFromAmmPoolDai(_liquidityProvider, TestConstants.USD_10_000_18DEC);
     }
 

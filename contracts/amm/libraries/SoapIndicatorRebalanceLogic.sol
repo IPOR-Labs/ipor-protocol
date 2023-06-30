@@ -15,7 +15,7 @@ library SoapIndicatorRebalanceLogic {
     /// @notice Update SOAP indicators when open swap
     /// @param si SOAP indicators
     /// @param rebalanceTimestamp timestamp when the rebalance is executed
-    /// @param derivativeNotional notional of the swap which is going to be opened and influence the SOAP
+    /// @param swapNotional notional of the swap which is going to be opened and influence the SOAP
     /// @param swapFixedInterestRate fixed interest rate of the swap
     /// @param swapIbtQuantity IBT quantity of the swap
     /// @return updated SOAP indicators
@@ -70,7 +70,7 @@ library SoapIndicatorRebalanceLogic {
             swapFixedInterestRate
         );
 
-        if (si.totalNotional != derivativeNotional) {
+        if (si.totalNotional != swapNotional) {
             uint256 currentHypoteticalInterestTotal = SoapIndicatorLogic.calculateHyphoteticalInterestTotal(
                 si,
                 rebalanceTimestamp
@@ -158,8 +158,8 @@ library SoapIndicatorRebalanceLogic {
         } else {
             return
                 IporMath.division(
-                    (totalNotional * averageInterestRate - derivativeNotional * swapFixedInterestRate),
-                    (totalNotional - derivativeNotional)
+                    (totalNotional * averageInterestRate - swapNotional * swapFixedInterestRate),
+                    (totalNotional - swapNotional)
                 );
         }
     }

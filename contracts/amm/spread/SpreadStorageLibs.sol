@@ -46,7 +46,7 @@ library SpreadStorageLibs {
     }
 
     /// @notice Saves time weighted notional for a specific asset and tenor
-    /// @param storageId The storage ID of the time weighted notional
+    /// @param timeWeightedNotionalStorageId The storage ID of the time weighted notional
     /// @param timeWeightedNotional The time weighted notional to save
     function saveTimeWeightedNotional(
         StorageId timeWeightedNotionalStorageId,
@@ -65,7 +65,7 @@ library SpreadStorageLibs {
         uint32 lastUpdateTimePayFixed = timeWeightedNotional.lastUpdateTimePayFixed.toUint32();
         uint96 timeWeightedNotionalReceiveFixed = timeWeightedNotionalReceiveFixedTemp.toUint96();
         uint32 lastUpdateTimeReceiveFixed = timeWeightedNotional.lastUpdateTimeReceiveFixed.toUint32();
-        uint256 slotAddress = _getStorageSlot(storageId);
+        uint256 slotAddress = _getStorageSlot(timeWeightedNotionalStorageId);
         assembly {
             let value := add(
                 timeWeightedNotionalPayFixed,
@@ -79,7 +79,7 @@ library SpreadStorageLibs {
     }
 
     /// @notice Gets the time-weighted notional for a specific storage ID representing an asset and tenor
-    /// @param storageId The storage ID of the time weighted notional
+    /// @param timeWeightedNotionalStorageId The storage ID of the time weighted notional
     function getTimeWeightedNotional(
         StorageId timeWeightedNotionalStorageId
     ) internal view returns (SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional28Days) {
