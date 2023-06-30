@@ -104,15 +104,24 @@ library AmmErrors {
     /// @notice Swap cannot be closed because closing timestamp is lower than swap's open timestamp for buyer.
     string public constant CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY_FOR_BUYER = "IPOR_332";
 
+    /// @notice Swap cannot be closed and unwind because is too late
     string public constant CANNOT_UNWIND_CLOSING_TOO_LATE = "IPOR_333";
 
-    string public constant SPREAD_ROUTER_CALL_FAILED = "IPOR_334";
+    /// @notice Unsupported swap tenor
+    string public constant UNSUPPORTED_SWAP_TENOR = "IPOR_334";
 
-    string public constant UNSUPPORTED_SWAP_TENOR = "IPOR_335";
+    /// @notice Sender is not AMM (is not a IporProtocolRouter contract)
+    string public constant SENDER_NOT_AMM = "IPOR_335";
 
-    string public constant SENDER_NOT_AMM = "IPOR_336";
-    string public constant STORAGE_ID_IS_NOT_TIME_WEIGHTED_NOTIONAL = "IPOR_337";
-    string public constant FUNCTION_NOT_SUPPORTED = "IPOR_338";
-    string public constant UNSUPPORTED_DIRECTION = "IPOR_339";
-    string public constant INVALID_NOTIONAL = "IPOR_340";
+    /// @notice Storage id is not time weighted notional group
+    string public constant STORAGE_ID_IS_NOT_TIME_WEIGHTED_NOTIONAL = "IPOR_336";
+
+    /// @notice Spread function is not supported
+    string public constant FUNCTION_NOT_SUPPORTED = "IPOR_337";
+
+    /// @notice Unsupported direction
+    string public constant UNSUPPORTED_DIRECTION = "IPOR_338";
+
+    /// @notice Invalid notional
+    string public constant INVALID_NOTIONAL = "IPOR_339";
 }

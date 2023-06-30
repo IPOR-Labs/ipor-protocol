@@ -27,7 +27,9 @@ library SpreadTypes {
         SpreadStorageLibs.StorageId storageId;
     }
 
+    /// @notice Technical structure used in Lens for the Weighted Notional params
     struct TimeWeightedNotionalResponse {
+        /// @notice timeWeightedNotionalPayFixed time weighted notional params
         TimeWeightedNotionalMemory timeWeightedNotional;
         string key;
     }

@@ -89,6 +89,11 @@ interface IAmmCloseSwapService {
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
         );
 
+    /// @notice Closes batch of USDT swaps on both legs in emergency mode by Owner of Ipor Protocol Router.
+    /// @param payFixedSwapIds array of pay-fixed swap IDs.
+    /// @param receiveFixedSwapIds array of receive-fixed swap IDs.
+    /// @return closedPayFixedSwaps array of closed pay-fixed swaps.
+    /// @return closedReceiveFixedSwaps array of closed receive-fixed swaps.
     function emergencyCloseSwapsUsdt(
         uint256[] memory payFixedSwapIds,
         uint256[] memory receiveFixedSwapIds
@@ -99,6 +104,11 @@ interface IAmmCloseSwapService {
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
         );
 
+    /// @notice Closes batch of USDC swaps on both legs in emergency mode by Owner of Ipor Protocol Router.
+    /// @param payFixedSwapIds array of pay-fixed swap IDs.
+    /// @param receiveFixedSwapIds array of receive-fixed swap IDs.
+    /// @return closedPayFixedSwaps array of closed pay-fixed swaps.
+    /// @return closedReceiveFixedSwaps array of closed receive-fixed swaps.
     function emergencyCloseSwapsUsdc(
         uint256[] memory payFixedSwapIds,
         uint256[] memory receiveFixedSwapIds
@@ -109,6 +119,11 @@ interface IAmmCloseSwapService {
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
         );
 
+    /// @notice Closes batch of DAI swaps on both legs in emergency mode by Owner of Ipor Protocol Router.
+    /// @param payFixedSwapIds array of pay-fixed swap IDs.
+    /// @param receiveFixedSwapIds array of receive-fixed swap IDs.
+    /// @return closedPayFixedSwaps array of closed pay-fixed swaps.
+    /// @return closedReceiveFixedSwaps array of closed receive-fixed swaps.
     function emergencyCloseSwapsDai(
         uint256[] memory payFixedSwapIds,
         uint256[] memory receiveFixedSwapIds

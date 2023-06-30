@@ -6,11 +6,12 @@ import "../libraries/StorageLib.sol";
 import "../security/PauseManager.sol";
 import "../security/OwnerManager.sol";
 
+/// @title Smart contract reponsible for managing access to administative functions in IporProtocolRouter
 contract AccessControl {
+    /// @dev Reentrancy - flag when thread is left method
     uint256 internal constant _NOT_ENTERED = 1;
+    /// @dev Reentrancy - flag when thread is entered to method
     uint256 internal constant _ENTERED = 2;
-
-    uint256 internal _reentrancyStatus;
 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new
@@ -19,11 +20,13 @@ contract AccessControl {
      */
     uint256[49] private __gap;
 
+    /// @notice Checks if sender is owner
     modifier onlyOwner() {
         _onlyOwner();
         _;
     }
 
+    /// @notice Checks if sender is appointed owner
     modifier onlyAppointedOwner() {
         require(
             address(StorageLib.getAppointedOwner().appointedOwner) == msg.sender,
@@ -31,17 +34,22 @@ contract AccessControl {
         );
         _;
     }
+
+    /// @notice Checks if sender is pause guardian
     modifier onlyPauseGuardian() {
         require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
         _;
     }
 
+    /// @notice Steps before and after method execution to prevent reentrancy
     modifier nonReentrant() {
         _nonReentrantBefore();
         _;
         _nonReentrantAfter();
     }
 
+    /// @notice Gets IPOR Protocol Owner on Router
+    /// @return IPOR Protocol Owner address
     function owner() external view returns (address) {
         return OwnerManager.getOwner();
     }

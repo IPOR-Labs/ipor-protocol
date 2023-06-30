@@ -7,6 +7,7 @@ import "../../libraries/math/IporMath.sol";
 import "../../libraries/math/InterestRates.sol";
 import "../../libraries/errors/AmmErrors.sol";
 
+/// @title Core logic for IPOR Swap
 library IporSwapLogic {
     using SafeCast for uint256;
     using SafeCast for int256;
@@ -37,6 +38,12 @@ library IporSwapLogic {
         openingFee = availableAmount - collateral;
     }
 
+    /// @notice Calculates payoff for a pay fixed swap for a given swap closing timestamp and IBT price from IporOracle.
+    /// @param swap Swap structure
+    /// @param closingTimestamp moment when swap is closed, represented in seconds
+    /// @param mdIbtPrice IBT price from IporOracle, represented in 18 decimals
+    /// @return swapValue swap payoff, represented in 18 decimals
+    /// @dev Calculated payoff not taken into consideration potential unwinding of the swap.
     function calculatePayoffPayFixed(
         AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
@@ -47,6 +54,12 @@ library IporSwapLogic {
         swapValue = normalizeSwapValue(swap.collateral, interestFloating.toInt256() - interestFixed.toInt256());
     }
 
+    /// @notice Calculates payoff for a receive fixed swap for a given swap closing timestamp and IBT price from IporOracle.
+    /// @param swap Swap structure
+    /// @param closingTimestamp moment when swap is closed, represented in seconds
+    /// @param mdIbtPrice IBT price from IporOracle, represented in 18 decimals
+    /// @return swapValue swap payoff, represented in 18 decimals
+    /// @dev Calculated payoff not taken into consideration potential unwinding of the swap.
     function calculatePayoffReceiveFixed(
         AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
@@ -88,6 +101,11 @@ library IporSwapLogic {
             );
     }
 
+    /// @notice Calculates the swap unwind opening fee amount for a given swap, closing timestamp and IBT price from IporOracle.
+    /// @param swap Swap structure
+    /// @param closingTimestamp moment when swap is closed, represented in seconds without 18 decimals
+    /// @param openingFeeRateCfg opening fee rate taken from Protocol configuration, represented in 18 decimals
+    /// @return swapOpeningFeeAmount swap opening fee amount, represented in 18 decimals
     function calculateSwapUnwindOpeningFeeAmount(
         AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
@@ -104,6 +122,12 @@ library IporSwapLogic {
         );
     }
 
+    /// @notice Calculates interest including continuous capitalization for a given swap, closing timestamp and IBT price from IporOracle.
+    /// @param swap Swap structure
+    /// @param closingTimestamp moment when swap is closed, represented in seconds without 18 decimals
+    /// @param mdIbtPrice IBT price from IporOracle, represented in 18 decimals
+    /// @return interestFixed fixed interest chunk, represented in 18 decimals
+    /// @return interestFloating floating interest chunk, represented in 18 decimals
     function calculateInterest(
         AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
@@ -120,6 +144,11 @@ library IporSwapLogic {
         interestFloating = calculateInterestFloating(swap.ibtQuantity, mdIbtPrice);
     }
 
+    /// @notice Calculates fixed interest chunk including continuous capitalization for a given swap, closing timestamp and IBT price from IporOracle.
+    /// @param notional swap notional, represented in 18 decimals
+    /// @param swapFixedInterestRate fixed interest rate on a swap, represented in 18 decimals
+    /// @param swapPeriodInSeconds swap period in seconds
+    /// @return interestFixed fixed interest chunk, represented in 18 decimals
     function calculateInterestFixed(
         uint256 notional,
         uint256 swapFixedInterestRate,
@@ -131,29 +160,39 @@ library IporSwapLogic {
             );
     }
 
+    /// @notice Calculates floating interest chunk for a given ibt quantity and IBT current price
+    /// @param ibtQuantity IBT quantity, represented in 18 decimals
+    /// @param ibtCurrentPrice IBT price from IporOracle, represented in 18 decimals
+    /// @return interestFloating floating interest chunk, represented in 18 decimals
     function calculateInterestFloating(uint256 ibtQuantity, uint256 ibtCurrentPrice) internal pure returns (uint256) {
         //IBTQ * IBTPtc (IBTPtc - interest bearing token price in time when swap is closed)
         return IporMath.division(ibtQuantity * ibtCurrentPrice, 1e18);
     }
 
-    function normalizeSwapValue(uint256 collateral, int256 swapValue) internal pure returns (int256) {
+    /// @notice Normalizes swap value to collateral value. Absolute value Swap payoff can't be higher than collateral.
+    /// @param collateral collateral value, represented in 18 decimals
+    /// @param swapPayoff swap payoff, represented in 18 decimals
+    function normalizeSwapValue(uint256 collateral, int256 swapPayoff) internal pure returns (int256) {
         int256 intCollateral = collateral.toInt256();
 
-        if (swapValue > 0) {
-            if (swapValue < intCollateral) {
-                return swapValue;
+        if (swapPayoff > 0) {
+            if (swapPayoff < intCollateral) {
+                return swapPayoff;
             } else {
                 return intCollateral;
             }
         } else {
-            if (swapValue < -intCollateral) {
+            if (swapPayoff < -intCollateral) {
                 return -intCollateral;
             } else {
-                return swapValue;
+                return swapPayoff;
             }
         }
     }
 
+    /// @notice Gets swap end timestamp based on swap tenor
+    /// @param swap Swap structure
+    /// @return swap end timestamp in seconds without 18 decimals
     function getSwapEndTimestamp(AmmTypes.Swap memory swap) internal pure returns (uint256) {
         if (swap.tenor == IporTypes.SwapTenor.DAYS_28) {
             return swap.openTimestamp + 28 days;
@@ -166,6 +205,9 @@ library IporSwapLogic {
         }
     }
 
+    /// @notice Gets swap tenor in seconds
+    /// @param tenor Swap tenor
+    /// @return swap tenor in seconds
     function getTenorInSeconds(IporTypes.SwapTenor tenor) internal pure returns (uint256) {
         if (tenor == IporTypes.SwapTenor.DAYS_28) {
             return 28 days;
@@ -177,6 +219,9 @@ library IporSwapLogic {
         revert(AmmErrors.UNSUPPORTED_SWAP_TENOR);
     }
 
+    /// @notice Gets swap tenor in days
+    /// @param tenor Swap tenor
+    /// @return swap tenor in days
     function getTenorInDays(IporTypes.SwapTenor tenor) internal pure returns (uint256) {
         if (tenor == IporTypes.SwapTenor.DAYS_28) {
             return 28;
@@ -189,6 +234,11 @@ library IporSwapLogic {
         }
     }
 
+    /// @notice Splits opening fee amount into liquidity pool and treasury portions
+    /// @param openingFeeAmount opening fee amount, represented in 18 decimals
+    /// @param openingFeeForTreasurePortionRate opening fee for treasury portion rate taken from Protocol configuration, represented in 18 decimals
+    /// @return liquidityPoolAmount liquidity pool portion of opening fee, represented in 18 decimals
+    /// @return treasuryAmount treasury portion of opening fee, represented in 18 decimals
     function splitOpeningFeeAmount(
         uint256 openingFeeAmount,
         uint256 openingFeeForTreasurePortionRate

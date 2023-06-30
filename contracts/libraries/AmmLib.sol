@@ -21,7 +21,7 @@ library AmmLib {
     using SoapIndicatorLogic for AmmStorageTypes.SoapIndicators;
 
     function getExchangeRate(AmmTypes.AmmPoolCoreModel memory model) internal view returns (uint256) {
-        (, , int256 soap) = getSOAP(model);
+        (, , int256 soap) = getSoap(model);
 
         uint256 liquidityPoolBalance = getAccruedBalance(model).liquidityPool;
 
@@ -43,7 +43,7 @@ library AmmLib {
         AmmTypes.AmmPoolCoreModel memory model,
         uint256 liquidityPoolBalance
     ) internal view returns (uint256) {
-        (, , int256 soap) = getSOAP(model);
+        (, , int256 soap) = getSoap(model);
 
         int256 balance = liquidityPoolBalance.toInt256() - soap;
         require(balance >= 0, AmmErrors.SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW);
@@ -56,7 +56,7 @@ library AmmLib {
         }
     }
 
-    function getSOAP(
+    function getSoap(
         AmmTypes.AmmPoolCoreModel memory model
     ) internal view returns (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap) {
         uint256 timestamp = block.timestamp;
