@@ -54,18 +54,31 @@ contract AccessControl {
         return OwnerManager.getOwner();
     }
 
+    /// @notice Appoint new account to ownership
+    /// @param appointedOwner New appointed owner address
     function appointToOwnership(address appointedOwner) public onlyOwner {
         OwnerManager.appointToOwnership(appointedOwner);
     }
 
+    /// @notice Confirm appointed ownership
     function confirmAppointmentToOwnership() public onlyAppointedOwner {
         OwnerManager.confirmAppointmentToOwnership();
     }
 
+    /// @notice Renounce ownership
     function renounceOwnership() public virtual onlyOwner {
         OwnerManager.renounceOwnership();
     }
 
+    /// @notice Checks if function is paused
+    /// @param functionSig Function signature
+    /// @return 1 if function is paused, 0 otherwise
+    function paused(bytes4 functionSig) external view returns (uint256) {
+        return StorageLib.getRouterFunctionPaused().value[functionSig];
+    }
+
+    /// @notice Pauses list of functions in IporProtocolRouter
+    /// @dev Can be called only by pause guardian
     function pause(bytes4[] calldata functionSigs) external onlyPauseGuardian {
         uint256 len = functionSigs.length;
         for (uint256 i; i < len; ) {
@@ -76,6 +89,8 @@ contract AccessControl {
         }
     }
 
+    /// @notice Unpauses list of functions in IporProtocolRouter
+    /// @dev Can be called only by Owner of Ipor Protocol Router
     function unpause(bytes4[] calldata functionSigs) external onlyOwner {
         uint256 len = functionSigs.length;
         for (uint256 i; i < len; ) {
@@ -86,20 +101,23 @@ contract AccessControl {
         }
     }
 
-    function paused(bytes4 functionSig) external view returns (uint256) {
-        return StorageLib.getRouterFunctionPaused().value[functionSig];
+    /// @notice Checks if address is pause guardian
+    /// @param guardian Pause guardian address
+    /// @return true if address is pause guardian, false otherwise
+    function isPauseGuardian(address guardian) external view returns (bool) {
+        return PauseManager.isPauseGuardian(guardian);
     }
 
+    /// @notice Adds new pause guardian
+    /// @param guardian New pause guardian address
     function addPauseGuardian(address guardian) external onlyOwner {
         PauseManager.addPauseGuardian(guardian);
     }
 
+    /// @notice Removes pause guardian
+    /// @param guardian Pause guardian address
     function removePauseGuardian(address guardian) external onlyOwner {
         PauseManager.removePauseGuardian(guardian);
-    }
-
-    function isPauseGuardian(address guardian) external view returns (bool) {
-        return PauseManager.isPauseGuardian(guardian);
     }
 
     function _checkFunctionSigAndIsNotPause(bytes4 functionSig, bytes4 expectedSig) internal view returns (bool) {

@@ -4,35 +4,20 @@ pragma solidity 0.8.20;
 import "../../interfaces/types/IporOracleTypes.sol";
 import "../../libraries/errors/IporOracleErrors.sol";
 
+/// @title Ipor Index logic library
 library IporLogic {
-    function accrueQuasiIbtPrice(IporOracleTypes.IPOR memory ipor, uint256 accrueTimestamp)
-        internal
-        pure
-        returns (uint256)
-    {
-        return
-            accrueQuasiIbtPrice(
-                ipor.indexValue,
-                ipor.quasiIbtPrice,
-                ipor.lastUpdateTimestamp,
-                accrueTimestamp
-            );
-    }
-
-    //@param indexValue indexValue represented in WAD
-    //@param quasiIbtPrice quasiIbtPrice represented in WAD, "quasi" prefix indicates that IBT Price doesn't have final value. It is required to divide by number of seconds in year
-    //@dev return value represented in WAD
+    /// @notice Acrrues the quasi IBT price
+    /// @param ipor IPOR struct
+    /// @param accrueTimestamp Accrue timestamp
+    /// @return Accrued quasi IBT price
     function accrueQuasiIbtPrice(
-        uint256 indexValue,
-        uint256 quasiIbtPrice,
-        uint256 indexTimestamp,
+        IporOracleTypes.IPOR memory ipor,
         uint256 accrueTimestamp
     ) internal pure returns (uint256) {
         require(
-            accrueTimestamp >= indexTimestamp,
+            accrueTimestamp >= ipor.lastUpdateTimestamp,
             IporOracleErrors.INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP
         );
-        return quasiIbtPrice + (indexValue * (accrueTimestamp - indexTimestamp));
+        return ipor.quasiIbtPrice + (ipor.indexValue * (accrueTimestamp - ipor.lastUpdateTimestamp));
     }
-
 }

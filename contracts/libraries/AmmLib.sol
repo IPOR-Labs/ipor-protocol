@@ -15,11 +15,15 @@ import "./errors/IporErrors.sol";
 import "./errors/AmmErrors.sol";
 import "../amm/libraries/SoapIndicatorLogic.sol";
 
+/// @title AMM basic logic library
 library AmmLib {
     using SafeCast for uint256;
     using SafeCast for int256;
     using SoapIndicatorLogic for AmmStorageTypes.SoapIndicators;
 
+    /// @notice Gets AMM exchange rate
+    /// @param model AMM model skeleton of the pool
+    /// @return AMM exchange rate
     function getExchangeRate(AmmTypes.AmmPoolCoreModel memory model) internal view returns (uint256) {
         (, , int256 soap) = getSoap(model);
 
@@ -38,6 +42,10 @@ library AmmLib {
         }
     }
 
+    /// @notice Gets AMM exchange rate
+    /// @param model AMM model skeleton of the pool
+    /// @param liquidityPoolBalance liquidity pool balance
+    /// @return AMM exchange rate
     /// @dev For gas optimization with additional param liquidityPoolBalance with already calculated value
     function getExchangeRate(
         AmmTypes.AmmPoolCoreModel memory model,
@@ -56,6 +64,11 @@ library AmmLib {
         }
     }
 
+    /// @notice Gets AMM SOAP Sum Of All Payouts
+    /// @param model AMM model skeleton of the pool
+    /// @return soapPayFixed SOAP Pay Fixed
+    /// @return soapReceiveFixed SOAP Receive Fixed
+    /// @return soap SOAP Sum Of All Payouts
     function getSoap(
         AmmTypes.AmmPoolCoreModel memory model
     ) internal view returns (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap) {
@@ -71,6 +84,10 @@ library AmmLib {
         soap = soapPayFixed + soapReceiveFixed;
     }
 
+    /// @notice Gets accrued balance of the pool
+    /// @param model AMM model skeleton of the pool
+    /// @return accrued balance of the pool
+    /// @dev balance takes into consideration asset management vault balance and their accrued interest
     function getAccruedBalance(
         AmmTypes.AmmPoolCoreModel memory model
     ) internal view returns (IporTypes.AmmBalancesMemory memory) {
@@ -88,6 +105,10 @@ library AmmLib {
         return accruedBalance;
     }
 
+    /// @notice Gets risk indicators for open swap
+    /// @param context AMM model skeleton of the pool
+    /// @param direction direction of the swap
+    /// @return riskIndicators risk indicators for open swap
     function getRiskIndicators(
         AmmInternalTypes.RiskIndicatorsContext memory context,
         uint256 direction
