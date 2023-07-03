@@ -9,7 +9,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "../../contracts/security/IporOwnableUpgradeable.sol";
-import "../../contracts/libraries/errors/MocksErrors.sol";
+import "./MocksErrors.sol";
 import "../../contracts/interfaces/ITestnetFaucet.sol";
 
 contract TestnetFaucet is

@@ -117,6 +117,15 @@ abstract contract AssetManagement is
         (, exchangeRate, , ) = _calcExchangeRate(strategyAave, strategyCompound);
     }
 
+    function getMaxApyStrategy()
+        external
+        view
+        override
+        returns (address strategyMaxApy, address strategyAave, address strategyCompound)
+    {
+        return _getMaxApyStrategy();
+    }
+
     /**
      * @dev to deposit asset in higher apy strategy.
      * @notice only AmmTreasury can deposit

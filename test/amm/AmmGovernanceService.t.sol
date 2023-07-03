@@ -64,7 +64,7 @@ contract AmmGovernanceServiceTest is TestCommons {
 
         // when
         vm.prank(_admin);
-        vm.expectRevert("IPOR_409");
+        vm.expectRevert("IPOR_408");
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
             1000000000,
@@ -80,7 +80,7 @@ contract AmmGovernanceServiceTest is TestCommons {
 
         // when
         vm.prank(_admin);
-        vm.expectRevert("IPOR_409");
+        vm.expectRevert("IPOR_408");
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
             1000000000,

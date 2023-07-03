@@ -3,6 +3,7 @@ pragma solidity 0.8.20;
 
 import "../../amm/libraries/types/AmmInternalTypes.sol";
 
+/// @title Spread interface for close swap, service
 interface ISpreadCloseSwapService {
     /// @notice Updates the time-weighted notional on swap closure.
     /// @dev Updates the time-weighted notional for the specified asset and tenor based on the swap closure.

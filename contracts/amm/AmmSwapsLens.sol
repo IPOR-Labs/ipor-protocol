@@ -109,7 +109,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         ammCoreModel.asset = asset;
         ammCoreModel.ammStorage = address(ammStorage);
         ammCoreModel.iporOracle = _iporOracle;
-        (soapPayFixed, soapReceiveFixed, soap) = ammCoreModel.getSOAP();
+        (soapPayFixed, soapReceiveFixed, soap) = ammCoreModel.getSoap();
     }
 
     function getOfferedRate(

@@ -23,6 +23,7 @@ import "../libraries/errors/IporErrors.sol";
 import "../libraries/IporContractValidator.sol";
 import "./AccessControl.sol";
 
+/// @title Entry point for IPOR protocol
 contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementation {
     using Address for address;
     using IporContractValidator for address;
@@ -81,10 +82,14 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         StorageLib.getReentrancyStatus().value = _NOT_ENTERED;
     }
 
+    /// @notice Gets the implementation of the router
+    /// @return implementation address
     function getImplementation() external view override returns (address) {
         return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
 
+    /// @notice Gets the Router configuration
+    /// @return DeployedContracts struct
     function getConfiguration() external view returns (DeployedContracts memory) {
         return
             DeployedContracts({
@@ -102,6 +107,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             });
     }
 
+    /// @notice Allows to execute batch of calls in one transaction using IPOR protocol business methods
+    /// @param calls array of encoded calls
     function batchExecutor(bytes[] calldata calls) external nonReentrant {
         uint256 length = calls.length;
         for (uint256 i; i != length; ) {

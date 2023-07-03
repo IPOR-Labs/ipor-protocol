@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.20;
 
+/// @title Interface for interaction with PowerToken and LiquidityMining contracts.
 interface IPowerTokenFlowsService {
     /// @notice Claims rewards for the caller by transferring them from the LiquidityMining contract to the PowerToken contract.
     /// @param lpTokens An array of LP tokens for which the rewards are to be claimed.

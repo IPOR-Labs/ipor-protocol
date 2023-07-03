@@ -17,7 +17,7 @@ contract AssetManagementMaxApyStrategyTest is TestCommons {
     IvTokenBuilder internal _ivTokenBuilder = new IvTokenBuilder(address(this));
     AssetManagementBuilder internal _assetManagementBuilder = new AssetManagementBuilder(address(this));
 
-    ItfAssetManagement internal _assetManagementDai;
+    AssetManagement internal _assetManagementDai;
     MockStrategy internal _strategyAaveDai;
     MockStrategy internal _strategyCompoundDai;
 

@@ -17,7 +17,6 @@ library IporRiskManagementOracleTypes {
         uint256 maxCollateralRatio;
     }
 
-    // TODO Add documentation size of numbers
     //@notice Base Spreads And Fixed Rate Caps Structure for a given asset, both legs and all maturities
     struct BaseSpreadsAndFixedRateCaps {
         /// @notice spread for 28 days pay fixed swap

@@ -3,6 +3,7 @@ pragma solidity 0.8.20;
 
 import "../../interfaces/types/IporTypes.sol";
 
+/// @title Spread interface for tenor 28 days service
 interface ISpread60Days {
     /// @notice Calculates the quote value for a fixed 60-day period on the pay-fixed side based on the provided spread inputs.
     /// @param spreadInputs The spread inputs required for the calculation.

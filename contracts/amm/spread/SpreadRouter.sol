@@ -15,6 +15,7 @@ import "../../amm/spread/SpreadAccessControl.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
 import "../../libraries/IporContractValidator.sol";
 
+/// @title Single entry point for all spread models
 contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl, IProxyImplementation {
     using IporContractValidator for address;
 
@@ -62,6 +63,9 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl, IProxyImplementat
         deployedContracts.closeSwapService = _closeSwapService;
     }
 
+    /// @notice Gets the implementation address for a given function signature.
+    /// @param sig The function signature.
+    /// @return The implementation address of spread model.
     function getRouterImplementation(bytes4 sig) public view returns (address) {
         if (
             sig == ISpread28Days.calculateAndUpdateOfferedRatePayFixed28Days.selector ||
@@ -112,6 +116,7 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl, IProxyImplementat
         revert(AmmErrors.FUNCTION_NOT_SUPPORTED);
     }
 
+    /// @notice Gets the implementation address of a Spread Router.
     function getImplementation() external view override returns (address) {
         return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }

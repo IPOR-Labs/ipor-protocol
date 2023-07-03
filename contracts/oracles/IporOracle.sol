@@ -88,6 +88,8 @@ contract IporOracle is
         }
     }
 
+    /// @notice Step required after IporOracle upgrade from v1 to v2 for supported assets.
+    /// @param assets List of assets.
     function postUpgrade(address[] memory assets) public onlyOwner {
         uint256 assetsLength = assets.length;
 

@@ -7,6 +7,7 @@ import "../../security/PauseManager.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
 import "../../libraries/IporContractValidator.sol";
 
+/// @title Contract responsible for managing access control for the Spread Router
 contract SpreadAccessControl {
     using IporContractValidator for address;
 

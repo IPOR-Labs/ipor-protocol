@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.20;
 
+/// @title Interface for interaction with PowerToken and LiquidityMining contracts.
 interface IPowerTokenStakeService {
     /// @notice Stakes the specified amounts of LP tokens into the LiquidityMining contract.
     /// @dev This function allows the caller to stake their LP tokens on behalf of another address (`beneficiary`).

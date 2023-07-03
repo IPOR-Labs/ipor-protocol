@@ -4,7 +4,7 @@ import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import "../../contracts/libraries/math/IporMath.sol";
-import "../../contracts/itf/ItfIporOracle.sol";
+import "../../contracts/oracles/IporOracle.sol";
 import "../mocks/tokens/MockTestnetToken.sol";
 
 contract AmmClosingSwaps is TestCommons, DataUtils {
@@ -1220,7 +1220,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -1301,7 +1301,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -1380,7 +1380,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -1458,7 +1458,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -1536,7 +1536,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -1615,7 +1615,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -1695,7 +1695,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -1778,7 +1778,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -1859,7 +1859,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -1942,7 +1942,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -2025,7 +2025,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -2106,7 +2106,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -2187,7 +2187,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -2270,7 +2270,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -2351,7 +2351,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -2433,7 +2433,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -2515,7 +2515,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -2597,7 +2597,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -2680,7 +2680,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -2759,7 +2759,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -2837,7 +2837,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -2915,7 +2915,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -2993,7 +2993,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -3072,7 +3072,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -3150,7 +3150,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -3233,7 +3233,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -3318,7 +3318,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -3399,7 +3399,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -3482,7 +3482,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -3564,7 +3564,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -3645,7 +3645,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -3726,7 +3726,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -3809,7 +3809,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -3890,7 +3890,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -3972,7 +3972,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -4054,7 +4054,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
@@ -4136,7 +4136,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+        IporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
         uint256 totalAmount = 10_000 * 1e6;
