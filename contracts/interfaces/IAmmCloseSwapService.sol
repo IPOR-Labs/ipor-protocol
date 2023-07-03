@@ -21,12 +21,12 @@ interface IAmmCloseSwapService {
         uint256 transferredToLiquidator
     );
 
-    /// @notice Emitted when the trader closes the swap before maturity or if the absolute value of the swap's payoff is less than 99% of the swap's collateral.
+    /// @notice Emitted when unwind is performed during closing swap.
     event SwapUnwind(
         /// @notice swap ID.
         uint256 indexed swapId,
-        /// @notice payoff to date without unwind value, represented in 18 decimals
-        int256 swapPayoffToDate,
+        /// @notice Profit and Loss to date without unwind value, represented in 18 decimals
+        int256 swapPnlValueToDate,
         /// @notice swap unwind amount, represented in 18 decimals
         int256 swapUnwindAmount,
         /// @notice opening fee amount, part earmarked for the liquidity pool, represented in 18 decimals
@@ -39,7 +39,7 @@ interface IAmmCloseSwapService {
     /// @param beneficiary account - receiver of liquidation deposit.
     /// @param payFixedSwapIds array of pay-fixed swap IDs.
     /// @param receiveFixedSwapIds array of receive-fixed swap IDs.
-    /// @dev Swap payoff is always transferred to the swaps's owner.
+    /// @dev Swap PnL is always transferred to the swaps's owner.
     /// @return closedPayFixedSwaps array of closed pay-fixed swaps.
     /// @return closedReceiveFixedSwaps array of closed receive-fixed swaps.
     function closeSwapsUsdt(
@@ -57,7 +57,7 @@ interface IAmmCloseSwapService {
     /// @param beneficiary account - receiver of liquidation deposit.
     /// @param payFixedSwapIds array of pay fixed swap IDs.
     /// @param receiveFixedSwapIds array of receive fixed swap IDs.
-    /// @dev Swap payoff is always transferred to the swaps's owner.
+    /// @dev Swap PnL is always transferred to the swaps's owner.
     /// @return closedPayFixedSwaps array of closed pay-fixed swaps.
     /// @return closedReceiveFixedSwaps array of closed receive-fixed swaps.
     function closeSwapsUsdc(
@@ -75,7 +75,7 @@ interface IAmmCloseSwapService {
     /// @param beneficiary account - receiver of liquidation deposit.
     /// @param payFixedSwapIds array of pay fixed swap IDs.
     /// @param receiveFixedSwapIds array of receive fixed swap IDs.
-    /// @dev Swap payoff is always transferred to the swaps's owner.
+    /// @dev Swap PnL is always transferred to the swaps's owner.
     /// @return closedPayFixedSwaps array of closed pay-fixed swaps.
     /// @return closedReceiveFixedSwaps array of closed receive-fixed swaps.
     function closeSwapsDai(

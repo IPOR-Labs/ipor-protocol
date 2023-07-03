@@ -12,11 +12,11 @@ contract IporSwapLogicTest is Test, DataUtils {
         _iporSwapLogic = new MockIporSwapLogic();
     }
 
-    function testShouldCalculateSwapUnwindAmountWithoutPayoffToDate() public {
+    function testShouldCalculateSwapUnwindAmountWithoutPnlValueToDate() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 0;
+        int256 swapPnlValueToDate = 0;
         uint256 oppositeLegFixedRate = 18e15;
 
         swap.notional = 500_000 * 1e18;
@@ -30,7 +30,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -38,11 +38,11 @@ contract IporSwapLogicTest is Test, DataUtils {
         assertEq(virtualHedgingSwap, -63089187650935100324);
     }
 
-    function testShouldCalculateSwapUnwindAmountWithoutPayoffToDateMoreDaysThanTenor() public {
+    function testShouldCalculateSwapUnwindAmountWithoutPnlValueToDateMoreDaysThanTenor() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 0;
+        int256 swapPnlValueToDate = 0;
         uint256 oppositeLegFixedRate = 18e15;
 
         swap.notional = 500_000 * 1e18;
@@ -57,12 +57,12 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
     }
 
-    function testShouldCalculateSwapUnwindAmountWithPayoffToDate() public {
+    function testShouldCalculateSwapUnwindAmountWithPnlValueToDate() public {
         // given
         AmmTypes.Swap memory swap;
 
@@ -75,13 +75,13 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 closingTimestamp = swap.openTimestamp + 5 days;
 
-        int256 swapPayoffToDate = 0;
+        int256 swapPnlValueToDate = 0;
 
         //when
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -93,7 +93,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 200 * 1e18;
+        int256 swapPnlValueToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -107,7 +107,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -119,7 +119,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 200 * 1e18;
+        int256 swapPnlValueToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -133,7 +133,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -145,7 +145,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 200 * 1e18;
+        int256 swapPnlValueToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -159,7 +159,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -171,7 +171,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = -200 * 1e18;
+        int256 swapPnlValueToDate = -200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -185,7 +185,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -197,7 +197,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = -200 * 1e18;
+        int256 swapPnlValueToDate = -200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -211,7 +211,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -223,7 +223,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = -200 * 1e18;
+        int256 swapPnlValueToDate = -200 * 1e18;
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -237,7 +237,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -249,7 +249,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 0;
+        int256 swapPnlValueToDate = 0;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -263,7 +263,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -275,7 +275,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 0;
+        int256 swapPnlValueToDate = 0;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -289,7 +289,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -301,7 +301,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 0;
+        int256 swapPnlValueToDate = 0;
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -315,7 +315,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -327,7 +327,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 200 * 1e18;
+        int256 swapPnlValueToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -341,7 +341,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -353,7 +353,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 200 * 1e18;
+        int256 swapPnlValueToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 0;
 
         swap.notional = 500_000 * 1e18;
@@ -367,7 +367,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -379,7 +379,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = -200 * 1e18;
+        int256 swapPnlValueToDate = -200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -393,7 +393,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -405,7 +405,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = -200 * 1e18;
+        int256 swapPnlValueToDate = -200 * 1e18;
         uint256 oppositeLegFixedRate = 0;
 
         swap.notional = 500_000 * 1e18;
@@ -419,7 +419,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -431,7 +431,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 0;
+        int256 swapPnlValueToDate = 0;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -445,7 +445,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -457,7 +457,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 0;
+        int256 swapPnlValueToDate = 0;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -471,7 +471,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -483,7 +483,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 0;
+        int256 swapPnlValueToDate = 0;
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -497,7 +497,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -509,7 +509,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 200 * 1e18;
+        int256 swapPnlValueToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -523,7 +523,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -535,7 +535,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 200 * 1e18;
+        int256 swapPnlValueToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -549,7 +549,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -561,7 +561,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 200 * 1e18;
+        int256 swapPnlValueToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -575,7 +575,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -587,7 +587,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 0;
+        int256 swapPnlValueToDate = 0;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -601,7 +601,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -613,7 +613,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 0;
+        int256 swapPnlValueToDate = 0;
         uint256 oppositeLegFixedRate = 0;
 
         swap.notional = 500_000 * 1e18;
@@ -627,7 +627,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -639,7 +639,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 0;
+        int256 swapPnlValueToDate = 0;
         uint256 oppositeLegFixedRate = 0;
 
         swap.notional = 500_000 * 1e18;
@@ -653,7 +653,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -665,7 +665,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 200 * 1e18;
+        int256 swapPnlValueToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -679,7 +679,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -691,7 +691,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 200 * 1e18;
+        int256 swapPnlValueToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -705,7 +705,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -717,7 +717,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 200 * 1e18;
+        int256 swapPnlValueToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -731,7 +731,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -743,7 +743,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = -200 * 1e18;
+        int256 swapPnlValueToDate = -200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -757,7 +757,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -769,7 +769,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = -200 * 1e18;
+        int256 swapPnlValueToDate = -200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -783,7 +783,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -795,7 +795,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = -200 * 1e18;
+        int256 swapPnlValueToDate = -200 * 1e18;
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -809,7 +809,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -821,7 +821,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 200 * 1e18;
+        int256 swapPnlValueToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -836,7 +836,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -848,7 +848,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 200 * 1e18;
+        int256 swapPnlValueToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -863,7 +863,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -875,7 +875,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 200 * 1e18;
+        int256 swapPnlValueToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -890,7 +890,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -902,7 +902,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = -200 * 1e18;
+        int256 swapPnlValueToDate = -200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -917,7 +917,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -929,7 +929,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = -200 * 1e18;
+        int256 swapPnlValueToDate = -200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -944,7 +944,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 
@@ -956,7 +956,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = -200 * 1e18;
+        int256 swapPnlValueToDate = -200 * 1e18;
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -971,7 +971,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindAmount(
             swap,
             closingTimestamp,
-            swapPayoffToDate,
+            swapPnlValueToDate,
             oppositeLegFixedRate
         );
 

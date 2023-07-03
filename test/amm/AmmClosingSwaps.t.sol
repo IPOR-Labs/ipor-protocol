@@ -1214,7 +1214,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
-    function testShouldClosePayFixedSwapByLiquidatorBeforeMaturityMoreThanOneHourFrom99to100PercentagePayoffBuyerEarned()
+    function testShouldClosePayFixedSwapByLiquidatorBeforeMaturityMoreThanOneHourFrom99to100PercentagePnlValueBuyerEarned()
         public
     {
         //given
@@ -1227,11 +1227,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -1262,8 +1262,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlPayFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         uint256[] memory swapPfIds = new uint256[](1);
@@ -1276,16 +1276,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff < minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
+        assertEq(absPnlValue < swap.collateral, true, "Failed absPnlValue < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
@@ -1295,7 +1295,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
-    function testShouldClosePayFixedSwapByLiquidatorBeforeMaturityLessThanOneHourFrom99to100PercentagePayoffBuyerEanred()
+    function testShouldClosePayFixedSwapByLiquidatorBeforeMaturityLessThanOneHourFrom99to100PercentagePnlValueBuyerEanred()
         public
     {
         //given
@@ -1308,11 +1308,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -1343,8 +1343,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlPayFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         uint256[] memory swapPfIds = new uint256[](1);
@@ -1357,16 +1357,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff < minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
+        assertEq(absPnlValue < swap.collateral, true, "Failed absPnlValue < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
@@ -1376,7 +1376,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
-    function testShouldClosePayFixedSwapByBuyerBeforeMaturityMoreThan24HoursFrom99to100PercentagePayoff() public {
+    function testShouldClosePayFixedSwapByBuyerBeforeMaturityMoreThan24HoursFrom99to100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -1387,11 +1387,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -1422,8 +1422,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlPayFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
@@ -1435,16 +1435,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff < minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
+        assertEq(absPnlValue < swap.collateral, true, "Failed absPnlValue < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
@@ -1454,7 +1454,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
-    function testShouldClosePayFixedSwapByBuyerBeforeMaturityLessThan24HoursFrom99to100PercentagePayoff() public {
+    function testShouldClosePayFixedSwapByBuyerBeforeMaturityLessThan24HoursFrom99to100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -1465,11 +1465,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -1500,8 +1500,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlPayFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
@@ -1513,16 +1513,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff < minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
+        assertEq(absPnlValue < swap.collateral, true, "Failed absPnlValue < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
@@ -1532,7 +1532,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
-    function testShouldClosePayFixedSwapByLiquidatorAfterMaturityFrom99to100PercentagePayoff() public {
+    function testShouldClosePayFixedSwapByLiquidatorAfterMaturityFrom99to100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -1543,11 +1543,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -1578,8 +1578,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlPayFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         uint256[] memory swapPfIds = new uint256[](1);
@@ -1592,16 +1592,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff < minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
+        assertEq(absPnlValue < swap.collateral, true, "Failed absPnlValue < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
@@ -1611,7 +1611,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
-    function testShouldClosePayFixedSwapByBuyerAfterMaturityFrom99to100PercentagePayoff() public {
+    function testShouldClosePayFixedSwapByBuyerAfterMaturityFrom99to100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -1622,11 +1622,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -1657,8 +1657,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlPayFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
@@ -1670,16 +1670,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff < minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
+        assertEq(absPnlValue < swap.collateral, true, "Failed absPnlValue < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
@@ -1689,7 +1689,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
-    function testShouldClosePayFixedSwapByCommunityBeforeMaturityMoreThanOneHourFrom99HalfTo100PercentagePayoff()
+    function testShouldClosePayFixedSwapByCommunityBeforeMaturityMoreThanOneHourFrom99HalfTo100PercentagePnlValue()
         public
     {
         //given
@@ -1702,11 +1702,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -1738,8 +1738,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlPayFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
@@ -1751,16 +1751,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
+        assertEq(absPnlValue < swap.collateral, true, "Failed absPnlValue < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -1772,7 +1772,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
 
-    function testShouldClosePayFixedSwapByCommunityBeforeMaturityLessThanOneHourFrom99HalfTo100PercentagePayoff()
+    function testShouldClosePayFixedSwapByCommunityBeforeMaturityLessThanOneHourFrom99HalfTo100PercentagePnlValue()
         public
     {
         //given
@@ -1785,11 +1785,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -1821,8 +1821,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlPayFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
@@ -1834,16 +1834,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
+        assertEq(absPnlValue < swap.collateral, true, "Failed absPnlValue < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -1855,7 +1855,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
 
-    function testShouldClosePayFixedSwapByLiquidatorBeforeMaturityMoreThanOneHour100PercentagePayoff() public {
+    function testShouldClosePayFixedSwapByLiquidatorBeforeMaturityMoreThanOneHour100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -1866,11 +1866,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -1902,8 +1902,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlPayFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
@@ -1917,16 +1917,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
+        assertEq(absPnlValue == swap.collateral, true, "Failed absPnlValue == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -1938,7 +1938,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldClosePayFixedSwapByLiquidatorBeforeMaturityLessThanOneHour100PercentagePayoff() public {
+    function testShouldClosePayFixedSwapByLiquidatorBeforeMaturityLessThanOneHour100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -1949,11 +1949,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -1985,8 +1985,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlPayFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
@@ -2000,16 +2000,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
+        assertEq(absPnlValue == swap.collateral, true, "Failed absPnlValue == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -2021,7 +2021,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldClosePayFixedSwapByBuyerBeforeMaturityMoreThan24Hours100PercentagePayoff() public {
+    function testShouldClosePayFixedSwapByBuyerBeforeMaturityMoreThan24Hours100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -2032,11 +2032,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -2068,8 +2068,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlPayFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
@@ -2081,16 +2081,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
+        assertEq(absPnlValue == swap.collateral, true, "Failed absPnlValue == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -2102,7 +2102,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldClosePayFixedSwapByBuyerBeforeMaturityLessThan24Hours100PercentagePayoff() public {
+    function testShouldClosePayFixedSwapByBuyerBeforeMaturityLessThan24Hours100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -2113,11 +2113,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -2149,8 +2149,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlPayFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
@@ -2162,16 +2162,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
+        assertEq(absPnlValue == swap.collateral, true, "Failed absPnlValue == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -2183,7 +2183,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldClosePayFixedSwapByLiquidatorAfterMaturity100PercentagePayoff() public {
+    function testShouldClosePayFixedSwapByLiquidatorAfterMaturity100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -2194,11 +2194,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -2230,8 +2230,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlPayFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
@@ -2245,16 +2245,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
+        assertEq(absPnlValue == swap.collateral, true, "Failed absPnlValue == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -2266,7 +2266,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldClosePayFixedSwapByBuyerAfterMaturity100PercentagePayoff() public {
+    function testShouldClosePayFixedSwapByBuyerAfterMaturity100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -2277,11 +2277,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -2313,8 +2313,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlPayFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
@@ -2326,16 +2326,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
+        assertEq(absPnlValue == swap.collateral, true, "Failed absPnlValue == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -2347,7 +2347,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldNotClosePayFixedSwapByCommunityAfterMaturity100PercentagePayoff() public {
+    function testShouldNotClosePayFixedSwapByCommunityAfterMaturity100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -2358,11 +2358,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -2394,8 +2394,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlPayFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
@@ -2408,16 +2408,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
+        assertEq(absPnlValue == swap.collateral, true, "Failed absPnlValue == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -2429,7 +2429,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldNotClosePayFixedSwapByCommunityBeforeMaturityLessThanOneHour100PercentagePayoff() public {
+    function testShouldNotClosePayFixedSwapByCommunityBeforeMaturityLessThanOneHour100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -2440,11 +2440,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -2476,8 +2476,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlPayFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
@@ -2490,16 +2490,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
+        assertEq(absPnlValue == swap.collateral, true, "Failed absPnlValue == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -2511,7 +2511,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldNotClosePayFixedSwapByCommunityBeforeMaturityMoreThanOneHour100PercentagePayoff() public {
+    function testShouldNotClosePayFixedSwapByCommunityBeforeMaturityMoreThanOneHour100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -2522,11 +2522,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -2558,8 +2558,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlPayFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
@@ -2572,16 +2572,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
+        assertEq(absPnlValue == swap.collateral, true, "Failed absPnlValue == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -2593,7 +2593,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldClosePayFixedSwapByCommunityAfterMaturityFrom99HalfTo100PercentagePayoff() public {
+    function testShouldClosePayFixedSwapByCommunityAfterMaturityFrom99HalfTo100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -2604,11 +2604,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -2640,8 +2640,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlPayFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
@@ -2653,16 +2653,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
+        assertEq(absPnlValue < swap.collateral, true, "Failed absPnlValue < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -2674,7 +2674,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
 
-    function testShouldCloseReceiveFixedSwapByLiquidatorBeforeMaturityMoreThanOneHourFrom99to100PercentagePayoffBuyerLost()
+    function testShouldCloseReceiveFixedSwapByLiquidatorBeforeMaturityMoreThanOneHourFrom99to100PercentagePnlValueBuyerLost()
         public
     {
         //given
@@ -2687,11 +2687,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -2717,8 +2717,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlReceiveFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         uint256[] memory swapPfIds = new uint256[](0);
@@ -2731,14 +2731,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff < minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity"
         );
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -2753,7 +2753,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         );
     }
 
-    function testShouldCloseReceiveFixedSwapByLiquidatorBeforeMaturityLessThanOneHourFrom99to100PercentagePayoffBuyerLost()
+    function testShouldCloseReceiveFixedSwapByLiquidatorBeforeMaturityLessThanOneHourFrom99to100PercentagePnlValueBuyerLost()
         public
     {
         //given
@@ -2766,11 +2766,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -2801,8 +2801,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlReceiveFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         uint256[] memory swapPfIds = new uint256[](0);
@@ -2815,14 +2815,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff < minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity"
         );
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -2833,7 +2833,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
-    function testShouldCloseReceiveFixedSwapByBuyerBeforeMaturityMoreThan24HoursFrom99to100PercentagePayoff() public {
+    function testShouldCloseReceiveFixedSwapByBuyerBeforeMaturityMoreThan24HoursFrom99to100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -2844,11 +2844,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -2879,8 +2879,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlReceiveFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
@@ -2892,16 +2892,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff < minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
+        assertEq(absPnlValue < swap.collateral, true, "Failed absPnlValue < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
@@ -2911,7 +2911,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
-    function testShouldCloseReceiveFixedSwapByBuyerBeforeMaturityLessThan24HoursFrom99to100PercentagePayoff() public {
+    function testShouldCloseReceiveFixedSwapByBuyerBeforeMaturityLessThan24HoursFrom99to100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -2922,11 +2922,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -2957,8 +2957,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlReceiveFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
@@ -2970,16 +2970,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff < minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
+        assertEq(absPnlValue < swap.collateral, true, "Failed absPnlValue < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
@@ -2989,7 +2989,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
-    function testShouldCloseReceiveFixedSwapByLiquidatorAfterMaturityFrom99to100PercentagePayoff() public {
+    function testShouldCloseReceiveFixedSwapByLiquidatorAfterMaturityFrom99to100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -3000,11 +3000,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -3035,8 +3035,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlReceiveFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         uint256[] memory swapPfIds = new uint256[](0);
@@ -3049,16 +3049,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff < minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
+        assertEq(absPnlValue < swap.collateral, true, "Failed absPnlValue < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
@@ -3068,7 +3068,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
-    function testShouldCloseReceiveFixedSwapByBuyerAfterMaturityFrom99to100PercentagePayoff() public {
+    function testShouldCloseReceiveFixedSwapByBuyerAfterMaturityFrom99to100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -3079,11 +3079,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -3114,8 +3114,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlReceiveFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
@@ -3127,16 +3127,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff < minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff < minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
+        assertEq(absPnlValue < swap.collateral, true, "Failed absPnlValue < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
@@ -3146,7 +3146,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
-    function testShouldCloseReceiveFixedSwapByCommunityAfterMaturityFrom99HalfTo100PercentagePayoff() public {
+    function testShouldCloseReceiveFixedSwapByCommunityAfterMaturityFrom99HalfTo100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -3157,11 +3157,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -3193,8 +3193,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlReceiveFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
@@ -3206,16 +3206,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
+        assertEq(absPnlValue < swap.collateral, true, "Failed absPnlValue < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3227,7 +3227,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
 
-    function testShouldCloseReceiveFixedSwapByCommunityBeforeMaturityMoreThanOneHourFrom99HalfTo100PercentagePayoff()
+    function testShouldCloseReceiveFixedSwapByCommunityBeforeMaturityMoreThanOneHourFrom99HalfTo100PercentagePnlValue()
         public
     {
         //given
@@ -3240,11 +3240,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -3276,8 +3276,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlReceiveFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
@@ -3289,16 +3289,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
+        assertEq(absPnlValue < swap.collateral, true, "Failed absPnlValue < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3310,7 +3310,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
 
-    function testShouldCloseReceiveFixedSwapByCommunityBeforeMaturityLessThanOneHourFrom99HalfTo100PercentagePayoff()
+    function testShouldCloseReceiveFixedSwapByCommunityBeforeMaturityLessThanOneHourFrom99HalfTo100PercentagePnlValue()
         public
     {
         //given
@@ -3325,11 +3325,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -3361,8 +3361,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlReceiveFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
@@ -3374,16 +3374,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
+        assertEq(absPnlValue < swap.collateral, true, "Failed absPnlValue < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3395,7 +3395,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
 
-    function testShouldCloseReceiveFixedSwapByLiquidatorBeforeMaturityMoreThanOneHour100PercentagePayoff() public {
+    function testShouldCloseReceiveFixedSwapByLiquidatorBeforeMaturityMoreThanOneHour100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -3406,11 +3406,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -3442,8 +3442,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlReceiveFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
@@ -3457,16 +3457,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
+        assertEq(absPnlValue == swap.collateral, true, "Failed absPnlValue == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3478,7 +3478,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldCloseReceiveFixedSwapByLiquidatorBeforeMaturityLessThanOneHour100PercentagePayoff() public {
+    function testShouldCloseReceiveFixedSwapByLiquidatorBeforeMaturityLessThanOneHour100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -3489,11 +3489,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -3525,8 +3525,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlReceiveFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
         uint256[] memory swapPfIds = new uint256[](0);
@@ -3539,16 +3539,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
+        assertEq(absPnlValue == swap.collateral, true, "Failed absPnlValue == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3560,7 +3560,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldCloseReceiveFixedSwapByBuyerBeforeMaturityMoreThan24Hours100PercentagePayoff() public {
+    function testShouldCloseReceiveFixedSwapByBuyerBeforeMaturityMoreThan24Hours100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -3571,11 +3571,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -3607,8 +3607,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlReceiveFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
@@ -3620,16 +3620,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
+        assertEq(absPnlValue == swap.collateral, true, "Failed absPnlValue == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3641,7 +3641,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldCloseReceiveFixedSwapByBuyerBeforeMaturityLessThan24Hours100PercentagePayoff() public {
+    function testShouldCloseReceiveFixedSwapByBuyerBeforeMaturityLessThan24Hours100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -3652,11 +3652,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -3688,8 +3688,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlReceiveFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
@@ -3701,16 +3701,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
+        assertEq(absPnlValue == swap.collateral, true, "Failed absPnlValue == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3722,7 +3722,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldCloseReceiveFixedSwapByLiquidatorAfterMaturity100PercentagePayoff() public {
+    function testShouldCloseReceiveFixedSwapByLiquidatorAfterMaturity100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -3733,11 +3733,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -3769,8 +3769,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlReceiveFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
 
@@ -3784,16 +3784,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
+        assertEq(absPnlValue == swap.collateral, true, "Failed absPnlValue == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3805,7 +3805,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldCloseReceiveFixedSwapByBuyerAfterMaturity100PercentagePayoff() public {
+    function testShouldCloseReceiveFixedSwapByBuyerAfterMaturity100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -3816,11 +3816,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -3852,8 +3852,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlReceiveFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
@@ -3865,16 +3865,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
+        assertEq(absPnlValue == swap.collateral, true, "Failed absPnlValue == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3886,7 +3886,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldNotCloseReceiveFixedSwapByCommunityAfterMaturity100PercentagePayoff() public {
+    function testShouldNotCloseReceiveFixedSwapByCommunityAfterMaturity100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -3897,11 +3897,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -3933,8 +3933,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlReceiveFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
@@ -3947,16 +3947,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
+        assertEq(absPnlValue == swap.collateral, true, "Failed absPnlValue == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -3968,7 +3968,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldNotCloseReceiveFixedSwapByCommunityBeforeMaturityLessThanOneHour100PercentagePayoff() public {
+    function testShouldNotCloseReceiveFixedSwapByCommunityBeforeMaturityLessThanOneHour100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -3979,11 +3979,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -4015,8 +4015,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlReceiveFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
@@ -4029,16 +4029,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
+        assertEq(absPnlValue == swap.collateral, true, "Failed absPnlValue == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -4050,7 +4050,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldNotCloseReceiveFixedSwapByCommunityBeforeMaturityMoreThanOneHour100PercentagePayoff() public {
+    function testShouldNotCloseReceiveFixedSwapByCommunityBeforeMaturityMoreThanOneHour100PercentagePnlValue() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
@@ -4061,11 +4061,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -4097,8 +4097,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlReceiveFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
@@ -4111,16 +4111,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff == swap.collateral, true, "Failed absPayoff == swap.collateral");
+        assertEq(absPnlValue == swap.collateral, true, "Failed absPnlValue == swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
@@ -4143,11 +4143,11 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10 ** 18;
 
-        ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
+        ///@dev 99% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
-        ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
+        ///@dev 99.5% of pnlValue
+        uint256 minPnlValueToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
@@ -4179,8 +4179,8 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffReceiveFixed(address(_iporProtocol.asset), 1);
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlReceiveFixed(address(_iporProtocol.asset), 1);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
@@ -4192,16 +4192,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //then
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByBuyer,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByBuyer"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer"
         );
         assertEq(
-            absPayoff >= minPayoffToCloseBeforeMaturityByCommunity,
+            absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity,
             true,
-            "Failed absPayoff >= minPayoffToCloseBeforeMaturityByCommunity"
+            "Failed absPnlValue >= minPnlValueToCloseBeforeMaturityByCommunity"
         );
-        assertEq(absPayoff < swap.collateral, true, "Failed absPayoff < swap.collateral");
+        assertEq(absPnlValue < swap.collateral, true, "Failed absPnlValue < swap.collateral");
 
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);

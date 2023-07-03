@@ -87,18 +87,18 @@ contract AmmSwapsLens is IAmmSwapsLens {
         return (count, _mapSwaps(asset, ammStorage, swapIds));
     }
 
-    function getPayoffPayFixed(address asset, uint256 swapId) external view override returns (int256) {
+    function getPnlPayFixed(address asset, uint256 swapId) external view override returns (int256) {
         IAmmStorage ammStorage = _getAmmStorage(asset);
         AmmTypes.Swap memory swap = ammStorage.getSwap(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, swapId);
         uint256 accruedIbtPrice = IIporOracle(_iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
-        return swap.calculatePayoffPayFixed(block.timestamp, accruedIbtPrice);
+        return swap.calculatePnlPayFixed(block.timestamp, accruedIbtPrice);
     }
 
-    function getPayoffReceiveFixed(address asset, uint256 swapId) external view override returns (int256) {
+    function getPnlReceiveFixed(address asset, uint256 swapId) external view override returns (int256) {
         IAmmStorage ammStorage = _getAmmStorage(asset);
         AmmTypes.Swap memory swap = ammStorage.getSwap(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, swapId);
         uint256 accruedIbtPrice = IIporOracle(_iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
-        return swap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
+        return swap.calculatePnlReceiveFixed(block.timestamp, accruedIbtPrice);
     }
 
     function getSoap(
@@ -249,14 +249,14 @@ contract AmmSwapsLens is IAmmSwapsLens {
                     AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
                     swapId.id
                 );
-                int256 swapValue = swap.calculatePayoffPayFixed(block.timestamp, accruedIbtPrice);
+                int256 swapValue = swap.calculatePnlPayFixed(block.timestamp, accruedIbtPrice);
                 mappedSwaps[i] = _mapSwap(asset, swap, 0, swapValue);
             } else {
                 AmmTypes.Swap memory swap = ammStorage.getSwap(
                     AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
                     swapId.id
                 );
-                int256 swapValue = swap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
+                int256 swapValue = swap.calculatePnlReceiveFixed(block.timestamp, accruedIbtPrice);
                 mappedSwaps[i] = _mapSwap(asset, swap, 1, swapValue);
             }
             unchecked {
@@ -270,7 +270,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         address asset,
         AmmTypes.Swap memory swap,
         uint256 direction,
-        int256 swapValue
+        int256 pnlValue
     ) internal pure returns (IAmmSwapsLens.IporSwap memory) {
         return
             IAmmSwapsLens.IporSwap({
@@ -283,7 +283,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
                 direction: direction,
                 ibtQuantity: swap.ibtQuantity,
                 fixedInterestRate: swap.fixedInterestRate,
-                payoff: swapValue,
+                pnlValue: pnlValue,
                 openTimestamp: swap.openTimestamp,
                 endTimestamp: swap.getSwapEndTimestamp(),
                 liquidationDepositAmount: swap.liquidationDepositAmount,

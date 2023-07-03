@@ -184,7 +184,7 @@ library AmmTypes {
         uint256 fixedRateCapPerLeg;
     }
 
-    /// @notice Structure containing information about swap's closing status, unwind values and payoff for a given swap and time.
+    /// @notice Structure containing information about swap's closing status, unwind values and PnL for a given swap and time.
     struct ClosingSwapDetails {
         /// @notice Swap's closing status
         AmmTypes.SwapClosableStatus closableStatus;
@@ -198,7 +198,7 @@ library AmmTypes {
         uint256 swapUnwindOpeningFeeLPAmount;
         /// @notice Part of unwind opening fee allocated in Treasury Balance
         uint256 swapUnwindOpeningFeeTreasuryAmount;
-        /// @notice Final payoff which takes into account the swap unwind and limits the payoff to the collateral amount. Represented in 18 decimals.
-        int256 payoff;
+        /// @notice Final Profit and Loss which takes into account the swap unwind and limits the PnL to the collateral amount. Represented in 18 decimals.
+        int256 pnlValue;
     }
 }

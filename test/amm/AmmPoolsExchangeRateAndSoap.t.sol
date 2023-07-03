@@ -461,35 +461,35 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
 
         (, , int256 initialSoap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
-        ExchangeRateAndPayoff memory exchangeRateAndPayoff;
-        exchangeRateAndPayoff.initialExchangeRate = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(
+        ExchangeRateAndPnl memory exchangeRateAndPnl;
+        exchangeRateAndPnl.initialExchangeRate = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(
             address(_iporProtocol.asset)
         );
 
         vm.warp(block.timestamp + TestConstants.PERIOD_28_DAYS_IN_SECONDS);
         (, , int256 soapAfter28Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
-        exchangeRateAndPayoff.exchangeRateAfter28Days = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(
+        exchangeRateAndPnl.exchangeRateAfter28Days = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(
             address(_iporProtocol.asset)
         );
-        exchangeRateAndPayoff.payoff1After28Days = _iporProtocol.ammSwapsLens.getPayoffPayFixed(
+        exchangeRateAndPnl.pnlValue1After28Days = _iporProtocol.ammSwapsLens.getPnlPayFixed(
             address(_iporProtocol.asset),
             1
         );
-        exchangeRateAndPayoff.payoff2After28Days = _iporProtocol.ammSwapsLens.getPayoffPayFixed(
+        exchangeRateAndPnl.pnlValue2After28Days = _iporProtocol.ammSwapsLens.getPnlPayFixed(
             address(_iporProtocol.asset),
             2
         );
 
         vm.warp(block.timestamp + TestConstants.PERIOD_28_DAYS_IN_SECONDS);
         (, , int256 soapAfter56DaysBeforeClose) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
-        exchangeRateAndPayoff.exchangeRateAfter56DaysBeforeClose = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(
+        exchangeRateAndPnl.exchangeRateAfter56DaysBeforeClose = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(
             address(_iporProtocol.asset)
         );
-        exchangeRateAndPayoff.payoff1After56Days = _iporProtocol.ammSwapsLens.getPayoffPayFixed(
+        exchangeRateAndPnl.pnlValue1After56Days = _iporProtocol.ammSwapsLens.getPnlPayFixed(
             address(_iporProtocol.asset),
             1
         );
-        exchangeRateAndPayoff.payoff2After56Days = _iporProtocol.ammSwapsLens.getPayoffPayFixed(
+        exchangeRateAndPnl.pnlValue2After56Days = _iporProtocol.ammSwapsLens.getPnlPayFixed(
             address(_iporProtocol.asset),
             2
         );
@@ -516,7 +516,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
             address(_iporProtocol.asset)
         );
         assertEq(initialSoap, TestConstants.ZERO_INT);
-        assertEq(exchangeRateAndPayoff.initialExchangeRate, 1086791317829457364, "incorrect initial exchange rate");
+        assertEq(exchangeRateAndPnl.initialExchangeRate, 1086791317829457364, "incorrect initial exchange rate");
         assertEq(
             liquidityPoolBalanceBeforeClose.liquidityPool,
             1086791317829457364359504,
@@ -524,20 +524,20 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         );
         assertEq(soapAfter28Days, 43537371804356688432372, "incorrect SOAP after 28 days");
         assertEq(
-            exchangeRateAndPayoff.exchangeRateAfter28Days,
+            exchangeRateAndPnl.exchangeRateAfter28Days,
             1043253946025100676,
             "incorrect exchange rate after 28 days"
         );
-        assertEq(exchangeRateAndPayoff.payoff1After28Days, 21768685902178344216186, "incorrect payoff1After28Days");
-        assertEq(exchangeRateAndPayoff.payoff2After28Days, 21768685902178344216186, "incorrect payoff2After28Days");
+        assertEq(exchangeRateAndPnl.pnlValue1After28Days, 21768685902178344216186, "incorrect pnl1After28Days");
+        assertEq(exchangeRateAndPnl.pnlValue2After28Days, 21768685902178344216186, "incorrect pnl2After28Days");
         assertEq(soapAfter56DaysBeforeClose, 87359096014382786307122, "incorrect SOAP after 56 days before close");
         assertEq(
-            exchangeRateAndPayoff.exchangeRateAfter56DaysBeforeClose,
+            exchangeRateAndPnl.exchangeRateAfter56DaysBeforeClose,
             999432221815074578,
             "incorrect exchange rate after 56 days before close"
         );
-        assertEq(exchangeRateAndPayoff.payoff1After56Days, 43679548007191393153560, "incorrect payoff1After56Days");
-        assertEq(exchangeRateAndPayoff.payoff2After56Days, 43679548007191393153560, "incorrect payoff2After56Days");
+        assertEq(exchangeRateAndPnl.pnlValue1After56Days, 43679548007191393153560, "incorrect pnlValue1After56Days");
+        assertEq(exchangeRateAndPnl.pnlValue2After56Days, 43679548007191393153560, "incorrect pnl2After56Days");
         assertEq(soapAfter56DaysAfterClose, TestConstants.ZERO_INT, "incorrect SOAP after close");
         assertEq(exchangeRate56DaysAfterClose, 999432221815074578, "incorrect exchange rate after close");
         assertEq(
@@ -553,13 +553,13 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         );
     }
 
-    struct ExchangeRateAndPayoff {
+    struct ExchangeRateAndPnl {
         uint256 initialExchangeRate;
         uint256 exchangeRateAfter28Days;
         uint256 exchangeRateAfter56DaysBeforeClose;
-        int256 payoff1After28Days;
-        int256 payoff2After28Days;
-        int256 payoff1After56Days;
-        int256 payoff2After56Days;
+        int256 pnlValue1After28Days;
+        int256 pnlValue2After28Days;
+        int256 pnlValue1After56Days;
+        int256 pnlValue2After56Days;
     }
 }
