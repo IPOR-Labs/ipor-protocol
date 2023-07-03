@@ -190,8 +190,8 @@ library AmmTypes {
         AmmTypes.SwapClosableStatus closableStatus;
         /// @notice Flag indicating if swap unwind is required
         bool swapUnwindRequired;
-        /// @notice Swap's unwind amount
-        int256 swapUnwindAmount;
+        /// @notice Swap's unwind PnL Value, part of PnL corresponded to virtual swap (unwinded swap), represented in 18 decimals
+        int256 swapUnwindPnlValue;
         /// @notice Unwind opening fee amount it is a sum of `swapUnwindOpeningFeeLPAmount` and `swapUnwindOpeningFeeTreasuryAmount`
         uint256 swapUnwindOpeningFeeAmount;
         /// @notice Part of unwind opening fee allocated as a profit of the Liquidity Pool
