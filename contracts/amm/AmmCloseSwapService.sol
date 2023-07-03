@@ -729,15 +729,15 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         AmmTypes.SwapClosableStatus closableStatus,
         bool swapUnwindRequired
     ) internal pure {
-        if (closableStatus == AmmTypes.SwapClosableStatus.SWAP_ALREADY_CLOSED) revert(AmmErrors.INCORRECT_SWAP_STATUS);
-        if (closableStatus == AmmTypes.SwapClosableStatus.SWAP_REQUIRED_BUYER_OR_LIQUIDATOR_TO_CLOSE)
-            revert(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR);
-        if (!swapUnwindRequired) {
-            if (closableStatus == AmmTypes.SwapClosableStatus.SWAP_CANNOT_CLOSE_CLOSING_TOO_EARLY_FOR_BUYER)
-                revert(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY_FOR_BUYER);
+        if (closableStatus == AmmTypes.SwapClosableStatus.SWAP_ALREADY_CLOSED) {
+            revert(AmmErrors.INCORRECT_SWAP_STATUS);
         }
-        if (closableStatus == AmmTypes.SwapClosableStatus.SWAP_CANNOT_CLOSE_CLOSING_TOO_EARLY_FOR_COMMUNITY)
+        if (closableStatus == AmmTypes.SwapClosableStatus.SWAP_REQUIRED_BUYER_OR_LIQUIDATOR_TO_CLOSE) {
+            revert(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR);
+        }
+        if (closableStatus == AmmTypes.SwapClosableStatus.SWAP_CANNOT_CLOSE_CLOSING_TOO_EARLY_FOR_COMMUNITY) {
             revert(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY);
+        }
     }
 
     /// @notice Check closable status for Swap given as a parameter.
