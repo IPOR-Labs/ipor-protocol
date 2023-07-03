@@ -428,7 +428,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             int256 pnlValue,
             uint256 swapUnwindOpeningFeeLPAmount,
             uint256 swapUnwindOpeningFeeTreasuryAmount
-        ) = _calculateProfitAndLoss(
+        ) = _calculatePnlValue(
                 AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
                 timestamp,
                 swap.calculatePnlPayFixed(timestamp, ibtPrice),
@@ -454,7 +454,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
 
         uint256 transferredToBuyer;
 
-        (transferredToBuyer, payoutForLiquidator) = _transferTokensBasedOnPnl(beneficiary, pnlValue, swap, poolCfg);
+        (transferredToBuyer, payoutForLiquidator) = _transferTokensBasedOnPnlValue(beneficiary, pnlValue, swap, poolCfg);
 
         emit CloseSwap(swap.id, poolCfg.asset, timestamp, beneficiary, transferredToBuyer, payoutForLiquidator);
     }
@@ -471,7 +471,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             int256 pnlValue,
             uint256 swapUnwindOpeningFeeLPAmount,
             uint256 swapUnwindOpeningFeeTreasuryAmount
-        ) = _calculateProfitAndLoss(
+        ) = _calculatePnlValue(
                 AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
                 timestamp,
                 swap.calculatePnlReceiveFixed(timestamp, ibtPrice),
@@ -496,7 +496,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
 
         uint256 transferredToBuyer;
 
-        (transferredToBuyer, payoutForLiquidator) = _transferTokensBasedOnPnl(beneficiary, pnlValue, swap, poolCfg);
+        (transferredToBuyer, payoutForLiquidator) = _transferTokensBasedOnPnlValue(beneficiary, pnlValue, swap, poolCfg);
 
         emit CloseSwap(swap.id, poolCfg.asset, timestamp, beneficiary, transferredToBuyer, payoutForLiquidator);
     }
@@ -575,7 +575,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         }
     }
 
-    function _calculateProfitAndLoss(
+    function _calculatePnlValue(
         AmmTypes.SwapDirection direction,
         uint256 closeTimestamp,
         int256 swapPnlValueToDate,
@@ -696,7 +696,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
      * @param pnlValue - Net earnings of the derivative. Can be positive (swap has a possitive earnings) or negative (swap looses)
      * @param poolCfg - Pool configuration
      **/
-    function _transferTokensBasedOnPnl(
+    function _transferTokensBasedOnPnlValue(
         address beneficiary,
         int256 pnlValue,
         AmmTypes.Swap memory swap,
