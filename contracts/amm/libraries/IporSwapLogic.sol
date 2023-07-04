@@ -14,12 +14,18 @@ library IporSwapLogic {
     using InterestRates for uint256;
     using InterestRates for int256;
 
+    /// @notice Calculates core amounts related with swap
     /// @param tenor swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
     /// @param wadTotalAmount total amount represented in 18 decimals
     /// @param leverage swap leverage, represented in 18 decimals
     /// @param wadLiquidationDepositAmount liquidation deposit amount, represented in 18 decimals
     /// @param iporPublicationFeeAmount IPOR publication fee amount, represented in 18 decimals
     /// @param openingFeeRate opening fee rate, represented in 18 decimals
+    /// @return collateral collateral amount, represented in 18 decimals
+    /// @return notional notional amount, represented in 18 decimals
+    /// @return openingFee opening fee amount, represented in 18 decimals
+    /// @dev wadTotalAmount = collateral + openingFee + wadLiquidationDepositAmount + iporPublicationFeeAmount
+    /// @dev Opening Fee is a multiplication openingFeeRate and notional
     function calculateSwapAmount(
         IporTypes.SwapTenor tenor,
         uint256 wadTotalAmount,
