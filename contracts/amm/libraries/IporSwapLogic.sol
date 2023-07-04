@@ -14,12 +14,18 @@ library IporSwapLogic {
     using InterestRates for uint256;
     using InterestRates for int256;
 
+    /// @notice Calculates core amounts related with swap
     /// @param tenor swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
     /// @param wadTotalAmount total amount represented in 18 decimals
     /// @param leverage swap leverage, represented in 18 decimals
     /// @param wadLiquidationDepositAmount liquidation deposit amount, represented in 18 decimals
     /// @param iporPublicationFeeAmount IPOR publication fee amount, represented in 18 decimals
     /// @param openingFeeRate opening fee rate, represented in 18 decimals
+    /// @return collateral collateral amount, represented in 18 decimals
+    /// @return notional notional amount, represented in 18 decimals
+    /// @return openingFee opening fee amount, represented in 18 decimals
+    /// @dev wadTotalAmount = collateral + openingFee + wadLiquidationDepositAmount + iporPublicationFeeAmount
+    /// @dev Opening Fee is a multiplication openingFeeRate and notional
     function calculateSwapAmount(
         IporTypes.SwapTenor tenor,
         uint256 wadTotalAmount,
@@ -38,67 +44,79 @@ library IporSwapLogic {
         openingFee = availableAmount - collateral;
     }
 
-    /// @notice Calculates payoff for a pay fixed swap for a given swap closing timestamp and IBT price from IporOracle.
+    /// @notice Calculates Profit and Loss (PnL) for a pay fixed swap for a given swap closing timestamp and IBT price from IporOracle.
     /// @param swap Swap structure
     /// @param closingTimestamp moment when swap is closed, represented in seconds
     /// @param mdIbtPrice IBT price from IporOracle, represented in 18 decimals
-    /// @return swapValue swap payoff, represented in 18 decimals
-    /// @dev Calculated payoff not taken into consideration potential unwinding of the swap.
-    function calculatePayoffPayFixed(
+    /// @return pnlValue swap PnL, represented in 18 decimals
+    /// @dev Calculated PnL not taken into consideration potential unwinding of the swap.
+    function calculatePnlPayFixed(
         AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
-    ) internal pure returns (int256 swapValue) {
+    ) internal pure returns (int256 pnlValue) {
         (uint256 interestFixed, uint256 interestFloating) = calculateInterest(swap, closingTimestamp, mdIbtPrice);
 
-        swapValue = normalizeSwapValue(swap.collateral, interestFloating.toInt256() - interestFixed.toInt256());
+        pnlValue = normalizePnlValue(swap.collateral, interestFloating.toInt256() - interestFixed.toInt256());
     }
 
-    /// @notice Calculates payoff for a receive fixed swap for a given swap closing timestamp and IBT price from IporOracle.
+    /// @notice Calculates Profit and Loss (PnL) for a receive fixed swap for a given swap closing timestamp and IBT price from IporOracle.
     /// @param swap Swap structure
     /// @param closingTimestamp moment when swap is closed, represented in seconds
     /// @param mdIbtPrice IBT price from IporOracle, represented in 18 decimals
-    /// @return swapValue swap payoff, represented in 18 decimals
-    /// @dev Calculated payoff not taken into consideration potential unwinding of the swap.
-    function calculatePayoffReceiveFixed(
+    /// @return pnlValue swap PnL, represented in 18 decimals
+    /// @dev Calculated PnL not taken into consideration potential unwinding of the swap.
+    function calculatePnlReceiveFixed(
         AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
-    ) internal pure returns (int256 swapValue) {
+    ) internal pure returns (int256 pnlValue) {
         (uint256 interestFixed, uint256 interestFloating) = calculateInterest(swap, closingTimestamp, mdIbtPrice);
 
-        swapValue = normalizeSwapValue(swap.collateral, interestFixed.toInt256() - interestFloating.toInt256());
+        pnlValue = normalizePnlValue(swap.collateral, interestFixed.toInt256() - interestFloating.toInt256());
     }
 
-    /// @notice Calculates the swap unwind value, virtual hedging position needed when swaps is closed before the maturity day.
+    /// @notice Calculates the swap unwind PnL value.
     /// @param swap Swap structure
+    /// @param direction swap direction
     /// @param closingTimestamp moment when swap is closed, represented in seconds without 18 decimals
-    /// @param swapPayoffToDate swap payoff to date, represented in 18 decimals, this represents value of payoff
     /// for particular swap at time when swap will be closed by the trader.
     /// @dev Equation for this calculation is:
     /// time - number of seconds left to swap until maturity divided by number of seconds in year
     /// Opposite Leg Fixed Rate - calculated fixed rate of opposite leg used for the virtual swap
-    /// @dev UnwindValue   = Current Swap Payoff + Notional * (e^(Opposite Leg Fixed Rate * time) - e^(Swap Fixed Rate * time))
-    function calculateSwapUnwindAmount(
+    /// @dev If Swap is Pay Fixed Receive Floating then UnwindValue  = Current Swap PnL + Notional * (e^(Opposite Leg Fixed Rate * time) - e^(Swap Fixed Rate * time))
+    /// @dev If Swap is Receive Fixed Pay Floating then UnwindValue  = Current Swap PnL + Notional * (e^(Swap Fixed Rate * time) - e^(Opposite Leg Fixed Rate * time))
+    function calculateSwapUnwindPnlValue(
         AmmTypes.Swap memory swap,
+        AmmTypes.SwapDirection direction,
         uint256 closingTimestamp,
-        int256 swapPayoffToDate,
         uint256 oppositeLegFixedRate
-    ) internal pure returns (int256 swapUnwindAmount) {
+    ) internal pure returns (int256 swapUnwindPnlValue) {
         uint256 endTimestamp = getSwapEndTimestamp(swap);
 
         require(closingTimestamp <= endTimestamp, AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE);
 
         uint256 time = (endTimestamp - swap.openTimestamp) - (closingTimestamp - swap.openTimestamp);
 
-        swapUnwindAmount =
-            swapPayoffToDate +
-            swap.notional.toInt256().calculateContinuousCompoundInterestUsingRatePeriodMultiplicationInt(
-                (oppositeLegFixedRate * time).toInt256()
-            ) -
-            swap.notional.toInt256().calculateContinuousCompoundInterestUsingRatePeriodMultiplicationInt(
-                (swap.fixedInterestRate * time).toInt256()
-            );
+        if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
+            swapUnwindPnlValue =
+                swap.notional.toInt256().calculateContinuousCompoundInterestUsingRatePeriodMultiplicationInt(
+                    (oppositeLegFixedRate * time).toInt256()
+                ) -
+                swap.notional.toInt256().calculateContinuousCompoundInterestUsingRatePeriodMultiplicationInt(
+                    (swap.fixedInterestRate * time).toInt256()
+                );
+        } else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
+            swapUnwindPnlValue =
+                swap.notional.toInt256().calculateContinuousCompoundInterestUsingRatePeriodMultiplicationInt(
+                    (swap.fixedInterestRate * time).toInt256()
+                ) -
+                swap.notional.toInt256().calculateContinuousCompoundInterestUsingRatePeriodMultiplicationInt(
+                    (oppositeLegFixedRate * time).toInt256()
+                );
+        } else {
+            revert(AmmErrors.UNSUPPORTED_DIRECTION);
+        }
     }
 
     /// @notice Calculates the swap unwind opening fee amount for a given swap, closing timestamp and IBT price from IporOracle.
@@ -169,23 +187,23 @@ library IporSwapLogic {
         return IporMath.division(ibtQuantity * ibtCurrentPrice, 1e18);
     }
 
-    /// @notice Normalizes swap value to collateral value. Absolute value Swap payoff can't be higher than collateral.
+    /// @notice Normalizes swap value to collateral value. Absolute value Swap PnL can't be higher than collateral.
     /// @param collateral collateral value, represented in 18 decimals
-    /// @param swapPayoff swap payoff, represented in 18 decimals
-    function normalizeSwapValue(uint256 collateral, int256 swapPayoff) internal pure returns (int256) {
+    /// @param pnlValue swap PnL, represented in 18 decimals
+    function normalizePnlValue(uint256 collateral, int256 pnlValue) internal pure returns (int256) {
         int256 intCollateral = collateral.toInt256();
 
-        if (swapPayoff > 0) {
-            if (swapPayoff < intCollateral) {
-                return swapPayoff;
+        if (pnlValue > 0) {
+            if (pnlValue < intCollateral) {
+                return pnlValue;
             } else {
                 return intCollateral;
             }
         } else {
-            if (swapPayoff < -intCollateral) {
+            if (pnlValue < -intCollateral) {
                 return -intCollateral;
             } else {
-                return swapPayoff;
+                return pnlValue;
             }
         }
     }

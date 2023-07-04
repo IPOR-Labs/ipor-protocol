@@ -10,7 +10,7 @@ import "../utils/TestConstants.sol";
 import "contracts/itf/ItfJoseph.sol";
 
 contract JosephUtils is Test {
-    struct ExchangeRateAndPayoff {
+    struct ExchangeRateAndPnl {
         uint256 initialExchangeRate;
         uint256 exchangeRateAfter28Days;
         uint256 exchangeRateAfter56DaysBeforeClose;

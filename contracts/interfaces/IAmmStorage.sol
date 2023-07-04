@@ -145,13 +145,13 @@ interface IAmmStorage {
     /// @notice Updates structures in the storage: balance, swaps, SOAP indicators when closing Pay-Fixed swap.
     /// @dev Function is only available to AmmCloseSwapService, it can be executed only by IPOR Protocol Router as internal interaction.
     /// @param swap The swap structure containing IPOR swap information.
-    /// @param payoff The amount that the trader has earned or lost on the swap, represented in 18 decimals.
+    /// @param pnlValue The amount that the trader has earned or lost on the swap, represented in 18 decimals.
     ///              It can be negative.
     /// @param closingTimestamp The moment when the swap was closed.
     /// @return closedSwap A memory struct representing the closed swap.
     function updateStorageWhenCloseSwapPayFixedInternal(
         AmmTypes.Swap memory swap,
-        int256 payoff,
+        int256 pnlValue,
         uint256 swapUnwindOpeningFeeLPAmount,
         uint256 swapUnwindOpeningFeeTreasuryAmount,
         uint256 closingTimestamp
@@ -160,13 +160,13 @@ interface IAmmStorage {
     /// @notice Updates structures in the storage: swaps, balances, SOAP indicators when closing Receive-Fixed swap.
     /// @dev Function is only available to AmmCloseSwapService, it can be executed only by IPOR Protocol Router as internal interaction.
     /// @param swap The swap structure containing IPOR swap information.
-    /// @param payoff The amount that the trader has earned or lost on the swap, represented in 18 decimals.
+    /// @param pnlValue The amount that the trader has earned or lost on the swap, represented in 18 decimals.
     ///              It can be negative.
     /// @param closingTimestamp The moment when the swap was closed.
     /// @return closedSwap A memory struct representing the closed swap.
     function updateStorageWhenCloseSwapReceiveFixedInternal(
         AmmTypes.Swap memory swap,
-        int256 payoff,
+        int256 pnlValue,
         uint256 swapUnwindOpeningFeeLPAmount,
         uint256 swapUnwindOpeningFeeTreasuryAmount,
         uint256 closingTimestamp

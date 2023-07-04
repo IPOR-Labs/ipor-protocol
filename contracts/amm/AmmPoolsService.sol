@@ -430,7 +430,11 @@ contract AmmPoolsService is IAmmPoolsService {
     ) internal pure returns (uint256) {
         uint256 denominator = totalLiquidityPoolBalance - redeemedAmount;
         if (denominator > 0) {
-            return IporMath.division(totalCollateralBalance * 1e18, totalLiquidityPoolBalance - redeemedAmount);
+            if (totalLiquidityPoolBalance <= redeemedAmount) {
+                return Constants.MAX_VALUE;
+            } else {
+                return IporMath.division(totalCollateralBalance * 1e18, totalLiquidityPoolBalance - redeemedAmount);
+            }
         } else {
             return Constants.MAX_VALUE;
         }

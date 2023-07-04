@@ -14,7 +14,7 @@ contract AmmUnwindSwap is TestCommons {
 
     event SwapUnwind(
         uint256 indexed swapId,
-        int256 swapPayoffToDate,
+        int256 swapPnlValueToDate,
         int256 swapUnwindAmount,
         uint256 openingFeeLPAmount,
         uint256 openingFeeTreasuryAmount
@@ -37,8 +37,8 @@ contract AmmUnwindSwap is TestCommons {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        int256 expectedSwapPayoffToDate = -254213052927823196669;
-        int256 expectedSwapUnwindAmount = -1366359843923722381006;
+        int256 expectedSwapPnlValueToDate = -254213052927823196669;
+        int256 expectedSwapUnwindAmount = -1112146790995899184337;
         uint256 expectedOpeningFeeLpAmount = 29145104043000041192;
         uint256 expectedOpeningFeeTreasuryAmount = 14579841942471256;
 
@@ -64,7 +64,7 @@ contract AmmUnwindSwap is TestCommons {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlPayFixed(address(_iporProtocol.asset), 1);
 
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
@@ -74,7 +74,7 @@ contract AmmUnwindSwap is TestCommons {
         vm.expectEmit(true, true, true, true);
         emit SwapUnwind(
             swap.id,
-            expectedSwapPayoffToDate,
+            expectedSwapPnlValueToDate,
             expectedSwapUnwindAmount,
             expectedOpeningFeeLpAmount,
             expectedOpeningFeeTreasuryAmount
@@ -82,7 +82,7 @@ contract AmmUnwindSwap is TestCommons {
         _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds);
 
         //then
-        assertGe(payoff, expectedSwapUnwindAmount);
+        assertGe(pnlValue, expectedSwapUnwindAmount);
     }
 
     function testShouldUnwindPayFixedWhenCloseTwoPositionInDifferentMoment() public {
@@ -94,13 +94,13 @@ contract AmmUnwindSwap is TestCommons {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        int256 expectedSwapPayoffToDateOne = -13299129121611997911;
-        int256 expectedSwapUnwindAmountOne = -16139194942451368026;
+        int256 expectedSwapPnlValueToDateOne = -13299129121611997911;
+        int256 expectedSwapUnwindAmountOne = -2840065820839370115;
         uint256 expectedOpeningFeeLpAmountOne = 29145104043000041192;
         uint256 expectedOpeningFeeTreasuryAmountOne = 14579841942471256;
 
-        int256 expectedSwapPayoffToDateTwo = -43675964363614309616;
-        int256 expectedSwapUnwindAmountTwo = -48644627546906928945;
+        int256 expectedSwapPnlValueToDateTwo = -43675964363614309616;
+        int256 expectedSwapUnwindAmountTwo = -4968664717774392481;
         uint256 expectedOpeningFeeLpAmountTwo = 16473326053178158123;
         uint256 expectedOpeningFeeTreasuryAmountTwo = 8240783418298228;
 
@@ -150,7 +150,7 @@ contract AmmUnwindSwap is TestCommons {
         vm.expectEmit(true, true, true, true);
         emit SwapUnwind(
             swapOne.id,
-            expectedSwapPayoffToDateOne,
+            expectedSwapPnlValueToDateOne,
             expectedSwapUnwindAmountOne,
             expectedOpeningFeeLpAmountOne,
             expectedOpeningFeeTreasuryAmountOne
@@ -162,7 +162,7 @@ contract AmmUnwindSwap is TestCommons {
         vm.expectEmit(true, true, true, true);
         emit SwapUnwind(
             swapTwo.id,
-            expectedSwapPayoffToDateTwo,
+            expectedSwapPnlValueToDateTwo,
             expectedSwapUnwindAmountTwo,
             expectedOpeningFeeLpAmountTwo,
             expectedOpeningFeeTreasuryAmountTwo
@@ -182,13 +182,13 @@ contract AmmUnwindSwap is TestCommons {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10 ** 18;
 
-        int256 expectedSwapPayoffToDateOne = 12065905511771631746;
-        int256 expectedSwapUnwindAmountOne = 14905962631666875568;
+        int256 expectedSwapPnlValueToDateOne = 12065905511771631746;
+        int256 expectedSwapUnwindAmountOne = -2840057119895243822;
         uint256 expectedOpeningFeeLpAmountOne = 29145104043000041192;
         uint256 expectedOpeningFeeTreasuryAmountOne = 14579841942471256;
 
-        int256 expectedSwapPayoffToDateTwo = 32472470598307779236;
-        int256 expectedSwapUnwindAmountTwo = 37441114868747785307;
+        int256 expectedSwapPnlValueToDateTwo = 32472470598307779236;
+        int256 expectedSwapUnwindAmountTwo = -4968642222696925314;
         uint256 expectedOpeningFeeLpAmountTwo = 16473326053178158123;
         uint256 expectedOpeningFeeTreasuryAmountTwo = 8240783418298228;
 
@@ -235,7 +235,7 @@ contract AmmUnwindSwap is TestCommons {
 
         emit SwapUnwind(
             swapOne.id,
-            expectedSwapPayoffToDateOne,
+            expectedSwapPnlValueToDateOne,
             expectedSwapUnwindAmountOne,
             expectedOpeningFeeLpAmountOne,
             expectedOpeningFeeTreasuryAmountOne
@@ -252,7 +252,7 @@ contract AmmUnwindSwap is TestCommons {
         vm.expectEmit(true, true, true, true);
         emit SwapUnwind(
             swapTwo.id,
-            expectedSwapPayoffToDateTwo,
+            expectedSwapPnlValueToDateTwo,
             expectedSwapUnwindAmountTwo,
             expectedOpeningFeeLpAmountTwo,
             expectedOpeningFeeTreasuryAmountTwo

@@ -28,8 +28,8 @@ interface IAmmSwapsLens {
         uint256 ibtQuantity;
         /// @notice Fixed interest rate.
         uint256 fixedInterestRate;
-        /// @notice Current position value, represented in 18 decimals.
-        int256 payoff;
+        /// @notice Current PnL value (Profit and Loss Value), represented in 18 decimals.
+        int256 pnlValue;
         /// @notice Moment when swap was opened.
         uint256 openTimestamp;
         /// @notice Moment when swap achieve its maturity.
@@ -71,17 +71,17 @@ interface IAmmSwapsLens {
         uint256 chunkSize
     ) external view returns (uint256 totalCount, IporSwap[] memory swaps);
 
-    /// @notice Gets the swap's payoff for a pay-fixed, given asset and swap ID.
+    /// @notice Gets the swap's PnL (Profit and Loss) for a pay-fixed, given asset and swap ID.
     /// @param asset asset address
     /// @param swapId swap ID
-    /// @return payoff payoff for a pay fixed swap
-    function getPayoffPayFixed(address asset, uint256 swapId) external view returns (int256 payoff);
+    /// @return pnlValue PnL for a pay fixed swap
+    function getPnlPayFixed(address asset, uint256 swapId) external view returns (int256 pnlValue);
 
-    /// @notice Gets the swap's payoff for a receive-fixed, given asset and swap ID.
+    /// @notice Gets the swap's PnL (Profit and Loss) for a receive-fixed, given asset and swap ID.
     /// @param asset asset address
     /// @param swapId swap ID
-    /// @return payoff payoff for a receive fixed swap
-    function getPayoffReceiveFixed(address asset, uint256 swapId) external view returns (int256 payoff);
+    /// @return pnlValue PnL for a receive fixed swap
+    function getPnlReceiveFixed(address asset, uint256 swapId) external view returns (int256 pnlValue);
 
     /// @notice Gets the balances structure required to open a swap.
     /// @param asset The address of the asset.

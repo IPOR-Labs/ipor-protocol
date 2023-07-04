@@ -457,7 +457,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
         );
         (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, _iporProtocol.ammTreasury);
         assertEq(TestConstants.ZERO, swaps.length, "Incorrect swaps length");
-        assertEq(actualBalances.actualPayoff, -int256(expectedBalances.expectedPayoffAbs), "Incorrect payoff");
+        assertEq(actualBalances.actualPnlValue, -int256(expectedBalances.expectedPnlValueAbs), "Incorrect PnL");
         assertEq(
             actualBalances.actualSumOfBalances,
             expectedBalances.expectedSumOfBalancesBeforePayout,

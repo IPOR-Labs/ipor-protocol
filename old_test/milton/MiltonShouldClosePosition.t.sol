@@ -897,7 +897,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         );
         (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, _iporProtocol.ammTreasury);
         assertEq(TestConstants.ZERO, swaps.length, "incorrect swaps length");
-        assertEq(actualBalances.actualPayoff, expectedPayoffWad, "incorrect payoff");
+        assertEq(actualBalances.actualPnlValue, expectedPayoffWad, "incorrect PnL");
 
         assertEq(
             actualBalances.actualSumOfBalances,
@@ -1079,7 +1079,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         );
         (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, _iporProtocol.ammTreasury);
         assertEq(TestConstants.ZERO, swaps.length, "swaps length");
-        assertEq(actualBalances.actualPayoff, expectedPayoffWad, "incorrect payoff");
+        assertEq(actualBalances.actualPnlValue, expectedPayoffWad, "incorrect PnL");
 
         assertEq(
             actualBalances.actualSumOfBalances,
@@ -3476,7 +3476,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         int256 actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
 
         assertEq(TestConstants.ZERO, swaps.length, "incorrect number of swaps");
-        assertEq(actualPayoff, int256(expectedBalances.expectedPayoffAbs), "incorrect payoff");
+        assertEq(actualPnlValue, int256(expectedBalances.expectedPnlValueAbs), "incorrect PnL");
         assertEq(actualAmmTreasuryBalance, expectedBalances.expectedAmmTreasuryBalance, "incorrect ammTreasury balance");
         assertEq(actualOpenerUserBalance, expectedBalances.expectedOpenerUserBalance, "incorrect opener user balance");
         assertEq(balance.totalCollateralPayFixed, TestConstants.ZERO, "incorrect total collateral pay fixed");

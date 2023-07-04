@@ -163,18 +163,18 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
 
         AmmTypes.Swap memory swap = IAmmStorage(poolCfg.ammStorage).getSwap(direction, swapId);
 
-        int256 swapPayoffToDate;
+        int256 swapPnlValueToDate;
 
         if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
-            swapPayoffToDate = swap.calculatePayoffPayFixed(block.timestamp, accruedIpor.ibtPrice);
+            swapPnlValueToDate = swap.calculatePnlPayFixed(block.timestamp, accruedIpor.ibtPrice);
         } else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
-            swapPayoffToDate = swap.calculatePayoffReceiveFixed(block.timestamp, accruedIpor.ibtPrice);
+            swapPnlValueToDate = swap.calculatePnlReceiveFixed(block.timestamp, accruedIpor.ibtPrice);
         } else {
             revert(AmmErrors.UNSUPPORTED_DIRECTION);
         }
 
         (closingSwapDetails.closableStatus, closingSwapDetails.swapUnwindRequired) = _getClosableStatusForSwap(
-            swapPayoffToDate,
+            swapPnlValueToDate,
             closeTimestamp,
             swap,
             poolCfg
@@ -182,21 +182,21 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
 
         if (closingSwapDetails.swapUnwindRequired == true) {
             (
-                closingSwapDetails.swapUnwindAmount,
+                closingSwapDetails.swapUnwindPnlValue,
                 closingSwapDetails.swapUnwindOpeningFeeAmount,
                 closingSwapDetails.swapUnwindOpeningFeeLPAmount,
                 closingSwapDetails.swapUnwindOpeningFeeTreasuryAmount,
-                closingSwapDetails.payoff
+                closingSwapDetails.pnlValue
             ) = _calculateSwapUnwindWhenUnwindRequired(
                 direction,
                 closeTimestamp,
-                swapPayoffToDate,
+                swapPnlValueToDate,
                 accruedIpor.indexValue,
                 swap,
                 poolCfg
             );
         } else {
-            closingSwapDetails.payoff = swapPayoffToDate;
+            closingSwapDetails.pnlValue = swapPnlValueToDate;
         }
     }
 
@@ -425,13 +425,13 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
     ) internal returns (uint256 payoutForLiquidator) {
         uint256 timestamp = block.timestamp;
         (
-            int256 payoff,
+            int256 pnlValue,
             uint256 swapUnwindOpeningFeeLPAmount,
             uint256 swapUnwindOpeningFeeTreasuryAmount
-        ) = _calculatePayoff(
+        ) = _calculatePnlValue(
                 AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
                 timestamp,
-                swap.calculatePayoffPayFixed(timestamp, ibtPrice),
+                swap.calculatePnlPayFixed(timestamp, ibtPrice),
                 indexValue,
                 swap,
                 poolCfg
@@ -444,7 +444,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             swap.notional,
             IAmmStorage(poolCfg.ammStorage).updateStorageWhenCloseSwapPayFixedInternal(
                 swap,
-                payoff,
+                pnlValue,
                 swapUnwindOpeningFeeLPAmount,
                 swapUnwindOpeningFeeTreasuryAmount,
                 timestamp
@@ -454,7 +454,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
 
         uint256 transferredToBuyer;
 
-        (transferredToBuyer, payoutForLiquidator) = _transferTokensBasedOnPayoff(beneficiary, payoff, swap, poolCfg);
+        (transferredToBuyer, payoutForLiquidator) = _transferTokensBasedOnPnlValue(beneficiary, pnlValue, swap, poolCfg);
 
         emit CloseSwap(swap.id, poolCfg.asset, timestamp, beneficiary, transferredToBuyer, payoutForLiquidator);
     }
@@ -468,13 +468,13 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
     ) internal returns (uint256 payoutForLiquidator) {
         uint256 timestamp = block.timestamp;
         (
-            int256 payoff,
+            int256 pnlValue,
             uint256 swapUnwindOpeningFeeLPAmount,
             uint256 swapUnwindOpeningFeeTreasuryAmount
-        ) = _calculatePayoff(
+        ) = _calculatePnlValue(
                 AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
                 timestamp,
-                swap.calculatePayoffReceiveFixed(timestamp, ibtPrice),
+                swap.calculatePnlReceiveFixed(timestamp, ibtPrice),
                 indexValue,
                 swap,
                 poolCfg
@@ -486,7 +486,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             swap.notional,
             IAmmStorage(poolCfg.ammStorage).updateStorageWhenCloseSwapReceiveFixedInternal(
                 swap,
-                payoff,
+                pnlValue,
                 swapUnwindOpeningFeeLPAmount,
                 swapUnwindOpeningFeeTreasuryAmount,
                 timestamp
@@ -496,7 +496,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
 
         uint256 transferredToBuyer;
 
-        (transferredToBuyer, payoutForLiquidator) = _transferTokensBasedOnPayoff(beneficiary, payoff, swap, poolCfg);
+        (transferredToBuyer, payoutForLiquidator) = _transferTokensBasedOnPnlValue(beneficiary, pnlValue, swap, poolCfg);
 
         emit CloseSwap(swap.id, poolCfg.asset, timestamp, beneficiary, transferredToBuyer, payoutForLiquidator);
     }
@@ -575,19 +575,19 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         }
     }
 
-    function _calculatePayoff(
+    function _calculatePnlValue(
         AmmTypes.SwapDirection direction,
         uint256 closeTimestamp,
-        int256 swapPayoffToDate,
+        int256 swapPnlValueToDate,
         uint256 indexValue,
         AmmTypes.Swap memory swap,
         AmmCloseSwapServicePoolConfiguration memory poolCfg
     )
         internal
-        returns (int256 payoff, uint256 swapUnwindOpeningFeeLPAmount, uint256 swapUnwindOpeningFeeTreasuryAmount)
+        returns (int256 pnlValue, uint256 swapUnwindOpeningFeeLPAmount, uint256 swapUnwindOpeningFeeTreasuryAmount)
     {
         (AmmTypes.SwapClosableStatus closableStatus, bool swapUnwindRequired) = _getClosableStatusForSwap(
-            swapPayoffToDate,
+            swapPnlValueToDate,
             closeTimestamp,
             swap,
             poolCfg
@@ -602,11 +602,11 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                 ,
                 swapUnwindOpeningFeeLPAmount,
                 swapUnwindOpeningFeeTreasuryAmount,
-                payoff
+                pnlValue
             ) = _calculateSwapUnwindWhenUnwindRequired(
                 direction,
                 closeTimestamp,
-                swapPayoffToDate,
+                swapPnlValueToDate,
                 indexValue,
                 swap,
                 poolCfg
@@ -614,24 +614,24 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
 
             emit SwapUnwind(
                 swap.id,
-                swapPayoffToDate,
+                swapPnlValueToDate,
                 swapUnwindAmount,
                 swapUnwindOpeningFeeLPAmount,
                 swapUnwindOpeningFeeTreasuryAmount
             );
         } else {
-            payoff = swapPayoffToDate;
+            pnlValue = swapPnlValueToDate;
         }
     }
 
     /// @notice Calculate swap unwind when unwind is required
     /// @param direction swap direction
     /// @param closeTimestamp close timestamp
-    /// @param swapPayoffToDate swap payoff to specific date current date
+    /// @param swapPnlValueToDate swap PnL to specific date current date
     function _calculateSwapUnwindWhenUnwindRequired(
         AmmTypes.SwapDirection direction,
         uint256 closeTimestamp,
-        int256 swapPayoffToDate,
+        int256 swapPnlValueToDate,
         uint256 indexValue,
         AmmTypes.Swap memory swap,
         AmmCloseSwapServicePoolConfiguration memory poolCfg
@@ -639,11 +639,11 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         internal
         view
         returns (
-            int256 swapUnwindAmount,
+            int256 swapUnwindPnlValue,
             uint256 swapUnwindOpeningFeeAmount,
             uint256 swapUnwindOpeningFeeLPAmount,
             uint256 swapUnwindOpeningFeeTreasuryAmount,
-            int256 swapUnwindPayoff
+            int256 swapPnlValue
         )
     {
         uint256 oppositeDirection;
@@ -670,7 +670,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             })
         );
 
-        swapUnwindAmount = swap.calculateSwapUnwindAmount(closeTimestamp, swapPayoffToDate, oppositeLegFixedRate);
+        swapUnwindPnlValue = swap.calculateSwapUnwindPnlValue(direction, closeTimestamp, oppositeLegFixedRate);
 
         swapUnwindOpeningFeeAmount = swap.calculateSwapUnwindOpeningFeeAmount(
             closeTimestamp,
@@ -682,8 +682,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             poolCfg.openingFeeTreasuryPortionRateForSwapUnwind
         );
 
-        swapUnwindPayoff = swapPayoffToDate + swapUnwindAmount - swapUnwindOpeningFeeAmount.toInt256();
-        swapUnwindPayoff = IporSwapLogic.normalizeSwapValue(swap.collateral, swapUnwindPayoff);
+        swapPnlValue = swapPnlValueToDate + swapUnwindPnlValue - swapUnwindOpeningFeeAmount.toInt256();
+        swapPnlValue = IporSwapLogic.normalizePnlValue(swap.collateral, swapPnlValue);
     }
 
     /**
@@ -693,24 +693,24 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
      * # checks if swap's payout is larger than the collateral used to open it
      * # should the payout be larger than the collateral then it transfers payout to the buyer
      * @param swap - Derivative struct
-     * @param payoff - Net earnings of the derivative. Can be positive (swap has a possitive earnings) or negative (swap looses)
+     * @param pnlValue - Net earnings of the derivative. Can be positive (swap has a possitive earnings) or negative (swap looses)
      * @param poolCfg - Pool configuration
      **/
-    function _transferTokensBasedOnPayoff(
+    function _transferTokensBasedOnPnlValue(
         address beneficiary,
-        int256 payoff,
+        int256 pnlValue,
         AmmTypes.Swap memory swap,
         AmmCloseSwapServicePoolConfiguration memory poolCfg
     ) internal returns (uint256 transferredToBuyer, uint256 payoutForLiquidator) {
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
-        if (payoff > 0) {
+        if (pnlValue > 0) {
             //Buyer earns, AmmTreasury looses
             (transferredToBuyer, payoutForLiquidator) = _transferDerivativeAmount(
                 beneficiary,
                 swap.buyer,
                 swap.liquidationDepositAmount,
-                swap.collateral + absPayoff,
+                swap.collateral + absPnlValue,
                 poolCfg
             );
         } else {
@@ -719,7 +719,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                 beneficiary,
                 swap.buyer,
                 swap.liquidationDepositAmount,
-                swap.collateral - absPayoff,
+                swap.collateral - absPnlValue,
                 poolCfg
             );
         }
@@ -729,25 +729,25 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         AmmTypes.SwapClosableStatus closableStatus,
         bool swapUnwindRequired
     ) internal pure {
-        if (closableStatus == AmmTypes.SwapClosableStatus.SWAP_ALREADY_CLOSED) revert(AmmErrors.INCORRECT_SWAP_STATUS);
-        if (closableStatus == AmmTypes.SwapClosableStatus.SWAP_REQUIRED_BUYER_OR_LIQUIDATOR_TO_CLOSE)
-            revert(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR);
-        if (!swapUnwindRequired) {
-            if (closableStatus == AmmTypes.SwapClosableStatus.SWAP_CANNOT_CLOSE_CLOSING_TOO_EARLY_FOR_BUYER)
-                revert(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY_FOR_BUYER);
+        if (closableStatus == AmmTypes.SwapClosableStatus.SWAP_ALREADY_CLOSED) {
+            revert(AmmErrors.INCORRECT_SWAP_STATUS);
         }
-        if (closableStatus == AmmTypes.SwapClosableStatus.SWAP_CANNOT_CLOSE_CLOSING_TOO_EARLY_FOR_COMMUNITY)
+        if (closableStatus == AmmTypes.SwapClosableStatus.SWAP_REQUIRED_BUYER_OR_LIQUIDATOR_TO_CLOSE) {
+            revert(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR);
+        }
+        if (closableStatus == AmmTypes.SwapClosableStatus.SWAP_CANNOT_CLOSE_CLOSING_TOO_EARLY_FOR_COMMUNITY) {
             revert(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY);
+        }
     }
 
     /// @notice Check closable status for Swap given as a parameter.
     /// @param swap The swap to be checked
-    /// @param swapPayoffToDate The payoff of the swap
+    /// @param swapPnlValueToDate The pnl of the swap on a given date
     /// @param closeTimestamp The timestamp of closing
     /// @return closableStatus Closable status for Swap.
     /// @return swapUnwindRequired True if swap unwind is required.
     function _getClosableStatusForSwap(
-        int256 swapPayoffToDate,
+        int256 swapPnlValueToDate,
         uint256 closeTimestamp,
         AmmTypes.Swap memory swap,
         AmmCloseSwapServicePoolConfiguration memory poolCfg
@@ -759,9 +759,9 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         address msgSender = msg.sender;
 
         if (msgSender != OwnerManager.getOwner()) {
-            uint256 absPayoff = IporMath.absoluteValue(swapPayoffToDate);
+            uint256 absPnlValue = IporMath.absoluteValue(swapPnlValueToDate);
 
-            uint256 minPayoffToCloseBeforeMaturityByCommunity = IporMath.percentOf(
+            uint256 minPnlValueToCloseBeforeMaturityByCommunity = IporMath.percentOf(
                 swap.collateral,
                 poolCfg.minLiquidationThresholdToCloseBeforeMaturityByCommunity
             );
@@ -769,7 +769,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             uint256 swapEndTimestamp = swap.getSwapEndTimestamp();
 
             if (closeTimestamp >= swapEndTimestamp) {
-                if (absPayoff < minPayoffToCloseBeforeMaturityByCommunity || absPayoff == swap.collateral) {
+                if (absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity || absPnlValue == swap.collateral) {
                     if (
                         AmmConfigurationManager.isSwapLiquidator(poolCfg.asset, msgSender) != true &&
                         msgSender != swap.buyer
@@ -778,14 +778,14 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                     }
                 }
             } else {
-                uint256 minPayoffToCloseBeforeMaturityByBuyer = IporMath.percentOf(
+                uint256 minPnlValueToCloseBeforeMaturityByBuyer = IporMath.percentOf(
                     swap.collateral,
                     poolCfg.minLiquidationThresholdToCloseBeforeMaturityByBuyer
                 );
 
                 if (
-                    (absPayoff >= minPayoffToCloseBeforeMaturityByBuyer &&
-                        absPayoff < minPayoffToCloseBeforeMaturityByCommunity) || absPayoff == swap.collateral
+                    (absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer &&
+                        absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity) || absPnlValue == swap.collateral
                 ) {
                     if (
                         AmmConfigurationManager.isSwapLiquidator(poolCfg.asset, msgSender) != true &&
@@ -795,7 +795,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                     }
                 }
 
-                if (absPayoff < minPayoffToCloseBeforeMaturityByBuyer) {
+                if (absPnlValue < minPnlValueToCloseBeforeMaturityByBuyer) {
                     if (msgSender == swap.buyer) {
                         if (swapEndTimestamp - poolCfg.timeBeforeMaturityAllowedToCloseSwapByBuyer > closeTimestamp) {
                             return (AmmTypes.SwapClosableStatus.SWAP_CANNOT_CLOSE_CLOSING_TOO_EARLY_FOR_BUYER, true);

@@ -287,7 +287,7 @@ contract AmmStorage is
 
     function updateStorageWhenCloseSwapPayFixedInternal(
         AmmTypes.Swap memory swap,
-        int256 payoff,
+        int256 pnlValue,
         uint256 swapUnwindOpeningFeeLPAmount,
         uint256 swapUnwindOpeningFeeTreasuryAmount,
         uint256 closingTimestamp
@@ -295,7 +295,7 @@ contract AmmStorage is
         _updateSwapsWhenClosePayFixed(swap);
         _updateBalancesWhenCloseSwapPayFixed(
             swap,
-            payoff,
+            pnlValue,
             swapUnwindOpeningFeeLPAmount,
             swapUnwindOpeningFeeTreasuryAmount
         );
@@ -305,7 +305,7 @@ contract AmmStorage is
 
     function updateStorageWhenCloseSwapReceiveFixedInternal(
         AmmTypes.Swap memory swap,
-        int256 payoff,
+        int256 pnlValue,
         uint256 swapUnwindOpeningFeeLPAmount,
         uint256 swapUnwindOpeningFeeTreasuryAmount,
         uint256 closingTimestamp
@@ -313,7 +313,7 @@ contract AmmStorage is
         _updateSwapsWhenCloseReceiveFixed(swap);
         _updateBalancesWhenCloseSwapReceiveFixed(
             swap,
-            payoff,
+            pnlValue,
             swapUnwindOpeningFeeLPAmount,
             swapUnwindOpeningFeeTreasuryAmount
         );
@@ -488,11 +488,11 @@ contract AmmStorage is
 
     function _updateBalancesWhenCloseSwapPayFixed(
         AmmTypes.Swap memory swap,
-        int256 payoff,
+        int256 pnlValue,
         uint256 swapUnwindOpeningFeeLPAmount,
         uint256 swapUnwindOpeningFeeTreasuryAmount
     ) internal {
-        _updateBalancesWhenCloseSwap(payoff, swapUnwindOpeningFeeLPAmount, swapUnwindOpeningFeeTreasuryAmount);
+        _updateBalancesWhenCloseSwap(pnlValue, swapUnwindOpeningFeeLPAmount, swapUnwindOpeningFeeTreasuryAmount);
 
         _balances.totalCollateralPayFixed = _balances.totalCollateralPayFixed - swap.collateral.toUint128();
         _balances.treasury = _balances.treasury + swapUnwindOpeningFeeTreasuryAmount.toUint128();
@@ -500,36 +500,36 @@ contract AmmStorage is
 
     function _updateBalancesWhenCloseSwapReceiveFixed(
         AmmTypes.Swap memory swap,
-        int256 payoff,
+        int256 pnlValue,
         uint256 swapUnwindOpeningFeeLPAmount,
         uint256 swapUnwindOpeningFeeTreasuryAmount
     ) internal {
-        _updateBalancesWhenCloseSwap(payoff, swapUnwindOpeningFeeLPAmount, swapUnwindOpeningFeeTreasuryAmount);
+        _updateBalancesWhenCloseSwap(pnlValue, swapUnwindOpeningFeeLPAmount, swapUnwindOpeningFeeTreasuryAmount);
 
         _balances.totalCollateralReceiveFixed = _balances.totalCollateralReceiveFixed - swap.collateral.toUint128();
         _balances.treasury = _balances.treasury + swapUnwindOpeningFeeTreasuryAmount.toUint128();
     }
 
     function _updateBalancesWhenCloseSwap(
-        int256 payoff,
+        int256 pnlValue,
         uint256 swapUnwindOpeningFeeLPAmount,
         uint256 swapUnwindOpeningFeeTreasuryAmount
     ) internal {
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
-        if (payoff > 0) {
-            /// @dev Buyer earns, AmmTreasury (LP) looses
-            require(_balances.liquidityPool >= absPayoff, AmmErrors.CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW);
-            /// @dev When AmmTreasury (LP) looses, then  always substract all payoff
+        if (pnlValue > 0) {
+            /// @dev Buyer earns, AMM (LP) looses
+            require(_balances.liquidityPool >= absPnlValue, AmmErrors.CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW);
+            /// @dev When AMM (LP) looses, then  always substract all pnlValue
             _balances.liquidityPool =
                 _balances.liquidityPool -
-                absPayoff.toUint128() +
+                absPnlValue.toUint128() +
                 swapUnwindOpeningFeeLPAmount.toUint128();
         } else {
-            /// @dev AmmTreasury earns, Buyer looses,
+            /// @dev AMM earns, Buyer looses,
             _balances.liquidityPool =
                 _balances.liquidityPool +
-                absPayoff.toUint128() +
+                absPnlValue.toUint128() +
                 swapUnwindOpeningFeeLPAmount.toUint128();
         }
     }
