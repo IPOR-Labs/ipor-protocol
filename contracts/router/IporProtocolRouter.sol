@@ -273,7 +273,10 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             sig == IPowerTokenLens.getPwTokenTotalSupplyBase.selector
         ) {
             return _powerTokenLens;
-        } else if (sig == IAmmCloseSwapLens.getAmmCloseSwapServicePoolConfiguration.selector) {
+        } else if (
+            sig == IAmmCloseSwapLens.getAmmCloseSwapServicePoolConfiguration.selector ||
+            sig == IAmmCloseSwapLens.getClosingSwapDetails.selector
+        ) {
             return _ammCloseSwapService;
         }
 
