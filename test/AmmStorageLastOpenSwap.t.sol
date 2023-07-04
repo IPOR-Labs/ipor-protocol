@@ -38,14 +38,15 @@ contract SimpleTest is TestCommons {
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(
             _buyer,
             block.timestamp,
+            IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             1_000e18,
             100_000e18,
             10e18,
             1e18,
             25, //liquidationDepositAmount
             1e18,
-            1e18,
-            IporTypes.SwapTenor.DAYS_28
+            1e18
         );
         uint256 cfgIporPublicationFee = 1e18;
 
@@ -79,14 +80,15 @@ contract SimpleTest is TestCommons {
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(
             _buyer,
             block.timestamp,
+            IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             1_000e18,
             100_000e18,
             10e18,
             1e18,
             25, //liquidationDepositAmount
             1e18,
-            1e18,
-            IporTypes.SwapTenor.DAYS_28
+            1e18
         );
         uint256 cfgIporPublicationFee = 1e18;
 
@@ -121,14 +123,15 @@ contract SimpleTest is TestCommons {
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(
             _buyer,
             block.timestamp,
+            IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             1_000e18,
             100_000e18,
             10e18,
             1e18,
             25, //liquidationDepositAmount
             1e18,
-            1e18,
-            IporTypes.SwapTenor.DAYS_28
+            1e18
         );
         uint256 cfgIporPublicationFee = 1e18;
 
@@ -161,14 +164,15 @@ contract SimpleTest is TestCommons {
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(
             _buyer,
             block.timestamp,
+            IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             1_000e18,
             100_000e18,
             10e18,
             1e18,
             25, //liquidationDepositAmount
             1e18,
-            1e18,
-            IporTypes.SwapTenor.DAYS_28
+            1e18
         );
         uint256 cfgIporPublicationFee = 1e18;
 
@@ -203,26 +207,29 @@ contract SimpleTest is TestCommons {
         AmmTypes.NewSwap memory newSwap28Days = AmmTypes.NewSwap(
             _buyer,
             block.timestamp,
+            IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             1_000e18,
             100_000e18,
             10e18,
             1e18,
             25, //liquidationDepositAmount
             1e18,
-            1e18,
-            IporTypes.SwapTenor.DAYS_28
+            1e18
         );
+
         AmmTypes.NewSwap memory newSwap60Days = AmmTypes.NewSwap(
             _buyer,
             block.timestamp,
+            IporTypes.SwapTenor.DAYS_60,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             1_000e18,
             100_000e18,
             10e18,
             1e18,
             25, //liquidationDepositAmount
             1e18,
-            1e18,
-            IporTypes.SwapTenor.DAYS_60
+            1e18
         );
         uint256 cfgIporPublicationFee = 1e18;
 
@@ -265,14 +272,15 @@ contract SimpleTest is TestCommons {
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(
             _buyer,
             block.timestamp,
+            IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             1_000e18,
             100_000e18,
             10e18,
             1e18,
             25, //liquidationDepositAmount
             1e18,
-            1e18,
-            IporTypes.SwapTenor.DAYS_28
+            1e18
         );
         uint256 cfgIporPublicationFee = 1e18;
         vm.startPrank(_router);
@@ -291,6 +299,7 @@ contract SimpleTest is TestCommons {
             _buyer,
             newSwap.openTimestamp,
             newSwap.tenor,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             1,
             newSwap.collateral,
             newSwap.notional,
@@ -324,14 +333,15 @@ contract SimpleTest is TestCommons {
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(
             _buyer,
             block.timestamp,
+            IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             1_000e18,
             100_000e18,
             10e18,
             1e18,
             25, //liquidationDepositAmount
             1e18,
-            1e18,
-            IporTypes.SwapTenor.DAYS_28
+            1e18
         );
         uint256 cfgIporPublicationFee = 1e18;
         vm.startPrank(_router);
@@ -350,6 +360,7 @@ contract SimpleTest is TestCommons {
             _buyer,
             newSwap.openTimestamp,
             newSwap.tenor,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             2,
             newSwap.collateral,
             newSwap.notional,
@@ -383,14 +394,15 @@ contract SimpleTest is TestCommons {
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(
             _buyer,
             block.timestamp,
+            IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             1_000e18,
             100_000e18,
             10e18,
             1e18,
             25, //liquidationDepositAmount
             1e18,
-            1e18,
-            IporTypes.SwapTenor.DAYS_28
+            1e18
         );
         uint256 cfgIporPublicationFee = 1e18;
         vm.startPrank(_router);
@@ -409,6 +421,7 @@ contract SimpleTest is TestCommons {
             _buyer,
             newSwap.openTimestamp,
             newSwap.tenor,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             3,
             newSwap.collateral,
             newSwap.notional,
@@ -442,14 +455,15 @@ contract SimpleTest is TestCommons {
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(
             _buyer,
             block.timestamp,
+            IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             1_000e18,
             100_000e18,
             10e18,
             1e18,
             25, //liquidationDepositAmount
             1e18,
-            1e18,
-            IporTypes.SwapTenor.DAYS_28
+            1e18
         );
         uint256 cfgIporPublicationFee = 1e18;
         vm.startPrank(_router);
@@ -468,6 +482,7 @@ contract SimpleTest is TestCommons {
             _buyer,
             newSwap.openTimestamp,
             newSwap.tenor,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             1,
             newSwap.collateral,
             newSwap.notional,
@@ -501,14 +516,15 @@ contract SimpleTest is TestCommons {
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(
             _buyer,
             block.timestamp,
+            IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             1_000e18,
             100_000e18,
             10e18,
             1e18,
             25, //liquidationDepositAmount
             1e18,
-            1e18,
-            IporTypes.SwapTenor.DAYS_28
+            1e18
         );
         uint256 cfgIporPublicationFee = 1e18;
         vm.startPrank(_router);
@@ -527,6 +543,7 @@ contract SimpleTest is TestCommons {
             _buyer,
             newSwap.openTimestamp,
             newSwap.tenor,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             2,
             newSwap.collateral,
             newSwap.notional,
@@ -560,14 +577,15 @@ contract SimpleTest is TestCommons {
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(
             _buyer,
             block.timestamp,
+            IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             1_000e18,
             100_000e18,
             10e18,
             1e18,
             25, //liquidationDepositAmount
             1e18,
-            1e18,
-            IporTypes.SwapTenor.DAYS_28
+            1e18
         );
         uint256 cfgIporPublicationFee = 1e18;
         vm.startPrank(_router);
@@ -586,6 +604,7 @@ contract SimpleTest is TestCommons {
             _buyer,
             newSwap.openTimestamp,
             newSwap.tenor,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             3,
             newSwap.collateral,
             newSwap.notional,

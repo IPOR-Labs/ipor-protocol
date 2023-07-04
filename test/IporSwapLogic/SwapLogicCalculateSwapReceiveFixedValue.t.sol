@@ -21,6 +21,7 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             _admin, // buyer
             block.timestamp, // openTimestamp
             IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
@@ -30,8 +31,10 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             IporTypes.SwapState.ACTIVE
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePnlReceiveFixed(
-            swap, swap.openTimestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, 1 * TestConstants.D18
+        int256 swapValue = _iporSwapLogic.calculatePnl(
+            swap,
+            swap.openTimestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
+            1 * TestConstants.D18
         );
         // then
         assertEq(swapValue, 50000000000000000000000);
@@ -44,6 +47,7 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             _admin, // buyer
             block.timestamp, // openTimestamp
             IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
@@ -53,7 +57,7 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             IporTypes.SwapState.ACTIVE
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePnlReceiveFixed(swap, swap.openTimestamp, 125 * TestConstants.D18);
+        int256 swapValue = _iporSwapLogic.calculatePnl(swap, swap.openTimestamp, 125 * TestConstants.D18);
         // then
         assertEq(swapValue, -24675750000000000000000);
     }
@@ -65,6 +69,7 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             _admin, // buyer
             block.timestamp, // openTimestamp
             IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
@@ -74,8 +79,10 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             IporTypes.SwapState.ACTIVE
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePnlReceiveFixed(
-            swap, swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 100 * TestConstants.D18
+        int256 swapValue = _iporSwapLogic.calculatePnl(
+            swap,
+            swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
+            100 * TestConstants.D18
         );
         // then
         assertEq(swapValue, 270789953843120398784);
@@ -88,6 +95,7 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             _admin, // buyer
             block.timestamp, // openTimestamp
             IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
@@ -97,22 +105,23 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             IporTypes.SwapState.ACTIVE
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePnlReceiveFixed(
-            swap, swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 125 * TestConstants.D18
+        int256 swapValue = _iporSwapLogic.calculatePnl(
+            swap,
+            swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
+            125 * TestConstants.D18
         );
         // then
         assertEq(swapValue, -24404960046156879601216);
     }
 
-    function testShouldCalculateInterestWhenHugeIPOR25DaysLaterAndIBTPriceHasChangedAndUserLosesAnd18Decimals()
-    public
-    {
+    function testShouldCalculateInterestWhenHugeIPOR25DaysLaterAndIBTPriceHasChangedAndUserLosesAnd18Decimals() public {
         // given
         AmmTypes.Swap memory swap = AmmTypes.Swap(
             TestConstants.ZERO, // id
             _admin, // buyer
             block.timestamp, // openTimestamp
             IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             98703 * TestConstants.D18, // notional
@@ -122,8 +131,10 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             IporTypes.SwapState.ACTIVE
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePnlReceiveFixed(
-            swap, swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 125 * TestConstants.D18
+        int256 swapValue = _iporSwapLogic.calculatePnl(
+            swap,
+            swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
+            125 * TestConstants.D18
         );
         // then
         assertEq(swapValue, 3445246712749083726618);
@@ -136,6 +147,7 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             _admin, // buyer
             block.timestamp, // openTimestamp
             IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
@@ -145,8 +157,10 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             IporTypes.SwapState.ACTIVE
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePnlReceiveFixed(
-            swap, swap.openTimestamp + 4 * TestConstants.PERIOD_25_DAYS_IN_SECONDS, 120 * TestConstants.D18
+        int256 swapValue = _iporSwapLogic.calculatePnl(
+            swap,
+            swap.openTimestamp + 4 * TestConstants.PERIOD_25_DAYS_IN_SECONDS,
+            120 * TestConstants.D18
         );
         // then
         assertEq(swapValue, -18652974581413050198561);
@@ -159,6 +173,7 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             _admin, // buyer
             block.timestamp, // openTimestamp
             IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
@@ -168,8 +183,10 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             IporTypes.SwapState.ACTIVE
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePnlReceiveFixed(
-            swap, swap.openTimestamp + 4 * TestConstants.PERIOD_25_DAYS_IN_SECONDS, 120 * TestConstants.D18
+        int256 swapValue = _iporSwapLogic.calculatePnl(
+            swap,
+            swap.openTimestamp + 4 * TestConstants.PERIOD_25_DAYS_IN_SECONDS,
+            120 * TestConstants.D18
         );
         // then
         assertEq(swapValue, -18652974581413050198561);
@@ -182,6 +199,7 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             _admin, // buyer
             block.timestamp, // openTimestamp
             IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
@@ -191,8 +209,10 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             IporTypes.SwapState.ACTIVE
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePnlReceiveFixed(
-            swap, swap.openTimestamp + 4 * TestConstants.PERIOD_25_DAYS_IN_SECONDS, 120 * TestConstants.D18
+        int256 swapValue = _iporSwapLogic.calculatePnl(
+            swap,
+            swap.openTimestamp + 4 * TestConstants.PERIOD_25_DAYS_IN_SECONDS,
+            120 * TestConstants.D18
         );
         // then
         assertEq(swapValue, -18652974581413050198561);

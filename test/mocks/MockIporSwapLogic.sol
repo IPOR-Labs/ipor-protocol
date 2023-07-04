@@ -44,20 +44,12 @@ contract MockIporSwapLogic {
         return IporSwapLogic.calculateInterestFloating(ibtQuantity, ibtCurrentPrice);
     }
 
-    function calculatePnlPayFixed(
+    function calculatePnl(
         AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) public pure returns (int256 swapValue) {
-        swapValue = IporSwapLogic.calculatePnlPayFixed(swap, closingTimestamp, mdIbtPrice);
-    }
-
-    function calculatePnlReceiveFixed(
-        AmmTypes.Swap memory swap,
-        uint256 closingTimestamp,
-        uint256 mdIbtPrice
-    ) public pure returns (int256 swapValue) {
-        swapValue = IporSwapLogic.calculatePnlReceiveFixed(swap, closingTimestamp, mdIbtPrice);
+        swapValue = IporSwapLogic.calculatePnl(swap, closingTimestamp, mdIbtPrice);
     }
 
     function calculateSwapUnwindPnlValue(
@@ -65,11 +57,7 @@ contract MockIporSwapLogic {
         uint256 closingTimestamp,
         uint256 oppositeLegFixedRate
     ) public pure returns (int256 swapUnwindAmount) {
-        swapUnwindAmount = IporSwapLogic.calculateSwapUnwindPnlValue(
-            swap,
-            closingTimestamp,
-            oppositeLegFixedRate
-        );
+        swapUnwindAmount = IporSwapLogic.calculateSwapUnwindPnlValue(swap, closingTimestamp, oppositeLegFixedRate);
     }
 
     function calculateSwapUnwindOpeningFeeAmount(

@@ -163,15 +163,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
 
         AmmTypes.Swap memory swap = IAmmStorage(poolCfg.ammStorage).getSwap(direction, swapId);
 
-        int256 swapPnlValueToDate;
-
-        if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
-            swapPnlValueToDate = swap.calculatePnlPayFixed(block.timestamp, accruedIpor.ibtPrice);
-        } else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
-            swapPnlValueToDate = swap.calculatePnlReceiveFixed(block.timestamp, accruedIpor.ibtPrice);
-        } else {
-            revert(AmmErrors.UNSUPPORTED_DIRECTION);
-        }
+        int256 swapPnlValueToDate = swap.calculatePnl(block.timestamp, accruedIpor.ibtPrice);
 
         (closingSwapDetails.closableStatus, closingSwapDetails.swapUnwindRequired) = _getClosableStatusForSwap(
             swapPnlValueToDate,
@@ -427,14 +419,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             int256 pnlValue,
             uint256 swapUnwindOpeningFeeLPAmount,
             uint256 swapUnwindOpeningFeeTreasuryAmount
-        ) = _calculatePnlValue(
-                AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-                timestamp,
-                swap.calculatePnlPayFixed(timestamp, ibtPrice),
-                indexValue,
-                swap,
-                poolCfg
-            );
+        ) = _calculatePnlValue(timestamp, swap.calculatePnl(timestamp, ibtPrice), indexValue, swap, poolCfg);
 
         ISpreadCloseSwapService(_spreadRouter).updateTimeWeightedNotionalOnClose(
             poolCfg.asset,
@@ -453,7 +438,12 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
 
         uint256 transferredToBuyer;
 
-        (transferredToBuyer, payoutForLiquidator) = _transferTokensBasedOnPnlValue(beneficiary, pnlValue, swap, poolCfg);
+        (transferredToBuyer, payoutForLiquidator) = _transferTokensBasedOnPnlValue(
+            beneficiary,
+            pnlValue,
+            swap,
+            poolCfg
+        );
 
         emit CloseSwap(swap.id, poolCfg.asset, timestamp, beneficiary, transferredToBuyer, payoutForLiquidator);
     }
@@ -470,14 +460,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             int256 pnlValue,
             uint256 swapUnwindOpeningFeeLPAmount,
             uint256 swapUnwindOpeningFeeTreasuryAmount
-        ) = _calculatePnlValue(
-                AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-                timestamp,
-                swap.calculatePnlReceiveFixed(timestamp, ibtPrice),
-                indexValue,
-                swap,
-                poolCfg
-            );
+        ) = _calculatePnlValue(timestamp, swap.calculatePnl(timestamp, ibtPrice), indexValue, swap, poolCfg);
         ISpreadCloseSwapService(_spreadRouter).updateTimeWeightedNotionalOnClose(
             poolCfg.asset,
             1,
@@ -495,7 +478,12 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
 
         uint256 transferredToBuyer;
 
-        (transferredToBuyer, payoutForLiquidator) = _transferTokensBasedOnPnlValue(beneficiary, pnlValue, swap, poolCfg);
+        (transferredToBuyer, payoutForLiquidator) = _transferTokensBasedOnPnlValue(
+            beneficiary,
+            pnlValue,
+            swap,
+            poolCfg
+        );
 
         emit CloseSwap(swap.id, poolCfg.asset, timestamp, beneficiary, transferredToBuyer, payoutForLiquidator);
     }
@@ -601,13 +589,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                 swapUnwindOpeningFeeLPAmount,
                 swapUnwindOpeningFeeTreasuryAmount,
                 pnlValue
-            ) = _calculateSwapUnwindWhenUnwindRequired(
-                closeTimestamp,
-                swapPnlValueToDate,
-                indexValue,
-                swap,
-                poolCfg
-            );
+            ) = _calculateSwapUnwindWhenUnwindRequired(closeTimestamp, swapPnlValueToDate, indexValue, swap, poolCfg);
 
             emit SwapUnwind(
                 swap.id,

@@ -312,14 +312,15 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         AmmTypes.NewSwap memory newSwap1 = AmmTypes.NewSwap(
             _owner,
             block.timestamp,
+            IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             1_000e18,
             100_000e18,
             10e18,
             1e18,
             25, //liquidationDepositAmount
             1e18,
-            1e18,
-            IporTypes.SwapTenor.DAYS_28
+            1e18
         );
         vm.prank(_owner);
         ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap1, cfgIporPublicationFee);
@@ -330,14 +331,15 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         AmmTypes.NewSwap memory newSwap2 = AmmTypes.NewSwap(
             _owner,
             block.timestamp,
+            IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             1_000e18,
             100_000e18,
             10e18,
             1e18,
             25, //liquidationDepositAmount
             1e18,
-            1e18,
-            IporTypes.SwapTenor.DAYS_28
+            1e18
         );
         vm.prank(_owner);
         ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap2, cfgIporPublicationFee);
@@ -352,14 +354,15 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         AmmTypes.NewSwap memory newSwap3 = AmmTypes.NewSwap(
             _owner,
             block.timestamp,
+            IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             1_000e18,
             100_000e18,
             10e18,
             1e18,
             25, //liquidationDepositAmount
             1e18,
-            1e18,
-            IporTypes.SwapTenor.DAYS_28
+            1e18
         );
         vm.prank(_ammAddress);
         ISpread28Days(_routerAddress).calculateAndUpdateOfferedRateReceiveFixed28Days(spreadInputsOpen);
@@ -449,14 +452,15 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         AmmTypes.NewSwap memory newSwap1 = AmmTypes.NewSwap(
             _owner,
             block.timestamp,
+            IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             1_000e18,
             100_000e18,
             10e18,
             1e18,
             25, //liquidationDepositAmount
             1e18,
-            1e18,
-            IporTypes.SwapTenor.DAYS_28
+            1e18
         );
         vm.prank(_owner);
         ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap1, cfgIporPublicationFee);
@@ -467,14 +471,15 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         AmmTypes.NewSwap memory newSwap2 = AmmTypes.NewSwap(
             _owner,
             block.timestamp,
+            IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             1_000e18,
             100_000e18,
             10e18,
             1e18,
             25, //liquidationDepositAmount
             1e18,
-            1e18,
-            IporTypes.SwapTenor.DAYS_28
+            1e18
         );
         vm.prank(_owner);
         ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap2, cfgIporPublicationFee);
@@ -489,14 +494,15 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         AmmTypes.NewSwap memory newSwap3 = AmmTypes.NewSwap(
             _owner,
             block.timestamp,
+            IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             1_000e18,
             100_000e18,
             10e18,
             1e18,
             25, //liquidationDepositAmount
             1e18,
-            1e18,
-            IporTypes.SwapTenor.DAYS_28
+            1e18
         );
         vm.prank(_ammAddress);
         ISpread28Days(_routerAddress).calculateAndUpdateOfferedRatePayFixed28Days(spreadInputsOpen);

@@ -18,6 +18,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 32 * 1e15;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 1_000_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -28,7 +29,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -43,6 +43,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 29 * 1e15;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 1_000_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -53,7 +54,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -68,6 +68,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 1_000_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -78,7 +79,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -93,6 +93,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 32 * 1e15;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 1_000_000 * 1e18;
         swap.fixedInterestRate = 28 * 1e15;
         swap.openTimestamp = block.timestamp;
@@ -103,7 +104,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -118,6 +118,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 29 * 1e15;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 1_000_000 * 1e18;
         swap.fixedInterestRate = 32 * 1e15;
         swap.openTimestamp = block.timestamp;
@@ -128,7 +129,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -143,6 +143,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 1_000_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -153,7 +154,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -168,6 +168,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 18e15;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 2 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -179,7 +180,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         vm.expectRevert("IPOR_333");
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -191,6 +191,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -201,7 +202,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -216,6 +216,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -226,7 +227,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -241,6 +241,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -251,7 +252,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -266,6 +266,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -276,7 +277,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -291,6 +291,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -301,7 +302,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -316,6 +316,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -326,7 +327,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -341,6 +341,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 0;
         swap.openTimestamp = block.timestamp;
@@ -351,7 +352,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -366,6 +366,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 0;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -376,7 +377,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -391,6 +391,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -401,7 +402,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -416,6 +416,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -426,7 +427,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -441,6 +441,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 0;
         swap.openTimestamp = block.timestamp;
@@ -451,7 +452,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -466,6 +466,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 0;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -476,7 +477,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -491,6 +491,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 0;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 0;
         swap.openTimestamp = block.timestamp;
@@ -501,7 +502,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -516,6 +516,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -526,7 +527,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -541,6 +541,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -551,7 +552,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -566,6 +566,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -576,7 +577,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -591,6 +591,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -602,7 +603,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -617,6 +617,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -628,7 +629,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -643,6 +643,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -654,7 +655,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -669,6 +669,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -680,7 +681,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -783,6 +783,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 18e15;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 2 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -794,7 +795,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         vm.expectRevert("IPOR_333");
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -806,6 +806,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -816,7 +817,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -831,6 +831,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -841,7 +842,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -856,6 +856,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -866,7 +867,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -881,6 +881,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -891,7 +892,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -906,6 +906,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -916,7 +917,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -931,6 +931,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -941,7 +942,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -956,6 +956,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 0;
         swap.openTimestamp = block.timestamp;
@@ -966,7 +967,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -981,6 +981,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 0;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -991,7 +992,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -1006,6 +1006,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -1016,7 +1017,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -1031,6 +1031,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -1041,7 +1042,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -1056,6 +1056,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 0;
         swap.openTimestamp = block.timestamp;
@@ -1066,7 +1067,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -1081,6 +1081,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 0;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -1091,7 +1092,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -1106,6 +1106,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 0;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 0;
         swap.openTimestamp = block.timestamp;
@@ -1116,7 +1117,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -1131,6 +1131,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -1141,7 +1142,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -1156,6 +1156,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -1166,7 +1167,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -1181,6 +1181,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -1191,7 +1192,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         //when
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -1206,6 +1206,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -1217,7 +1218,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -1232,6 +1232,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -1243,7 +1244,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -1258,6 +1258,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -1269,7 +1270,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );
@@ -1284,6 +1284,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
+        swap.direction = AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED;
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
         swap.openTimestamp = block.timestamp;
@@ -1295,7 +1296,6 @@ contract IporSwapLogicTest is Test, DataUtils {
         vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closingTimestamp,
             oppositeLegFixedRate
         );

@@ -23,6 +23,7 @@ contract IporSwapLogicCalculateInterest is TestCommons, DataUtils {
             _admin, // buyer
             block.timestamp, // openTimestamp
             IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
@@ -49,6 +50,7 @@ contract IporSwapLogicCalculateInterest is TestCommons, DataUtils {
             _admin, // buyer
             block.timestamp, // openTimestamp
             IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
@@ -75,6 +77,7 @@ contract IporSwapLogicCalculateInterest is TestCommons, DataUtils {
             _admin, // buyer
             block.timestamp, // openTimestamp
             IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
@@ -101,6 +104,7 @@ contract IporSwapLogicCalculateInterest is TestCommons, DataUtils {
             _admin, // buyer
             block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS, // openTimestamp
             IporTypes.SwapTenor.DAYS_90,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
@@ -125,6 +129,7 @@ contract IporSwapLogicCalculateInterest is TestCommons, DataUtils {
             _admin, // buyer
             block.timestamp, // openTimestamp
             IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
@@ -151,6 +156,7 @@ contract IporSwapLogicCalculateInterest is TestCommons, DataUtils {
             _admin, // buyer
             block.timestamp, // openTimestamp
             IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
@@ -177,6 +183,7 @@ contract IporSwapLogicCalculateInterest is TestCommons, DataUtils {
             _admin, // buyer
             block.timestamp, // openTimestamp
             IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
@@ -203,6 +210,7 @@ contract IporSwapLogicCalculateInterest is TestCommons, DataUtils {
             _admin, // buyer
             block.timestamp, // openTimestamp
             IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
@@ -229,6 +237,7 @@ contract IporSwapLogicCalculateInterest is TestCommons, DataUtils {
             _admin, // buyer
             block.timestamp, // openTimestamp
             IporTypes.SwapTenor.DAYS_28,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional

@@ -612,7 +612,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
             ctx.beneficiary,
             block.timestamp,
             ctx.tenor,
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             bosStruct.collateral,
             bosStruct.notional,
             indicator.ibtQuantity,

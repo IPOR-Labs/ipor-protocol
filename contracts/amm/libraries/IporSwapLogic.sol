@@ -57,9 +57,9 @@ library IporSwapLogic {
     ) internal pure returns (int256 pnlValue) {
         (uint256 interestFixed, uint256 interestFloating) = calculateInterest(swap, closingTimestamp, mdIbtPrice);
 
-        if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
+        if (swap.direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
             pnlValue = normalizePnlValue(swap.collateral, interestFloating.toInt256() - interestFixed.toInt256());
-        } else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
+        } else if (swap.direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
             pnlValue = normalizePnlValue(swap.collateral, interestFixed.toInt256() - interestFloating.toInt256());
         } else {
             revert(AmmErrors.UNSUPPORTED_DIRECTION);

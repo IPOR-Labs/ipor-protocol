@@ -154,6 +154,7 @@ contract AmmStorage is
                 swap.buyer,
                 swap.openTimestamp,
                 swap.tenor,
+                direction,
                 swap.idsIndex,
                 swap.collateral,
                 swap.notional,
@@ -170,7 +171,16 @@ contract AmmStorage is
         uint256 chunkSize
     ) external view override returns (uint256 totalCount, AmmTypes.Swap[] memory swaps) {
         uint32[] storage ids = _swapsPayFixed.ids[account];
-        return (ids.length, _getPositions(_swapsPayFixed.swaps, ids, offset, chunkSize));
+        return (
+            ids.length,
+            _getPositions(
+                AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+                _swapsPayFixed.swaps,
+                ids,
+                offset,
+                chunkSize
+            )
+        );
     }
 
     function getSwapsReceiveFixed(
@@ -179,7 +189,16 @@ contract AmmStorage is
         uint256 chunkSize
     ) external view override returns (uint256 totalCount, AmmTypes.Swap[] memory swaps) {
         uint32[] storage ids = _swapsReceiveFixed.ids[account];
-        return (ids.length, _getPositions(_swapsReceiveFixed.swaps, ids, offset, chunkSize));
+        return (
+            ids.length,
+            _getPositions(
+                AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+                _swapsReceiveFixed.swaps,
+                ids,
+                offset,
+                chunkSize
+            )
+        );
     }
 
     function getSwapIds(
@@ -246,7 +265,7 @@ contract AmmStorage is
         AmmTypes.NewSwap memory newSwap,
         uint256 cfgIporPublicationFee
     ) external override onlyRouter returns (uint256) {
-        uint256 id = _updateSwapsWhenOpen(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, newSwap);
+        uint256 id = _updateSwapsWhenOpen(newSwap);
         _updateBalancesWhenOpenSwapPayFixed(
             newSwap.collateral,
             newSwap.openingFeeLPAmount,
@@ -268,7 +287,7 @@ contract AmmStorage is
         AmmTypes.NewSwap memory newSwap,
         uint256 cfgIporPublicationFee
     ) external override onlyRouter returns (uint256) {
-        uint256 id = _updateSwapsWhenOpen(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, newSwap);
+        uint256 id = _updateSwapsWhenOpen(newSwap);
         _updateBalancesWhenOpenSwapReceiveFixed(
             newSwap.collateral,
             newSwap.openingFeeLPAmount,
@@ -424,6 +443,7 @@ contract AmmStorage is
     }
 
     function _getPositions(
+        AmmTypes.SwapDirection direction,
         mapping(uint32 => StorageInternalTypes.Swap) storage swaps,
         uint32[] storage ids,
         uint256 offset,
@@ -443,6 +463,7 @@ contract AmmStorage is
                 swap.buyer,
                 swap.openTimestamp,
                 swap.tenor,
+                direction,
                 swap.idsIndex,
                 swap.collateral,
                 swap.notional,
