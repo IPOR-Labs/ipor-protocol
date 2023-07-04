@@ -188,7 +188,6 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                 closingSwapDetails.swapUnwindOpeningFeeTreasuryAmount,
                 closingSwapDetails.pnlValue
             ) = _calculateSwapUnwindWhenUnwindRequired(
-                direction,
                 closeTimestamp,
                 swapPnlValueToDate,
                 accruedIpor.indexValue,
@@ -576,7 +575,6 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
     }
 
     function _calculatePnlValue(
-        AmmTypes.SwapDirection direction,
         uint256 closeTimestamp,
         int256 swapPnlValueToDate,
         uint256 indexValue,
@@ -604,7 +602,6 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                 swapUnwindOpeningFeeTreasuryAmount,
                 pnlValue
             ) = _calculateSwapUnwindWhenUnwindRequired(
-                direction,
                 closeTimestamp,
                 swapPnlValueToDate,
                 indexValue,
@@ -625,11 +622,9 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
     }
 
     /// @notice Calculate swap unwind when unwind is required
-    /// @param direction swap direction
     /// @param closeTimestamp close timestamp
     /// @param swapPnlValueToDate swap PnL to specific date current date
     function _calculateSwapUnwindWhenUnwindRequired(
-        AmmTypes.SwapDirection direction,
         uint256 closeTimestamp,
         int256 swapPnlValueToDate,
         uint256 indexValue,
@@ -648,9 +643,9 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
     {
         uint256 oppositeDirection;
 
-        if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
+        if (swap.direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
             oppositeDirection = 1;
-        } else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
+        } else if (swap.direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
             oppositeDirection = 0;
         } else {
             revert(AmmErrors.UNSUPPORTED_DIRECTION);
@@ -670,7 +665,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             })
         );
 
-        swapUnwindPnlValue = swap.calculateSwapUnwindPnlValue(direction, closeTimestamp, oppositeLegFixedRate);
+        swapUnwindPnlValue = swap.calculateSwapUnwindPnlValue(closeTimestamp, oppositeLegFixedRate);
 
         swapUnwindOpeningFeeAmount = swap.calculateSwapUnwindOpeningFeeAmount(
             closeTimestamp,

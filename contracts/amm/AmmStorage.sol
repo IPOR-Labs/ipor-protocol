@@ -534,20 +534,17 @@ contract AmmStorage is
         }
     }
 
-    function _updateSwapsWhenOpen(
-        AmmTypes.SwapDirection direction,
-        AmmTypes.NewSwap memory newSwap
-    ) internal returns (uint256) {
+    function _updateSwapsWhenOpen(AmmTypes.NewSwap memory newSwap) internal returns (uint256) {
         _lastSwapId++;
         uint32 id = _lastSwapId;
 
         StorageInternalTypes.Swap storage swap;
         uint32 idsIndexLocal;
 
-        if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
+        if (newSwap.direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
             swap = _swapsPayFixed.swaps[id];
             idsIndexLocal = _swapsPayFixed.ids[newSwap.buyer].length.toUint32();
-        } else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
+        } else if (newSwap.direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
             swap = _swapsReceiveFixed.swaps[id];
             idsIndexLocal = _swapsReceiveFixed.ids[newSwap.buyer].length.toUint32();
         } else {
@@ -557,6 +554,7 @@ contract AmmStorage is
         swap.id = id;
         swap.buyer = newSwap.buyer;
         swap.openTimestamp = newSwap.openTimestamp.toUint32();
+        swap.tenor = newSwap.tenor;
         swap.idsIndex = idsIndexLocal;
         swap.collateral = newSwap.collateral.toUint128();
         swap.notional = newSwap.notional.toUint128();
@@ -564,11 +562,10 @@ contract AmmStorage is
         swap.fixedInterestRate = newSwap.fixedInterestRate.toUint64();
         swap.liquidationDepositAmount = newSwap.liquidationDepositAmount.toUint32();
         swap.state = IporTypes.SwapState.ACTIVE;
-        swap.tenor = newSwap.tenor;
 
-        if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
+        if (newSwap.direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
             _swapsPayFixed.ids[newSwap.buyer].push(id);
-        } else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
+        } else if (newSwap.direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
             _swapsReceiveFixed.ids[newSwap.buyer].push(id);
         } else {
             revert(AmmErrors.UNSUPPORTED_DIRECTION);

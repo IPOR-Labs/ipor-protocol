@@ -514,14 +514,15 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(
             ctx.beneficiary,
             block.timestamp,
+            ctx.tenor,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             bosStruct.collateral,
             bosStruct.notional,
             indicator.ibtQuantity,
             indicator.fixedInterestRate,
             bosStruct.liquidationDepositAmount,
             bosStruct.openingFeeLPAmount,
-            bosStruct.openingFeeTreasuryAmount,
-            ctx.tenor
+            bosStruct.openingFeeTreasuryAmount
         );
 
         uint256 newSwapId = IAmmStorage(ctx.poolCfg.ammStorage).updateStorageWhenOpenSwapPayFixedInternal(
@@ -537,7 +538,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
             bosStruct.wadTotalAmount,
             newSwap,
             indicator,
-            0,
             bosStruct.iporPublicationFeeAmount
         );
 
@@ -611,14 +611,15 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(
             ctx.beneficiary,
             block.timestamp,
+            ctx.tenor,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             bosStruct.collateral,
             bosStruct.notional,
             indicator.ibtQuantity,
             indicator.fixedInterestRate,
             bosStruct.liquidationDepositAmount,
             bosStruct.openingFeeLPAmount,
-            bosStruct.openingFeeTreasuryAmount,
-            ctx.tenor
+            bosStruct.openingFeeTreasuryAmount
         );
 
         uint256 newSwapId = IAmmStorage(ctx.poolCfg.ammStorage).updateStorageWhenOpenSwapReceiveFixedInternal(
@@ -634,7 +635,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
             bosStruct.wadTotalAmount,
             newSwap,
             indicator,
-            1,
             bosStruct.iporPublicationFeeAmount
         );
 
@@ -725,14 +725,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         uint256 wadTotalAmount,
         AmmTypes.NewSwap memory newSwap,
         AmmTypes.IporSwapIndicator memory indicator,
-        uint256 direction,
         uint256 iporPublicationFee
     ) internal {
         emit OpenSwap(
             newSwapId,
             newSwap.buyer,
             asset,
-            AmmTypes.SwapDirection(direction),
+            newSwap.direction,
             AmmTypes.OpenSwapAmount(
                 wadTotalAmount,
                 newSwap.collateral,

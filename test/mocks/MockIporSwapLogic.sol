@@ -62,13 +62,11 @@ contract MockIporSwapLogic {
 
     function calculateSwapUnwindPnlValue(
         AmmTypes.Swap memory swap,
-        AmmTypes.SwapDirection direction,
         uint256 closingTimestamp,
         uint256 oppositeLegFixedRate
     ) public pure returns (int256 swapUnwindAmount) {
         swapUnwindAmount = IporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            direction,
             closingTimestamp,
             oppositeLegFixedRate
         );

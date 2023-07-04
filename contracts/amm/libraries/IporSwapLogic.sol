@@ -44,41 +44,30 @@ library IporSwapLogic {
         openingFee = availableAmount - collateral;
     }
 
-    /// @notice Calculates Profit and Loss (PnL) for a pay fixed swap for a given swap closing timestamp and IBT price from IporOracle.
+    /// @notice Calculates Profit and Loss (PnL) for a given swap closing timestamp and IBT price from IporOracle.
     /// @param swap Swap structure
     /// @param closingTimestamp moment when swap is closed, represented in seconds
     /// @param mdIbtPrice IBT price from IporOracle, represented in 18 decimals
     /// @return pnlValue swap PnL, represented in 18 decimals
     /// @dev Calculated PnL not taken into consideration potential unwinding of the swap.
-    function calculatePnlPayFixed(
+    function calculatePnl(
         AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) internal pure returns (int256 pnlValue) {
         (uint256 interestFixed, uint256 interestFloating) = calculateInterest(swap, closingTimestamp, mdIbtPrice);
 
-        pnlValue = normalizePnlValue(swap.collateral, interestFloating.toInt256() - interestFixed.toInt256());
-    }
-
-    /// @notice Calculates Profit and Loss (PnL) for a receive fixed swap for a given swap closing timestamp and IBT price from IporOracle.
-    /// @param swap Swap structure
-    /// @param closingTimestamp moment when swap is closed, represented in seconds
-    /// @param mdIbtPrice IBT price from IporOracle, represented in 18 decimals
-    /// @return pnlValue swap PnL, represented in 18 decimals
-    /// @dev Calculated PnL not taken into consideration potential unwinding of the swap.
-    function calculatePnlReceiveFixed(
-        AmmTypes.Swap memory swap,
-        uint256 closingTimestamp,
-        uint256 mdIbtPrice
-    ) internal pure returns (int256 pnlValue) {
-        (uint256 interestFixed, uint256 interestFloating) = calculateInterest(swap, closingTimestamp, mdIbtPrice);
-
-        pnlValue = normalizePnlValue(swap.collateral, interestFixed.toInt256() - interestFloating.toInt256());
+        if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
+            pnlValue = normalizePnlValue(swap.collateral, interestFloating.toInt256() - interestFixed.toInt256());
+        } else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
+            pnlValue = normalizePnlValue(swap.collateral, interestFixed.toInt256() - interestFloating.toInt256());
+        } else {
+            revert(AmmErrors.UNSUPPORTED_DIRECTION);
+        }
     }
 
     /// @notice Calculates the swap unwind PnL value.
     /// @param swap Swap structure
-    /// @param direction swap direction
     /// @param closingTimestamp moment when swap is closed, represented in seconds without 18 decimals
     /// for particular swap at time when swap will be closed by the trader.
     /// @dev Equation for this calculation is:
@@ -88,7 +77,6 @@ library IporSwapLogic {
     /// @dev If Swap is Receive Fixed Pay Floating then UnwindValue  = Current Swap PnL + Notional * (e^(Swap Fixed Rate * time) - e^(Opposite Leg Fixed Rate * time))
     function calculateSwapUnwindPnlValue(
         AmmTypes.Swap memory swap,
-        AmmTypes.SwapDirection direction,
         uint256 closingTimestamp,
         uint256 oppositeLegFixedRate
     ) internal pure returns (int256 swapUnwindPnlValue) {
@@ -98,7 +86,7 @@ library IporSwapLogic {
 
         uint256 time = (endTimestamp - swap.openTimestamp) - (closingTimestamp - swap.openTimestamp);
 
-        if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
+        if (swap.direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
             swapUnwindPnlValue =
                 swap.notional.toInt256().calculateContinuousCompoundInterestUsingRatePeriodMultiplicationInt(
                     (oppositeLegFixedRate * time).toInt256()
@@ -106,7 +94,7 @@ library IporSwapLogic {
                 swap.notional.toInt256().calculateContinuousCompoundInterestUsingRatePeriodMultiplicationInt(
                     (swap.fixedInterestRate * time).toInt256()
                 );
-        } else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
+        } else if (swap.direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
             swapUnwindPnlValue =
                 swap.notional.toInt256().calculateContinuousCompoundInterestUsingRatePeriodMultiplicationInt(
                     (swap.fixedInterestRate * time).toInt256()

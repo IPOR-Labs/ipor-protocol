@@ -32,6 +32,10 @@ library AmmTypes {
         address buyer;
         /// @notice Epoch timestamp of when position was opened by the trader.
         uint256 openTimestamp;
+        /// @notice Swap's tenor, 0 - 28 days, 1 - 60 days or 2 - 90 days
+        IporTypes.SwapTenor tenor;
+        /// @notice Swap's direction
+        AmmTypes.SwapDirection direction;
         /// @notice Swap's collateral amount.
         /// @dev value represented in 18 decimals
         uint256 collateral;
@@ -54,8 +58,6 @@ library AmmTypes {
         /// @notice Opening fee amount part which is allocated in Treasury Balance. This fee is calculated as a rate of the swap's collateral.
         /// @dev value represented in 18 decimals
         uint256 openingFeeTreasuryAmount;
-        /// @notice Swap's tenor, 0 - 28 days, 1 - 60 days or 2 - 90 days
-        IporTypes.SwapTenor tenor;
     }
 
     /// @notice Struct representing swap item, used for listing and in internal calculations
@@ -68,6 +70,8 @@ library AmmTypes {
         uint256 openTimestamp;
         /// @notice Swap's tenor
         IporTypes.SwapTenor tenor;
+        /// @notice Swap's direction
+        AmmTypes.SwapDirection direction;
         /// @notice Index position of this Swap in an array of swaps' identification associated to swap buyer
         /// @dev Field used for gas optimization purposes, it allows for quick removal by id in the array.
         /// During removal the last item in the array is switched with the one that just has been removed.

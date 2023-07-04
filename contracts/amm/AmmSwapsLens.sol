@@ -269,7 +269,6 @@ contract AmmSwapsLens is IAmmSwapsLens {
     function _mapSwap(
         address asset,
         AmmTypes.Swap memory swap,
-        uint256 direction,
         int256 pnlValue
     ) internal pure returns (IAmmSwapsLens.IporSwap memory) {
         return
@@ -280,7 +279,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
                 collateral: swap.collateral,
                 notional: swap.notional,
                 leverage: IporMath.division(swap.notional * 1e18, swap.collateral),
-                direction: direction,
+                direction: swap.direction,
                 ibtQuantity: swap.ibtQuantity,
                 fixedInterestRate: swap.fixedInterestRate,
                 pnlValue: pnlValue,
