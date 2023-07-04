@@ -108,22 +108,27 @@ library CalculateTimeWeightedNotionalLibs {
         uint256[] memory tenorsInSeconds
     ) internal view returns (uint256 timeWeightedNotionalPayFixed, uint256 timeWeightedNotionalReceiveFixed) {
         uint256 length = timeWeightedNotionalStorageIds.length;
+
+        SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional;
+        uint256 timeWeightedNotionalPayFixedTemp;
+        uint256 timeWeightedNotionalReceiveFixedTemp;
+
         for (uint256 i; i != length; ) {
-            SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional = SpreadStorageLibs
-                .getTimeWeightedNotional(timeWeightedNotionalStorageIds[i]);
-            uint256 timeWeightedNotionalPayFixedTemp = calculateTimeWeightedNotional(
+            timeWeightedNotional = SpreadStorageLibs.getTimeWeightedNotional(timeWeightedNotionalStorageIds[i]);
+            timeWeightedNotionalPayFixedTemp = calculateTimeWeightedNotional(
                 timeWeightedNotional.timeWeightedNotionalPayFixed,
                 block.timestamp - timeWeightedNotional.lastUpdateTimePayFixed,
                 tenorsInSeconds[i]
             );
             timeWeightedNotionalPayFixed = timeWeightedNotionalPayFixed + timeWeightedNotionalPayFixedTemp;
 
-            uint256 timeWeightedNotionalReceiveFixedTemp = calculateTimeWeightedNotional(
+            timeWeightedNotionalReceiveFixedTemp = calculateTimeWeightedNotional(
                 timeWeightedNotional.timeWeightedNotionalReceiveFixed,
                 block.timestamp - timeWeightedNotional.lastUpdateTimeReceiveFixed,
                 tenorsInSeconds[i]
             );
             timeWeightedNotionalReceiveFixed = timeWeightedNotionalReceiveFixedTemp + timeWeightedNotionalReceiveFixed;
+
             unchecked {
                 ++i;
             }

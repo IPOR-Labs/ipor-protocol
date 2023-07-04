@@ -520,9 +520,10 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             block.timestamp,
             poolCfg.asset
         );
+        uint256 swapId;
 
         for (uint256 i; i != swapIdsLength; ) {
-            uint256 swapId = swapIds[i];
+            swapId = swapIds[i];
             require(swapId > 0, AmmErrors.INCORRECT_SWAP_ID);
 
             swap = IAmmStorage(poolCfg.ammStorage).getSwap(direction, swapId);
