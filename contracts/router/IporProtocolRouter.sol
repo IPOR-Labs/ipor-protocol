@@ -111,8 +111,10 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
     /// @param calls array of encoded calls
     function batchExecutor(bytes[] calldata calls) external nonReentrant {
         uint256 length = calls.length;
+        address implementation;
+
         for (uint256 i; i != length; ) {
-            address implementation = _getRouterImplementation(bytes4(calls[i][:4]), BATCH_OPERATION);
+            implementation = _getRouterImplementation(bytes4(calls[i][:4]), BATCH_OPERATION);
             implementation.functionDelegateCall(calls[i]);
             unchecked {
                 ++i;

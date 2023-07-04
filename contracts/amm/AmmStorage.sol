@@ -435,8 +435,10 @@ contract AmmStorage is
         uint256 swapsIdsLength = PaginationUtils.resolveResultSetSize(ids.length, offset, chunkSize);
         AmmTypes.Swap[] memory derivatives = new AmmTypes.Swap[](swapsIdsLength);
 
+        uint32 id;
+
         for (uint256 i; i != swapsIdsLength; ) {
-            uint32 id = ids[i + offset];
+            id = ids[i + offset];
             StorageInternalTypes.Swap storage swap = swaps[id];
             derivatives[i] = AmmTypes.Swap(
                 swap.id,
@@ -493,9 +495,7 @@ contract AmmStorage is
         uint256 swapUnwindOpeningFeeTreasuryAmount
     ) internal {
         _updateBalancesWhenCloseSwap(pnlValue, swapUnwindOpeningFeeLPAmount, swapUnwindOpeningFeeTreasuryAmount);
-
         _balances.totalCollateralPayFixed = _balances.totalCollateralPayFixed - swap.collateral.toUint128();
-        _balances.treasury = _balances.treasury + swapUnwindOpeningFeeTreasuryAmount.toUint128();
     }
 
     function _updateBalancesWhenCloseSwapReceiveFixed(
@@ -505,9 +505,7 @@ contract AmmStorage is
         uint256 swapUnwindOpeningFeeTreasuryAmount
     ) internal {
         _updateBalancesWhenCloseSwap(pnlValue, swapUnwindOpeningFeeLPAmount, swapUnwindOpeningFeeTreasuryAmount);
-
         _balances.totalCollateralReceiveFixed = _balances.totalCollateralReceiveFixed - swap.collateral.toUint128();
-        _balances.treasury = _balances.treasury + swapUnwindOpeningFeeTreasuryAmount.toUint128();
     }
 
     function _updateBalancesWhenCloseSwap(
@@ -532,6 +530,7 @@ contract AmmStorage is
                 absPnlValue.toUint128() +
                 swapUnwindOpeningFeeLPAmount.toUint128();
         }
+        _balances.treasury = _balances.treasury + swapUnwindOpeningFeeTreasuryAmount.toUint128();
     }
 
     function _updateSwapsWhenOpen(

@@ -15,6 +15,7 @@ contract SpreadStorageLens is ISpreadStorageLens {
         (SpreadStorageLibs.StorageId[] memory storageIds, string[] memory keys) = SpreadStorageLibs.getAllStorageId();
         uint256 storageIdLength = storageIds.length;
         timeWeightedNotionalResponse = new SpreadTypes.TimeWeightedNotionalResponse[](storageIdLength);
+
         for (uint256 i; i != storageIdLength; ) {
             timeWeightedNotionalResponse[i].timeWeightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
                 storageIds[i]
