@@ -493,6 +493,10 @@ abstract contract AssetManagement is
     //solhint-disable no-empty-blocks
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
+    function isPauseGuardian(address _guardian) external onlyOwner {
+        PauseManager.isPauseGuardian(_guardian);
+    }
+
     function addPauseGuardian(address _guardian) external onlyOwner {
         PauseManager.addPauseGuardian(_guardian);
     }
