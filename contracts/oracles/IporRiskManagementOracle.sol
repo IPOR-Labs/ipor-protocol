@@ -570,19 +570,19 @@ contract IporRiskManagementOracle is
         IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage memory toSave
     ) internal pure returns (bytes32 result) {
         require(toSave.lastUpdateTimestamp < type(uint32).max, "lastUpdateTimestamp overflow");
-        require(toSave.spread28dPayFixed < type(int24).max, "spread28dPayFixed overflow");
-        require(toSave.spread28dReceiveFixed < type(int24).max, "spread28dReceiveFixed overflow");
-        require(toSave.spread60dPayFixed < type(int24).max, "spread60dPayFixed overflow");
+        require(-type(int24).max < toSave.spread28dPayFixed  && toSave.spread28dPayFixed < type(int24).max, "spread28dPayFixed overflow");
+        require(-type(int24).max < toSave.spread28dReceiveFixed && toSave.spread28dReceiveFixed < type(int24).max, "spread28dReceiveFixed overflow");
+        require(-type(int24).max < toSave.spread60dPayFixed && toSave.spread60dPayFixed < type(int24).max, "spread60dPayFixed overflow");
         require(
-            -type(int24).max < toSave.spread60dReceiveFixed && toSave.spread60dReceiveFixed < type(int256).max,
+            -type(int24).max < toSave.spread60dReceiveFixed && toSave.spread60dReceiveFixed < type(int24).max,
             "spread60dReceiveFixed overflow"
         );
         require(
-            -type(int24).max < toSave.spread90dPayFixed && toSave.spread90dPayFixed < type(int256).max,
+            -type(int24).max < toSave.spread90dPayFixed && toSave.spread90dPayFixed < type(int24).max,
             "spread90dPayFixed overflow"
         );
         require(
-            -type(int24).max < toSave.spread90dReceiveFixed && toSave.spread90dReceiveFixed < type(int256).max,
+            -type(int24).max < toSave.spread90dReceiveFixed && toSave.spread90dReceiveFixed < type(int24).max,
             "spread90dReceiveFixed overflow"
         );
         require(toSave.fixedRateCap28dPayFixed < 2 ** 12, "fixedRateCap28dPayFixed overflow");
