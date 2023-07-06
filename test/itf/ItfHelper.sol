@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "forge-std/Test.sol";
-
 import "../../contracts/interfaces/IAmmSwapsLens.sol";
 import "../../contracts/interfaces/IAmmCloseSwapLens.sol";
 
@@ -42,7 +40,6 @@ contract ItfHelper {
                 break;
             }
             offset += openSwaps.length;
-            console2.log("offset", offset);
 
             AmmTypes.ClosingSwapDetails memory swapDetails;
             for (uint i; i < openSwaps.length; ++i) {
