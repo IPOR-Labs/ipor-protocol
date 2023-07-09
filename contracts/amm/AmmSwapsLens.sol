@@ -116,7 +116,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         address asset,
         IporTypes.SwapTenor tenor,
         uint256 notional
-    ) external override returns (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed) {
+    ) external override view returns (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed) {
         require(notional > 0, AmmErrors.INVALID_NOTIONAL);
 
         SwapLensPoolConfiguration memory poolCfg = _getSwapLensPoolConfiguration(asset);
@@ -166,9 +166,9 @@ contract AmmSwapsLens is IAmmSwapsLens {
 
     function _getOfferedRatePerLeg(
         AmmInternalTypes.SpreadContext memory spreadContext
-    ) internal returns (uint256 offeredRate) {
+    ) internal view returns (uint256 offeredRate) {
         offeredRate = abi.decode(
-            _spreadRouter.functionCall(
+            _spreadRouter.functionStaticCall(
                 abi.encodeWithSelector(
                     spreadContext.spreadFunctionSig,
                     spreadContext.asset,
