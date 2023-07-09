@@ -11,6 +11,40 @@ import "../../contracts/interfaces/types/IporTypes.sol";
 
 contract ItfHelper {
 
+    struct OfferedRate {
+        uint256 offeredRatePayFixed28;
+        uint256 offeredRateReceiveFixed28;
+        uint256 offeredRatePayFixed60;
+        uint256 offeredRateReceiveFixed60;
+        uint256 offeredRatePayFixed90;
+        uint256 offeredRateReceiveFixed90;
+    }
+
+    struct AmmData {
+        address asset;
+        IAmmGovernanceLens.AmmPoolsParamsConfiguration ammPoolsParamsConfiguration;
+        AmmTypes.OpenSwapRiskIndicators riskIndicatorsPayFixed28;
+        AmmTypes.OpenSwapRiskIndicators riskIndicatorsPayFixed60;
+        AmmTypes.OpenSwapRiskIndicators riskIndicatorsPayFixed90;
+        AmmTypes.OpenSwapRiskIndicators riskIndicatorsReceiveFixed28;
+        AmmTypes.OpenSwapRiskIndicators riskIndicatorsReceiveFixed60;
+        AmmTypes.OpenSwapRiskIndicators riskIndicatorsReceiveFixed90;
+        IAmmOpenSwapLens.AmmOpenSwapServicePoolConfiguration ammOpenSwapServicePoolConfiguration;
+        OfferedRate offeredRate;
+        Soap soap;
+        Index index;
+    }
+
+    struct Soap {
+        int256 soapPayFixed; int256 soapReceiveFixed; int256 soap;
+    }
+
+    struct Index {
+        uint256 value;
+        uint256 ibtPrice;
+        uint256 lastUpdateTimestamp;
+    }
+
     address internal immutable _router;
     address internal immutable _iporOracle;
     address internal immutable _usdt;
@@ -55,42 +89,6 @@ contract ItfHelper {
         }
         return pnl;
     }
-
-    struct OfferedRate {
-        uint256 offeredRatePayFixed28;
-        uint256 offeredRateReceiveFixed28;
-        uint256 offeredRatePayFixed60;
-        uint256 offeredRateReceiveFixed60;
-        uint256 offeredRatePayFixed90;
-        uint256 offeredRateReceiveFixed90;
-    }
-
-    struct AmmData {
-        address asset;
-        IAmmGovernanceLens.AmmPoolsParamsConfiguration ammPoolsParamsConfiguration;
-        AmmTypes.OpenSwapRiskIndicators riskIndicatorsPayFixed28;
-        AmmTypes.OpenSwapRiskIndicators riskIndicatorsPayFixed60;
-        AmmTypes.OpenSwapRiskIndicators riskIndicatorsPayFixed90;
-        AmmTypes.OpenSwapRiskIndicators riskIndicatorsReceiveFixed28;
-        AmmTypes.OpenSwapRiskIndicators riskIndicatorsReceiveFixed60;
-        AmmTypes.OpenSwapRiskIndicators riskIndicatorsReceiveFixed90;
-        IAmmOpenSwapLens.AmmOpenSwapServicePoolConfiguration ammOpenSwapServicePoolConfiguration;
-        OfferedRate offeredRate;
-        Soap soap;
-        Index index;
-    }
-
-    struct Soap {
-        int256 soapPayFixed; int256 soapReceiveFixed; int256 soap;
-    }
-
-
-    struct Index {
-        uint256 value;
-        uint256 ibtPrice;
-        uint256 lastUpdateTimestamp;
-    }
-
 
     function getAmmData(address asset) external view returns (AmmData memory) {
         AmmData memory ammData;
