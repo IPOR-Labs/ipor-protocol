@@ -25,4 +25,11 @@ contract MockPowerTokenStakeService is IPowerTokenStakeService {
     function pwTokenCancelCooldown() external {}
 
     function redeemPwToken(address transferTo) external {}
+
+    function stakeGovernanceTokenToPowerTokenAndDelegate(
+        address beneficiary,
+        uint256 governanceTokenAmount,
+        address[] calldata lpTokens,
+        uint256[] calldata pwTokenAmounts
+    ) external {}
 }
