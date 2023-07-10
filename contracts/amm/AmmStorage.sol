@@ -143,9 +143,11 @@ contract AmmStorage is
         uint32 id = swapId.toUint32();
         StorageInternalTypes.Swap storage swap;
 
-        if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) swap = _swapsPayFixed.swaps[id];
-        else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) swap = _swapsReceiveFixed.swaps[id];
-        else {
+        if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
+            swap = _swapsPayFixed.swaps[id];
+        } else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
+            swap = _swapsReceiveFixed.swaps[id];
+        } else {
             revert(AmmErrors.UNSUPPORTED_DIRECTION);
         }
         return
@@ -619,7 +621,7 @@ contract AmmStorage is
 
     function _updateSoapIndicatorsWhenOpenSwapPayFixed(
         uint256 openTimestamp,
-        uint256 notional,
+        uint256 swapNotional,
         uint256 fixedInterestRate,
         uint256 ibtQuantity
     ) internal {
@@ -631,7 +633,7 @@ contract AmmStorage is
             _soapIndicatorsPayFixed.rebalanceTimestamp
         );
 
-        pf = pf.rebalanceWhenOpenSwap(openTimestamp, notional, fixedInterestRate, ibtQuantity);
+        pf = pf.rebalanceWhenOpenSwap(openTimestamp, swapNotional, fixedInterestRate, ibtQuantity);
 
         _soapIndicatorsPayFixed.rebalanceTimestamp = pf.rebalanceTimestamp.toUint32();
         _soapIndicatorsPayFixed.totalNotional = pf.totalNotional.toUint128();
@@ -642,7 +644,7 @@ contract AmmStorage is
 
     function _updateSoapIndicatorsWhenOpenSwapReceiveFixed(
         uint256 openTimestamp,
-        uint256 notional,
+        uint256 swapNotional,
         uint256 fixedInterestRate,
         uint256 ibtQuantity
     ) internal {
@@ -653,7 +655,7 @@ contract AmmStorage is
             _soapIndicatorsReceiveFixed.averageInterestRate,
             _soapIndicatorsReceiveFixed.rebalanceTimestamp
         );
-        rf = rf.rebalanceWhenOpenSwap(openTimestamp, notional, fixedInterestRate, ibtQuantity);
+        rf = rf.rebalanceWhenOpenSwap(openTimestamp, swapNotional, fixedInterestRate, ibtQuantity);
 
         _soapIndicatorsReceiveFixed.rebalanceTimestamp = rf.rebalanceTimestamp.toUint32();
         _soapIndicatorsReceiveFixed.totalNotional = rf.totalNotional.toUint128();

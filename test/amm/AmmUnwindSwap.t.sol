@@ -38,7 +38,7 @@ contract AmmUnwindSwap is TestCommons {
         uint256 leverage = 100 * 10 ** 18;
 
         int256 expectedSwapPnlValueToDate = -254213052927823196669;
-        int256 expectedSwapUnwindAmount = -1112146790995899184337;
+        int256 expectedSwapUnwindAmount = -1169961640683441257416;
         uint256 expectedOpeningFeeLpAmount = 29145104043000041192;
         uint256 expectedOpeningFeeTreasuryAmount = 14579841942471256;
 
@@ -95,12 +95,12 @@ contract AmmUnwindSwap is TestCommons {
         uint256 leverage = 100 * 10 ** 18;
 
         int256 expectedSwapPnlValueToDateOne = -13299129121611997911;
-        int256 expectedSwapUnwindAmountOne = -2840065820839370115;
+        int256 expectedSwapUnwindAmountOne = -119662692291211422847;
         uint256 expectedOpeningFeeLpAmountOne = 29145104043000041192;
         uint256 expectedOpeningFeeTreasuryAmountOne = 14579841942471256;
 
         int256 expectedSwapPnlValueToDateTwo = -43675964363614309616;
-        int256 expectedSwapUnwindAmountTwo = -4968664717774392481;
+        int256 expectedSwapUnwindAmountTwo = -70953638111401068366;
         uint256 expectedOpeningFeeLpAmountTwo = 16473326053178158123;
         uint256 expectedOpeningFeeTreasuryAmountTwo = 8240783418298228;
 
@@ -182,13 +182,13 @@ contract AmmUnwindSwap is TestCommons {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10 ** 18;
 
-        int256 expectedSwapPnlValueToDateOne = 12065905511771631746;
-        int256 expectedSwapUnwindAmountOne = -2840057119895243822;
+        int256 expectedSwapPnlValueToDateOne = -13298938086225219915;
+        int256 expectedSwapUnwindAmountOne = -119662325687633544168;
         uint256 expectedOpeningFeeLpAmountOne = 29145104043000041192;
         uint256 expectedOpeningFeeTreasuryAmountOne = 14579841942471256;
 
-        int256 expectedSwapPnlValueToDateTwo = 32472470598307779236;
-        int256 expectedSwapUnwindAmountTwo = -4968642222696925314;
+        int256 expectedSwapPnlValueToDateTwo = -43673905437684851567;
+        int256 expectedSwapUnwindAmountTwo = -70953275080543619994;
         uint256 expectedOpeningFeeLpAmountTwo = 16473326053178158123;
         uint256 expectedOpeningFeeTreasuryAmountTwo = 8240783418298228;
 

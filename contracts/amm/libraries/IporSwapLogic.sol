@@ -34,6 +34,11 @@ library IporSwapLogic {
         uint256 iporPublicationFeeAmount,
         uint256 openingFeeRate
     ) internal pure returns (uint256 collateral, uint256 notional, uint256 openingFee) {
+        require(
+            wadTotalAmount > wadLiquidationDepositAmount + iporPublicationFeeAmount,
+            AmmErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
+        );
+
         uint256 availableAmount = wadTotalAmount - wadLiquidationDepositAmount - iporPublicationFeeAmount;
 
         collateral = IporMath.division(
@@ -129,6 +134,8 @@ library IporSwapLogic {
         uint256 closingTimestamp,
         uint256 openingFeeRateCfg
     ) internal pure returns (uint256 swapOpeningFeeAmount) {
+        require(closingTimestamp >= swap.openTimestamp, AmmErrors.CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP);
+
         swapOpeningFeeAmount = IporMath.division(
             swap.notional *
                 openingFeeRateCfg *
