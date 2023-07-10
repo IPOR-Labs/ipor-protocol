@@ -107,7 +107,7 @@ interface IAmmSwapsLens {
         address asset,
         IporTypes.SwapTenor tenor,
         uint256 notional
-    ) external returns (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed);
+    ) external view returns (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed);
 
     /**
      * @dev Returns the Risk indicators when open swap for a given asse, direction and tenor.
