@@ -40,7 +40,7 @@ library OfferedRateCalculationLibs {
         int256 baseSpreadPerLeg,
         uint256 demandSpread,
         uint256 receiveFixedMaxCap
-    ) internal view returns (uint256 offeredRate) {
+    ) internal pure returns (uint256 offeredRate) {
         int256 baseOfferedRate = iporIndexValue.toInt256() + baseSpreadPerLeg;
 
         int256 temp;

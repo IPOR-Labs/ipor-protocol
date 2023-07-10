@@ -25,7 +25,7 @@ library SoapIndicatorRebalanceLogic {
         uint256 swapNotional,
         uint256 swapFixedInterestRate,
         uint256 swapIbtQuantity
-    ) external view returns (AmmStorageTypes.SoapIndicators memory) {
+    ) external pure returns (AmmStorageTypes.SoapIndicators memory) {
         uint256 averageInterestRate = calculateAverageInterestRateWhenOpenSwap(
             si.totalNotional,
             si.averageInterestRate,
@@ -62,7 +62,7 @@ library SoapIndicatorRebalanceLogic {
         uint256 swapNotional,
         uint256 swapFixedInterestRate,
         uint256 swapIbtQuantity
-    ) external view returns (AmmStorageTypes.SoapIndicators memory) {
+    ) external pure returns (AmmStorageTypes.SoapIndicators memory) {
         uint256 newAverageInterestRate = calculateAverageInterestRateWhenCloseSwap(
             si.totalNotional,
             si.averageInterestRate,
