@@ -83,25 +83,22 @@ library SoapIndicatorRebalanceLogic {
                 swapFixedInterestRate
             );
 
-            require(
-                currentHypoteticalInterestTotal >= interestPaidOut,
-                AmmErrors.TOTAL_HYPOTHETICAL_INTEREST_IS_TOO_LOW
-            );
-
-            uint256 hypotheticalInterestTotal = currentHypoteticalInterestTotal - interestPaidOut;
-
-            si.rebalanceTimestamp = rebalanceTimestamp;
-            si.hypotheticalInterestCumulative = hypotheticalInterestTotal;
+            if (currentHypoteticalInterestTotal >= interestPaidOut) {
+                si.hypotheticalInterestCumulative = currentHypoteticalInterestTotal - interestPaidOut;
+            } else {
+                si.hypotheticalInterestCumulative = 0;
+            }
             si.totalNotional = si.totalNotional - swapNotional;
             si.totalIbtQuantity = si.totalIbtQuantity - swapIbtQuantity;
             si.averageInterestRate = newAverageInterestRate;
+            si.rebalanceTimestamp = rebalanceTimestamp;
         } else {
             /// @dev when newAverageInterestRate = 0 it means in IPOR Protocol is closing the LAST derivative on this leg.
-            si.rebalanceTimestamp = rebalanceTimestamp;
             si.hypotheticalInterestCumulative = 0;
             si.totalNotional = 0;
             si.totalIbtQuantity = 0;
             si.averageInterestRate = 0;
+            si.rebalanceTimestamp = rebalanceTimestamp;
         }
 
         return si;
@@ -162,24 +159,22 @@ library SoapIndicatorRebalanceLogic {
     ) internal pure returns (uint256 newAverageInterestRate) {
         require(swapNotional <= totalNotional, AmmErrors.SWAP_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL);
 
-        uint256 totalNotionalAndAverageInterestRate = totalNotional * averageInterestRate;
-        uint256 swapNotionalAndSwapFixedInterestRate = swapNotional * swapFixedInterestRate;
-
-        require(
-            totalNotionalAndAverageInterestRate >= swapNotionalAndSwapFixedInterestRate,
-            AmmErrors.TOTAL_NOTIONAL_AND_AVG_INTEREST_RATE_IS_TOO_LOW
-        );
-
         if (swapNotional == totalNotional) {
             return 0;
         } else {
-            newAverageInterestRate = IporMath.division(
-                (totalNotionalAndAverageInterestRate - swapNotionalAndSwapFixedInterestRate),
-                (totalNotional - swapNotional)
-            );
+            uint256 totalNotionalAndAverageInterestRate = totalNotional * averageInterestRate;
+            uint256 swapNotionalAndSwapFixedInterestRate = swapNotional * swapFixedInterestRate;
 
-            if (averageInterestRate > 0) {
-                require(newAverageInterestRate > 0, AmmErrors.AVERAGE_INTEREST_RATE_WHEN_CLOSE_SWAP_CANNOT_BE_ZERO);
+            if (totalNotionalAndAverageInterestRate <= swapNotionalAndSwapFixedInterestRate) {
+                return 0;
+            } else {
+                newAverageInterestRate = IporMath.division(
+                    (totalNotionalAndAverageInterestRate - swapNotionalAndSwapFixedInterestRate),
+                    (totalNotional - swapNotional)
+                );
+                if (averageInterestRate > 0) {
+                    require(newAverageInterestRate > 0, AmmErrors.AVERAGE_INTEREST_RATE_WHEN_CLOSE_SWAP_CANNOT_BE_ZERO);
+                }
             }
         }
     }

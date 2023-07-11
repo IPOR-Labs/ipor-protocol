@@ -25,7 +25,6 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         _ammCfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
-
     function testShouldOpenSwapWhenFixedInterestRateEqualOneIsHigherThanZero() public {
         // given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
@@ -52,7 +51,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfAwapIds, swapIds);
     }
 
-    function testShouldNotCloseBecauseAverageInterestRateIsEqualZero() public {
+    function testShouldCloseSwapEvenIfAverageInterestRateIsEqualZero() public {
         // given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -85,12 +84,19 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         uint256[] memory pfAwapIds = new uint256[](0);
         uint256[] memory swapIds = new uint256[](1);
         swapIds[0] = swap1;
+
+        //when
         vm.prank(_userTwo);
-        vm.expectRevert("IPOR_341");
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfAwapIds, swapIds);
+        (
+            AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
+            AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
+        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfAwapIds, swapIds);
+
+        //then
+        assertEq(closedReceiveFixedSwaps.length, 1, "closedPayFixedSwaps.length");
     }
 
-    function testShouldNotCloseSwapIncorrectHypotheticalInterestCase1() public {
+    function testShouldCloseSwapEvenIfIncorrectHypotheticalInterestCase1() public {
         // given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -123,12 +129,19 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         uint256[] memory pfAwapIds = new uint256[](0);
         uint256[] memory swapIds = new uint256[](1);
         swapIds[0] = swap1;
+
+        //when
         vm.prank(_userTwo);
-        vm.expectRevert("IPOR_343");
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfAwapIds, swapIds);
+        (
+            AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
+            AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
+        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfAwapIds, swapIds);
+
+        //then
+        assertEq(closedReceiveFixedSwaps.length, 1, "closedPayFixedSwaps.length");
     }
 
-    function testShouldNotCloseSwapIncorrectHypotheticalInterestCase2() public {
+    function testShouldCloseSwapEvenIfIncorrectHypotheticalInterestCase2() public {
         // given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -161,12 +174,18 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         uint256[] memory pfAwapIds = new uint256[](0);
         uint256[] memory swapIds = new uint256[](1);
         swapIds[0] = swap1;
+
+        //when
         vm.prank(_userTwo);
-        vm.expectRevert("IPOR_343");
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfAwapIds, swapIds);
+        (
+            AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
+            AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
+        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfAwapIds, swapIds);
+
+        //then
+        assertEq(closedReceiveFixedSwaps.length, 1, "closedPayFixedSwaps.length");
     }
 
-    //TODO: after fix review that test and slit in case when fail and pass
     function testShouldPassUsdt() public {
         // given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
@@ -200,12 +219,18 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         uint256[] memory swapIds = new uint256[](1);
         swapIds[0] = swap1;
         vm.warp(118 days);
+
+        //when
         vm.prank(_userTwo);
-        vm.expectRevert("IPOR_343");
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfAwapIds, swapIds);
+        (
+            AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
+            AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
+        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfAwapIds, swapIds);
+
+        //then
+        assertEq(closedReceiveFixedSwaps.length, 1, "closedPayFixedSwaps.length");
     }
 
-    //TODO: after fix review that test and slit in case when fail and pass
     function testShouldPassDai() public {
         // given
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -239,12 +264,19 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         uint256[] memory swapIds = new uint256[](1);
         swapIds[0] = swap1;
         vm.warp(118 days);
+
+        //when
         vm.prank(_userTwo);
-        vm.expectRevert("IPOR_343");
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userOne, pfAwapIds, swapIds);
+        (
+            AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
+            AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
+        ) = _iporProtocol.ammCloseSwapService.closeSwapsDai(_userOne, pfAwapIds, swapIds);
+
+        //then
+        assertEq(closedReceiveFixedSwaps.length, 1, "closedPayFixedSwaps.length");
     }
 
-    function testShouldNotCloseSwapBecauseTotalNotionalMultiplyAverageInterestRateIsTooLow() public {
+    function testShouldCloseSwapEvenIfTotalNotionalMultiplyAverageInterestRateIsTooLow() public {
         // given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -278,8 +310,15 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         uint256[] memory swapIds = new uint256[](1);
         swapIds[0] = swap1;
 
+        //when
         vm.prank(_userTwo);
-        vm.expectRevert("IPOR_342");
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfAwapIds, swapIds);
+        (
+            AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
+            AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
+        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfAwapIds, swapIds);
+
+        //then
+        assertEq(closedPayFixedSwaps.length, 0, "closedPayFixedSwaps.length");
+        assertEq(closedReceiveFixedSwaps.length, 1, "closedReceiveFixedSwaps.length");
     }
 }

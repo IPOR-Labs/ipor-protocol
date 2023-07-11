@@ -112,19 +112,21 @@ contract SoapIndicatorLogicTest is TestCommons {
         );
     }
 
-    function testShouldNotCalculateInterestRateWhenClosePositionTotalNotionalAndAverageInterestRateTooLow() public {
+    function testShouldCalculateInterestRateEvenWhenClosePositionTotalNotionalAndAverageInterestRateTooLow() public {
         // given
         uint256 derivativeNotional = 40000 * TestConstants.D18;
         uint256 swapFixedInterestRate = TestConstants.PERCENTAGE_4_18DEC;
 
         // when
-        vm.expectRevert("IPOR_342");
-        SoapIndicatorRebalanceLogic.calculateAverageInterestRateWhenCloseSwap(
+        uint256 newAverageInterestRate = SoapIndicatorRebalanceLogic.calculateAverageInterestRateWhenCloseSwap(
             61257906215921483127120,
             2029718087,
             61257906215921483127120,
             swapFixedInterestRate
         );
+
+        //then
+        assertEq(newAverageInterestRate, 0);
     }
 
     function testShouldCalculateInterestDeltaWhenSimpleCase1And18Decimals() public {
