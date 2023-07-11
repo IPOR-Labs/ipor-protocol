@@ -27,6 +27,7 @@ contract AmmSoapTest is TestCommons {
         _ammCfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
+
     function testShouldCalculateSoapWhenNoDerivativesSoapEqualZero() public {
         // given
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);

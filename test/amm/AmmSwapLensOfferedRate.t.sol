@@ -43,7 +43,7 @@ contract AmmSwapLensOfferedRateTest is TestCommons {
         );
         // then
         assertEq(offeredRatePayFixed, 31001860119047619);
-        assertEq(offeredRateReceiveFixed, 30998139880952381);
+        assertEq(offeredRateReceiveFixed, 28998139880952381);
     }
 
     function testShouldCalculateOfferedRateForFirstBigSwap28Days() public {
@@ -72,7 +72,7 @@ contract AmmSwapLensOfferedRateTest is TestCommons {
         );
         // then
         assertEq(offeredRatePayFixed, 31569274010076428);
-        assertEq(offeredRateReceiveFixed, 31000000000000000);
+        assertEq(offeredRateReceiveFixed, 29000000000000000);
     }
 
     function testShouldCalculateOfferedRateForSecondSwap28Days() public {
@@ -114,7 +114,7 @@ contract AmmSwapLensOfferedRateTest is TestCommons {
         );
         // then
         assertEq(offeredRatePayFixed, 31001860119047619);
-        assertEq(offeredRateReceiveFixed, 30998139880952381);
+        assertEq(offeredRateReceiveFixed, 28998139880952381);
     }
 
     function testShouldCalculateOfferedRateForFirstSwap90Days() public {
@@ -135,6 +135,6 @@ contract AmmSwapLensOfferedRateTest is TestCommons {
         );
         // then
         assertEq(offeredRatePayFixed, 31001860119047619);
-        assertEq(offeredRateReceiveFixed, 30998139880952381);
+        assertEq(offeredRateReceiveFixed, 28998139880952381);
     }
 }

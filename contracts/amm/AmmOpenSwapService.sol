@@ -661,11 +661,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, poolCfg.decimals);
         uint256 wadLiquidationDepositAmount = poolCfg.liquidationDepositAmount * 1e18;
 
-        require(
-            wadTotalAmount > wadLiquidationDepositAmount + poolCfg.iporPublicationFee,
-            AmmErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
-        );
-
         (uint256 collateral, uint256 notional, uint256 openingFeeAmount) = IporSwapLogic.calculateSwapAmount(
             tenor,
             wadTotalAmount,

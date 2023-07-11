@@ -1303,4 +1303,24 @@ contract IporSwapLogicTest is Test, DataUtils {
         //then
         assertEq(swapUnwindPnlValue, 0);
     }
+
+    function testShouldNotCalculateSwapUnwindOpeningFeeAmountWrongCloseTimestamp() public {
+        //given
+        AmmTypes.Swap memory swap;
+
+        swap.notional = 500_000 * 1e18;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 openingFeeRate = 5 * 1e14;
+        uint256 closeTimestamp = block.timestamp - 1;
+
+        //when
+        vm.expectRevert(bytes(AmmErrors.CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP));
+        uint256 swapOpeningFeeAmount = _iporSwapLogic.calculateSwapUnwindOpeningFeeAmount(
+            swap,
+            closeTimestamp,
+            openingFeeRate
+        );
+    }
 }

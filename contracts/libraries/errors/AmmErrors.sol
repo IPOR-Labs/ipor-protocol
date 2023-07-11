@@ -124,4 +124,17 @@ library AmmErrors {
 
     /// @notice Invalid notional
     string public constant INVALID_NOTIONAL = "IPOR_339";
+
+    /// @notice Average interest rate cannot be zero when open swap
+    string public constant AVERAGE_INTEREST_RATE_WHEN_OPEN_SWAP_CANNOT_BE_ZERO = "IPOR_340";
+
+    /// @notice Average interest rate cannot be zero when close swap
+    string public constant AVERAGE_INTEREST_RATE_WHEN_CLOSE_SWAP_CANNOT_BE_ZERO = "IPOR_341";
+
+    /// @notice Total notional and average interest rate is too low
+    string public constant TOTAL_NOTIONAL_AND_AVG_INTEREST_RATE_IS_TOO_LOW = "IPOR_342";
+
+    /// @notice Total hypothetical interest is too low
+    string public constant TOTAL_HYPOTHETICAL_INTEREST_IS_TOO_LOW = "IPOR_343";
+
 }
