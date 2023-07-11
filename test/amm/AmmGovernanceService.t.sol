@@ -22,6 +22,33 @@ contract AmmGovernanceServiceTest is TestCommons {
         _cfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
+    function testShouldSetupMaxAllowanceInAmmTreasury() public {
+        // given
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
+        //when
+        _iporProtocol.ammTreasury.setupMaxAllowanceForAsset(address(_userOne));
+
+        //then
+        uint256 allowance = _iporProtocol.asset.allowance(address(_iporProtocol.ammTreasury), address(_userOne));
+
+        assertEq(allowance, type(uint256).max);
+    }
+
+    function testShouldSetupZeroAllowanceInAmmTreasury() public {
+        // given
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+        _iporProtocol.ammTreasury.setupMaxAllowanceForAsset(address(_userOne));
+
+        //when
+        _iporProtocol.ammTreasury.setupZeroAllowanceForAsset(address(_userOne));
+
+        //then
+        uint256 allowance = _iporProtocol.asset.allowance(address(_iporProtocol.ammTreasury), address(_userOne));
+
+        assertEq(allowance, 0);
+    }
+
     function testShouldReturnDefaultAmmTreasuryAssetManagementBalanceRatio() public {
         // given
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);

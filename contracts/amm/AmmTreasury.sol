@@ -111,8 +111,13 @@ contract AmmTreasury is
         _unpause();
     }
 
-    function setupMaxAllowanceForAsset(address spender) external override onlyOwner whenNotPaused {
+    function setupMaxAllowanceForAsset(address spender) external override onlyOwner {
         IERC20Upgradeable(_asset).safeIncreaseAllowance(spender, Constants.MAX_VALUE);
+    }
+
+    function setupZeroAllowanceForAsset(address spender) external override onlyOwner {
+        uint256 currentAllowance = IERC20Upgradeable(_asset).allowance(address(this), spender);
+        IERC20Upgradeable(_asset).safeDecreaseAllowance(spender, currentAllowance);
     }
 
     function getImplementation() external view override returns (address) {
