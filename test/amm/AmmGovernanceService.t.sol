@@ -27,7 +27,7 @@ contract AmmGovernanceServiceTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         //when
-        _iporProtocol.ammTreasury.setupMaxAllowanceForAsset(address(_userOne));
+        _iporProtocol.ammTreasury.grandMaxAllowanceForSpender(address(_userOne));
 
         //then
         uint256 allowance = _iporProtocol.asset.allowance(address(_iporProtocol.ammTreasury), address(_userOne));
@@ -38,10 +38,10 @@ contract AmmGovernanceServiceTest is TestCommons {
     function testShouldSetupZeroAllowanceInAmmTreasury() public {
         // given
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-        _iporProtocol.ammTreasury.setupMaxAllowanceForAsset(address(_userOne));
+        _iporProtocol.ammTreasury.grandMaxAllowanceForSpender(address(_userOne));
 
         //when
-        _iporProtocol.ammTreasury.setupZeroAllowanceForAsset(address(_userOne));
+        _iporProtocol.ammTreasury.revokeAllowanceForSpender(address(_userOne));
 
         //then
         uint256 allowance = _iporProtocol.asset.allowance(address(_iporProtocol.ammTreasury), address(_userOne));

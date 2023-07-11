@@ -56,9 +56,9 @@ interface IAmmTreasury {
 
     /// @notice sets the max allowance for a given spender. Action available only for AmmTreasury contract Owner.
     /// @param spender account which will have rights to transfer ERC20 underlying assets on behalf of AmmTreasury
-    function setupMaxAllowanceForAsset(address spender) external;
+    function grandMaxAllowanceForSpender(address spender) external;
 
     /// @notice sets the zero allowance for a given spender. Action available only for AmmTreasury contract Owner.
     /// @param spender account which will have rights to transfer ERC20 underlying assets on behalf of AmmTreasury
-    function setupZeroAllowanceForAsset(address spender) external;
+    function revokeAllowanceForSpender(address spender) external;
 }
