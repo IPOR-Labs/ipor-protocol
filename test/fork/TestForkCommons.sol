@@ -593,9 +593,9 @@ contract TestForkCommons is Test {
         AmmTreasury(miltonProxyDai).upgradeTo(address(daiTreasuryImplementation));
         AmmTreasury(miltonProxyUsdc).upgradeTo(address(usdcTreasuryImplementation));
         AmmTreasury(miltonProxyUsdt).upgradeTo(address(usdtTreasuryImplementation));
-        AmmTreasury(miltonProxyDai).setupMaxAllowanceForAsset(iporProtocolRouterProxy);
-        AmmTreasury(miltonProxyUsdc).setupMaxAllowanceForAsset(iporProtocolRouterProxy);
-        AmmTreasury(miltonProxyUsdt).setupMaxAllowanceForAsset(iporProtocolRouterProxy);
+        AmmTreasury(miltonProxyDai).grandMaxAllowanceForSpender(iporProtocolRouterProxy);
+        AmmTreasury(miltonProxyUsdc).grandMaxAllowanceForSpender(iporProtocolRouterProxy);
+        AmmTreasury(miltonProxyUsdt).grandMaxAllowanceForSpender(iporProtocolRouterProxy);
         vm.stopPrank();
     }
 
