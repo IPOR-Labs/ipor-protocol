@@ -14,8 +14,9 @@ import "../libraries/errors/IporOracleErrors.sol";
 import "../libraries/Constants.sol";
 import "../libraries/math/IporMath.sol";
 import "../libraries/math/InterestRates.sol";
-import "./libraries/IporLogic.sol";
+import "../security/PauseManager.sol";
 import "../security/IporOwnableUpgradeable.sol";
+import "./libraries/IporLogic.sol";
 
 /**
  * @title IPOR Index Oracle Contract
@@ -42,6 +43,11 @@ contract IporOracle is
 
     mapping(address => uint256) internal _updaters;
     mapping(address => IporOracleTypes.IPOR) internal _indexes;
+
+    modifier onlyPauseGuardian() {
+        require(PauseManager.isPauseGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
+        _;
+    }
 
     modifier onlyUpdater() {
         require(_updaters[_msgSender()] == 1, IporOracleErrors.CALLER_NOT_UPDATER);
@@ -201,12 +207,24 @@ contract IporOracle is
         return _indexes[asset].lastUpdateTimestamp > 0;
     }
 
-    function pause() external override onlyOwner {
+    function pause() external override onlyPauseGuardian {
         _pause();
     }
 
     function unpause() external override onlyOwner {
         _unpause();
+    }
+
+    function isPauseGuardian(address account) external view override returns (bool) {
+        return PauseManager.isPauseGuardian(account);
+    }
+
+    function addPauseGuardian(address guardian) external override onlyOwner {
+        PauseManager.addPauseGuardian(guardian);
+    }
+
+    function removePauseGuardian(address guardian) external override onlyOwner {
+        PauseManager.removePauseGuardian(guardian);
     }
 
     function getImplementation() external view override returns (address) {

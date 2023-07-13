@@ -102,10 +102,10 @@ contract AccessControl {
     }
 
     /// @notice Checks if address is pause guardian
-    /// @param guardian Pause guardian address
+    /// @param account Pause guardian address
     /// @return true if address is pause guardian, false otherwise
-    function isPauseGuardian(address guardian) external view returns (bool) {
-        return PauseManager.isPauseGuardian(guardian);
+    function isPauseGuardian(address account) external view returns (bool) {
+        return PauseManager.isPauseGuardian(account);
     }
 
     /// @notice Adds new pause guardian

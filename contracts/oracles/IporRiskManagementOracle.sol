@@ -7,8 +7,9 @@ import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../interfaces/IIporRiskManagementOracle.sol";
 import "../interfaces/IProxyImplementation.sol";
 import "../libraries/errors/IporRiskManagementOracleErrors.sol";
-import "./libraries/IporRiskManagementOracleStorageTypes.sol";
+import "../security/PauseManager.sol";
 import "../security/IporOwnableUpgradeable.sol";
+import "./libraries/IporRiskManagementOracleStorageTypes.sol";
 
 /**
  * @title Ipor Risk Management Oracle contract
@@ -48,6 +49,11 @@ contract IporRiskManagementOracle is
     /// @dev 212 - 223 bytes - fixedRateCap60dReceiveFixed - uint12 - fixed rate cap for 60 days period for receive fixed leg,
     /// @dev 224 - 235 bytes - fixedRateCap90dPayFixed - uint12 - fixed rate cap for 90 days period for pay fixed leg,
     mapping(address => bytes32) internal _baseSpreadsAndFixedRateCaps;
+
+    modifier onlyPauseGuardian() {
+        require(PauseManager.isPauseGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
+        _;
+    }
 
     modifier onlyUpdater() {
         require(_updaters[_msgSender()] == 1, IporRiskManagementOracleErrors.CALLER_NOT_UPDATER);
@@ -337,12 +343,24 @@ contract IporRiskManagementOracle is
         emit IporRiskManagementOracleUpdaterRemoved(updater);
     }
 
-    function pause() external override onlyOwner {
+    function pause() external override onlyPauseGuardian {
         _pause();
     }
 
     function unpause() external override onlyOwner {
         _unpause();
+    }
+
+    function isPauseGuardian(address account) external view override returns (bool) {
+        return PauseManager.isPauseGuardian(account);
+    }
+
+    function addPauseGuardian(address guardian) external override onlyOwner {
+        PauseManager.addPauseGuardian(guardian);
+    }
+
+    function removePauseGuardian(address guardian) external override onlyOwner {
+        PauseManager.removePauseGuardian(guardian);
     }
 
     function getImplementation() external view override returns (address) {
@@ -570,9 +588,18 @@ contract IporRiskManagementOracle is
         IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage memory toSave
     ) internal pure returns (bytes32 result) {
         require(toSave.lastUpdateTimestamp < type(uint32).max, "lastUpdateTimestamp overflow");
-        require(-type(int24).max < toSave.spread28dPayFixed  && toSave.spread28dPayFixed < type(int24).max, "spread28dPayFixed overflow");
-        require(-type(int24).max < toSave.spread28dReceiveFixed && toSave.spread28dReceiveFixed < type(int24).max, "spread28dReceiveFixed overflow");
-        require(-type(int24).max < toSave.spread60dPayFixed && toSave.spread60dPayFixed < type(int24).max, "spread60dPayFixed overflow");
+        require(
+            -type(int24).max < toSave.spread28dPayFixed && toSave.spread28dPayFixed < type(int24).max,
+            "spread28dPayFixed overflow"
+        );
+        require(
+            -type(int24).max < toSave.spread28dReceiveFixed && toSave.spread28dReceiveFixed < type(int24).max,
+            "spread28dReceiveFixed overflow"
+        );
+        require(
+            -type(int24).max < toSave.spread60dPayFixed && toSave.spread60dPayFixed < type(int24).max,
+            "spread60dPayFixed overflow"
+        );
         require(
             -type(int24).max < toSave.spread60dReceiveFixed && toSave.spread60dReceiveFixed < type(int24).max,
             "spread60dReceiveFixed overflow"

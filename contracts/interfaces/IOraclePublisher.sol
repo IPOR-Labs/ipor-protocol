@@ -23,13 +23,26 @@ interface IOraclePublisher {
     /// @return 0 if account is not updater, 1 if account is updater.
     function isUpdater(address account) external view returns (uint256);
 
-    /// @notice Pauses current smart contract, it can be executed only by the Owner
+    /// @notice Pauses current smart contract, it can be executed only by the Pause Guardian
     /// @dev Emits {Paused} event from IporOracle.
     function pause() external;
 
     /// @notice Unpauses current smart contract, it can be executed only by the Owner
     /// @dev Emits {Unpaused} event from IporOracle.
     function unpause() external;
+
+    /// @notice Checks if given account is a pause guardian.
+    /// @param account The address of the account to be checked.
+    /// @return true if account is a pause guardian.
+    function isPauseGuardian(address account) external view returns (bool);
+
+    /// @notice Adds a pause guardian to the list of guardians. Function available only for the Owner.
+    /// @param guardian The address of the pause guardian to be added.
+    function addPauseGuardian(address guardian) external;
+
+    /// @notice Removes a pause guardian from the list of guardians. Function available only for the Owner.
+    /// @param guardian The address of the pause guardian to be removed.
+    function removePauseGuardian(address guardian) external;
 
     /// @notice event emitted when OraclePublisher Updater is added by Owner
     /// @param newUpdater new Updater address

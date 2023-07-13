@@ -11,11 +11,12 @@ import "../interfaces/IAmmStorage.sol";
 import "../interfaces/IProxyImplementation.sol";
 import "../libraries/Constants.sol";
 import "../libraries/PaginationUtils.sol";
-import "./libraries/SoapIndicatorRebalanceLogic.sol";
-import "./libraries/types/StorageInternalTypes.sol";
-import "./libraries/types/AmmInternalTypes.sol";
-import "../security/IporOwnableUpgradeable.sol";
 import "../libraries/IporContractValidator.sol";
+import "../security/PauseManager.sol";
+import "../security/IporOwnableUpgradeable.sol";
+import "./libraries/types/AmmInternalTypes.sol";
+import "./libraries/types/StorageInternalTypes.sol";
+import "./libraries/SoapIndicatorRebalanceLogic.sol";
 
 //@dev all stored values related to tokens are in 18 decimals.
 contract AmmStorage is
@@ -50,6 +51,11 @@ contract AmmStorage is
     mapping(address => uint128) private _liquidityPoolAccountContribution;
     mapping(IporTypes.SwapTenor => AmmInternalTypes.OpenSwapList) private _openedSwapsPayFixed;
     mapping(IporTypes.SwapTenor => AmmInternalTypes.OpenSwapList) private _openedSwapsReceiveFixed;
+
+    modifier onlyPauseGuardian() {
+        require(PauseManager.isPauseGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
+        _;
+    }
 
     modifier onlyRouter() {
         require(_msgSender() == _iporProtocolRouter, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
@@ -381,12 +387,24 @@ contract AmmStorage is
         _balances.treasury = balance.toUint128();
     }
 
-    function pause() external override onlyOwner {
+    function pause() external override onlyPauseGuardian {
         _pause();
     }
 
     function unpause() external override onlyOwner {
         _unpause();
+    }
+
+    function isPauseGuardian(address account) external view override returns (bool) {
+        return PauseManager.isPauseGuardian(account);
+    }
+
+    function addPauseGuardian(address guardian) external override onlyOwner {
+        PauseManager.addPauseGuardian(guardian);
+    }
+
+    function removePauseGuardian(address guardian) external override onlyOwner {
+        PauseManager.removePauseGuardian(guardian);
     }
 
     function getLiquidityPoolAccountContribution(address account) external view returns (uint256) {
