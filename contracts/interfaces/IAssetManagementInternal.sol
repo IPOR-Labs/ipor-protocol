@@ -56,7 +56,7 @@ interface IAssetManagementInternal {
     /// @param newAmmTreasury new AmmTreasury address.
     function setAmmTreasury(address newAmmTreasury) external;
 
-    /// @notice Pauses current smart contract. It can be executed only by the Owner.
+    /// @notice Pauses current smart contract. It can be executed only by the Pause Guardian.
     /// @dev Emits {Paused} event from AssetManagement.
     function pause() external;
 
@@ -64,13 +64,18 @@ interface IAssetManagementInternal {
     /// @dev Emits {Unpaused} event from AssetManagement.
     function unpause() external;
 
+    /// @notice Checks if given account is a pause guardian.
+    /// @param account The address of the account to be checked.
+    /// @return true if account is a pause guardian.
+    function isPauseGuardian(address account) external view returns (bool);
+
     /// @notice Adds a pause guardian to the list of guardians. Function available only for the Owner.
-    /// @param _guardian The address of the pause guardian to be added.
-    function addPauseGuardian(address _guardian) external;
+    /// @param guardian The address of the pause guardian to be added.
+    function addPauseGuardian(address guardian) external;
 
     /// @notice Removes a pause guardian from the list of guardians. Function available only for the Owner.
-    /// @param _guardian The address of the pause guardian to be removed.
-    function removePauseGuardian(address _guardian) external;
+    /// @param guardian The address of the pause guardian to be removed.
+    function removePauseGuardian(address guardian) external;
 
     /// @notice Emmited when all AssetManagement's assets are migrated from old strategy to the new one. Function is available only by the Owner.
     /// @param newStrategy new strategy address where assets was migrated

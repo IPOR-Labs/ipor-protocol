@@ -16,6 +16,7 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
     IporRiskManagementOracle private _iporRiskManagementOracle;
 
     function setUp() public {
+        _admin = address(this);
         vm.warp(_blockTimestamp);
         (_daiTestnetToken, _usdcTestnetToken, _usdtTestnetToken) = _getStables();
 
@@ -115,11 +116,14 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
         assertEq(version, 2_000);
     }
 
-    function testShouldPauseSCWhenSenderIsAdmin() public {
+    function testShouldPauseSCWhenSenderIsPauseGuardian() public {
         // given
         bool pausedBefore = _iporRiskManagementOracle.paused();
+        _iporRiskManagementOracle.addPauseGuardian(_admin);
+
         // when
         _iporRiskManagementOracle.pause();
+
         // then
         bool pausedAfter = _iporRiskManagementOracle.paused();
 
@@ -129,6 +133,7 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
 
     function testShouldPauseSCSpecificMethods() public {
         // given
+        _iporRiskManagementOracle.addPauseGuardian(_admin);
         _iporRiskManagementOracle.pause();
         bool pausedBefore = _iporRiskManagementOracle.paused();
 
@@ -163,37 +168,6 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
         _iporRiskManagementOracle.updateBaseSpreadsAndFixedRateCaps(address(_daiTestnetToken), baseSpreads1);
 
-        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[]
-            memory baseSpreadsArray = new IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[](2);
-        baseSpreadsArray[0] = IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps({
-            spread28dPayFixed: TestConstants.RMO_SPREAD_0_2_PER,
-            spread28dReceiveFixed: TestConstants.RMO_SPREAD_0_2_PER,
-            spread60dPayFixed: TestConstants.RMO_SPREAD_0_25_PER,
-            spread60dReceiveFixed: TestConstants.RMO_SPREAD_0_25_PER,
-            spread90dPayFixed: TestConstants.RMO_SPREAD_0_25_PER,
-            spread90dReceiveFixed: TestConstants.RMO_SPREAD_0_25_PER,
-            fixedRateCap28dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_2_0_PER,
-            fixedRateCap28dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_3_5_PER,
-            fixedRateCap60dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_2_0_PER,
-            fixedRateCap60dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_3_5_PER,
-            fixedRateCap90dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_2_0_PER,
-            fixedRateCap90dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_3_5_PER
-        });
-        baseSpreadsArray[1] = IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps({
-            spread28dPayFixed: TestConstants.RMO_SPREAD_0_2_PER,
-            spread28dReceiveFixed: TestConstants.RMO_SPREAD_0_2_PER,
-            spread60dPayFixed: TestConstants.RMO_SPREAD_0_25_PER,
-            spread60dReceiveFixed: TestConstants.RMO_SPREAD_0_25_PER,
-            spread90dPayFixed: TestConstants.RMO_SPREAD_0_25_PER,
-            spread90dReceiveFixed: TestConstants.RMO_SPREAD_0_25_PER,
-            fixedRateCap28dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_2_0_PER,
-            fixedRateCap28dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_3_5_PER,
-            fixedRateCap60dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_2_0_PER,
-            fixedRateCap60dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_3_5_PER,
-            fixedRateCap90dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_2_0_PER,
-            fixedRateCap90dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_3_5_PER
-        });
-
         // then
         bool pausedAfter = _iporRiskManagementOracle.paused();
         assertEq(pausedBefore, true);
@@ -202,13 +176,28 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
 
     function testShouldNotPauseSmartContractSpecificMethodsWhenPaused() public {
         // given
+        _iporRiskManagementOracle.addPauseGuardian(_admin);
         _iporRiskManagementOracle.pause();
+
         bool pausedBefore = _iporRiskManagementOracle.paused();
 
         //when
+        vm.startPrank(_getUserAddress(1));
+        _iporRiskManagementOracle.getVersion();
+        _iporRiskManagementOracle.getOpenSwapParameters(address(_daiTestnetToken), 1, IporTypes.SwapTenor.DAYS_28);
         _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken));
+        _iporRiskManagementOracle.getBaseSpreads(address(_daiTestnetToken));
+        _iporRiskManagementOracle.getFixedRateCaps(address(_daiTestnetToken));
         _iporRiskManagementOracle.isAssetSupported(address(_daiTestnetToken));
         _iporRiskManagementOracle.isUpdater(address(this));
+        _iporRiskManagementOracle.isPauseGuardian(address(this));
+        vm.stopPrank();
+
+        //admin
+        _iporRiskManagementOracle.addUpdater(address(this));
+        _iporRiskManagementOracle.removeUpdater(address(this));
+        _iporRiskManagementOracle.addPauseGuardian(address(this));
+        _iporRiskManagementOracle.removePauseGuardian(address(this));
 
         // then
         bool pausedAfter = _iporRiskManagementOracle.paused();
@@ -217,12 +206,13 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
         assertEq(pausedAfter, true);
     }
 
-    function testShouldNotPauseSmartContractWhenSenderIsNotAnAdmin() public {
+    function testShouldNotPauseSmartContractWhenSenderIsNotAnPauseGuardian() public {
         // given
         bool pausedBefore = _iporRiskManagementOracle.paused();
+
         // when
         vm.prank(_getUserAddress(1));
-        vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
+        vm.expectRevert(abi.encodePacked("IPOR_011"));
         _iporRiskManagementOracle.pause();
         // then
         bool pausedAfter = _iporRiskManagementOracle.paused();
@@ -233,10 +223,15 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
 
     function testShouldUnpauseSmartContractWhenSenderIsAnAdmin() public {
         // given
+        _iporRiskManagementOracle.addPauseGuardian(_admin);
         _iporRiskManagementOracle.pause();
+        _iporRiskManagementOracle.removePauseGuardian(_admin);
+
         bool pausedBefore = _iporRiskManagementOracle.paused();
+
         // when
         _iporRiskManagementOracle.unpause();
+
         // then
         bool pausedAfter = _iporRiskManagementOracle.paused();
 
@@ -246,12 +241,17 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
 
     function testShouldNotUnpauseSmartContractWhenSenderIsNotAnAdmin() public {
         // given
+        _iporRiskManagementOracle.addPauseGuardian(_admin);
         _iporRiskManagementOracle.pause();
+        _iporRiskManagementOracle.removePauseGuardian(_admin);
+
         bool pausedBefore = _iporRiskManagementOracle.paused();
+
         // when
         vm.prank(_getUserAddress(1));
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
         _iporRiskManagementOracle.unpause();
+
         // then
         bool pausedAfter = _iporRiskManagementOracle.paused();
 

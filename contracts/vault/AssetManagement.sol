@@ -490,18 +490,18 @@ abstract contract AssetManagement is
         }
     }
 
+    function isPauseGuardian(address account) external view override returns (bool) {
+        return PauseManager.isPauseGuardian(account);
+    }
+
+    function addPauseGuardian(address guardian) external override onlyOwner {
+        PauseManager.addPauseGuardian(guardian);
+    }
+
+    function removePauseGuardian(address guardian) external override onlyOwner {
+        PauseManager.removePauseGuardian(guardian);
+    }
+
     //solhint-disable no-empty-blocks
     function _authorizeUpgrade(address) internal override onlyOwner {}
-
-    function isPauseGuardian(address guardian) external view returns (bool) {
-        return PauseManager.isPauseGuardian(guardian);
-    }
-
-    function addPauseGuardian(address _guardian) external onlyOwner {
-        PauseManager.addPauseGuardian(_guardian);
-    }
-
-    function removePauseGuardian(address _guardian) external onlyOwner {
-        PauseManager.removePauseGuardian(_guardian);
-    }
 }

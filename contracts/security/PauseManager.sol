@@ -14,11 +14,11 @@ library PauseManager {
     event PauseGuardianRemoved(address indexed guardian);
 
     /// @notice Checks if account is Ipor Protocol Router pause guardian
-    /// @param guardian Address of guardian
+    /// @param account Address of guardian
     /// @return true if account is Ipor Protocol Router pause guardian
-    function isPauseGuardian(address guardian) internal view returns (bool) {
+    function isPauseGuardian(address account) internal view returns (bool) {
         mapping(address => bool) storage pauseGuardians = StorageLib.getPauseGuardianStorage();
-        return pauseGuardians[guardian];
+        return pauseGuardians[account];
     }
 
     /// @notice Adds Ipor Protocol Router pause guardian

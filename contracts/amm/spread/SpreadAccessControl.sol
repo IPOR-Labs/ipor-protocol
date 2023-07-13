@@ -91,25 +91,25 @@ contract SpreadAccessControl {
         return uint256(SpreadStorageLibs.getPaused().value);
     }
 
+    /// @notice Checks if an address is a pause guardian.
+    /// @param account The address to be checked.
+    /// @return A boolean indicating whether the address is a pause guardian (true) or not (false).
+    function isPauseGuardian(address account) external view returns (bool) {
+        return PauseManager.isPauseGuardian(account);
+    }
+
     /// @notice Adds a new pause guardian to the contract.
-    /// @param _guardian The address of the new pause guardian.
+    /// @param guardian The address of the new pause guardian.
     /// @dev Only the contract owner can call this function.
-    function addPauseGuardian(address _guardian) external onlyOwner {
-        PauseManager.addPauseGuardian(_guardian);
+    function addPauseGuardian(address guardian) external onlyOwner {
+        PauseManager.addPauseGuardian(guardian);
     }
 
     /// @notice Removes a pause guardian from the contract.
-    /// @param _guardian The address of the pause guardian to be removed.
+    /// @param guardian The address of the pause guardian to be removed.
     /// @dev Only the contract owner can call this function.
-    function removePauseGuardian(address _guardian) external onlyOwner {
-        PauseManager.removePauseGuardian(_guardian);
-    }
-
-    /// @notice Checks if an address is a pause guardian.
-    /// @param guardian The address to be checked.
-    /// @return A boolean indicating whether the address is a pause guardian (true) or not (false).
-    function isPauseGuardian(address guardian) external view returns (bool) {
-        return PauseManager.isPauseGuardian(guardian);
+    function removePauseGuardian(address guardian) external onlyOwner {
+        PauseManager.removePauseGuardian(guardian);
     }
 
     /// @dev Internal function to check if the sender is the AMM address.

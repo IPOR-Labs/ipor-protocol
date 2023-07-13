@@ -18,6 +18,7 @@ contract IporOracleTest is TestCommons {
     IporOracle private _iporOracle;
 
     function setUp() public {
+        _admin = address(this);
         vm.warp(_blockTimestamp);
         (_daiTestnetToken, _usdcTestnetToken, _usdtTestnetToken) = _getStables();
 
@@ -192,9 +193,11 @@ contract IporOracleTest is TestCommons {
         assertEq(version, 2_000);
     }
 
-    function testShouldPauseSCWhenSenderIsAdmin() public {
+    function testShouldPauseSCWhenSenderIsPauseGuardian() public {
         // given
         bool pausedBefore = _iporOracle.paused();
+        _iporOracle.addPauseGuardian(_admin);
+
         // when
         _iporOracle.pause();
         // then
@@ -206,8 +209,11 @@ contract IporOracleTest is TestCommons {
 
     function testShouldPauseSCSpecificMethods() public {
         // given
+        _iporOracle.addPauseGuardian(_admin);
         _iporOracle.pause();
+
         bool pausedBefore = _iporOracle.paused();
+
         address[] memory assets = new address[](3);
         assets[0] = address(_daiTestnetToken);
         assets[1] = address(_usdcTestnetToken);
@@ -254,15 +260,21 @@ contract IporOracleTest is TestCommons {
         // given
         _blockTimestamp += 60 * 60;
         vm.warp(_blockTimestamp);
+
+        _iporOracle.addPauseGuardian(_admin);
+
         _iporOracle.pause();
+
         bool pausedBefore = _iporOracle.paused();
 
         //when
+        _iporOracle.getVersion();
         _iporOracle.getIndex(address(_daiTestnetToken));
         _iporOracle.getAccruedIndex(_blockTimestamp, address(_daiTestnetToken));
         _iporOracle.calculateAccruedIbtPrice(address(_daiTestnetToken), _blockTimestamp);
-        _iporOracle.isAssetSupported(address(_daiTestnetToken));
         _iporOracle.isUpdater(address(this));
+        _iporOracle.isAssetSupported(address(_daiTestnetToken));
+        _iporOracle.isPauseGuardian(address(this));
 
         // then
         bool pausedAfter = _iporOracle.paused();
@@ -271,12 +283,13 @@ contract IporOracleTest is TestCommons {
         assertEq(pausedAfter, true);
     }
 
-    function testShouldNotPauseSmartContractWhenSenderIsNotAnAdmin() public {
+    function testShouldNotPauseSmartContractWhenSenderIsNotAnPauseGuardian() public {
         // given
         bool pausedBefore = _iporOracle.paused();
+
         // when
         vm.prank(_getUserAddress(1));
-        vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
+        vm.expectRevert(abi.encodePacked("IPOR_011"));
         _iporOracle.pause();
         // then
         bool pausedAfter = _iporOracle.paused();
@@ -287,10 +300,14 @@ contract IporOracleTest is TestCommons {
 
     function testShouldUnpauseSmartContractWhenSenderIsAnAdmin() public {
         // given
+        _iporOracle.addPauseGuardian(_admin);
         _iporOracle.pause();
         bool pausedBefore = _iporOracle.paused();
+        _iporOracle.removePauseGuardian(_admin);
+
         // when
         _iporOracle.unpause();
+
         // then
         bool pausedAfter = _iporOracle.paused();
 
@@ -300,12 +317,16 @@ contract IporOracleTest is TestCommons {
 
     function testShouldNotUnpauseSmartContractWhenSenderIsNotAnAdmin() public {
         // given
+        _iporOracle.addPauseGuardian(_admin);
         _iporOracle.pause();
+
         bool pausedBefore = _iporOracle.paused();
+
         // when
         vm.prank(_getUserAddress(1));
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
         _iporOracle.unpause();
+
         // then
         bool pausedAfter = _iporOracle.paused();
 

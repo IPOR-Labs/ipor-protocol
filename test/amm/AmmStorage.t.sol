@@ -963,4 +963,111 @@ contract AmmStorageTest is TestCommons {
         assertEq(totalCount, 21);
         assertEq(ids.length, TestConstants.ZERO);
     }
+
+    function testShouldPauseSCWhenSenderIsPauseGuardian() public {
+        // given
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+        _iporProtocol.ammStorage.addPauseGuardian(_admin);
+        bool pausedBefore = _iporProtocol.ammStorage.paused();
+
+        // when
+        _iporProtocol.ammStorage.pause();
+
+        // then
+        bool pausedAfter = _iporProtocol.ammStorage.paused();
+
+        assertEq(pausedBefore, false);
+        assertEq(pausedAfter, true);
+    }
+
+    function testShouldNotPauseSCSpecificMethods() public {
+        // given
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+        _iporProtocol.ammStorage.addPauseGuardian(_admin);
+        _iporProtocol.ammStorage.pause();
+
+        bool pausedBefore = _iporProtocol.ammStorage.paused();
+
+        // when
+        vm.startPrank(_getUserAddress(1));
+        _iporProtocol.ammStorage.getVersion();
+        _iporProtocol.ammStorage.isPauseGuardian(_getUserAddress(1));
+        _iporProtocol.ammStorage.getLastSwapId();
+        _iporProtocol.ammStorage.getLastOpenedSwap(IporTypes.SwapTenor.DAYS_28, 0);
+        _iporProtocol.ammStorage.getBalance();
+        _iporProtocol.ammStorage.getBalancesForOpenSwap();
+        _iporProtocol.ammStorage.getExtendedBalance();
+        _iporProtocol.ammStorage.getSoapIndicators();
+        _iporProtocol.ammStorage.getSwap(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, 1);
+        _iporProtocol.ammStorage.getSwapsPayFixed(_admin, 0, 10);
+        _iporProtocol.ammStorage.getSwapsReceiveFixed(_admin, 0, 10);
+        _iporProtocol.ammStorage.getSwapIds(_admin, 0, 10);
+        vm.stopPrank();
+
+        // admin
+        _iporProtocol.ammStorage.addPauseGuardian(_getUserAddress(1));
+        _iporProtocol.ammStorage.removePauseGuardian(_getUserAddress(1));
+
+        // then
+        bool pausedAfter = _iporProtocol.ammStorage.paused();
+        assertEq(pausedBefore, true);
+        assertEq(pausedAfter, true);
+    }
+
+    function testShouldNotPauseSmartContractWhenSenderIsNotAnPauseGuardian() public {
+        // given
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+        bool pausedBefore = _iporProtocol.ammStorage.paused();
+
+        // when
+        vm.prank(_getUserAddress(1));
+        vm.expectRevert(abi.encodePacked("IPOR_011"));
+        _iporProtocol.ammStorage.pause();
+
+        // then
+        bool pausedAfter = _iporProtocol.ammStorage.paused();
+
+        assertEq(pausedBefore, false);
+        assertEq(pausedAfter, false);
+    }
+
+    function testShouldUnpauseSmartContractWhenSenderIsAnAdmin() public {
+        // given
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+        _iporProtocol.ammStorage.addPauseGuardian(_admin);
+        _iporProtocol.ammStorage.pause();
+        _iporProtocol.ammStorage.removePauseGuardian(_admin);
+
+        bool pausedBefore = _iporProtocol.ammStorage.paused();
+
+        // when
+        _iporProtocol.ammStorage.unpause();
+
+        // then
+        bool pausedAfter = _iporProtocol.ammStorage.paused();
+
+        assertEq(pausedBefore, true);
+        assertEq(pausedAfter, false);
+    }
+
+    function testShouldNotUnpauseSmartContractWhenSenderIsNotAnAdmin() public {
+        // given
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+        _iporProtocol.ammStorage.addPauseGuardian(_admin);
+        _iporProtocol.ammStorage.pause();
+        _iporProtocol.ammStorage.removePauseGuardian(_admin);
+
+        bool pausedBefore = _iporProtocol.ammStorage.paused();
+
+        // when
+        vm.prank(_getUserAddress(1));
+        vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
+        _iporProtocol.ammStorage.unpause();
+
+        // then
+        bool pausedAfter = _iporProtocol.ammStorage.paused();
+
+        assertEq(pausedBefore, true);
+        assertEq(pausedAfter, true);
+    }
 }

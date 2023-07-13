@@ -22,6 +22,7 @@ contract OraclePublisherTest is TestCommons {
     OraclePublisher private _oraclePublisher;
 
     function setUp() public {
+        _admin = address(this);
         vm.warp(_blockTimestamp);
         (_daiTestnetToken, _usdcTestnetToken, _usdtTestnetToken) = _getStables();
 
@@ -152,11 +153,14 @@ contract OraclePublisherTest is TestCommons {
         assertEq(version, 2_000);
     }
 
-    function testShouldPauseSCWhenSenderIsAdmin() public {
+    function testShouldPauseSCWhenSenderIsPauseGuardian() public {
         // given
+        _oraclePublisher.addPauseGuardian(_admin);
         bool pausedBefore = _oraclePublisher.paused();
+
         // when
         _oraclePublisher.pause();
+
         // then
         bool pausedAfter = _oraclePublisher.paused();
 
@@ -166,7 +170,9 @@ contract OraclePublisherTest is TestCommons {
 
     function testShouldPauseSCSpecificMethods() public {
         // given
+        _oraclePublisher.addPauseGuardian(_admin);
         _oraclePublisher.pause();
+
         bool pausedBefore = _oraclePublisher.paused();
 
         bytes memory updateIndexCallData = abi.encodeWithSignature(
@@ -178,8 +184,8 @@ contract OraclePublisherTest is TestCommons {
         addresses[0] = address(_iporOracle);
         bytes[] memory calls = new bytes[](1);
         calls[0] = updateIndexCallData;
-        // when
 
+        // when
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
         _oraclePublisher.publish(addresses, calls);
 
@@ -189,13 +195,51 @@ contract OraclePublisherTest is TestCommons {
         assertEq(pausedAfter, true);
     }
 
-    function testShouldNotPauseSmartContractWhenSenderIsNotAnAdmin() public {
+    function testShouldNotPauseSCSpecificMethods() public {
+        // given
+        _oraclePublisher.addPauseGuardian(_admin);
+        _oraclePublisher.pause();
+
+        bool pausedBefore = _oraclePublisher.paused();
+
+        bytes memory updateIndexCallData = abi.encodeWithSignature(
+            "updateIndex(address,uint256)",
+            address(_daiTestnetToken),
+            TestConstants.PERCENTAGE_2_5_18DEC
+        );
+        address[] memory addresses = new address[](1);
+        addresses[0] = address(_iporOracle);
+        bytes[] memory calls = new bytes[](1);
+        calls[0] = updateIndexCallData;
+
+        // when
+        vm.startPrank(_getUserAddress(1));
+        _oraclePublisher.getVersion();
+        _oraclePublisher.isUpdater(_getUserAddress(1));
+        _oraclePublisher.isPauseGuardian(_getUserAddress(1));
+        vm.stopPrank();
+
+        // admin
+        _oraclePublisher.addUpdater(_getUserAddress(1));
+        _oraclePublisher.removeUpdater(_getUserAddress(1));
+        _oraclePublisher.addPauseGuardian(_getUserAddress(1));
+        _oraclePublisher.removePauseGuardian(_getUserAddress(1));
+
+        // then
+        bool pausedAfter = _oraclePublisher.paused();
+        assertEq(pausedBefore, true);
+        assertEq(pausedAfter, true);
+    }
+
+    function testShouldNotPauseSmartContractWhenSenderIsNotAnPauseGuardian() public {
         // given
         bool pausedBefore = _oraclePublisher.paused();
+
         // when
         vm.prank(_getUserAddress(1));
-        vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
+        vm.expectRevert(abi.encodePacked("IPOR_011"));
         _oraclePublisher.pause();
+
         // then
         bool pausedAfter = _oraclePublisher.paused();
 
@@ -205,10 +249,15 @@ contract OraclePublisherTest is TestCommons {
 
     function testShouldUnpauseSmartContractWhenSenderIsAnAdmin() public {
         // given
+        _oraclePublisher.addPauseGuardian(_admin);
         _oraclePublisher.pause();
+        _oraclePublisher.removePauseGuardian(_admin);
+
         bool pausedBefore = _oraclePublisher.paused();
+
         // when
         _oraclePublisher.unpause();
+
         // then
         bool pausedAfter = _oraclePublisher.paused();
 
@@ -218,12 +267,17 @@ contract OraclePublisherTest is TestCommons {
 
     function testShouldNotUnpauseSmartContractWhenSenderIsNotAnAdmin() public {
         // given
+        _oraclePublisher.addPauseGuardian(_admin);
         _oraclePublisher.pause();
+        _oraclePublisher.removePauseGuardian(_admin);
+
         bool pausedBefore = _oraclePublisher.paused();
+
         // when
         vm.prank(_getUserAddress(1));
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
         _oraclePublisher.unpause();
+
         // then
         bool pausedAfter = _oraclePublisher.paused();
 
