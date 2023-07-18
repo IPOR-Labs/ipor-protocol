@@ -25,6 +25,8 @@ interface IAmmCloseSwapService {
     event SwapUnwind(
         /// @notice swap ID.
         uint256 indexed swapId,
+        /// @notice underlying asset
+        address asset,
         /// @notice Profit and Loss to date without unwind value, represented in 18 decimals
         int256 swapPnlValueToDate,
         /// @notice swap unwind amount, represented in 18 decimals
