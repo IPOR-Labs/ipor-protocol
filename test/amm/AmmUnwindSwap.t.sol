@@ -13,8 +13,8 @@ contract AmmUnwindSwap is TestCommons {
     BuilderUtils.IporProtocol internal _iporProtocol;
 
     event SwapUnwind(
-        uint256 indexed swapId,
         address asset,
+        uint256 indexed swapId,
         int256 swapPnlValueToDate,
         int256 swapUnwindAmount,
         uint256 openingFeeLPAmount,
@@ -74,8 +74,8 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         vm.expectEmit(true, true, true, true);
         emit SwapUnwind(
-            swap.id,
             address(_iporProtocol.asset),
+            swap.id,
             expectedSwapPnlValueToDate,
             expectedSwapUnwindAmount,
             expectedOpeningFeeLpAmount,
@@ -150,8 +150,8 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         vm.expectEmit(true, true, true, true);
         emit SwapUnwind(
-            swapOne.id,
             address(_iporProtocol.asset),
+            swapOne.id,
             expectedSwapPnlValueToDateOne,
             expectedSwapUnwindAmountOne,
             expectedOpeningFeeLpAmountOne,
@@ -163,8 +163,8 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         vm.expectEmit(true, true, true, true);
         emit SwapUnwind(
-            swapTwo.id,
             address(_iporProtocol.asset),
+            swapTwo.id,
             expectedSwapPnlValueToDateTwo,
             expectedSwapUnwindAmountTwo,
             expectedOpeningFeeLpAmountTwo,
@@ -237,8 +237,8 @@ contract AmmUnwindSwap is TestCommons {
         vm.expectEmit(true, true, true, true);
 
         emit SwapUnwind(
-            swapOne.id,
             address(_iporProtocol.asset),
+            swapOne.id,
             expectedSwapPnlValueToDateOne,
             expectedSwapUnwindAmountOne,
             expectedOpeningFeeLpAmountOne,
@@ -255,8 +255,8 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         vm.expectEmit(true, true, true, true);
         emit SwapUnwind(
-            swapTwo.id,
             address(_iporProtocol.asset),
+            swapTwo.id,
             expectedSwapPnlValueToDateTwo,
             expectedSwapUnwindAmountTwo,
             expectedOpeningFeeLpAmountTwo,

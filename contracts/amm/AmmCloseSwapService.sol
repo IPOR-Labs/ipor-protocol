@@ -614,8 +614,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             );
 
             emit SwapUnwind(
-                swap.id,
                 poolCfg.asset,
+                swap.id,
                 swapPnlValueToDate,
                 swapUnwindAmount,
                 swapUnwindOpeningFeeLPAmount,
