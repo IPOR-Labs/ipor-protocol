@@ -13,6 +13,7 @@ contract AmmUnwindSwap is TestCommons {
     BuilderUtils.IporProtocol internal _iporProtocol;
 
     event SwapUnwind(
+        address asset,
         uint256 indexed swapId,
         int256 swapPnlValueToDate,
         int256 swapUnwindAmount,
@@ -73,6 +74,7 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         vm.expectEmit(true, true, true, true);
         emit SwapUnwind(
+            address(_iporProtocol.asset),
             swap.id,
             expectedSwapPnlValueToDate,
             expectedSwapUnwindAmount,
@@ -142,25 +144,26 @@ contract AmmUnwindSwap is TestCommons {
 
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
-        uint256[] memory swapRfIds = new uint256[](0);
 
         //when/then
         vm.warp(5 days);
         vm.prank(_buyer);
         vm.expectEmit(true, true, true, true);
         emit SwapUnwind(
+            address(_iporProtocol.asset),
             swapOne.id,
             expectedSwapPnlValueToDateOne,
             expectedSwapUnwindAmountOne,
             expectedOpeningFeeLpAmountOne,
             expectedOpeningFeeTreasuryAmountOne
         );
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, new uint256[](0));
 
         vm.warp(15 days);
         vm.prank(_buyer);
         vm.expectEmit(true, true, true, true);
         emit SwapUnwind(
+            address(_iporProtocol.asset),
             swapTwo.id,
             expectedSwapPnlValueToDateTwo,
             expectedSwapUnwindAmountTwo,
@@ -170,7 +173,7 @@ contract AmmUnwindSwap is TestCommons {
 
         swapPfIds[0] = 2;
 
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, new uint256[](0));
     }
 
     function testShouldUnwindReceiveFixedWhenCloseTwoPositionInDifferentMoment() public {
@@ -234,6 +237,7 @@ contract AmmUnwindSwap is TestCommons {
         vm.expectEmit(true, true, true, true);
 
         emit SwapUnwind(
+            address(_iporProtocol.asset),
             swapOne.id,
             expectedSwapPnlValueToDateOne,
             expectedSwapUnwindAmountOne,
@@ -251,6 +255,7 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         vm.expectEmit(true, true, true, true);
         emit SwapUnwind(
+            address(_iporProtocol.asset),
             swapTwo.id,
             expectedSwapPnlValueToDateTwo,
             expectedSwapUnwindAmountTwo,
