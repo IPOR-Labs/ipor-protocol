@@ -13,17 +13,19 @@ interface IIporOracle {
     /// @notice Gets IPOR Index indicators for a given asset
     /// @dev all returned values represented in 18 decimals
     /// @param asset underlying / stablecoin address supported in Ipor Protocol
-    /// @return value IPOR Index value for a given asset
-    /// @return ibtPrice Interest Bearing Token Price for a given IPOR Index
+    /// @return indexValue IPOR Index value for a given asset calculated for time lastUpdateTimestamp
+    /// @return ibtPrice Interest Bearing Token Price for a given IPOR Index calculated for time lastUpdateTimestamp
     /// @return lastUpdateTimestamp Last IPOR Index update done by off-chain service
+    /// @dev For calculation accrued IPOR Index indicators (indexValue and ibtPrice) for a specified timestamp use {getAccruedIndex} function
     function getIndex(
         address asset
-    ) external view returns (uint256 value, uint256 ibtPrice, uint256 lastUpdateTimestamp);
+    ) external view returns (uint256 indexValue, uint256 ibtPrice, uint256 lastUpdateTimestamp);
 
     /// @notice Gets accrued IPOR Index indicators for a given timestamp and asset.
     /// @param calculateTimestamp time of accrued IPOR Index calculation
     /// @param asset underlying / stablecoin address supported by IPOR Protocol.
     /// @return accruedIpor structure {IporTypes.AccruedIpor}
+    /// @dev ibtPrice included in accruedIpor structure is calculated using continuous compounding interest formula
     function getAccruedIndex(
         uint256 calculateTimestamp,
         address asset

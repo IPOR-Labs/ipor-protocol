@@ -53,6 +53,7 @@ contract AmmPoolsServiceRedeemTest is TestCommons {
         IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getAmmBalance(
             address(_iporProtocol.asset)
         );
+
         uint256 actualLiquidityPoolBalance = balance.liquidityPool;
 
         assertEq(_iporProtocol.ipToken.balanceOf(_liquidityProvider), expectedIpTokenBalance);

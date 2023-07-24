@@ -27,8 +27,6 @@ interface IAmmGovernanceLens {
     struct AmmPoolsParamsConfiguration {
         /// @dev max liquidity pool balance in the asset pool, represented in 18 decimals
         uint256 maxLiquidityPoolBalance;
-        /// @dev  max lp account contribution in the asset pool, represented in 18 decimals
-        uint256 maxLpAccountContribution;
         /// @dev The threshold for auto-rebalancing the pool. Value represented without 18 decimals.
         /// Value represents multiplication of 1000.
         uint256 autoRebalanceThresholdInThousands;

@@ -27,7 +27,6 @@ contract JosephAutoRebalance is TestCommons {
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
             1000000000,
-            1000000000,
             autoRebalanceThreshold,
             ammTreasuryAssetManagementRatio
         );
@@ -69,7 +68,6 @@ contract JosephAutoRebalance is TestCommons {
 
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
-            1000000000,
             1000000000,
             autoRebalanceThreshold,
             ammTreasuryAssetManagementRatio
@@ -117,7 +115,6 @@ contract JosephAutoRebalance is TestCommons {
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
             1000000000,
-            1000000000,
             autoRebalanceThreshold,
             ammTreasuryAssetManagementRatio
         );
@@ -164,7 +161,6 @@ contract JosephAutoRebalance is TestCommons {
 
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
-            1000000000,
             1000000000,
             autoRebalanceThreshold,
             ammTreasuryAssetManagementRatio

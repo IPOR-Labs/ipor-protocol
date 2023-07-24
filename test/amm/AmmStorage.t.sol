@@ -152,12 +152,11 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdcInstance(_cfg);
 
         // when
-        vm.expectRevert("IPOR_328");
+        vm.expectRevert("IPOR_324");
         vm.prank(address(_iporProtocol.router));
         _iporProtocol.ammStorage.addLiquidityInternal(
             _liquidityProvider,
             TestConstants.ZERO,
-            TestConstants.USD_10_000_000_18DEC,
             TestConstants.USD_10_000_000_18DEC
         );
     }
@@ -167,7 +166,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdcInstance(_cfg);
 
         // when
-        vm.expectRevert("IPOR_330");
+        vm.expectRevert("IPOR_326");
         vm.prank(address(_iporProtocol.router));
         _iporProtocol.ammStorage.updateStorageWhenTransferToTreasuryInternal(TestConstants.D18 * TestConstants.D18);
     }
@@ -177,7 +176,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdcInstance(_cfg);
 
         // when
-        vm.expectRevert("IPOR_329");
+        vm.expectRevert("IPOR_325");
         vm.prank(address(_iporProtocol.ammTreasury));
         _iporProtocol.ammStorage.updateStorageWhenDepositToAssetManagement(TestConstants.D18, TestConstants.ZERO);
     }
@@ -187,7 +186,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdcInstance(_cfg);
 
         // when
-        vm.expectRevert("IPOR_326");
+        vm.expectRevert("IPOR_322");
         vm.prank(address(_iporProtocol.router));
         _iporProtocol.ammStorage.updateStorageWhenTransferToCharlieTreasuryInternal(
             TestConstants.D18 * TestConstants.D18

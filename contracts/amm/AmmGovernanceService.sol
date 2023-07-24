@@ -156,14 +156,12 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     function setAmmPoolsParams(
         address asset,
         uint32 newMaxLiquidityPoolBalance,
-        uint32 newMaxLpAccountContribution,
         uint32 newAutoRebalanceThresholdInThousands,
         uint16 newAmmTreasuryAndAssetManagementRatio
     ) external override {
         AmmConfigurationManager.setAmmPoolsParams(
             asset,
             newMaxLiquidityPoolBalance,
-            newMaxLpAccountContribution,
             newAutoRebalanceThresholdInThousands,
             newAmmTreasuryAndAssetManagementRatio
         );
@@ -173,7 +171,6 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(asset);
         cfg = AmmPoolsParamsConfiguration({
             maxLiquidityPoolBalance: uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
-            maxLpAccountContribution: uint256(ammPoolsParamsCfg.maxLpAccountContribution) * 1e18,
             autoRebalanceThresholdInThousands: ammPoolsParamsCfg.autoRebalanceThresholdInThousands,
             ammTreasuryAndAssetManagementRatio: ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio
         });

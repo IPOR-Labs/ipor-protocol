@@ -55,13 +55,11 @@ interface IAmmGovernanceService {
     /// @notice Sets AMM Pools params for a given asset (pool). Action available only to IPOR Protocol Owner.
     /// @param asset Address of asset representing specific pool
     /// @param newMaxLiquidityPoolBalance New max liquidity pool balance threshold. Value represented WITHOUT 18 decimals.
-    /// @param newMaxLpAccountContribution New max liquidity pool account contribution threshold. Value represented WITHOUT 18 decimals.
     /// @param newAutoRebalanceThresholdInThousands New auto rebalance threshold in thousands. Value represented WITHOUT 18 decimals. Value represents multiplication of 1000.
     /// @param newAmmTreasuryAndAssetManagementRatio New AMM Treasury and Asset Management ratio, represented WITHOUT 18 decimals, value represents percentage with 2 decimals. Example: 65% = 6500, 99,99% = 9999
     function setAmmPoolsParams(
         address asset,
         uint32 newMaxLiquidityPoolBalance,
-        uint32 newMaxLpAccountContribution,
         uint32 newAutoRebalanceThresholdInThousands,
         uint16 newAmmTreasuryAndAssetManagementRatio
     ) external;

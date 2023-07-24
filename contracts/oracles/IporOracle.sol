@@ -243,11 +243,7 @@ contract IporOracle is
         }
     }
 
-    function _updateIndex(
-        address asset,
-        uint256 indexValue,
-        uint256 updateTimestamp
-    ) internal returns (uint256 newIndexValue, uint256 newIbtPrice, uint256 lastUpdateTimestamp) {
+    function _updateIndex(address asset, uint256 indexValue, uint256 updateTimestamp) internal {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
 
         require(ipor.lastUpdateTimestamp > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
@@ -264,10 +260,6 @@ contract IporOracle is
             indexValue.toUint64(),
             updateTimestamp.toUint32()
         );
-
-        newIndexValue = indexValue;
-        newIbtPrice = IporMath.division(newQuasiIbtPrice, Constants.YEAR_IN_SECONDS);
-        lastUpdateTimestamp = updateTimestamp;
 
         emit IporIndexUpdate(asset, indexValue, newQuasiIbtPrice, updateTimestamp);
     }

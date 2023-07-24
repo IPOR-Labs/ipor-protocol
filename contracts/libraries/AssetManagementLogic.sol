@@ -6,7 +6,7 @@ import "./math/IporMath.sol";
 library AssetManagementLogic {
     using SafeCast for uint256;
 
-    /// @notice Calculate rebalance amount before withdraw from pool.
+    /// @notice Calculates rebalance amount before withdraw from pool.
     /// @param wadAmmErc20BalanceBeforeWithdraw ERC20 balance of the Amm Treasury before withdraw.
     /// @param vaultBalance ERC20 balance of the Vault.
     /// @param wadOperationAmount Amount of ERC20 tokens to withdraw.

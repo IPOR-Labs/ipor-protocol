@@ -176,7 +176,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 30 days;
 
         //when
-        vm.expectRevert("IPOR_333");
+        vm.expectRevert("IPOR_329");
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
             AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
@@ -791,7 +791,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 30 days;
 
         //when
-        vm.expectRevert("IPOR_333");
+        vm.expectRevert("IPOR_329");
         int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
             AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,

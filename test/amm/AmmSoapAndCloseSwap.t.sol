@@ -44,11 +44,11 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
             0,
             TestConstants.LEVERAGE_18DEC
         );
-        uint256[] memory pfAwapIds = new uint256[](0);
+        uint256[] memory pfSwapIds = new uint256[](0);
         uint256[] memory swapIds = new uint256[](1);
         swapIds[0] = swap1;
         vm.prank(_userTwo);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfAwapIds, swapIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfSwapIds, swapIds);
     }
 
     function testShouldCloseSwapEvenIfAverageInterestRateIsEqualZero() public {
@@ -81,7 +81,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         );
         vm.warp(30 days);
 
-        uint256[] memory pfAwapIds = new uint256[](0);
+        uint256[] memory pfSwapIds = new uint256[](0);
         uint256[] memory swapIds = new uint256[](1);
         swapIds[0] = swap1;
 
@@ -90,7 +90,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         (
             AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
-        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfAwapIds, swapIds);
+        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfSwapIds, swapIds);
 
         //then
         assertEq(closedReceiveFixedSwaps.length, 1, "closedPayFixedSwaps.length");
@@ -126,7 +126,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         );
         vm.warp(30 days);
 
-        uint256[] memory pfAwapIds = new uint256[](0);
+        uint256[] memory pfSwapIds = new uint256[](0);
         uint256[] memory swapIds = new uint256[](1);
         swapIds[0] = swap1;
 
@@ -135,7 +135,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         (
             AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
-        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfAwapIds, swapIds);
+        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfSwapIds, swapIds);
 
         //then
         assertEq(closedReceiveFixedSwaps.length, 1, "closedPayFixedSwaps.length");
@@ -171,7 +171,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         );
         vm.warp(30 days);
 
-        uint256[] memory pfAwapIds = new uint256[](0);
+        uint256[] memory pfSwapIds = new uint256[](0);
         uint256[] memory swapIds = new uint256[](1);
         swapIds[0] = swap1;
 
@@ -180,7 +180,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         (
             AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
-        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfAwapIds, swapIds);
+        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfSwapIds, swapIds);
 
         //then
         assertEq(closedReceiveFixedSwaps.length, 1, "closedPayFixedSwaps.length");
@@ -215,7 +215,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
             TestConstants.LEVERAGE_18DEC
         );
 
-        uint256[] memory pfAwapIds = new uint256[](0);
+        uint256[] memory pfSwapIds = new uint256[](0);
         uint256[] memory swapIds = new uint256[](1);
         swapIds[0] = swap1;
         vm.warp(118 days);
@@ -225,7 +225,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         (
             AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
-        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfAwapIds, swapIds);
+        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfSwapIds, swapIds);
 
         //then
         assertEq(closedReceiveFixedSwaps.length, 1, "closedPayFixedSwaps.length");
@@ -260,7 +260,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
             TestConstants.LEVERAGE_18DEC
         );
 
-        uint256[] memory pfAwapIds = new uint256[](0);
+        uint256[] memory pfSwapIds = new uint256[](0);
         uint256[] memory swapIds = new uint256[](1);
         swapIds[0] = swap1;
         vm.warp(118 days);
@@ -270,7 +270,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         (
             AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
-        ) = _iporProtocol.ammCloseSwapService.closeSwapsDai(_userOne, pfAwapIds, swapIds);
+        ) = _iporProtocol.ammCloseSwapService.closeSwapsDai(_userOne, pfSwapIds, swapIds);
 
         //then
         assertEq(closedReceiveFixedSwaps.length, 1, "closedPayFixedSwaps.length");
@@ -306,7 +306,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         );
         vm.warp(30 days);
 
-        uint256[] memory pfAwapIds = new uint256[](0);
+        uint256[] memory pfSwapIds = new uint256[](0);
         uint256[] memory swapIds = new uint256[](1);
         swapIds[0] = swap1;
 
@@ -315,7 +315,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         (
             AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
-        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfAwapIds, swapIds);
+        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfSwapIds, swapIds);
 
         //then
         assertEq(closedPayFixedSwaps.length, 0, "closedPayFixedSwaps.length");
