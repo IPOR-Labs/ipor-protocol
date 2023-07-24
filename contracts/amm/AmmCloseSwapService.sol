@@ -825,26 +825,39 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         return (AmmTypes.SwapClosableStatus.SWAP_IS_CLOSABLE, false);
     }
 
+    /// @notice Transfer derivative amount to buyer or liquidator.
+    /// @param beneficiary Account which will receive the liquidation deposit amount
+    /// @param buyer Account which will receive the collateral amount including pnl value (transferAmount)
+    /// @param wadLiquidationDepositAmount Amount of liquidation deposit
+    /// @param wadTransferAmount Amount of collateral including pnl value
+    /// @param poolCfg Pool configuration
+    /// @return wadTransferredToBuyer Final value transferred to buyer, containing collateral and pnl value and if buyer is beneficiary, liquidation deposit amount
+    /// @return wadPayoutForLiquidator Final value transferred to liquidator, if liquidator is beneficiary then value is zero
+    /// @dev If beneficiary is buyer, then liquidation deposit amount is added to transfer amount.
+    /// @dev Input amounts and returned values are represented in 18 decimals.
     function _transferDerivativeAmount(
         address beneficiary,
         address buyer,
-        uint256 liquidationDepositAmount,
-        uint256 transferAmount,
+        uint256 wadLiquidationDepositAmount,
+        uint256 wadTransferAmount,
         AmmCloseSwapServicePoolConfiguration memory poolCfg
-    ) internal returns (uint256 transferredToBuyer, uint256 payoutForLiquidator) {
+    ) internal returns (uint256 wadTransferredToBuyer, uint256 wadPayoutForLiquidator) {
         if (beneficiary == buyer) {
-            transferAmount = transferAmount + liquidationDepositAmount;
+            wadTransferAmount = wadTransferAmount + wadLiquidationDepositAmount;
         } else {
             //transfer liquidation deposit amount from AmmTreasury to Liquidator address (beneficiary),
             // transfer to be made outside this function, to avoid multiple transfers
-            payoutForLiquidator = liquidationDepositAmount;
+            wadPayoutForLiquidator = wadLiquidationDepositAmount;
         }
 
-        if (transferAmount > 0) {
-            uint256 transferAmountAssetDecimals = IporMath.convertWadToAssetDecimals(transferAmount, poolCfg.decimals);
+        if (wadTransferAmount > 0) {
+            uint256 transferAmountAssetDecimals = IporMath.convertWadToAssetDecimals(
+                wadTransferAmount,
+                poolCfg.decimals
+            );
 
             uint256 totalTransferAmountAssetDecimals = transferAmountAssetDecimals +
-                IporMath.convertWadToAssetDecimals(payoutForLiquidator, poolCfg.decimals);
+                IporMath.convertWadToAssetDecimals(wadPayoutForLiquidator, poolCfg.decimals);
 
             uint256 ammTreasuryErc20BalanceBeforeRedeem = IERC20Upgradeable(poolCfg.asset).balanceOf(
                 poolCfg.ammTreasury
@@ -866,7 +879,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                 int256 rebalanceAmount = AssetManagementLogic.calculateRebalanceAmountBeforeWithdraw(
                     IporMath.convertToWad(ammTreasuryErc20BalanceBeforeRedeem, poolCfg.decimals),
                     balance.vault,
-                    transferAmount + liquidationDepositAmount,
+                    wadTransferAmount + wadPayoutForLiquidator,
                     uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) * 1e14
                 );
 
@@ -879,7 +892,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
 
             IERC20Upgradeable(poolCfg.asset).safeTransferFrom(poolCfg.ammTreasury, buyer, transferAmountAssetDecimals);
 
-            transferredToBuyer = IporMath.convertToWad(transferAmountAssetDecimals, poolCfg.decimals);
+            wadTransferredToBuyer = IporMath.convertToWad(transferAmountAssetDecimals, poolCfg.decimals);
         }
     }
 }

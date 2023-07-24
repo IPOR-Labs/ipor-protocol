@@ -77,9 +77,9 @@ contract AmmShouldClosePositionTest is TestCommons {
         assertEq(ammERC20BalanceBefore, 17_890e6, "ammERC20BalanceBefore");
         assertEq(userERC20BalanceBefore, 9_990_000e6, "userERC20BalanceBefore");
         assertEq(assetManagementBalanceBefore, 20_110e18, "assetManagementBalanceBefore");
-        assertEq(ammERC20BalanceAfter, 15511942767, "ammERC20BalanceAfter");
+        assertEq(ammERC20BalanceAfter, 15508192767, "ammERC20BalanceAfter");
         assertEq(userERC20BalanceAfter, 10009803276237, "userERC20BalanceAfter");
-        assertEq(assetManagementBalanceAfter, 2732989900090834399069, "assetManagementBalanceAfter");
+        assertEq(assetManagementBalanceAfter, 2736739900090834399059, "assetManagementBalanceAfter");
     }
 
     function testShouldClosePositionUSDTAndRebalanceLiquiditationDepositEdgeCase() public {
