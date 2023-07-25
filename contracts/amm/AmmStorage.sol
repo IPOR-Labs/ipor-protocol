@@ -48,7 +48,9 @@ contract AmmStorage is
     StorageInternalTypes.SwapContainer internal _swapsPayFixed;
     StorageInternalTypes.SwapContainer internal _swapsReceiveFixed;
 
-    mapping(address => uint128) private _liquidityPoolAccountContribution;
+    /// @dev DEPRECATED in V2
+    mapping(address => uint128) private _liquidityPoolAccountContributionDeprecated;
+
     mapping(IporTypes.SwapTenor => AmmInternalTypes.OpenSwapList) private _openedSwapsPayFixed;
     mapping(IporTypes.SwapTenor => AmmInternalTypes.OpenSwapList) private _openedSwapsReceiveFixed;
 
@@ -225,8 +227,7 @@ contract AmmStorage is
     function addLiquidityInternal(
         address account,
         uint256 assetAmount,
-        uint256 cfgMaxLiquidityPoolBalance,
-        uint256 cfgMaxLpAccountContribution
+        uint256 cfgMaxLiquidityPoolBalance
     ) external override onlyRouter {
         require(assetAmount > 0, AmmErrors.DEPOSIT_AMOUNT_IS_TOO_LOW);
 
@@ -234,16 +235,7 @@ contract AmmStorage is
 
         require(newLiquidityPoolBalance <= cfgMaxLiquidityPoolBalance, AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH);
 
-        uint128 newLiquidityPoolAccountContribution = _liquidityPoolAccountContribution[account] +
-            assetAmount.toUint128();
-
-        require(
-            newLiquidityPoolAccountContribution <= cfgMaxLpAccountContribution,
-            AmmErrors.LP_ACCOUNT_CONTRIBUTION_IS_TOO_HIGH
-        );
-
         _balances.liquidityPool = newLiquidityPoolBalance;
-        _liquidityPoolAccountContribution[account] = newLiquidityPoolAccountContribution;
     }
 
     function subtractLiquidityInternal(uint256 assetAmount) external override onlyRouter {
@@ -405,10 +397,6 @@ contract AmmStorage is
 
     function removePauseGuardian(address guardian) external override onlyOwner {
         PauseManager.removePauseGuardian(guardian);
-    }
-
-    function getLiquidityPoolAccountContribution(address account) external view returns (uint256) {
-        return _liquidityPoolAccountContribution[account];
     }
 
     function getImplementation() external view override returns (address) {

@@ -138,7 +138,7 @@ contract AmmPoolsServiceProvideLiquidity is TestCommons {
         // given
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        _iporProtocol.ammGovernanceService.setAmmPoolsParams(address(_iporProtocol.asset), 20000, 15000, 50, 8500);
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(address(_iporProtocol.asset), 20000, 50, 8500);
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_15_000_18DEC);
@@ -147,71 +147,5 @@ contract AmmPoolsServiceProvideLiquidity is TestCommons {
         vm.prank(_userOne);
         vm.expectRevert("IPOR_304");
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_15_000_18DEC);
-    }
-
-    function testShouldNotProvideLiquidityWhenMaxLiquidityPoolAccountContributionExceededCase1() public {
-        // given
-        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-
-        _iporProtocol.ammGovernanceService.setAmmPoolsParams(address(_iporProtocol.asset), 2000000, 50000, 50, 8500);
-
-        vm.startPrank(_liquidityProvider);
-        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_10_000_18DEC);
-
-        // when
-        vm.expectRevert("IPOR_305");
-        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, 51000 * TestConstants.D18);
-        vm.stopPrank();
-    }
-
-    function testShouldNotProvideLiquidityWhenMaxLiquidityPoolAccountContributionExceededCase2() public {
-        // given
-        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-
-        _iporProtocol.ammGovernanceService.setAmmPoolsParams(address(_iporProtocol.asset), 2000000, 50000, 50, 8500);
-
-        vm.startPrank(_liquidityProvider);
-        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_50_000_18DEC);
-
-        // when
-        vm.expectRevert("IPOR_305");
-        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_50_000_18DEC);
-        vm.stopPrank();
-    }
-
-    function testShouldNotProvideLiquidityWhenMaxLiquidityPoolAccountContributionExceededCase3() public {
-        // given
-        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-
-        _iporProtocol.ammGovernanceService.setAmmPoolsParams(address(_iporProtocol.asset), 2000000, 50000, 50, 8500);
-
-        vm.startPrank(_liquidityProvider);
-        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_50_000_18DEC);
-        _iporProtocol.ammPoolsService.redeemFromAmmPoolDai(_liquidityProvider, TestConstants.USD_50_000_18DEC);
-
-        // when
-        vm.expectRevert("IPOR_305");
-        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_50_000_18DEC);
-        vm.stopPrank();
-    }
-
-    function testShouldNotProvideLiquidityWhenMaxLiquidityPoolAccountContributionExceededCase4() public {
-        // given
-        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-
-        _iporProtocol.ammGovernanceService.setAmmPoolsParams(address(_iporProtocol.asset), 2000000, 50000, 50, 8500);
-
-        vm.startPrank(_liquidityProvider);
-        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_50_000_18DEC);
-
-        _iporProtocol.ipToken.transfer(_userThree, TestConstants.USD_50_000_18DEC);
-
-        uint256 ipTokenLiquidityProviderBalance = _iporProtocol.ipToken.balanceOf(_liquidityProvider);
-        assertEq(ipTokenLiquidityProviderBalance, TestConstants.ZERO);
-
-        // when
-        vm.expectRevert("IPOR_305");
-        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_50_000_18DEC);
-        vm.stopPrank();
     }
 }

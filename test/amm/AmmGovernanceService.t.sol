@@ -72,7 +72,6 @@ contract AmmGovernanceServiceTest is TestCommons {
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
             1000000000,
-            1000000000,
             50,
             5000
         );
@@ -95,7 +94,6 @@ contract AmmGovernanceServiceTest is TestCommons {
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
             1000000000,
-            1000000000,
             50,
             0
         );
@@ -110,7 +108,6 @@ contract AmmGovernanceServiceTest is TestCommons {
         vm.expectRevert("IPOR_408");
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
-            1000000000,
             1000000000,
             50,
             10000

@@ -165,7 +165,10 @@ contract BuilderUtils {
         CASE9,
         /// @dev Pay Fixed Quote Value 51%
         /// @dev Receive Fixed Quote Value 0%
-        CASE10
+        CASE10,
+        /// @dev Pay Fixed Quote Value 1%
+        /// @dev Receive Fixed Quote Value 0%
+        CASE11
     }
 
     enum Spread60DaysTestCase {

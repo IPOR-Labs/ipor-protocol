@@ -318,7 +318,6 @@ contract IporProtocolFactory is Test {
         IAmmGovernanceService(address(amm.router)).setAmmPoolsParams(
             address(amm.usdt.asset),
             1000000000,
-            1000000000,
             50,
             8500
         );
@@ -326,14 +325,12 @@ contract IporProtocolFactory is Test {
         IAmmGovernanceService(address(amm.router)).setAmmPoolsParams(
             address(amm.usdc.asset),
             1000000000,
-            1000000000,
             50,
             8500
         );
 
         IAmmGovernanceService(address(amm.router)).setAmmPoolsParams(
             address(amm.dai.asset),
-            1000000000,
             1000000000,
             50,
             8500
@@ -444,7 +441,6 @@ contract IporProtocolFactory is Test {
 
         IAmmGovernanceService(address(iporProtocol.router)).setAmmPoolsParams(
             address(iporProtocol.asset),
-            1000000000,
             1000000000,
             50,
             8500
@@ -561,7 +557,6 @@ contract IporProtocolFactory is Test {
         IAmmGovernanceService(address(iporProtocol.router)).setAmmPoolsParams(
             address(iporProtocol.asset),
             1000000000,
-            1000000000,
             50,
             8500
         );
@@ -675,7 +670,6 @@ contract IporProtocolFactory is Test {
 
         IAmmGovernanceService(address(iporProtocol.router)).setAmmPoolsParams(
             address(iporProtocol.asset),
-            1000000000,
             1000000000,
             50,
             8500
@@ -1529,8 +1523,8 @@ contract IporProtocolFactory is Test {
             ammStorage: address(_fakeContract),
             ammTreasury: address(_fakeContract),
             assetManagement: address(_fakeContract),
-            openingFeeRateForSwapUnwind: 0,
-            openingFeeTreasuryPortionRateForSwapUnwind: 0,
+            unwindingFeeRate: 0,
+            unwindingFeeTreasuryPortionRate: 0,
             maxLengthOfLiquidatedSwapsPerLeg: 0,
             timeBeforeMaturityAllowedToCloseSwapByCommunity: 0,
             timeBeforeMaturityAllowedToCloseSwapByBuyer: 0,
@@ -1626,8 +1620,8 @@ contract IporProtocolFactory is Test {
                 ammStorage: ammStorage,
                 ammTreasury: ammTreasury,
                 assetManagement: assetManagement,
-                openingFeeRateForSwapUnwind: 5 * 1e14,
-                openingFeeTreasuryPortionRateForSwapUnwind: 5 * 1e14,
+                unwindingFeeRate: 5 * 1e14,
+                unwindingFeeTreasuryPortionRate: 5 * 1e14,
                 maxLengthOfLiquidatedSwapsPerLeg: 10,
                 timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
                 timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
@@ -1642,8 +1636,8 @@ contract IporProtocolFactory is Test {
                 ammStorage: ammStorage,
                 ammTreasury: ammTreasury,
                 assetManagement: assetManagement,
-                openingFeeRateForSwapUnwind: 5 * 1e14,
-                openingFeeTreasuryPortionRateForSwapUnwind: 5 * 1e14,
+                unwindingFeeRate: 5 * 1e14,
+                unwindingFeeTreasuryPortionRate: 5 * 1e14,
                 maxLengthOfLiquidatedSwapsPerLeg: 10,
                 timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
                 timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,

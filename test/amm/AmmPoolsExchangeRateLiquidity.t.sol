@@ -133,8 +133,7 @@ contract AmmPoolsExchangeRateLiquidityTest is TestCommons {
         _iporProtocol.ammStorage.addLiquidityInternal(
             _liquidityProvider,
             TestConstants.USD_2_000_18DEC,
-            TestConstants.USD_20_000_000_18DEC,
-            TestConstants.USD_10_000_000_18DEC
+            TestConstants.USD_20_000_000_18DEC
         );
         vm.stopPrank();
         vm.startPrank(address(_liquidityProvider));

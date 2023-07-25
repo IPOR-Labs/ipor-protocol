@@ -123,6 +123,8 @@ contract SpreadRouterBuilder is Test {
             return address(new MockSpreadXDays(TestConstants.ZERO, TestConstants.PERCENTAGE_49_18DEC));
         } else if (builderData.spread28DaysTestCase == BuilderUtils.Spread28DaysTestCase.CASE10) {
             return address(new MockSpreadXDays(TestConstants.PERCENTAGE_51_18DEC, TestConstants.ZERO));
+        } else if (builderData.spread28DaysTestCase == BuilderUtils.Spread28DaysTestCase.CASE11) {
+            return address(new MockSpreadXDays(TestConstants.PERCENTAGE_1_18DEC, TestConstants.ZERO));
         }
 
         return address(new Spread28Days(builderData.dai, builderData.usdc, builderData.usdt));

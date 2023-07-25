@@ -78,11 +78,6 @@ contract AmmPoolsLens is IAmmPoolsLens {
         return _getPoolCoreModel(asset).getAccruedBalance();
     }
 
-    function getLiquidityPoolAccountContribution(address asset, address account) external view returns (uint256) {
-        AmmPoolsLensPoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
-        return IAmmStorage(poolCfg.ammStorage).getLiquidityPoolAccountContribution(account);
-    }
-
     function _getPoolCoreModel(address asset) internal view returns (AmmTypes.AmmPoolCoreModel memory) {
         AmmPoolsLensPoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 

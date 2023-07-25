@@ -70,7 +70,7 @@ contract IporProtocolRouterTest is TestCommons {
         _iporProtocol.ammGovernanceService.withdrawAllFromAssetManagement(address(_iporProtocol.asset));
 
         vm.expectRevert("IPOR_014");
-        _iporProtocol.ammGovernanceService.setAmmPoolsParams(address(_iporProtocol.asset), 1, 1, 1, 1);
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(address(_iporProtocol.asset), 1, 1, 1);
 
         uint256[] memory swapIds = new uint256[](1);
         swapIds[0] = 1;
@@ -106,7 +106,7 @@ contract IporProtocolRouterTest is TestCommons {
         amm.dai.ammGovernanceService.depositToAssetManagement(address(amm.dai.asset), 100e18);
         amm.dai.ammGovernanceService.withdrawFromAssetManagement(address(amm.dai.asset), 1e18);
         amm.dai.ammGovernanceService.withdrawAllFromAssetManagement(address(amm.dai.asset));
-        amm.dai.ammGovernanceService.setAmmPoolsParams(address(amm.dai.asset), 100_000, 100_000, 100_000, 1);
+        amm.dai.ammGovernanceService.setAmmPoolsParams(address(amm.dai.asset), 100_000, 100_000, 1);
 
         amm.dai.ammPoolsService.provideLiquidityDai(_userOne, 10000e18);
         amm.usdt.ammPoolsService.provideLiquidityUsdt(_userOne, 10000e6);

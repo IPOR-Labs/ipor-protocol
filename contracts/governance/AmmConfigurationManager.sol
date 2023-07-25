@@ -21,13 +21,11 @@ library AmmConfigurationManager {
     /// @notice Emitted when AMM Pools Params are changed.
     /// @param asset address of the asset (pool)
     /// @param maxLiquidityPoolBalance maximum liquidity pool balance
-    /// @param maxLpAccountContribution maximum LP account contribution
     /// @param autoRebalanceThresholdInThousands auto rebalance threshold in thousands
     /// @param ammTreasuryAndAssetManagementRatio AMM treasury and asset management ratio
     event AmmPoolsParamsChanged(
         address indexed asset,
         uint32 maxLiquidityPoolBalance,
-        uint32 maxLpAccountContribution,
         uint32 autoRebalanceThresholdInThousands,
         uint16 ammTreasuryAndAssetManagementRatio
     );
@@ -121,14 +119,12 @@ library AmmConfigurationManager {
     /// @notice Sets AMM Pools Params.
     /// @param asset address of the asset (pool)
     /// @param newMaxLiquidityPoolBalance maximum liquidity pool balance
-    /// @param newMaxLpAccountContribution maximum LP account contribution
     /// @param newAutoRebalanceThresholdInThousands auto rebalance threshold in thousands
     /// @param newAmmTreasuryAndAssetManagementRatio AMM treasury and asset management ratio
     /// @dev Allowed only for the owner of the Ipor Protocol Router
     function setAmmPoolsParams(
         address asset,
         uint32 newMaxLiquidityPoolBalance,
-        uint32 newMaxLpAccountContribution,
         uint32 newAutoRebalanceThresholdInThousands,
         uint16 newAmmTreasuryAndAssetManagementRatio
     ) internal {
@@ -138,7 +134,6 @@ library AmmConfigurationManager {
 
         StorageLib.getAmmPoolsParamsStorage().value[asset] = StorageLib.AmmPoolsParamsValue({
             maxLiquidityPoolBalance: newMaxLiquidityPoolBalance,
-            maxLpAccountContribution: newMaxLpAccountContribution,
             autoRebalanceThresholdInThousands: newAutoRebalanceThresholdInThousands,
             ammTreasuryAndAssetManagementRatio: newAmmTreasuryAndAssetManagementRatio
         });
@@ -146,7 +141,6 @@ library AmmConfigurationManager {
         emit AmmPoolsParamsChanged(
             asset,
             newMaxLiquidityPoolBalance,
-            newMaxLpAccountContribution,
             newAutoRebalanceThresholdInThousands,
             newAmmTreasuryAndAssetManagementRatio
         );

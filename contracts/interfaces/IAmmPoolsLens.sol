@@ -37,9 +37,4 @@ interface IAmmPoolsLens {
     /// @return IporTypes.AmmBalancesMemory The balance of the AMM Treasury.
     function getAmmBalance(address asset) external view returns (IporTypes.AmmBalancesMemory memory);
 
-    /// @notice Returns the contribution of a specific account to the Liquidity Pool.
-    /// @param asset The address of the asset.
-    /// @param account The address of the account for which to fetch the contribution.
-    /// @return uint256 The account's contribution to the Liquidity Pool, represented in 18 decimals.
-    function getLiquidityPoolAccountContribution(address asset, address account) external view returns (uint256);
 }

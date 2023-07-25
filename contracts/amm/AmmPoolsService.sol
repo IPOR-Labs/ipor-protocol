@@ -184,8 +184,7 @@ contract AmmPoolsService is IAmmPoolsService {
         IAmmStorage(poolCfg.ammStorage).addLiquidityInternal(
             beneficiary,
             wadAssetAmount,
-            uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
-            uint256(ammPoolsParamsCfg.maxLpAccountContribution) * 1e18
+            uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18
         );
 
         IERC20Upgradeable(poolCfg.asset).safeTransferFrom(msg.sender, poolCfg.ammTreasury, assetAmount);

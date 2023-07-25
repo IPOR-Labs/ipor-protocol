@@ -612,20 +612,17 @@ contract TestForkCommons is Test {
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(
             DAI,
             type(uint32).max,
-            type(uint32).max,
             0,
             5000
         );
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(
             USDC,
             type(uint32).max,
-            type(uint32).max,
             0,
             5000
         );
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(
             USDT,
-            type(uint32).max,
             type(uint32).max,
             0,
             5000

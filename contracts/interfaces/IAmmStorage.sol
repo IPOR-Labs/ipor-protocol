@@ -108,13 +108,11 @@ interface IAmmStorage {
     /// @param account account address executing request for redeem asset amount
     /// @param assetAmount amount of asset added to balance of Liquidity Pool, represented in 18 decimals
     /// @param cfgMaxLiquidityPoolBalance max liquidity pool balance taken from AmmPoolsService configuration, represented in 18 decimals.
-    /// @param cfgMaxLpAccountContribution max liquidity pool account contribution taken from AMM configuration, represented in 18 decimals.
     /// @dev Function is only available to AmmPoolsService, can be executed only by IPOR Protocol Router as internal interaction.
     function addLiquidityInternal(
         address account,
         uint256 assetAmount,
-        uint256 cfgMaxLiquidityPoolBalance,
-        uint256 cfgMaxLpAccountContribution
+        uint256 cfgMaxLiquidityPoolBalance
     ) external;
 
     /// @notice subtract liquidity from the Liquidity Pool. Function available only to Router.
@@ -214,8 +212,4 @@ interface IAmmStorage {
     /// @param guardian The address of the pause guardian to be removed.
     function removePauseGuardian(address guardian) external;
 
-    /// @notice Returns the contribution of a specific account to the Liquidity Pool.
-    /// @param account Account address for which to fetch the contribution.
-    /// @return The amount of the account's contribution to the Liquidity Pool, represented in 18 decimals.
-    function getLiquidityPoolAccountContribution(address account) external view returns (uint256);
 }

@@ -52,8 +52,6 @@ library StorageLib {
     struct AmmPoolsParamsValue {
         /// @dev max liquidity pool balance in the asset pool, represented without 18 decimals
         uint32 maxLiquidityPoolBalance;
-        /// @dev  max lp account contribution in the asset pool, represented without 18 decimals
-        uint32 maxLpAccountContribution;
         /// @dev The threshold for auto-rebalancing the pool. Value represented without 18 decimals.
         /// Value represents multiplication of 1000.
         uint32 autoRebalanceThresholdInThousands;

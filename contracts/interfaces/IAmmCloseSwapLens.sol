@@ -17,10 +17,10 @@ interface IAmmCloseSwapLens {
         address ammTreasury;
         /// @notice Asset Management contract address
         address assetManagement;
-        /// @notice Opening Fee Rate for unwinding the swap, represented in 18 decimals, 1e18 = 100%
-        uint256 openingFeeRateForSwapUnwind;
-        /// @notice Opening Fee Rate for unwinding the swap, part earmarked for the treasury, represented in 18 decimals, 1e18 = 100%
-        uint256 openingFeeTreasuryPortionRateForSwapUnwind;
+        /// @notice Unwinding Fee Rate for unwinding the swap, represented in 18 decimals, 1e18 = 100%
+        uint256 unwindingFeeRate;
+        /// @notice Unwinding Fee Rate for unwinding the swap, part earmarked for the treasury, represented in 18 decimals, 1e18 = 100%
+        uint256 unwindingFeeTreasuryPortionRate;
         /// @notice Max number of swaps (per leg) that can be liquidated in one call, represented without decimals
         uint256 maxLengthOfLiquidatedSwapsPerLeg;
         /// @notice Time before maturity when the community is allowed to close the swap, represented in seconds

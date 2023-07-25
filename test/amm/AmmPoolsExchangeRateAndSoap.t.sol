@@ -32,7 +32,6 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
             1000000000,
-            1000000000,
             70,
             5000
         );
@@ -74,7 +73,6 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
-            1000000000,
             1000000000,
             70,
             5000
@@ -121,7 +119,6 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
             1000000000,
-            1000000000,
             70,
             5000
         );
@@ -167,7 +164,6 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
             1000000000,
-            1000000000,
             70,
             5000
         );
@@ -212,7 +208,6 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
-            1000000000,
             1000000000,
             70,
             5000
@@ -270,7 +265,6 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
             1000000000,
-            1000000000,
             70,
             5000
         );
@@ -326,7 +320,6 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
             1000000000,
-            1000000000,
             70,
             5000
         );
@@ -379,7 +372,6 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
             1000000000,
-            1000000000,
             0,
             5000
         );
@@ -429,7 +421,6 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
-            1000000000,
             1000000000,
             0,
             5000
