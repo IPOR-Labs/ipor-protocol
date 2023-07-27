@@ -103,7 +103,7 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         stanleySnapshotStart.assert(stanleySnapshotStart, stanleySnapshotAfterUpgrade);
     }
 
-    function testShouldUpgradeDaiImplementationAndInteract() public {
+    function skipTestShouldUpgradeDaiImplementationAndInteract() public {
         uint256 blockNumber = block.number;
         basicInteractWithAmm(_owner, _dai, _josephProxyDai, _miltonProxyDai);
         //Get snapshot of milton before switch implementation

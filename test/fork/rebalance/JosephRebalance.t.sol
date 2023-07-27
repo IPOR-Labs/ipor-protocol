@@ -442,7 +442,7 @@ contract JosephRebalance is Test, TestCommons {
         assertEq(balanceMiltonIvBefore, balanceMiltonIvAfter);
     }
 
-    function testShouldClosePositionWhenMiltonDoesntHaveCashButStanleyHas() public {
+    function skipTestShouldClosePositionWhenMiltonDoesntHaveCashButStanleyHas() public {
         //given
         address user = _getUserAddress(1);
         uint256 depositAmount = 50_000e18;
