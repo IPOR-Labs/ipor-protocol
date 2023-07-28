@@ -26,7 +26,6 @@ IStanleyInternal
     address internal _strategyCompoundDeprecated;
 
     address internal immutable _asset;
-    address internal immutable _ivToken;
     address internal immutable _milton;
     address internal immutable _strategyAave;
     address internal immutable _strategyCompound;
@@ -52,7 +51,6 @@ IStanleyInternal
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address asset,
-        address ivToken,
         address strategyAave,
         address strategyCompound,
         address strategyDsr,
@@ -60,18 +58,13 @@ IStanleyInternal
     ) {
         _disableInitializers();
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(ivToken != address(0), IporErrors.WRONG_ADDRESS);
         require(
             _getDecimals() == IERC20MetadataUpgradeable(asset).decimals(),
             IporErrors.WRONG_DECIMALS
         );
 
-        IIvToken iivToken = IIvToken(ivToken);
-        require(asset == iivToken.getAsset(), IporErrors.ADDRESSES_MISMATCH);
-
         _asset = asset;
         _milton = milton;
-        _ivToken = ivToken;
         _strategyAave = strategyAave;
         _strategyCompound = strategyCompound;
         _strategyDsr = strategyDsr;
@@ -92,7 +85,7 @@ IStanleyInternal
     }
 
     function getIvToken() external view returns (address) {
-        return _ivToken;
+        return address(0);
     }
 
     function getMilton() external view override returns (address) {
@@ -116,7 +109,6 @@ IStanleyInternal
     }
 
     function calculateExchangeRate() external view override returns (uint256 exchangeRate) {
-        (, exchangeRate,) = _calcExchangeRate();
     }
 
     /**
@@ -135,30 +127,20 @@ IStanleyInternal
         uint256 assetAmount = IporMath.convertWadToAssetDecimals(amount, _getDecimals());
         require(assetAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
-        (
-            ,
-            uint256 exchangeRate,
-            StrategiesData memory strategiesData
-        ) = _calcExchangeRate();
-
-
+        StrategiesData memory strategiesData = _getStrategiesBalances();
         StrategyData[] memory sortedStrategies = _getMaxApyStrategy(strategiesData);
-
-        uint256 ivTokenAmount = IporMath.division(amount * Constants.D18, exchangeRate);
 
         IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(this), assetAmount);
 
         depositedAmount = IStrategy(sortedStrategies[2].strategy).deposit(amount);
 
-        IIvToken(_ivToken).mint(_msgSender(), ivTokenAmount);
-
         emit Deposit(
             block.timestamp,
             _msgSender(),
             sortedStrategies[2].strategy,
-            exchangeRate,
+            0,
             depositedAmount,
-            ivTokenAmount
+            0
         );
 
         vaultBalance = _calculateTotalBalance(strategiesData) + depositedAmount;
@@ -191,20 +173,12 @@ IStanleyInternal
     {
         require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
-        IIvToken ivToken = IIvToken(_ivToken);
         IERC20Upgradeable asset = IERC20Upgradeable(_asset);
         IStrategy strategyAave = IStrategy(_strategyAave);
         IStrategy strategyCompound = IStrategy(_strategyCompound);
 
-        StrategiesData memory strategiesData;
-        (
-        ,
-        ,
-            strategiesData
-        ) = _calcExchangeRate();
 
-        uint256 senderIvTokens = ivToken.balanceOf(_msgSender());
-        StrategyData[] memory sortedStrategies = _getMaxApyStrategy(strategiesData);
+        StrategyData[] memory sortedStrategies = _getMaxApyStrategy(_getStrategiesBalances());
 
         uint256 amountToWithdraw = amount;
 
@@ -221,29 +195,17 @@ IStanleyInternal
             }
         }
 
-        uint256 exchangeRate;
-        (
-        ,
-            exchangeRate,
-            strategiesData
-        ) = _calcExchangeRate();
 
         uint256 assetBalanceStanley = IERC20Upgradeable(_asset).balanceOf(address(this));
         withdrawnAmount = IporMath.convertToWad(assetBalanceStanley, _getDecimals());
-        uint256 ivTokenWithdrawnAmount = IporMath.division(withdrawnAmount * Constants.D18, exchangeRate);
 
-        if (ivTokenWithdrawnAmount > senderIvTokens) {
-            ivToken.burn(_msgSender(), senderIvTokens);
-        } else {
-            ivToken.burn(_msgSender(), ivTokenWithdrawnAmount);
-        }
 
         if (assetBalanceStanley > 0) {
             //Always transfer all assets from Stanley to Milton
             IERC20Upgradeable(_asset).safeTransfer(_msgSender(), assetBalanceStanley);
         }
 
-        return (withdrawnAmount, _calculateTotalBalance(strategiesData) - withdrawnAmount);
+        return (withdrawnAmount, _calculateTotalBalance(_getStrategiesBalances()));
     }
 
     function withdrawAll()
@@ -254,14 +216,10 @@ IStanleyInternal
     returns (uint256 withdrawnAmount, uint256 vaultBalance)
     {
         address msgSender = _msgSender();
-        IIvToken ivToken = IIvToken(_ivToken);
         IERC20Upgradeable asset = IERC20Upgradeable(_asset);
 
-        (
-            ,
-            ,
-            StrategiesData memory strategiesData
-        ) = _calcExchangeRate();
+
+        StrategiesData memory strategiesData = _getStrategiesBalances();
 
         if (strategiesData.aave.balance > 0) {
             IStrategy(_strategyAave).withdraw(strategiesData.aave.balance);
@@ -273,7 +231,6 @@ IStanleyInternal
             IStrategy(_strategyDsr).withdraw(strategiesData.dsr.balance);
         }
 
-        ivToken.burn(msgSender, ivToken.balanceOf(msgSender));
 
         uint256 assetBalanceStanley = asset.balanceOf(address(this));
 
@@ -281,9 +238,6 @@ IStanleyInternal
         asset.safeTransfer(msgSender, assetBalanceStanley);
 
         withdrawnAmount = IporMath.convertToWad(assetBalanceStanley, _getDecimals());
-
-        ivToken.burn(_msgSender(), ivToken.balanceOf(_msgSender()));
-
 
     }
 
@@ -297,20 +251,8 @@ IStanleyInternal
         uint256 assetBalanceStanley = IERC20Upgradeable(_asset).balanceOf(address(this));
         withdrawnAmount = IporMath.convertToWad(assetBalanceStanley, _getDecimals());
 
-        (
-            ,
-            uint256 exchangeRate,
-            StrategiesData memory strategiesData
-        ) = _calcExchangeRate();
 
-        uint256 senderIvTokens = IIvToken(_ivToken).balanceOf(_msgSender());
-        uint256 ivTokenWithdrawnAmount = IporMath.division(withdrawnAmount * Constants.D18, exchangeRate);
-
-        if (ivTokenWithdrawnAmount > senderIvTokens) {
-            IIvToken(_ivToken).burn(_msgSender(), senderIvTokens);
-        } else {
-            IIvToken(_ivToken).burn(_msgSender(), ivTokenWithdrawnAmount);
-        }
+            StrategiesData memory strategiesData = _getStrategiesBalances();
 
         if (assetBalanceStanley > 0) {
             //Always transfer all assets from Stanley to Milton
@@ -318,6 +260,15 @@ IStanleyInternal
         }
 
         return (withdrawnAmount, _calculateTotalBalance(strategiesData) - withdrawnAmount);
+    }
+
+
+    function grandMaxAllowanceForSpender(address asset, address spender) external override onlyOwner {
+        IERC20Upgradeable(asset).safeApprove(spender, Constants.MAX_VALUE);
+    }
+
+    function revokeAllowanceForSpender(address asset, address spender) external override onlyOwner {
+        IERC20Upgradeable(asset).safeApprove(spender, 0);
     }
 
     function pause() external override onlyOwner {
@@ -333,34 +284,21 @@ IStanleyInternal
     }
 
     function _totalBalance(address who) internal view returns (uint256) {
-        (, uint256 exchangeRate,) = _calcExchangeRate();
-        return IporMath.division(IIvToken(_ivToken).balanceOf(who) * exchangeRate, Constants.D18);
+        return _calculateTotalBalance(_getStrategiesBalances());
     }
 
-
-    function _calcExchangeRate()
+    function _getStrategiesBalances()
     internal
     view
     returns (
-        uint256 ivTokenTotalSupply,
-        uint256 exchangeRate,
         StrategiesData memory strategiesData
     )
     {
         strategiesData.aave.balance = IStrategy(_strategyAave).balanceOf();
         strategiesData.compound.balance = IStrategy(_strategyCompound).balanceOf();
         strategiesData.dsr.balance = IStrategy(_strategyDsr).balanceOf();
-
-        uint256 totalAssetBalance = _calculateTotalBalance(strategiesData);
-
-        ivTokenTotalSupply = IIvToken(_ivToken).totalSupply();
-
-        if (totalAssetBalance == 0 || ivTokenTotalSupply == 0) {
-            exchangeRate = Constants.D18;
-        } else {
-            exchangeRate = IporMath.division(totalAssetBalance * Constants.D18, ivTokenTotalSupply);
-        }
     }
+
 
     function _calculateTotalBalance(StrategiesData memory strategiesData)
     internal
