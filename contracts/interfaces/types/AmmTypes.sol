@@ -192,12 +192,12 @@ library AmmTypes {
         bool swapUnwindRequired;
         /// @notice Swap's unwind PnL Value, part of PnL corresponded to virtual swap (unwinded swap), represented in 18 decimals
         int256 swapUnwindPnlValue;
-        /// @notice Unwind opening fee amount it is a sum of `swapUnwindOpeningFeeLPAmount` and `swapUnwindOpeningFeeTreasuryAmount`
+        /// @notice Unwind opening fee amount it is a sum of `swapUnwindFeeLPAmount` and `swapUnwindFeeTreasuryAmount`
         uint256 swapUnwindOpeningFeeAmount;
         /// @notice Part of unwind opening fee allocated as a profit of the Liquidity Pool
-        uint256 swapUnwindOpeningFeeLPAmount;
+        uint256 swapUnwindFeeLPAmount;
         /// @notice Part of unwind opening fee allocated in Treasury Balance
-        uint256 swapUnwindOpeningFeeTreasuryAmount;
+        uint256 swapUnwindFeeTreasuryAmount;
         /// @notice Final Profit and Loss which takes into account the swap unwind and limits the PnL to the collateral amount. Represented in 18 decimals.
         int256 pnlValue;
     }

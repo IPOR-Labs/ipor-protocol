@@ -12,7 +12,15 @@ contract MockIporSwapLogic {
         uint256 liquidationDepositAmount,
         uint256 iporPublicationFeeAmount,
         uint256 openingFeeRate
-    ) public view returns (uint256 collateral, uint256 notional, uint256 openingFee) {
+    )
+        public
+        view
+        returns (
+            uint256 collateral,
+            uint256 notional,
+            uint256 openingFee
+        )
+    {
         return
             IporSwapLogic.calculateSwapAmount(
                 tenor,
@@ -74,15 +82,11 @@ contract MockIporSwapLogic {
         );
     }
 
-    function calculateSwapUnwindOpeningFeeAmount(
+    function calculateSwapUnwindFeeAmount(
         AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
-        uint256 openingFeeRateCfg
-    ) public pure returns (uint256 swapOpeningFeeAmount) {
-        swapOpeningFeeAmount = IporSwapLogic.calculateSwapUnwindOpeningFeeAmount(
-            swap,
-            closingTimestamp,
-            openingFeeRateCfg
-        );
+        uint256 unwindingFeeRateCfg
+    ) public pure returns (uint256 swapUnwindFeeAmount) {
+        swapUnwindFeeAmount = IporSwapLogic.calculateSwapUnwindFeeAmount(swap, closingTimestamp, unwindingFeeRateCfg);
     }
 }

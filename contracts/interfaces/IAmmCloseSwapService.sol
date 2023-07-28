@@ -31,10 +31,10 @@ interface IAmmCloseSwapService {
         int256 swapPnlValueToDate,
         /// @notice swap unwind amount, represented in 18 decimals
         int256 swapUnwindAmount,
-        /// @notice opening fee amount, part earmarked for the liquidity pool, represented in 18 decimals
-        uint256 openingFeeLPAmount,
-        /// @notice opening fee amount, part earmarked for the treasury, represented in 18 decimals
-        uint256 openingFeeTreasuryAmount
+        /// @notice unwind fee amount, part earmarked for the liquidity pool, represented in 18 decimals
+        uint256 swapUnwindFeeLPAmount,
+        /// @notice unwind fee amount, part earmarked for the treasury, represented in 18 decimals
+        uint256 swapUnwindFeeTreasuryAmount
     );
 
     /// @notice Closes batch of USDT swaps on both legs.
@@ -96,10 +96,7 @@ interface IAmmCloseSwapService {
     /// @param receiveFixedSwapIds array of receive-fixed swap IDs.
     /// @return closedPayFixedSwaps array of closed pay-fixed swaps.
     /// @return closedReceiveFixedSwaps array of closed receive-fixed swaps.
-    function emergencyCloseSwapsUsdt(
-        uint256[] memory payFixedSwapIds,
-        uint256[] memory receiveFixedSwapIds
-    )
+    function emergencyCloseSwapsUsdt(uint256[] memory payFixedSwapIds, uint256[] memory receiveFixedSwapIds)
         external
         returns (
             AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
@@ -111,10 +108,7 @@ interface IAmmCloseSwapService {
     /// @param receiveFixedSwapIds array of receive-fixed swap IDs.
     /// @return closedPayFixedSwaps array of closed pay-fixed swaps.
     /// @return closedReceiveFixedSwaps array of closed receive-fixed swaps.
-    function emergencyCloseSwapsUsdc(
-        uint256[] memory payFixedSwapIds,
-        uint256[] memory receiveFixedSwapIds
-    )
+    function emergencyCloseSwapsUsdc(uint256[] memory payFixedSwapIds, uint256[] memory receiveFixedSwapIds)
         external
         returns (
             AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
@@ -126,10 +120,7 @@ interface IAmmCloseSwapService {
     /// @param receiveFixedSwapIds array of receive-fixed swap IDs.
     /// @return closedPayFixedSwaps array of closed pay-fixed swaps.
     /// @return closedReceiveFixedSwaps array of closed receive-fixed swaps.
-    function emergencyCloseSwapsDai(
-        uint256[] memory payFixedSwapIds,
-        uint256[] memory receiveFixedSwapIds
-    )
+    function emergencyCloseSwapsDai(uint256[] memory payFixedSwapIds, uint256[] memory receiveFixedSwapIds)
         external
         returns (
             AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,

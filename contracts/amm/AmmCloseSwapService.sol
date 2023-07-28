@@ -142,9 +142,12 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         _spreadRouter = spreadRouter.checkAddress();
     }
 
-    function getAmmCloseSwapServicePoolConfiguration(
-        address asset
-    ) external view override returns (AmmCloseSwapServicePoolConfiguration memory) {
+    function getAmmCloseSwapServicePoolConfiguration(address asset)
+        external
+        view
+        override
+        returns (AmmCloseSwapServicePoolConfiguration memory)
+    {
         return _getPoolConfiguration(asset);
     }
 
@@ -184,8 +187,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             (
                 closingSwapDetails.swapUnwindPnlValue,
                 closingSwapDetails.swapUnwindOpeningFeeAmount,
-                closingSwapDetails.swapUnwindOpeningFeeLPAmount,
-                closingSwapDetails.swapUnwindOpeningFeeTreasuryAmount,
+                closingSwapDetails.swapUnwindFeeLPAmount,
+                closingSwapDetails.swapUnwindFeeTreasuryAmount,
                 closingSwapDetails.pnlValue
             ) = _calculateSwapUnwindWhenUnwindRequired(
                 direction,
@@ -260,10 +263,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         );
     }
 
-    function emergencyCloseSwapsUsdt(
-        uint256[] memory payFixedSwapIds,
-        uint256[] memory receiveFixedSwapIds
-    )
+    function emergencyCloseSwapsUsdt(uint256[] memory payFixedSwapIds, uint256[] memory receiveFixedSwapIds)
         external
         override
         returns (
@@ -279,10 +279,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         );
     }
 
-    function emergencyCloseSwapsUsdc(
-        uint256[] memory payFixedSwapIds,
-        uint256[] memory receiveFixedSwapIds
-    )
+    function emergencyCloseSwapsUsdc(uint256[] memory payFixedSwapIds, uint256[] memory receiveFixedSwapIds)
         external
         override
         returns (
@@ -298,10 +295,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         );
     }
 
-    function emergencyCloseSwapsDai(
-        uint256[] memory payFixedSwapIds,
-        uint256[] memory receiveFixedSwapIds
-    )
+    function emergencyCloseSwapsDai(uint256[] memory payFixedSwapIds, uint256[] memory receiveFixedSwapIds)
         external
         override
         returns (
@@ -424,18 +418,14 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         AmmCloseSwapServicePoolConfiguration memory poolCfg
     ) internal returns (uint256 payoutForLiquidator) {
         uint256 timestamp = block.timestamp;
-        (
-            int256 pnlValue,
-            uint256 swapUnwindOpeningFeeLPAmount,
-            uint256 swapUnwindOpeningFeeTreasuryAmount
-        ) = _calculatePnlValue(
-                AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-                timestamp,
-                swap.calculatePnlPayFixed(timestamp, ibtPrice),
-                indexValue,
-                swap,
-                poolCfg
-            );
+        (int256 pnlValue, uint256 swapUnwindFeeLPAmount, uint256 swapUnwindFeeTreasuryAmount) = _calculatePnlValue(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            timestamp,
+            swap.calculatePnlPayFixed(timestamp, ibtPrice),
+            indexValue,
+            swap,
+            poolCfg
+        );
 
         ISpreadCloseSwapService(_spreadRouter).updateTimeWeightedNotionalOnClose(
             poolCfg.asset,
@@ -445,8 +435,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             IAmmStorage(poolCfg.ammStorage).updateStorageWhenCloseSwapPayFixedInternal(
                 swap,
                 pnlValue,
-                swapUnwindOpeningFeeLPAmount,
-                swapUnwindOpeningFeeTreasuryAmount,
+                swapUnwindFeeLPAmount,
+                swapUnwindFeeTreasuryAmount,
                 timestamp
             ),
             poolCfg.ammStorage
@@ -472,18 +462,14 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         AmmCloseSwapServicePoolConfiguration memory poolCfg
     ) internal returns (uint256 payoutForLiquidator) {
         uint256 timestamp = block.timestamp;
-        (
-            int256 pnlValue,
-            uint256 swapUnwindOpeningFeeLPAmount,
-            uint256 swapUnwindOpeningFeeTreasuryAmount
-        ) = _calculatePnlValue(
-                AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-                timestamp,
-                swap.calculatePnlReceiveFixed(timestamp, ibtPrice),
-                indexValue,
-                swap,
-                poolCfg
-            );
+        (int256 pnlValue, uint256 swapUnwindFeeLPAmount, uint256 swapUnwindFeeTreasuryAmount) = _calculatePnlValue(
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            timestamp,
+            swap.calculatePnlReceiveFixed(timestamp, ibtPrice),
+            indexValue,
+            swap,
+            poolCfg
+        );
         ISpreadCloseSwapService(_spreadRouter).updateTimeWeightedNotionalOnClose(
             poolCfg.asset,
             1,
@@ -492,8 +478,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             IAmmStorage(poolCfg.ammStorage).updateStorageWhenCloseSwapReceiveFixedInternal(
                 swap,
                 pnlValue,
-                swapUnwindOpeningFeeLPAmount,
-                swapUnwindOpeningFeeTreasuryAmount,
+                swapUnwindFeeLPAmount,
+                swapUnwindFeeTreasuryAmount,
                 timestamp
             ),
             poolCfg.ammStorage
@@ -586,6 +572,9 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         }
     }
 
+    /// @return pnlValue pnl value include (substract) unwind fee (lp and treasury), value represented in 18 decimals
+    /// @return swapUnwindFeeLPAmount swap unwind opening fee amount, value represented in 18 decimals
+    /// @return swapUnwindFeeTreasuryAmount swap unwind opening fee amount, value represented in 18 decimals
     function _calculatePnlValue(
         AmmTypes.SwapDirection direction,
         uint256 closeTimestamp,
@@ -595,7 +584,11 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         AmmCloseSwapServicePoolConfiguration memory poolCfg
     )
         internal
-        returns (int256 pnlValue, uint256 swapUnwindOpeningFeeLPAmount, uint256 swapUnwindOpeningFeeTreasuryAmount)
+        returns (
+            int256 pnlValue,
+            uint256 swapUnwindFeeLPAmount,
+            uint256 swapUnwindFeeTreasuryAmount
+        )
     {
         (AmmTypes.SwapClosableStatus closableStatus, bool swapUnwindRequired) = _getClosableStatusForSwap(
             swapPnlValueToDate,
@@ -611,8 +604,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             (
                 swapUnwindAmount,
                 ,
-                swapUnwindOpeningFeeLPAmount,
-                swapUnwindOpeningFeeTreasuryAmount,
+                swapUnwindFeeLPAmount,
+                swapUnwindFeeTreasuryAmount,
                 pnlValue
             ) = _calculateSwapUnwindWhenUnwindRequired(
                 direction,
@@ -628,8 +621,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                 swap.id,
                 swapPnlValueToDate,
                 swapUnwindAmount,
-                swapUnwindOpeningFeeLPAmount,
-                swapUnwindOpeningFeeTreasuryAmount
+                swapUnwindFeeLPAmount,
+                swapUnwindFeeTreasuryAmount
             );
         } else {
             pnlValue = swapPnlValueToDate;
@@ -640,6 +633,17 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
     /// @param direction swap direction
     /// @param closeTimestamp close timestamp
     /// @param swapPnlValueToDate swap PnL to specific date current date
+    /// @param indexValue index value in a moment when swap is closed, closeTimestamp
+    /// @param swap closing swap data
+    /// @param poolCfg pool configuration
+    /// @return swapUnwindPnlValue swap unwind pnl value, value represented in 18 decimals
+    /// @return swapUnwindFeeAmount swap unwind fee amount, value represented in 18 decimals
+    /// @return swapUnwindFeeLPAmount swap unwind fee amount for Liquidity Pool, value represented in 18 decimals
+    /// @return swapUnwindFeeTreasuryAmount swap unwind fee amount for Treasury, value represented in 18 decimals
+    /// @return swapPnlValue swap PnL value, value represented in 18 decimals
+    /// @dev swapUnwindFeeAmount = swapUnwindFeeLPAmount + swapUnwindFeeTreasuryAmount
+    /// @dev swapPnlValue include (substract) swapUnwindFeeAmount (unwind fee lp and treasury),
+    /// and take into account invariant that Swap PnL can not be higher than swap collateral.
     function _calculateSwapUnwindWhenUnwindRequired(
         AmmTypes.SwapDirection direction,
         uint256 closeTimestamp,
@@ -652,9 +656,9 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         view
         returns (
             int256 swapUnwindPnlValue,
-            uint256 swapUnwindOpeningFeeAmount,
-            uint256 swapUnwindOpeningFeeLPAmount,
-            uint256 swapUnwindOpeningFeeTreasuryAmount,
+            uint256 swapUnwindFeeAmount,
+            uint256 swapUnwindFeeLPAmount,
+            uint256 swapUnwindFeeTreasuryAmount,
             int256 swapPnlValue
         )
     {
@@ -684,14 +688,14 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
 
         swapUnwindPnlValue = swap.calculateSwapUnwindPnlValue(direction, closeTimestamp, oppositeLegFixedRate);
 
-        swapUnwindOpeningFeeAmount = swap.calculateSwapUnwindOpeningFeeAmount(closeTimestamp, poolCfg.unwindingFeeRate);
+        swapUnwindFeeAmount = swap.calculateSwapUnwindFeeAmount(closeTimestamp, poolCfg.unwindingFeeRate);
 
-        (swapUnwindOpeningFeeLPAmount, swapUnwindOpeningFeeTreasuryAmount) = IporSwapLogic.splitOpeningFeeAmount(
-            swapUnwindOpeningFeeAmount,
+        (swapUnwindFeeLPAmount, swapUnwindFeeTreasuryAmount) = IporSwapLogic.splitOpeningFeeAmount(
+            swapUnwindFeeAmount,
             poolCfg.unwindingFeeTreasuryPortionRate
         );
 
-        swapPnlValue = swapPnlValueToDate + swapUnwindPnlValue - swapUnwindOpeningFeeAmount.toInt256();
+        swapPnlValue = swapPnlValueToDate + swapUnwindPnlValue - swapUnwindFeeAmount.toInt256();
         swapPnlValue = IporSwapLogic.normalizePnlValue(swap.collateral, swapPnlValue);
     }
 
@@ -734,10 +738,10 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         }
     }
 
-    function _validateAllowanceToCloseSwap(
-        AmmTypes.SwapClosableStatus closableStatus,
-        bool swapUnwindRequired
-    ) internal pure {
+    function _validateAllowanceToCloseSwap(AmmTypes.SwapClosableStatus closableStatus, bool swapUnwindRequired)
+        internal
+        pure
+    {
         if (closableStatus == AmmTypes.SwapClosableStatus.SWAP_ALREADY_CLOSED) {
             revert(AmmErrors.INCORRECT_SWAP_STATUS);
         }

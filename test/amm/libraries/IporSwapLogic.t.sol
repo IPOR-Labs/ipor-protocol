@@ -701,7 +701,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closeTimestamp = block.timestamp + 23 days;
 
         //when
-        uint256 swapOpeningFeeAmount = _iporSwapLogic.calculateSwapUnwindOpeningFeeAmount(
+        uint256 swapOpeningFeeAmount = _iporSwapLogic.calculateSwapUnwindFeeAmount(
             swap,
             closeTimestamp,
             openingFeeRate
@@ -723,7 +723,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closeTimestamp = block.timestamp + 18 days;
 
         //when
-        uint256 swapOpeningFeeAmount = _iporSwapLogic.calculateSwapUnwindOpeningFeeAmount(
+        uint256 swapOpeningFeeAmount = _iporSwapLogic.calculateSwapUnwindFeeAmount(
             swap,
             closeTimestamp,
             openingFeeRate
@@ -745,7 +745,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closeTimestamp = block.timestamp + 18 days;
 
         //when
-        uint256 swapOpeningFeeAmount = _iporSwapLogic.calculateSwapUnwindOpeningFeeAmount(
+        uint256 swapOpeningFeeAmount = _iporSwapLogic.calculateSwapUnwindFeeAmount(
             swap,
             closeTimestamp,
             openingFeeRate
@@ -767,7 +767,7 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closeTimestamp = block.timestamp + 18 days;
 
         //when
-        uint256 swapOpeningFeeAmount = _iporSwapLogic.calculateSwapUnwindOpeningFeeAmount(
+        uint256 swapOpeningFeeAmount = _iporSwapLogic.calculateSwapUnwindFeeAmount(
             swap,
             closeTimestamp,
             openingFeeRate
@@ -1317,7 +1317,7 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         //when
         vm.expectRevert(bytes(AmmErrors.CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP));
-        uint256 swapOpeningFeeAmount = _iporSwapLogic.calculateSwapUnwindOpeningFeeAmount(
+        uint256 swapOpeningFeeAmount = _iporSwapLogic.calculateSwapUnwindFeeAmount(
             swap,
             closeTimestamp,
             openingFeeRate

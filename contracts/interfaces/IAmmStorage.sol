@@ -150,8 +150,8 @@ interface IAmmStorage {
     function updateStorageWhenCloseSwapPayFixedInternal(
         AmmTypes.Swap memory swap,
         int256 pnlValue,
-        uint256 swapUnwindOpeningFeeLPAmount,
-        uint256 swapUnwindOpeningFeeTreasuryAmount,
+        uint256 swapUnwindFeeLPAmount,
+        uint256 swapUnwindFeeTreasuryAmount,
         uint256 closingTimestamp
     ) external returns (AmmInternalTypes.OpenSwapItem memory closedSwap);
 
@@ -165,8 +165,8 @@ interface IAmmStorage {
     function updateStorageWhenCloseSwapReceiveFixedInternal(
         AmmTypes.Swap memory swap,
         int256 pnlValue,
-        uint256 swapUnwindOpeningFeeLPAmount,
-        uint256 swapUnwindOpeningFeeTreasuryAmount,
+        uint256 swapUnwindFeeLPAmount,
+        uint256 swapUnwindFeeTreasuryAmount,
         uint256 closingTimestamp
     ) external returns (AmmInternalTypes.OpenSwapItem memory closedSwap);
 

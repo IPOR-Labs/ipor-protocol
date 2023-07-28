@@ -33,7 +33,15 @@ library IporSwapLogic {
         uint256 wadLiquidationDepositAmount,
         uint256 iporPublicationFeeAmount,
         uint256 openingFeeRate
-    ) internal pure returns (uint256 collateral, uint256 notional, uint256 openingFee) {
+    )
+        internal
+        pure
+        returns (
+            uint256 collateral,
+            uint256 notional,
+            uint256 openingFee
+        )
+    {
         require(
             wadTotalAmount > wadLiquidationDepositAmount + iporPublicationFeeAmount,
             AmmErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
@@ -127,18 +135,18 @@ library IporSwapLogic {
     /// @notice Calculates the swap unwind opening fee amount for a given swap, closing timestamp and IBT price from IporOracle.
     /// @param swap Swap structure
     /// @param closingTimestamp moment when swap is closed, represented in seconds without 18 decimals
-    /// @param openingFeeRateCfg opening fee rate taken from Protocol configuration, represented in 18 decimals
-    /// @return swapOpeningFeeAmount swap opening fee amount, represented in 18 decimals
-    function calculateSwapUnwindOpeningFeeAmount(
+    /// @param unwindingFeeRateCfg opening fee rate taken from Protocol configuration, represented in 18 decimals
+    /// @return swapUnwindFeeAmount swap unwind fee amount, represented in 18 decimals
+    function calculateSwapUnwindFeeAmount(
         AmmTypes.Swap memory swap,
         uint256 closingTimestamp,
-        uint256 openingFeeRateCfg
-    ) internal pure returns (uint256 swapOpeningFeeAmount) {
+        uint256 unwindingFeeRateCfg
+    ) internal pure returns (uint256 swapUnwindFeeAmount) {
         require(closingTimestamp >= swap.openTimestamp, AmmErrors.CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP);
 
-        swapOpeningFeeAmount = IporMath.division(
+        swapUnwindFeeAmount = IporMath.division(
             swap.notional *
-                openingFeeRateCfg *
+                unwindingFeeRateCfg *
                 IporMath.division(
                     ((getSwapEndTimestamp(swap) - swap.openTimestamp) - (closingTimestamp - swap.openTimestamp)) * 1e18,
                     365 days
@@ -264,10 +272,11 @@ library IporSwapLogic {
     /// @param openingFeeForTreasurePortionRate opening fee for treasury portion rate taken from Protocol configuration, represented in 18 decimals
     /// @return liquidityPoolAmount liquidity pool portion of opening fee, represented in 18 decimals
     /// @return treasuryAmount treasury portion of opening fee, represented in 18 decimals
-    function splitOpeningFeeAmount(
-        uint256 openingFeeAmount,
-        uint256 openingFeeForTreasurePortionRate
-    ) internal pure returns (uint256 liquidityPoolAmount, uint256 treasuryAmount) {
+    function splitOpeningFeeAmount(uint256 openingFeeAmount, uint256 openingFeeForTreasurePortionRate)
+        internal
+        pure
+        returns (uint256 liquidityPoolAmount, uint256 treasuryAmount)
+    {
         treasuryAmount = IporMath.division(openingFeeAmount * openingFeeForTreasurePortionRate, 1e18);
         liquidityPoolAmount = openingFeeAmount - treasuryAmount;
     }
