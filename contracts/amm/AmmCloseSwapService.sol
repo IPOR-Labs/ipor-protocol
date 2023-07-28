@@ -186,7 +186,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         if (closingSwapDetails.swapUnwindRequired == true) {
             (
                 closingSwapDetails.swapUnwindPnlValue,
-                closingSwapDetails.swapUnwindOpeningFeeAmount,
+                closingSwapDetails.swapUnwindFeeAmount,
                 closingSwapDetails.swapUnwindFeeLPAmount,
                 closingSwapDetails.swapUnwindFeeTreasuryAmount,
                 closingSwapDetails.pnlValue
@@ -572,7 +572,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         }
     }
 
-    /// @return pnlValue pnl value include (substract) unwind fee (lp and treasury), value represented in 18 decimals
+    /// @return pnlValue pnl value include (subtract) unwind fee (lp and treasury), value represented in 18 decimals
     /// @return swapUnwindFeeLPAmount swap unwind opening fee amount, value represented in 18 decimals
     /// @return swapUnwindFeeTreasuryAmount swap unwind opening fee amount, value represented in 18 decimals
     function _calculatePnlValue(
@@ -642,8 +642,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
     /// @return swapUnwindFeeTreasuryAmount swap unwind fee amount for Treasury, value represented in 18 decimals
     /// @return swapPnlValue swap PnL value, value represented in 18 decimals
     /// @dev swapUnwindFeeAmount = swapUnwindFeeLPAmount + swapUnwindFeeTreasuryAmount
-    /// @dev swapPnlValue include (substract) swapUnwindFeeAmount (unwind fee lp and treasury),
-    /// and take into account invariant that Swap PnL can not be higher than swap collateral.
+    /// @dev swapPnlValue include (subtract) swapUnwindFeeAmount (unwind fee lp and treasury),
+    /// and take into account invariant that Swap PnL value can not be higher than swap collateral.
     function _calculateSwapUnwindWhenUnwindRequired(
         AmmTypes.SwapDirection direction,
         uint256 closeTimestamp,
@@ -690,13 +690,21 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
 
         swapUnwindFeeAmount = swap.calculateSwapUnwindFeeAmount(closeTimestamp, poolCfg.unwindingFeeRate);
 
+        /// @dev transaction cannot be processed if there is insufficient collateral to cover potential loss and unwind fee
+        /// @dev swapUnwindPnlValue is not taken into account because it is a optional / virtual value, could be cut during normalization below
+        //TODO: clear it up
+        if (swap.collateral.toInt256() + swapPnlValueToDate < swapUnwindFeeAmount.toInt256()) {
+            revert(AmmErrors.CANNOT_UNWIND_INSUFFICIENT_COLLATERAL);
+        }
+
         (swapUnwindFeeLPAmount, swapUnwindFeeTreasuryAmount) = IporSwapLogic.splitOpeningFeeAmount(
             swapUnwindFeeAmount,
             poolCfg.unwindingFeeTreasuryPortionRate
         );
 
-        swapPnlValue = swapPnlValueToDate + swapUnwindPnlValue - swapUnwindFeeAmount.toInt256();
-        swapPnlValue = IporSwapLogic.normalizePnlValue(swap.collateral, swapPnlValue);
+        swapPnlValue =
+            IporSwapLogic.normalizePnlValue(swap.collateral, swapPnlValueToDate + swapUnwindPnlValue) -
+            swapUnwindFeeAmount.toInt256();
     }
 
     /**

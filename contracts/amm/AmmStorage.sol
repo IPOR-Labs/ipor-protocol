@@ -101,10 +101,12 @@ contract AmmStorage is
         return _lastSwapId;
     }
 
-    function getLastOpenedSwap(
-        IporTypes.SwapTenor tenor,
-        uint256 direction
-    ) external view override returns (AmmInternalTypes.OpenSwapItem memory) {
+    function getLastOpenedSwap(IporTypes.SwapTenor tenor, uint256 direction)
+        external
+        view
+        override
+        returns (AmmInternalTypes.OpenSwapItem memory)
+    {
         return
             direction == 0
                 ? _openedSwapsPayFixed[tenor].swaps[_openedSwapsPayFixed[tenor].headSwapId]
@@ -144,10 +146,12 @@ contract AmmStorage is
             );
     }
 
-    function getSwap(
-        AmmTypes.SwapDirection direction,
-        uint256 swapId
-    ) external view override returns (AmmTypes.Swap memory) {
+    function getSwap(AmmTypes.SwapDirection direction, uint256 swapId)
+        external
+        view
+        override
+        returns (AmmTypes.Swap memory)
+    {
         uint32 id = swapId.toUint32();
         StorageInternalTypes.Swap storage swap;
 
@@ -242,10 +246,12 @@ contract AmmStorage is
         _balances.liquidityPool = _balances.liquidityPool - assetAmount.toUint128();
     }
 
-    function updateStorageWhenOpenSwapPayFixedInternal(
-        AmmTypes.NewSwap memory newSwap,
-        uint256 cfgIporPublicationFee
-    ) external override onlyRouter returns (uint256) {
+    function updateStorageWhenOpenSwapPayFixedInternal(AmmTypes.NewSwap memory newSwap, uint256 cfgIporPublicationFee)
+        external
+        override
+        onlyRouter
+        returns (uint256)
+    {
         uint256 id = _updateSwapsWhenOpen(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, newSwap);
         _updateBalancesWhenOpenSwapPayFixed(
             newSwap.collateral,
@@ -293,12 +299,7 @@ contract AmmStorage is
         uint256 closingTimestamp
     ) external override onlyRouter returns (AmmInternalTypes.OpenSwapItem memory closedSwap) {
         _updateSwapsWhenClosePayFixed(swap);
-        _updateBalancesWhenCloseSwapPayFixed(
-            swap,
-            pnlValue,
-            swapUnwindFeeLPAmount,
-            swapUnwindFeeTreasuryAmount
-        );
+        _updateBalancesWhenCloseSwapPayFixed(swap, pnlValue, swapUnwindFeeLPAmount, swapUnwindFeeTreasuryAmount);
         _updateSoapIndicatorsWhenCloseSwapPayFixed(swap, closingTimestamp);
         return _updateOpenedSwapWhenClosePayFixed(swap.tenor, swap.id);
     }
@@ -311,20 +312,16 @@ contract AmmStorage is
         uint256 closingTimestamp
     ) external override onlyRouter returns (AmmInternalTypes.OpenSwapItem memory closedSwap) {
         _updateSwapsWhenCloseReceiveFixed(swap);
-        _updateBalancesWhenCloseSwapReceiveFixed(
-            swap,
-            pnlValue,
-            swapUnwindFeeLPAmount,
-            swapUnwindFeeTreasuryAmount
-        );
+        _updateBalancesWhenCloseSwapReceiveFixed(swap, pnlValue, swapUnwindFeeLPAmount, swapUnwindFeeTreasuryAmount);
         _updateSoapIndicatorsWhenCloseSwapReceiveFixed(swap, closingTimestamp);
         return _updateOpenedSwapWhenCloseReceiveFixed(swap.tenor, swap.id);
     }
 
-    function updateStorageWhenWithdrawFromAssetManagement(
-        uint256 withdrawnAmount,
-        uint256 vaultBalance
-    ) external override onlyAmmTreasury {
+    function updateStorageWhenWithdrawFromAssetManagement(uint256 withdrawnAmount, uint256 vaultBalance)
+        external
+        override
+        onlyAmmTreasury
+    {
         uint256 currentVaultBalance = _balances.vault;
         // We nedd this because for compound if we deposit and withdraw we could get negative intrest based on rounds
         require(vaultBalance + withdrawnAmount >= currentVaultBalance, AmmErrors.INTEREST_FROM_STRATEGY_BELOW_ZERO);
@@ -337,10 +334,11 @@ contract AmmStorage is
         _balances.vault = vaultBalance.toUint128();
     }
 
-    function updateStorageWhenDepositToAssetManagement(
-        uint256 depositAmount,
-        uint256 vaultBalance
-    ) external override onlyAmmTreasury {
+    function updateStorageWhenDepositToAssetManagement(uint256 depositAmount, uint256 vaultBalance)
+        external
+        override
+        onlyAmmTreasury
+    {
         require(vaultBalance >= depositAmount, AmmErrors.VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE);
 
         uint256 currentVaultBalance = _balances.vault;
@@ -353,9 +351,11 @@ contract AmmStorage is
         _balances.liquidityPool = liquidityPoolBalance.toUint128();
     }
 
-    function updateStorageWhenTransferToCharlieTreasuryInternal(
-        uint256 transferredAmount
-    ) external override onlyRouter {
+    function updateStorageWhenTransferToCharlieTreasuryInternal(uint256 transferredAmount)
+        external
+        override
+        onlyRouter
+    {
         require(transferredAmount > 0, IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER);
 
         uint256 balance = _balances.iporPublicationFee;
@@ -530,25 +530,25 @@ contract AmmStorage is
         if (pnlValue > 0) {
             /// @dev Buyer earns, AMM (LP) looses
             require(_balances.liquidityPool >= absPnlValue, AmmErrors.CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW);
-            /// @dev When AMM (LP) looses, then  always substract all pnlValue
+            /// @dev When AMM (LP) looses, then  always subtract all pnlValue
             _balances.liquidityPool =
                 _balances.liquidityPool -
-                absPnlValue.toUint128() +
-                swapUnwindFeeLPAmount.toUint128();
+                absPnlValue.toUint128() -
+                swapUnwindFeeTreasuryAmount.toUint128();
         } else {
             /// @dev AMM earns, Buyer looses,
             _balances.liquidityPool =
                 _balances.liquidityPool +
-                absPnlValue.toUint128() +
-                swapUnwindFeeLPAmount.toUint128();
+                absPnlValue.toUint128() -
+                swapUnwindFeeTreasuryAmount.toUint128();
         }
         _balances.treasury = _balances.treasury + swapUnwindFeeTreasuryAmount.toUint128();
     }
 
-    function _updateSwapsWhenOpen(
-        AmmTypes.SwapDirection direction,
-        AmmTypes.NewSwap memory newSwap
-    ) internal returns (uint256) {
+    function _updateSwapsWhenOpen(AmmTypes.SwapDirection direction, AmmTypes.NewSwap memory newSwap)
+        internal
+        returns (uint256)
+    {
         _lastSwapId++;
         uint32 id = _lastSwapId;
 
@@ -700,10 +700,9 @@ contract AmmStorage is
         );
     }
 
-    function _updateSoapIndicatorsWhenCloseSwapReceiveFixed(
-        AmmTypes.Swap memory swap,
-        uint256 closingTimestamp
-    ) internal {
+    function _updateSoapIndicatorsWhenCloseSwapReceiveFixed(AmmTypes.Swap memory swap, uint256 closingTimestamp)
+        internal
+    {
         AmmStorageTypes.SoapIndicators memory rf = AmmStorageTypes.SoapIndicators(
             _soapIndicatorsReceiveFixed.hypotheticalInterestCumulative,
             _soapIndicatorsReceiveFixed.totalNotional,
@@ -745,10 +744,10 @@ contract AmmStorage is
         _openedSwapsPayFixed[tenor].swaps[headSwapId].nextSwapId = swapId.toUint32();
     }
 
-    function _updateOpenedSwapWhenClosePayFixed(
-        IporTypes.SwapTenor tenor,
-        uint256 swapId
-    ) internal returns (AmmInternalTypes.OpenSwapItem memory closedSwap) {
+    function _updateOpenedSwapWhenClosePayFixed(IporTypes.SwapTenor tenor, uint256 swapId)
+        internal
+        returns (AmmInternalTypes.OpenSwapItem memory closedSwap)
+    {
         uint32 headSwapId = _openedSwapsPayFixed[tenor].headSwapId;
         AmmInternalTypes.OpenSwapItem memory swap = _openedSwapsPayFixed[tenor].swaps[swapId.toUint32()];
         if (swap.openSwapTimestamp == 0) {
@@ -788,10 +787,10 @@ contract AmmStorage is
         _openedSwapsReceiveFixed[tenor].swaps[headSwapId].nextSwapId = swapId.toUint32();
     }
 
-    function _updateOpenedSwapWhenCloseReceiveFixed(
-        IporTypes.SwapTenor tenor,
-        uint256 swapId
-    ) internal returns (AmmInternalTypes.OpenSwapItem memory closedSwap) {
+    function _updateOpenedSwapWhenCloseReceiveFixed(IporTypes.SwapTenor tenor, uint256 swapId)
+        internal
+        returns (AmmInternalTypes.OpenSwapItem memory closedSwap)
+    {
         uint32 headSwapId = _openedSwapsReceiveFixed[tenor].headSwapId;
         AmmInternalTypes.OpenSwapItem memory swap = _openedSwapsReceiveFixed[tenor].swaps[swapId.toUint32()];
         if (swap.openSwapTimestamp == 0) {

@@ -98,13 +98,13 @@ contract AmmUnwindSwap is TestCommons {
 
         int256 expectedSwapPnlValueToDateOne = -13299129121611997911;
         int256 expectedSwapUnwindAmountOne = -119662692291211422847;
-        uint256 expectedOpeningFeeLpAmountOne = 29145104043000041192;
-        uint256 expectedOpeningFeeTreasuryAmountOne = 14579841942471256;
+        uint256 expectedUnwindFeeLpAmountOne = 29145104043000041192;
+        uint256 expectedUnwindFeeTreasuryAmountOne = 14579841942471256;
 
         int256 expectedSwapPnlValueToDateTwo = -43675964363614309616;
-        int256 expectedSwapUnwindAmountTwo = -70953638111401068366;
-        uint256 expectedOpeningFeeLpAmountTwo = 16473326053178158123;
-        uint256 expectedOpeningFeeTreasuryAmountTwo = 8240783418298228;
+        int256 expectedSwapUnwindAmountTwo = -70953641475019627183;
+        uint256 expectedUnwindFeeLpAmountTwo = 16473326053178158123;
+        uint256 expectedUnwindFeeTreasuryAmountTwo = 8240783418298228;
 
         _iporProtocol.asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_admin, liquidityAmount);
@@ -154,8 +154,8 @@ contract AmmUnwindSwap is TestCommons {
             swapOne.id,
             expectedSwapPnlValueToDateOne,
             expectedSwapUnwindAmountOne,
-            expectedOpeningFeeLpAmountOne,
-            expectedOpeningFeeTreasuryAmountOne
+            expectedUnwindFeeLpAmountOne,
+            expectedUnwindFeeTreasuryAmountOne
         );
         _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, new uint256[](0));
 
@@ -167,8 +167,8 @@ contract AmmUnwindSwap is TestCommons {
             swapTwo.id,
             expectedSwapPnlValueToDateTwo,
             expectedSwapUnwindAmountTwo,
-            expectedOpeningFeeLpAmountTwo,
-            expectedOpeningFeeTreasuryAmountTwo
+            expectedUnwindFeeLpAmountTwo,
+            expectedUnwindFeeTreasuryAmountTwo
         );
 
         swapPfIds[0] = 2;
@@ -187,13 +187,13 @@ contract AmmUnwindSwap is TestCommons {
 
         int256 expectedSwapPnlValueToDateOne = -13298938086225219915;
         int256 expectedSwapUnwindAmountOne = -119662325687633544168;
-        uint256 expectedOpeningFeeLpAmountOne = 29145104043000041192;
-        uint256 expectedOpeningFeeTreasuryAmountOne = 14579841942471256;
+        uint256 expectedUnwindFeeLpAmountOne = 29145104043000041192;
+        uint256 expectedUnwindFeeTreasuryAmountOne = 14579841942471256;
 
         int256 expectedSwapPnlValueToDateTwo = -43673905437684851567;
-        int256 expectedSwapUnwindAmountTwo = -70953275080543619994;
-        uint256 expectedOpeningFeeLpAmountTwo = 16473326053178158123;
-        uint256 expectedOpeningFeeTreasuryAmountTwo = 8240783418298228;
+        int256 expectedSwapUnwindAmountTwo = -70953278444402619173;
+        uint256 expectedUnwindFeeLpAmountTwo = 16473326053178158123;
+        uint256 expectedUnwindFeeTreasuryAmountTwo = 8240783418298228;
 
         _iporProtocol.asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_admin, liquidityAmount);
@@ -241,8 +241,8 @@ contract AmmUnwindSwap is TestCommons {
             swapOne.id,
             expectedSwapPnlValueToDateOne,
             expectedSwapUnwindAmountOne,
-            expectedOpeningFeeLpAmountOne,
-            expectedOpeningFeeTreasuryAmountOne
+            expectedUnwindFeeLpAmountOne,
+            expectedUnwindFeeTreasuryAmountOne
         );
 
         uint256[] memory swapPfIds = new uint256[](0);
@@ -259,8 +259,8 @@ contract AmmUnwindSwap is TestCommons {
             swapTwo.id,
             expectedSwapPnlValueToDateTwo,
             expectedSwapUnwindAmountTwo,
-            expectedOpeningFeeLpAmountTwo,
-            expectedOpeningFeeTreasuryAmountTwo
+            expectedUnwindFeeLpAmountTwo,
+            expectedUnwindFeeTreasuryAmountTwo
         );
 
         swapRfIds[0] = 2;

@@ -118,4 +118,7 @@ library AmmErrors {
 
     /// @notice Average interest rate cannot be zero when close swap
     string public constant AVERAGE_INTEREST_RATE_WHEN_CLOSE_SWAP_CANNOT_BE_ZERO = "IPOR_337";
+
+    /// @notice Cannot unwind when close swap, because collateral is too low to cover potential loss and unwind fee.
+    string public constant CANNOT_UNWIND_INSUFFICIENT_COLLATERAL = "IPOR_338";
 }

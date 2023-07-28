@@ -158,8 +158,9 @@ interface IAmmStorage {
     /// @notice Updates structures in the storage: swaps, balances, SOAP indicators when closing Receive-Fixed swap.
     /// @dev Function is only available to AmmCloseSwapService, it can be executed only by IPOR Protocol Router as internal interaction.
     /// @param swap The swap structure containing IPOR swap information.
-    /// @param pnlValue The amount that the trader has earned or lost on the swap, represented in 18 decimals.
-    ///              It can be negative.
+    /// @param pnlValue The amount that the trader has earned or lost on the swap, represented in 18 decimals. It can be negative.
+    /// @param swapUnwindFeeLPAmount Swap Unwind Fee amount stored in Liquidity Pool balance, represented in 18 decimals.
+    /// @param swapUnwindFeeTreasuryAmount Swap Unwind Fee amount stored in treasury balance, represented in 18 decimals.
     /// @param closingTimestamp The moment when the swap was closed.
     /// @return closedSwap A memory struct representing the closed swap.
     function updateStorageWhenCloseSwapReceiveFixedInternal(
