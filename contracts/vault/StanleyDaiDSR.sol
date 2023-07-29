@@ -263,13 +263,13 @@ IStanleyInternal
     }
 
 
-    function grandMaxAllowanceForSpender(address asset, address spender) external override onlyOwner {
-        IERC20Upgradeable(asset).safeApprove(spender, Constants.MAX_VALUE);
-    }
-
-    function revokeAllowanceForSpender(address asset, address spender) external override onlyOwner {
-        IERC20Upgradeable(asset).safeApprove(spender, 0);
-    }
+//    function grandMaxAllowanceForSpender(address asset, address spender) external override onlyOwner {
+//        IERC20Upgradeable(asset).safeApprove(spender, Constants.MAX_VALUE);
+//    }
+//
+//    function revokeAllowanceForSpender(address asset, address spender) external override onlyOwner {
+//        IERC20Upgradeable(asset).safeApprove(spender, 0);
+//    }
 
     function pause() external override onlyOwner {
         _pause();

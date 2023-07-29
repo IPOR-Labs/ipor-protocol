@@ -10,6 +10,7 @@ import "../../contracts/oracles/IporOracle.sol";
 import "../../contracts/vault/StanleyDai.sol";
 import "../../contracts/vault/strategies/StrategyCompound.sol";
 import "../../contracts/vault/strategies/StrategyAave.sol";
+import "../../contracts/vault/strategies/StrategyDsr.sol";
 import "../../contracts/amm/pool/Joseph.sol";
 import "../../contracts/amm/pool/JosephDai.sol";
 import "../../contracts/amm/Milton.sol";
@@ -20,6 +21,7 @@ import "../../contracts/mocks/stanley/MockStrategy.sol";
 import "../../contracts/vault/interfaces/aave/IAaveIncentivesController.sol";
 
 contract DaiAmm is Test, TestCommons {
+    address private constant _temporary = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
     address private constant _algorithmFacade = 0x9D4BD8CB9DA419A9cA1343A5340eD4Ce07E85140;
     address private constant _comptrollerAddress = 0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B;
     address private constant _compTokenAddress = 0xc00e94Cb662C3520282E6f5717214004A7f26888;
@@ -32,6 +34,10 @@ contract DaiAmm is Test, TestCommons {
     address public constant dai = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
     address public constant cDai = 0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643;
     address public constant aDai = 0x028171bCA77440897B824Ca71D1c56caC55b68A3;
+    address public constant sDai = 0x83F20F44975D03b1b09e64809B757c47f942BEeA;
+
+    address public constant dsrManager = 0x373238337Bfe1146fb49989fc222523f83081dDb;
+    address public constant pot = 0x197E90f9FAD81970bA7976f33CbD77088E5D7cf7;
 
     address public ivDai;
     address public ipDai;
@@ -43,6 +49,7 @@ contract DaiAmm is Test, TestCommons {
     StrategyCompound public strategyCompoundV2;
     StrategyAave public strategyAave;
     StrategyAave public strategyAaveV2;
+    StrategyDsr public strategyDsr;
 
     Joseph public joseph;
     Milton public milton;
@@ -59,7 +66,10 @@ contract DaiAmm is Test, TestCommons {
         strategyCompoundV2 = _createCompoundStrategy();
         strategyAave = _createAaveStrategy();
         strategyAaveV2 = _createAaveStrategy();
+        //        _createStanleyEmptyImpl();
         _createStanley();
+        strategyDsr = _createDsrStrategy();
+
         _createMiltonStorage();
         _createMiltonSpreadModel();
         _createIporOracle();
@@ -160,6 +170,15 @@ contract DaiAmm is Test, TestCommons {
         return StrategyAave(address(proxy));
     }
 
+    function _createDsrStrategy() internal returns (StrategyDsr) {
+        StrategyDsr implementation = new StrategyDsr(dai, sDai, address(stanley), dsrManager, pot);
+        ERC1967Proxy proxy = new ERC1967Proxy(
+            address(implementation),
+            abi.encodeWithSignature("initialize()")
+        );
+        return StrategyDsr(address(proxy));
+    }
+
     function _createStanley() internal {
         StanleyDai implementation = new StanleyDai();
         ERC1967Proxy proxy = new ERC1967Proxy(
@@ -170,6 +189,22 @@ contract DaiAmm is Test, TestCommons {
                 ivDai,
                 address(strategyAave),
                 address(strategyCompound)
+            )
+        );
+
+        stanley = Stanley(address(proxy));
+    }
+
+    function _createStanleyEmptyImpl() internal {
+        StanleyDai implementation = new StanleyDai();
+        ERC1967Proxy proxy = new ERC1967Proxy(
+            address(implementation),
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                dai,
+                ivDai,
+                address(_temporary),
+                address(_temporary)
             )
         );
 
@@ -255,7 +290,7 @@ contract DaiAmm is Test, TestCommons {
     }
 
     function _createAaveIncentivesController() internal {
-       aaveIncentivesController = IAaveIncentivesController(_aaveIncentiveAddress);
+        aaveIncentivesController = IAaveIncentivesController(_aaveIncentiveAddress);
     }
 
     function _setupJoseph(address owner) internal {
