@@ -14,6 +14,7 @@ import "../../libraries/math/IporMath.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 import "../interfaces/dsr/IDsrManager.sol";
 import "../interfaces/dsr/IPot.sol";
+import "../interfaces/dsr/ISavingsDai.sol";
 import "../../interfaces/IStrategyDsr.sol";
 import "forge-std/console2.sol";
 
@@ -28,10 +29,11 @@ contract StrategyDsr is
     using SafeCast for uint256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
+    uint256 private constant RAY = 10**27;
+
     address internal immutable _asset;
     address internal immutable _shareToken;
     address internal immutable _stanley;
-    address internal immutable _dsrManager;
     address internal immutable _pot;
 
     modifier onlyStanley() {
@@ -43,21 +45,16 @@ contract StrategyDsr is
     constructor(
         address asset,
         address shareToken,
-        address stanley,
-        address dsrManager,
-        address pot
+        address stanley
     ) {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(shareToken != address(0), IporErrors.WRONG_ADDRESS);
         require(stanley != address(0), IporErrors.WRONG_ADDRESS);
-        require(dsrManager != address(0), IporErrors.WRONG_ADDRESS);
-        require(pot != address(0), IporErrors.WRONG_ADDRESS);
 
         _asset = asset;
         _shareToken = shareToken;
         _stanley = stanley;
-        _dsrManager = dsrManager;
-        _pot = pot;
+        _pot = ISavingsDai(shareToken).pot();
 
         _disableInitializers();
     }
@@ -66,7 +63,8 @@ contract StrategyDsr is
         __Pausable_init();
         __Ownable_init();
         __UUPSUpgradeable_init();
-        IERC20Upgradeable(_asset).safeApprove(dsrManager, type(uint256).max);
+
+        IERC20Upgradeable(_asset).safeApprove(_shareToken, type(uint256).max);
     }
 
     function getVersion() external pure override returns (uint256) {
@@ -111,9 +109,9 @@ contract StrategyDsr is
         );
     }
 
-    function balanceOf() external override returns (uint256) {
-        uint256 balance = IDsrManager(_dsrManager).daiBalance(_asset);
-        return balance;
+    function balanceOf() external view override returns (uint256) {
+        uint256 shares = ISavingsDai(_shareToken).balanceOf(address(this));
+        return ISavingsDai(_shareToken).convertToAssets(shares);
     }
 
     function deposit(uint256 wadAmount)
@@ -123,10 +121,8 @@ contract StrategyDsr is
         onlyStanley
         returns (uint256 depositedAmount)
     {
-        console2.log("Approve 1");
         IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(this), wadAmount);
-        console2.log("Approve 2");
-        IDsrManager(_dsrManager).join(address(this), wadAmount);
+        ISavingsDai(_shareToken).deposit(wadAmount, address(this));
         depositedAmount = wadAmount;
     }
 
@@ -137,7 +133,7 @@ contract StrategyDsr is
         onlyStanley
         returns (uint256 withdrawnAmount)
     {
-        IDsrManager(_dsrManager).exit(_msgSender(), wadAmount);
+        ISavingsDai(_shareToken).withdraw(wadAmount, _msgSender(), address(this));
         withdrawnAmount = wadAmount;
     }
 

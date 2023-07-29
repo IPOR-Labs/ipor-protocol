@@ -36,9 +36,6 @@ contract DaiAmm is Test, TestCommons {
     address public constant aDai = 0x028171bCA77440897B824Ca71D1c56caC55b68A3;
     address public constant sDai = 0x83F20F44975D03b1b09e64809B757c47f942BEeA;
 
-    address public constant dsrManager = 0x373238337Bfe1146fb49989fc222523f83081dDb;
-    address public constant pot = 0x197E90f9FAD81970bA7976f33CbD77088E5D7cf7;
-
     address public ivDai;
     address public ipDai;
 
@@ -171,7 +168,7 @@ contract DaiAmm is Test, TestCommons {
     }
 
     function _createDsrStrategy() internal returns (StrategyDsr) {
-        StrategyDsr implementation = new StrategyDsr(dai, sDai, address(stanley), dsrManager, pot);
+        StrategyDsr implementation = new StrategyDsr(dai, sDai, address(stanley));
         ERC1967Proxy proxy = new ERC1967Proxy(
             address(implementation),
             abi.encodeWithSignature("initialize()")
