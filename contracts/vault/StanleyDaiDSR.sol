@@ -105,7 +105,7 @@ IStanleyInternal
     }
 
     function totalBalance(address who) external view override returns (uint256) {
-        return _totalBalance(who);
+        return _totalBalance();
     }
 
     function calculateExchangeRate() external view override returns (uint256 exchangeRate) {
@@ -146,23 +146,6 @@ IStanleyInternal
         vaultBalance = _calculateTotalBalance(strategiesData) + depositedAmount;
     }
 
-    function _getMaxApyStrategy(StrategiesData memory strategiesData)
-    internal
-    view
-    returns (
-        StrategyData[] memory sortedStrategies
-    )
-    {
-        StrategyData[] memory strategies = new StrategyData[](3);
-        strategiesData.aave.apr = IStrategy(strategiesData.aave.strategy).getApr();
-        strategies[0] = strategiesData.aave;
-        strategiesData.compound.apr = IStrategy(strategiesData.compound.strategy).getApr();
-        strategies[1] = strategiesData.compound;
-        strategiesData.dsr.apr = IStrategy(strategiesData.dsr.strategy).getApr();
-        strategies[2] = strategiesData.dsr;
-
-        sortedStrategies = _sortApr(strategies);
-    }
 
     function withdraw(uint256 amount)
     external
@@ -252,24 +235,23 @@ IStanleyInternal
         withdrawnAmount = IporMath.convertToWad(assetBalanceStanley, _getDecimals());
 
 
-            StrategiesData memory strategiesData = _getStrategiesBalances();
+        StrategiesData memory strategiesData = _getStrategiesBalances();
 
         if (assetBalanceStanley > 0) {
             //Always transfer all assets from Stanley to Milton
             IERC20Upgradeable(_asset).safeTransfer(_msgSender(), assetBalanceStanley);
         }
 
-        return (withdrawnAmount, _calculateTotalBalance(strategiesData) - withdrawnAmount);
+        return (withdrawnAmount, _calculateTotalBalance(strategiesData));
     }
 
+    function grandMaxAllowanceForSpender(address asset, address spender) external onlyOwner {
+        IERC20Upgradeable(asset).safeApprove(spender, Constants.MAX_VALUE);
+    }
 
-//    function grandMaxAllowanceForSpender(address asset, address spender) external override onlyOwner {
-//        IERC20Upgradeable(asset).safeApprove(spender, Constants.MAX_VALUE);
-//    }
-//
-//    function revokeAllowanceForSpender(address asset, address spender) external override onlyOwner {
-//        IERC20Upgradeable(asset).safeApprove(spender, 0);
-//    }
+    function revokeAllowanceForSpender(address asset, address spender) external onlyOwner {
+        IERC20Upgradeable(asset).safeApprove(spender, 0);
+    }
 
     function pause() external override onlyOwner {
         _pause();
@@ -279,11 +261,30 @@ IStanleyInternal
         _unpause();
     }
 
+
+    function _getMaxApyStrategy(StrategiesData memory strategiesData)
+    internal
+    view
+    returns (
+        StrategyData[] memory sortedStrategies
+    )
+    {
+        StrategyData[] memory strategies = new StrategyData[](3);
+        strategiesData.aave.apr = IStrategy(strategiesData.aave.strategy).getApr();
+        strategies[0] = strategiesData.aave;
+        strategiesData.compound.apr = IStrategy(strategiesData.compound.strategy).getApr();
+        strategies[1] = strategiesData.compound;
+        strategiesData.dsr.apr = IStrategy(strategiesData.dsr.strategy).getApr();
+        strategies[2] = strategiesData.dsr;
+
+        sortedStrategies = _sortApr(strategies);
+    }
+
     function _getDecimals() internal pure virtual returns (uint256) {
         return 18;
     }
 
-    function _totalBalance(address who) internal view returns (uint256) {
+    function _totalBalance() internal view returns (uint256) {
         return _calculateTotalBalance(_getStrategiesBalances());
     }
 
@@ -294,11 +295,13 @@ IStanleyInternal
         StrategiesData memory strategiesData
     )
     {
+        strategiesData.aave.strategy = _strategyAave;
         strategiesData.aave.balance = IStrategy(_strategyAave).balanceOf();
+        strategiesData.compound.strategy = _strategyCompound;
         strategiesData.compound.balance = IStrategy(_strategyCompound).balanceOf();
+        strategiesData.dsr.strategy = _strategyDsr;
         strategiesData.dsr.balance = IStrategy(_strategyDsr).balanceOf();
     }
-
 
     function _calculateTotalBalance(StrategiesData memory strategiesData)
     internal
@@ -341,7 +344,7 @@ IStanleyInternal
         if (i < right) _quickSortApr(arr, i, right);
     }
 
-
+// @dev deprecated functions
     function migrateAssetToStrategyWithMaxApr() external whenNotPaused onlyOwner {}
 
     function setStrategyAave(address newStrategyAddr) external override whenNotPaused onlyOwner {}
