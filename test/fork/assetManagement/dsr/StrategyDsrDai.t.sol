@@ -8,7 +8,7 @@ import "../../DaiAmm.sol";
 import "../../../../contracts/vault/interfaces/dsr/ISavingsDai.sol";
 import "../../../../contracts/vault/interfaces/dsr/IDsrManager.sol";
 
-contract StanleyAaveDaiTest is Test, TestCommons {
+contract StanleyDsrDaiTest is Test, TestCommons {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     address internal _admin;
     address internal _user;
