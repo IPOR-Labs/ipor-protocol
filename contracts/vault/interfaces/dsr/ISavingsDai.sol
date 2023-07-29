@@ -3,6 +3,7 @@ pragma solidity 0.8.16;
 
 interface ISavingsDai {
     function balanceOf(address owner) external view returns (uint256);
+
     function pot() external view returns (address);
 
     function transfer(address to, uint256 value) external returns (bool);
