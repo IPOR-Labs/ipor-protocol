@@ -8,17 +8,14 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-//import "@openzeppelin/contracts/access/Ownable.sol";
 import "../../libraries/errors/StanleyErrors.sol";
 import "../../libraries/math/IporMath.sol";
 import "../../security/IporOwnableUpgradeable.sol";
-import "../interfaces/dsr/IDsrManager.sol";
 import "../interfaces/dsr/IPot.sol";
 import "../interfaces/dsr/ISavingsDai.sol";
 import "../../interfaces/IStrategyDsr.sol";
-import "forge-std/console2.sol";
 
-contract StrategyDsr is
+contract StrategyDsrDai is
     Initializable,
     PausableUpgradeable,
     ReentrancyGuardUpgradeable,

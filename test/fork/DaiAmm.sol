@@ -10,7 +10,7 @@ import "../../contracts/oracles/IporOracle.sol";
 import "../../contracts/vault/StanleyDai.sol";
 import "../../contracts/vault/strategies/StrategyCompound.sol";
 import "../../contracts/vault/strategies/StrategyAave.sol";
-import "../../contracts/vault/strategies/StrategyDsr.sol";
+import "../../contracts/vault/strategies/StrategyDsrDai.sol";
 import "../../contracts/amm/pool/Joseph.sol";
 import "../../contracts/amm/pool/JosephDai.sol";
 import "../../contracts/amm/Milton.sol";
@@ -46,7 +46,7 @@ contract DaiAmm is Test, TestCommons {
     StrategyCompound public strategyCompoundV2;
     StrategyAave public strategyAave;
     StrategyAave public strategyAaveV2;
-    StrategyDsr public strategyDsr;
+    StrategyDsrDai public strategyDsr;
 
     Joseph public joseph;
     Milton public milton;
@@ -167,13 +167,13 @@ contract DaiAmm is Test, TestCommons {
         return StrategyAave(address(proxy));
     }
 
-    function _createDsrStrategy() internal returns (StrategyDsr) {
-        StrategyDsr implementation = new StrategyDsr(dai, sDai, address(stanley));
+    function _createDsrStrategy() internal returns (StrategyDsrDai) {
+        StrategyDsrDai implementation = new StrategyDsrDai(dai, sDai, address(stanley));
         ERC1967Proxy proxy = new ERC1967Proxy(
             address(implementation),
             abi.encodeWithSignature("initialize()")
         );
-        return StrategyDsr(address(proxy));
+        return StrategyDsrDai(address(proxy));
     }
 
     function _createStanley() internal {

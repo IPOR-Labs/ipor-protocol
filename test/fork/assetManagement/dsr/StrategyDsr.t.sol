@@ -21,7 +21,7 @@ contract StanleyAaveDaiTest is Test, TestCommons {
     function testShouldGetApr() public {
         // given
         DaiAmm amm = new DaiAmm(_admin);
-        StrategyDsr strategy = amm.strategyDsr();
+        StrategyDsrDai strategy = amm.strategyDsr();
 
         // when
         uint256 apr = strategy.getApr();
@@ -35,7 +35,7 @@ contract StanleyAaveDaiTest is Test, TestCommons {
         // given
         uint256 amount = 1000 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
-        StrategyDsr strategy = amm.strategyDsr();
+        StrategyDsrDai strategy = amm.strategyDsr();
 
         deal(amm.dai(), address(amm.stanley()), 1000_000 * 1e18);
 
@@ -64,7 +64,7 @@ contract StanleyAaveDaiTest is Test, TestCommons {
         // given
         uint256 amount = 1000 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
-        StrategyDsr strategy = amm.strategyDsr();
+        StrategyDsrDai strategy = amm.strategyDsr();
 
         deal(amm.dai(), address(amm.stanley()), 1000_000 * 1e18);
 
@@ -91,7 +91,7 @@ contract StanleyAaveDaiTest is Test, TestCommons {
         // given
         uint256 amount = 1000 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
-        StrategyDsr strategy = amm.strategyDsr();
+        StrategyDsrDai strategy = amm.strategyDsr();
 
         deal(amm.dai(), address(amm.stanley()), 1000_000 * 1e18);
 
@@ -128,7 +128,7 @@ contract StanleyAaveDaiTest is Test, TestCommons {
         address dsrManager = 0x373238337Bfe1146fb49989fc222523f83081dDb;
         uint256 amount = 1000 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
-        StrategyDsr strategy = amm.strategyDsr();
+        StrategyDsrDai strategy = amm.strategyDsr();
 
         deal(amm.dai(), address(amm.stanley()), 1000_000 * 1e18);
 
@@ -163,7 +163,7 @@ contract StanleyAaveDaiTest is Test, TestCommons {
         // given
         uint256 amount = 1000 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
-        StrategyDsr strategy = amm.strategyDsr();
+        StrategyDsrDai strategy = amm.strategyDsr();
 
         deal(amm.dai(), address(amm.stanley()), 1000_000 * 1e18);
 
@@ -201,7 +201,7 @@ contract StanleyAaveDaiTest is Test, TestCommons {
         // given
         uint256 amount = 1000 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
-        StrategyDsr strategy = amm.strategyDsr();
+        StrategyDsrDai strategy = amm.strategyDsr();
 
         deal(amm.dai(), address(amm.stanley()), 1000_000 * 1e18);
 
@@ -240,7 +240,7 @@ contract StanleyAaveDaiTest is Test, TestCommons {
         // given
         uint256 amount = 1000 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
-        StrategyDsr strategy = amm.strategyDsr();
+        StrategyDsrDai strategy = amm.strategyDsr();
 
         deal(amm.dai(), address(amm.stanley()), 1000_000 * 1e18);
 
@@ -279,7 +279,7 @@ contract StanleyAaveDaiTest is Test, TestCommons {
         // given
         uint256 amount = 1000 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
-        StrategyDsr strategy = amm.strategyDsr();
+        StrategyDsrDai strategy = amm.strategyDsr();
 
         deal(amm.dai(), address(amm.stanley()), 1000_000 * 1e18);
 
@@ -309,7 +309,7 @@ contract StanleyAaveDaiTest is Test, TestCommons {
 
         uint256 amount = 1000 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
-        StrategyDsr strategy = amm.strategyDsr();
+        StrategyDsrDai strategy = amm.strategyDsr();
 
         deal(amm.dai(), address(amm.stanley()), 1000_000 * 1e18);
 
@@ -348,7 +348,7 @@ contract StanleyAaveDaiTest is Test, TestCommons {
 
         uint256 amount = 1000 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
-        StrategyDsr strategy = amm.strategyDsr();
+        StrategyDsrDai strategy = amm.strategyDsr();
 
         deal(amm.dai(), address(amm.stanley()), 1000_000 * 1e18);
 
