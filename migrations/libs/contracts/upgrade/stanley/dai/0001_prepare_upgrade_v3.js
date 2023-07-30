@@ -14,6 +14,7 @@ module.exports = async function (deployer, _network, addresses, Stanley) {
 
     const stanleyImplAddress = await prepareUpgrade(stanleyProxyAddress, Stanley, {
         unsafeAllow: ["constructor", "state-variable-immutable"],
+        unsafeAllowRenames: true,
         constructorArgs: [asset, milton, strategyAave, strategyCompound, strategyDsr],
         deployer: deployer,
         kind: "uups",

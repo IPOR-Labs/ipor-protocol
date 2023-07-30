@@ -10,6 +10,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../libraries/Constants.sol";
 import "../libraries/math/IporMath.sol";
+import "../interfaces/IIvToken.sol";
 import "../interfaces/IStrategy.sol";
 import "../interfaces/IStrategyDsr.sol";
 import "../interfaces/IStanleyDsr.sol";
@@ -35,7 +36,7 @@ contract StanleyDsrDai is
     /// @dev deprecated
     address internal _assetDeprecated;
     /// @dev deprecated
-    address internal _ivTokenDeprecated;
+    IIvToken internal _ivTokenDeprecated;
     /// @dev deprecated
     address internal _miltonDeprecated;
     /// @dev deprecated
