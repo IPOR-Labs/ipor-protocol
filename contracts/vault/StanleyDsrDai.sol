@@ -146,7 +146,7 @@ contract StanleyDsrDai is
         return _strategyDsr;
     }
 
-    function totalBalance() external view override returns (uint256) {
+    function totalBalance(address who) external view override returns (uint256) {
         return _totalBalance();
     }
 

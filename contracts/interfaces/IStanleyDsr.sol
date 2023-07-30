@@ -19,7 +19,7 @@ interface IStanleyDsr {
 
     /// @notice Gets total balance of Milton (AmmTreasury), transferred assets to Stanley.
     /// @return Total balance for specific account given as a parameter, represented in 18 decimals.
-    function totalBalance() external view returns (uint256);
+    function totalBalance(address who) external view returns (uint256);
 
     /// @notice Deposits ERC20 underlying assets to Stanley. Function available only for Milton.
     /// @dev Emits {Deposit} event from Stanley, emits {Mint} event from ivToken, emits {Transfer} event from ERC20 asset.
