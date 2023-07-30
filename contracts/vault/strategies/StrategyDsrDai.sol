@@ -14,7 +14,6 @@ import "../../security/IporOwnableUpgradeable.sol";
 import "../interfaces/dsr/IPot.sol";
 import "../interfaces/dsr/ISavingsDai.sol";
 import "../../interfaces/IStrategyDsr.sol";
-import "forge-std/console2.sol";
 
 contract StrategyDsrDai is
     Initializable,
@@ -80,7 +79,6 @@ contract StrategyDsrDai is
     }
 
     function getApr() external view override returns (uint256 apy) {
-        console2.log("dsr=", IPot(_pot).dsr());
         return IporMath.convertToWad(IporMath.rayPow(IPot(_pot).dsr(), 365 days) - 1e27, 27);
     }
 
