@@ -16,8 +16,9 @@ interface IStrategyDsr {
     /// @notice Returns strategy's share token address
     function getShareToken() external view returns (address);
 
-    /// @notice Gets annualised interest rate (APR) for this strategy.
+    /// @notice Gets annualised interest rate (APR) for this strategy. Returns current APY from Dai Savings Rate.
     /// @return APR value, represented in 18 decimals.
+    /// @dev APY = dsr^(365*24*60*60), dsr represented in 27 decimals
     function getApr() external view returns (uint256);
 
     /// @notice Gets balance for given asset (underlying / stablecoin) allocated to this strategy.

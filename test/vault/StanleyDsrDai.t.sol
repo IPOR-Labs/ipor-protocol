@@ -5,11 +5,11 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "../TestCommons.sol";
 import "./MockStrategyWithTransfers.sol";
-import "../../contracts/vault/StanleyDaiDSR.sol";
+import "../../contracts/vault/StanleyDsrDai.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import "./MockMiltonForStanley.sol";
 
-
-contract StanleyAaveDaiTest is TestCommons {
+contract StanleyDsrDaiTest is TestCommons {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     address internal _admin;
     address internal _milton;
@@ -17,13 +17,12 @@ contract StanleyAaveDaiTest is TestCommons {
     MockStrategyWithTransfers internal _strategyAave;
     MockStrategyWithTransfers internal _strategyCompound;
     MockStrategyWithTransfers internal _strategyDsr;
-    StanleyDaiDSR internal _stanley;
-
+    StanleyDsrDai internal _stanley;
 
     function setUp() public {
         _admin = vm.rememberKey(1);
-        _milton = vm.rememberKey(2);
-        (_dai,,) = _getStables();
+        (_dai, , ) = _getStables();
+        _milton = address(new MockMiltonForStanley(address(_dai)));
         _strategyAave = new MockStrategyWithTransfers();
         _strategyAave.setAsset(address(_dai));
         _strategyCompound = new MockStrategyWithTransfers();
@@ -31,9 +30,18 @@ contract StanleyAaveDaiTest is TestCommons {
         _strategyDsr = new MockStrategyWithTransfers();
         _strategyDsr.setAsset(address(_dai));
 
-        StanleyDaiDSR stanleyImpl = new StanleyDaiDSR(address(_dai), address(_strategyAave), address(_strategyCompound), address(_strategyDsr), _milton);
-        ERC1967Proxy proxy = new ERC1967Proxy(address(stanleyImpl), abi.encodeWithSignature("initialize()"));
-        _stanley = StanleyDaiDSR(address(proxy));
+        StanleyDsrDai stanleyImpl = new StanleyDsrDai(
+            address(_dai),
+            _milton,
+            address(_strategyAave),
+            address(_strategyCompound),
+            address(_strategyDsr)
+        );
+        ERC1967Proxy proxy = new ERC1967Proxy(
+            address(stanleyImpl),
+            abi.encodeWithSignature("initialize()")
+        );
+        _stanley = StanleyDsrDai(address(proxy));
         vm.prank(_milton);
         _dai.approve(address(_stanley), type(uint256).max);
         _stanley.grandMaxAllowanceForSpender(address(_dai), address(_strategyAave));
@@ -41,12 +49,6 @@ contract StanleyAaveDaiTest is TestCommons {
         _stanley.grandMaxAllowanceForSpender(address(_dai), address(_strategyDsr));
 
         deal(address(_dai), _milton, 1_000_000e18);
-
-
-    }
-
-    function test() external {
-        assertTrue(true);
     }
 
     function testShouldDepositToAave() external {
@@ -205,7 +207,6 @@ contract StanleyAaveDaiTest is TestCommons {
         assertEq(0, stanleyBalanceBefore);
         assertEq(997_000e18, miltonBalanceAfter);
         assertEq(0, stanleyBalanceAfter);
-
     }
 
     function testShouldWithdrawFromAaveWhenAaveHasLowerApr() external {
@@ -459,7 +460,9 @@ contract StanleyAaveDaiTest is TestCommons {
 
         // when
         vm.startPrank(_milton);
-        (uint256 withdrawnAmount, uint256 vaultBalance) = _stanley.withdrawAllFromStrategy(address(_strategyAave));
+        (uint256 withdrawnAmount, uint256 vaultBalance) = _stanley.withdrawAllFromStrategy(
+            address(_strategyAave)
+        );
         vm.stopPrank();
 
         // then
@@ -505,7 +508,9 @@ contract StanleyAaveDaiTest is TestCommons {
 
         // when
         vm.startPrank(_milton);
-        (uint256 withdrawnAmount, uint256 vaultBalance) = _stanley.withdrawAllFromStrategy(address(_strategyCompound));
+        (uint256 withdrawnAmount, uint256 vaultBalance) = _stanley.withdrawAllFromStrategy(
+            address(_strategyCompound)
+        );
         vm.stopPrank();
 
         // then
@@ -551,7 +556,9 @@ contract StanleyAaveDaiTest is TestCommons {
 
         // when
         vm.startPrank(_milton);
-        (uint256 withdrawnAmount, uint256 vaultBalance) = _stanley.withdrawAllFromStrategy(address(_strategyDsr));
+        (uint256 withdrawnAmount, uint256 vaultBalance) = _stanley.withdrawAllFromStrategy(
+            address(_strategyDsr)
+        );
         vm.stopPrank();
 
         // then
@@ -574,6 +581,4 @@ contract StanleyAaveDaiTest is TestCommons {
         assertEq(997_000e18, miltonBalanceAfter);
         assertEq(0, stanleyBalanceAfter);
     }
-
-
 }

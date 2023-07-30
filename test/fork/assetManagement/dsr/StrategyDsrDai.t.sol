@@ -26,6 +26,8 @@ contract StanleyDsrDaiTest is Test, TestCommons {
         // when
         uint256 apr = strategy.getApr();
 
+        console2.log("apr", apr);
+
         //then
         assertLe(apr, 1e18);
         assertGt(apr, 0);

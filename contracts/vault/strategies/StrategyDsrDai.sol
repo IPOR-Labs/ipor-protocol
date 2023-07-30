@@ -14,6 +14,7 @@ import "../../security/IporOwnableUpgradeable.sol";
 import "../interfaces/dsr/IPot.sol";
 import "../interfaces/dsr/ISavingsDai.sol";
 import "../../interfaces/IStrategyDsr.sol";
+import "forge-std/console2.sol";
 
 contract StrategyDsrDai is
     Initializable,
@@ -25,8 +26,6 @@ contract StrategyDsrDai is
 {
     using SafeCast for uint256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
-
-    uint256 private constant RAY = 10**27;
 
     address internal immutable _asset;
     address internal immutable _shareToken;
@@ -80,30 +79,9 @@ contract StrategyDsrDai is
         return _stanley;
     }
 
-    /// @notice Returns current APY from Dai Savings Rate
-    /// @dev APY = dsr^(365*24*60*60), dsr represented in 27 decimals
-    /// @return apy Current APY, represented in 18 decimals
     function getApr() external view override returns (uint256 apy) {
-        uint256 aproxRatePerDay = (IPot(_pot).dsr() - 1e27) * 1 days + 1e27;
-
-        uint256 ratePerDay2 = IporMath.division(aproxRatePerDay * aproxRatePerDay, 1e27);
-        uint256 ratePerDay4 = IporMath.division(ratePerDay2 * ratePerDay2, 1e27);
-        uint256 ratePerDay8 = IporMath.division(ratePerDay4 * ratePerDay4, 1e27);
-        uint256 ratePerDay16 = IporMath.division(ratePerDay8 * ratePerDay8, 1e27);
-        uint256 ratePerDay32 = IporMath.division(ratePerDay16 * ratePerDay16, 1e27);
-        uint256 ratePerDay64 = IporMath.division(ratePerDay32 * ratePerDay32, 1e27);
-        uint256 ratePerDay128 = IporMath.division(ratePerDay64 * ratePerDay64, 1e27);
-        uint256 ratePerDay256 = IporMath.division(ratePerDay128 * ratePerDay128, 1e27);
-        uint256 ratePerDay40 = IporMath.division(ratePerDay32 * ratePerDay8, 1e27);
-        uint256 ratePerDay104 = IporMath.division(ratePerDay64 * ratePerDay40, 1e27);
-        uint256 ratePerDay360 = IporMath.division(ratePerDay256 * ratePerDay104, 1e27);
-        apy = IporMath.convertToWad(
-            IporMath.division(
-                ratePerDay360 * IporMath.division(ratePerDay4 * aproxRatePerDay, 1e27),
-                1e27
-            ) - 1e27,
-            27
-        );
+        console2.log("dsr=", IPot(_pot).dsr());
+        return IporMath.convertToWad(IporMath.rayPow(IPot(_pot).dsr(), 365 days) - 1e27, 27);
     }
 
     function balanceOf() external view override returns (uint256) {

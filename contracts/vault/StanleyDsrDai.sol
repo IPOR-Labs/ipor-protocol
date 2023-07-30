@@ -1,23 +1,41 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 
-import "./Stanley.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "../libraries/Constants.sol";
+import "../libraries/math/IporMath.sol";
+import "../interfaces/IStrategy.sol";
+import "../interfaces/IStrategyDsr.sol";
+import "../interfaces/IStanleyDsr.sol";
+import "../security/IporOwnableUpgradeable.sol";
 
-contract StanleyDaiDSR is
-Initializable,
-PausableUpgradeable,
-ReentrancyGuardUpgradeable,
-UUPSUpgradeable,
-IporOwnableUpgradeable,
-IStanley,
-IStanleyInternal
+interface IAsset {
+    function getAsset() external view returns (address);
+}
+
+contract StanleyDsrDai is
+    Initializable,
+    PausableUpgradeable,
+    ReentrancyGuardUpgradeable,
+    UUPSUpgradeable,
+    IporOwnableUpgradeable,
+    IStanleyDsr
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
+
+    uint256 private constant _SUPPORTED_STRATEGIES_VOLUME = 3;
+    uint256 private constant _HIGHEST_APY_STRATEGY_ARRAY_INDEX = 2;
 
     /// @dev deprecated
     address internal _assetDeprecated;
     /// @dev deprecated
-    IIvToken internal _ivTokenDeprecated;
+    address internal _ivTokenDeprecated;
     /// @dev deprecated
     address internal _miltonDeprecated;
     /// @dev deprecated
@@ -51,15 +69,40 @@ IStanleyInternal
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address asset,
+        address milton,
         address strategyAave,
         address strategyCompound,
-        address strategyDsr,
-        address milton
+        address strategyDsr
     ) {
-        _disableInitializers();
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
+        require(milton != address(0), IporErrors.WRONG_ADDRESS);
+        require(strategyAave != address(0), IporErrors.WRONG_ADDRESS);
+        require(strategyCompound != address(0), IporErrors.WRONG_ADDRESS);
+        require(strategyDsr != address(0), IporErrors.WRONG_ADDRESS);
+
         require(
             _getDecimals() == IERC20MetadataUpgradeable(asset).decimals(),
+            IporErrors.WRONG_DECIMALS
+        );
+
+        require(
+            _getDecimals() == IERC20MetadataUpgradeable(IAsset(milton).getAsset()).decimals(),
+            IporErrors.WRONG_DECIMALS
+        );
+
+        require(
+            _getDecimals() == IERC20MetadataUpgradeable(IAsset(strategyAave).getAsset()).decimals(),
+            IporErrors.WRONG_DECIMALS
+        );
+
+        require(
+            _getDecimals() ==
+                IERC20MetadataUpgradeable(IAsset(strategyCompound).getAsset()).decimals(),
+            IporErrors.WRONG_DECIMALS
+        );
+
+        require(
+            _getDecimals() == IERC20MetadataUpgradeable(IAsset(strategyDsr).getAsset()).decimals(),
             IporErrors.WRONG_DECIMALS
         );
 
@@ -68,6 +111,8 @@ IStanleyInternal
         _strategyAave = strategyAave;
         _strategyCompound = strategyCompound;
         _strategyDsr = strategyDsr;
+
+        _disableInitializers();
     }
 
     function initialize() public initializer {
@@ -84,10 +129,6 @@ IStanleyInternal
         return _asset;
     }
 
-    function getIvToken() external view returns (address) {
-        return address(0);
-    }
-
     function getMilton() external view override returns (address) {
         return _milton;
     }
@@ -100,44 +141,40 @@ IStanleyInternal
         return _strategyCompound;
     }
 
-    function getStrategyDsr() external view returns (address) {
+    function getStrategyDsr() external view override returns (address) {
         return _strategyDsr;
     }
 
-    function totalBalance(address who) external view override returns (uint256) {
+    function totalBalance() external view override returns (uint256) {
         return _totalBalance();
-    }
-
-    function calculateExchangeRate() external view override returns (uint256 exchangeRate) {
     }
 
     /**
      * @dev to deposit asset in higher apy strategy.
-     * @notice only Milton can deposit
+     * @notice only Milton DAI can deposit
      * @param amount underlying token amount represented in 18 decimals
      */
     function deposit(uint256 amount)
-    external
-    override
-    whenNotPaused
-    onlyMilton
-    returns (uint256 vaultBalance, uint256 depositedAmount)
+        external
+        override
+        whenNotPaused
+        onlyMilton
+        returns (uint256 vaultBalance, uint256 depositedAmount)
     {
         require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-        uint256 assetAmount = IporMath.convertWadToAssetDecimals(amount, _getDecimals());
-        require(assetAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
-        StrategiesData memory strategiesData = _getStrategiesBalances();
+        StrategiesData memory strategiesData = _getStrategiesData();
         StrategyData[] memory sortedStrategies = _getMaxApyStrategy(strategiesData);
 
-        IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(this), assetAmount);
+        IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(this), amount);
 
-        depositedAmount = IStrategy(sortedStrategies[2].strategy).deposit(amount);
+        depositedAmount = IStrategy(sortedStrategies[_HIGHEST_APY_STRATEGY_ARRAY_INDEX].strategy)
+            .deposit(amount);
 
         emit Deposit(
             block.timestamp,
             _msgSender(),
-            sortedStrategies[2].strategy,
+            sortedStrategies[_HIGHEST_APY_STRATEGY_ARRAY_INDEX].strategy,
             0,
             depositedAmount,
             0
@@ -146,63 +183,58 @@ IStanleyInternal
         vaultBalance = _calculateTotalBalance(strategiesData) + depositedAmount;
     }
 
-
     function withdraw(uint256 amount)
-    external
-    override
-    whenNotPaused
-    onlyMilton
-    returns (uint256 withdrawnAmount, uint256 vaultBalance)
+        external
+        override
+        whenNotPaused
+        onlyMilton
+        returns (uint256 withdrawnAmount, uint256 vaultBalance)
     {
         require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
         IERC20Upgradeable asset = IERC20Upgradeable(_asset);
-        IStrategy strategyAave = IStrategy(_strategyAave);
-        IStrategy strategyCompound = IStrategy(_strategyCompound);
 
-
-        StrategyData[] memory sortedStrategies = _getMaxApyStrategy(_getStrategiesBalances());
+        StrategyData[] memory sortedStrategies = _getMaxApyStrategy(_getStrategiesData());
 
         uint256 amountToWithdraw = amount;
 
-        for (uint256 i; i < 3; ++i) {
+        for (uint256 i; i < _SUPPORTED_STRATEGIES_VOLUME; ++i) {
             if (sortedStrategies[i].balance >= amountToWithdraw) {
                 IStrategy(sortedStrategies[i].strategy).withdraw(amountToWithdraw);
+                sortedStrategies[i].balance -= amountToWithdraw;
                 amountToWithdraw = 0;
             } else {
                 IStrategy(sortedStrategies[i].strategy).withdraw(sortedStrategies[i].balance);
                 amountToWithdraw -= sortedStrategies[i].balance;
+                sortedStrategies[i].balance = 0;
             }
+
             if (amountToWithdraw == 0) {
                 break;
             }
         }
 
+        withdrawnAmount = IERC20Upgradeable(_asset).balanceOf(address(this));
 
-        uint256 assetBalanceStanley = IERC20Upgradeable(_asset).balanceOf(address(this));
-        withdrawnAmount = IporMath.convertToWad(assetBalanceStanley, _getDecimals());
-
-
-        if (assetBalanceStanley > 0) {
+        if (withdrawnAmount > 0) {
             //Always transfer all assets from Stanley to Milton
-            IERC20Upgradeable(_asset).safeTransfer(_msgSender(), assetBalanceStanley);
+            IERC20Upgradeable(_asset).safeTransfer(_msgSender(), withdrawnAmount);
         }
 
-        return (withdrawnAmount, _calculateTotalBalance(_getStrategiesBalances()));
+        vaultBalance = _calculateTotalBalanceSorted(sortedStrategies);
     }
 
     function withdrawAll()
-    external
-    override
-    whenNotPaused
-    onlyMilton
-    returns (uint256 withdrawnAmount, uint256 vaultBalance)
+        external
+        override
+        whenNotPaused
+        onlyMilton
+        returns (uint256 withdrawnAmount, uint256 vaultBalance)
     {
         address msgSender = _msgSender();
         IERC20Upgradeable asset = IERC20Upgradeable(_asset);
 
-
-        StrategiesData memory strategiesData = _getStrategiesBalances();
+        StrategiesData memory strategiesData = _getStrategiesData();
 
         if (strategiesData.aave.balance > 0) {
             IStrategy(_strategyAave).withdraw(strategiesData.aave.balance);
@@ -214,35 +246,34 @@ IStanleyInternal
             IStrategy(_strategyDsr).withdraw(strategiesData.dsr.balance);
         }
 
-
-        uint256 assetBalanceStanley = asset.balanceOf(address(this));
+        withdrawnAmount = asset.balanceOf(address(this));
 
         //Always transfer all assets from Stanley to Milton
-        asset.safeTransfer(msgSender, assetBalanceStanley);
-
-        withdrawnAmount = IporMath.convertToWad(assetBalanceStanley, _getDecimals());
-
+        asset.safeTransfer(msgSender, withdrawnAmount);
     }
 
-    function withdrawAllFromStrategy(address strategy) external onlyMilton returns (uint256 withdrawnAmount, uint256 vaultBalance)  {
-        require(strategy == _strategyAave || strategy == _strategyCompound || strategy == _strategyDsr, IporErrors.WRONG_ADDRESS);
+    function withdrawAllFromStrategy(address strategy)
+        external
+        onlyMilton
+        returns (uint256 withdrawnAmount, uint256 vaultBalance)
+    {
+        require(
+            strategy == _strategyAave || strategy == _strategyCompound || strategy == _strategyDsr,
+            IporErrors.WRONG_ADDRESS
+        );
 
         uint256 balance = IStrategy(strategy).balanceOf();
 
         IStrategy(strategy).withdraw(balance);
 
-        uint256 assetBalanceStanley = IERC20Upgradeable(_asset).balanceOf(address(this));
-        withdrawnAmount = IporMath.convertToWad(assetBalanceStanley, _getDecimals());
+        withdrawnAmount = IERC20Upgradeable(_asset).balanceOf(address(this));
 
-
-        StrategiesData memory strategiesData = _getStrategiesBalances();
-
-        if (assetBalanceStanley > 0) {
+        if (withdrawnAmount > 0) {
             //Always transfer all assets from Stanley to Milton
-            IERC20Upgradeable(_asset).safeTransfer(_msgSender(), assetBalanceStanley);
+            IERC20Upgradeable(_asset).safeTransfer(_msgSender(), withdrawnAmount);
         }
 
-        return (withdrawnAmount, _calculateTotalBalance(strategiesData));
+        return (withdrawnAmount, _calculateTotalBalance(_getStrategiesData()));
     }
 
     function grandMaxAllowanceForSpender(address asset, address spender) external onlyOwner {
@@ -261,15 +292,12 @@ IStanleyInternal
         _unpause();
     }
 
-
     function _getMaxApyStrategy(StrategiesData memory strategiesData)
-    internal
-    view
-    returns (
-        StrategyData[] memory sortedStrategies
-    )
+        internal
+        view
+        returns (StrategyData[] memory sortedStrategies)
     {
-        StrategyData[] memory strategies = new StrategyData[](3);
+        StrategyData[] memory strategies = new StrategyData[](_SUPPORTED_STRATEGIES_VOLUME);
         strategiesData.aave.apr = IStrategy(strategiesData.aave.strategy).getApr();
         strategies[0] = strategiesData.aave;
         strategiesData.compound.apr = IStrategy(strategiesData.compound.strategy).getApr();
@@ -285,16 +313,10 @@ IStanleyInternal
     }
 
     function _totalBalance() internal view returns (uint256) {
-        return _calculateTotalBalance(_getStrategiesBalances());
+        return _calculateTotalBalance(_getStrategiesData());
     }
 
-    function _getStrategiesBalances()
-    internal
-    view
-    returns (
-        StrategiesData memory strategiesData
-    )
-    {
+    function _getStrategiesData() internal view returns (StrategiesData memory strategiesData) {
         strategiesData.aave.strategy = _strategyAave;
         strategiesData.aave.balance = IStrategy(_strategyAave).balanceOf();
         strategiesData.compound.strategy = _strategyCompound;
@@ -303,19 +325,27 @@ IStanleyInternal
         strategiesData.dsr.balance = IStrategy(_strategyDsr).balanceOf();
     }
 
+    function _calculateTotalBalanceSorted(StrategyData[] memory sortedStrategies)
+        internal
+        view
+        returns (uint256 totalBalance)
+    {
+        for (uint256 i; i < _SUPPORTED_STRATEGIES_VOLUME; ++i) {
+            totalBalance += sortedStrategies[i].balance;
+        }
+    }
+
     function _calculateTotalBalance(StrategiesData memory strategiesData)
-    internal
-    view
-    returns (uint256)
+        internal
+        view
+        returns (uint256)
     {
         return
             strategiesData.aave.balance +
             strategiesData.compound.balance +
-            strategiesData.dsr.balance + IERC20Upgradeable(_asset).balanceOf(address(this));
+            strategiesData.dsr.balance +
+            IERC20Upgradeable(_asset).balanceOf(address(this));
     }
-
-    //solhint-disable no-empty-blocks
-    function _authorizeUpgrade(address) internal override onlyOwner {}
 
     function _sortApr(StrategyData[] memory data) internal view returns (StrategyData[] memory) {
         _quickSortApr(data, int256(0), int256(data.length - 1));
@@ -344,17 +374,6 @@ IStanleyInternal
         if (i < right) _quickSortApr(arr, i, right);
     }
 
-// @dev deprecated functions
-    function migrateAssetToStrategyWithMaxApr() external whenNotPaused onlyOwner {}
-
-    function setStrategyAave(address newStrategyAddr) external override whenNotPaused onlyOwner {}
-
-    function setStrategyCompound(address newStrategyAddr)
-    external
-    override
-    whenNotPaused
-    onlyOwner
-    {}
-
-    function setMilton(address newMilton) external override whenNotPaused onlyOwner {}
+    //solhint-disable no-empty-blocks
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 }
