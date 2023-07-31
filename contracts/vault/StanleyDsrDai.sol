@@ -10,6 +10,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../libraries/Constants.sol";
 import "../libraries/math/IporMath.sol";
+import "../libraries/errors/StanleyErrors.sol";
 import "../interfaces/IIvToken.sol";
 import "../interfaces/IStrategy.sol";
 import "../interfaces/IStrategyDsr.sol";
@@ -168,9 +169,20 @@ contract StanleyDsrDai is
         StrategyData[] memory sortedStrategies = _getMaxApyStrategy(strategiesData);
 
         IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(this), amount);
+        // 0 when no deposited to any strategy, 1 amount deposited
+        uint256 wasDeposited;
+        for(uint256 i; i< _SUPPORTED_STRATEGIES_VOLUME; ++i){
+            try IStrategy(sortedStrategies[_HIGHEST_APY_STRATEGY_ARRAY_INDEX-i].strategy)
+            .deposit(amount) returns (uint256 amount) {
+                depositedAmount = amount;
+                wasDeposited = 1;
+                break;
+            } catch {
+                continue;
+            }
+        }
 
-        depositedAmount = IStrategy(sortedStrategies[_HIGHEST_APY_STRATEGY_ARRAY_INDEX].strategy)
-            .deposit(amount);
+        require(wasDeposited == 1, StanleyErrors.DEPOSIT_TO_STRATEGY_FAILED);
 
         emit Deposit(
             block.timestamp,
@@ -201,13 +213,23 @@ contract StanleyDsrDai is
 
         for (uint256 i; i < _SUPPORTED_STRATEGIES_VOLUME; ++i) {
             if (sortedStrategies[i].balance >= amountToWithdraw) {
-                IStrategy(sortedStrategies[i].strategy).withdraw(amountToWithdraw);
-                sortedStrategies[i].balance -= amountToWithdraw;
-                amountToWithdraw = 0;
+                try IStrategy(sortedStrategies[i].strategy).withdraw(amountToWithdraw) {
+                    sortedStrategies[i].balance -= amountToWithdraw;
+                    amountToWithdraw = 0;
+                    // todo emit event
+                } catch {
+                    //If strategy withdraw fails, try to withdraw from next strategy
+                    continue;
+                }
             } else {
-                IStrategy(sortedStrategies[i].strategy).withdraw(sortedStrategies[i].balance);
-                amountToWithdraw -= sortedStrategies[i].balance;
-                sortedStrategies[i].balance = 0;
+                try IStrategy(sortedStrategies[i].strategy).withdraw(sortedStrategies[i].balance) {
+                    amountToWithdraw -= sortedStrategies[i].balance;
+                    sortedStrategies[i].balance = 0;
+                    // todo emit event
+                } catch {
+                    //If strategy withdraw fails, try to withdraw from next strategy
+                    continue;
+                }
             }
 
             if (amountToWithdraw == 0) {
@@ -251,6 +273,7 @@ contract StanleyDsrDai is
 
         //Always transfer all assets from Stanley to Milton
         asset.safeTransfer(msgSender, withdrawnAmount);
+        // todo emit event
     }
 
     function withdrawAllFromStrategy(address strategy)

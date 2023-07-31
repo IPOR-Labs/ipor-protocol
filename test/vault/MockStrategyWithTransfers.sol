@@ -15,18 +15,24 @@ contract MockStrategyWithTransfers is IStrategy {
     address private _owner;
     address private _treasury;
     address private _treasuryManager;
+    bool private _paused;
+
+    modifier notPaused() {
+        require(!_paused, "MockStrategyWithTransfers: paused");
+        _;
+    }
 
     function getVersion() external pure override returns (uint256) {
         return 1;
     }
 
-    function deposit(uint256 amount) external override returns (uint256 depositedAmount) {
+    function deposit(uint256 amount) external override notPaused returns (uint256 depositedAmount) {
         _balance = _balance + amount;
         depositedAmount = amount;
         IERC20Upgradeable(_asset).transferFrom(msg.sender, address(this), amount);
     }
 
-    function withdraw(uint256 amount) external override returns (uint256 withdrawnAmount) {
+    function withdraw(uint256 amount) external override notPaused returns (uint256 withdrawnAmount) {
         _balance = _balance - amount;
         withdrawnAmount = amount;
         IERC20Upgradeable(_asset).transfer(msg.sender, amount);
@@ -36,9 +42,13 @@ contract MockStrategyWithTransfers is IStrategy {
         return _asset;
     }
 
-    function pause() external override {}
+    function pause() external override {
+        _paused = true;
+    }
 
-    function unpause() external override {}
+    function unpause() external override {
+        _paused = false;
+    }
 
     function setAsset(address asset) external {
         _asset = asset;

@@ -90,6 +90,90 @@ contract StanleyDsrDaiTest is TestCommons {
         assertEq(0, stanleyBalanceAfter);
     }
 
+    function testShouldDepositToCompoundWhenAaveIsPaused() external {
+        // given
+        _strategyAave.setApr(10e15);
+        _strategyAave.pause();
+        _strategyCompound.setApr(9e15);
+        _strategyDsr.setApr(8e15);
+
+        uint256 aaveBalanceBefore = _dai.balanceOf(address(_strategyAave));
+        uint256 compoundBalanceBefore = _dai.balanceOf(address(_strategyCompound));
+        uint256 dsrBalanceBefore = _dai.balanceOf(address(_strategyDsr));
+        uint256 miltonBalanceBefore = _dai.balanceOf(_milton);
+        uint256 stanleyBalanceBefore = _dai.balanceOf(address(_stanley));
+
+        // when
+        vm.startPrank(_milton);
+        (uint256 vaultBalance, uint256 depositedAmount) = _stanley.deposit(1_000e18);
+        vm.stopPrank();
+
+        // then
+
+        uint256 aaveBalanceAfter = _dai.balanceOf(address(_strategyAave));
+        uint256 compoundBalanceAfter = _dai.balanceOf(address(_strategyCompound));
+        uint256 dsrBalanceAfter = _dai.balanceOf(address(_strategyDsr));
+        uint256 miltonBalanceAfter = _dai.balanceOf(_milton);
+        uint256 stanleyBalanceAfter = _dai.balanceOf(address(_stanley));
+
+        assertEq(1_000e18, vaultBalance);
+        assertEq(1_000e18, depositedAmount);
+        assertEq(0, aaveBalanceBefore);
+        assertEq(0, compoundBalanceBefore);
+        assertEq(0, dsrBalanceBefore);
+        assertEq(0, aaveBalanceAfter);
+        assertEq(1_000e18, compoundBalanceAfter);
+        assertEq(0, dsrBalanceAfter);
+        assertEq(1_000_000e18, miltonBalanceBefore);
+        assertEq(0, stanleyBalanceBefore);
+        assertEq(999_000e18, miltonBalanceAfter);
+        assertEq(0, stanleyBalanceAfter);
+    }
+
+
+    function testShouldRevertWhenAllStrategiesIsPaused() external {
+        // given
+        _strategyAave.setApr(10e15);
+        _strategyAave.pause();
+        _strategyCompound.setApr(9e15);
+        _strategyCompound.pause();
+        _strategyDsr.setApr(8e15);
+        _strategyDsr.pause();
+
+        uint256 aaveBalanceBefore = _dai.balanceOf(address(_strategyAave));
+        uint256 compoundBalanceBefore = _dai.balanceOf(address(_strategyCompound));
+        uint256 dsrBalanceBefore = _dai.balanceOf(address(_strategyDsr));
+        uint256 miltonBalanceBefore = _dai.balanceOf(_milton);
+        uint256 stanleyBalanceBefore = _dai.balanceOf(address(_stanley));
+
+        // when
+        vm.startPrank(_milton);
+        vm.expectRevert(bytes(StanleyErrors.DEPOSIT_TO_STRATEGY_FAILED));
+        (uint256 vaultBalance, uint256 depositedAmount) = _stanley.deposit(1_000e18);
+        vm.stopPrank();
+
+        // then
+
+        uint256 aaveBalanceAfter = _dai.balanceOf(address(_strategyAave));
+        uint256 compoundBalanceAfter = _dai.balanceOf(address(_strategyCompound));
+        uint256 dsrBalanceAfter = _dai.balanceOf(address(_strategyDsr));
+        uint256 miltonBalanceAfter = _dai.balanceOf(_milton);
+        uint256 stanleyBalanceAfter = _dai.balanceOf(address(_stanley));
+
+        assertEq(0, vaultBalance);
+        assertEq(0, depositedAmount);
+        assertEq(0, aaveBalanceBefore);
+        assertEq(0, compoundBalanceBefore);
+        assertEq(0, dsrBalanceBefore);
+        assertEq(0, aaveBalanceAfter);
+        assertEq(0, compoundBalanceAfter);
+        assertEq(0, dsrBalanceAfter);
+        assertEq(1_000_000e18, miltonBalanceBefore);
+        assertEq(0, stanleyBalanceBefore);
+        assertEq(1_000_000e18, miltonBalanceAfter);
+        assertEq(0, stanleyBalanceAfter);
+    }
+
     function testShouldDepositToCompound() external {
         // given
         _strategyAave.setApr(10e15);
@@ -248,6 +332,53 @@ contract StanleyDsrDaiTest is TestCommons {
         assertEq(3_000e18, dsrBalanceBefore);
         assertEq(0, aaveBalanceAfter);
         assertEq(2_000e18, compoundBalanceAfter);
+        assertEq(3_000e18, dsrBalanceAfter);
+        assertEq(994_000e18, miltonBalanceBefore);
+        assertEq(0, stanleyBalanceBefore);
+        assertEq(995_000e18, miltonBalanceAfter);
+        assertEq(0, stanleyBalanceAfter);
+    }
+
+    function testShouldWithdrawFromCompoundWhenAaveWasPaused() external {
+        // given
+        _strategyAave.setApr(10e15);
+        _strategyCompound.setApr(9e15);
+        _strategyDsr.setApr(8e15);
+
+        vm.startPrank(_milton);
+        _stanley.deposit(1_000e18);
+        _strategyCompound.setApr(11e15);
+        _stanley.deposit(2_000e18);
+        _strategyDsr.setApr(12e15);
+        _stanley.deposit(3_000e18);
+        vm.stopPrank();
+        _strategyAave.pause();
+
+        uint256 aaveBalanceBefore = _dai.balanceOf(address(_strategyAave));
+        uint256 compoundBalanceBefore = _dai.balanceOf(address(_strategyCompound));
+        uint256 dsrBalanceBefore = _dai.balanceOf(address(_strategyDsr));
+        uint256 miltonBalanceBefore = _dai.balanceOf(_milton);
+        uint256 stanleyBalanceBefore = _dai.balanceOf(address(_stanley));
+
+        // when
+        vm.startPrank(_milton);
+        (uint256 withdrawnAmount, uint256 vaultBalance) = _stanley.withdraw(1_000e18);
+        vm.stopPrank();
+
+        // then
+        uint256 aaveBalanceAfter = _dai.balanceOf(address(_strategyAave));
+        uint256 compoundBalanceAfter = _dai.balanceOf(address(_strategyCompound));
+        uint256 dsrBalanceAfter = _dai.balanceOf(address(_strategyDsr));
+        uint256 miltonBalanceAfter = _dai.balanceOf(_milton);
+        uint256 stanleyBalanceAfter = _dai.balanceOf(address(_stanley));
+
+        assertEq(5_000e18, vaultBalance);
+        assertEq(1_000e18, withdrawnAmount);
+        assertEq(1_000e18, aaveBalanceBefore);
+        assertEq(2_000e18, compoundBalanceBefore);
+        assertEq(3_000e18, dsrBalanceBefore);
+        assertEq(1_000e18, aaveBalanceAfter);
+        assertEq(1_000e18, compoundBalanceAfter);
         assertEq(3_000e18, dsrBalanceAfter);
         assertEq(994_000e18, miltonBalanceBefore);
         assertEq(0, stanleyBalanceBefore);

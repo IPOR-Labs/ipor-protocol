@@ -21,4 +21,6 @@ library StanleyErrors {
 
     // problem with redeem shared token
     string public constant SHARED_TOKEN_REDEEM_ERROR = "IPOR_506";
+
+    string public constant DEPOSIT_TO_STRATEGY_FAILED = "IPOR_507";
 }
