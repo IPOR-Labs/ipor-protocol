@@ -13,6 +13,7 @@ import "../../../../contracts/interfaces/IStanleyInternal.sol";
 contract StanleyAaveDaiTest is Test {
     address public constant dai = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
     address public constant sDai = 0x83F20F44975D03b1b09e64809B757c47f942BEeA;
+    address public constant ivDai = 0x8537b194BFf354c4738E9F3C81d67E3371DaDAf8;
     address public constant miltonDai = 0xEd7d74AA7eB1f12F83dA36DFaC1de2257b4e7523;
     address public constant josephDai = 0x086d4daab14741b195deE65aFF050ba184B65045;
     address public constant strategyAaveDai = 0x526d0047725D48BBc6e24C7B82A3e47C1AF1f62f;
@@ -113,6 +114,7 @@ contract StanleyAaveDaiTest is Test {
         console2.log("balanceCompound", balanceCompound);
 
     }
+
 //
 //    function testShouldRebalanceToDsrWhenRestIsPaused() public {
 //
@@ -138,7 +140,8 @@ contract StanleyAaveDaiTest is Test {
             miltonDai,
             strategyAaveDai,
             strategyCompoundDai,
-            address(strategyDsr)
+            address(strategyDsr),
+            ivDai
         );
 
         vm.prank(_iporProtocolOwner);

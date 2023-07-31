@@ -22,12 +22,12 @@ interface IAsset {
 }
 
 contract StanleyDsrDai is
-    Initializable,
-    PausableUpgradeable,
-    ReentrancyGuardUpgradeable,
-    UUPSUpgradeable,
-    IporOwnableUpgradeable,
-    IStanleyDsr
+Initializable,
+PausableUpgradeable,
+ReentrancyGuardUpgradeable,
+UUPSUpgradeable,
+IporOwnableUpgradeable,
+IStanleyDsr
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -50,6 +50,7 @@ contract StanleyDsrDai is
     address internal immutable _strategyAave;
     address internal immutable _strategyCompound;
     address internal immutable _strategyDsr;
+    address internal immutable _ivToken;
 
     struct StrategyData {
         address strategy;
@@ -74,13 +75,15 @@ contract StanleyDsrDai is
         address milton,
         address strategyAave,
         address strategyCompound,
-        address strategyDsr
+        address strategyDsr,
+        address ivToken
     ) {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(milton != address(0), IporErrors.WRONG_ADDRESS);
         require(strategyAave != address(0), IporErrors.WRONG_ADDRESS);
         require(strategyCompound != address(0), IporErrors.WRONG_ADDRESS);
         require(strategyDsr != address(0), IporErrors.WRONG_ADDRESS);
+        require(ivToken != address(0), IporErrors.WRONG_ADDRESS);
 
         require(
             _getDecimals() == IERC20MetadataUpgradeable(asset).decimals(),
@@ -99,7 +102,7 @@ contract StanleyDsrDai is
 
         require(
             _getDecimals() ==
-                IERC20MetadataUpgradeable(IAsset(strategyCompound).getAsset()).decimals(),
+            IERC20MetadataUpgradeable(IAsset(strategyCompound).getAsset()).decimals(),
             IporErrors.WRONG_DECIMALS
         );
 
@@ -113,6 +116,7 @@ contract StanleyDsrDai is
         _strategyAave = strategyAave;
         _strategyCompound = strategyCompound;
         _strategyDsr = strategyDsr;
+        _ivToken = ivToken;
 
         _disableInitializers();
     }
@@ -157,11 +161,11 @@ contract StanleyDsrDai is
      * @param amount underlying token amount represented in 18 decimals
      */
     function deposit(uint256 amount)
-        external
-        override
-        whenNotPaused
-        onlyMilton
-        returns (uint256 vaultBalance, uint256 depositedAmount)
+    external
+    override
+    whenNotPaused
+    onlyMilton
+    returns (uint256 vaultBalance, uint256 depositedAmount)
     {
         require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
@@ -171,8 +175,8 @@ contract StanleyDsrDai is
         IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(this), amount);
         // 0 when no deposited to any strategy, 1 amount deposited
         uint256 wasDeposited;
-        for(uint256 i; i< _SUPPORTED_STRATEGIES_VOLUME; ++i){
-            try IStrategy(sortedStrategies[_HIGHEST_APY_STRATEGY_ARRAY_INDEX-i].strategy)
+        for (uint256 i; i < _SUPPORTED_STRATEGIES_VOLUME; ++i) {
+            try IStrategy(sortedStrategies[_HIGHEST_APY_STRATEGY_ARRAY_INDEX - i].strategy)
             .deposit(amount) returns (uint256 amount) {
                 depositedAmount = amount;
                 wasDeposited = 1;
@@ -183,25 +187,28 @@ contract StanleyDsrDai is
         }
 
         require(wasDeposited == 1, StanleyErrors.DEPOSIT_TO_STRATEGY_FAILED);
+        uint256 exchangeRate = _calcExchangeRate(strategiesData);
+        uint256 ivTokenAmount = IporMath.division(amount * Constants.D18, exchangeRate);
+        IIvToken(_ivToken).mint(_msgSender(), ivTokenAmount);
 
         emit Deposit(
             block.timestamp,
             _msgSender(),
             sortedStrategies[_HIGHEST_APY_STRATEGY_ARRAY_INDEX].strategy,
-            0,
+            exchangeRate,
             depositedAmount,
-            0
+            ivTokenAmount
         );
 
         vaultBalance = _calculateTotalBalance(strategiesData) + depositedAmount;
     }
 
     function withdraw(uint256 amount)
-        external
-        override
-        whenNotPaused
-        onlyMilton
-        returns (uint256 withdrawnAmount, uint256 vaultBalance)
+    external
+    override
+    whenNotPaused
+    onlyMilton
+    returns (uint256 withdrawnAmount, uint256 vaultBalance)
     {
         require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
@@ -216,7 +223,6 @@ contract StanleyDsrDai is
                 try IStrategy(sortedStrategies[i].strategy).withdraw(amountToWithdraw) {
                     sortedStrategies[i].balance -= amountToWithdraw;
                     amountToWithdraw = 0;
-                    // todo emit event
                 } catch {
                     //If strategy withdraw fails, try to withdraw from next strategy
                     continue;
@@ -225,7 +231,6 @@ contract StanleyDsrDai is
                 try IStrategy(sortedStrategies[i].strategy).withdraw(sortedStrategies[i].balance) {
                     amountToWithdraw -= sortedStrategies[i].balance;
                     sortedStrategies[i].balance = 0;
-                    // todo emit event
                 } catch {
                     //If strategy withdraw fails, try to withdraw from next strategy
                     continue;
@@ -239,20 +244,42 @@ contract StanleyDsrDai is
 
         withdrawnAmount = IERC20Upgradeable(_asset).balanceOf(address(this));
 
+        uint256 exchangeRate = _calcExchangeRate(sortedStrategies);
+        uint256 ivTokenWithdrawnAmount = IporMath.division(
+            withdrawnAmount * Constants.D18,
+            exchangeRate
+        );
+        uint256 senderIvTokens = IIvToken(_ivToken).balanceOf(_msgSender());
+
+        if (ivTokenWithdrawnAmount > senderIvTokens) {
+            IIvToken(_ivToken).burn(_msgSender(), senderIvTokens);
+        } else {
+            IIvToken(_ivToken).burn(_msgSender(), ivTokenWithdrawnAmount);
+        }
+
         if (withdrawnAmount > 0) {
             //Always transfer all assets from Stanley to Milton
             IERC20Upgradeable(_asset).safeTransfer(_msgSender(), withdrawnAmount);
         }
 
+        emit Withdraw(
+            block.timestamp,
+            address(0x00),
+            _msgSender(),
+            exchangeRate,
+            withdrawnAmount,
+            ivTokenWithdrawnAmount
+        );
+
         vaultBalance = _calculateTotalBalanceSorted(sortedStrategies);
     }
 
     function withdrawAll()
-        external
-        override
-        whenNotPaused
-        onlyMilton
-        returns (uint256 withdrawnAmount, uint256 vaultBalance)
+    external
+    override
+    whenNotPaused
+    onlyMilton
+    returns (uint256 withdrawnAmount, uint256 vaultBalance)
     {
         address msgSender = _msgSender();
         IERC20Upgradeable asset = IERC20Upgradeable(_asset);
@@ -271,33 +298,20 @@ contract StanleyDsrDai is
 
         withdrawnAmount = asset.balanceOf(address(this));
 
+        uint256 ivBalance = IIvToken(_ivToken).balanceOf(msgSender);
+        uint256 exchangeRate = _calcExchangeRate(strategiesData);
+        IIvToken(_ivToken).burn(msgSender, ivBalance);
+
         //Always transfer all assets from Stanley to Milton
         asset.safeTransfer(msgSender, withdrawnAmount);
-        // todo emit event
-    }
-
-    function withdrawAllFromStrategy(address strategy)
-        external
-        onlyMilton
-        returns (uint256 withdrawnAmount, uint256 vaultBalance)
-    {
-        require(
-            strategy == _strategyAave || strategy == _strategyCompound || strategy == _strategyDsr,
-            IporErrors.WRONG_ADDRESS
+        emit Withdraw(
+            block.timestamp,
+            address(0x00),
+            _msgSender(),
+            exchangeRate,
+            withdrawnAmount,
+            ivBalance
         );
-
-        uint256 balance = IStrategy(strategy).balanceOf();
-
-        IStrategy(strategy).withdraw(balance);
-
-        withdrawnAmount = IERC20Upgradeable(_asset).balanceOf(address(this));
-
-        if (withdrawnAmount > 0) {
-            //Always transfer all assets from Stanley to Milton
-            IERC20Upgradeable(_asset).safeTransfer(_msgSender(), withdrawnAmount);
-        }
-
-        return (withdrawnAmount, _calculateTotalBalance(_getStrategiesData()));
     }
 
     function grandMaxAllowanceForSpender(address asset, address spender) external onlyOwner {
@@ -317,9 +331,9 @@ contract StanleyDsrDai is
     }
 
     function _getMaxApyStrategy(StrategiesData memory strategiesData)
-        internal
-        view
-        returns (StrategyData[] memory sortedStrategies)
+    internal
+    view
+    returns (StrategyData[] memory sortedStrategies)
     {
         StrategyData[] memory strategies = new StrategyData[](_SUPPORTED_STRATEGIES_VOLUME);
         strategiesData.aave.apr = IStrategy(strategiesData.aave.strategy).getApr();
@@ -350,25 +364,62 @@ contract StanleyDsrDai is
     }
 
     function _calculateTotalBalanceSorted(StrategyData[] memory sortedStrategies)
-        internal
-        view
-        returns (uint256 totalBalance)
+    internal
+    view
+    returns (uint256 totalBalance)
     {
         for (uint256 i; i < _SUPPORTED_STRATEGIES_VOLUME; ++i) {
             totalBalance += sortedStrategies[i].balance;
         }
+        totalBalance += IERC20Upgradeable(_asset).balanceOf(address(this));
     }
 
     function _calculateTotalBalance(StrategiesData memory strategiesData)
-        internal
-        view
-        returns (uint256)
+    internal
+    view
+    returns (uint256)
     {
         return
             strategiesData.aave.balance +
             strategiesData.compound.balance +
             strategiesData.dsr.balance +
             IERC20Upgradeable(_asset).balanceOf(address(this));
+    }
+
+    function _calcExchangeRate(StrategyData[] memory sortedStrategies)
+    internal
+    view
+    returns (
+        uint256 exchangeRate
+    )
+    {
+
+        uint256 totalAssetBalance = _calculateTotalBalanceSorted(sortedStrategies);
+        uint256 ivTokenTotalSupply = IIvToken(_ivToken).totalSupply();
+
+        if (totalAssetBalance == 0 || ivTokenTotalSupply == 0) {
+            exchangeRate = Constants.D18;
+        } else {
+            exchangeRate = IporMath.division(totalAssetBalance * Constants.D18, ivTokenTotalSupply);
+        }
+    }
+
+    function _calcExchangeRate(StrategiesData memory strategiesData)
+    internal
+    view
+    returns (
+        uint256 exchangeRate
+    )
+    {
+
+        uint256 totalAssetBalance = _calculateTotalBalance(strategiesData);
+        uint256 ivTokenTotalSupply = IIvToken(_ivToken).totalSupply();
+
+        if (totalAssetBalance == 0 || ivTokenTotalSupply == 0) {
+            exchangeRate = Constants.D18;
+        } else {
+            exchangeRate = IporMath.division(totalAssetBalance * Constants.D18, ivTokenTotalSupply);
+        }
     }
 
     function _sortApr(StrategyData[] memory data) internal view returns (StrategyData[] memory) {
