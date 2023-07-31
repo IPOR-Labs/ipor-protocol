@@ -203,9 +203,7 @@ abstract contract MiltonInternal is
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
-    function _withdrawFromStanley(uint256 assetAmount)
-        internal
-    {
+    function _withdrawFromStanley(uint256 assetAmount) internal {
         (uint256 withdrawnAmount, uint256 vaultBalance) = _getStanley().withdraw(assetAmount);
         _getMiltonStorage().updateStorageWhenWithdrawFromStanley(withdrawnAmount, vaultBalance);
     }

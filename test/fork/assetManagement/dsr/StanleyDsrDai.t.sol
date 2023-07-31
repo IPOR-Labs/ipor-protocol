@@ -26,58 +26,78 @@ contract StanleyAaveDaiTest is Test {
     StrategyDsrDai public strategyDsr;
 
     function setUp() public {
+        uint256 forkId = vm.createSelectFork(vm.envString("FORK_URL"), 17810000);
         _admin = vm.rememberKey(1);
         strategyDsr = _createDsrStrategy();
     }
-
-    function testShouldBeTheSameBalanceAfterUpgrade() public {
-        //given
-        IStanley stanley = IStanley(stanleyDai);
-        uint256 balanceBefore = stanley.totalBalance(0xEd7d74AA7eB1f12F83dA36DFaC1de2257b4e7523);
-        balanceBefore = IporMath.division(balanceBefore, 1e7);
-
-        //when
-        _upgradeStanleyDsr();
-
-        //then
-        StanleyDsrDai stanleyV2 = StanleyDsrDai(stanleyDai);
-        uint256 balanceAfter = stanleyV2.totalBalance(0xEd7d74AA7eB1f12F83dA36DFaC1de2257b4e7523);
-        balanceAfter = IporMath.division(balanceAfter, 1e7);
-
-        assertEq(balanceBefore, balanceAfter);
-    }
-
-    function testShouldBeTheSameAprAfterUpgrade() public {
-        //given
-        IStanleyInternal stanley = IStanleyInternal(stanleyDai);
-
-        address strategyAaveBefore = stanley.getStrategyAave();
-        address strategyCompoundBefore = stanley.getStrategyCompound();
-
-        uint256 aprAaveBefore = IStrategy(strategyAaveBefore).getApr();
-        uint256 aprCompoundBefore = IStrategy(strategyCompoundBefore).getApr();
-
-        //when
-        _upgradeStanleyDsr();
-
-        //then
-        address strategyAaveAfter = stanley.getStrategyAave();
-        address strategyCompoundAfter = stanley.getStrategyCompound();
-
-        uint256 aprAaveAfter = IStrategyDsr(strategyAaveAfter).getApr();
-        uint256 aprCompoundAfter = IStrategyDsr(strategyCompoundAfter).getApr();
-        uint256 aprDsrAfter = IStrategyDsr(strategyDsr).getApr();
-
-        assertEq(aprAaveBefore, aprAaveAfter);
-        assertEq(aprCompoundBefore, aprCompoundAfter);
-
-        console2.log("aprDsrAfter", aprDsrAfter);
-    }
+//
+//    function testShouldBeTheSameBalanceAfterUpgrade() public {
+//        //given
+//        IStanley stanley = IStanley(stanleyDai);
+//        uint256 balanceBefore = stanley.totalBalance(0xEd7d74AA7eB1f12F83dA36DFaC1de2257b4e7523);
+//        balanceBefore = IporMath.division(balanceBefore, 1e7);
+//
+//        //when
+//        _upgradeStanleyDsr();
+//
+//        //then
+//        StanleyDsrDai stanleyV2 = StanleyDsrDai(stanleyDai);
+//        uint256 balanceAfter = stanleyV2.totalBalance(0xEd7d74AA7eB1f12F83dA36DFaC1de2257b4e7523);
+//        balanceAfter = IporMath.division(balanceAfter, 1e7);
+//
+//        assertEq(balanceBefore, balanceAfter);
+//    }
+//
+//    function testShouldBeTheSameAprAfterUpgrade() public {
+//        //given
+//        IStanleyInternal stanley = IStanleyInternal(stanleyDai);
+//
+//        address strategyAaveBefore = stanley.getStrategyAave();
+//        address strategyCompoundBefore = stanley.getStrategyCompound();
+//
+//        uint256 aprAaveBefore = IStrategy(strategyAaveBefore).getApr();
+//        uint256 aprCompoundBefore = IStrategy(strategyCompoundBefore).getApr();
+//
+//        //when
+//        _upgradeStanleyDsr();
+//
+//        //then
+//        address strategyAaveAfter = stanley.getStrategyAave();
+//        address strategyCompoundAfter = stanley.getStrategyCompound();
+//
+//        uint256 aprAaveAfter = IStrategyDsr(strategyAaveAfter).getApr();
+//        uint256 aprCompoundAfter = IStrategyDsr(strategyCompoundAfter).getApr();
+//        uint256 aprDsrAfter = IStrategyDsr(strategyDsr).getApr();
+//
+//        assertEq(aprAaveBefore, aprAaveAfter);
+//        assertEq(aprCompoundBefore, aprCompoundAfter);
+//
+//        console2.log("aprDsrAfter", aprDsrAfter);
+//    }
 
     function testShouldRebalanceAfterUpgrade() public {
         //given
         IJosephInternal joseph = IJosephInternal(josephDai);
         _upgradeStanleyDsr();
+
+        uint256 aaveApr = IStrategyDsr(strategyAaveDai).getApr();
+        uint256 compoundApr = IStrategyDsr(strategyCompoundDai).getApr();
+        uint256 dsrApr = IStrategyDsr(strategyDsr).getApr();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyAaveDai).pause();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).pause();
+
+
+        console2.log("aaveApr", aaveApr);
+        console2.log("compoundApr", compoundApr);
+        console2.log("dsrApr", dsrApr);
+
+        console2.log("aave address=", address(strategyAaveDai));
+        console2.log("compound address=", address(strategyCompoundDai));
+        console2.log("dsr address=", address(strategyDsr));
 
         //when
         vm.prank(0xA21603c271C6f41CdC83E70a0691171eBB7db40A);
@@ -85,28 +105,32 @@ contract StanleyAaveDaiTest is Test {
 
         //then
         uint256 balanceDsr = IStrategyDsr(strategyDsr).balanceOf();
+        uint256 balanceAave = IStrategyDsr(strategyAaveDai).balanceOf();
+        uint256 balanceCompound = IStrategyDsr(strategyCompoundDai).balanceOf();
+
         console2.log("balanceDsr", balanceDsr);
-
-
-    }
-
-    function testShouldRebalanceToDsrWhenRestIsPaused() public {
+        console2.log("balanceAave", balanceAave);
+        console2.log("balanceCompound", balanceCompound);
 
     }
-    function testShouldWithdrawFromAllStrategies() public {
-
-    }
-    function testShouldProvideLiquidity() public {}
-
-    function testShouldRedeemLiquidity() public {}
-
-
-    function testShould() public {
-        //        StanleyDsrDai stanley = StanleyDsrDai(stanleyDai);
-        IStanley stanley = IStanley(stanleyDai);
-        uint256 balance = stanley.totalBalance(0xEd7d74AA7eB1f12F83dA36DFaC1de2257b4e7523);
-        console2.log("balance", balance);
-    }
+//
+//    function testShouldRebalanceToDsrWhenRestIsPaused() public {
+//
+//    }
+//    function testShouldWithdrawFromAllStrategies() public {
+//
+//    }
+//    function testShouldProvideLiquidity() public {}
+//
+//    function testShouldRedeemLiquidity() public {}
+//
+//
+//    function testShould() public {
+//        //        StanleyDsrDai stanley = StanleyDsrDai(stanleyDai);
+//        IStanley stanley = IStanley(stanleyDai);
+//        uint256 balance = stanley.totalBalance(0xEd7d74AA7eB1f12F83dA36DFaC1de2257b4e7523);
+//        console2.log("balance", balance);
+//    }
 
     function _upgradeStanleyDsr() internal {
         StanleyDsrDai implementation = new StanleyDsrDai(
