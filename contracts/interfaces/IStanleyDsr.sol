@@ -17,9 +17,17 @@ interface IStanleyDsr {
     /// @return Milton address
     function getMilton() external view returns (address);
 
+    /// @notice Gets IvToken address
+    /// @return IvToken address
+    function getIvToken() external view returns (address);
+
     /// @notice Gets total balance of Milton (AmmTreasury), transferred assets to Stanley.
     /// @return Total balance for specific account given as a parameter, represented in 18 decimals.
     function totalBalance(address who) external view returns (uint256);
+
+    /// @notice Calculated exchange rate between ivToken and the underlying asset.
+    /// @return Current exchange rate between ivToken and the underlying asset, represented in 18 decimals.
+    function calculateExchangeRate() external view returns (uint256);
 
     /// @notice Deposits ERC20 underlying assets to Stanley. Function available only for Milton.
     /// @dev Emits {Deposit} event from Stanley, emits {Mint} event from ivToken, emits {Transfer} event from ERC20 asset.
@@ -79,14 +87,14 @@ interface IStanleyDsr {
         uint256 timestamp,
         address from,
         address to,
-        uint256 exchangeRate, //TODO: after internal consultation remove or stay with zero
+        uint256 exchangeRate,
         uint256 amount,
-        uint256 ivTokenAmount //TODO: after internal consultation remove or stay with zero
+        uint256 ivTokenAmount
     );
 
     /// @notice Emitted when Milton executes withdraw function.
     /// @param timestamp moment when deposit was executed
-    /// @param from account address from which assets are transferred
+    /// @param from strategy address from which assets are transferred
     /// @param to account address where assets are transferred to
     /// @param exchangeRate exchange rate of ivToken, represented in 18 decimals
     /// @param amount of asset transferred from Milton to Stanley, represented in 18 decimals
@@ -95,8 +103,8 @@ interface IStanleyDsr {
         uint256 timestamp,
         address from,
         address to,
-        uint256 exchangeRate, //TODO: after internal consultation remove or stay with zero
+        uint256 exchangeRate,
         uint256 amount,
-        uint256 ivTokenAmount //TODO: after internal consultation remove or stay with zero
+        uint256 ivTokenAmount
     );
 }
