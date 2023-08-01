@@ -206,7 +206,8 @@ contract StanleyDsrDai is
                 )
             returns (uint256 tryDepositedAmount) {
                 depositedAmount = tryDepositedAmount;
-                wasDepositedToStrategy = sortedStrategies[_HIGHEST_APY_STRATEGY_ARRAY_INDEX - i].strategy;
+                wasDepositedToStrategy = sortedStrategies[_HIGHEST_APY_STRATEGY_ARRAY_INDEX - i]
+                    .strategy;
                 break;
             } catch {
                 continue;
@@ -249,20 +250,19 @@ contract StanleyDsrDai is
         uint256 amountToWithdraw = amount;
 
         for (uint256 i; i < _SUPPORTED_STRATEGIES_VOLUME; ++i) {
-                try
-                    IStrategy(sortedStrategies[i].strategy).withdraw(sortedStrategies[i].balance)
-                returns (uint256 tryWithdrawnAmount) {
-                    amountToWithdraw -= tryWithdrawnAmount;
-                    sortedStrategies[i].balance -= tryWithdrawnAmount;
-                } catch {
-                    /// @dev If strategy withdraw fails, try to withdraw from next strategy
-                    continue;
-                }
+            try
+                IStrategy(sortedStrategies[i].strategy).withdraw(sortedStrategies[i].balance<=amountToWithdraw ? sortedStrategies[i].balance : amountToWithdraw)
+            returns (uint256 tryWithdrawnAmount) {
+                amountToWithdraw -= tryWithdrawnAmount;
+                sortedStrategies[i].balance -= tryWithdrawnAmount;
+            } catch {
+                /// @dev If strategy withdraw fails, try to withdraw from next strategy
+                continue;
             }
 
             if (amountToWithdraw <= 1e18) {
                 break;
-
+            }
         }
 
         /// @dev Always all collected assets on Stanley are withdrawn to Milton
@@ -394,12 +394,12 @@ contract StanleyDsrDai is
     function _calculateTotalBalanceSorted(StrategyData[] memory sortedStrategies)
         internal
         view
-        returns (uint256 totalBalance)
+        returns (uint256 returnedTotalBalance)
     {
         for (uint256 i; i < _SUPPORTED_STRATEGIES_VOLUME; ++i) {
-            totalBalance += sortedStrategies[i].balance;
+            returnedTotalBalance += sortedStrategies[i].balance;
         }
-        totalBalance += IERC20Upgradeable(_asset).balanceOf(address(this));
+        returnedTotalBalance += IERC20Upgradeable(_asset).balanceOf(address(this));
     }
 
     function _calculateTotalBalance(StrategiesData memory strategiesData)
