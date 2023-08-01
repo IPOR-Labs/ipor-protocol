@@ -199,15 +199,22 @@ contract StanleyDsrDai is
         IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(this), amount);
 
         address wasDepositedToStrategy = address(0x0);
+
         for (uint256 i; i < _SUPPORTED_STRATEGIES_VOLUME; ++i) {
             try
                 IStrategy(sortedStrategies[_HIGHEST_APY_STRATEGY_ARRAY_INDEX - i].strategy).deposit(
                     amount
                 )
             returns (uint256 tryDepositedAmount) {
+                require(
+                    tryDepositedAmount > 0 && tryDepositedAmount <= amount,
+                    StanleyErrors.STRATEGY_INCORRECT_DEPOSITED_AMOUNT
+                );
+
                 depositedAmount = tryDepositedAmount;
                 wasDepositedToStrategy = sortedStrategies[_HIGHEST_APY_STRATEGY_ARRAY_INDEX - i]
                     .strategy;
+
                 break;
             } catch {
                 continue;
@@ -251,7 +258,11 @@ contract StanleyDsrDai is
 
         for (uint256 i; i < _SUPPORTED_STRATEGIES_VOLUME; ++i) {
             try
-                IStrategy(sortedStrategies[i].strategy).withdraw(sortedStrategies[i].balance<=amountToWithdraw ? sortedStrategies[i].balance : amountToWithdraw)
+                IStrategy(sortedStrategies[i].strategy).withdraw(
+                    sortedStrategies[i].balance <= amountToWithdraw
+                        ? sortedStrategies[i].balance
+                        : amountToWithdraw
+                )
             returns (uint256 tryWithdrawnAmount) {
                 amountToWithdraw -= tryWithdrawnAmount;
                 sortedStrategies[i].balance -= tryWithdrawnAmount;

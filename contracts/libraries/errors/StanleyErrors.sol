@@ -22,5 +22,9 @@ library StanleyErrors {
     // problem with redeem shared token
     string public constant SHARED_TOKEN_REDEEM_ERROR = "IPOR_506";
 
+    /// @dev Error appears if deposit every strategy failed
     string public constant DEPOSIT_TO_STRATEGY_FAILED = "IPOR_507";
+
+    /// @dev Error appears when deposited amount returned from strategy is not higher than 0 and lower than amount sent to strategy
+    string public constant STRATEGY_INCORRECT_DEPOSITED_AMOUNT = "IPOR_508";
 }
