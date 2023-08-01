@@ -152,7 +152,7 @@ contract StanleyDsrDai is
     }
 
     function getIvToken() external view override returns (address) {
-        return address(_ivToken);
+        return _ivToken;
     }
 
     function getMilton() external view override returns (address) {
@@ -198,8 +198,7 @@ contract StanleyDsrDai is
 
         IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(this), amount);
 
-        /// @dev 0 when no deposited to any strategy, 1 amount deposited
-        uint256 wasDeposited;
+        address wasDepositedToStrategy = address(0x0);
         for (uint256 i; i < _SUPPORTED_STRATEGIES_VOLUME; ++i) {
             try
                 IStrategy(sortedStrategies[_HIGHEST_APY_STRATEGY_ARRAY_INDEX - i].strategy).deposit(
@@ -207,14 +206,14 @@ contract StanleyDsrDai is
                 )
             returns (uint256 tryDepositedAmount) {
                 depositedAmount = tryDepositedAmount;
-                wasDeposited = 1;
+                wasDepositedToStrategy = sortedStrategies[_HIGHEST_APY_STRATEGY_ARRAY_INDEX - i].strategy;
                 break;
             } catch {
                 continue;
             }
         }
 
-        require(wasDeposited == 1, StanleyErrors.DEPOSIT_TO_STRATEGY_FAILED);
+        require(wasDepositedToStrategy != address(0x0), StanleyErrors.DEPOSIT_TO_STRATEGY_FAILED);
 
         uint256 exchangeRate = _calcExchangeRate(strategiesData);
 
@@ -225,7 +224,7 @@ contract StanleyDsrDai is
         emit Deposit(
             block.timestamp,
             _msgSender(),
-            sortedStrategies[_HIGHEST_APY_STRATEGY_ARRAY_INDEX].strategy,
+            wasDepositedToStrategy,
             exchangeRate,
             depositedAmount,
             ivTokenAmount
@@ -250,17 +249,6 @@ contract StanleyDsrDai is
         uint256 amountToWithdraw = amount;
 
         for (uint256 i; i < _SUPPORTED_STRATEGIES_VOLUME; ++i) {
-            if (sortedStrategies[i].balance >= amountToWithdraw) {
-                try IStrategy(sortedStrategies[i].strategy).withdraw(amountToWithdraw) returns (
-                    uint256 tryWithdrawnAmount
-                ) {
-                    sortedStrategies[i].balance -= tryWithdrawnAmount;
-                    amountToWithdraw -= tryWithdrawnAmount;
-                } catch {
-                    /// @dev If strategy withdraw fails, try to withdraw from next strategy
-                    continue;
-                }
-            } else {
                 try
                     IStrategy(sortedStrategies[i].strategy).withdraw(sortedStrategies[i].balance)
                 returns (uint256 tryWithdrawnAmount) {
@@ -272,9 +260,9 @@ contract StanleyDsrDai is
                 }
             }
 
-            if (amountToWithdraw == 0) {
+            if (amountToWithdraw <= 1e18) {
                 break;
-            }
+
         }
 
         /// @dev Always all collected assets on Stanley are withdrawn to Milton
