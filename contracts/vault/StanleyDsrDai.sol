@@ -264,8 +264,17 @@ contract StanleyDsrDai is
                         : amountToWithdraw
                 )
             returns (uint256 tryWithdrawnAmount) {
-                amountToWithdraw -= tryWithdrawnAmount;
-                sortedStrategies[i].balance -= tryWithdrawnAmount;
+                if (tryWithdrawnAmount > amountToWithdraw) {
+                    amountToWithdraw = 0;
+                } else {
+                    amountToWithdraw -= tryWithdrawnAmount;
+                }
+
+                if (tryWithdrawnAmount > sortedStrategies[i].balance) {
+                    sortedStrategies[i].balance = 0;
+                } else {
+                    sortedStrategies[i].balance -= tryWithdrawnAmount;
+                }
             } catch {
                 /// @dev If strategy withdraw fails, try to withdraw from next strategy
                 continue;
@@ -455,7 +464,7 @@ contract StanleyDsrDai is
         }
     }
 
-    function _sortApr(StrategyData[] memory data) internal view returns (StrategyData[] memory) {
+    function _sortApr(StrategyData[] memory data) internal pure returns (StrategyData[] memory) {
         _quickSortApr(data, int256(0), int256(data.length - 1));
         return data;
     }
@@ -464,7 +473,7 @@ contract StanleyDsrDai is
         StrategyData[] memory arr,
         int256 left,
         int256 right
-    ) internal view {
+    ) internal pure {
         int256 i = left;
         int256 j = right;
         if (i == j) return;
