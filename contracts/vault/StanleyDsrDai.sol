@@ -264,17 +264,13 @@ contract StanleyDsrDai is
                         : amountToWithdraw
                 )
             returns (uint256 tryWithdrawnAmount) {
-                if (tryWithdrawnAmount > amountToWithdraw) {
-                    amountToWithdraw = 0;
-                } else {
-                    amountToWithdraw -= tryWithdrawnAmount;
-                }
+                amountToWithdraw = tryWithdrawnAmount > amountToWithdraw
+                    ? 0
+                    : amountToWithdraw - tryWithdrawnAmount;
 
-                if (tryWithdrawnAmount > sortedStrategies[i].balance) {
-                    sortedStrategies[i].balance = 0;
-                } else {
-                    sortedStrategies[i].balance -= tryWithdrawnAmount;
-                }
+                sortedStrategies[i].balance = tryWithdrawnAmount > sortedStrategies[i].balance
+                    ? 0
+                    : sortedStrategies[i].balance - tryWithdrawnAmount;
             } catch {
                 /// @dev If strategy withdraw fails, try to withdraw from next strategy
                 continue;
@@ -298,11 +294,10 @@ contract StanleyDsrDai is
 
             uint256 senderIvTokens = IIvToken(_ivToken).balanceOf(_msgSender());
 
-            if (ivTokenWithdrawnAmount > senderIvTokens) {
-                IIvToken(_ivToken).burn(_msgSender(), senderIvTokens);
-            } else {
-                IIvToken(_ivToken).burn(_msgSender(), ivTokenWithdrawnAmount);
-            }
+            IIvToken(_ivToken).burn(
+                _msgSender(),
+                ivTokenWithdrawnAmount > senderIvTokens ? senderIvTokens : ivTokenWithdrawnAmount
+            );
 
             /// @dev Always transfer all assets from Stanley to Milton
             asset.safeTransfer(_msgSender(), withdrawnAmount);
@@ -437,31 +432,29 @@ contract StanleyDsrDai is
     function _calcExchangeRateSorted(StrategyData[] memory sortedStrategies)
         internal
         view
-        returns (uint256 exchangeRate)
+        returns (uint256)
     {
         uint256 totalAssetBalance = _calculateTotalBalanceSorted(sortedStrategies);
         uint256 ivTokenTotalSupply = IIvToken(_ivToken).totalSupply();
 
-        if (totalAssetBalance == 0 || ivTokenTotalSupply == 0) {
-            exchangeRate = Constants.D18;
-        } else {
-            exchangeRate = IporMath.division(totalAssetBalance * Constants.D18, ivTokenTotalSupply);
-        }
+        return
+            totalAssetBalance == 0 || ivTokenTotalSupply == 0
+                ? Constants.D18
+                : IporMath.division(totalAssetBalance * Constants.D18, ivTokenTotalSupply);
     }
 
     function _calcExchangeRate(StrategiesData memory strategiesData)
         internal
         view
-        returns (uint256 exchangeRate)
+        returns (uint256)
     {
         uint256 totalAssetBalance = _calculateTotalBalance(strategiesData);
         uint256 ivTokenTotalSupply = IIvToken(_ivToken).totalSupply();
 
-        if (totalAssetBalance == 0 || ivTokenTotalSupply == 0) {
-            exchangeRate = Constants.D18;
-        } else {
-            exchangeRate = IporMath.division(totalAssetBalance * Constants.D18, ivTokenTotalSupply);
-        }
+        return
+            totalAssetBalance == 0 || ivTokenTotalSupply == 0
+                ? Constants.D18
+                : IporMath.division(totalAssetBalance * Constants.D18, ivTokenTotalSupply);
     }
 
     function _sortApr(StrategyData[] memory data) internal pure returns (StrategyData[] memory) {
