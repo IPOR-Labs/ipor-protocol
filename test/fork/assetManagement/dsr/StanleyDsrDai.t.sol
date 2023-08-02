@@ -33,7 +33,7 @@ contract StanleyAaveDaiTest is Test {
     StrategyDsrDai public strategyDsr;
 
     function setUp() public {
-        uint256 forkId = vm.createSelectFork(vm.envString("FORK_URL"), 17810000);
+        uint256 forkId = vm.createSelectFork(vm.envString("PROVIDER_URL"), 17810000);
         _admin = vm.rememberKey(1);
         _user = vm.rememberKey(2);
 
