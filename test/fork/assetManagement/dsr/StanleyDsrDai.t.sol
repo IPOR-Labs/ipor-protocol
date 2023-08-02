@@ -320,7 +320,116 @@ contract StanleyAaveDaiTest is Test {
         );
     }
 
-    //    function testShouldDepositOnlyInDsrStrategyAndEarnInterest() public {}
+    function testShouldDepositOnlyInDsrStrategyAndEarnInterest() public {
+        //given
+        IStanley stanley = IStanley(stanleyDai);
+
+        _upgradeStanleyDsr();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyAaveDai).pause();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).pause();
+
+        deal(address(dai), _user, 100_000e18);
+
+        IJoseph joseph = IJoseph(josephDai);
+
+        vm.startPrank(_user);
+        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
+        joseph.provideLiquidity(70_000 * 1e18);
+        vm.stopPrank();
+
+        uint256 strategyDsrBalanceBefore = IStrategyDsr(strategyDsr).balanceOf();
+        uint256 aprBefore = IStrategyDsr(strategyDsr).getApr();
+
+        vm.warp(block.timestamp + 365 days);
+
+        //when
+        uint256 strategyDsrBalanceAfter = IStrategyDsr(strategyDsr).balanceOf();
+
+        //then
+
+        uint256 expectedBalanceAndInterest = IporMath.division(
+            strategyDsrBalanceBefore +
+                IporMath.division(strategyDsrBalanceBefore * aprBefore, 1e18),
+            1e7
+        );
+        uint256 actualBalanceAndInterest = IporMath.division(strategyDsrBalanceAfter, 1e7);
+
+        assertGt(strategyDsrBalanceAfter, strategyDsrBalanceBefore, "dsr great than");
+        assertEq(expectedBalanceAndInterest, actualBalanceAndInterest, "dsr apr");
+    }
+
+    function testShouldProvideLiquidity() public {
+        //given
+        IStanley stanley = IStanley(stanleyDai);
+
+        _upgradeStanleyDsr();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyAaveDai).pause();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).pause();
+
+        deal(address(dai), _user, 100_000e18);
+
+        IJoseph joseph = IJoseph(josephDai);
+
+        uint256 strategyDsrBalanceBefore = IStrategyDsr(strategyDsr).balanceOf();
+
+        //when
+        vm.startPrank(_user);
+        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
+        joseph.provideLiquidity(70_000 * 1e18);
+        vm.stopPrank();
+
+        //then
+        uint256 strategyDsrBalanceAfter = IStrategyDsr(strategyDsr).balanceOf();
+
+        assertGt(strategyDsrBalanceAfter, strategyDsrBalanceBefore, "dsr balance");
+    }
+
+    function testShouldRedeemLiquidity() public {
+        //given
+        IStanley stanley = IStanley(stanleyDai);
+
+        _upgradeStanleyDsr();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyAaveDai).pause();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).pause();
+
+        deal(address(dai), _user, 100_000e18);
+
+        IJoseph joseph = IJoseph(josephDai);
+
+        vm.startPrank(_user);
+        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
+        joseph.provideLiquidity(70_000 * 1e18);
+        vm.stopPrank();
+
+        uint256 strategyDsrBalanceBeforeRedeem = IStrategyDsr(strategyDsr).balanceOf();
+
+        uint256 ipTokenAmount = IIpToken(ipDai).balanceOf(_user);
+
+        vm.warp(block.timestamp + 1 days);
+        //when
+        vm.prank(_user);
+        joseph.redeem(ipTokenAmount);
+
+        //then
+        uint256 strategyDsrBalanceAfterRedeem = IStrategyDsr(strategyDsr).balanceOf();
+
+        assertGt(strategyDsrBalanceBeforeRedeem, strategyDsrBalanceAfterRedeem, "dsr balance");
+
+        assertEq(strategyDsrBalanceAfterRedeem, 0, "dsr balance zero");
+    }
+
     //
     //    function testShouldCloseSwapAndWithdrawFromDsrStrategy() public {}
     //
@@ -331,10 +440,8 @@ contract StanleyAaveDaiTest is Test {
     //
     //    function testShouldWithdrawFromAllStrategies() public {}
     //
-    //    function testShouldProvideLiquidity() public {}
-    //
-    //    function testShouldRedeemLiquidity() public {}
 
+    //
 
     function _upgradeStanleyDsr() internal {
         StanleyDsrDai implementation = new StanleyDsrDai(
