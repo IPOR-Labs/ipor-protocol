@@ -11,6 +11,9 @@ import "../../../../contracts/interfaces/IStanley.sol";
 import "../../../../contracts/interfaces/IJoseph.sol";
 import "../../../../contracts/interfaces/IJosephInternal.sol";
 import "../../../../contracts/interfaces/IStanleyInternal.sol";
+import "../../../../contracts/interfaces/IStrategyDsr.sol";
+import "../../../../contracts/interfaces/IStrategyCompound.sol";
+import "../../../../contracts/interfaces/IStrategyAave.sol";
 import "../../../../contracts/amm/MiltonDai.sol";
 
 contract StanleyAaveDaiTest is Test {
@@ -430,6 +433,55 @@ contract StanleyAaveDaiTest is Test {
         assertEq(strategyDsrBalanceAfterRedeem, 0, "dsr balance zero");
     }
 
+    function testShouldWithdrawFromAllStrategiesTwoStrategiesPaused() public {
+        //given
+        IStanley stanley = IStanley(stanleyDai);
+
+        _upgradeStanleyDsr();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyAaveDai).pause();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).pause();
+
+        deal(address(dai), _user, 100_000e18);
+
+        IJoseph joseph = IJoseph(josephDai);
+
+        vm.startPrank(_user);
+        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
+        joseph.provideLiquidity(70_000 * 1e18);
+        vm.stopPrank();
+
+        uint256 strategyDsrBalanceBefore = IStrategyDsr(strategyDsr).balanceOf();
+        uint256 strategyCompoundBalanceBefore = IStrategyCompound(strategyCompoundDai).balanceOf();
+        uint256 strategyAaveBalanceBefore = IStrategyAave(strategyAaveDai).balanceOf();
+        uint256 ammBalanceBefore = IERC20Upgradeable(dai).balanceOf(address(miltonDai));
+
+        //when
+        vm.prank(_iporProtocolOwner);
+        IJosephInternal(josephDai).withdrawAllFromStanley();
+
+        //then
+        uint256 strategyDsrBalanceAfter = IStrategyDsr(strategyDsr).balanceOf();
+        uint256 strategyCompoundBalanceAfter = IStrategyCompound(strategyCompoundDai).balanceOf();
+        uint256 strategyAaveBalanceAfter = IStrategyAave(strategyAaveDai).balanceOf();
+        uint256 ammBalanceAfter = IERC20Upgradeable(dai).balanceOf(address(miltonDai));
+
+        assertEq(strategyDsrBalanceAfter, 0, "dsr balance");
+        assertEq(strategyCompoundBalanceAfter, 0, "compound balance");
+        assertEq(strategyAaveBalanceAfter, 0, "aave balance");
+        assertEq(
+            ammBalanceAfter,
+            ammBalanceBefore +
+                strategyDsrBalanceBefore +
+                strategyCompoundBalanceBefore +
+                strategyAaveBalanceBefore,
+            "amm balance"
+        );
+    }
+
     //
     //    function testShouldCloseSwapAndWithdrawFromDsrStrategy() public {}
     //
@@ -438,7 +490,7 @@ contract StanleyAaveDaiTest is Test {
     //
     //    function testShouldRebalanceToDsrWhenRestIsPaused() public {}
     //
-    //    function testShouldWithdrawFromAllStrategies() public {}
+
     //
 
     //
