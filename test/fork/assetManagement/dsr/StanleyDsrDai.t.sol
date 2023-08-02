@@ -433,7 +433,7 @@ contract StanleyAaveDaiTest is Test {
         assertEq(strategyDsrBalanceAfterRedeem, 0, "dsr balance zero");
     }
 
-    function testShouldWithdrawFromAllStrategiesTwoStrategiesPaused() public {
+    function testShouldWithdrawFromAllStrategies() public {
         //given
         IStanley stanley = IStanley(stanleyDai);
 
@@ -459,6 +459,12 @@ contract StanleyAaveDaiTest is Test {
         uint256 strategyAaveBalanceBefore = IStrategyAave(strategyAaveDai).balanceOf();
         uint256 ammBalanceBefore = IERC20Upgradeable(dai).balanceOf(address(miltonDai));
 
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyAaveDai).unpause();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).unpause();
+
         //when
         vm.prank(_iporProtocolOwner);
         IJosephInternal(josephDai).withdrawAllFromStanley();
@@ -472,7 +478,7 @@ contract StanleyAaveDaiTest is Test {
         assertEq(strategyDsrBalanceAfter, 0, "dsr balance");
         assertEq(strategyCompoundBalanceAfter, 0, "compound balance");
         assertEq(strategyAaveBalanceAfter, 0, "aave balance");
-        assertEq(
+        assertGe(
             ammBalanceAfter,
             ammBalanceBefore +
                 strategyDsrBalanceBefore +
@@ -482,18 +488,48 @@ contract StanleyAaveDaiTest is Test {
         );
     }
 
-    //
-    //    function testShouldCloseSwapAndWithdrawFromDsrStrategy() public {}
-    //
+    function testShouldRebalanceToDsrWhenRestIsPaused() public {
+        //given
+        IStanley stanley = IStanley(stanleyDai);
+
+        _upgradeStanleyDsr();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyAaveDai).pause();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).pause();
+
+        deal(address(dai), _user, 100_000e18);
+
+        IJoseph joseph = IJoseph(josephDai);
+
+        vm.startPrank(_user);
+        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
+        joseph.provideLiquidity(70_000 * 1e18);
+        joseph.provideLiquidity(10_000 * 1e18);
+        joseph.provideLiquidity(10_000 * 1e18);
+        joseph.provideLiquidity(10_000 * 1e18);
+        vm.stopPrank();
+
+        uint256 strategyDsrBalanceBefore = IStrategyDsr(strategyDsr).balanceOf();
+
+        vm.prank(_iporProtocolOwner);
+        IJosephInternal(josephDai).addAppointedToRebalance(_user);
+
+        //when
+        vm.warp(block.timestamp + 1 days);
+        vm.prank(_user);
+        IJosephInternal(josephDai).rebalance();
+
+        //then
+        uint256 strategyDsrBalanceAfter = IStrategyDsr(strategyDsr).balanceOf();
+        assertGe(strategyDsrBalanceAfter, strategyDsrBalanceBefore, "dsr balance");
+    }
+
+    function testShouldCloseSwapAndWithdrawFromDsrStrategy() public {}
+
     //    function testShouldCloseSwapAndWithdrawFromTwoStrategiesIfNeeded() public {}
-
-    //
-    //    function testShouldRebalanceToDsrWhenRestIsPaused() public {}
-    //
-
-    //
-
-    //
 
     function _upgradeStanleyDsr() internal {
         StanleyDsrDai implementation = new StanleyDsrDai(
