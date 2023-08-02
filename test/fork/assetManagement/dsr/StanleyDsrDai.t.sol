@@ -560,15 +560,10 @@ contract StanleyAaveDaiTest is Test {
         vm.prank(_user);
         IERC20Upgradeable(dai).approve(address(miltonDai), type(uint256).max);
 
-        uint256 totalAmount = 10_000*1e18;
+        uint256 totalAmount = 5_000 * 1e18;
 
         vm.prank(_user);
-        milton.openSwapPayFixed(totalAmount, 9e16, 100e18);
-
-
-
-//    5872 539310171874988186
-//    587 253931017187498819
+        milton.openSwapReceiveFixed(totalAmount, 1e16, 100e18);
     }
 
     //    function testShouldCloseSwapAndWithdrawFromTwoStrategiesIfNeeded() public {}
