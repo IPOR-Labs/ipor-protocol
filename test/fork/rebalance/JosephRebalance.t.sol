@@ -291,6 +291,7 @@ contract JosephRebalance is Test, TestCommons {
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
 
+        vm.warp(block.timestamp + 1 days);
         joseph.rebalance();
 
         // then
