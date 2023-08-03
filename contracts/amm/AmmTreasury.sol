@@ -110,7 +110,7 @@ contract AmmTreasury is
     }
 
     function grandMaxAllowanceForSpender(address spender) external override onlyOwner {
-        IERC20Upgradeable(_asset).safeApprove(spender, Constants.MAX_VALUE);
+        IERC20Upgradeable(_asset).forceApprove(spender, Constants.MAX_VALUE);
     }
 
     function revokeAllowanceForSpender(address spender) external override onlyOwner {
