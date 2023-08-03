@@ -4,9 +4,8 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
-import "contracts/oracles/IporRiskManagementOracle.sol";
-import "contracts/interfaces/IIporRiskManagementOracle.sol";
-import "contracts/interfaces/types/IporRiskManagementOracleTypes.sol";
+import "../../contracts/oracles/IporRiskManagementOracle.sol";
+import "../../contracts/interfaces/types/IporRiskManagementOracleTypes.sol";
 
 contract IporRiskManagementOracleTest is Test, TestCommons {
     uint32 private _blockTimestamp = 1641701;
@@ -17,6 +16,7 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
     IporRiskManagementOracle private _iporRiskManagementOracle;
 
     function setUp() public {
+        _admin = address(this);
         vm.warp(_blockTimestamp);
         (_daiTestnetToken, _usdcTestnetToken, _usdtTestnetToken) = _getStables();
 
@@ -116,11 +116,14 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
         assertEq(version, 2_000);
     }
 
-    function testShouldPauseSCWhenSenderIsAdmin() public {
+    function testShouldPauseSCWhenSenderIsPauseGuardian() public {
         // given
         bool pausedBefore = _iporRiskManagementOracle.paused();
+        _iporRiskManagementOracle.addPauseGuardian(_admin);
+
         // when
         _iporRiskManagementOracle.pause();
+
         // then
         bool pausedAfter = _iporRiskManagementOracle.paused();
 
@@ -130,6 +133,7 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
 
     function testShouldPauseSCSpecificMethods() public {
         // given
+        _iporRiskManagementOracle.addPauseGuardian(_admin);
         _iporRiskManagementOracle.pause();
         bool pausedBefore = _iporRiskManagementOracle.paused();
 
@@ -144,40 +148,6 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
             TestConstants.RMO_COLLATERAL_RATIO_30_PER,
             TestConstants.RMO_COLLATERAL_RATIO_30_PER,
             TestConstants.RMO_COLLATERAL_RATIO_48_PER
-        );
-
-        address[] memory assets = new address[](2);
-        assets[0] = address(_daiTestnetToken);
-        assets[1] = address(_usdcTestnetToken);
-
-        uint256[] memory maxNotionalPayFixed = new uint256[](2);
-        maxNotionalPayFixed[0] = TestConstants.RMO_NOTIONAL_2B;
-        maxNotionalPayFixed[1] = TestConstants.RMO_NOTIONAL_2B;
-
-        uint256[] memory maxNotionalReceiveFixed = new uint256[](2);
-        maxNotionalReceiveFixed[0] = TestConstants.RMO_NOTIONAL_2B;
-        maxNotionalReceiveFixed[1] = TestConstants.RMO_NOTIONAL_2B;
-
-        uint256[] memory maxCollateralRatioPayFixed = new uint256[](2);
-        maxCollateralRatioPayFixed[0] = TestConstants.RMO_COLLATERAL_RATIO_30_PER;
-        maxCollateralRatioPayFixed[1] = TestConstants.RMO_COLLATERAL_RATIO_30_PER;
-
-        uint256[] memory maxCollateralRatioReceiveFixed = new uint256[](2);
-        maxCollateralRatioReceiveFixed[0] = TestConstants.RMO_COLLATERAL_RATIO_30_PER;
-        maxCollateralRatioReceiveFixed[1] = TestConstants.RMO_COLLATERAL_RATIO_30_PER;
-
-        uint256[] memory maxCollateralRatio = new uint256[](2);
-        maxCollateralRatio[0] = TestConstants.RMO_COLLATERAL_RATIO_80_PER;
-        maxCollateralRatio[1] = TestConstants.RMO_COLLATERAL_RATIO_80_PER;
-
-        vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        _iporRiskManagementOracle.updateRiskIndicators(
-            assets,
-            maxNotionalPayFixed,
-            maxNotionalReceiveFixed,
-            maxCollateralRatioPayFixed,
-            maxCollateralRatioReceiveFixed,
-            maxCollateralRatio
         );
 
         IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps memory baseSpreads1 = IporRiskManagementOracleTypes
@@ -198,40 +168,6 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
         _iporRiskManagementOracle.updateBaseSpreadsAndFixedRateCaps(address(_daiTestnetToken), baseSpreads1);
 
-        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[]
-            memory baseSpreadsArray = new IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[](2);
-        baseSpreadsArray[0] = IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps({
-            spread28dPayFixed: TestConstants.RMO_SPREAD_0_2_PER,
-            spread28dReceiveFixed: TestConstants.RMO_SPREAD_0_2_PER,
-            spread60dPayFixed: TestConstants.RMO_SPREAD_0_25_PER,
-            spread60dReceiveFixed: TestConstants.RMO_SPREAD_0_25_PER,
-            spread90dPayFixed: TestConstants.RMO_SPREAD_0_25_PER,
-            spread90dReceiveFixed: TestConstants.RMO_SPREAD_0_25_PER,
-            fixedRateCap28dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_2_0_PER,
-            fixedRateCap28dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_3_5_PER,
-            fixedRateCap60dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_2_0_PER,
-            fixedRateCap60dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_3_5_PER,
-            fixedRateCap90dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_2_0_PER,
-            fixedRateCap90dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_3_5_PER
-        });
-        baseSpreadsArray[1] = IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps({
-            spread28dPayFixed: TestConstants.RMO_SPREAD_0_2_PER,
-            spread28dReceiveFixed: TestConstants.RMO_SPREAD_0_2_PER,
-            spread60dPayFixed: TestConstants.RMO_SPREAD_0_25_PER,
-            spread60dReceiveFixed: TestConstants.RMO_SPREAD_0_25_PER,
-            spread90dPayFixed: TestConstants.RMO_SPREAD_0_25_PER,
-            spread90dReceiveFixed: TestConstants.RMO_SPREAD_0_25_PER,
-            fixedRateCap28dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_2_0_PER,
-            fixedRateCap28dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_3_5_PER,
-            fixedRateCap60dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_2_0_PER,
-            fixedRateCap60dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_3_5_PER,
-            fixedRateCap90dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_2_0_PER,
-            fixedRateCap90dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_3_5_PER
-        });
-
-        vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        _iporRiskManagementOracle.updateBaseSpreadsAndFixedRateCaps(assets, baseSpreadsArray);
-
         // then
         bool pausedAfter = _iporRiskManagementOracle.paused();
         assertEq(pausedBefore, true);
@@ -240,13 +176,28 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
 
     function testShouldNotPauseSmartContractSpecificMethodsWhenPaused() public {
         // given
+        _iporRiskManagementOracle.addPauseGuardian(_admin);
         _iporRiskManagementOracle.pause();
+
         bool pausedBefore = _iporRiskManagementOracle.paused();
 
         //when
+        vm.startPrank(_getUserAddress(1));
+        _iporRiskManagementOracle.getVersion();
+        _iporRiskManagementOracle.getOpenSwapParameters(address(_daiTestnetToken), 1, IporTypes.SwapTenor.DAYS_28);
         _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken));
+        _iporRiskManagementOracle.getBaseSpreads(address(_daiTestnetToken));
+        _iporRiskManagementOracle.getFixedRateCaps(address(_daiTestnetToken));
         _iporRiskManagementOracle.isAssetSupported(address(_daiTestnetToken));
         _iporRiskManagementOracle.isUpdater(address(this));
+        _iporRiskManagementOracle.isPauseGuardian(address(this));
+        vm.stopPrank();
+
+        //admin
+        _iporRiskManagementOracle.addUpdater(address(this));
+        _iporRiskManagementOracle.removeUpdater(address(this));
+        _iporRiskManagementOracle.addPauseGuardian(address(this));
+        _iporRiskManagementOracle.removePauseGuardian(address(this));
 
         // then
         bool pausedAfter = _iporRiskManagementOracle.paused();
@@ -255,12 +206,13 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
         assertEq(pausedAfter, true);
     }
 
-    function testShouldNotPauseSmartContractWhenSenderIsNotAnAdmin() public {
+    function testShouldNotPauseSmartContractWhenSenderIsNotAnPauseGuardian() public {
         // given
         bool pausedBefore = _iporRiskManagementOracle.paused();
+
         // when
         vm.prank(_getUserAddress(1));
-        vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
+        vm.expectRevert(abi.encodePacked("IPOR_011"));
         _iporRiskManagementOracle.pause();
         // then
         bool pausedAfter = _iporRiskManagementOracle.paused();
@@ -271,10 +223,15 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
 
     function testShouldUnpauseSmartContractWhenSenderIsAnAdmin() public {
         // given
+        _iporRiskManagementOracle.addPauseGuardian(_admin);
         _iporRiskManagementOracle.pause();
+        _iporRiskManagementOracle.removePauseGuardian(_admin);
+
         bool pausedBefore = _iporRiskManagementOracle.paused();
+
         // when
         _iporRiskManagementOracle.unpause();
+
         // then
         bool pausedAfter = _iporRiskManagementOracle.paused();
 
@@ -284,12 +241,17 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
 
     function testShouldNotUnpauseSmartContractWhenSenderIsNotAnAdmin() public {
         // given
+        _iporRiskManagementOracle.addPauseGuardian(_admin);
         _iporRiskManagementOracle.pause();
+        _iporRiskManagementOracle.removePauseGuardian(_admin);
+
         bool pausedBefore = _iporRiskManagementOracle.paused();
+
         // when
         vm.prank(_getUserAddress(1));
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
         _iporRiskManagementOracle.unpause();
+
         // then
         bool pausedAfter = _iporRiskManagementOracle.paused();
 
@@ -737,186 +699,6 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
         assertEq(fixedRateCap90dPayFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_0_PER) * 1e14);
         assertEq(fixedRateCap90dReceiveFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_0_PER) * 1e14);
         assertEq(lastUpdateTimestampFixedRateCap, _blockTimestamp2);
-    }
-
-    function testShouldUpdateMultipleIndicators() public {
-        // given
-        vm.warp(_blockTimestamp2);
-
-        address[] memory assets = new address[](2);
-        assets[0] = address(_daiTestnetToken);
-        assets[1] = address(_usdcTestnetToken);
-
-        uint256[] memory maxNotionalPayFixed = new uint256[](2);
-        maxNotionalPayFixed[0] = TestConstants.RMO_NOTIONAL_2B;
-        maxNotionalPayFixed[1] = TestConstants.RMO_NOTIONAL_3B;
-
-        uint256[] memory maxNotionalReceiveFixed = new uint256[](2);
-        maxNotionalReceiveFixed[0] = TestConstants.RMO_NOTIONAL_2B;
-        maxNotionalReceiveFixed[1] = TestConstants.RMO_NOTIONAL_10B;
-
-        uint256[] memory maxCollateralRatioPayFixed = new uint256[](2);
-        maxCollateralRatioPayFixed[0] = TestConstants.RMO_COLLATERAL_RATIO_30_PER;
-        maxCollateralRatioPayFixed[1] = TestConstants.RMO_COLLATERAL_RATIO_20_PER;
-
-        uint256[] memory maxCollateralRatioReceiveFixed = new uint256[](2);
-        maxCollateralRatioReceiveFixed[0] = TestConstants.RMO_COLLATERAL_RATIO_30_PER;
-        maxCollateralRatioReceiveFixed[1] = TestConstants.RMO_COLLATERAL_RATIO_35_PER;
-
-        uint256[] memory maxCollateralRatio = new uint256[](2);
-        maxCollateralRatio[0] = TestConstants.RMO_COLLATERAL_RATIO_48_PER;
-        maxCollateralRatio[1] = TestConstants.RMO_COLLATERAL_RATIO_60_PER;
-
-        // when
-        _iporRiskManagementOracle.updateRiskIndicators(
-            assets,
-            maxNotionalPayFixed,
-            maxNotionalReceiveFixed,
-            maxCollateralRatioPayFixed,
-            maxCollateralRatioReceiveFixed,
-            maxCollateralRatio
-        );
-
-        // then
-        (
-            uint256 daiMaxNotionalPayFixed,
-            uint256 daiMaxNotionalReceiveFixed,
-            uint256 daiMaxCollateralRatioPayFixed,
-            uint256 daiMaxCollateralRatioReceiveFixed,
-            uint256 daiMaxCollateralRatio,
-            uint256 daiLastUpdateTimestamp
-        ) = _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken));
-        assertEq(daiMaxNotionalPayFixed, uint256(TestConstants.RMO_NOTIONAL_2B) * 1e22);
-        assertEq(daiMaxNotionalReceiveFixed, uint256(TestConstants.RMO_NOTIONAL_2B) * 1e22);
-        assertEq(daiMaxCollateralRatioPayFixed, uint256(TestConstants.RMO_COLLATERAL_RATIO_30_PER) * 1e14);
-        assertEq(daiMaxCollateralRatioReceiveFixed, uint256(TestConstants.RMO_COLLATERAL_RATIO_30_PER) * 1e14);
-        assertEq(daiMaxCollateralRatio, uint256(TestConstants.RMO_COLLATERAL_RATIO_48_PER) * 1e14);
-        assertEq(daiLastUpdateTimestamp, _blockTimestamp2);
-        (
-            uint256 usdcMaxNotionalPayFixed,
-            uint256 usdcMaxNotionalReceiveFixed,
-            uint256 usdcMaxCollateralRatioPayFixed,
-            uint256 usdcMaxCollateralRatioReceiveFixed,
-            uint256 usdcMaxCollateralRatio,
-            uint256 usdcLastUpdateTimestamp
-        ) = _iporRiskManagementOracle.getRiskIndicators(address(_usdcTestnetToken));
-        assertEq(usdcMaxNotionalPayFixed, uint256(TestConstants.RMO_NOTIONAL_3B) * 1e22);
-        assertEq(usdcMaxNotionalReceiveFixed, uint256(TestConstants.RMO_NOTIONAL_10B) * 1e22);
-        assertEq(usdcMaxCollateralRatioPayFixed, uint256(TestConstants.RMO_COLLATERAL_RATIO_20_PER) * 1e14);
-        assertEq(usdcMaxCollateralRatioReceiveFixed, uint256(TestConstants.RMO_COLLATERAL_RATIO_35_PER) * 1e14);
-        assertEq(usdcMaxCollateralRatio, uint256(TestConstants.RMO_COLLATERAL_RATIO_60_PER) * 1e14);
-        assertEq(usdcLastUpdateTimestamp, _blockTimestamp2);
-    }
-
-    function testShouldUpdateMultipleBaseSpreads() public {
-        // given
-        vm.warp(_blockTimestamp2);
-
-        address[] memory assets = new address[](2);
-        assets[0] = address(_daiTestnetToken);
-        assets[1] = address(_usdcTestnetToken);
-
-        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[]
-            memory input = new IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[](2);
-        input[0] = IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps({
-            spread28dPayFixed: TestConstants.RMO_SPREAD_0_2_PER,
-            spread28dReceiveFixed: TestConstants.RMO_SPREAD_0_15_PER,
-            spread60dPayFixed: TestConstants.RMO_SPREAD_0_3_PER,
-            spread60dReceiveFixed: TestConstants.RMO_SPREAD_0_25_PER,
-            spread90dPayFixed: TestConstants.RMO_SPREAD_0_3_PER,
-            spread90dReceiveFixed: TestConstants.RMO_SPREAD_0_25_PER,
-            fixedRateCap28dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_4_0_PER,
-            fixedRateCap28dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_4_2_PER,
-            fixedRateCap60dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_4_0_PER,
-            fixedRateCap60dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_4_2_PER,
-            fixedRateCap90dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_4_0_PER,
-            fixedRateCap90dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_4_2_PER
-        });
-        input[1] = IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps({
-            spread28dPayFixed: TestConstants.RMO_SPREAD_0_25_PER,
-            spread28dReceiveFixed: TestConstants.RMO_SPREAD_0_2_PER,
-            spread60dPayFixed: TestConstants.RMO_SPREAD_0_35_PER,
-            spread60dReceiveFixed: TestConstants.RMO_SPREAD_0_3_PER,
-            spread90dPayFixed: TestConstants.RMO_SPREAD_0_35_PER,
-            spread90dReceiveFixed: TestConstants.RMO_SPREAD_0_3_PER,
-            fixedRateCap28dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_4_1_PER,
-            fixedRateCap28dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_4_1_PER,
-            fixedRateCap60dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_4_1_PER,
-            fixedRateCap60dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_4_1_PER,
-            fixedRateCap90dPayFixed: TestConstants.RMO_FIXED_RATE_CAP_4_1_PER,
-            fixedRateCap90dReceiveFixed: TestConstants.RMO_FIXED_RATE_CAP_4_1_PER
-        });
-
-        // when
-        _iporRiskManagementOracle.updateBaseSpreadsAndFixedRateCaps(assets, input);
-
-        // then
-        (
-            uint256 daiLastUpdateTimestamp,
-            int256 daiSpread28dPayFixed,
-            int256 daiSpread28dReceiveFixed,
-            int256 daiSpread60dPayFixed,
-            int256 daiSpread60dReceiveFixed,
-            int256 daiSpread90dPayFixed,
-            int256 daiSpread90dReceiveFixed
-        ) = _iporRiskManagementOracle.getBaseSpreads(address(_daiTestnetToken));
-        assertEq(daiSpread28dPayFixed, int256(TestConstants.RMO_SPREAD_0_2_PER) * 1e12);
-        assertEq(daiSpread28dReceiveFixed, int256(TestConstants.RMO_SPREAD_0_15_PER) * 1e12);
-        assertEq(daiSpread60dPayFixed, int256(TestConstants.RMO_SPREAD_0_3_PER) * 1e12);
-        assertEq(daiSpread60dReceiveFixed, int256(TestConstants.RMO_SPREAD_0_25_PER) * 1e12);
-        assertEq(daiSpread90dPayFixed, int256(TestConstants.RMO_SPREAD_0_3_PER) * 1e12);
-        assertEq(daiSpread90dReceiveFixed, int256(TestConstants.RMO_SPREAD_0_25_PER) * 1e12);
-        assertEq(daiLastUpdateTimestamp, _blockTimestamp2);
-        (
-            uint256 usdcLastUpdateTimestamp,
-            int256 usdcSpread28dPayFixed,
-            int256 usdcSpread28dReceiveFixed,
-            int256 usdcSpread60dPayFixed,
-            int256 usdcSpread60dReceiveFixed,
-            int256 usdcSpread90dPayFixed,
-            int256 usdcSpread90dReceiveFixed
-        ) = _iporRiskManagementOracle.getBaseSpreads(address(_usdcTestnetToken));
-        assertEq(usdcSpread28dPayFixed, int256(TestConstants.RMO_SPREAD_0_25_PER) * 1e12);
-        assertEq(usdcSpread28dReceiveFixed, int256(TestConstants.RMO_SPREAD_0_2_PER) * 1e12);
-        assertEq(usdcSpread60dPayFixed, int256(TestConstants.RMO_SPREAD_0_35_PER) * 1e12);
-        assertEq(usdcSpread60dReceiveFixed, int256(TestConstants.RMO_SPREAD_0_3_PER) * 1e12);
-        assertEq(usdcSpread90dPayFixed, int256(TestConstants.RMO_SPREAD_0_35_PER) * 1e12);
-        assertEq(usdcSpread90dReceiveFixed, int256(TestConstants.RMO_SPREAD_0_3_PER) * 1e12);
-        assertEq(usdcLastUpdateTimestamp, _blockTimestamp2);
-
-        (
-            uint256 daiLastUpdateTimestampFixedRateCap,
-            uint256 daiFixedRateCap28dPayFixed,
-            uint256 daiFixedRateCap28dReceiveFixed,
-            uint256 daiFixedRateCap60dPayFixed,
-            uint256 daiFixedRateCap60dReceiveFixed,
-            uint256 daiFixedRateCap90dPayFixed,
-            uint256 daiFixedRateCap90dReceiveFixed
-        ) = _iporRiskManagementOracle.getFixedRateCaps(address(_daiTestnetToken));
-        assertEq(daiFixedRateCap28dPayFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_0_PER) * 1e14);
-        assertEq(daiFixedRateCap28dReceiveFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_2_PER) * 1e14);
-        assertEq(daiFixedRateCap60dPayFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_0_PER) * 1e14);
-        assertEq(daiFixedRateCap60dReceiveFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_2_PER) * 1e14);
-        assertEq(daiFixedRateCap90dPayFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_0_PER) * 1e14);
-        assertEq(daiFixedRateCap90dReceiveFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_2_PER) * 1e14);
-        assertEq(daiLastUpdateTimestampFixedRateCap, _blockTimestamp2);
-
-        (
-            uint256 usdcLastUpdateTimestampFixedRateCap,
-            uint256 usdcFixedRateCap28dPayFixed,
-            uint256 usdcFixedRateCap28dReceiveFixed,
-            uint256 usdcFixedRateCap60dPayFixed,
-            uint256 usdcFixedRateCap60dReceiveFixed,
-            uint256 usdcFixedRateCap90dPayFixed,
-            uint256 usdcFixedRateCap90dReceiveFixed
-        ) = _iporRiskManagementOracle.getFixedRateCaps(address(_usdcTestnetToken));
-        assertEq(usdcFixedRateCap28dPayFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_1_PER) * 1e14);
-        assertEq(usdcFixedRateCap28dReceiveFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_1_PER) * 1e14);
-        assertEq(usdcFixedRateCap60dPayFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_1_PER) * 1e14);
-        assertEq(usdcFixedRateCap60dReceiveFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_1_PER) * 1e14);
-        assertEq(usdcFixedRateCap90dPayFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_1_PER) * 1e14);
-        assertEq(usdcFixedRateCap90dReceiveFixed, uint256(TestConstants.RMO_FIXED_RATE_CAP_4_1_PER) * 1e14);
-        assertEq(usdcLastUpdateTimestampFixedRateCap, _blockTimestamp2);
     }
 
     function testShouldRetrieveOpenSwapParameters() public {

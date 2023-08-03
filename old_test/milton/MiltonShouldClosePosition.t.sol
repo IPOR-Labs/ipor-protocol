@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "../TestCommons.sol";
+import "test/TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
 import "contracts/amm/AmmStorage.sol";
-import "contracts/mocks/spread/MockSpreadModel.sol";
+import "test/mocks/spread/MockSpreadModel.sol";
 import "contracts/interfaces/types/IporTypes.sol";
 import "contracts/interfaces/types/AmmTypes.sol";
 import "contracts/interfaces/types/AmmStorageTypes.sol";
-import {MockCaseBaseAssetManagement} from "contracts/mocks/assetManagement/MockCaseBaseAssetManagement.sol";
+import {MockCaseBaseAssetManagement} from "@ipor-protocol/test/mocks/assetManagement/MockCaseBaseAssetManagement.sol";
 
 contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
@@ -897,7 +897,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         );
         (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, _iporProtocol.ammTreasury);
         assertEq(TestConstants.ZERO, swaps.length, "incorrect swaps length");
-        assertEq(actualBalances.actualPayoff, expectedPayoffWad, "incorrect payoff");
+        assertEq(actualBalances.actualPnlValue, expectedPayoffWad, "incorrect PnL");
 
         assertEq(
             actualBalances.actualSumOfBalances,
@@ -1079,7 +1079,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         );
         (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, _iporProtocol.ammTreasury);
         assertEq(TestConstants.ZERO, swaps.length, "swaps length");
-        assertEq(actualBalances.actualPayoff, expectedPayoffWad, "incorrect payoff");
+        assertEq(actualBalances.actualPnlValue, expectedPayoffWad, "incorrect PnL");
 
         assertEq(
             actualBalances.actualSumOfBalances,
@@ -3476,7 +3476,7 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         int256 actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
 
         assertEq(TestConstants.ZERO, swaps.length, "incorrect number of swaps");
-        assertEq(actualPayoff, int256(expectedBalances.expectedPayoffAbs), "incorrect payoff");
+        assertEq(actualPnlValue, int256(expectedBalances.expectedPnlValueAbs), "incorrect PnL");
         assertEq(actualAmmTreasuryBalance, expectedBalances.expectedAmmTreasuryBalance, "incorrect ammTreasury balance");
         assertEq(actualOpenerUserBalance, expectedBalances.expectedOpenerUserBalance, "incorrect opener user balance");
         assertEq(balance.totalCollateralPayFixed, TestConstants.ZERO, "incorrect total collateral pay fixed");

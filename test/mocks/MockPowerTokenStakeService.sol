@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "contracts/interfaces/IPowerTokenStakeService.sol";
+import "../../contracts/interfaces/IPowerTokenStakeService.sol";
 
 contract MockPowerTokenStakeService is IPowerTokenStakeService {
     function stakeLpTokensToLiquidityMining(
@@ -25,4 +25,11 @@ contract MockPowerTokenStakeService is IPowerTokenStakeService {
     function pwTokenCancelCooldown() external {}
 
     function redeemPwToken(address transferTo) external {}
+
+    function stakeGovernanceTokenToPowerTokenAndDelegate(
+        address beneficiary,
+        uint256 governanceTokenAmount,
+        address[] calldata lpTokens,
+        uint256[] calldata pwTokenAmounts
+    ) external {}
 }

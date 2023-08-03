@@ -3,8 +3,8 @@ pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
-import "contracts/tokens/IpToken.sol";
-import "contracts/interfaces/types/IporTypes.sol";
+import "../../contracts/tokens/IpToken.sol";
+import "../../contracts/interfaces/types/IporTypes.sol";
 
 contract AmmPoolsExchangeRateLiquidityTest is TestCommons {
     IporProtocolFactory.IporProtocolConfig private _cfg;
@@ -133,8 +133,7 @@ contract AmmPoolsExchangeRateLiquidityTest is TestCommons {
         _iporProtocol.ammStorage.addLiquidityInternal(
             _liquidityProvider,
             TestConstants.USD_2_000_18DEC,
-            TestConstants.USD_20_000_000_18DEC,
-            TestConstants.USD_10_000_000_18DEC
+            TestConstants.USD_20_000_000_18DEC
         );
         vm.stopPrank();
         vm.startPrank(address(_liquidityProvider));

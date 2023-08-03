@@ -2,28 +2,30 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 
+import "../interfaces/IIporOracle.sol";
+import "../interfaces/IAmmStorage.sol";
+import "../interfaces/IAmmOpenSwapService.sol";
+import "../interfaces/IAmmOpenSwapLens.sol";
+import "./spread/ISpread28Days.sol";
+import "./spread/ISpread60Days.sol";
+import "./spread/ISpread90Days.sol";
 import "../libraries/Constants.sol";
 import "../libraries/math/IporMath.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/AmmErrors.sol";
-import "../interfaces/IIporOracle.sol";
-import "../interfaces/IAmmStorage.sol";
-import "../interfaces/IIporRiskManagementOracle.sol";
-import "../interfaces/IAmmOpenSwapService.sol";
-import "./libraries/types/AmmInternalTypes.sol";
 import "../libraries/errors/AmmErrors.sol";
+import "../libraries/AmmLib.sol";
+import "./libraries/types/AmmInternalTypes.sol";
 import "./libraries/IporSwapLogic.sol";
-import "contracts/amm/spread/ISpread28Days.sol";
-import "contracts/amm/spread/ISpread60Days.sol";
-import "contracts/amm/spread/ISpread90Days.sol";
+import "../libraries/IporContractValidator.sol";
 
-contract AmmOpenSwapService is IAmmOpenSwapService {
+contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
     using Address for address;
+    using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
+    using AmmLib for AmmInternalTypes.RiskIndicatorsContext;
 
     address internal immutable _usdt;
     uint256 internal immutable _usdtDecimals;
@@ -78,35 +80,10 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         address iporRiskManagementOracle,
         address spreadRouter
     ) {
-        require(usdtPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool asset"));
-        require(usdtPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammStorage"));
-        require(
-            usdtPoolCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammTreasury")
-        );
-
-        require(usdcPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool asset"));
-        require(usdcPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammStorage"));
-        require(
-            usdcPoolCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammTreasury")
-        );
-
-        require(daiPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool asset"));
-        require(daiPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammStorage"));
-        require(daiPoolCfg.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammTreasury"));
-
-        require(iporOracle != address(0), string.concat(IporErrors.WRONG_ADDRESS, " iporOracle"));
-        require(
-            iporRiskManagementOracle != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " iporRiskManagementOracle")
-        );
-        require(spreadRouter != address(0), string.concat(IporErrors.WRONG_ADDRESS, " spreadRouter"));
-
-        _usdt = usdtPoolCfg.asset;
+        _usdt = usdtPoolCfg.asset.checkAddress();
         _usdtDecimals = usdtPoolCfg.decimals;
-        _usdtAmmStorage = usdtPoolCfg.ammStorage;
-        _usdtAmmTreasury = usdtPoolCfg.ammTreasury;
+        _usdtAmmStorage = usdtPoolCfg.ammStorage.checkAddress();
+        _usdtAmmTreasury = usdtPoolCfg.ammTreasury.checkAddress();
         _usdtIporPublicationFee = usdtPoolCfg.iporPublicationFee;
         _usdtMaxSwapCollateralAmount = usdtPoolCfg.maxSwapCollateralAmount;
         _usdtLiquidationDepositAmount = usdtPoolCfg.liquidationDepositAmount;
@@ -114,10 +91,10 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         _usdtOpeningFeeRate = usdtPoolCfg.openingFeeRate;
         _usdtOpeningFeeTreasuryPortionRate = usdtPoolCfg.openingFeeTreasuryPortionRate;
 
-        _usdc = usdcPoolCfg.asset;
+        _usdc = usdcPoolCfg.asset.checkAddress();
         _usdcDecimals = usdcPoolCfg.decimals;
-        _usdcAmmStorage = usdcPoolCfg.ammStorage;
-        _usdcAmmTreasury = usdcPoolCfg.ammTreasury;
+        _usdcAmmStorage = usdcPoolCfg.ammStorage.checkAddress();
+        _usdcAmmTreasury = usdcPoolCfg.ammTreasury.checkAddress();
         _usdcIporPublicationFee = usdcPoolCfg.iporPublicationFee;
         _usdcMaxSwapCollateralAmount = usdcPoolCfg.maxSwapCollateralAmount;
         _usdcLiquidationDepositAmount = usdcPoolCfg.liquidationDepositAmount;
@@ -125,10 +102,10 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         _usdcOpeningFeeRate = usdcPoolCfg.openingFeeRate;
         _usdcOpeningFeeTreasuryPortionRate = usdcPoolCfg.openingFeeTreasuryPortionRate;
 
-        _dai = daiPoolCfg.asset;
+        _dai = daiPoolCfg.asset.checkAddress();
         _daiDecimals = daiPoolCfg.decimals;
-        _daiAmmStorage = daiPoolCfg.ammStorage;
-        _daiAmmTreasury = daiPoolCfg.ammTreasury;
+        _daiAmmStorage = daiPoolCfg.ammStorage.checkAddress();
+        _daiAmmTreasury = daiPoolCfg.ammTreasury.checkAddress();
         _daiIporPublicationFee = daiPoolCfg.iporPublicationFee;
         _daiMaxSwapCollateralAmount = daiPoolCfg.maxSwapCollateralAmount;
         _daiLiquidationDepositAmount = daiPoolCfg.liquidationDepositAmount;
@@ -136,9 +113,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         _daiOpeningFeeRate = daiPoolCfg.openingFeeRate;
         _daiOpeningFeeTreasuryPortionRate = daiPoolCfg.openingFeeTreasuryPortionRate;
 
-        _iporOracle = iporOracle;
-        _iporRiskManagementOracle = iporRiskManagementOracle;
-        _spreadRouter = spreadRouter;
+        _iporOracle = iporOracle.checkAddress();
+        _iporRiskManagementOracle = iporRiskManagementOracle.checkAddress();
+        _spreadRouter = spreadRouter.checkAddress();
     }
 
     function getAmmOpenSwapServicePoolConfiguration(
@@ -488,13 +465,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 
-        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
-            ctx.poolCfg.asset,
-            0,
-            ctx.tenor,
-            balance.liquidityPool,
-            ctx.poolCfg.minLeverage
-        );
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(ctx, balance.liquidityPool, 0);
 
         _validateLiquidityPoolCollateralRatioAndSwapLeverage(
             balance.liquidityPool,
@@ -515,14 +486,14 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                     bosStruct.notional,
                     riskIndicators.maxLeveragePerLeg,
                     riskIndicators.maxCollateralRatioPerLeg,
-                    riskIndicators.spread,
+                    riskIndicators.baseSpreadPerLeg,
                     balance.totalCollateralPayFixed,
                     balance.totalCollateralReceiveFixed,
                     balance.liquidityPool,
                     balance.totalNotionalPayFixed,
                     balance.totalNotionalReceiveFixed,
                     bosStruct.accruedIpor.indexValue,
-                    riskIndicators.fixedRateCap
+                    riskIndicators.fixedRateCapPerLeg
                 )
             ),
             (uint256)
@@ -590,16 +561,11 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
 
         IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(ctx.poolCfg.ammStorage)
             .getBalancesForOpenSwap();
+
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralReceiveFixed = balance.totalCollateralReceiveFixed + bosStruct.collateral;
 
-        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
-            ctx.poolCfg.asset,
-            1,
-            ctx.tenor,
-            balance.liquidityPool,
-            ctx.poolCfg.minLeverage
-        );
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(ctx, balance.liquidityPool, 1);
 
         _validateLiquidityPoolCollateralRatioAndSwapLeverage(
             balance.liquidityPool,
@@ -620,14 +586,14 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                     bosStruct.notional,
                     riskIndicators.maxLeveragePerLeg,
                     riskIndicators.maxCollateralRatioPerLeg,
-                    riskIndicators.spread,
+                    riskIndicators.baseSpreadPerLeg,
                     balance.totalCollateralPayFixed,
                     balance.totalCollateralReceiveFixed,
                     balance.liquidityPool,
                     balance.totalNotionalPayFixed,
                     balance.totalNotionalReceiveFixed,
                     bosStruct.accruedIpor.indexValue,
-                    riskIndicators.fixedRateCap
+                    riskIndicators.fixedRateCapPerLeg
                 )
             ),
             (uint256)
@@ -693,18 +659,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         );
 
         uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, poolCfg.decimals);
-        uint256 liquidationDepositAmountWad = poolCfg.liquidationDepositAmount * 1e18;
-
-        require(
-            wadTotalAmount > liquidationDepositAmountWad + poolCfg.iporPublicationFee,
-            AmmErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
-        );
+        uint256 wadLiquidationDepositAmount = poolCfg.liquidationDepositAmount * 1e18;
 
         (uint256 collateral, uint256 notional, uint256 openingFeeAmount) = IporSwapLogic.calculateSwapAmount(
             tenor,
             wadTotalAmount,
             leverage,
-            liquidationDepositAmountWad,
+            wadLiquidationDepositAmount,
             poolCfg.iporPublicationFee,
             poolCfg.openingFeeRate
         );
@@ -717,7 +678,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         require(collateral <= poolCfg.maxSwapCollateralAmount, AmmErrors.COLLATERAL_AMOUNT_TOO_HIGH);
 
         require(
-            wadTotalAmount > liquidationDepositAmountWad + poolCfg.iporPublicationFee + openingFeeAmount,
+            wadTotalAmount > wadLiquidationDepositAmount + poolCfg.iporPublicationFee + openingFeeAmount,
             AmmErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
         IporTypes.AccruedIpor memory accruedIndex = IIporOracle(_iporOracle).getAccruedIndex(
@@ -739,42 +700,18 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function _getRiskIndicators(
-        address asset,
-        uint256 direction,
-        IporTypes.SwapTenor tenor,
-        uint256 liquidityPool,
-        uint256 cfgMinLeverage
-    ) internal view virtual returns (AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators) {
-        uint256 maxNotionalPerLeg;
+        Context memory ctx,
+        uint256 liquidityPoolBalance,
+        uint256 direction
+    ) internal view virtual returns (AmmTypes.OpenSwapRiskIndicators memory riskIndicators) {
+        AmmInternalTypes.RiskIndicatorsContext memory riskIndicatorsContext;
+        riskIndicatorsContext.asset = ctx.poolCfg.asset;
+        riskIndicatorsContext.iporRiskManagementOracle = _iporRiskManagementOracle;
+        riskIndicatorsContext.tenor = ctx.tenor;
+        riskIndicatorsContext.liquidityPoolBalance = liquidityPoolBalance;
+        riskIndicatorsContext.minLeverage = ctx.poolCfg.minLeverage;
 
-        (
-            maxNotionalPerLeg,
-            riskIndicators.maxCollateralRatioPerLeg,
-            riskIndicators.maxCollateralRatio,
-            riskIndicators.spread,
-            riskIndicators.fixedRateCap
-        ) = IIporRiskManagementOracle(_iporRiskManagementOracle).getOpenSwapParameters(asset, direction, tenor);
-
-        uint256 maxCollateralPerLeg = IporMath.division(liquidityPool * riskIndicators.maxCollateralRatioPerLeg, 1e18);
-
-        if (maxCollateralPerLeg > 0) {
-            riskIndicators.maxLeveragePerLeg = _leverageInRange(
-                IporMath.division(maxNotionalPerLeg * 1e18, maxCollateralPerLeg),
-                cfgMinLeverage
-            );
-        } else {
-            riskIndicators.maxLeveragePerLeg = cfgMinLeverage;
-        }
-    }
-
-    function _leverageInRange(uint256 leverage, uint256 cfgMinLeverage) internal pure returns (uint256) {
-        if (leverage > Constants.WAD_LEVERAGE_1000) {
-            return Constants.WAD_LEVERAGE_1000;
-        } else if (leverage < cfgMinLeverage) {
-            return cfgMinLeverage;
-        } else {
-            return leverage;
-        }
+        riskIndicators = riskIndicatorsContext.getRiskIndicators(direction);
     }
 
     function _emitOpenSwapEvent(

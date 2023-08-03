@@ -5,8 +5,8 @@ import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "contracts/itf/ItfIporOracle.sol";
-import "contracts/mocks/MockIporWeighted.sol";
-import "contracts/mocks/MockIporWeighted.sol";
+import "test/mocks/MockIporWeighted.sol";
+import "test/mocks/MockIporWeighted.sol";
 
 contract IporOracleUtils is Test {
     struct OracleParams {

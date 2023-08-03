@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "contracts/interfaces/types/IporTypes.sol";
-import "./SpreadTypes.sol";
+import "../../amm/spread/SpreadTypes.sol";
 
+/// @title Spread interface for storage lens
 interface ISpreadStorageLens {
-    function getTimeWeightedNotional(
-    ) external returns (SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse);
+    /// @notice Gets the time-weighted notional for all supported assets and tenors.
+    /// @return timeWeightedNotionalResponse The time-weighted notional for all supported assets and tenors.
+    function getTimeWeightedNotional()
+        external
+        returns (SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse);
 }

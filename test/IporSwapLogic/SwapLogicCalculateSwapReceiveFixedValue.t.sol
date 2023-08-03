@@ -4,8 +4,8 @@ pragma solidity 0.8.20;
 import {DataUtils} from "../utils/DataUtils.sol";
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
-import "contracts/mocks/MockIporSwapLogic.sol";
-import "contracts/interfaces/types/IporTypes.sol";
+import "../mocks/MockIporSwapLogic.sol";
+import "../../contracts/interfaces/types/IporTypes.sol";
 
 contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
     MockIporSwapLogic internal _iporSwapLogic;
@@ -30,7 +30,7 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             IporTypes.SwapState.ACTIVE
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(
+        int256 swapValue = _iporSwapLogic.calculatePnlReceiveFixed(
             swap, swap.openTimestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, 1 * TestConstants.D18
         );
         // then
@@ -53,7 +53,7 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             IporTypes.SwapState.ACTIVE
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(swap, swap.openTimestamp, 125 * TestConstants.D18);
+        int256 swapValue = _iporSwapLogic.calculatePnlReceiveFixed(swap, swap.openTimestamp, 125 * TestConstants.D18);
         // then
         assertEq(swapValue, -24675750000000000000000);
     }
@@ -74,7 +74,7 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             IporTypes.SwapState.ACTIVE
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(
+        int256 swapValue = _iporSwapLogic.calculatePnlReceiveFixed(
             swap, swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 100 * TestConstants.D18
         );
         // then
@@ -97,7 +97,7 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             IporTypes.SwapState.ACTIVE
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(
+        int256 swapValue = _iporSwapLogic.calculatePnlReceiveFixed(
             swap, swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 125 * TestConstants.D18
         );
         // then
@@ -122,7 +122,7 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             IporTypes.SwapState.ACTIVE
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(
+        int256 swapValue = _iporSwapLogic.calculatePnlReceiveFixed(
             swap, swap.openTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 125 * TestConstants.D18
         );
         // then
@@ -145,7 +145,7 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             IporTypes.SwapState.ACTIVE
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(
+        int256 swapValue = _iporSwapLogic.calculatePnlReceiveFixed(
             swap, swap.openTimestamp + 4 * TestConstants.PERIOD_25_DAYS_IN_SECONDS, 120 * TestConstants.D18
         );
         // then
@@ -168,7 +168,7 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             IporTypes.SwapState.ACTIVE
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(
+        int256 swapValue = _iporSwapLogic.calculatePnlReceiveFixed(
             swap, swap.openTimestamp + 4 * TestConstants.PERIOD_25_DAYS_IN_SECONDS, 120 * TestConstants.D18
         );
         // then
@@ -191,7 +191,7 @@ contract IporSwapLogicCalculateSwapReceiveFixedValue is TestCommons, DataUtils {
             IporTypes.SwapState.ACTIVE
         );
         // when
-        int256 swapValue = _iporSwapLogic.calculatePayoffReceiveFixed(
+        int256 swapValue = _iporSwapLogic.calculatePnlReceiveFixed(
             swap, swap.openTimestamp + 4 * TestConstants.PERIOD_25_DAYS_IN_SECONDS, 120 * TestConstants.D18
         );
         // then

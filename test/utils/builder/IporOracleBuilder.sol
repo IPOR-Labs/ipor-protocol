@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "contracts/itf/ItfIporOracle.sol";
-import "../TestConstants.sol";
+import "../../../contracts/oracles/IporOracle.sol";
 import "forge-std/Test.sol";
-import "./BuilderUtils.sol";
 import "../../mocks/EmptyIporOracleImplementation.sol";
 
 contract IporOracleBuilder is Test {
@@ -49,20 +47,20 @@ contract IporOracleBuilder is Test {
         return this;
     }
 
-    function build() public returns (ItfIporOracle) {
+    function build() public returns (IporOracle) {
         vm.startPrank(_owner);
         ERC1967Proxy proxy = _constructProxy(address(builderData.iporOracleImplementation));
-        ItfIporOracle iporOracle = ItfIporOracle(address(proxy));
+        IporOracle iporOracle = IporOracle(address(proxy));
         vm.stopPrank();
         delete builderData;
         return iporOracle;
     }
 
-    function buildEmptyProxy() public returns (ItfIporOracle) {
+    function buildEmptyProxy() public returns (IporOracle) {
         vm.startPrank(_owner);
 
         ERC1967Proxy proxy = _constructProxy(address(new EmptyIporOracleImplementation()));
-        ItfIporOracle iporOracle = ItfIporOracle(address(proxy));
+        IporOracle iporOracle = IporOracle(address(proxy));
         vm.stopPrank();
         delete builderData;
         return iporOracle;

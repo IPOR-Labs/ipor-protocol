@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 
-import "./SpreadStorageLibs.sol";
+import "../../amm/spread/SpreadStorageLibs.sol";
 
 library SpreadTypes {
     /// @notice structure used to save the weighted notional for the 28 days into storage
@@ -27,7 +27,9 @@ library SpreadTypes {
         SpreadStorageLibs.StorageId storageId;
     }
 
+    /// @notice Technical structure used in Lens for the Weighted Notional params
     struct TimeWeightedNotionalResponse {
+        /// @notice timeWeightedNotionalPayFixed time weighted notional params
         TimeWeightedNotionalMemory timeWeightedNotional;
         string key;
     }

@@ -2,19 +2,19 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 
-import "contracts/libraries/math/IporMath.sol";
-import "contracts/libraries/errors/AmmPoolsErrors.sol";
-import "contracts/interfaces/IAmmTreasury.sol";
-import "contracts/interfaces/IAmmStorage.sol";
-import "contracts/interfaces/IAmmGovernanceService.sol";
-import "contracts/interfaces/IAmmGovernanceLens.sol";
-import "contracts/governance/AmmConfigurationManager.sol";
+import "../interfaces/IAmmTreasury.sol";
+import "../interfaces/IAmmStorage.sol";
+import "../interfaces/IAmmGovernanceService.sol";
+import "../interfaces/IAmmGovernanceLens.sol";
+import "../libraries/math/IporMath.sol";
+import "../libraries/errors/AmmPoolsErrors.sol";
+import "../governance/AmmConfigurationManager.sol";
+import "../libraries/IporContractValidator.sol";
 
 contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
+    using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     address internal immutable _usdt;
@@ -45,131 +45,41 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     address internal immutable _daiAmmCharlieTreasuryManager;
 
     constructor(
-        PoolConfiguration memory usdtPoolCfg,
-        PoolConfiguration memory usdcPoolCfg,
-        PoolConfiguration memory daiPoolCfg
+        AmmGovernancePoolConfiguration memory usdtPoolCfg,
+        AmmGovernancePoolConfiguration memory usdcPoolCfg,
+        AmmGovernancePoolConfiguration memory daiPoolCfg
     ) {
-        require(
-            usdtPoolCfg.asset != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " asset USDT address cannot be 0")
-        );
-        require(
-            usdtPoolCfg.ammStorage != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammStorage USDT address cannot be 0")
-        );
-        require(
-            usdtPoolCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammTreasury USDT address cannot be 0")
-        );
-        require(
-            usdtPoolCfg.ammPoolsTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammPoolsTreasury USDT address cannot be 0")
-        );
-        require(
-            usdtPoolCfg.ammPoolsTreasuryManager != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammPoolsTreasuryManager USDT address cannot be 0")
-        );
-        require(
-            usdtPoolCfg.ammCharlieTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammCharlieTreasury USDT address cannot be 0")
-        );
-        require(
-            usdtPoolCfg.ammCharlieTreasuryManager != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammCharlieTreasuryManager USDT address cannot be 0")
-        );
+        _usdt = usdtPoolCfg.asset.checkAddress();
+        _usdtDecimals = usdtPoolCfg.decimals;
+        _usdtAmmStorage = usdtPoolCfg.ammStorage.checkAddress();
+        _usdtAmmTreasury = usdtPoolCfg.ammTreasury.checkAddress();
+        _usdtAmmPoolsTreasury = usdtPoolCfg.ammPoolsTreasury.checkAddress();
+        _usdtAmmPoolsTreasuryManager = usdtPoolCfg.ammPoolsTreasuryManager.checkAddress();
+        _usdtAmmCharlieTreasury = usdtPoolCfg.ammCharlieTreasury.checkAddress();
+        _usdtAmmCharlieTreasuryManager = usdtPoolCfg.ammCharlieTreasuryManager.checkAddress();
 
-        require(
-            usdcPoolCfg.asset != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " asset USDC address cannot be 0")
-        );
-        require(
-            usdcPoolCfg.ammStorage != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammStorage USDC address cannot be 0")
-        );
-        require(
-            usdcPoolCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammTreasury USDC address cannot be 0")
-        );
-        require(
-            usdcPoolCfg.ammPoolsTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammPoolsTreasury USDC address cannot be 0")
-        );
-        require(
-            usdcPoolCfg.ammPoolsTreasuryManager != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammPoolsTreasuryManager USDC address cannot be 0")
-        );
-        require(
-            usdcPoolCfg.ammCharlieTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammCharlieTreasury USDC address cannot be 0")
-        );
-        require(
-            usdcPoolCfg.ammCharlieTreasuryManager != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammCharlieTreasuryManager USDC address cannot be 0")
-        );
+        _usdc = usdcPoolCfg.asset.checkAddress();
+        _usdcDecimals = usdcPoolCfg.decimals;
+        _usdcAmmStorage = usdcPoolCfg.ammStorage.checkAddress();
+        _usdcAmmTreasury = usdcPoolCfg.ammTreasury.checkAddress();
+        _usdcAmmPoolsTreasury = usdcPoolCfg.ammPoolsTreasury.checkAddress();
+        _usdcAmmPoolsTreasuryManager = usdcPoolCfg.ammPoolsTreasuryManager.checkAddress();
+        _usdcAmmCharlieTreasury = usdcPoolCfg.ammCharlieTreasury.checkAddress();
+        _usdcAmmCharlieTreasuryManager = usdcPoolCfg.ammCharlieTreasuryManager.checkAddress();
 
-        require(
-            daiPoolCfg.asset != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " asset DAI address cannot be 0")
-        );
-        require(
-            daiPoolCfg.ammStorage != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammStorage DAI address cannot be 0")
-        );
-        require(
-            daiPoolCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammTreasury DAI address cannot be 0")
-        );
-        require(
-            daiPoolCfg.ammPoolsTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammPoolsTreasury DAI address cannot be 0")
-        );
-        require(
-            daiPoolCfg.ammPoolsTreasuryManager != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammPoolsTreasuryManager DAI address cannot be 0")
-        );
-        require(
-            daiPoolCfg.ammCharlieTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammCharlieTreasury DAI address cannot be 0")
-        );
-        require(
-            daiPoolCfg.ammCharlieTreasuryManager != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " ammCharlieTreasuryManager DAI address cannot be 0")
-        );
-
-        _usdt = usdtPoolCfg.asset;
-        _usdtDecimals = usdtPoolCfg.assetDecimals;
-        _usdtAmmStorage = usdtPoolCfg.ammStorage;
-        _usdtAmmTreasury = usdtPoolCfg.ammTreasury;
-        _usdtAmmPoolsTreasury = usdtPoolCfg.ammPoolsTreasury;
-        _usdtAmmPoolsTreasuryManager = usdtPoolCfg.ammPoolsTreasuryManager;
-        _usdtAmmCharlieTreasury = usdtPoolCfg.ammCharlieTreasury;
-        _usdtAmmCharlieTreasuryManager = usdtPoolCfg.ammCharlieTreasuryManager;
-
-        _usdc = usdcPoolCfg.asset;
-        _usdcDecimals = usdcPoolCfg.assetDecimals;
-        _usdcAmmStorage = usdcPoolCfg.ammStorage;
-        _usdcAmmTreasury = usdcPoolCfg.ammTreasury;
-        _usdcAmmPoolsTreasury = usdcPoolCfg.ammPoolsTreasury;
-        _usdcAmmPoolsTreasuryManager = usdcPoolCfg.ammPoolsTreasuryManager;
-        _usdcAmmCharlieTreasury = usdcPoolCfg.ammCharlieTreasury;
-        _usdcAmmCharlieTreasuryManager = usdcPoolCfg.ammCharlieTreasuryManager;
-
-        _dai = daiPoolCfg.asset;
-        _daiDecimals = daiPoolCfg.assetDecimals;
-        _daiAmmStorage = daiPoolCfg.ammStorage;
-        _daiAmmTreasury = daiPoolCfg.ammTreasury;
-        _daiAmmPoolsTreasury = daiPoolCfg.ammPoolsTreasury;
-        _daiAmmPoolsTreasuryManager = daiPoolCfg.ammPoolsTreasuryManager;
-        _daiAmmCharlieTreasury = daiPoolCfg.ammCharlieTreasury;
-        _daiAmmCharlieTreasuryManager = daiPoolCfg.ammCharlieTreasuryManager;
+        _dai = daiPoolCfg.asset.checkAddress();
+        _daiDecimals = daiPoolCfg.decimals;
+        _daiAmmStorage = daiPoolCfg.ammStorage.checkAddress();
+        _daiAmmTreasury = daiPoolCfg.ammTreasury.checkAddress();
+        _daiAmmPoolsTreasury = daiPoolCfg.ammPoolsTreasury.checkAddress();
+        _daiAmmPoolsTreasuryManager = daiPoolCfg.ammPoolsTreasuryManager.checkAddress();
+        _daiAmmCharlieTreasury = daiPoolCfg.ammCharlieTreasury.checkAddress();
+        _daiAmmCharlieTreasuryManager = daiPoolCfg.ammCharlieTreasuryManager.checkAddress();
     }
 
-    function getAmmGovernanceServicePoolConfiguration(address asset)
-        external
-        view
-        override
-        returns (PoolConfiguration memory)
-    {
+    function getAmmGovernancePoolConfiguration(
+        address asset
+    ) external view override returns (AmmGovernancePoolConfiguration memory) {
         return _getPoolConfiguration(asset);
     }
 
@@ -186,12 +96,12 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     }
 
     function transferToTreasury(address asset, uint256 assetAmount) external override {
-        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+        AmmGovernancePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         require(msg.sender == poolCfg.ammPoolsTreasuryManager, AmmPoolsErrors.CALLER_NOT_TREASURY_MANAGER);
 
-        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(assetAmount, poolCfg.assetDecimals);
-        uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, poolCfg.assetDecimals);
+        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(assetAmount, poolCfg.decimals);
+        uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, poolCfg.decimals);
 
         IAmmStorage(poolCfg.ammStorage).updateStorageWhenTransferToTreasuryInternal(wadAssetAmount);
 
@@ -203,12 +113,12 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     }
 
     function transferToCharlieTreasury(address asset, uint256 assetAmount) external override {
-        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+        AmmGovernancePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         require(msg.sender == poolCfg.ammCharlieTreasuryManager, AmmPoolsErrors.CALLER_NOT_PUBLICATION_FEE_TRANSFERER);
 
-        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(assetAmount, poolCfg.assetDecimals);
-        uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, poolCfg.assetDecimals);
+        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(assetAmount, poolCfg.decimals);
+        uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, poolCfg.decimals);
 
         IAmmStorage(poolCfg.ammStorage).updateStorageWhenTransferToCharlieTreasuryInternal(wadAssetAmount);
 
@@ -246,29 +156,32 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     function setAmmPoolsParams(
         address asset,
         uint32 newMaxLiquidityPoolBalance,
-        uint32 newMaxLpAccountContribution,
         uint32 newAutoRebalanceThresholdInThousands,
         uint16 newAmmTreasuryAndAssetManagementRatio
     ) external override {
         AmmConfigurationManager.setAmmPoolsParams(
             asset,
             newMaxLiquidityPoolBalance,
-            newMaxLpAccountContribution,
             newAutoRebalanceThresholdInThousands,
             newAmmTreasuryAndAssetManagementRatio
         );
     }
 
-    function getAmmPoolsParams(address asset) external view override returns (StorageLib.AmmPoolsParamsValue memory) {
-        return AmmConfigurationManager.getAmmPoolsParams(asset);
+    function getAmmPoolsParams(address asset) external view override returns (AmmPoolsParamsConfiguration memory cfg) {
+        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(asset);
+        cfg = AmmPoolsParamsConfiguration({
+            maxLiquidityPoolBalance: uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
+            autoRebalanceThresholdInThousands: ammPoolsParamsCfg.autoRebalanceThresholdInThousands,
+            ammTreasuryAndAssetManagementRatio: ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio
+        });
     }
 
-    function _getPoolConfiguration(address asset) internal view returns (PoolConfiguration memory) {
+    function _getPoolConfiguration(address asset) internal view returns (AmmGovernancePoolConfiguration memory) {
         if (asset == _usdt) {
             return
-                PoolConfiguration({
+                AmmGovernancePoolConfiguration({
                     asset: _usdt,
-                    assetDecimals: _usdtDecimals,
+                    decimals: _usdtDecimals,
                     ammStorage: _usdtAmmStorage,
                     ammTreasury: _usdtAmmTreasury,
                     ammPoolsTreasury: _usdtAmmPoolsTreasury,
@@ -278,9 +191,9 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
                 });
         } else if (asset == _usdc) {
             return
-                PoolConfiguration({
+                AmmGovernancePoolConfiguration({
                     asset: _usdc,
-                    assetDecimals: _usdcDecimals,
+                    decimals: _usdcDecimals,
                     ammStorage: _usdcAmmStorage,
                     ammTreasury: _usdcAmmTreasury,
                     ammPoolsTreasury: _usdcAmmPoolsTreasury,
@@ -290,9 +203,9 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
                 });
         } else if (asset == _dai) {
             return
-                PoolConfiguration({
+                AmmGovernancePoolConfiguration({
                     asset: _dai,
-                    assetDecimals: _daiDecimals,
+                    decimals: _daiDecimals,
                     ammStorage: _daiAmmStorage,
                     ammTreasury: _daiAmmTreasury,
                     ammPoolsTreasury: _daiAmmPoolsTreasury,

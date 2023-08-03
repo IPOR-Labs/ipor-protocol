@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "forge-std/Test.sol";
 import "../TestCommons.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import {IporTypes} from "contracts/interfaces/types/IporTypes.sol";
 import "../../contracts/oracles/IporOracle.sol";
-import "../../contracts/mocks/tokens/MockTestnetToken.sol";
+import "../mocks/tokens/MockTestnetToken.sol";
 
 contract IporOracleTest is TestCommons {
     using stdStorage for StdStorage;
@@ -20,6 +18,7 @@ contract IporOracleTest is TestCommons {
     IporOracle private _iporOracle;
 
     function setUp() public {
+        _admin = address(this);
         vm.warp(_blockTimestamp);
         (_daiTestnetToken, _usdcTestnetToken, _usdtTestnetToken) = _getStables();
 
@@ -145,7 +144,6 @@ contract IporOracleTest is TestCommons {
         assertEq(_iporOracle.calculateAccruedIbtPrice(address(_daiTestnetToken), block.timestamp), 1030454533953516858); //lost precision at 18th decimal place
     }
 
-
     function testShouldCalculateDifferentInterestBearingTokenPriceOneSecondPeriodSameIporIndexValue18DecimalsAsset()
         public
     {
@@ -195,9 +193,11 @@ contract IporOracleTest is TestCommons {
         assertEq(version, 2_000);
     }
 
-    function testShouldPauseSCWhenSenderIsAdmin() public {
+    function testShouldPauseSCWhenSenderIsPauseGuardian() public {
         // given
         bool pausedBefore = _iporOracle.paused();
+        _iporOracle.addPauseGuardian(_admin);
+
         // when
         _iporOracle.pause();
         // then
@@ -209,8 +209,11 @@ contract IporOracleTest is TestCommons {
 
     function testShouldPauseSCSpecificMethods() public {
         // given
+        _iporOracle.addPauseGuardian(_admin);
         _iporOracle.pause();
+
         bool pausedBefore = _iporOracle.paused();
+
         address[] memory assets = new address[](3);
         assets[0] = address(_daiTestnetToken);
         assets[1] = address(_usdcTestnetToken);
@@ -257,15 +260,21 @@ contract IporOracleTest is TestCommons {
         // given
         _blockTimestamp += 60 * 60;
         vm.warp(_blockTimestamp);
+
+        _iporOracle.addPauseGuardian(_admin);
+
         _iporOracle.pause();
+
         bool pausedBefore = _iporOracle.paused();
 
         //when
+        _iporOracle.getVersion();
         _iporOracle.getIndex(address(_daiTestnetToken));
         _iporOracle.getAccruedIndex(_blockTimestamp, address(_daiTestnetToken));
         _iporOracle.calculateAccruedIbtPrice(address(_daiTestnetToken), _blockTimestamp);
-        _iporOracle.isAssetSupported(address(_daiTestnetToken));
         _iporOracle.isUpdater(address(this));
+        _iporOracle.isAssetSupported(address(_daiTestnetToken));
+        _iporOracle.isPauseGuardian(address(this));
 
         // then
         bool pausedAfter = _iporOracle.paused();
@@ -274,12 +283,13 @@ contract IporOracleTest is TestCommons {
         assertEq(pausedAfter, true);
     }
 
-    function testShouldNotPauseSmartContractWhenSenderIsNotAnAdmin() public {
+    function testShouldNotPauseSmartContractWhenSenderIsNotAnPauseGuardian() public {
         // given
         bool pausedBefore = _iporOracle.paused();
+
         // when
         vm.prank(_getUserAddress(1));
-        vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
+        vm.expectRevert(abi.encodePacked("IPOR_011"));
         _iporOracle.pause();
         // then
         bool pausedAfter = _iporOracle.paused();
@@ -290,10 +300,14 @@ contract IporOracleTest is TestCommons {
 
     function testShouldUnpauseSmartContractWhenSenderIsAnAdmin() public {
         // given
+        _iporOracle.addPauseGuardian(_admin);
         _iporOracle.pause();
         bool pausedBefore = _iporOracle.paused();
+        _iporOracle.removePauseGuardian(_admin);
+
         // when
         _iporOracle.unpause();
+
         // then
         bool pausedAfter = _iporOracle.paused();
 
@@ -303,12 +317,16 @@ contract IporOracleTest is TestCommons {
 
     function testShouldNotUnpauseSmartContractWhenSenderIsNotAnAdmin() public {
         // given
+        _iporOracle.addPauseGuardian(_admin);
         _iporOracle.pause();
+
         bool pausedBefore = _iporOracle.paused();
+
         // when
         vm.prank(_getUserAddress(1));
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
         _iporOracle.unpause();
+
         // then
         bool pausedAfter = _iporOracle.paused();
 
@@ -665,5 +683,62 @@ contract IporOracleTest is TestCommons {
         );
         (bool status, ) = address(_iporOracle).call{value: msg.value}("");
         assertTrue(!status);
+    }
+
+    function testShouldCalculateDifferentInterestBearingTokenPriceOneSecondPeriodSameIporIndexValue6DecimalsAsset()
+        public
+    {
+        // given
+        uint256 updateDate = _blockTimestamp + 60 * 60;
+
+        vm.warp(updateDate);
+        _iporOracle.updateIndex(address(_usdcTestnetToken), 5e16);
+
+        updateDate++;
+
+        (uint256 iporIndexBefore, uint256 ibtPriceBefore, ) = _iporOracle.getIndex(address(_usdcTestnetToken));
+
+        vm.warp(updateDate);
+
+        // when
+        _iporOracle.updateIndex(address(_usdcTestnetToken), 5e16);
+
+        // then
+        (uint256 iporIndexAfter, uint256 ibtPriceAfter, ) = _iporOracle.getIndex(address(_usdcTestnetToken));
+
+        assertEq(iporIndexBefore, 5e16);
+        assertEq(iporIndexAfter, 5e16);
+
+        assertEq(iporIndexAfter, iporIndexBefore);
+
+        assertEq(ibtPriceBefore != ibtPriceAfter, true);
+    }
+
+    function testShouldCalculateNextAfterNextInterestBearingTokenPriceHalfYearAndThreeMonthsSnapshots() public {
+        // given
+        uint256 indexValueOne = 5e16;
+        uint256 indexValueTwo = 6e16;
+        uint256 iporIndexThirdValue = 7e16;
+        uint256 expectedIbtPrice = 1040810774192388227;
+
+        uint256 updateDate = _blockTimestamp + 60 * 60;
+        vm.warp(updateDate);
+        _iporOracle.updateIndex(address(_usdtTestnetToken), indexValueOne);
+
+        updateDate += (365 * 24 * 60 * 60) / 2;
+        vm.warp(updateDate);
+        _iporOracle.updateIndex(address(_usdtTestnetToken), indexValueTwo);
+
+        updateDate += (365 * 24 * 60 * 60) / 4;
+        vm.warp(updateDate);
+
+        // when
+        _iporOracle.updateIndex(address(_usdtTestnetToken), iporIndexThirdValue);
+
+        // then
+        (uint256 iporIndexAfter, uint256 ibtPriceAfter, ) = _iporOracle.getIndex(address(_usdtTestnetToken));
+
+        assertEq(iporIndexAfter, iporIndexThirdValue);
+        assertEq(ibtPriceAfter, expectedIbtPrice);
     }
 }

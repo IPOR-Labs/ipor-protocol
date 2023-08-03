@@ -5,12 +5,12 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "../../interfaces/IStrategy.sol";
+import "../../interfaces/IProxyImplementation.sol";
 import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/errors/AssetManagementErrors.sol";
-
 import "../../security/IporOwnableUpgradeable.sol";
 import "../../security/PauseManager.sol";
-import "../../interfaces/IStrategy.sol";
 
 abstract contract StrategyCore is
     Initializable,
@@ -18,7 +18,8 @@ abstract contract StrategyCore is
     ReentrancyGuardUpgradeable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-    IStrategy
+    IStrategy,
+    IProxyImplementation
 {
     address internal _asset;
     address internal _shareToken;
@@ -94,14 +95,22 @@ abstract contract StrategyCore is
         _unpause();
     }
 
+    function isPauseGuardian(address account) external view override returns (bool) {
+        return PauseManager.isPauseGuardian(account);
+    }
+
+    function addPauseGuardian(address guardian) external override onlyOwner {
+        PauseManager.addPauseGuardian(guardian);
+    }
+
+    function removePauseGuardian(address guardian) external override onlyOwner {
+        PauseManager.removePauseGuardian(guardian);
+    }
+
+    function getImplementation() external view override returns (address) {
+        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
+    }
+
     //solhint-disable no-empty-blocks
     function _authorizeUpgrade(address) internal override onlyOwner {}
-
-    function addPauseGuardian(address _guardian) external onlyOwner {
-        PauseManager.addPauseGuardian(_guardian);
-    }
-
-    function removePauseGuardian(address _guardian) external onlyOwner {
-        PauseManager.removePauseGuardian(_guardian);
-    }
 }

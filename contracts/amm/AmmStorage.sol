@@ -6,22 +6,33 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
-import "contracts/libraries/Constants.sol";
-import "contracts/libraries/PaginationUtils.sol";
-import "contracts/interfaces/types/AmmStorageTypes.sol";
-import "contracts/interfaces/IAmmStorage.sol";
-import "contracts/security/IporOwnableUpgradeable.sol";
-import "contracts/amm/libraries/SoapIndicatorRebalanceLogic.sol";
-import "contracts/amm/libraries/types/StorageInternalTypes.sol";
-import "contracts/amm/libraries/types/AmmInternalTypes.sol";
+import "../interfaces/types/AmmStorageTypes.sol";
+import "../interfaces/IAmmStorage.sol";
+import "../interfaces/IProxyImplementation.sol";
+import "../libraries/Constants.sol";
+import "../libraries/PaginationUtils.sol";
+import "../libraries/IporContractValidator.sol";
+import "../security/PauseManager.sol";
+import "../security/IporOwnableUpgradeable.sol";
+import "./libraries/types/AmmInternalTypes.sol";
+import "./libraries/types/StorageInternalTypes.sol";
+import "./libraries/SoapIndicatorRebalanceLogic.sol";
 
 //@dev all stored values related to tokens are in 18 decimals.
-contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, IporOwnableUpgradeable, IAmmStorage {
+contract AmmStorage is
+    Initializable,
+    PausableUpgradeable,
+    UUPSUpgradeable,
+    IporOwnableUpgradeable,
+    IAmmStorage,
+    IProxyImplementation
+{
+    using IporContractValidator for address;
     using SafeCast for uint256;
     using SoapIndicatorRebalanceLogic for AmmStorageTypes.SoapIndicators;
 
-    address private immutable IPOR_PROTOCOL_ROUTER;
-    address private immutable AMM_TREASURY;
+    address private immutable _iporProtocolRouter;
+    address private immutable _ammTreasury;
 
     uint32 private _lastSwapId;
 
@@ -37,33 +48,31 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     StorageInternalTypes.SwapContainer internal _swapsPayFixed;
     StorageInternalTypes.SwapContainer internal _swapsReceiveFixed;
 
-    mapping(address => uint128) private _liquidityPoolAccountContribution;
+    /// @dev DEPRECATED in V2
+    mapping(address => uint128) private _liquidityPoolAccountContributionDeprecated;
+
     mapping(IporTypes.SwapTenor => AmmInternalTypes.OpenSwapList) private _openedSwapsPayFixed;
     mapping(IporTypes.SwapTenor => AmmInternalTypes.OpenSwapList) private _openedSwapsReceiveFixed;
 
+    modifier onlyPauseGuardian() {
+        require(PauseManager.isPauseGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
+        _;
+    }
+
     modifier onlyRouter() {
-        require(_msgSender() == IPOR_PROTOCOL_ROUTER, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
+        require(_msgSender() == _iporProtocolRouter, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
         _;
     }
 
     modifier onlyAmmTreasury() {
-        require(_msgSender() == AMM_TREASURY, IporErrors.CALLER_NOT_AMM_TREASURY);
+        require(_msgSender() == _ammTreasury, IporErrors.CALLER_NOT_AMM_TREASURY);
         _;
     }
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(address iporProtocolRouterInput, address ammTreasury) {
-        require(
-            iporProtocolRouterInput != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " IPOR protocol router address cannot be 0")
-        );
-        require(
-            ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " AMM treasury address cannot be 0")
-        );
-
-        IPOR_PROTOCOL_ROUTER = iporProtocolRouterInput;
-        AMM_TREASURY = ammTreasury;
+        _iporProtocolRouter = iporProtocolRouterInput.checkAddress();
+        _ammTreasury = ammTreasury.checkAddress();
         _disableInitializers();
     }
 
@@ -142,9 +151,11 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         uint32 id = swapId.toUint32();
         StorageInternalTypes.Swap storage swap;
 
-        if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) swap = _swapsPayFixed.swaps[id];
-        else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) swap = _swapsReceiveFixed.swaps[id];
-        else {
+        if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
+            swap = _swapsPayFixed.swaps[id];
+        } else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
+            swap = _swapsReceiveFixed.swaps[id];
+        } else {
             revert(AmmErrors.UNSUPPORTED_DIRECTION);
         }
         return
@@ -216,8 +227,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     function addLiquidityInternal(
         address account,
         uint256 assetAmount,
-        uint256 cfgMaxLiquidityPoolBalance,
-        uint256 cfgMaxLpAccountContribution
+        uint256 cfgMaxLiquidityPoolBalance
     ) external override onlyRouter {
         require(assetAmount > 0, AmmErrors.DEPOSIT_AMOUNT_IS_TOO_LOW);
 
@@ -225,16 +235,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
         require(newLiquidityPoolBalance <= cfgMaxLiquidityPoolBalance, AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH);
 
-        uint128 newLiquidityPoolAccountContribution = _liquidityPoolAccountContribution[account] +
-            assetAmount.toUint128();
-
-        require(
-            newLiquidityPoolAccountContribution <= cfgMaxLpAccountContribution,
-            AmmErrors.LP_ACCOUNT_CONTRIBUTION_IS_TOO_HIGH
-        );
-
         _balances.liquidityPool = newLiquidityPoolBalance;
-        _liquidityPoolAccountContribution[account] = newLiquidityPoolAccountContribution;
     }
 
     function subtractLiquidityInternal(uint256 assetAmount) external override onlyRouter {
@@ -286,7 +287,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
     function updateStorageWhenCloseSwapPayFixedInternal(
         AmmTypes.Swap memory swap,
-        int256 payoff,
+        int256 pnlValue,
         uint256 swapUnwindOpeningFeeLPAmount,
         uint256 swapUnwindOpeningFeeTreasuryAmount,
         uint256 closingTimestamp
@@ -294,7 +295,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _updateSwapsWhenClosePayFixed(swap);
         _updateBalancesWhenCloseSwapPayFixed(
             swap,
-            payoff,
+            pnlValue,
             swapUnwindOpeningFeeLPAmount,
             swapUnwindOpeningFeeTreasuryAmount
         );
@@ -304,7 +305,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
     function updateStorageWhenCloseSwapReceiveFixedInternal(
         AmmTypes.Swap memory swap,
-        int256 payoff,
+        int256 pnlValue,
         uint256 swapUnwindOpeningFeeLPAmount,
         uint256 swapUnwindOpeningFeeTreasuryAmount,
         uint256 closingTimestamp
@@ -312,7 +313,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _updateSwapsWhenCloseReceiveFixed(swap);
         _updateBalancesWhenCloseSwapReceiveFixed(
             swap,
-            payoff,
+            pnlValue,
             swapUnwindOpeningFeeLPAmount,
             swapUnwindOpeningFeeTreasuryAmount
         );
@@ -378,7 +379,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _balances.treasury = balance.toUint128();
     }
 
-    function pause() external override onlyOwner {
+    function pause() external override onlyPauseGuardian {
         _pause();
     }
 
@@ -386,43 +387,20 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _unpause();
     }
 
-    function getLiquidityPoolAccountContribution(address account) external view returns (uint256) {
-        return _liquidityPoolAccountContribution[account];
+    function isPauseGuardian(address account) external view override returns (bool) {
+        return PauseManager.isPauseGuardian(account);
     }
 
-    function _getPositions(
-        mapping(uint32 => StorageInternalTypes.Swap) storage swaps,
-        uint32[] storage ids,
-        uint256 offset,
-        uint256 chunkSize
-    ) internal view returns (AmmTypes.Swap[] memory) {
-        require(chunkSize > 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
-        require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
+    function addPauseGuardian(address guardian) external override onlyOwner {
+        PauseManager.addPauseGuardian(guardian);
+    }
 
-        uint256 swapsIdsLength = PaginationUtils.resolveResultSetSize(ids.length, offset, chunkSize);
-        AmmTypes.Swap[] memory derivatives = new AmmTypes.Swap[](swapsIdsLength);
+    function removePauseGuardian(address guardian) external override onlyOwner {
+        PauseManager.removePauseGuardian(guardian);
+    }
 
-        for (uint256 i; i != swapsIdsLength; ) {
-            uint32 id = ids[i + offset];
-            StorageInternalTypes.Swap storage swap = swaps[id];
-            derivatives[i] = AmmTypes.Swap(
-                swap.id,
-                swap.buyer,
-                swap.openTimestamp,
-                swap.tenor,
-                swap.idsIndex,
-                swap.collateral,
-                swap.notional,
-                swap.ibtQuantity,
-                swap.fixedInterestRate,
-                uint256(swap.liquidationDepositAmount) * 1e18,
-                swaps[id].state
-            );
-            unchecked {
-                ++i;
-            }
-        }
-        return derivatives;
+    function getImplementation() external view override returns (address) {
+        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
 
     function getSoapIndicators()
@@ -451,6 +429,43 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             averageInterestRate: soapIndicatorsReceiveFixed.averageInterestRate,
             rebalanceTimestamp: soapIndicatorsReceiveFixed.rebalanceTimestamp
         });
+    }
+
+    function _getPositions(
+        mapping(uint32 => StorageInternalTypes.Swap) storage swaps,
+        uint32[] storage ids,
+        uint256 offset,
+        uint256 chunkSize
+    ) internal view returns (AmmTypes.Swap[] memory) {
+        require(chunkSize > 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
+        require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
+
+        uint256 swapsIdsLength = PaginationUtils.resolveResultSetSize(ids.length, offset, chunkSize);
+        AmmTypes.Swap[] memory derivatives = new AmmTypes.Swap[](swapsIdsLength);
+
+        uint32 id;
+
+        for (uint256 i; i != swapsIdsLength; ) {
+            id = ids[i + offset];
+            StorageInternalTypes.Swap storage swap = swaps[id];
+            derivatives[i] = AmmTypes.Swap(
+                swap.id,
+                swap.buyer,
+                swap.openTimestamp,
+                swap.tenor,
+                swap.idsIndex,
+                swap.collateral,
+                swap.notional,
+                swap.ibtQuantity,
+                swap.fixedInterestRate,
+                uint256(swap.liquidationDepositAmount) * 1e18,
+                swaps[id].state
+            );
+            unchecked {
+                ++i;
+            }
+        }
+        return derivatives;
     }
 
     function _updateBalancesWhenOpenSwapPayFixed(
@@ -483,51 +498,47 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
     function _updateBalancesWhenCloseSwapPayFixed(
         AmmTypes.Swap memory swap,
-        int256 payoff,
+        int256 pnlValue,
         uint256 swapUnwindOpeningFeeLPAmount,
         uint256 swapUnwindOpeningFeeTreasuryAmount
     ) internal {
-        _updateBalancesWhenCloseSwap(payoff, swapUnwindOpeningFeeLPAmount, swapUnwindOpeningFeeTreasuryAmount);
-
+        _updateBalancesWhenCloseSwap(pnlValue, swapUnwindOpeningFeeLPAmount, swapUnwindOpeningFeeTreasuryAmount);
         _balances.totalCollateralPayFixed = _balances.totalCollateralPayFixed - swap.collateral.toUint128();
-        _balances.treasury = _balances.treasury + swapUnwindOpeningFeeTreasuryAmount.toUint128();
     }
 
     function _updateBalancesWhenCloseSwapReceiveFixed(
         AmmTypes.Swap memory swap,
-        int256 payoff,
+        int256 pnlValue,
         uint256 swapUnwindOpeningFeeLPAmount,
         uint256 swapUnwindOpeningFeeTreasuryAmount
     ) internal {
-        _updateBalancesWhenCloseSwap(payoff, swapUnwindOpeningFeeLPAmount, swapUnwindOpeningFeeTreasuryAmount);
-
+        _updateBalancesWhenCloseSwap(pnlValue, swapUnwindOpeningFeeLPAmount, swapUnwindOpeningFeeTreasuryAmount);
         _balances.totalCollateralReceiveFixed = _balances.totalCollateralReceiveFixed - swap.collateral.toUint128();
-        _balances.treasury = _balances.treasury + swapUnwindOpeningFeeTreasuryAmount.toUint128();
     }
 
     function _updateBalancesWhenCloseSwap(
-        int256 payoff,
+        int256 pnlValue,
         uint256 swapUnwindOpeningFeeLPAmount,
         uint256 swapUnwindOpeningFeeTreasuryAmount
     ) internal {
-        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
-        if (payoff > 0) {
-            /// @dev Buyer earns, AmmTreasury (LP) looses
-            require(_balances.liquidityPool >= absPayoff, AmmErrors.CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW);
-
-            /// @dev When AmmTreasury (LP) looses, then  always substract all payoff
+        if (pnlValue > 0) {
+            /// @dev Buyer earns, AMM (LP) looses
+            require(_balances.liquidityPool >= absPnlValue, AmmErrors.CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW);
+            /// @dev When AMM (LP) looses, then  always substract all pnlValue
             _balances.liquidityPool =
                 _balances.liquidityPool -
-                absPayoff.toUint128() +
+                absPnlValue.toUint128() +
                 swapUnwindOpeningFeeLPAmount.toUint128();
         } else {
-            /// @dev AmmTreasury earns, Buyer looses,
+            /// @dev AMM earns, Buyer looses,
             _balances.liquidityPool =
                 _balances.liquidityPool +
-                absPayoff.toUint128() +
+                absPnlValue.toUint128() +
                 swapUnwindOpeningFeeLPAmount.toUint128();
         }
+        _balances.treasury = _balances.treasury + swapUnwindOpeningFeeTreasuryAmount.toUint128();
     }
 
     function _updateSwapsWhenOpen(
@@ -616,7 +627,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
     function _updateSoapIndicatorsWhenOpenSwapPayFixed(
         uint256 openTimestamp,
-        uint256 notional,
+        uint256 swapNotional,
         uint256 fixedInterestRate,
         uint256 ibtQuantity
     ) internal {
@@ -628,7 +639,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             _soapIndicatorsPayFixed.rebalanceTimestamp
         );
 
-        pf = pf.rebalanceWhenOpenSwap(openTimestamp, notional, fixedInterestRate, ibtQuantity);
+        pf = pf.rebalanceWhenOpenSwap(openTimestamp, swapNotional, fixedInterestRate, ibtQuantity);
 
         _soapIndicatorsPayFixed.rebalanceTimestamp = pf.rebalanceTimestamp.toUint32();
         _soapIndicatorsPayFixed.totalNotional = pf.totalNotional.toUint128();
@@ -639,7 +650,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
     function _updateSoapIndicatorsWhenOpenSwapReceiveFixed(
         uint256 openTimestamp,
-        uint256 notional,
+        uint256 swapNotional,
         uint256 fixedInterestRate,
         uint256 ibtQuantity
     ) internal {
@@ -650,7 +661,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             _soapIndicatorsReceiveFixed.averageInterestRate,
             _soapIndicatorsReceiveFixed.rebalanceTimestamp
         );
-        rf = rf.rebalanceWhenOpenSwap(openTimestamp, notional, fixedInterestRate, ibtQuantity);
+        rf = rf.rebalanceWhenOpenSwap(openTimestamp, swapNotional, fixedInterestRate, ibtQuantity);
 
         _soapIndicatorsReceiveFixed.rebalanceTimestamp = rf.rebalanceTimestamp.toUint32();
         _soapIndicatorsReceiveFixed.totalNotional = rf.totalNotional.toUint128();

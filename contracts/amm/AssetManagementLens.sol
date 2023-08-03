@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "../libraries/errors/IporErrors.sol";
 import "../interfaces/IAssetManagementLens.sol";
 import "../interfaces/IAssetManagement.sol";
 import "../interfaces/IAssetManagementInternal.sol";
 import "../interfaces/IStrategy.sol";
+import "../libraries/errors/IporErrors.sol";
+import "../libraries/IporContractValidator.sol";
 
 contract AssetManagementLens is IAssetManagementLens {
+    using IporContractValidator for address;
+
     address internal immutable _usdt;
     uint256 internal immutable _usdtDecimals;
     address internal immutable _usdtAssetManagement;
@@ -28,64 +31,28 @@ contract AssetManagementLens is IAssetManagementLens {
         AssetManagementConfiguration memory usdcAssetManagementCfg,
         AssetManagementConfiguration memory daiAssetManagementCfg
     ) {
-        require(
-            usdtAssetManagementCfg.asset != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDT AssetManagement asset")
-        );
-        require(
-            usdtAssetManagementCfg.assetManagement != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDT AssetManagement asset")
-        );
-        require(
-            usdtAssetManagementCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDT AmmTreasury asset")
-        );
-
-        require(
-            usdcAssetManagementCfg.asset != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC AssetManagement asset")
-        );
-        require(
-            usdcAssetManagementCfg.assetManagement != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC AssetManagement asset")
-        );
-        require(
-            usdcAssetManagementCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC AmmTreasury asset")
-        );
-
-        require(
-            daiAssetManagementCfg.asset != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " DAI AssetManagement asset")
-        );
-        require(
-            daiAssetManagementCfg.assetManagement != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " DAI AssetManagement asset")
-        );
-        require(
-            daiAssetManagementCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " DAI AmmTreasury asset")
-        );
-
-        _usdt = usdtAssetManagementCfg.asset;
+        _usdt = usdtAssetManagementCfg.asset.checkAddress();
         _usdtDecimals = usdtAssetManagementCfg.decimals;
-        _usdtAssetManagement = usdtAssetManagementCfg.assetManagement;
-        _usdtAmmTreasury = usdtAssetManagementCfg.ammTreasury;
+        _usdtAssetManagement = usdtAssetManagementCfg.assetManagement.checkAddress();
+        _usdtAmmTreasury = usdtAssetManagementCfg.ammTreasury.checkAddress();
 
-        _usdc = usdcAssetManagementCfg.asset;
+        _usdc = usdcAssetManagementCfg.asset.checkAddress();
         _usdcDecimals = usdcAssetManagementCfg.decimals;
-        _usdcAssetManagement = usdcAssetManagementCfg.assetManagement;
-        _usdcAmmTreasury = usdcAssetManagementCfg.ammTreasury;
+        _usdcAssetManagement = usdcAssetManagementCfg.assetManagement.checkAddress();
+        _usdcAmmTreasury = usdcAssetManagementCfg.ammTreasury.checkAddress();
 
-        _dai = daiAssetManagementCfg.asset;
+        _dai = daiAssetManagementCfg.asset.checkAddress();
         _daiDecimals = daiAssetManagementCfg.decimals;
-        _daiAssetManagement = daiAssetManagementCfg.assetManagement;
-        _daiAmmTreasury = daiAssetManagementCfg.ammTreasury;
+        _daiAssetManagement = daiAssetManagementCfg.assetManagement.checkAddress();
+        _daiAmmTreasury = daiAssetManagementCfg.ammTreasury.checkAddress();
     }
 
     function balanceOfAmmTreasuryInAssetManagement(address asset) external view returns (uint256) {
         AssetManagementConfiguration memory assetManagementConfiguration = _getAssetManagementConfiguration(asset);
-        return IAssetManagement(assetManagementConfiguration.assetManagement).totalBalance(assetManagementConfiguration.ammTreasury);
+        return
+            IAssetManagement(assetManagementConfiguration.assetManagement).totalBalance(
+                assetManagementConfiguration.ammTreasury
+            );
     }
 
     function getIvTokenExchangeRate(address asset) external view returns (uint256) {
@@ -93,23 +60,25 @@ contract AssetManagementLens is IAssetManagementLens {
         return IAssetManagement(assetManagementConfiguration.assetManagement).calculateExchangeRate();
     }
 
-    function aaveBalanceOfInAssetManagement(address asset) external view returns (uint256) {
+    function balanceOfStrategyAave(address asset) external view returns (uint256) {
         AssetManagementConfiguration memory assetManagementConfiguration = _getAssetManagementConfiguration(asset);
-        IAssetManagementInternal assetManagement = IAssetManagementInternal(assetManagementConfiguration.assetManagement);
+        IAssetManagementInternal assetManagement = IAssetManagementInternal(
+            assetManagementConfiguration.assetManagement
+        );
         return IStrategy(assetManagement.getStrategyAave()).balanceOf();
     }
 
-    function compoundBalanceOfInAssetManagement(address asset) external view returns (uint256) {
+    function balanceOfStrategyCompound(address asset) external view returns (uint256) {
         AssetManagementConfiguration memory assetManagementConfiguration = _getAssetManagementConfiguration(asset);
-        IAssetManagementInternal assetManagement = IAssetManagementInternal(assetManagementConfiguration.assetManagement);
+        IAssetManagementInternal assetManagement = IAssetManagementInternal(
+            assetManagementConfiguration.assetManagement
+        );
         return IStrategy(assetManagement.getStrategyCompound()).balanceOf();
     }
 
-    function _getAssetManagementConfiguration(address asset)
-        internal
-        view
-        returns (AssetManagementConfiguration memory)
-    {
+    function _getAssetManagementConfiguration(
+        address asset
+    ) internal view returns (AssetManagementConfiguration memory) {
         if (asset == _usdt) {
             return
                 AssetManagementConfiguration({

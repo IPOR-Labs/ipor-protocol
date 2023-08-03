@@ -1,35 +1,28 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "contracts/amm/libraries/types/AmmInternalTypes.sol";
-import "contracts/interfaces/types/AmmTypes.sol";
-import "contracts/interfaces/IAmmStorage.sol";
-import "contracts/libraries/errors/IporErrors.sol";
-import "contracts/libraries/errors/AmmErrors.sol";
-import "contracts/amm/libraries/IporSwapLogic.sol";
-import "./ISpreadCloseSwapService.sol";
-import "./SpreadStorageLibs.sol";
-import "./CalculateTimeWeightedNotionalLibs.sol";
+import "../../interfaces/IAmmStorage.sol";
+import "../../amm/spread/ISpreadCloseSwapService.sol";
+import "../../libraries/errors/IporErrors.sol";
+import "../../libraries/errors/AmmErrors.sol";
+import "../../amm/libraries/types/AmmInternalTypes.sol";
+import "../../amm/libraries/IporSwapLogic.sol";
+import "../../amm/spread/SpreadStorageLibs.sol";
+import "../../amm/spread/CalculateTimeWeightedNotionalLibs.sol";
+import "../../libraries/IporContractValidator.sol";
 
 contract SpreadCloseSwapService is ISpreadCloseSwapService {
+    using IporContractValidator for address;
     using SafeCast for uint256;
 
-    address internal immutable _DAI;
-    address internal immutable _USDC;
-    address internal immutable _USDT;
+    address internal immutable _dai;
+    address internal immutable _usdc;
+    address internal immutable _usdt;
 
-    constructor(
-        address dai,
-        address usdc,
-        address usdt
-    ) {
-        require(dai != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI asset address cannot be 0"));
-        require(usdc != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC asset address cannot be 0"));
-        require(usdt != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT asset address cannot be 0"));
-
-        _DAI = dai;
-        _USDC = usdc;
-        _USDT = usdt;
+    constructor(address dai, address usdc, address usdt) {
+        _dai = dai.checkAddress();
+        _usdc = usdc.checkAddress();
+        _usdt = usdt.checkAddress();
     }
 
     function updateTimeWeightedNotionalOnClose(
@@ -101,11 +94,11 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
         SpreadStorageLibs.saveTimeWeightedNotional(storageId, timeWeightedNotional);
     }
 
-    function _getStorageId(address asset, IporTypes.SwapTenor tenor)
-        internal view
-        returns (SpreadStorageLibs.StorageId storageId)
-    {
-        if (asset == _DAI) {
+    function _getStorageId(
+        address asset,
+        IporTypes.SwapTenor tenor
+    ) internal view returns (SpreadStorageLibs.StorageId storageId) {
+        if (asset == _dai) {
             if (tenor == IporTypes.SwapTenor.DAYS_28) {
                 storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai;
             } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
@@ -113,7 +106,7 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
             } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
                 storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysDai;
             }
-        } else if (asset == _USDC) {
+        } else if (asset == _usdc) {
             if (tenor == IporTypes.SwapTenor.DAYS_28) {
                 storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysUsdc;
             } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
@@ -121,7 +114,7 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
             } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
                 storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysUsdc;
             }
-        } else if (asset == _USDT) {
+        } else if (asset == _usdt) {
             if (tenor == IporTypes.SwapTenor.DAYS_28) {
                 storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysUsdt;
             } else if (tenor == IporTypes.SwapTenor.DAYS_60) {

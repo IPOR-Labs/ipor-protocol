@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
+import "../../contracts/interfaces/IAmmGovernanceLens.sol";
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
 
@@ -21,15 +22,42 @@ contract AmmGovernanceServiceTest is TestCommons {
         _cfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
+    function testShouldSetupMaxAllowanceInAmmTreasury() public {
+        // given
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
+        //when
+        _iporProtocol.ammTreasury.grandMaxAllowanceForSpender(address(_userOne));
+
+        //then
+        uint256 allowance = _iporProtocol.asset.allowance(address(_iporProtocol.ammTreasury), address(_userOne));
+
+        assertEq(allowance, type(uint256).max);
+    }
+
+    function testShouldSetupZeroAllowanceInAmmTreasury() public {
+        // given
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+        _iporProtocol.ammTreasury.grandMaxAllowanceForSpender(address(_userOne));
+
+        //when
+        _iporProtocol.ammTreasury.revokeAllowanceForSpender(address(_userOne));
+
+        //then
+        uint256 allowance = _iporProtocol.asset.allowance(address(_iporProtocol.ammTreasury), address(_userOne));
+
+        assertEq(allowance, 0);
+    }
+
     function testShouldReturnDefaultAmmTreasuryAssetManagementBalanceRatio() public {
         // given
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
         vm.prank(_admin);
-        StorageLib.AmmPoolsParamsValue memory ammParams = _iporProtocol.ammGovernanceLens.getAmmPoolsParams(
-            address(_iporProtocol.asset)
-        );
+        IAmmGovernanceLens.AmmPoolsParamsConfiguration memory ammParams = _iporProtocol
+            .ammGovernanceLens
+            .getAmmPoolsParams(address(_iporProtocol.asset));
 
         // then
         assertEq(ammParams.ammTreasuryAndAssetManagementRatio, 8500);
@@ -44,16 +72,15 @@ contract AmmGovernanceServiceTest is TestCommons {
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
             1000000000,
-            1000000000,
             50,
             5000
         );
 
         // then
         vm.stopPrank();
-        StorageLib.AmmPoolsParamsValue memory ammParams = _iporProtocol.ammGovernanceLens.getAmmPoolsParams(
-            address(_iporProtocol.asset)
-        );
+        IAmmGovernanceLens.AmmPoolsParamsConfiguration memory ammParams = _iporProtocol
+            .ammGovernanceLens
+            .getAmmPoolsParams(address(_iporProtocol.asset));
         assertEq(ammParams.ammTreasuryAndAssetManagementRatio, 5000);
     }
 
@@ -63,10 +90,9 @@ contract AmmGovernanceServiceTest is TestCommons {
 
         // when
         vm.prank(_admin);
-        vm.expectRevert("IPOR_409");
+        vm.expectRevert("IPOR_408");
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
-            1000000000,
             1000000000,
             50,
             0
@@ -79,10 +105,9 @@ contract AmmGovernanceServiceTest is TestCommons {
 
         // when
         vm.prank(_admin);
-        vm.expectRevert("IPOR_409");
+        vm.expectRevert("IPOR_408");
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
-            1000000000,
             1000000000,
             50,
             10000

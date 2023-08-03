@@ -1,19 +1,27 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
-import "contracts/interfaces/types/IporTypes.sol";
+import "./IporTypes.sol";
 
 /// @title Types used in interfaces strictly related to AMM (Automated Market Maker).
 /// @dev Used by IAmmTreasury and IAmmStorage interfaces.
 library AmmTypes {
-
+    /// @notice Struct describing AMM Pool's core addresses.
     struct AmmPoolCoreModel {
+        /// @notice asset address
         address asset;
+        /// @notice asset decimals
         uint256 assetDecimals;
+        /// @notice ipToken address associated to the asset
         address ipToken;
+        /// @notice AMM Storage address
         address ammStorage;
+        /// @notice AMM Treasury address
         address ammTreasury;
+        /// @notice Asset Management address
         address assetManagement;
+        /// @notice IPOR Oracle address
         address iporOracle;
+        /// @notice IPOR Risk Management Oracle address
         address iporRiskManagementOracle;
     }
 
@@ -84,7 +92,7 @@ library AmmTypes {
         IporTypes.SwapState state;
     }
 
-    /// @notice Struct representing assets (ie. stablecoin) related to Swap that is presently being opened.
+    /// @notice Struct representing amounts related to Swap that is presently being opened.
     /// @dev all values represented in 18 decimals
     struct OpenSwapAmount {
         /// @notice Total Amount of asset that is sent from buyer to AmmTreasury when opening swap.
@@ -112,10 +120,16 @@ library AmmTypes {
         bool closed;
     }
 
+    /// @notice Technical structure used for storing information about amounts used during redeeming assets from liquidity pool.
     struct RedeemAmount {
+        /// @notice Asset amount represented in 18 decimals
+        /// @dev Asset amount is a sum of wadRedeemFee and wadRedeemAmount
         uint256 wadAssetAmount;
+        /// @notice Redeemed amount represented in decimals of asset
         uint256 redeemAmount;
+        /// @notice Redeem fee value represented in 18 decimals
         uint256 wadRedeemFee;
+        /// @notice Redeem amount represented in 18 decimals
         uint256 wadRedeemAmount;
     }
 
@@ -127,8 +141,22 @@ library AmmTypes {
         /// @notice When taking the "short" position the trader will pay a floating rate and receive a fixed rate.
         PAY_FLOATING_RECEIVE_FIXED
     }
+    /// @notice List of closable statuses for a given swap
+    /// @dev Closable status is a one of the following values:
+    /// 0 - Swap is closable
+    /// 1 - Swap is already closed
+    /// 2 - Swap state required Buyer or Liquidator to close. Sender is not Buyer nor Liquidator.
+    /// 3 - Cannot close swap, closing is too early for Buyer
+    /// 4 - Cannot close swap, closing is too early for Community
+    enum SwapClosableStatus {
+        SWAP_IS_CLOSABLE,
+        SWAP_ALREADY_CLOSED,
+        SWAP_REQUIRED_BUYER_OR_LIQUIDATOR_TO_CLOSE,
+        SWAP_CANNOT_CLOSE_CLOSING_TOO_EARLY_FOR_BUYER,
+        SWAP_CANNOT_CLOSE_CLOSING_TOO_EARLY_FOR_COMMUNITY
+    }
 
-    /// @notice Collection of swap attributes connected with IPOR Index
+    /// @notice Collection of swap attributes connected with IPOR Index and swap itself.
     /// @dev all values are in 18 decimals
     struct IporSwapIndicator {
         /// @notice IPOR Index value at the time of swap opening
@@ -140,5 +168,37 @@ library AmmTypes {
         /// @notice Fixed interest rate at which the position has been opened,
         /// it is quote from spread documentation
         uint256 fixedInterestRate;
+    }
+
+    /// @notice Risk indicators calculated for swap opening
+    struct OpenSwapRiskIndicators {
+        /// @notice Maximum collateral ratio in general
+        uint256 maxCollateralRatio;
+        /// @notice Maximum collateral ratio for a given leg
+        uint256 maxCollateralRatioPerLeg;
+        /// @notice Maximum leverage for a given leg
+        uint256 maxLeveragePerLeg;
+        /// @notice Base Spread for a given leg (without demand part)
+        int256 baseSpreadPerLeg;
+        /// @notice Fixed rate cap
+        uint256 fixedRateCapPerLeg;
+    }
+
+    /// @notice Structure containing information about swap's closing status, unwind values and PnL for a given swap and time.
+    struct ClosingSwapDetails {
+        /// @notice Swap's closing status
+        AmmTypes.SwapClosableStatus closableStatus;
+        /// @notice Flag indicating if swap unwind is required
+        bool swapUnwindRequired;
+        /// @notice Swap's unwind PnL Value, part of PnL corresponded to virtual swap (unwinded swap), represented in 18 decimals
+        int256 swapUnwindPnlValue;
+        /// @notice Unwind opening fee amount it is a sum of `swapUnwindOpeningFeeLPAmount` and `swapUnwindOpeningFeeTreasuryAmount`
+        uint256 swapUnwindOpeningFeeAmount;
+        /// @notice Part of unwind opening fee allocated as a profit of the Liquidity Pool
+        uint256 swapUnwindOpeningFeeLPAmount;
+        /// @notice Part of unwind opening fee allocated in Treasury Balance
+        uint256 swapUnwindOpeningFeeTreasuryAmount;
+        /// @notice Final Profit and Loss which takes into account the swap unwind and limits the PnL to the collateral amount. Represented in 18 decimals.
+        int256 pnlValue;
     }
 }

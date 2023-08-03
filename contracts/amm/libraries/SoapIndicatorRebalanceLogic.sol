@@ -1,28 +1,35 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "contracts/libraries/errors/AmmErrors.sol";
-import "contracts/libraries/Constants.sol";
-import "contracts/libraries/math/IporMath.sol";
-import "contracts/libraries/math/InterestRates.sol";
-import "contracts/interfaces/types/AmmStorageTypes.sol";
-import "contracts/amm/libraries/SoapIndicatorLogic.sol";
+import "../../interfaces/types/AmmStorageTypes.sol";
+import "../../libraries/errors/AmmErrors.sol";
+import "../../libraries/math/IporMath.sol";
+import "../../libraries/math/InterestRates.sol";
+import "../../amm/libraries/SoapIndicatorLogic.sol";
 
+/// @title Basic logic related with SOAP indicators when rebalance
 library SoapIndicatorRebalanceLogic {
     using SafeCast for uint256;
     using InterestRates for uint256;
 
+    /// @notice Update SOAP indicators when open swap
+    /// @param si SOAP indicators
+    /// @param rebalanceTimestamp timestamp when the rebalance is executed
+    /// @param swapNotional notional of the swap which is going to be opened and influence the SOAP
+    /// @param swapFixedInterestRate fixed interest rate of the swap
+    /// @param swapIbtQuantity IBT quantity of the swap
+    /// @return updated SOAP indicators
     function rebalanceWhenOpenSwap(
         AmmStorageTypes.SoapIndicators memory si,
         uint256 rebalanceTimestamp,
-        uint256 derivativeNotional,
+        uint256 swapNotional,
         uint256 swapFixedInterestRate,
-        uint256 derivativeIbtQuantity
+        uint256 swapIbtQuantity
     ) external pure returns (AmmStorageTypes.SoapIndicators memory) {
         uint256 averageInterestRate = calculateAverageInterestRateWhenOpenSwap(
             si.totalNotional,
             si.averageInterestRate,
-            derivativeNotional,
+            swapNotional,
             swapFixedInterestRate
         );
 
@@ -32,30 +39,38 @@ library SoapIndicatorRebalanceLogic {
         );
 
         si.rebalanceTimestamp = rebalanceTimestamp;
-        si.totalNotional = si.totalNotional + derivativeNotional;
-        si.totalIbtQuantity = si.totalIbtQuantity + derivativeIbtQuantity;
+        si.totalNotional = si.totalNotional + swapNotional;
+        si.totalIbtQuantity = si.totalIbtQuantity + swapIbtQuantity;
         si.averageInterestRate = averageInterestRate;
         si.hypotheticalInterestCumulative = hypotheticalInterestTotal;
 
         return si;
     }
 
+    /// @notice Update SOAP indicators when close swap
+    /// @param si SOAP indicators
+    /// @param rebalanceTimestamp timestamp when the rebalance is executed
+    /// @param swapOpenTimestamp timestamp when the swap was opened
+    /// @param swapNotional notional of the swap which is going to be closed and influence the SOAP
+    /// @param swapFixedInterestRate fixed interest rate of the swap
+    /// @param swapIbtQuantity IBT quantity of the swap
+    /// @return updated SOAP indicators
     function rebalanceWhenCloseSwap(
         AmmStorageTypes.SoapIndicators memory si,
         uint256 rebalanceTimestamp,
-        uint256 derivativeOpenTimestamp,
-        uint256 derivativeNotional,
+        uint256 swapOpenTimestamp,
+        uint256 swapNotional,
         uint256 swapFixedInterestRate,
-        uint256 derivativeIbtQuantity
+        uint256 swapIbtQuantity
     ) external pure returns (AmmStorageTypes.SoapIndicators memory) {
         uint256 newAverageInterestRate = calculateAverageInterestRateWhenCloseSwap(
             si.totalNotional,
             si.averageInterestRate,
-            derivativeNotional,
+            swapNotional,
             swapFixedInterestRate
         );
 
-        if (si.totalNotional != derivativeNotional) {
+        if (si.totalNotional != swapNotional) {
             uint256 currentHypoteticalInterestTotal = SoapIndicatorLogic.calculateHyphoteticalInterestTotal(
                 si,
                 rebalanceTimestamp
@@ -63,71 +78,104 @@ library SoapIndicatorRebalanceLogic {
 
             uint256 interestPaidOut = calculateInterestPaidOut(
                 rebalanceTimestamp,
-                derivativeOpenTimestamp,
-                derivativeNotional,
+                swapOpenTimestamp,
+                swapNotional,
                 swapFixedInterestRate
             );
 
-            uint256 hypotheticalInterestTotal = currentHypoteticalInterestTotal - interestPaidOut;
-
-            si.rebalanceTimestamp = rebalanceTimestamp;
-            si.hypotheticalInterestCumulative = hypotheticalInterestTotal;
-            si.totalNotional = si.totalNotional - derivativeNotional;
-            si.totalIbtQuantity = si.totalIbtQuantity - derivativeIbtQuantity;
+            if (currentHypoteticalInterestTotal >= interestPaidOut) {
+                si.hypotheticalInterestCumulative = currentHypoteticalInterestTotal - interestPaidOut;
+            } else {
+                si.hypotheticalInterestCumulative = 0;
+            }
+            si.totalNotional = si.totalNotional - swapNotional;
+            si.totalIbtQuantity = si.totalIbtQuantity - swapIbtQuantity;
             si.averageInterestRate = newAverageInterestRate;
+            si.rebalanceTimestamp = rebalanceTimestamp;
         } else {
             /// @dev when newAverageInterestRate = 0 it means in IPOR Protocol is closing the LAST derivative on this leg.
-            si.rebalanceTimestamp = rebalanceTimestamp;
             si.hypotheticalInterestCumulative = 0;
             si.totalNotional = 0;
             si.totalIbtQuantity = 0;
             si.averageInterestRate = 0;
+            si.rebalanceTimestamp = rebalanceTimestamp;
         }
 
         return si;
     }
 
+    /// @notice Calculate the interest paid out of the swap when close it
+    /// @param calculateTimestamp timestamp when the rebalance is executed
+    /// @param swapOpenTimestamp timestamp when the swap was opened
+    /// @param swapNotional notional of the swap
+    /// @param swapFixedInterestRate fixed interest rate of the swap
+    /// @return interest paid out, represented in 18 decimals
     function calculateInterestPaidOut(
         uint256 calculateTimestamp,
-        uint256 derivativeOpenTimestamp,
-        uint256 derivativeNotional,
+        uint256 swapOpenTimestamp,
+        uint256 swapNotional,
         uint256 swapFixedInterestRate
     ) internal pure returns (uint256) {
-        require(calculateTimestamp >= derivativeOpenTimestamp, AmmErrors.CALC_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP);
+        require(calculateTimestamp >= swapOpenTimestamp, AmmErrors.CALC_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP);
         return
-            derivativeNotional.calculateContinuousCompoundInterestUsingRatePeriodMultiplication(
-                swapFixedInterestRate * (calculateTimestamp - derivativeOpenTimestamp)
+            swapNotional.calculateContinuousCompoundInterestUsingRatePeriodMultiplication(
+                swapFixedInterestRate * (calculateTimestamp - swapOpenTimestamp)
             );
     }
 
+    /// @notice Calculate the average interest rate when open a swap
+    /// @param totalNotional total notional balance
+    /// @param averageInterestRate average interest rate
+    /// @param swapNotional notional of the swap
+    /// @param swapFixedInterestRate fixed interest rate of the swap
+    /// @return newAverageInterestRate average interest rate, represented in 18 decimals
     function calculateAverageInterestRateWhenOpenSwap(
         uint256 totalNotional,
         uint256 averageInterestRate,
-        uint256 derivativeNotional,
+        uint256 swapNotional,
         uint256 swapFixedInterestRate
-    ) internal pure returns (uint256) {
-        return
-            IporMath.division(
-                (totalNotional * averageInterestRate + derivativeNotional * swapFixedInterestRate),
-                (totalNotional + derivativeNotional)
-            );
+    ) internal pure returns (uint256 newAverageInterestRate) {
+        newAverageInterestRate = IporMath.division(
+            (totalNotional * averageInterestRate + swapNotional * swapFixedInterestRate),
+            (totalNotional + swapNotional)
+        );
+
+        if (averageInterestRate != 0) {
+            require(newAverageInterestRate > 0, AmmErrors.AVERAGE_INTEREST_RATE_WHEN_OPEN_SWAP_CANNOT_BE_ZERO);
+        }
     }
 
+    /// @notice Calculate the average interest rate when close a swap
+    /// @param totalNotional total notional balance
+    /// @param averageInterestRate average interest rate for all opened swaps in AMM
+    /// @param swapNotional notional of the swap
+    /// @param swapFixedInterestRate fixed interest rate of the swap
+    /// @return newAverageInterestRate average interest rate, represented in 18 decimals
     function calculateAverageInterestRateWhenCloseSwap(
         uint256 totalNotional,
         uint256 averageInterestRate,
-        uint256 derivativeNotional,
+        uint256 swapNotional,
         uint256 swapFixedInterestRate
-    ) internal pure returns (uint256) {
-        require(derivativeNotional <= totalNotional, AmmErrors.SWAP_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL);
-        if (derivativeNotional == totalNotional) {
+    ) internal pure returns (uint256 newAverageInterestRate) {
+        require(swapNotional <= totalNotional, AmmErrors.SWAP_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL);
+
+        if (swapNotional == totalNotional) {
             return 0;
         } else {
-            return
-                IporMath.division(
-                    (totalNotional * averageInterestRate - derivativeNotional * swapFixedInterestRate),
-                    (totalNotional - derivativeNotional)
+            uint256 totalNotionalAndAverageInterestRate = totalNotional * averageInterestRate;
+            uint256 swapNotionalAndSwapFixedInterestRate = swapNotional * swapFixedInterestRate;
+
+            if (totalNotionalAndAverageInterestRate <= swapNotionalAndSwapFixedInterestRate) {
+                return 0;
+            } else {
+                newAverageInterestRate = IporMath.division(
+                    (totalNotionalAndAverageInterestRate - swapNotionalAndSwapFixedInterestRate),
+                    (totalNotional - swapNotional)
                 );
+                if (averageInterestRate > 0) {
+                    require(newAverageInterestRate > 0, AmmErrors.AVERAGE_INTEREST_RATE_WHEN_CLOSE_SWAP_CANNOT_BE_ZERO);
+                }
+            }
         }
     }
 }

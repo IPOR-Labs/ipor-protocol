@@ -4,14 +4,14 @@ pragma solidity 0.8.20;
 import "./TestCommons.sol";
 import {DataUtils} from "./utils/DataUtils.sol";
 import {TestConstants} from "./utils/TestConstants.sol";
-import {IpToken} from "contracts/tokens/IpToken.sol";
-import {AmmStorage} from "contracts/amm/AmmStorage.sol";
-import {ItfIporOracle} from "contracts/itf/ItfIporOracle.sol";
-import {MockSpreadModel} from "contracts/mocks/spread/MockSpreadModel.sol";
-import {MockCaseBaseAssetManagement} from "contracts/mocks/assetManagement/MockCaseBaseAssetManagement.sol";
-import {MockCase2AssetManagement} from "contracts/mocks/assetManagement/MockCase2AssetManagement.sol";
-import {IIporRiskManagementOracle} from "contracts/interfaces/IIporRiskManagementOracle.sol";
-import {IporTypes} from "contracts/interfaces/types/IporTypes.sol";
+import {IpToken} from "@ipor-protocol/contracts/tokens/IpToken.sol";
+import {AmmStorage} from "@ipor-protocol/contracts/amm/AmmStorage.sol";
+import {ItfIporOracle} from "@ipor-protocol/contracts/itf/ItfIporOracle.sol";
+import {MockSpreadModel} from "@ipor-protocol/test/mocks/spread/MockSpreadModel.sol";
+import {MockCaseBaseAssetManagement} from "@ipor-protocol/test/mocks/assetManagement/MockCaseBaseAssetManagement.sol";
+import {MockCase2AssetManagement} from "@ipor-protocol/test/mocks/assetManagement/MockCase2AssetManagement.sol";
+import {IIporRiskManagementOracle} from "@ipor-protocol/contracts/interfaces/IIporRiskManagementOracle.sol";
+import {IporTypes} from "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
 
 contract AssetManagementTest is TestCommons, DataUtils {
     MockSpreadModel internal _ammTreasurySpreadModel;

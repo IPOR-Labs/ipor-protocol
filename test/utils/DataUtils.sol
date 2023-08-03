@@ -3,10 +3,8 @@ pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "../utils/TestConstants.sol";
-import "contracts/amm/AmmStorage.sol";
-import "contracts/libraries/Constants.sol";
-import "contracts/mocks/tokens/MockTestnetToken.sol";
-import "contracts/tokens/IpToken.sol";
+import "../mocks/tokens/MockTestnetToken.sol";
+import "../../contracts/tokens/IpToken.sol";
 
 contract DataUtils is Test {
 

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
-import "forge-std/console2.sol";
 import "forge-std/Test.sol";
 import "../TestConstants.sol";
 import "../builder/IporRiskManagementOracleBuilder.sol";
+import "../builder/BuilderUtils.sol";
 
 contract IporRiskManagementOracleFactory is Test {
     address internal _owner;
@@ -40,8 +40,7 @@ contract IporRiskManagementOracleFactory is Test {
 
     function _constructIndicatorsBasedOnInitialParamTestCase(
         BuilderUtils.IporRiskManagementOracleInitialParamsTestCase initialParamsTestCase
-    ) internal view returns (IporRiskManagementOracleTypes.RiskIndicators memory riskIndicators) {
-        //TODO: pure
+    ) internal pure returns (IporRiskManagementOracleTypes.RiskIndicators memory riskIndicators) {
         uint64 maxNotionalPayFixed = TestConstants.RMO_NOTIONAL_1B;
         uint64 maxNotionalReceiveFixed = TestConstants.RMO_NOTIONAL_1B;
         uint16 maxCollateralRatioPayFixed = TestConstants.RMO_COLLATERAL_RATIO_48_PER;
@@ -97,11 +96,11 @@ contract IporRiskManagementOracleFactory is Test {
         BuilderUtils.IporRiskManagementOracleInitialParamsTestCase initialParamsTestCase
     ) internal pure returns (IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps memory baseSpreads) {
         int24 spread28dPayFixed = TestConstants.RMO_SPREAD_0_1_PER;
-        int24 spread28dReceiveFixed = TestConstants.RMO_SPREAD_0_1_PER;
+        int24 spread28dReceiveFixed = -TestConstants.RMO_SPREAD_0_1_PER;
         int24 spread60dPayFixed = TestConstants.RMO_SPREAD_0_1_PER;
-        int24 spread60dReceiveFixed = TestConstants.RMO_SPREAD_0_1_PER;
+        int24 spread60dReceiveFixed = -TestConstants.RMO_SPREAD_0_1_PER;
         int24 spread90dPayFixed = TestConstants.RMO_SPREAD_0_1_PER;
-        int24 spread90dReceiveFixed = TestConstants.RMO_SPREAD_0_1_PER;
+        int24 spread90dReceiveFixed = -TestConstants.RMO_SPREAD_0_1_PER;
         uint16 fixedRateCap28dPayFixed = TestConstants.RMO_FIXED_RATE_CAP_2_0_PER;
         uint16 fixedRateCap28dReceiveFixed = TestConstants.RMO_FIXED_RATE_CAP_3_5_PER;
         uint16 fixedRateCap60dPayFixed = TestConstants.RMO_FIXED_RATE_CAP_2_0_PER;

@@ -2,40 +2,38 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "contracts/libraries/errors/IporOracleErrors.sol";
-import "contracts/libraries/errors/IporErrors.sol";
-import "./ISpread60Days.sol";
-import "./ISpread60DaysLens.sol";
-import "./DemandSpreadLibs.sol";
-import "./SpreadStorageLibs.sol";
-import "./OfferedRateCalculationLibs.sol";
+import "../../amm/spread/ISpread60Days.sol";
+import "../../amm/spread/ISpread60DaysLens.sol";
+import "../../libraries/errors/IporOracleErrors.sol";
+import "../../libraries/errors/IporErrors.sol";
+import "../../amm/spread/DemandSpreadLibs.sol";
+import "../../amm/spread/SpreadStorageLibs.sol";
+import "../../amm/spread/OfferedRateCalculationLibs.sol";
+import "../../libraries/IporContractValidator.sol";
 
 contract Spread60Days is ISpread60Days, ISpread60DaysLens {
+    using IporContractValidator for address;
     using SafeCast for uint256;
     using SafeCast for int256;
 
-    address internal immutable _DAI;
-    address internal immutable _USDC;
-    address internal immutable _USDT;
+    address internal immutable _dai;
+    address internal immutable _usdc;
+    address internal immutable _usdt;
 
     constructor(address dai, address usdc, address usdt) {
-        require(dai != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI asset address cannot be 0"));
-        require(usdc != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC asset address cannot be 0"));
-        require(usdt != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT asset address cannot be 0"));
-
-        _DAI = dai;
-        _USDC = usdc;
-        _USDT = usdt;
+        _dai = dai.checkAddress();
+        _usdc = usdc.checkAddress();
+        _usdt = usdt.checkAddress();
     }
 
     function calculateAndUpdateOfferedRatePayFixed60Days(
         IporTypes.SpreadInputs calldata spreadInputs
     ) external override returns (uint256 offeredRate) {
         offeredRate = OfferedRateCalculationLibs.calculatePayFixedOfferedRate(
-            spreadInputs.indexValue,
-            spreadInputs.baseSpread,
+            spreadInputs.iporIndexValue,
+            spreadInputs.baseSpreadPerLeg,
             _calculateDemandPayFixedAndUpdateTimeWeightedNotional60Day(spreadInputs),
-            spreadInputs.cap
+            spreadInputs.fixedRateCapPerLeg
         );
     }
 
@@ -43,10 +41,10 @@ contract Spread60Days is ISpread60Days, ISpread60DaysLens {
         IporTypes.SpreadInputs calldata spreadInputs
     ) external view override returns (uint256 offeredRate) {
         offeredRate = OfferedRateCalculationLibs.calculatePayFixedOfferedRate(
-            spreadInputs.indexValue,
-            spreadInputs.baseSpread,
+            spreadInputs.iporIndexValue,
+            spreadInputs.baseSpreadPerLeg,
             _calculateDemandPayFixed60Day(spreadInputs),
-            spreadInputs.cap
+            spreadInputs.fixedRateCapPerLeg
         );
     }
 
@@ -54,10 +52,10 @@ contract Spread60Days is ISpread60Days, ISpread60DaysLens {
         IporTypes.SpreadInputs calldata spreadInputs
     ) external override returns (uint256 offeredRate) {
         offeredRate = OfferedRateCalculationLibs.calculateReceiveFixedOfferedRate(
-            spreadInputs.indexValue,
-            spreadInputs.baseSpread,
+            spreadInputs.iporIndexValue,
+            spreadInputs.baseSpreadPerLeg,
             _calculateDemandReceiveFixedAndUpdateTimeWeightedNotional60Day(spreadInputs),
-            spreadInputs.cap
+            spreadInputs.fixedRateCapPerLeg
         );
     }
 
@@ -65,18 +63,18 @@ contract Spread60Days is ISpread60Days, ISpread60DaysLens {
         IporTypes.SpreadInputs calldata spreadInputs
     ) external view override returns (uint256 offeredRate) {
         offeredRate = OfferedRateCalculationLibs.calculateReceiveFixedOfferedRate(
-            spreadInputs.indexValue,
-            spreadInputs.baseSpread,
+            spreadInputs.iporIndexValue,
+            spreadInputs.baseSpreadPerLeg,
             _calculateDemandReceiveFixed60Day(spreadInputs),
-            spreadInputs.cap
+            spreadInputs.fixedRateCapPerLeg
         );
     }
 
     function getSupportedAssets() external view returns (address[] memory) {
         address[] memory assets = new address[](3);
-        assets[0] = _DAI;
-        assets[1] = _USDC;
-        assets[2] = _USDT;
+        assets[0] = _dai;
+        assets[1] = _usdc;
+        assets[2] = _usdt;
         return assets;
     }
 
@@ -99,7 +97,7 @@ contract Spread60Days is ISpread60Days, ISpread60DaysLens {
         spreadValue = DemandSpreadLibs.calculatePayFixedSpread(inputData);
 
         SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
-            inputData.storageId
+            inputData.timeWeightedNotionalStorageId
         );
 
         CalculateTimeWeightedNotionalLibs.updateTimeWeightedNotionalPayFixed(
@@ -125,7 +123,7 @@ contract Spread60Days is ISpread60Days, ISpread60DaysLens {
         spreadValue = DemandSpreadLibs.calculateReceiveFixedSpread(inputData);
 
         SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
-            inputData.storageId
+            inputData.timeWeightedNotionalStorageId
         );
 
         CalculateTimeWeightedNotionalLibs.updateTimeWeightedNotionalReceiveFixed(
@@ -141,38 +139,38 @@ contract Spread60Days is ISpread60Days, ISpread60DaysLens {
         inputData = DemandSpreadLibs.SpreadInputData({
             totalCollateralPayFixed: spreadInputs.totalCollateralPayFixed,
             totalCollateralReceiveFixed: spreadInputs.totalCollateralReceiveFixed,
-            liquidityPool: spreadInputs.liquidityPool,
+            liquidityPoolBalance: spreadInputs.liquidityPoolBalance,
             totalNotionalPayFixed: spreadInputs.totalNotionalPayFixed,
             totalNotionalReceiveFixed: spreadInputs.totalNotionalReceiveFixed,
             swapNotional: spreadInputs.swapNotional,
-            maxLeverage: spreadInputs.maxLeverage,
+            maxLeveragePerLeg: spreadInputs.maxLeveragePerLeg,
             maxLpCollateralRatioPerLegRate: spreadInputs.maxLpCollateralRatioPerLegRate,
-            storageIds: new SpreadStorageLibs.StorageId[](3),
-            maturities: new uint256[](3),
-            storageId: SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysDai
+            tenorsInSeconds: new uint256[](3),
+            timeWeightedNotionalStorageIds: new SpreadStorageLibs.StorageId[](3),
+            timeWeightedNotionalStorageId: SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysDai
         });
 
-        inputData.maturities[0] = 28 days;
-        inputData.maturities[1] = 60 days;
-        inputData.maturities[2] = 90 days;
+        inputData.tenorsInSeconds[0] = 28 days;
+        inputData.tenorsInSeconds[1] = 60 days;
+        inputData.tenorsInSeconds[2] = 90 days;
 
-        if (spreadInputs.asset == _USDC) {
-            inputData.storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysUsdc;
-            inputData.storageIds[0] = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysUsdc;
-            inputData.storageIds[1] = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysUsdc;
-            inputData.storageIds[2] = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysUsdc;
+        if (spreadInputs.asset == _usdc) {
+            inputData.timeWeightedNotionalStorageId = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysUsdc;
+            inputData.timeWeightedNotionalStorageIds[0] = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysUsdc;
+            inputData.timeWeightedNotionalStorageIds[1] = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysUsdc;
+            inputData.timeWeightedNotionalStorageIds[2] = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysUsdc;
             return inputData;
-        } else if (spreadInputs.asset == _USDT) {
-            inputData.storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysUsdt;
-            inputData.storageIds[0] = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysUsdt;
-            inputData.storageIds[1] = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysUsdt;
-            inputData.storageIds[2] = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysUsdt;
+        } else if (spreadInputs.asset == _usdt) {
+            inputData.timeWeightedNotionalStorageId = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysUsdt;
+            inputData.timeWeightedNotionalStorageIds[0] = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysUsdt;
+            inputData.timeWeightedNotionalStorageIds[1] = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysUsdt;
+            inputData.timeWeightedNotionalStorageIds[2] = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysUsdt;
             return inputData;
-        } else if (spreadInputs.asset == _DAI) {
-            inputData.storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysDai;
-            inputData.storageIds[0] = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai;
-            inputData.storageIds[1] = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysDai;
-            inputData.storageIds[2] = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysDai;
+        } else if (spreadInputs.asset == _dai) {
+            inputData.timeWeightedNotionalStorageId = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysDai;
+            inputData.timeWeightedNotionalStorageIds[0] = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai;
+            inputData.timeWeightedNotionalStorageIds[1] = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysDai;
+            inputData.timeWeightedNotionalStorageIds[2] = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysDai;
             return inputData;
         }
         revert(string.concat(IporOracleErrors.ASSET_NOT_SUPPORTED, " ", Strings.toHexString(spreadInputs.asset)));

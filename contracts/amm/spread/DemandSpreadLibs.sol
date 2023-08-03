@@ -1,106 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "contracts/interfaces/types/IporTypes.sol";
-import "./CalculateTimeWeightedNotionalLibs.sol";
+import "../../amm/spread/CalculateTimeWeightedNotionalLibs.sol";
 
 library DemandSpreadLibs {
-    /// @notice DTO for the Weighted Notional
-    struct SpreadInputData {
-        /// @notice Swap's balance for Pay Fixed leg
-        uint256 totalCollateralPayFixed;
-        /// @notice Swap's balance for Receive Fixed leg
-        uint256 totalCollateralReceiveFixed;
-        /// @notice Liquidity Pool's Balance
-        uint256 liquidityPool;
-        /// @notice Swap's notional balance for Pay Fixed leg
-        uint256 totalNotionalPayFixed;
-        /// @notice Swap's notional balance for Receive Fixed leg
-        uint256 totalNotionalReceiveFixed;
-        uint256 swapNotional;
-        uint256 maxLeverage;
-        uint256 maxLpCollateralRatioPerLegRate;
-        uint256[] maturities;
-        SpreadStorageLibs.StorageId[] storageIds;
-        SpreadStorageLibs.StorageId storageId;
-    }
-
-    /// @notice Calculates the spread value for the pay-fixed side based on the provided input data.
-    /// @param inputData The input data required for the calculation, including liquidity pool information and collateral amounts.
-    /// @return spreadValue The calculated spread value for the pay-fixed side.
-    function calculatePayFixedSpread(SpreadInputData memory inputData) internal view returns (uint256 spreadValue) {
-        uint256 lpDepth = CalculateTimeWeightedNotionalLibs.calculateLpDepth(
-            inputData.liquidityPool,
-            inputData.totalCollateralPayFixed,
-            inputData.totalCollateralReceiveFixed
-        );
-
-        uint256 notionalDepth = IporMath.division(
-            lpDepth * inputData.maxLeverage * inputData.maxLpCollateralRatioPerLegRate,
-            1e36
-        );
-
-        (
-            uint256 oldWeightedNotionalPayFixed,
-            uint256 timeWeightedNotionalReceiveFixed
-        ) = CalculateTimeWeightedNotionalLibs.getTimeWeightedNotional(inputData.storageIds, inputData.maturities);
-        uint256 newWeightedNotionalPayFixed = oldWeightedNotionalPayFixed + inputData.swapNotional;
-        if (newWeightedNotionalPayFixed > timeWeightedNotionalReceiveFixed) {
-            uint256 oldSpread;
-            if (oldWeightedNotionalPayFixed > timeWeightedNotionalReceiveFixed) {
-                oldSpread = calculateSpreadFunction(
-                    notionalDepth,
-                    oldWeightedNotionalPayFixed - timeWeightedNotionalReceiveFixed
-                );
-            }
-            uint256 newSpread = calculateSpreadFunction(
-                notionalDepth,
-                newWeightedNotionalPayFixed - timeWeightedNotionalReceiveFixed
-            );
-            spreadValue = IporMath.division(oldSpread + newSpread, 2);
-        } else {
-            spreadValue = 0;
-        }
-    }
-
-    /// @notice Calculates the spread value for the receive-fixed side based on the provided input data.
-    /// @param inputData The input data required for the calculation, including liquidity pool information and collateral amounts.
-    /// @return spreadValue The calculated spread value for the receive-fixed side.
-    function calculateReceiveFixedSpread(SpreadInputData memory inputData) internal view returns (uint256 spreadValue) {
-        uint256 lpDepth = CalculateTimeWeightedNotionalLibs.calculateLpDepth(
-            inputData.liquidityPool,
-            inputData.totalCollateralPayFixed,
-            inputData.totalCollateralReceiveFixed
-        );
-
-        uint256 notionalDepth = IporMath.division(
-            lpDepth * inputData.maxLeverage * inputData.maxLpCollateralRatioPerLegRate,
-            1e36
-        );
-        (
-            uint256 timeWeightedNotionalPayFixed,
-            uint256 oldWeightedNotionalReceiveFixed
-        ) = CalculateTimeWeightedNotionalLibs.getTimeWeightedNotional(inputData.storageIds, inputData.maturities);
-        uint256 newWeightedNotionalReceiveFixed = oldWeightedNotionalReceiveFixed + inputData.swapNotional;
-        if (newWeightedNotionalReceiveFixed > timeWeightedNotionalPayFixed) {
-            uint256 oldSpread;
-            if (oldWeightedNotionalReceiveFixed > timeWeightedNotionalPayFixed) {
-                oldSpread = calculateSpreadFunction(
-                    notionalDepth,
-                    oldWeightedNotionalReceiveFixed - timeWeightedNotionalPayFixed
-                );
-            }
-
-            uint256 newSpread = calculateSpreadFunction(
-                notionalDepth,
-                newWeightedNotionalReceiveFixed - timeWeightedNotionalPayFixed
-            );
-            spreadValue = IporMath.division(oldSpread + newSpread, 2);
-        } else {
-            spreadValue = 0;
-        }
-    }
-
     uint256 internal constant INTERVAL_ONE = 1e17;
     uint256 internal constant INTERVAL_TWO = 2e17;
     uint256 internal constant INTERVAL_THREE = 3e17;
@@ -130,6 +33,33 @@ library DemandSpreadLibs {
     uint256 internal constant SLOPE_SEVEN = 5e17;
     uint256 internal constant BASE_SEVEN = 2e17;
 
+    /// @notice DTO for the Weighted Notional
+    struct SpreadInputData {
+        /// @notice Swap's balance for Pay Fixed leg
+        uint256 totalCollateralPayFixed;
+        /// @notice Swap's balance for Receive Fixed leg
+        uint256 totalCollateralReceiveFixed;
+        /// @notice Liquidity Pool's Balance
+        uint256 liquidityPoolBalance;
+        /// @notice Swap's notional balance for Pay Fixed leg
+        uint256 totalNotionalPayFixed;
+        /// @notice Swap's notional balance for Receive Fixed leg
+        uint256 totalNotionalReceiveFixed;
+        /// @notice Swap's notional
+        uint256 swapNotional;
+        /// @notice Max leverage for a leg in the swap
+        uint256 maxLeveragePerLeg;
+        /// @notice Max liquidity pool collateral ratio per leg rate
+        uint256 maxLpCollateralRatioPerLegRate;
+        /// @notice List of supported tenors in seconds
+        uint256[] tenorsInSeconds;
+        /// @notice List of storage ids for a TimeWeightedNotional for all tenors for a given asset
+        SpreadStorageLibs.StorageId[] timeWeightedNotionalStorageIds;
+        /// @notice Storage id for a TimeWeightedNotional for a specific tenor and asset.
+        SpreadStorageLibs.StorageId timeWeightedNotionalStorageId;
+    }
+
+    /// @notice Gets the spread function configuration.
     function spreadFunctionConfig() public pure returns (uint256[] memory) {
         uint256[] memory config = new uint256[](21);
         config[0] = INTERVAL_ONE;
@@ -154,6 +84,98 @@ library DemandSpreadLibs {
         config[19] = SLOPE_SEVEN;
         config[20] = BASE_SEVEN;
         return config;
+    }
+
+    /// @notice Calculates the spread value for the pay-fixed side based on the provided input data.
+    /// @param inputData The input data required for the calculation, including liquidity pool information and collateral amounts.
+    /// @return spreadValue The calculated spread value for the pay-fixed side.
+    function calculatePayFixedSpread(SpreadInputData memory inputData) internal view returns (uint256 spreadValue) {
+        uint256 lpDepth = CalculateTimeWeightedNotionalLibs.calculateLpDepth(
+            inputData.liquidityPoolBalance,
+            inputData.totalCollateralPayFixed,
+            inputData.totalCollateralReceiveFixed
+        );
+
+        uint256 notionalDepth = IporMath.division(
+            lpDepth * inputData.maxLeveragePerLeg * inputData.maxLpCollateralRatioPerLegRate,
+            1e36
+        );
+
+        (
+            uint256 oldWeightedNotionalPayFixed,
+            uint256 timeWeightedNotionalReceiveFixed
+        ) = CalculateTimeWeightedNotionalLibs.getTimeWeightedNotional(
+                inputData.timeWeightedNotionalStorageIds,
+                inputData.tenorsInSeconds
+            );
+
+        uint256 newWeightedNotionalPayFixed = oldWeightedNotionalPayFixed + inputData.swapNotional;
+
+        if (newWeightedNotionalPayFixed > timeWeightedNotionalReceiveFixed) {
+            uint256 oldSpread;
+
+            if (oldWeightedNotionalPayFixed > timeWeightedNotionalReceiveFixed) {
+                oldSpread = calculateSpreadFunction(
+                    notionalDepth,
+                    oldWeightedNotionalPayFixed - timeWeightedNotionalReceiveFixed
+                );
+            }
+
+            uint256 newSpread = calculateSpreadFunction(
+                notionalDepth,
+                newWeightedNotionalPayFixed - timeWeightedNotionalReceiveFixed
+            );
+
+            spreadValue = IporMath.division(oldSpread + newSpread, 2);
+        } else {
+            spreadValue = 0;
+        }
+    }
+
+    /// @notice Calculates the spread value for the receive-fixed side based on the provided input data.
+    /// @param inputData The input data required for the calculation, including liquidity pool information and collateral amounts.
+    /// @return spreadValue The calculated spread value for the receive-fixed side.
+    function calculateReceiveFixedSpread(SpreadInputData memory inputData) internal view returns (uint256 spreadValue) {
+        uint256 lpDepth = CalculateTimeWeightedNotionalLibs.calculateLpDepth(
+            inputData.liquidityPoolBalance,
+            inputData.totalCollateralPayFixed,
+            inputData.totalCollateralReceiveFixed
+        );
+
+        uint256 notionalDepth = IporMath.division(
+            lpDepth * inputData.maxLeveragePerLeg * inputData.maxLpCollateralRatioPerLegRate,
+            1e36
+        );
+
+        (
+            uint256 timeWeightedNotionalPayFixed,
+            uint256 oldWeightedNotionalReceiveFixed
+        ) = CalculateTimeWeightedNotionalLibs.getTimeWeightedNotional(
+                inputData.timeWeightedNotionalStorageIds,
+                inputData.tenorsInSeconds
+            );
+
+        uint256 newWeightedNotionalReceiveFixed = oldWeightedNotionalReceiveFixed + inputData.swapNotional;
+
+        if (newWeightedNotionalReceiveFixed > timeWeightedNotionalPayFixed) {
+            uint256 oldSpread;
+
+            if (oldWeightedNotionalReceiveFixed > timeWeightedNotionalPayFixed) {
+                oldSpread = calculateSpreadFunction(
+                    notionalDepth,
+                    oldWeightedNotionalReceiveFixed - timeWeightedNotionalPayFixed
+                );
+            }
+
+            uint256 newSpread = calculateSpreadFunction(
+                notionalDepth,
+                newWeightedNotionalReceiveFixed - timeWeightedNotionalPayFixed
+            );
+
+            spreadValue = IporMath.division(oldSpread + newSpread, 2);
+        } else {
+            spreadValue = 0;
+        }
     }
 
     /// @notice Calculates the spread value based on the given maximum notional and weighted notional.

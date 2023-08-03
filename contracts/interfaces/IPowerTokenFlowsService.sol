@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.20;
 
+/// @title Interface for interaction with PowerToken and LiquidityMining contracts.
 interface IPowerTokenFlowsService {
     /// @notice Claims rewards for the caller by transferring them from the LiquidityMining contract to the PowerToken contract.
     /// @param lpTokens An array of LP tokens for which the rewards are to be claimed.
@@ -32,5 +33,8 @@ interface IPowerTokenFlowsService {
     /// @dev It requires that the length of `lpTokens` is equal to the length of `lpTokenAmounts`.
     /// @dev It reverts if either `lpTokens` or `lpTokenAmounts` arrays are empty.
     /// @dev It reverts if the total staked token amount to undelegate is not greater than zero.
-    function undelegatePwTokensToLiquidityMining(address[] calldata lpTokens, uint256[] calldata lpTokenAmounts) external;
+    function undelegatePwTokensToLiquidityMining(
+        address[] calldata lpTokens,
+        uint256[] calldata lpTokenAmounts
+    ) external;
 }

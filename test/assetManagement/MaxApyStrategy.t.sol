@@ -3,13 +3,12 @@ pragma solidity 0.8.20;
 
 import {TestCommons} from "../TestCommons.sol";
 
-import {IvToken} from "contracts/tokens/IvToken.sol";
-import {MockTestnetToken} from "contracts/mocks/tokens/MockTestnetToken.sol";
+import {IvToken} from "@ipor-protocol/contracts/tokens/IvToken.sol";
 
-import {ItfAssetManagement18D} from "contracts/itf/ItfAssetManagement18D.sol";
 
 import "../utils/builder/AssetManagementBuilder.sol";
-import "contracts/mocks/stanley/MockStrategy.sol";
+import "../mocks/assetManagement/MockStrategy.sol";
+import "../mocks/tokens/MockTestnetToken.sol";
 import "../utils/builder/IvTokenBuilder.sol";
 import "../utils/builder/AssetBuilder.sol";
 
@@ -18,7 +17,7 @@ contract AssetManagementMaxApyStrategyTest is TestCommons {
     IvTokenBuilder internal _ivTokenBuilder = new IvTokenBuilder(address(this));
     AssetManagementBuilder internal _assetManagementBuilder = new AssetManagementBuilder(address(this));
 
-    ItfAssetManagement internal _assetManagementDai;
+    AssetManagement internal _assetManagementDai;
     MockStrategy internal _strategyAaveDai;
     MockStrategy internal _strategyCompoundDai;
 
@@ -54,8 +53,8 @@ contract AssetManagementMaxApyStrategyTest is TestCommons {
 
     function testShouldSelectAaveStrategy() public {
         // given
-        _strategyAaveDai.setApr(100000);
-        _strategyCompoundDai.setApr(99999);
+        _strategyAaveDai.setApy(100000);
+        _strategyCompoundDai.setApy(99999);
         // when
         (address strategyMaxApy, , ) = _assetManagementDai.getMaxApyStrategy();
         // then
@@ -64,8 +63,8 @@ contract AssetManagementMaxApyStrategyTest is TestCommons {
 
     function testShouldSelectAaveStrategyWhenAaveApyEqualsCompoundApy() public {
         // given
-        _strategyAaveDai.setApr(10);
-        _strategyCompoundDai.setApr(10);
+        _strategyAaveDai.setApy(10);
+        _strategyCompoundDai.setApy(10);
         // when
         (address strategyMaxApy, , ) = _assetManagementDai.getMaxApyStrategy();
         // then
@@ -74,8 +73,8 @@ contract AssetManagementMaxApyStrategyTest is TestCommons {
 
     function testShouldSelectCompoundStrategy() public {
         // given
-        _strategyAaveDai.setApr(1000);
-        _strategyCompoundDai.setApr(99999);
+        _strategyAaveDai.setApy(1000);
+        _strategyCompoundDai.setApy(99999);
         // when
         (address strategyMaxApy, , ) = _assetManagementDai.getMaxApyStrategy();
         // then

@@ -5,11 +5,10 @@ import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
-import "../../libraries/Constants.sol";
-import "../../libraries/math/IporMath.sol";
 import "../../interfaces/IStrategyCompound.sol";
 import "../interfaces/compound/CErc20.sol";
 import "../interfaces/compound/ComptrollerInterface.sol";
+import "../../libraries/math/IporMath.sol";
 import "./StrategyCore.sol";
 
 contract StrategyCompound is StrategyCore, IStrategyCompound {
@@ -57,9 +56,9 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
     }
 
     /**
-     * @notice gets current APR in Compound Protocol.
+     * @notice gets current APY in Compound Protocol.
      */
-    function getApr() external view override returns (uint256 apr) {
+    function getApy() external view override returns (uint256 apy) {
         uint256 cRate = CErc20(_shareToken).supplyRatePerBlock(); // interest % per block
         uint256 ratePerDay = cRate * _blocksPerDay + 1e18;
 
@@ -71,7 +70,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         uint256 ratePerDay360 = IporMath.division(ratePerDay256 * ratePerDay64 * ratePerDay32 * ratePerDay8, 1e54);
         uint256 ratePerDay365 = IporMath.division(ratePerDay360 * ratePerDay4 * ratePerDay, 1e36);
 
-        apr = ratePerDay365 - 1e18;
+        apy = ratePerDay365 - 1e18;
     }
 
     /// @notice Gets AssetManagement Compound Strategy's asset amount in Compound Protocol.

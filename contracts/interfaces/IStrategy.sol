@@ -16,9 +16,9 @@ interface IStrategy {
     /// @notice Returns strategy's share token address
     function getShareToken() external view returns (address);
 
-    /// @notice Gets annualised interest rate (APR) for this strategy.
-    /// @return APR value, represented in 18 decimals.
-    function getApr() external view returns (uint256);
+    /// @notice Gets annual percentage yield (APY) for this strategy.
+    /// @return APY value, represented in 18 decimals.
+    function getApy() external view returns (uint256);
 
     /// @notice Gets balance for given asset (underlying / stablecoin) allocated to this strategy.
     /// @return balance for given asset, represented in 18 decimals.
@@ -61,7 +61,7 @@ interface IStrategy {
     /// @param newTreasuryManager new Treasury Manager address
     function setTreasuryManager(address newTreasuryManager) external;
 
-    /// @notice Pauses current smart contract, it can be executed only by the Owner
+    /// @notice Pauses current smart contract, it can be executed only by the Pause Guardian
     /// @dev Emits {Paused} event from Strategy implementation.
     function pause() external;
 
@@ -69,13 +69,18 @@ interface IStrategy {
     /// @dev Emits {Unpaused} event from Strategy implementation.
     function unpause() external;
 
+    /// @notice Checks if given account is a pause guardian.
+    /// @param account The address of the account to be checked.
+    /// @return true if account is a pause guardian.
+    function isPauseGuardian(address account) external view returns (bool);
+
     /// @notice Adds a pause guardian to the list of guardians. Function available only for the Owner.
-    /// @param _guardian The address of the pause guardian to be added.
-    function addPauseGuardian(address _guardian) external;
+    /// @param guardian The address of the pause guardian to be added.
+    function addPauseGuardian(address guardian) external;
 
     /// @notice Removes a pause guardian from the list of guardians. Function available only for the Owner.
-    /// @param _guardian The address of the pause guardian to be removed.
-    function removePauseGuardian(address _guardian) external;
+    /// @param guardian The address of the pause guardian to be removed.
+    function removePauseGuardian(address guardian) external;
 
     /// @notice Emitted when AssetManagement address is changed by Owner.
     /// @param newAssetManagement new AssetManagement address
@@ -86,12 +91,7 @@ interface IStrategy {
     /// @param shareToken share token assocciated with one strategy
     /// @param treasury Treasury address where claimed tokens are transferred.
     /// @param amount S
-    event DoClaim(
-        address indexed claimedBy,
-        address indexed shareToken,
-        address indexed treasury,
-        uint256 amount
-    );
+    event DoClaim(address indexed claimedBy, address indexed shareToken, address indexed treasury, uint256 amount);
 
     /// @notice Emmited when Treasury address has changed
     /// @param newTreasury new Treasury address
@@ -99,7 +99,5 @@ interface IStrategy {
 
     /// @notice Emmited when Treasury Manager address has changed
     /// @param newTreasuryManager new Treasury Manager address
-    event TreasuryManagerChanged(
-        address newTreasuryManager
-    );
+    event TreasuryManagerChanged(address newTreasuryManager);
 }

@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "../TestCommons.sol";
+import "test/TestCommons.sol";
 import "contracts/tokens/IpToken.sol";
 import "contracts/tokens/IvToken.sol";
 import "contracts/oracles/IporOracle.sol";
@@ -16,7 +16,7 @@ import "contracts/amm/AmmTreasury.sol";
 import "contracts/amm/AmmTreasuryUsdc.sol";
 import "contracts/amm/spread/AmmTreasurySpreadModelUsdc.sol";
 import "contracts/amm/spread/AmmTreasurySpreadModel.sol";
-import "contracts/mocks/assetManagement/MockStrategy.sol";
+import "test/mocks/assetManagement/MockStrategy.sol";
 import "contracts/vault/interfaces/aave/IAaveIncentivesController.sol";
 import "../utils/TestConstants.sol";
 import "../utils/IporRiskManagementOracleUtils.sol";
@@ -82,12 +82,12 @@ contract UsdcAmm is Test, TestCommons, IporRiskManagementOracleUtils {
         vm.stopPrank();
     }
 
-    function overrideAaveStrategyWithZeroApr(address owner) public {
+    function overrideAaveStrategyWithZeroApy(address owner) public {
         MockStrategy strategy = new MockStrategy();
         strategy.setAssetManagement(address(assetManagement));
         strategy.setBalance(0);
         strategy.setShareToken(aUsdc);
-        strategy.setApr(0);
+        strategy.setApy(0);
         strategy.setAsset(usdc);
         vm.prank(owner);
         assetManagement.setStrategyAave(address(strategy));
@@ -100,12 +100,12 @@ contract UsdcAmm is Test, TestCommons, IporRiskManagementOracleUtils {
         vm.stopPrank();
     }
 
-    function overrideCompoundStrategyWithZeroApr(address owner) public {
+    function overrideCompoundStrategyWithZeroApy(address owner) public {
         MockStrategy strategy = new MockStrategy();
         strategy.setAssetManagement(address(assetManagement));
         strategy.setBalance(0);
         strategy.setShareToken(cUsdc);
-        strategy.setApr(0);
+        strategy.setApy(0);
         strategy.setAsset(usdc);
         vm.prank(owner);
         assetManagement.setStrategyCompound(address(strategy));

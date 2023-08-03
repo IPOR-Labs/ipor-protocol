@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 
-import "../interfaces/types/AmmTypes.sol";
+import "./types/AmmTypes.sol";
 
 /// @title Interface of the service allowing to close swaps.
 interface IAmmCloseSwapService {
-    /// @notice Emmited when the trader closes the swap.
+    /// @notice Emitted when the trader closes the swap.
     event CloseSwap(
         /// @notice swap ID.
         uint256 indexed swapId,
@@ -21,50 +21,29 @@ interface IAmmCloseSwapService {
         uint256 transferredToLiquidator
     );
 
-    /// @notice Emmited when the trader closes the swap.
+    /// @notice Emitted when unwind is performed during closing swap.
     event SwapUnwind(
+        /// @notice underlying asset
+        address asset,
         /// @notice swap ID.
         uint256 indexed swapId,
-        /// @notice payoff to date without unwind value, represented in 18 decimals
-        int256 swapPayoffToDate,
-        // @notice swap unwind value, represented in 18 decimals
-        int256 swapUnwindValue,
+        /// @notice Profit and Loss to date without unwind value, represented in 18 decimals
+        int256 swapPnlValueToDate,
+        /// @notice swap unwind amount, represented in 18 decimals
+        int256 swapUnwindAmount,
+        /// @notice opening fee amount, part earmarked for the liquidity pool, represented in 18 decimals
         uint256 openingFeeLPAmount,
+        /// @notice opening fee amount, part earmarked for the treasury, represented in 18 decimals
         uint256 openingFeeTreasuryAmount
     );
 
-    struct AmmCloseSwapServicePoolConfiguration {
-        address asset;
-        uint256 decimals;
-        address ammStorage;
-        address ammTreasury;
-        address assetManagement;
-        uint256 openingFeeRateForSwapUnwind;
-        uint256 openingFeeTreasuryPortionRateForSwapUnwind;
-        uint256 liquidationLegLimit;
-        uint256 timeBeforeMaturityAllowedToCloseSwapByCommunity;
-        uint256 timeBeforeMaturityAllowedToCloseSwapByBuyer;
-        uint256 minLiquidationThresholdToCloseBeforeMaturityByCommunity;
-        uint256 minLiquidationThresholdToCloseBeforeMaturityByBuyer;
-        uint256 minLeverage;
-    }
-
-    function getAmmCloseSwapServicePoolConfiguration(
-        address asset
-    ) external view returns (AmmCloseSwapServicePoolConfiguration memory);
-
-    function closeSwapPayFixedUsdt(address beneficiary, uint256 swapId) external;
-
-    function closeSwapPayFixedUsdc(address beneficiary, uint256 swapId) external;
-
-    function closeSwapPayFixedDai(address beneficiary, uint256 swapId) external;
-
-    function closeSwapReceiveFixedUsdt(address beneficiary, uint256 swapId) external;
-
-    function closeSwapReceiveFixedUsdc(address beneficiary, uint256 swapId) external;
-
-    function closeSwapReceiveFixedDai(address beneficiary, uint256 swapId) external;
-
+    /// @notice Closes batch of USDT swaps on both legs.
+    /// @param beneficiary account - receiver of liquidation deposit.
+    /// @param payFixedSwapIds array of pay-fixed swap IDs.
+    /// @param receiveFixedSwapIds array of receive-fixed swap IDs.
+    /// @dev Swap PnL is always transferred to the swaps's owner.
+    /// @return closedPayFixedSwaps array of closed pay-fixed swaps.
+    /// @return closedReceiveFixedSwaps array of closed receive-fixed swaps.
     function closeSwapsUsdt(
         address beneficiary,
         uint256[] memory payFixedSwapIds,
@@ -76,6 +55,13 @@ interface IAmmCloseSwapService {
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
         );
 
+    /// @notice Closes batch of USDC swaps on both legs.
+    /// @param beneficiary account - receiver of liquidation deposit.
+    /// @param payFixedSwapIds array of pay fixed swap IDs.
+    /// @param receiveFixedSwapIds array of receive fixed swap IDs.
+    /// @dev Swap PnL is always transferred to the swaps's owner.
+    /// @return closedPayFixedSwaps array of closed pay-fixed swaps.
+    /// @return closedReceiveFixedSwaps array of closed receive-fixed swaps.
     function closeSwapsUsdc(
         address beneficiary,
         uint256[] memory payFixedSwapIds,
@@ -87,6 +73,13 @@ interface IAmmCloseSwapService {
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
         );
 
+    /// @notice Closes batch of DAI swaps on both legs.
+    /// @param beneficiary account - receiver of liquidation deposit.
+    /// @param payFixedSwapIds array of pay fixed swap IDs.
+    /// @param receiveFixedSwapIds array of receive fixed swap IDs.
+    /// @dev Swap PnL is always transferred to the swaps's owner.
+    /// @return closedPayFixedSwaps array of closed pay-fixed swaps.
+    /// @return closedReceiveFixedSwaps array of closed receive-fixed swaps.
     function closeSwapsDai(
         address beneficiary,
         uint256[] memory payFixedSwapIds,
@@ -98,39 +91,48 @@ interface IAmmCloseSwapService {
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
         );
 
-    function emergencyCloseSwapPayFixedUsdt(uint256 swapId) external;
+    /// @notice Closes batch of USDT swaps on both legs in emergency mode by Owner of Ipor Protocol Router.
+    /// @param payFixedSwapIds array of pay-fixed swap IDs.
+    /// @param receiveFixedSwapIds array of receive-fixed swap IDs.
+    /// @return closedPayFixedSwaps array of closed pay-fixed swaps.
+    /// @return closedReceiveFixedSwaps array of closed receive-fixed swaps.
+    function emergencyCloseSwapsUsdt(
+        uint256[] memory payFixedSwapIds,
+        uint256[] memory receiveFixedSwapIds
+    )
+        external
+        returns (
+            AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
+            AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
+        );
 
-    function emergencyCloseSwapPayFixedUsdc(uint256 swapId) external;
+    /// @notice Closes batch of USDC swaps on both legs in emergency mode by Owner of Ipor Protocol Router.
+    /// @param payFixedSwapIds array of pay-fixed swap IDs.
+    /// @param receiveFixedSwapIds array of receive-fixed swap IDs.
+    /// @return closedPayFixedSwaps array of closed pay-fixed swaps.
+    /// @return closedReceiveFixedSwaps array of closed receive-fixed swaps.
+    function emergencyCloseSwapsUsdc(
+        uint256[] memory payFixedSwapIds,
+        uint256[] memory receiveFixedSwapIds
+    )
+        external
+        returns (
+            AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
+            AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
+        );
 
-    function emergencyCloseSwapPayFixedDai(uint256 swapId) external;
-
-    function emergencyCloseSwapReceiveFixedUsdt(uint256 swapId) external;
-
-    function emergencyCloseSwapReceiveFixedUsdc(uint256 swapId) external;
-
-    function emergencyCloseSwapReceiveFixedDai(uint256 swapId) external;
-
-    function emergencyCloseSwapsPayFixedUsdt(
-        uint256[] memory swapIds
-    ) external returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps);
-
-    function emergencyCloseSwapsPayFixedUsdc(
-        uint256[] memory swapIds
-    ) external returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps);
-
-    function emergencyCloseSwapsPayFixedDai(
-        uint256[] memory swapIds
-    ) external returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps);
-
-    function emergencyCloseSwapsReceiveFixedUsdt(
-        uint256[] memory swapIds
-    ) external returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps);
-
-    function emergencyCloseSwapsReceiveFixedUsdc(
-        uint256[] memory swapIds
-    ) external returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps);
-
-    function emergencyCloseSwapsReceiveFixedDai(
-        uint256[] memory swapIds
-    ) external returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps);
+    /// @notice Closes batch of DAI swaps on both legs in emergency mode by Owner of Ipor Protocol Router.
+    /// @param payFixedSwapIds array of pay-fixed swap IDs.
+    /// @param receiveFixedSwapIds array of receive-fixed swap IDs.
+    /// @return closedPayFixedSwaps array of closed pay-fixed swaps.
+    /// @return closedReceiveFixedSwaps array of closed receive-fixed swaps.
+    function emergencyCloseSwapsDai(
+        uint256[] memory payFixedSwapIds,
+        uint256[] memory receiveFixedSwapIds
+    )
+        external
+        returns (
+            AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
+            AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
+        );
 }

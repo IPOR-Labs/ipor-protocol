@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "../libraries/errors/IporErrors.sol";
-import "../libraries/Constants.sol";
 import "../interfaces/IAmmTreasury.sol";
 import "../interfaces/IAmmStorage.sol";
 import "../interfaces/IAssetManagement.sol";
+import "../interfaces/IProxyImplementation.sol";
+import "../libraries/Constants.sol";
+import "../libraries/errors/IporErrors.sol";
+import "../libraries/IporContractValidator.sol";
+import "../security/PauseManager.sol";
 import "../security/IporOwnableUpgradeable.sol";
 
 contract AmmTreasury is
@@ -23,8 +23,10 @@ contract AmmTreasury is
     ReentrancyGuardUpgradeable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-    IAmmTreasury
+    IAmmTreasury,
+    IProxyImplementation
 {
+    using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     address internal immutable _asset;
@@ -33,23 +35,22 @@ contract AmmTreasury is
     address internal immutable _assetManagement;
     address internal immutable _router;
 
-    constructor(
-        address asset,
-        uint256 decimals,
-        address ammStorage,
-        address assetManagement,
-        address router
-    ) {
-        require(asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " asset address cannot be 0"));
-        require(ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " AMM storage address cannot be 0"));
-        require(assetManagement != address(0), string.concat(IporErrors.WRONG_ADDRESS, " asset management address cannot be 0"));
-        require(router != address(0), string.concat(IporErrors.WRONG_ADDRESS, " router address cannot be 0"));
+    modifier onlyPauseGuardian() {
+        require(PauseManager.isPauseGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
+        _;
+    }
 
-        _asset = asset;
+    modifier onlyRouter() {
+        require(_msgSender() == _router, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
+        _;
+    }
+
+    constructor(address asset, uint256 decimals, address ammStorage, address assetManagement, address router) {
+        _asset = asset.checkAddress();
         _decimals = decimals;
-        _ammStorage = ammStorage;
-        _assetManagement = assetManagement;
-        _router = router;
+        _ammStorage = ammStorage.checkAddress();
+        _assetManagement = assetManagement.checkAddress();
+        _router = router.checkAddress();
 
         _disableInitializers();
     }
@@ -77,22 +78,11 @@ contract AmmTreasury is
         }
     }
 
-    modifier onlyRouter() {
-        require(_msgSender() == _router, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
-        _;
-    }
-
     function getConfiguration()
         external
         view
         override
-        returns (
-            address asset,
-            uint256 decimals,
-            address ammStorage,
-            address assetManagement,
-            address router
-        )
+        returns (address asset, uint256 decimals, address ammStorage, address assetManagement, address router)
     {
         return (_asset, _decimals, _ammStorage, _assetManagement, _router);
     }
@@ -119,7 +109,15 @@ contract AmmTreasury is
         IAmmStorage(_ammStorage).updateStorageWhenWithdrawFromAssetManagement(withdrawnAmount, vaultBalance);
     }
 
-    function pause() external override onlyOwner {
+    function grandMaxAllowanceForSpender(address spender) external override onlyOwner {
+        IERC20Upgradeable(_asset).safeApprove(spender, Constants.MAX_VALUE);
+    }
+
+    function revokeAllowanceForSpender(address spender) external override onlyOwner {
+        IERC20Upgradeable(_asset).safeApprove(spender, 0);
+    }
+
+    function pause() external override onlyPauseGuardian {
         _pause();
     }
 
@@ -127,8 +125,20 @@ contract AmmTreasury is
         _unpause();
     }
 
-    function setupMaxAllowanceForAsset(address spender) external override onlyOwner whenNotPaused {
-        IERC20Upgradeable(_asset).safeIncreaseAllowance(spender, Constants.MAX_VALUE);
+    function isPauseGuardian(address account) external view override returns (bool) {
+        return PauseManager.isPauseGuardian(account);
+    }
+
+    function addPauseGuardian(address guardian) external override onlyOwner {
+        PauseManager.addPauseGuardian(guardian);
+    }
+
+    function removePauseGuardian(address guardian) external override onlyOwner {
+        PauseManager.removePauseGuardian(guardian);
+    }
+
+    function getImplementation() external view override returns (address) {
+        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
 
     /**

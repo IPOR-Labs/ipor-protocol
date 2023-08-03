@@ -5,12 +5,12 @@ import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {TestCommons} from "../../../TestCommons.sol";
 import {DataUtils} from "../../../utils/DataUtils.sol";
 import {TestConstants} from "../../../utils/TestConstants.sol";
-import {MockTestnetToken} from "contracts/mocks/tokens/MockTestnetToken.sol";
-import {AssetManagementDai} from "contracts/vault/AssetManagementDai.sol";
-import {AssetManagementUsdt} from "contracts/vault/AssetManagementUsdt.sol";
-import {AssetManagementUsdc} from "contracts/vault/AssetManagementUsdc.sol";
-import {IvToken} from "contracts/tokens/IvToken.sol";
-import {MockStrategy} from "contracts/mocks/assetManagement/MockStrategy.sol";
+import {MockTestnetToken} from "@ipor-protocol/test/mocks/tokens/MockTestnetToken.sol";
+import {AssetManagementDai} from "@ipor-protocol/contracts/vault/AssetManagementDai.sol";
+import {AssetManagementUsdt} from "@ipor-protocol/contracts/vault/AssetManagementUsdt.sol";
+import {AssetManagementUsdc} from "@ipor-protocol/contracts/vault/AssetManagementUsdc.sol";
+import {IvToken} from "@ipor-protocol/contracts/tokens/IvToken.sol";
+import {MockStrategy} from "@ipor-protocol/test/mocks/assetManagement/MockStrategy.sol";
 
 contract IporLogicTest is TestCommons, DataUtils {
     MockTestnetToken internal _daiMockedToken;
@@ -319,7 +319,7 @@ contract IporLogicTest is TestCommons, DataUtils {
         vm.expectRevert("Pausable: paused");
         assetManagementDai.withdrawAll();
         vm.expectRevert("Pausable: paused");
-        assetManagementDai.migrateAssetToStrategyWithMaxApr();
+        assetManagementDai.migrateAssetToStrategyWithMaxApy();
         vm.expectRevert("Pausable: paused");
         assetManagementDai.setStrategyAave(address(_mockStrategyAave));
         vm.expectRevert("Pausable: paused");

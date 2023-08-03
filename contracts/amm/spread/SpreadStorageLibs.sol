@@ -2,11 +2,10 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import "../../libraries/errors/AmmErrors.sol";
+import "../../amm/spread/SpreadTypes.sol";
 
-import "contracts/libraries/math/IporMath.sol";
-import "contracts/libraries/errors/AmmErrors.sol";
-import "./SpreadTypes.sol";
-
+/// @title Spread storage library
 library SpreadStorageLibs {
     using SafeCast for uint256;
     uint256 private constant STORAGE_SLOT_BASE = 10_000;
@@ -31,23 +30,29 @@ library SpreadStorageLibs {
         TimeWeightedNotional90DaysUsdt
     }
 
+    /// @notice Struct which contains owner address of Spread Router
     struct OwnerStorage {
         address owner;
     }
 
+    /// @notice Struct which contains pause flag on Spread Router
     struct PausedStorage {
         uint256 value;
     }
 
+    /// @notice Struct which contains address of appointed owner of Spread Router
     struct AppointedOwnerStorage {
         address appointedOwner;
     }
 
+    /// @notice Saves time weighted notional for a specific asset and tenor
+    /// @param timeWeightedNotionalStorageId The storage ID of the time weighted notional
+    /// @param timeWeightedNotional The time weighted notional to save
     function saveTimeWeightedNotional(
-        StorageId storageId,
+        StorageId timeWeightedNotionalStorageId,
         SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional
     ) internal {
-        _checkTimeWeightedNotional(storageId);
+        _checkTimeWeightedNotional(timeWeightedNotionalStorageId);
         uint256 timeWeightedNotionalPayFixedTemp;
         uint256 timeWeightedNotionalReceiveFixedTemp;
         unchecked {
@@ -60,7 +65,7 @@ library SpreadStorageLibs {
         uint32 lastUpdateTimePayFixed = timeWeightedNotional.lastUpdateTimePayFixed.toUint32();
         uint96 timeWeightedNotionalReceiveFixed = timeWeightedNotionalReceiveFixedTemp.toUint96();
         uint32 lastUpdateTimeReceiveFixed = timeWeightedNotional.lastUpdateTimeReceiveFixed.toUint32();
-        uint256 slotAddress = _getStorageSlot(storageId);
+        uint256 slotAddress = _getStorageSlot(timeWeightedNotionalStorageId);
         assembly {
             let value := add(
                 timeWeightedNotionalPayFixed,
@@ -73,15 +78,17 @@ library SpreadStorageLibs {
         }
     }
 
+    /// @notice Gets the time-weighted notional for a specific storage ID representing an asset and tenor
+    /// @param timeWeightedNotionalStorageId The storage ID of the time weighted notional
     function getTimeWeightedNotional(
-        StorageId storageId
+        StorageId timeWeightedNotionalStorageId
     ) internal view returns (SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional28Days) {
-        _checkTimeWeightedNotional(storageId);
+        _checkTimeWeightedNotional(timeWeightedNotionalStorageId);
         uint256 timeWeightedNotionalPayFixed;
         uint256 lastUpdateTimePayFixed;
         uint256 timeWeightedNotionalReceiveFixed;
         uint256 lastUpdateTimeReceiveFixed;
-        uint256 slotAddress = _getStorageSlot(storageId);
+        uint256 slotAddress = _getStorageSlot(timeWeightedNotionalStorageId);
         assembly {
             let slotValue := sload(slotAddress)
             timeWeightedNotionalPayFixed := mul(and(slotValue, 0xFFFFFFFFFFFFFFFFFFFFFFFF), 1000000000000000000)
@@ -99,10 +106,11 @@ library SpreadStorageLibs {
                 lastUpdateTimePayFixed: lastUpdateTimePayFixed,
                 timeWeightedNotionalReceiveFixed: timeWeightedNotionalReceiveFixed,
                 lastUpdateTimeReceiveFixed: lastUpdateTimeReceiveFixed,
-                storageId: storageId
+                storageId: timeWeightedNotionalStorageId
             });
     }
 
+    /// @notice Gets all time weighted notional storage IDs
     function getAllStorageId() internal pure returns (StorageId[] memory storageIds, string[] memory keys) {
         storageIds = new StorageId[](9);
         keys = new string[](9);
@@ -126,6 +134,8 @@ library SpreadStorageLibs {
         keys[8] = "TimeWeightedNotional90DaysUsdt";
     }
 
+    /// @notice Gets the owner of the Spread Router
+    /// @return owner The owner of the Spread Router
     function getOwner() internal pure returns (OwnerStorage storage owner) {
         uint256 slotAddress = _getStorageSlot(StorageId.Owner);
         assembly {
@@ -133,6 +143,8 @@ library SpreadStorageLibs {
         }
     }
 
+    /// @notice Gets the appointed owner of the Spread Router
+    /// @return appointedOwner The appointed owner of the Spread Router
     function getAppointedOwner() internal pure returns (AppointedOwnerStorage storage appointedOwner) {
         uint256 slotAddress = _getStorageSlot(StorageId.AppointedOwner);
         assembly {
@@ -140,6 +152,8 @@ library SpreadStorageLibs {
         }
     }
 
+    /// @notice Gets the paused state of the Spread Router
+    /// @return paused The paused state of the Spread Router
     function getPaused() internal pure returns (PausedStorage storage paused) {
         uint256 slotAddress = _getStorageSlot(StorageId.Paused);
         assembly {

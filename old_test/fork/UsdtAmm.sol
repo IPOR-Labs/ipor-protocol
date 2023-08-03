@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "../TestCommons.sol";
+import "test/TestCommons.sol";
 import "contracts/tokens/IpToken.sol";
 import "contracts/tokens/IvToken.sol";
 import "contracts/oracles/IporOracle.sol";
@@ -16,8 +16,8 @@ import "contracts/amm/AmmTreasury.sol";
 import "contracts/amm/AmmTreasuryUsdt.sol";
 import "contracts/amm/spread/AmmTreasurySpreadModelUsdt.sol";
 import "contracts/amm/spread/AmmTreasurySpreadModel.sol";
-import "contracts/mocks/assetManagement/MockStrategy.sol";
-import "./IAsset.sol";
+import "test/mocks/assetManagement/MockStrategy.sol";
+import "contracts/interfaces/types/IAsset.sol";
 import "contracts/vault/interfaces/aave/IAaveIncentivesController.sol";
 import "../utils/IporRiskManagementOracleUtils.sol";
 import "../utils/TestConstants.sol";
@@ -83,12 +83,12 @@ contract UsdtAmm is Test, TestCommons, IporRiskManagementOracleUtils {
         vm.stopPrank();
     }
 
-    function overrideAaveStrategyWithZeroApr(address owner) public {
+    function overrideAaveStrategyWithZeroApy(address owner) public {
         MockStrategy strategy = new MockStrategy();
         strategy.setAssetManagement(address(assetManagement));
         strategy.setBalance(0);
         strategy.setShareToken(aUsdt);
-        strategy.setApr(0);
+        strategy.setApy(0);
         strategy.setAsset(usdt);
         vm.prank(owner);
         assetManagement.setStrategyAave(address(strategy));
@@ -101,12 +101,12 @@ contract UsdtAmm is Test, TestCommons, IporRiskManagementOracleUtils {
         vm.stopPrank();
     }
 
-    function overrideCompoundStrategyWithZeroApr(address owner) public {
+    function overrideCompoundStrategyWithZeroApy(address owner) public {
         MockStrategy strategy = new MockStrategy();
         strategy.setAssetManagement(address(assetManagement));
         strategy.setBalance(0);
         strategy.setShareToken(cUsdt);
-        strategy.setApr(0);
+        strategy.setApy(0);
         strategy.setAsset(usdt);
         vm.prank(owner);
         assetManagement.setStrategyCompound(address(strategy));

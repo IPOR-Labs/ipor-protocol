@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import {DataUtils} from "../../utils/DataUtils.sol";
-import "contracts/mocks/MockIporSwapLogic.sol";
+import "../../mocks/MockIporSwapLogic.sol";
 
 contract IporSwapLogicTest is Test, DataUtils {
     MockIporSwapLogic internal _iporSwapLogic;
@@ -12,37 +12,160 @@ contract IporSwapLogicTest is Test, DataUtils {
         _iporSwapLogic = new MockIporSwapLogic();
     }
 
-    function testShouldCalculateSwapUnwindValueWithoutPayoffToDate() public {
+    function testShouldCalculateSwapUnwindAmountForPayFixedSwap18daysOppositeLegFixedRateHigher() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 0;
-        uint256 oppositeLegFixedRate = 18e15;
+        uint256 oppositeLegFixedRate = 32 * 1e15;
 
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 2 * 1e16;
+        swap.notional = 1_000_000 * 1e18;
+        swap.fixedInterestRate = 3 * 1e16;
         swap.openTimestamp = block.timestamp;
         swap.tenor = IporTypes.SwapTenor.DAYS_28;
 
-        uint256 closingTimestamp = swap.openTimestamp + 5 days;
+        uint256 closingTimestamp = swap.openTimestamp + 18 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            swapPayoffToDate,
             oppositeLegFixedRate
         );
 
         //then
-        assertEq(virtualHedgingSwap, -63089187650935100324);
+        assertEq(swapUnwindPnlValue, 54841078135006506434);
     }
 
-    function testShouldCalculateSwapUnwindValueWithoutPayoffToDateMoreDaysThanTenor() public {
+    function testShouldCalculateSwapUnwindAmountForPayFixedSwap18daysOppositeLegFixedRateLower() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 0;
+        uint256 oppositeLegFixedRate = 29 * 1e15;
+
+        swap.notional = 1_000_000 * 1e18;
+        swap.fixedInterestRate = 3 * 1e16;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp + 18 days;
+
+        //when
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, -27419412216617141908);
+    }
+
+    function testShouldCalculateSwapUnwindAmountForPayFixedSwap18daysOppositeLegFixedRateTheSame() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 3 * 1e16;
+
+        swap.notional = 1_000_000 * 1e18;
+        swap.fixedInterestRate = 3 * 1e16;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp + 18 days;
+
+        //when
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, 0);
+    }
+
+    function testShouldCalculateSwapUnwindAmountForReceiveFixedSwap18daysOppositeLegFixedRateHigher() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 32 * 1e15;
+
+        swap.notional = 1_000_000 * 1e18;
+        swap.fixedInterestRate = 28 * 1e15;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp + 18 days;
+
+        //when
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, -109679151361757278217);
+    }
+
+    function testShouldCalculateSwapUnwindAmountForReceiveFixedSwap18daysOppositeLegFixedRateLower() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 29 * 1e15;
+
+        swap.notional = 1_000_000 * 1e18;
+        swap.fixedInterestRate = 32 * 1e15;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp + 18 days;
+
+        //when
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, 82260490351623648342);
+    }
+
+    function testShouldCalculateSwapUnwindAmountForReceiveFixedSwap18daysOppositeLegFixedRateTheSame() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 3 * 1e16;
+
+        swap.notional = 1_000_000 * 1e18;
+        swap.fixedInterestRate = 3 * 1e16;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp + 18 days;
+
+        //when
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, 0);
+    }
+
+    function testShouldCalculateSwapUnwindAmountMoreDaysThanTenorForPayFixedSwap() public {
+        // given
+        AmmTypes.Swap memory swap;
+
         uint256 oppositeLegFixedRate = 18e15;
 
         swap.notional = 500_000 * 1e18;
@@ -53,47 +176,19 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 30 days;
 
         //when
-        vm.expectRevert("IPOR_333");
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        vm.expectRevert("IPOR_329");
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            swapPayoffToDate,
             oppositeLegFixedRate
         );
     }
 
-    function testShouldCalculateSwapUnwindValueWithPayoffToDate() public {
+    function testShouldCalculateSwapUnwindPnlValueElapsed10OppositeLegRateHigherForPayFixedSwap() public {
         // given
         AmmTypes.Swap memory swap;
 
-        uint256 oppositeLegFixedRate = 18e15;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 2 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp + 5 days;
-
-        int256 swapPayoffToDate = 0;
-
-        //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            swapPayoffToDate,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, -63089187650935100324);
-    }
-
-    function testShouldCalculateVirtualHedgingSwapElapsed10PositivePnLOppositeLegRateHigher() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 swapPayoffToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -104,48 +199,21 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            swapPayoffToDate,
             oppositeLegFixedRate
         );
 
         //then
-        assertEq(virtualHedgingSwap, 694124455447701456257);
+        assertEq(swapUnwindPnlValue, 494124455447701456257);
     }
 
-    function testShouldCalculateVirtualHedgingSwapElapsed10DaysPositivePnLOppositeLegRateEqual() public {
+    function testShouldCalculateSwapUnwindPnlValueElapsed10DaysOppositeLegRateLowerForPayFixedSwap() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 200 * 1e18;
-        uint256 oppositeLegFixedRate = 5 * 1e16;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 5 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp + 10 days;
-
-        //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            swapPayoffToDate,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, 195000000000000000000 + 5e18);
-    }
-
-    function testShouldCalculateVirtualHedgingSwapElapsed10DaysPositivePnLOppositeLegRateLower() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 swapPayoffToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -156,22 +224,21 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            swapPayoffToDate,
             oppositeLegFixedRate
         );
 
         //then
-        assertEq(virtualHedgingSwap, -294124455447701456257);
+        assertEq(swapUnwindPnlValue, -494124455447701456257);
     }
 
-    function testShouldCalculateVirtHedgPosElapsed10NegativePnLOppositeLegRateHigher() public {
+    function testShouldCalculateVirtHedgPosElapsed10OppositeLegRateHigherForPayFixedSwap() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = -200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -182,22 +249,21 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            swapPayoffToDate,
             oppositeLegFixedRate
         );
 
         //then
-        assertEq(virtualHedgingSwap, 294124455447701456257);
+        assertEq(swapUnwindPnlValue, 494124455447701456257);
     }
 
-    function testShouldCalculateVirtHedgPositionElapsed10DaysNegativePnLOppositeLegRateEqual() public {
+    function testShouldCalculateVirtHedgPositionElapsed10DaysOppositeLegRateEqualForPayFixedSwap() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = -200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -208,22 +274,21 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            swapPayoffToDate,
             oppositeLegFixedRate
         );
 
         //then
-        assertEq(virtualHedgingSwap, -200000000000000000000);
+        assertEq(swapUnwindPnlValue, 0);
     }
 
-    function testShouldCalculateVirtHedgPositionElapsed10DaysNegativePnLOppositeLegRateLower() public {
+    function testShouldCalculateVirtHedgPositionElapsed10DaysOppositeLegRateLowerForPayFixedSwap() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = -200 * 1e18;
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -234,48 +299,21 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            swapPayoffToDate,
             oppositeLegFixedRate
         );
 
         //then
-        assertEq(virtualHedgingSwap, -694124455447701456257);
+        assertEq(swapUnwindPnlValue, -494124455447701456257);
     }
 
-    function testShouldCalculateVirtualHedgingSwapElapsed10PnLZeroOppositeLegRateHigher() public {
+    function testShouldCalculateSwapUnwindPnlValueElapsed10DaysOppositeLegRateEqualForPayFixedSwap() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 0;
-        uint256 oppositeLegFixedRate = 5 * 1e16;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 3 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp + 10 days;
-
-        //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            swapPayoffToDate,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, 494124455447701456257);
-    }
-
-    function testShouldCalculateVirtualHedgingSwapElapsed10DaysPnLZeroOppositeLegRateEqual() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 swapPayoffToDate = 0;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -286,48 +324,21 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            swapPayoffToDate,
             oppositeLegFixedRate
         );
 
         //then
-        assertEq(virtualHedgingSwap, -5000000000000000000 + 5e18);
+        assertEq(swapUnwindPnlValue, -5000000000000000000 + 5e18);
     }
 
-    function testShouldCalculateVirtualHedgingSwapElapsed10DaysPnLZeroOppositeLegRateLower() public {
+    function testShouldCalculateSwapUnwindPnlValueElapsed10PayFixedZeroForPayFixedSwap() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 0;
-        uint256 oppositeLegFixedRate = 3 * 1e16;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 5 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp + 10 days;
-
-        //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            swapPayoffToDate,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, -494124455447701456257);
-    }
-
-    function testShouldCalculateVirtualHedgingSwapElapsed10PnL200PayFixedZero() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 swapPayoffToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -338,22 +349,21 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            swapPayoffToDate,
             oppositeLegFixedRate
         );
 
         //then
-        assertEq(virtualHedgingSwap, 1429397947389797852750 + 5e18);
+        assertEq(swapUnwindPnlValue, 1234397947389797852750);
     }
 
-    function testShouldCalculateVirtualHedgingSwapElapsed10PnL200OppositeLegZero() public {
+    function testShouldCalculateSwapUnwindPnlValueElapsed10OppositeLegZeroForPayFixedSwap() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 0;
 
         swap.notional = 500_000 * 1e18;
@@ -364,74 +374,21 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 10 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            swapPayoffToDate,
             oppositeLegFixedRate
         );
 
         //then
-        assertEq(virtualHedgingSwap, -1034397947389797852750);
+        assertEq(swapUnwindPnlValue, -1234397947389797852750);
     }
 
-    function testShouldCalculateVirtualHedgingSwapElapsed10PnLNegative200PayFixedZero() public {
+    function testShouldCalculateVirtHedgPosClosingInDayWhenOpenedOppositeLegHigherForPayFixedSwap() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = -200 * 1e18;
-        uint256 oppositeLegFixedRate = 5 * 1e16;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 0;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp + 10 days;
-
-        //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            swapPayoffToDate,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, 1029397947389797852750 + 5e18);
-    }
-
-    function testShouldCalculateVirtualHedgingSwapElapsed10PnLNegative200OppositeLegZero() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 swapPayoffToDate = -200 * 1e18;
-        uint256 oppositeLegFixedRate = 0;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 5 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp + 10 days;
-
-        //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            swapPayoffToDate,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, -1434397947389797852750);
-    }
-
-    function testShouldCalculateVirtHedgPosPnLZeroClosingInDayWhenOpenedOppositeLegHigher() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 swapPayoffToDate = 0;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -442,48 +399,21 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            swapPayoffToDate,
             oppositeLegFixedRate
         );
 
         //then
-        assertEq(virtualHedgingSwap, 769480890874670652244);
+        assertEq(swapUnwindPnlValue, 769480890874670652244);
     }
 
-    function testShouldCalculateVirtHedgPosPnLZeroClosingInDayWhenOpenedOppositeLegEqual() public {
+    function testShouldCalculateVirtHedgPosClosingInDayWhenOpenedOppositeLegLowerForPayFixedSwap() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 0;
-        uint256 oppositeLegFixedRate = 5 * 1e16;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 5 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp;
-
-        //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            swapPayoffToDate,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, -5000000000000000000 + 5e18);
-    }
-
-    function testShouldCalculateVirtHedgPosPnLZeroClosingInDayWhenOpenedOppositeLegLower() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 swapPayoffToDate = 0;
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -494,100 +424,21 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            swapPayoffToDate,
             oppositeLegFixedRate
         );
 
         //then
-        assertEq(virtualHedgingSwap, -769480890874670652244);
+        assertEq(swapUnwindPnlValue, -769480890874670652244);
     }
 
-    function testShouldCalculateVirtHedgPosPnL200ClosingInDayWhenOpenedOppositeLegHigher() public {
+    function testShouldCalculateVirtHedgPosClosingInDayWhenOpenedLegEqualZeroForPayFixedSwap() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 200 * 1e18;
-        uint256 oppositeLegFixedRate = 5 * 1e16;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 3 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp;
-
-        //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            swapPayoffToDate,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, 969480890874670652244);
-    }
-
-    function testShouldCalculateVirtHedgPosPnL200ClosingInDayWhenOpenedOppositeLegEqual() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 swapPayoffToDate = 200 * 1e18;
-        uint256 oppositeLegFixedRate = 5 * 1e16;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 5 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp;
-
-        //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            swapPayoffToDate,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, 195000000000000000000 + 5e18);
-    }
-
-    function testShouldCalculateVirtHedgPosPnL200ClosingInDayWhenOpenedOppositeLegLower() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 swapPayoffToDate = 200 * 1e18;
-        uint256 oppositeLegFixedRate = 3 * 1e16;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 5 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp;
-
-        //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            swapPayoffToDate,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, -569480890874670652244);
-    }
-
-    function testShouldCalculateVirtHedgPosPnLZeroClosingInDayWhenOpenedLegEqualZero() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 swapPayoffToDate = 0;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -598,22 +449,21 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            swapPayoffToDate,
             oppositeLegFixedRate
         );
 
         //then
-        assertEq(virtualHedgingSwap, 1916490914507168629875 + 5e18);
+        assertEq(swapUnwindPnlValue, 1916490914507168629875 + 5e18);
     }
 
-    function testShouldCalculateVirtHedgPosPnLZeroClosingInDayWhenOpenedOppositeLegEqualZero() public {
+    function testShouldCalculateVirtHedgPosClosingInDayWhenOpenedOppositeLegEqualZeroForPayFixedSwap() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 0;
         uint256 oppositeLegFixedRate = 0;
 
         swap.notional = 500_000 * 1e18;
@@ -624,22 +474,21 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            swapPayoffToDate,
             oppositeLegFixedRate
         );
 
         //then
-        assertEq(virtualHedgingSwap, -1921490914507168629875);
+        assertEq(swapUnwindPnlValue, -1921490914507168629875);
     }
 
-    function testShouldCalculateVirtHedgPosPnLZeroClosingInDayWhenOpenedBothLegZero() public {
+    function testShouldCalculateVirtHedgPosClosingInDayWhenOpenedBothLegZeroForPayFixedSwap() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 0;
         uint256 oppositeLegFixedRate = 0;
 
         swap.notional = 500_000 * 1e18;
@@ -650,22 +499,21 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            swapPayoffToDate,
             oppositeLegFixedRate
         );
 
         //then
-        assertEq(virtualHedgingSwap, -5000000000000000000 + 5e18);
+        assertEq(swapUnwindPnlValue, -5000000000000000000 + 5e18);
     }
 
-    function testShouldCalculateVirtHedgPosMaturityPnL200OppositeLegHigher() public {
+    function testShouldCalculateVirtHedgPosMaturityOppositeLegHigherForPayFixedSwap() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -676,22 +524,21 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 28 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            swapPayoffToDate,
             oppositeLegFixedRate
         );
 
         //then
-        assertEq(virtualHedgingSwap, 195000000000000000000 + 5e18);
+        assertEq(swapUnwindPnlValue, 0);
     }
 
-    function testShouldCalculateVirtHedgPosMaturityPnL200OppositeLegEqual() public {
+    function testShouldCalculateVirtHedgPosMaturityOppositeLegEqualForPayFixedSwap() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -702,22 +549,21 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 28 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            swapPayoffToDate,
             oppositeLegFixedRate
         );
 
         //then
-        assertEq(virtualHedgingSwap, 200000000000000000000);
+        assertEq(swapUnwindPnlValue, 0);
     }
 
-    function testShouldCalculateVirtHedgPosMaturityPnL200OppositeLegLower() public {
+    function testShouldCalculateVirtHedgPosMaturityOppositeLegLowerForPayFixedSwap() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -728,100 +574,21 @@ contract IporSwapLogicTest is Test, DataUtils {
         uint256 closingTimestamp = swap.openTimestamp + 28 days;
 
         //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            swapPayoffToDate,
             oppositeLegFixedRate
         );
 
         //then
-        assertEq(virtualHedgingSwap, 200000000000000000000);
+        assertEq(swapUnwindPnlValue, 0);
     }
 
-    function testShouldCalculateVirtHedgPosMaturityPnL200MinusOppositeLegHigher() public {
+    function testShouldCalculateVirtHedgPosAfterMaturityOppositeLegHigherForPayFixedSwap() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = -200 * 1e18;
-        uint256 oppositeLegFixedRate = 5 * 1e16;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 3 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp + 28 days;
-
-        //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            swapPayoffToDate,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, -200000000000000000000);
-    }
-
-    function testShouldCalculateVirtHedgPosMaturityPnL200MinusOppositeLegEqual() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 swapPayoffToDate = -200 * 1e18;
-        uint256 oppositeLegFixedRate = 5 * 1e16;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 5 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp + 28 days;
-
-        //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            swapPayoffToDate,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, -200000000000000000000);
-    }
-
-    function testShouldCalculateVirtHedgPosMaturityPnL200MinusOppositeLegLower() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 swapPayoffToDate = -200 * 1e18;
-        uint256 oppositeLegFixedRate = 3 * 1e16;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 5 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp + 28 days;
-
-        //when
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            swapPayoffToDate,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, -200000000000000000000);
-    }
-
-    function testShouldCalculateVirtHedgPosAfterMaturityPnL200OppositeLegHigher() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 swapPayoffToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -833,22 +600,21 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            swapPayoffToDate,
             oppositeLegFixedRate
         );
 
         //then
-        assertEq(virtualHedgingSwap, 0);
+        assertEq(swapUnwindPnlValue, 0);
     }
 
-    function testShouldCalculateVirtHedgPosAfterMaturityPnL200OppositeLegEqual() public {
+    function testShouldCalculateVirtHedgPosAfterMaturityOppositeLegEqualForPayFixedSwap() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -860,22 +626,21 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            swapPayoffToDate,
             oppositeLegFixedRate
         );
 
         //then
-        assertEq(virtualHedgingSwap, 0);
+        assertEq(swapUnwindPnlValue, 0);
     }
 
-    function testShouldCalculateVirtHedgPosAterMaturityPnL200OppositeLegLower() public {
+    function testShouldCalculateVirtHedgPosAterMaturityOppositeLegLowerForPayFixedSwap() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = 200 * 1e18;
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -887,76 +652,21 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            swapPayoffToDate,
             oppositeLegFixedRate
         );
 
         //then
-        assertEq(virtualHedgingSwap, 0);
+        assertEq(swapUnwindPnlValue, 0);
     }
 
-    function testShouldCalculateVirtHedgPosAfterMaturityPnL200MinusOppositeLegHigher() public {
+    function testShouldCalculateVirtHedgPosAfterMaturityOppositeLegLowerForPayFixedSwap() public {
         // given
         AmmTypes.Swap memory swap;
 
-        int256 swapPayoffToDate = -200 * 1e18;
-        uint256 oppositeLegFixedRate = 5 * 1e16;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 3 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp + 28 days + 2 days;
-
-        //when
-        vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            swapPayoffToDate,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, 0);
-    }
-
-    function testShouldCalculateVirtHedgPosAfterMaturityPnL200MinusOppositeLegEqual() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 swapPayoffToDate = -200 * 1e18;
-        uint256 oppositeLegFixedRate = 5 * 1e16;
-
-        swap.notional = 500_000 * 1e18;
-        swap.fixedInterestRate = 5 * 1e16;
-        swap.openTimestamp = block.timestamp;
-        swap.tenor = IporTypes.SwapTenor.DAYS_28;
-
-        uint256 closingTimestamp = swap.openTimestamp + 28 days + 2 days;
-
-        //when
-        vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
-            swap,
-            closingTimestamp,
-            swapPayoffToDate,
-            oppositeLegFixedRate
-        );
-
-        //then
-        assertEq(virtualHedgingSwap, 0);
-    }
-
-    function testShouldCalculateVirtHedgPosAfterMaturityPnL200MinusOppositeLegLower() public {
-        // given
-        AmmTypes.Swap memory swap;
-
-        int256 swapPayoffToDate = -200 * 1e18;
         uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
@@ -968,15 +678,15 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
-        int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            swapPayoffToDate,
             oppositeLegFixedRate
         );
 
         //then
-        assertEq(virtualHedgingSwap, 0);
+        assertEq(swapUnwindPnlValue, 0);
     }
 
     function testShouldCalculateSwapUnwindOpeningFeeAmount5daysLeft() public {
@@ -1065,5 +775,552 @@ contract IporSwapLogicTest is Test, DataUtils {
 
         //then
         assertEq(swapOpeningFeeAmount, 49315068493150685000);
+    }
+
+    function testShouldCalculateSwapUnwindAmountMoreDaysThanTenorForReceiveFixedSwap() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 18e15;
+
+        swap.notional = 500_000 * 1e18;
+        swap.fixedInterestRate = 2 * 1e16;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp + 30 days;
+
+        //when
+        vm.expectRevert("IPOR_329");
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+    }
+
+    function testShouldCalculateSwapUnwindPnlValueElapsed10OppositeLegRateHigherForReceiveFixedSwap() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 5 * 1e16;
+
+        swap.notional = 500_000 * 1e18;
+        swap.fixedInterestRate = 3 * 1e16;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp + 10 days;
+
+        //when
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, -494124455447701456257);
+    }
+
+    function testShouldCalculateSwapUnwindPnlValueElapsed10DaysOppositeLegRateLowerForReceiveFixedSwap() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 3 * 1e16;
+
+        swap.notional = 500_000 * 1e18;
+        swap.fixedInterestRate = 5 * 1e16;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp + 10 days;
+
+        //when
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, 494124455447701456257);
+    }
+
+    function testShouldCalculateVirtHedgPosElapsed10OppositeLegRateHigherForReceiveFixedSwap() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 5 * 1e16;
+
+        swap.notional = 500_000 * 1e18;
+        swap.fixedInterestRate = 3 * 1e16;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp + 10 days;
+
+        //when
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, -494124455447701456257);
+    }
+
+    function testShouldCalculateVirtHedgPositionElapsed10DaysOppositeLegRateEqualForReceiveFixedSwap() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 5 * 1e16;
+
+        swap.notional = 500_000 * 1e18;
+        swap.fixedInterestRate = 5 * 1e16;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp + 10 days;
+
+        //when
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, 0);
+    }
+
+    function testShouldCalculateVirtHedgPositionElapsed10DaysOppositeLegRateLowerForReceiveFixedSwap() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 3 * 1e16;
+
+        swap.notional = 500_000 * 1e18;
+        swap.fixedInterestRate = 5 * 1e16;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp + 10 days;
+
+        //when
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, 494124455447701456257);
+    }
+
+    function testShouldCalculateSwapUnwindPnlValueElapsed10DaysOppositeLegRateEqualForReceiveFixedSwap() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 5 * 1e16;
+
+        swap.notional = 500_000 * 1e18;
+        swap.fixedInterestRate = 5 * 1e16;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp + 10 days;
+
+        //when
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, 0);
+    }
+
+    function testShouldCalculateSwapUnwindPnlValueElapsed10PayFixedZeroForReceiveFixedSwap() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 5 * 1e16;
+
+        swap.notional = 500_000 * 1e18;
+        swap.fixedInterestRate = 0;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp + 10 days;
+
+        //when
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, -1234397947389797852750);
+    }
+
+    function testShouldCalculateSwapUnwindPnlValueElapsed10OppositeLegZeroForReceiveFixedSwap() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 0;
+
+        swap.notional = 500_000 * 1e18;
+        swap.fixedInterestRate = 5 * 1e16;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp + 10 days;
+
+        //when
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, 1234397947389797852750);
+    }
+
+    function testShouldCalculateVirtHedgPosClosingInDayWhenOpenedOppositeLegHigherForReceiveFixedSwap() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 5 * 1e16;
+
+        swap.notional = 500_000 * 1e18;
+        swap.fixedInterestRate = 3 * 1e16;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp;
+
+        //when
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, -769480890874670652244);
+    }
+
+    function testShouldCalculateVirtHedgPosClosingInDayWhenOpenedOppositeLegLowerForReceiveFixedSwap() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 3 * 1e16;
+
+        swap.notional = 500_000 * 1e18;
+        swap.fixedInterestRate = 5 * 1e16;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp;
+
+        //when
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, 769480890874670652244);
+    }
+
+    function testShouldCalculateVirtHedgPosClosingInDayWhenOpenedLegEqualZeroForReceiveFixedSwap() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 5 * 1e16;
+
+        swap.notional = 500_000 * 1e18;
+        swap.fixedInterestRate = 0;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp;
+
+        //when
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, -1921490914507168629875);
+    }
+
+    function testShouldCalculateVirtHedgPosClosingInDayWhenOpenedOppositeLegEqualZeroForReceiveFixedSwap() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 0;
+
+        swap.notional = 500_000 * 1e18;
+        swap.fixedInterestRate = 5 * 1e16;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp;
+
+        //when
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, 1921490914507168629875);
+    }
+
+    function testShouldCalculateVirtHedgPosClosingInDayWhenOpenedBothLegZeroForReceiveFixedSwap() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 0;
+
+        swap.notional = 500_000 * 1e18;
+        swap.fixedInterestRate = 0;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp;
+
+        //when
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, 0);
+    }
+
+    function testShouldCalculateVirtHedgPosMaturityOppositeLegHigherForReceiveFixedSwap() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 5 * 1e16;
+
+        swap.notional = 500_000 * 1e18;
+        swap.fixedInterestRate = 3 * 1e16;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp + 28 days;
+
+        //when
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, 0);
+    }
+
+    function testShouldCalculateVirtHedgPosMaturityOppositeLegEqualForReceiveFixedSwap() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 5 * 1e16;
+
+        swap.notional = 500_000 * 1e18;
+        swap.fixedInterestRate = 5 * 1e16;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp + 28 days;
+
+        //when
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, 0);
+    }
+
+    function testShouldCalculateVirtHedgPosMaturityOppositeLegLowerForReceiveFixedSwap() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 3 * 1e16;
+
+        swap.notional = 500_000 * 1e18;
+        swap.fixedInterestRate = 5 * 1e16;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp + 28 days;
+
+        //when
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, 0);
+    }
+
+    function testShouldCalculateVirtHedgPosAfterMaturityOppositeLegHigherForReceiveFixedSwap() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 5 * 1e16;
+
+        swap.notional = 500_000 * 1e18;
+        swap.fixedInterestRate = 3 * 1e16;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp + 28 days + 2 days;
+
+        //when
+        vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, 0);
+    }
+
+    function testShouldCalculateVirtHedgPosAfterMaturityOppositeLegEqualForReceiveFixedSwap() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 5 * 1e16;
+
+        swap.notional = 500_000 * 1e18;
+        swap.fixedInterestRate = 5 * 1e16;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp + 28 days + 2 days;
+
+        //when
+        vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, 0);
+    }
+
+    function testShouldCalculateVirtHedgPosAterMaturityOppositeLegLowerForReceiveFixedSwap() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 3 * 1e16;
+
+        swap.notional = 500_000 * 1e18;
+        swap.fixedInterestRate = 5 * 1e16;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp + 28 days + 2 days;
+
+        //when
+        vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, 0);
+    }
+
+    function testShouldCalculateVirtHedgPosAfterMaturityOppositeLegLowerForReceiveFixedSwap() public {
+        // given
+        AmmTypes.Swap memory swap;
+
+        uint256 oppositeLegFixedRate = 3 * 1e16;
+
+        swap.notional = 500_000 * 1e18;
+        swap.fixedInterestRate = 5 * 1e16;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 closingTimestamp = swap.openTimestamp + 28 days + 2 days;
+
+        //when
+        vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
+        int256 swapUnwindPnlValue = _iporSwapLogic.calculateSwapUnwindPnlValue(
+            swap,
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            closingTimestamp,
+            oppositeLegFixedRate
+        );
+
+        //then
+        assertEq(swapUnwindPnlValue, 0);
+    }
+
+    function testShouldNotCalculateSwapUnwindOpeningFeeAmountWrongCloseTimestamp() public {
+        //given
+        AmmTypes.Swap memory swap;
+
+        swap.notional = 500_000 * 1e18;
+        swap.openTimestamp = block.timestamp;
+        swap.tenor = IporTypes.SwapTenor.DAYS_28;
+
+        uint256 openingFeeRate = 5 * 1e14;
+        uint256 closeTimestamp = block.timestamp - 1;
+
+        //when
+        vm.expectRevert(bytes(AmmErrors.CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP));
+        uint256 swapOpeningFeeAmount = _iporSwapLogic.calculateSwapUnwindOpeningFeeAmount(
+            swap,
+            closeTimestamp,
+            openingFeeRate
+        );
     }
 }

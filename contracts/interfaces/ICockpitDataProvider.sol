@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 
-import "./types/IporTypes.sol";
 import "./types/CockpitTypes.sol";
 
 /// @title Interface of IPOR Protocol for interaction with external diagnostics web applications
@@ -40,8 +39,5 @@ interface ICockpitDataProvider {
     /// @param asset asset / stable coin address
     /// @return spreadPayFixed Spread value for Pay Fixed leg for a given asset
     /// @return spreadReceiveFixed Spread value for Receive Fixed leg for a given asset
-    function calculateSpread(address asset)
-        external
-        view
-        returns (int256 spreadPayFixed, int256 spreadReceiveFixed);
+    function calculateSpread(address asset) external view returns (int256 spreadPayFixed, int256 spreadReceiveFixed);
 }

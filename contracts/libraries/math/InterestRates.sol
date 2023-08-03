@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "abdk-libraries-solidity/ABDKMathQuad.sol";
-import "../Constants.sol";
-import "./IporMath.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import "abdk-libraries-solidity/ABDKMathQuad.sol";
+import "./IporMath.sol";
+import "../../libraries/Constants.sol";
 
 library InterestRates {
     using SafeCast for uint256;

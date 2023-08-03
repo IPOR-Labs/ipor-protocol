@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "contracts/mocks/MockIporWeighted.sol";
-import "contracts/mocks/tokens/MockTestnetToken.sol";
-import "contracts/tokens/IvToken.sol";
-import "contracts/itf/ItfAssetManagement6D.sol";
+import "../../../contracts/tokens/IvToken.sol";
+import "../../../contracts/vault/AssetManagementUsdt.sol";
+import "../../../contracts/vault/AssetManagementUsdc.sol";
+import "../../../contracts/vault/AssetManagementDai.sol";
+import "../../../contracts/vault/AssetManagement.sol";
 
 import "./BuilderUtils.sol";
 import "./StrategyAaveBuilder.sol";
 import "./StrategyCompoundBuilder.sol";
-import "contracts/itf/ItfAssetManagement.sol";
-import "contracts/itf/ItfAssetManagement18D.sol";
+
 import "forge-std/Test.sol";
 
 contract AssetManagementBuilder is Test {
@@ -56,10 +56,9 @@ contract AssetManagementBuilder is Test {
         return this;
     }
 
-    function withAssetManagementImplementation(address assetManagementImplementation)
-        public
-        returns (AssetManagementBuilder)
-    {
+    function withAssetManagementImplementation(
+        address assetManagementImplementation
+    ) public returns (AssetManagementBuilder) {
         builderData.assetManagementImplementation = assetManagementImplementation;
         return this;
     }
@@ -127,7 +126,7 @@ contract AssetManagementBuilder is Test {
         }
     }
 
-    function build() public returns (ItfAssetManagement) {
+    function build() public returns (AssetManagement) {
         require(builderData.asset != address(0), "Asset address is not set");
         require(builderData.ivToken != address(0), "IvToken address is not set");
 
@@ -136,7 +135,7 @@ contract AssetManagementBuilder is Test {
         vm.startPrank(_owner);
 
         ERC1967Proxy proxy = _constructProxy(address(_buildAssetManagementImplementation()));
-        ItfAssetManagement assetManagement = ItfAssetManagement(address(proxy));
+        AssetManagement assetManagement = AssetManagement(address(proxy));
 
         MockTestnetStrategy strategyAave = MockTestnetStrategy(builderData.strategyAave);
         MockTestnetStrategy strategyCompound = MockTestnetStrategy(builderData.strategyCompound);
@@ -153,11 +152,11 @@ contract AssetManagementBuilder is Test {
             assetManagementImpl = builderData.assetManagementImplementation;
         } else {
             if (builderData.assetType == BuilderUtils.AssetType.DAI) {
-                assetManagementImpl = address(new ItfAssetManagement18D());
+                assetManagementImpl = address(new AssetManagementDai());
             } else if (builderData.assetType == BuilderUtils.AssetType.USDT) {
-                assetManagementImpl = address(new ItfAssetManagement6D());
+                assetManagementImpl = address(new AssetManagementUsdt());
             } else if (builderData.assetType == BuilderUtils.AssetType.USDC) {
-                assetManagementImpl = address(new ItfAssetManagement6D());
+                assetManagementImpl = address(new AssetManagementUsdc());
             } else {
                 revert("Asset type not supported");
             }

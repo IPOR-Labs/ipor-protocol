@@ -3,10 +3,10 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "../interfaces/IIpToken.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/AmmErrors.sol";
 import "../libraries/errors/AmmPoolsErrors.sol";
-import "../interfaces/IIpToken.sol";
 import "../security/IporOwnable.sol";
 
 contract IpToken is IporOwnable, IIpToken, ERC20 {

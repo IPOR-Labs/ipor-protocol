@@ -1,102 +1,75 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
+import "@openzeppelin/contracts/utils/Address.sol";
 import "../interfaces/IAmmSwapsLens.sol";
-import "./libraries/IporSwapLogic.sol";
+import "./spread/ISpread28DaysLens.sol";
+import "./spread/ISpread60DaysLens.sol";
+import "./spread/ISpread90DaysLens.sol";
 import "../libraries/AmmLib.sol";
-import "../interfaces/IAmmOpenSwapService.sol";
 import "../libraries/RiskManagementLogic.sol";
+import "./libraries/IporSwapLogic.sol";
+import "../libraries/IporContractValidator.sol";
 
 contract AmmSwapsLens is IAmmSwapsLens {
+    using Address for address;
+    using IporContractValidator for address;
     using IporSwapLogic for AmmTypes.Swap;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
+    using AmmLib for AmmInternalTypes.RiskIndicatorsContext;
 
     address internal immutable _usdtAsset;
     address internal immutable _usdtAmmStorage;
     address internal immutable _usdtAmmTreasury;
+    uint256 internal immutable _usdtMinLeverage;
 
     address internal immutable _usdcAsset;
     address internal immutable _usdcAmmStorage;
     address internal immutable _usdcAmmTreasury;
+    uint256 internal immutable _usdcMinLeverage;
 
     address internal immutable _daiAsset;
     address internal immutable _daiAmmStorage;
     address internal immutable _daiAmmTreasury;
+    uint256 internal immutable _daiMinLeverage;
 
     address internal immutable _iporOracle;
-
-    address internal immutable _router;
-
     address internal immutable _riskManagementOracle;
 
+    address internal immutable _spreadRouter;
+
     constructor(
-        SwapLensConfiguration memory usdtCfg,
-        SwapLensConfiguration memory usdcCfg,
-        SwapLensConfiguration memory daiCfg,
+        SwapLensPoolConfiguration memory usdtCfg,
+        SwapLensPoolConfiguration memory usdcCfg,
+        SwapLensPoolConfiguration memory daiCfg,
         address iporOracle,
         address riskManagementOracle,
-        address router
+        address spreadRouter
     ) {
-        require(
-            usdtCfg.asset != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDT asset address cannot be 0")
-        );
-        require(
-            usdtCfg.ammStorage != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDT ammStorage address cannot be 0")
-        );
-        require(
-            usdtCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDT ammTreasury address cannot be 0")
-        );
+        _usdtAsset = usdtCfg.asset.checkAddress();
+        _usdtAmmStorage = usdtCfg.ammStorage.checkAddress();
+        _usdtAmmTreasury = usdtCfg.ammTreasury.checkAddress();
+        _usdtMinLeverage = usdtCfg.minLeverage;
 
-        require(
-            usdcCfg.asset != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC asset address cannot be 0")
-        );
-        require(
-            usdcCfg.ammStorage != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC ammStorage address cannot be 0")
-        );
-        require(
-            usdcCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC ammTreasury address cannot be 0")
-        );
+        _usdcAsset = usdcCfg.asset.checkAddress();
+        _usdcAmmStorage = usdcCfg.ammStorage.checkAddress();
+        _usdcAmmTreasury = usdcCfg.ammTreasury.checkAddress();
+        _usdcMinLeverage = usdcCfg.minLeverage;
 
-        require(daiCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI asset address cannot be 0"));
-        require(
-            daiCfg.ammStorage != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " DAI ammStorage address cannot be 0")
-        );
-        require(
-            daiCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " DAI ammTreasury address cannot be 0")
-        );
-        require(
-            address(iporOracle) != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " iporOracle address cannot be 0")
-        );
-        require(
-            riskManagementOracle != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " riskManagementOracle address cannot be 0")
-        );
-        require(router != address(0), string.concat(IporErrors.WRONG_ADDRESS, " router address cannot be 0"));
+        _daiAsset = daiCfg.asset.checkAddress();
+        _daiAmmStorage = daiCfg.ammStorage.checkAddress();
+        _daiAmmTreasury = daiCfg.ammTreasury.checkAddress();
+        _daiMinLeverage = daiCfg.minLeverage;
 
-        _usdtAsset = usdtCfg.asset;
-        _usdtAmmStorage = usdtCfg.ammStorage;
-        _usdtAmmTreasury = usdtCfg.ammTreasury;
+        _iporOracle = iporOracle.checkAddress();
+        _riskManagementOracle = riskManagementOracle.checkAddress();
+        _spreadRouter = spreadRouter.checkAddress();
+    }
 
-        _usdcAsset = usdcCfg.asset;
-        _usdcAmmStorage = usdcCfg.ammStorage;
-        _usdcAmmTreasury = usdcCfg.ammTreasury;
-
-        _daiAsset = daiCfg.asset;
-        _daiAmmStorage = daiCfg.ammStorage;
-        _daiAmmTreasury = daiCfg.ammTreasury;
-
-        _iporOracle = iporOracle;
-        _riskManagementOracle = riskManagementOracle;
-        _router = router;
+    function getSwapLensPoolConfiguration(
+        address asset
+    ) external view override returns (SwapLensPoolConfiguration memory) {
+        return _getSwapLensPoolConfiguration(asset);
     }
 
     function getSwaps(
@@ -114,86 +87,151 @@ contract AmmSwapsLens is IAmmSwapsLens {
         return (count, _mapSwaps(asset, ammStorage, swapIds));
     }
 
-    function getPayoffPayFixed(address asset, uint256 swapId) external view override returns (int256) {
+    function getPnlPayFixed(address asset, uint256 swapId) external view override returns (int256) {
         IAmmStorage ammStorage = _getAmmStorage(asset);
         AmmTypes.Swap memory swap = ammStorage.getSwap(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, swapId);
         uint256 accruedIbtPrice = IIporOracle(_iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
-        return swap.calculatePayoffPayFixed(block.timestamp, accruedIbtPrice);
+        return swap.calculatePnlPayFixed(block.timestamp, accruedIbtPrice);
     }
 
-    function getPayoffReceiveFixed(address asset, uint256 swapId) external view override returns (int256) {
+    function getPnlReceiveFixed(address asset, uint256 swapId) external view override returns (int256) {
         IAmmStorage ammStorage = _getAmmStorage(asset);
         AmmTypes.Swap memory swap = ammStorage.getSwap(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, swapId);
         uint256 accruedIbtPrice = IIporOracle(_iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
-        return swap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
+        return swap.calculatePnlReceiveFixed(block.timestamp, accruedIbtPrice);
     }
 
-    function getSOAP(address asset)
-        external
-        view
-        override
-        returns (
-            int256 soapPayFixed,
-            int256 soapReceiveFixed,
-            int256 soap
-        )
-    {
+    function getSoap(
+        address asset
+    ) external view override returns (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap) {
         IAmmStorage ammStorage = _getAmmStorage(asset);
         AmmTypes.AmmPoolCoreModel memory ammCoreModel;
         ammCoreModel.asset = asset;
         ammCoreModel.ammStorage = address(ammStorage);
         ammCoreModel.iporOracle = _iporOracle;
-        (soapPayFixed, soapReceiveFixed, soap) = ammCoreModel.getSOAP();
+        (soapPayFixed, soapReceiveFixed, soap) = ammCoreModel.getSoap();
     }
 
-    function getBalancesForOpenSwap(address asset)
-        external
-        view
-        returns (IporTypes.AmmBalancesForOpenSwapMemory memory)
-    {
+    function getOfferedRate(
+        address asset,
+        IporTypes.SwapTenor tenor,
+        uint256 notional
+    ) external override view returns (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed) {
+        require(notional > 0, AmmErrors.INVALID_NOTIONAL);
+
+        SwapLensPoolConfiguration memory poolCfg = _getSwapLensPoolConfiguration(asset);
+
+        (bytes4 payFixedSig, bytes4 receiveFixedSig) = _getSpreadRouterSignatures(tenor);
+        (uint256 indexValue, , ) = IIporOracle(_iporOracle).getIndex(asset);
+
+        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(poolCfg.ammStorage)
+            .getBalancesForOpenSwap();
+
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicatorsPayFixed = _getRiskIndicators(
+            asset,
+            tenor,
+            balance.liquidityPool,
+            poolCfg.minLeverage,
+            0
+        );
+        AmmInternalTypes.SpreadContext memory spreadContextPayFixed;
+        spreadContextPayFixed.asset = asset;
+        spreadContextPayFixed.spreadFunctionSig = payFixedSig;
+        spreadContextPayFixed.tenor = tenor;
+        spreadContextPayFixed.notional = notional;
+        spreadContextPayFixed.minLeverage = poolCfg.minLeverage;
+        spreadContextPayFixed.indexValue = indexValue;
+        spreadContextPayFixed.riskIndicators = riskIndicatorsPayFixed;
+        spreadContextPayFixed.balance = balance;
+        offeredRatePayFixed = _getOfferedRatePerLeg(spreadContextPayFixed);
+
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicatorsReceiveFixed = _getRiskIndicators(
+            asset,
+            tenor,
+            balance.liquidityPool,
+            poolCfg.minLeverage,
+            1
+        );
+        AmmInternalTypes.SpreadContext memory spreadContextReceiveFixed;
+        spreadContextReceiveFixed.asset = asset;
+        spreadContextReceiveFixed.spreadFunctionSig = receiveFixedSig;
+        spreadContextReceiveFixed.tenor = tenor;
+        spreadContextReceiveFixed.notional = notional;
+        spreadContextReceiveFixed.minLeverage = poolCfg.minLeverage;
+        spreadContextReceiveFixed.indexValue = indexValue;
+        spreadContextReceiveFixed.riskIndicators = riskIndicatorsReceiveFixed;
+        spreadContextReceiveFixed.balance = balance;
+        offeredRateReceiveFixed = _getOfferedRatePerLeg(spreadContextReceiveFixed);
+    }
+
+    function _getOfferedRatePerLeg(
+        AmmInternalTypes.SpreadContext memory spreadContext
+    ) internal view returns (uint256 offeredRate) {
+        offeredRate = abi.decode(
+            _spreadRouter.functionStaticCall(
+                abi.encodeWithSelector(
+                    spreadContext.spreadFunctionSig,
+                    spreadContext.asset,
+                    spreadContext.notional,
+                    spreadContext.riskIndicators.maxLeveragePerLeg,
+                    spreadContext.riskIndicators.maxCollateralRatioPerLeg,
+                    spreadContext.riskIndicators.baseSpreadPerLeg,
+                    spreadContext.balance.totalCollateralPayFixed,
+                    spreadContext.balance.totalCollateralReceiveFixed,
+                    spreadContext.balance.liquidityPool,
+                    spreadContext.balance.totalNotionalPayFixed,
+                    spreadContext.balance.totalNotionalReceiveFixed,
+                    spreadContext.indexValue,
+                    spreadContext.riskIndicators.fixedRateCapPerLeg
+                )
+            ),
+            (uint256)
+        );
+    }
+
+    function _getRiskIndicators(
+        address asset,
+        IporTypes.SwapTenor tenor,
+        uint256 liquidityPoolBalance,
+        uint256 minLeverage,
+        uint256 direction
+    ) internal view returns (AmmTypes.OpenSwapRiskIndicators memory riskIndicators) {
+        AmmInternalTypes.RiskIndicatorsContext memory riskIndicatorsContext;
+
+        riskIndicatorsContext.asset = asset;
+        riskIndicatorsContext.iporRiskManagementOracle = _riskManagementOracle;
+        riskIndicatorsContext.tenor = tenor;
+        riskIndicatorsContext.liquidityPoolBalance = liquidityPoolBalance;
+        riskIndicatorsContext.minLeverage = minLeverage;
+
+        riskIndicators = riskIndicatorsContext.getRiskIndicators(direction);
+    }
+
+    function getBalancesForOpenSwap(
+        address asset
+    ) external view returns (IporTypes.AmmBalancesForOpenSwapMemory memory) {
         IAmmStorage ammStorage = _getAmmStorage(asset);
         return ammStorage.getBalancesForOpenSwap();
     }
 
-    function getAmmSwapsLensConfiguration(
+    function getOpenSwapRiskIndicators(
         address asset,
         uint256 direction,
         IporTypes.SwapTenor tenor
-    ) external view override returns (AmmFacadeTypes.AssetConfiguration memory) {
-        IAmmOpenSwapService.AmmOpenSwapServicePoolConfiguration memory openSwapPoolCfg = IAmmOpenSwapService(_router)
-            .getAmmOpenSwapServicePoolConfiguration(asset);
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
-            openSwapPoolCfg.asset
-        );
+    ) external view override returns (AmmTypes.OpenSwapRiskIndicators memory riskIndicators) {
+        SwapLensPoolConfiguration memory swapLensPoolCfg = _getSwapLensPoolConfiguration(asset);
 
-        (, , uint256 maxCollateralRatio, int256 spread, ) = IIporRiskManagementOracle(_riskManagementOracle)
-            .getOpenSwapParameters(asset, direction, tenor);
-
-        IporTypes.AmmBalancesForOpenSwapMemory memory balances = IAmmStorage(openSwapPoolCfg.ammStorage)
+        IporTypes.AmmBalancesForOpenSwapMemory memory balances = IAmmStorage(swapLensPoolCfg.ammStorage)
             .getBalancesForOpenSwap();
 
-        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = RiskManagementLogic.getRiskIndicators(
+        riskIndicators = RiskManagementLogic.getRiskIndicators(
             asset,
             direction,
             tenor,
             balances.liquidityPool,
-            openSwapPoolCfg.minLeverage,
+            swapLensPoolCfg.minLeverage,
             _riskManagementOracle
         );
-
-        return
-            AmmFacadeTypes.AssetConfiguration(
-                asset,
-                openSwapPoolCfg.minLeverage,
-                riskIndicators.maxLeveragePerLeg,
-                openSwapPoolCfg.openingFeeRate,
-                openSwapPoolCfg.iporPublicationFee,
-                openSwapPoolCfg.liquidationDepositAmount,
-                spread,
-                maxCollateralRatio,
-                uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
-                uint256(ammPoolsParamsCfg.maxLpAccountContribution) * 1e18
-            );
     }
 
     function _mapSwaps(
@@ -203,22 +241,28 @@ contract AmmSwapsLens is IAmmSwapsLens {
     ) internal view returns (IAmmSwapsLens.IporSwap[] memory swaps) {
         uint256 accruedIbtPrice = IIporOracle(_iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
         uint256 swapCount = swapIds.length;
+
         IAmmSwapsLens.IporSwap[] memory mappedSwaps = new IAmmSwapsLens.IporSwap[](swapCount);
+        AmmStorageTypes.IporSwapId memory swapId;
+        AmmTypes.Swap memory swap;
+        int256 swapValue;
+
         for (uint256 i; i != swapCount; ) {
-            AmmStorageTypes.IporSwapId memory swapId = swapIds[i];
+            swapId = swapIds[i];
+
             if (swapId.direction == 0) {
-                AmmTypes.Swap memory swap = ammStorage.getSwap(
+                swap = ammStorage.getSwap(
                     AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
                     swapId.id
                 );
-                int256 swapValue = swap.calculatePayoffPayFixed(block.timestamp, accruedIbtPrice);
+                swapValue = swap.calculatePnlPayFixed(block.timestamp, accruedIbtPrice);
                 mappedSwaps[i] = _mapSwap(asset, swap, 0, swapValue);
             } else {
-                AmmTypes.Swap memory swap = ammStorage.getSwap(
+                swap = ammStorage.getSwap(
                     AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
                     swapId.id
                 );
-                int256 swapValue = swap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
+                swapValue = swap.calculatePnlReceiveFixed(block.timestamp, accruedIbtPrice);
                 mappedSwaps[i] = _mapSwap(asset, swap, 1, swapValue);
             }
             unchecked {
@@ -232,7 +276,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         address asset,
         AmmTypes.Swap memory swap,
         uint256 direction,
-        int256 swapValue
+        int256 pnlValue
     ) internal pure returns (IAmmSwapsLens.IporSwap memory) {
         return
             IAmmSwapsLens.IporSwap({
@@ -245,7 +289,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
                 direction: direction,
                 ibtQuantity: swap.ibtQuantity,
                 fixedInterestRate: swap.fixedInterestRate,
-                payoff: swapValue,
+                pnlValue: pnlValue,
                 openTimestamp: swap.openTimestamp,
                 endTimestamp: swap.getSwapEndTimestamp(),
                 liquidationDepositAmount: swap.liquidationDepositAmount,
@@ -265,17 +309,50 @@ contract AmmSwapsLens is IAmmSwapsLens {
         }
     }
 
-    function _getSwapLensConfiguration(address asset) internal view returns (SwapLensConfiguration memory) {
+    function _getSwapLensPoolConfiguration(address asset) internal view returns (SwapLensPoolConfiguration memory) {
         if (asset == _usdtAsset) {
             return
-                SwapLensConfiguration({asset: _usdtAsset, ammStorage: _usdtAmmStorage, ammTreasury: _usdtAmmTreasury});
+                SwapLensPoolConfiguration({
+                    asset: _usdtAsset,
+                    ammStorage: _usdtAmmStorage,
+                    ammTreasury: _usdtAmmTreasury,
+                    minLeverage: _usdtMinLeverage
+                });
         } else if (asset == _usdcAsset) {
             return
-                SwapLensConfiguration({asset: _usdcAsset, ammStorage: _usdcAmmStorage, ammTreasury: _usdcAmmTreasury});
+                SwapLensPoolConfiguration({
+                    asset: _usdcAsset,
+                    ammStorage: _usdcAmmStorage,
+                    ammTreasury: _usdcAmmTreasury,
+                    minLeverage: _usdcMinLeverage
+                });
         } else if (asset == _daiAsset) {
-            return SwapLensConfiguration({asset: _daiAsset, ammStorage: _daiAmmStorage, ammTreasury: _daiAmmTreasury});
+            return
+                SwapLensPoolConfiguration({
+                    asset: _daiAsset,
+                    ammStorage: _daiAmmStorage,
+                    ammTreasury: _daiAmmTreasury,
+                    minLeverage: _daiMinLeverage
+                });
         } else {
             revert(IporErrors.ASSET_NOT_SUPPORTED);
+        }
+    }
+
+    function _getSpreadRouterSignatures(
+        IporTypes.SwapTenor tenor
+    ) internal pure returns (bytes4 payFixedSig, bytes4 receiveFixedSig) {
+        if (tenor == IporTypes.SwapTenor.DAYS_28) {
+            payFixedSig = ISpread28DaysLens.calculateOfferedRatePayFixed28Days.selector;
+            receiveFixedSig = ISpread28DaysLens.calculateOfferedRateReceiveFixed28Days.selector;
+        } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
+            payFixedSig = ISpread60DaysLens.calculateOfferedRatePayFixed60Days.selector;
+            receiveFixedSig = ISpread60DaysLens.calculateOfferedRateReceiveFixed60Days.selector;
+        } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
+            payFixedSig = ISpread90DaysLens.calculateOfferedRatePayFixed90Days.selector;
+            receiveFixedSig = ISpread90DaysLens.calculateOfferedRateReceiveFixed90Days.selector;
+        } else {
+            revert(AmmErrors.UNSUPPORTED_SWAP_TENOR);
         }
     }
 }

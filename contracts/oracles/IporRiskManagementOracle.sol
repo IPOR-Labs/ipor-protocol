@@ -5,10 +5,11 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../interfaces/IIporRiskManagementOracle.sol";
+import "../interfaces/IProxyImplementation.sol";
+import "../libraries/errors/IporRiskManagementOracleErrors.sol";
+import "../security/PauseManager.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/IporRiskManagementOracleStorageTypes.sol";
-import "../libraries/errors/IporRiskManagementOracleErrors.sol";
-import "../libraries/Constants.sol";
 
 /**
  * @title Ipor Risk Management Oracle contract
@@ -20,22 +21,23 @@ contract IporRiskManagementOracle is
     PausableUpgradeable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-    IIporRiskManagementOracle
+    IIporRiskManagementOracle,
+    IProxyImplementation
 {
     using SafeCast for uint256;
     using SafeCast for int256;
 
     mapping(address => uint256) internal _updaters;
     mapping(address => IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage) internal _indicators;
-    
+
     /// @dev 0 - 31 bytes - lastUpdateTimestamp - uint32 - number of seconds since 1970-01-01T00:00:00Z
-    /// @dev 32 - 55 bytes - baseSpread28dPayFixed - int24 - base spread for 28 days period for pay fixed leg, 
+    /// @dev 32 - 55 bytes - baseSpread28dPayFixed - int24 - base spread for 28 days period for pay fixed leg,
     /// @dev    - on 32th position it is a sing - 1 means negative, 0 means positive
-    /// @dev 56 - 79 bytes - baseSpread28dReceiveFixed - int24 - base spread for 28 days period for receive fixed leg, 
+    /// @dev 56 - 79 bytes - baseSpread28dReceiveFixed - int24 - base spread for 28 days period for receive fixed leg,
     /// @dev    - on 56 position it is a sing - 1 means negative, 0 means positive
-    /// @dev 80 - 103 bytes - baseSpread60dPayFixed - int24 - base spread for 60 days period for pay fixed leg, 
+    /// @dev 80 - 103 bytes - baseSpread60dPayFixed - int24 - base spread for 60 days period for pay fixed leg,
     /// @dev    - on 80 position it is a sing - 1 means negative, 0 means positive
-    /// @dev 104 - 127 bytes - baseSpread60dReceiveFixed - int24 - base spread for 60 days period for receive fixed leg, 
+    /// @dev 104 - 127 bytes - baseSpread60dReceiveFixed - int24 - base spread for 60 days period for receive fixed leg,
     /// @dev    - on 104 position it is a sing - 1 means negative, 0 means positive
     /// @dev 128 - 151 bytes - baseSpread90dPayFixed - int24 - base spread for 90 days period for pay fixed leg,
     /// @dev   - on 128 position it is a sing - 1 means negative, 0 means positive
@@ -47,6 +49,11 @@ contract IporRiskManagementOracle is
     /// @dev 212 - 223 bytes - fixedRateCap60dReceiveFixed - uint12 - fixed rate cap for 60 days period for receive fixed leg,
     /// @dev 224 - 235 bytes - fixedRateCap90dPayFixed - uint12 - fixed rate cap for 90 days period for pay fixed leg,
     mapping(address => bytes32) internal _baseSpreadsAndFixedRateCaps;
+
+    modifier onlyPauseGuardian() {
+        require(PauseManager.isPauseGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
+        _;
+    }
 
     modifier onlyUpdater() {
         require(_updaters[_msgSender()] == 1, IporRiskManagementOracleErrors.CALLER_NOT_UPDATER);
@@ -153,86 +160,19 @@ contract IporRiskManagementOracle is
             uint256 maxNotionalPerLeg,
             uint256 maxCollateralRatioPerLeg,
             uint256 maxCollateralRatio,
-            int256 spread,
-            uint256 fixedRateCap
+            int256 baseSpreadPerLeg,
+            uint256 fixedRateCapPerLeg
         )
     {
         (maxNotionalPerLeg, maxCollateralRatioPerLeg, maxCollateralRatio) = _getRiskIndicatorsPerLeg(asset, direction);
-        (spread, fixedRateCap) = _getSpread(asset, direction, tenor);
-        return (maxNotionalPerLeg, maxCollateralRatioPerLeg, maxCollateralRatio, spread * 1e12, fixedRateCap * 1e14);
-    }
-
-    function _getRiskIndicatorsPerLeg(
-        address asset,
-        uint256 direction
-    ) internal view returns (uint256 maxNotionalPerLeg, uint256 maxCollateralRatioPerLeg, uint256 maxCollateralRatio) {
-        (
-            uint256 maxNotionalPayFixed,
-            uint256 maxNotionalReceiveFixed,
-            uint256 maxCollateralRatioPayFixed,
-            uint256 maxCollateralRatioReceiveFixed,
-            uint256 maxCollateralRatioBothLegs,
-
-        ) = _getRiskIndicators(asset);
-
-        if (direction == 0) {
-            return (maxNotionalPayFixed, maxCollateralRatioPayFixed, maxCollateralRatioBothLegs);
-        } else {
-            return (maxNotionalReceiveFixed, maxCollateralRatioReceiveFixed, maxCollateralRatioBothLegs);
-        }
-    }
-
-    function _getSpread(
-        address asset,
-        uint256 direction,
-        IporTypes.SwapTenor tenor
-    ) internal view returns (int256 spread, uint256 fixedRateCap) {
-        IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage
-            memory baseSpreadsAndFixedRateCaps = _bytes32ToBaseSpreadsAndFixedRateCapsStorage(
-                _baseSpreadsAndFixedRateCaps[asset]
-            );
-        require(
-            baseSpreadsAndFixedRateCaps.lastUpdateTimestamp > 0,
-            IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED
+        (baseSpreadPerLeg, fixedRateCapPerLeg) = _getSpread(asset, direction, tenor);
+        return (
+            maxNotionalPerLeg,
+            maxCollateralRatioPerLeg,
+            maxCollateralRatio,
+            baseSpreadPerLeg * 1e12,
+            fixedRateCapPerLeg * 1e14
         );
-
-        if (tenor == IporTypes.SwapTenor.DAYS_28) {
-            if (direction == 0) {
-                return (
-                    baseSpreadsAndFixedRateCaps.spread28dPayFixed,
-                    baseSpreadsAndFixedRateCaps.fixedRateCap28dPayFixed
-                );
-            } else {
-                return (
-                    baseSpreadsAndFixedRateCaps.spread28dReceiveFixed,
-                    baseSpreadsAndFixedRateCaps.fixedRateCap28dReceiveFixed
-                );
-            }
-        } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
-            if (direction == 0) {
-                return (
-                    baseSpreadsAndFixedRateCaps.spread60dPayFixed,
-                    baseSpreadsAndFixedRateCaps.fixedRateCap60dPayFixed
-                );
-            } else {
-                return (
-                    baseSpreadsAndFixedRateCaps.spread60dReceiveFixed,
-                    baseSpreadsAndFixedRateCaps.fixedRateCap60dReceiveFixed
-                );
-            }
-        } else {
-            if (direction == 0) {
-                return (
-                    baseSpreadsAndFixedRateCaps.spread90dPayFixed,
-                    baseSpreadsAndFixedRateCaps.fixedRateCap90dPayFixed
-                );
-            } else {
-                return (
-                    baseSpreadsAndFixedRateCaps.spread90dReceiveFixed,
-                    baseSpreadsAndFixedRateCaps.fixedRateCap90dReceiveFixed
-                );
-            }
-        }
     }
 
     function getRiskIndicators(
@@ -251,32 +191,6 @@ contract IporRiskManagementOracle is
         )
     {
         return _getRiskIndicators(asset);
-    }
-
-    function _getRiskIndicators(
-        address asset
-    )
-        internal
-        view
-        returns (
-            uint256 maxNotionalPayFixed,
-            uint256 maxNotionalReceiveFixed,
-            uint256 maxCollateralRatioPayFixed,
-            uint256 maxCollateralRatioReceiveFixed,
-            uint256 maxCollateralRatio,
-            uint256 lastUpdateTimestamp
-        )
-    {
-        IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage memory indicators = _indicators[asset];
-        require(indicators.lastUpdateTimestamp > 0, IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED);
-        return (
-            uint256(indicators.maxNotionalPayFixed) * 1e22, // 1 = 10k notional
-            uint256(indicators.maxNotionalReceiveFixed) * 1e22,
-            uint256(indicators.maxCollateralRatioPayFixed) * 1e14, // 1 = 0.01%
-            uint256(indicators.maxCollateralRatioReceiveFixed) * 1e14,
-            uint256(indicators.maxCollateralRatio) * 1e14,
-            uint256(indicators.lastUpdateTimestamp)
-        );
     }
 
     function getBaseSpreads(
@@ -333,6 +247,225 @@ contract IporRiskManagementOracle is
         return _getFixedRateCaps(asset);
     }
 
+    function isAssetSupported(address asset) external view override returns (bool) {
+        return _indicators[asset].lastUpdateTimestamp > 0;
+    }
+
+    function isUpdater(address updater) external view override returns (uint256) {
+        return _updaters[updater];
+    }
+
+    function updateRiskIndicators(
+        address asset,
+        uint256 maxNotionalPayFixed,
+        uint256 maxNotionalReceiveFixed,
+        uint256 maxCollateralRatioPayFixed,
+        uint256 maxCollateralRatioReceiveFixed,
+        uint256 maxCollateralRatio
+    ) external override onlyUpdater whenNotPaused {
+        _updateRiskIndicators(
+            asset,
+            maxNotionalPayFixed,
+            maxNotionalReceiveFixed,
+            maxCollateralRatioPayFixed,
+            maxCollateralRatioReceiveFixed,
+            maxCollateralRatio
+        );
+    }
+
+    function updateBaseSpreadsAndFixedRateCaps(
+        address asset,
+        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps calldata baseSpreadsAndFixedRateCaps
+    ) external override onlyUpdater whenNotPaused {
+        _updateBaseSpreadsAndFixedRateCaps(asset, baseSpreadsAndFixedRateCaps);
+    }
+
+    function addAsset(
+        address asset,
+        IporRiskManagementOracleTypes.RiskIndicators calldata riskIndicators,
+        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps calldata baseSpreadsAndFixedRateCaps
+    ) external override onlyOwner {
+        require(asset != address(0), IporErrors.WRONG_ADDRESS);
+        require(
+            _indicators[asset].lastUpdateTimestamp == 0,
+            IporRiskManagementOracleErrors.CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS
+        );
+
+        _indicators[asset] = IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage(
+            riskIndicators.maxNotionalPayFixed.toUint64(),
+            riskIndicators.maxNotionalReceiveFixed.toUint64(),
+            riskIndicators.maxCollateralRatioPayFixed.toUint16(),
+            riskIndicators.maxCollateralRatioReceiveFixed.toUint16(),
+            riskIndicators.maxCollateralRatio.toUint16(),
+            block.timestamp.toUint32()
+        );
+
+        _baseSpreadsAndFixedRateCaps[asset] = _baseSpreadsAndFixedRateCapsStorageToBytes32(
+            IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage(
+                block.timestamp,
+                baseSpreadsAndFixedRateCaps.spread28dPayFixed,
+                baseSpreadsAndFixedRateCaps.spread28dReceiveFixed,
+                baseSpreadsAndFixedRateCaps.spread60dPayFixed,
+                baseSpreadsAndFixedRateCaps.spread60dReceiveFixed,
+                baseSpreadsAndFixedRateCaps.spread90dPayFixed,
+                baseSpreadsAndFixedRateCaps.spread90dReceiveFixed,
+                baseSpreadsAndFixedRateCaps.fixedRateCap28dPayFixed,
+                baseSpreadsAndFixedRateCaps.fixedRateCap28dReceiveFixed,
+                baseSpreadsAndFixedRateCaps.fixedRateCap60dPayFixed,
+                baseSpreadsAndFixedRateCaps.fixedRateCap60dReceiveFixed,
+                baseSpreadsAndFixedRateCaps.fixedRateCap90dPayFixed,
+                baseSpreadsAndFixedRateCaps.fixedRateCap90dReceiveFixed
+            )
+        );
+
+        emit IporRiskManagementOracleAssetAdded(asset);
+    }
+
+    function removeAsset(address asset) external override onlyOwner {
+        require(asset != address(0), IporErrors.WRONG_ADDRESS);
+        require(_indicators[asset].lastUpdateTimestamp > 0, IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED);
+
+        delete _indicators[asset];
+        emit IporRiskManagementOracleAssetRemoved(asset);
+    }
+
+    function addUpdater(address updater) external override onlyOwner {
+        require(updater != address(0), IporErrors.WRONG_ADDRESS);
+
+        _updaters[updater] = 1;
+        emit IporRiskManagementOracleUpdaterAdded(updater);
+    }
+
+    function removeUpdater(address updater) external override onlyOwner {
+        require(updater != address(0), IporErrors.WRONG_ADDRESS);
+
+        _updaters[updater] = 0;
+        emit IporRiskManagementOracleUpdaterRemoved(updater);
+    }
+
+    function pause() external override onlyPauseGuardian {
+        _pause();
+    }
+
+    function unpause() external override onlyOwner {
+        _unpause();
+    }
+
+    function isPauseGuardian(address account) external view override returns (bool) {
+        return PauseManager.isPauseGuardian(account);
+    }
+
+    function addPauseGuardian(address guardian) external override onlyOwner {
+        PauseManager.addPauseGuardian(guardian);
+    }
+
+    function removePauseGuardian(address guardian) external override onlyOwner {
+        PauseManager.removePauseGuardian(guardian);
+    }
+
+    function getImplementation() external view override returns (address) {
+        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
+    }
+
+    function _getRiskIndicators(
+        address asset
+    )
+        internal
+        view
+        returns (
+            uint256 maxNotionalPayFixed,
+            uint256 maxNotionalReceiveFixed,
+            uint256 maxCollateralRatioPayFixed,
+            uint256 maxCollateralRatioReceiveFixed,
+            uint256 maxCollateralRatio,
+            uint256 lastUpdateTimestamp
+        )
+    {
+        IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage memory indicators = _indicators[asset];
+        require(indicators.lastUpdateTimestamp > 0, IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED);
+        return (
+            uint256(indicators.maxNotionalPayFixed) * 1e22, // 1 = 10k notional
+            uint256(indicators.maxNotionalReceiveFixed) * 1e22,
+            uint256(indicators.maxCollateralRatioPayFixed) * 1e14, // 1 = 0.01%
+            uint256(indicators.maxCollateralRatioReceiveFixed) * 1e14,
+            uint256(indicators.maxCollateralRatio) * 1e14,
+            uint256(indicators.lastUpdateTimestamp)
+        );
+    }
+
+    function _getRiskIndicatorsPerLeg(
+        address asset,
+        uint256 direction
+    ) internal view returns (uint256 maxNotionalPerLeg, uint256 maxCollateralRatioPerLeg, uint256 maxCollateralRatio) {
+        (
+            uint256 maxNotionalPayFixed,
+            uint256 maxNotionalReceiveFixed,
+            uint256 maxCollateralRatioPayFixed,
+            uint256 maxCollateralRatioReceiveFixed,
+            uint256 maxCollateralRatioBothLegs,
+
+        ) = _getRiskIndicators(asset);
+
+        if (direction == 0) {
+            return (maxNotionalPayFixed, maxCollateralRatioPayFixed, maxCollateralRatioBothLegs);
+        } else {
+            return (maxNotionalReceiveFixed, maxCollateralRatioReceiveFixed, maxCollateralRatioBothLegs);
+        }
+    }
+
+    function _getSpread(
+        address asset,
+        uint256 direction,
+        IporTypes.SwapTenor tenor
+    ) internal view returns (int256, uint256) {
+        IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage
+            memory baseSpreadsAndFixedRateCaps = _bytes32ToBaseSpreadsAndFixedRateCapsStorage(
+                _baseSpreadsAndFixedRateCaps[asset]
+            );
+        require(
+            baseSpreadsAndFixedRateCaps.lastUpdateTimestamp > 0,
+            IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED
+        );
+
+        if (tenor == IporTypes.SwapTenor.DAYS_28) {
+            if (direction == 0) {
+                return (
+                    baseSpreadsAndFixedRateCaps.spread28dPayFixed,
+                    baseSpreadsAndFixedRateCaps.fixedRateCap28dPayFixed
+                );
+            } else {
+                return (
+                    baseSpreadsAndFixedRateCaps.spread28dReceiveFixed,
+                    baseSpreadsAndFixedRateCaps.fixedRateCap28dReceiveFixed
+                );
+            }
+        } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
+            if (direction == 0) {
+                return (
+                    baseSpreadsAndFixedRateCaps.spread60dPayFixed,
+                    baseSpreadsAndFixedRateCaps.fixedRateCap60dPayFixed
+                );
+            } else {
+                return (
+                    baseSpreadsAndFixedRateCaps.spread60dReceiveFixed,
+                    baseSpreadsAndFixedRateCaps.fixedRateCap60dReceiveFixed
+                );
+            }
+        } else {
+            if (direction == 0) {
+                return (
+                    baseSpreadsAndFixedRateCaps.spread90dPayFixed,
+                    baseSpreadsAndFixedRateCaps.fixedRateCap90dPayFixed
+                );
+            } else {
+                return (
+                    baseSpreadsAndFixedRateCaps.spread90dReceiveFixed,
+                    baseSpreadsAndFixedRateCaps.fixedRateCap90dReceiveFixed
+                );
+            }
+        }
+    }
+
     function _getFixedRateCaps(
         address asset
     )
@@ -367,58 +500,6 @@ contract IporRiskManagementOracle is
         );
     }
 
-    function updateRiskIndicators(
-        address asset,
-        uint256 maxNotionalPayFixed,
-        uint256 maxNotionalReceiveFixed,
-        uint256 maxCollateralRatioPayFixed,
-        uint256 maxCollateralRatioReceiveFixed,
-        uint256 maxCollateralRatio
-    ) external override onlyUpdater whenNotPaused {
-        _updateRiskIndicators(
-            asset,
-            maxNotionalPayFixed,
-            maxNotionalReceiveFixed,
-            maxCollateralRatioPayFixed,
-            maxCollateralRatioReceiveFixed,
-            maxCollateralRatio
-        );
-    }
-
-    function updateRiskIndicators(
-        address[] calldata asset,
-        uint256[] calldata maxNotionalPayFixed,
-        uint256[] calldata maxNotionalReceiveFixed,
-        uint256[] calldata maxCollateralRatioPayFixed,
-        uint256[] calldata maxCollateralRatioReceiveFixed,
-        uint256[] calldata maxCollateralRatio
-    ) external override onlyUpdater whenNotPaused {
-        uint256 assetsLength = asset.length;
-
-        require(
-            assetsLength == maxNotionalPayFixed.length &&
-                assetsLength == maxNotionalReceiveFixed.length &&
-                assetsLength == maxCollateralRatioPayFixed.length &&
-                assetsLength == maxCollateralRatioReceiveFixed.length &&
-                assetsLength == maxCollateralRatio.length,
-            IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH
-        );
-
-        for (uint256 i; i != assetsLength; ) {
-            _updateRiskIndicators(
-                asset[i],
-                maxNotionalPayFixed[i],
-                maxNotionalReceiveFixed[i],
-                maxCollateralRatioPayFixed[i],
-                maxCollateralRatioReceiveFixed[i],
-                maxCollateralRatio[i]
-            );
-            unchecked {
-                ++i;
-            }
-        }
-    }
-
     function _updateRiskIndicators(
         address asset,
         uint256 maxNotionalPayFixed,
@@ -448,29 +529,6 @@ contract IporRiskManagementOracle is
             maxCollateralRatioReceiveFixed,
             maxCollateralRatio
         );
-    }
-
-    function updateBaseSpreadsAndFixedRateCaps(
-        address asset,
-        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps calldata baseSpreadsAndFixedRateCaps
-    ) external override onlyUpdater whenNotPaused {
-        _updateBaseSpreadsAndFixedRateCaps(asset, baseSpreadsAndFixedRateCaps);
-    }
-
-    function updateBaseSpreadsAndFixedRateCaps(
-        address[] memory asset,
-        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[] calldata baseSpreadsAndFixedRateCaps
-    ) external override onlyUpdater whenNotPaused {
-        uint256 assetsLength = asset.length;
-
-        require(assetsLength == baseSpreadsAndFixedRateCaps.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
-
-        for (uint256 i; i != assetsLength; ) {
-            _updateBaseSpreadsAndFixedRateCaps(asset[i], baseSpreadsAndFixedRateCaps[i]);
-            unchecked {
-                ++i;
-            }
-        }
     }
 
     function _updateBaseSpreadsAndFixedRateCaps(
@@ -526,105 +584,32 @@ contract IporRiskManagementOracle is
         );
     }
 
-    function addAsset(
-        address asset,
-        IporRiskManagementOracleTypes.RiskIndicators calldata riskIndicators,
-        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps calldata baseSpreadsAndFixedRateCaps
-    ) external override onlyOwner {
-        require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(
-            _indicators[asset].lastUpdateTimestamp == 0,
-            IporRiskManagementOracleErrors.CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS
-        );
-
-        _indicators[asset] = IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage(
-            riskIndicators.maxNotionalPayFixed.toUint64(),
-            riskIndicators.maxNotionalReceiveFixed.toUint64(),
-            riskIndicators.maxCollateralRatioPayFixed.toUint16(),
-            riskIndicators.maxCollateralRatioReceiveFixed.toUint16(),
-            riskIndicators.maxCollateralRatio.toUint16(),
-            block.timestamp.toUint32()
-        );
-
-        _baseSpreadsAndFixedRateCaps[asset] = _baseSpreadsAndFixedRateCapsStorageToBytes32(
-            IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage(
-                block.timestamp,
-                baseSpreadsAndFixedRateCaps.spread28dPayFixed,
-                baseSpreadsAndFixedRateCaps.spread28dReceiveFixed,
-                baseSpreadsAndFixedRateCaps.spread60dPayFixed,
-                baseSpreadsAndFixedRateCaps.spread60dReceiveFixed,
-                baseSpreadsAndFixedRateCaps.spread90dPayFixed,
-                baseSpreadsAndFixedRateCaps.spread90dReceiveFixed,
-                baseSpreadsAndFixedRateCaps.fixedRateCap28dPayFixed,
-                baseSpreadsAndFixedRateCaps.fixedRateCap28dReceiveFixed,
-                baseSpreadsAndFixedRateCaps.fixedRateCap60dPayFixed,
-                baseSpreadsAndFixedRateCaps.fixedRateCap60dReceiveFixed,
-                baseSpreadsAndFixedRateCaps.fixedRateCap90dPayFixed,
-                baseSpreadsAndFixedRateCaps.fixedRateCap90dReceiveFixed
-            )
-        );
-
-        emit IporRiskManagementOracleAssetAdded(asset);
-    }
-
-    function removeAsset(address asset) external override onlyOwner {
-        require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(_indicators[asset].lastUpdateTimestamp > 0, IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED);
-
-        delete _indicators[asset];
-        emit IporRiskManagementOracleAssetRemoved(asset);
-    }
-
-    function isAssetSupported(address asset) external view override returns (bool) {
-        return _indicators[asset].lastUpdateTimestamp > 0;
-    }
-
-    function pause() external override onlyOwner {
-        _pause();
-    }
-
-    function unpause() external override onlyOwner {
-        _unpause();
-    }
-
-    function addUpdater(address updater) external override onlyOwner {
-        require(updater != address(0), IporErrors.WRONG_ADDRESS);
-
-        _updaters[updater] = 1;
-        emit IporRiskManagementOracleUpdaterAdded(updater);
-    }
-
-    function removeUpdater(address updater) external override onlyOwner {
-        require(updater != address(0), IporErrors.WRONG_ADDRESS);
-
-        _updaters[updater] = 0;
-        emit IporRiskManagementOracleUpdaterRemoved(updater);
-    }
-
-    function isUpdater(address updater) external view override returns (uint256) {
-        return _updaters[updater];
-    }
-
-    //solhint-disable no-empty-blocks
-    function _authorizeUpgrade(address) internal override onlyOwner {}
-
     function _baseSpreadsAndFixedRateCapsStorageToBytes32(
         IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage memory toSave
     ) internal pure returns (bytes32 result) {
         require(toSave.lastUpdateTimestamp < type(uint32).max, "lastUpdateTimestamp overflow");
-        require(toSave.spread28dPayFixed < type(int24).max, "spread28dPayFixed overflow");
-        require(toSave.spread28dReceiveFixed < type(int24).max, "spread28dReceiveFixed overflow");
-        require(toSave.spread60dPayFixed < type(int24).max, "spread60dPayFixed overflow");
         require(
-            -type(int24).max < toSave.spread60dReceiveFixed && toSave.spread60dReceiveFixed < type(int256).max,
+            -type(int24).max < toSave.spread28dPayFixed && toSave.spread28dPayFixed < type(int24).max,
+            "spread28dPayFixed overflow"
+        );
+        require(
+            -type(int24).max < toSave.spread28dReceiveFixed && toSave.spread28dReceiveFixed < type(int24).max,
+            "spread28dReceiveFixed overflow"
+        );
+        require(
+            -type(int24).max < toSave.spread60dPayFixed && toSave.spread60dPayFixed < type(int24).max,
+            "spread60dPayFixed overflow"
+        );
+        require(
+            -type(int24).max < toSave.spread60dReceiveFixed && toSave.spread60dReceiveFixed < type(int24).max,
             "spread60dReceiveFixed overflow"
         );
         require(
-            -type(int24).max < toSave.spread90dPayFixed && toSave.spread90dPayFixed < type(int256).max,
+            -type(int24).max < toSave.spread90dPayFixed && toSave.spread90dPayFixed < type(int24).max,
             "spread90dPayFixed overflow"
         );
         require(
-            -type(int24).max < toSave.spread90dReceiveFixed && toSave.spread90dReceiveFixed < type(int256).max,
+            -type(int24).max < toSave.spread90dReceiveFixed && toSave.spread90dReceiveFixed < type(int24).max,
             "spread90dReceiveFixed overflow"
         );
         require(toSave.fixedRateCap28dPayFixed < 2 ** 12, "fixedRateCap28dPayFixed overflow");
@@ -732,4 +717,7 @@ contract IporRiskManagementOracle is
             mstore(add(result, 384), and(shr(236, toSave), 0xFFF)) // fixedRateCap90dReceiveFixed
         }
     }
+
+    //solhint-disable no-empty-blocks
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 }

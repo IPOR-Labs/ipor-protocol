@@ -19,8 +19,8 @@ library AmmErrors {
     /// @notice Liquidity Pool Balance is too high
     string public constant LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH = "IPOR_304";
 
-    /// @notice Liquidity Pool account contribution is too high.
-    string public constant LP_ACCOUNT_CONTRIBUTION_IS_TOO_HIGH = "IPOR_305";
+    /// @notice Swap cannot be closed because liquidity pool is too low for payid out cash. Situation should never happen where Liquidity Pool is insolvent.
+    string public constant CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW = "IPOR_305";
 
     /// @notice Swap id used in input has incorrect value (like 0) or not exists.
     string public constant INCORRECT_SWAP_ID = "IPOR_306";
@@ -50,7 +50,7 @@ library AmmErrors {
     string public constant SWAP_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL = "IPOR_314";
 
     /// @notice Number of swaps per leg which are going to be liquidated is too high, is higher than configured in AmmTreasury liquidation leg limit.
-    string public constant LIQUIDATION_LEG_LIMIT_EXCEEDED = "IPOR_315";
+    string public constant MAX_LENGTH_LIQUIDATED_SWAPS_PER_LEG_EXCEEDED = "IPOR_315";
 
     /// @notice Sum of SOAP and Liquidity Pool Balance is lower than zero.
     /// @dev SOAP can be negative, Sum of SOAP and Liquidity Pool Balance can be negative, but this is undesirable.
@@ -65,53 +65,57 @@ library AmmErrors {
     /// @notice Closing timestamp is lower than Swap's open timestamp.
     string public constant CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP = "IPOR_319";
 
-    /// @notice Swap cannot be closed because liquidity pool is too low for payid out cash. Situation should never happen where Liquidity Pool is insolvent.
-    string public constant CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW = "IPOR_320";
-
     /// @notice Swap cannot be closed because sender is not a buyer nor liquidator.
-    string public constant CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR = "IPOR_321";
+    string public constant CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR = "IPOR_320";
 
     /// @notice Interest from Strategy is below zero.
-    string public constant INTEREST_FROM_STRATEGY_BELOW_ZERO = "IPOR_322";
-
-    /// @notice Accrued Liquidity Pool is equal zero.
-    string public constant LIQUIDITY_POOL_ACCRUED_IS_EQUAL_ZERO = "IPOR_323";
-
-    /// @notice During spread calculation - Exponential Weighted Moving Variance cannot be higher than 1.
-    string public constant SPREAD_EMVAR_CANNOT_BE_HIGHER_THAN_ONE = "IPOR_324";
-
-    /// @notice During spread calculation - Alpha param cannot be higher than 1.
-    string public constant SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE = "IPOR_325";
+    string public constant INTEREST_FROM_STRATEGY_BELOW_ZERO = "IPOR_321";
 
     /// @notice IPOR publication fee balance is too low.
-    string public constant PUBLICATION_FEE_BALANCE_IS_TOO_LOW = "IPOR_326";
+    string public constant PUBLICATION_FEE_BALANCE_IS_TOO_LOW = "IPOR_322";
 
     /// @notice The caller must be the Router (Smart Contract responsible for managing AmmTreasury's tokens and balances).
-    string public constant CALLER_NOT_ROUTER = "IPOR_327";
+    string public constant CALLER_NOT_ROUTER = "IPOR_323";
 
     /// @notice Deposit amount is too low.
-    string public constant DEPOSIT_AMOUNT_IS_TOO_LOW = "IPOR_328";
+    string public constant DEPOSIT_AMOUNT_IS_TOO_LOW = "IPOR_324";
 
     /// @notice Vault balance is lower than deposit value.
-    string public constant VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE = "IPOR_329";
+    string public constant VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE = "IPOR_325";
 
     /// @notice Treasury balance is too low.
-    string public constant TREASURY_BALANCE_IS_TOO_LOW = "IPOR_330";
+    string public constant TREASURY_BALANCE_IS_TOO_LOW = "IPOR_326";
 
     /// @notice Swap cannot be closed because closing timestamp is lower than swap's open timestamp in general.
-    string public constant CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY = "IPOR_331";
+    string public constant CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY = "IPOR_327";
 
     /// @notice Swap cannot be closed because closing timestamp is lower than swap's open timestamp for buyer.
-    string public constant CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY_FOR_BUYER = "IPOR_332";
+    string public constant CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY_FOR_BUYER = "IPOR_328";
 
-    string public constant CANNOT_UNWIND_CLOSING_TOO_LATE = "IPOR_333";
+    /// @notice Swap cannot be closed and unwind because is too late
+    string public constant CANNOT_UNWIND_CLOSING_TOO_LATE = "IPOR_329";
 
-    string public constant SPREAD_ROUTER_CALL_FAILED = "IPOR_334";
+    /// @notice Unsupported swap tenor
+    string public constant UNSUPPORTED_SWAP_TENOR = "IPOR_330";
 
-    string public constant UNSUPPORTED_SWAP_TENOR = "IPOR_335";
+    /// @notice Sender is not AMM (is not a IporProtocolRouter contract)
+    string public constant SENDER_NOT_AMM = "IPOR_331";
 
-    string public constant SENDER_NOT_AMM = "IPOR_336";
-    string public constant STORAGE_ID_IS_NOT_TIME_WEIGHTED_NOTIONAL = "IPOR_337";
-    string public constant FUNCTION_NOT_SUPPORTED = "IPOR_338";
-    string public constant UNSUPPORTED_DIRECTION = "IPOR_339";
+    /// @notice Storage id is not time weighted notional group
+    string public constant STORAGE_ID_IS_NOT_TIME_WEIGHTED_NOTIONAL = "IPOR_332";
+
+    /// @notice Spread function is not supported
+    string public constant FUNCTION_NOT_SUPPORTED = "IPOR_333";
+
+    /// @notice Unsupported direction
+    string public constant UNSUPPORTED_DIRECTION = "IPOR_334";
+
+    /// @notice Invalid notional
+    string public constant INVALID_NOTIONAL = "IPOR_335";
+
+    /// @notice Average interest rate cannot be zero when open swap
+    string public constant AVERAGE_INTEREST_RATE_WHEN_OPEN_SWAP_CANNOT_BE_ZERO = "IPOR_336";
+
+    /// @notice Average interest rate cannot be zero when close swap
+    string public constant AVERAGE_INTEREST_RATE_WHEN_CLOSE_SWAP_CANNOT_BE_ZERO = "IPOR_337";
 }

@@ -1,22 +1,23 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.20;
 
-import "contracts/libraries/errors/AmmErrors.sol";
-import "contracts/libraries/errors/IporErrors.sol";
-import "contracts/security/PauseManager.sol";
-import "./SpreadStorageLibs.sol";
+import "../../libraries/errors/AmmErrors.sol";
+import "../../libraries/errors/IporErrors.sol";
+import "../../security/PauseManager.sol";
+import "../../amm/spread/SpreadStorageLibs.sol";
+import "../../libraries/IporContractValidator.sol";
 
-
+/// @title Contract responsible for managing access control for the Spread Router
 contract SpreadAccessControl {
+    using IporContractValidator for address;
+
     event AppointedToTransferOwnership(address indexed appointedOwner);
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
-    address internal immutable IPOR_PROTOCOL_ROUTER;
+    address internal immutable _iporProtocolRouter;
 
     constructor(address iporProtocolRouter) {
-        require(iporProtocolRouter != address(0), string.concat(IporErrors.WRONG_ADDRESS, " AMM address cannot be 0"));
-
-        IPOR_PROTOCOL_ROUTER = iporProtocolRouter;
+        _iporProtocolRouter = iporProtocolRouter.checkAddress();
     }
 
     /// @dev Throws an error if called by any account other than the owner.
@@ -90,30 +91,30 @@ contract SpreadAccessControl {
         return uint256(SpreadStorageLibs.getPaused().value);
     }
 
+    /// @notice Checks if an address is a pause guardian.
+    /// @param account The address to be checked.
+    /// @return A boolean indicating whether the address is a pause guardian (true) or not (false).
+    function isPauseGuardian(address account) external view returns (bool) {
+        return PauseManager.isPauseGuardian(account);
+    }
+
     /// @notice Adds a new pause guardian to the contract.
-    /// @param _guardian The address of the new pause guardian.
+    /// @param guardian The address of the new pause guardian.
     /// @dev Only the contract owner can call this function.
-    function addPauseGuardian(address _guardian) external onlyOwner {
-        PauseManager.addPauseGuardian(_guardian);
+    function addPauseGuardian(address guardian) external onlyOwner {
+        PauseManager.addPauseGuardian(guardian);
     }
 
     /// @notice Removes a pause guardian from the contract.
-    /// @param _guardian The address of the pause guardian to be removed.
+    /// @param guardian The address of the pause guardian to be removed.
     /// @dev Only the contract owner can call this function.
-    function removePauseGuardian(address _guardian) external onlyOwner {
-        PauseManager.removePauseGuardian(_guardian);
-    }
-
-    /// @notice Checks if an address is a pause guardian.
-    /// @param guardian The address to be checked.
-    /// @return A boolean indicating whether the address is a pause guardian (true) or not (false).
-    function isPauseGuardian(address guardian) external view returns (bool) {
-        return PauseManager.isPauseGuardian(guardian);
+    function removePauseGuardian(address guardian) external onlyOwner {
+        PauseManager.removePauseGuardian(guardian);
     }
 
     /// @dev Internal function to check if the sender is the AMM address.
     function _onlyIporProtocolRouter() internal view {
-        require(msg.sender == IPOR_PROTOCOL_ROUTER, AmmErrors.SENDER_NOT_AMM);
+        require(msg.sender == _iporProtocolRouter, AmmErrors.SENDER_NOT_AMM);
     }
 
     function _whenNotPaused() internal view {

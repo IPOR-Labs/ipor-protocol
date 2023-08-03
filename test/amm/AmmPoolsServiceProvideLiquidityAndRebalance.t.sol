@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "forge-std/Test.sol";
 import "../TestCommons.sol";
 
 contract JosephAutoRebalance is TestCommons {
@@ -27,7 +26,6 @@ contract JosephAutoRebalance is TestCommons {
 
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
-            1000000000,
             1000000000,
             autoRebalanceThreshold,
             ammTreasuryAssetManagementRatio
@@ -70,7 +68,6 @@ contract JosephAutoRebalance is TestCommons {
 
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
-            1000000000,
             1000000000,
             autoRebalanceThreshold,
             ammTreasuryAssetManagementRatio
@@ -118,7 +115,6 @@ contract JosephAutoRebalance is TestCommons {
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
             1000000000,
-            1000000000,
             autoRebalanceThreshold,
             ammTreasuryAssetManagementRatio
         );
@@ -165,7 +161,6 @@ contract JosephAutoRebalance is TestCommons {
 
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
-            1000000000,
             1000000000,
             autoRebalanceThreshold,
             ammTreasuryAssetManagementRatio

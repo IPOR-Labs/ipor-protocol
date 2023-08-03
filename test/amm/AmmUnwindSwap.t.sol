@@ -3,13 +3,8 @@ pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
-import "contracts/interfaces/types/AmmTypes.sol";
-import "contracts/interfaces/types/IporTypes.sol";
-import "contracts/interfaces/types/AmmStorageTypes.sol";
-import "contracts/amm/AmmStorage.sol";
-import "contracts/itf/ItfIporOracle.sol";
-import "contracts/tokens/IpToken.sol";
-import "contracts/mocks/tokens/MockTestnetToken.sol";
+import "../../contracts/interfaces/types/AmmTypes.sol";
+import "../../contracts/amm/AmmStorage.sol";
 
 contract AmmUnwindSwap is TestCommons {
     address internal _buyer;
@@ -18,9 +13,10 @@ contract AmmUnwindSwap is TestCommons {
     BuilderUtils.IporProtocol internal _iporProtocol;
 
     event SwapUnwind(
+        address asset,
         uint256 indexed swapId,
-        int256 swapPayoffToDate,
-        int256 swapUnwindValue,
+        int256 swapPnlValueToDate,
+        int256 swapUnwindAmount,
         uint256 openingFeeLPAmount,
         uint256 openingFeeTreasuryAmount
     );
@@ -42,8 +38,8 @@ contract AmmUnwindSwap is TestCommons {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        int256 expectedSwapPayoffToDate = -254213052927823196669;
-        int256 expectedSwapUnwindValue = -1366359843923722381006;
+        int256 expectedSwapPnlValueToDate = -254213052927823196669;
+        int256 expectedSwapUnwindAmount = -1169961640683441257416;
         uint256 expectedOpeningFeeLpAmount = 29145104043000041192;
         uint256 expectedOpeningFeeTreasuryAmount = 14579841942471256;
 
@@ -69,21 +65,26 @@ contract AmmUnwindSwap is TestCommons {
             1
         );
 
-        int256 payoff = _iporProtocol.ammSwapsLens.getPayoffPayFixed(address(_iporProtocol.asset), 1);
+        int256 pnlValue = _iporProtocol.ammSwapsLens.getPnlPayFixed(address(_iporProtocol.asset), 1);
+
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
 
         vm.prank(_buyer);
         vm.expectEmit(true, true, true, true);
         emit SwapUnwind(
+            address(_iporProtocol.asset),
             swap.id,
-            expectedSwapPayoffToDate,
-            expectedSwapUnwindValue,
+            expectedSwapPnlValueToDate,
+            expectedSwapUnwindAmount,
             expectedOpeningFeeLpAmount,
             expectedOpeningFeeTreasuryAmount
         );
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedDai(_buyer, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds);
 
         //then
-        assertGe(payoff, expectedSwapUnwindValue);
+        assertGe(pnlValue, expectedSwapUnwindAmount);
     }
 
     function testShouldUnwindPayFixedWhenCloseTwoPositionInDifferentMoment() public {
@@ -95,13 +96,13 @@ contract AmmUnwindSwap is TestCommons {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        int256 expectedSwapPayoffToDateOne = -13299129121611997911;
-        int256 expectedSwapUnwindValueOne = -16139194942451368026;
+        int256 expectedSwapPnlValueToDateOne = -13299129121611997911;
+        int256 expectedSwapUnwindAmountOne = -119662692291211422847;
         uint256 expectedOpeningFeeLpAmountOne = 29145104043000041192;
         uint256 expectedOpeningFeeTreasuryAmountOne = 14579841942471256;
 
-        int256 expectedSwapPayoffToDateTwo = -43675964363614309616;
-        int256 expectedSwapUnwindValueTwo = -48644627546906928945;
+        int256 expectedSwapPnlValueToDateTwo = -43675964363614309616;
+        int256 expectedSwapUnwindAmountTwo = -70953638111401068366;
         uint256 expectedOpeningFeeLpAmountTwo = 16473326053178158123;
         uint256 expectedOpeningFeeTreasuryAmountTwo = 8240783418298228;
 
@@ -141,30 +142,38 @@ contract AmmUnwindSwap is TestCommons {
             2
         );
 
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+
         //when/then
         vm.warp(5 days);
         vm.prank(_buyer);
         vm.expectEmit(true, true, true, true);
         emit SwapUnwind(
+            address(_iporProtocol.asset),
             swapOne.id,
-            expectedSwapPayoffToDateOne,
-            expectedSwapUnwindValueOne,
+            expectedSwapPnlValueToDateOne,
+            expectedSwapUnwindAmountOne,
             expectedOpeningFeeLpAmountOne,
             expectedOpeningFeeTreasuryAmountOne
         );
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedDai(_buyer, 1);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, new uint256[](0));
 
         vm.warp(15 days);
         vm.prank(_buyer);
         vm.expectEmit(true, true, true, true);
         emit SwapUnwind(
+            address(_iporProtocol.asset),
             swapTwo.id,
-            expectedSwapPayoffToDateTwo,
-            expectedSwapUnwindValueTwo,
+            expectedSwapPnlValueToDateTwo,
+            expectedSwapUnwindAmountTwo,
             expectedOpeningFeeLpAmountTwo,
             expectedOpeningFeeTreasuryAmountTwo
         );
-        _iporProtocol.ammCloseSwapService.closeSwapPayFixedDai(_buyer, 2);
+
+        swapPfIds[0] = 2;
+
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, new uint256[](0));
     }
 
     function testShouldUnwindReceiveFixedWhenCloseTwoPositionInDifferentMoment() public {
@@ -176,13 +185,13 @@ contract AmmUnwindSwap is TestCommons {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10 ** 18;
 
-        int256 expectedSwapPayoffToDateOne = 12065905511771631746;
-        int256 expectedSwapUnwindValueOne = 14905962631666875568;
+        int256 expectedSwapPnlValueToDateOne = -13298938086225219915;
+        int256 expectedSwapUnwindAmountOne = -119662325687633544168;
         uint256 expectedOpeningFeeLpAmountOne = 29145104043000041192;
         uint256 expectedOpeningFeeTreasuryAmountOne = 14579841942471256;
 
-        int256 expectedSwapPayoffToDateTwo = 32472470598307779236;
-        int256 expectedSwapUnwindValueTwo = 37441114868747785307;
+        int256 expectedSwapPnlValueToDateTwo = -43673905437684851567;
+        int256 expectedSwapUnwindAmountTwo = -70953275080543619994;
         uint256 expectedOpeningFeeLpAmountTwo = 16473326053178158123;
         uint256 expectedOpeningFeeTreasuryAmountTwo = 8240783418298228;
 
@@ -228,24 +237,34 @@ contract AmmUnwindSwap is TestCommons {
         vm.expectEmit(true, true, true, true);
 
         emit SwapUnwind(
+            address(_iporProtocol.asset),
             swapOne.id,
-            expectedSwapPayoffToDateOne,
-            expectedSwapUnwindValueOne,
+            expectedSwapPnlValueToDateOne,
+            expectedSwapUnwindAmountOne,
             expectedOpeningFeeLpAmountOne,
             expectedOpeningFeeTreasuryAmountOne
         );
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedDai(_buyer, 1);
+
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = 1;
+
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds);
 
         vm.warp(15 days);
         vm.prank(_buyer);
         vm.expectEmit(true, true, true, true);
         emit SwapUnwind(
+            address(_iporProtocol.asset),
             swapTwo.id,
-            expectedSwapPayoffToDateTwo,
-            expectedSwapUnwindValueTwo,
+            expectedSwapPnlValueToDateTwo,
+            expectedSwapUnwindAmountTwo,
             expectedOpeningFeeLpAmountTwo,
             expectedOpeningFeeTreasuryAmountTwo
         );
-        _iporProtocol.ammCloseSwapService.closeSwapReceiveFixedDai(_buyer, 2);
+
+        swapRfIds[0] = 2;
+
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds);
     }
 }

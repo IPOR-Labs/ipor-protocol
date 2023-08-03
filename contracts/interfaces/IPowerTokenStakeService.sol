@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.20;
 
+/// @title Interface for interaction with PowerToken and LiquidityMining contracts.
 interface IPowerTokenStakeService {
     /// @notice Stakes the specified amounts of LP tokens into the LiquidityMining contract.
     /// @dev This function allows the caller to stake their LP tokens on behalf of another address (`beneficiary`).
@@ -42,6 +43,27 @@ interface IPowerTokenStakeService {
     /// @dev Finally, the function transfers the IPOR tokens from the sender to the PowerToken contract for staking.
     /// @dev Reverts if any of the requirements is not met or if the transfer of IPOR tokens fails.
     function stakeGovernanceTokenToPowerToken(address beneficiary, uint256 iporTokenAmount) external;
+
+    /// @notice Stakes a specified amount of governance tokens and delegates power tokens to a specific beneficiary.
+    /// @param beneficiary The address on whose behalf the governance tokens will be staked and power tokens will be delegated.
+    /// @param governanceTokenAmount The amount of governance tokens to be staked, represented with 18 decimals.
+    /// @param lpTokens An array of addresses representing the liquidity pool tokens.
+    /// @param pwTokenAmounts An array of amounts of power tokens to be delegated corresponding to each liquidity pool token.
+    /// @dev The function ensures that the `beneficiary` address is valid and the `governanceTokenAmount` is greater than zero.
+    /// @dev The function also requires that the length of the `lpTokens` array is equal to the length of the `pwTokenAmounts` array.
+    /// @dev For each liquidity pool token in `lpTokens`, the function creates an `UpdatePwToken` structure to be used for updating the power tokens in the Liquidity Mining contract.
+    /// @dev The function checks if the total amount of power tokens to be delegated is less or equal to the amount of staked governance tokens.
+    /// @dev The function calls the `addGovernanceTokenInternal` function of the PowerToken contract to update the staked governance tokens for the `beneficiary`.
+    /// @dev The function transfers the governance tokens from the sender to the PowerToken contract for staking.
+    /// @dev The function calls the `delegateInternal` function of the PowerToken contract to delegate power tokens to the `beneficiary`.
+    /// @dev Finally, the function calls the `addPwTokensInternal` function of the Liquidity Mining contract to update the staked power tokens.
+    /// @dev Reverts if any of the requirements is not met or if the transfer of governance tokens fails.
+    function stakeGovernanceTokenToPowerTokenAndDelegate(
+        address beneficiary,
+        uint256 governanceTokenAmount,
+        address[] calldata lpTokens,
+        uint256[] calldata pwTokenAmounts
+    ) external;
 
     /// @notice Unstakes the specified amount of IPOR tokens and transfers them to the specified address.
     /// @param transferTo The address to which the unstaked IPOR tokens will be transferred.

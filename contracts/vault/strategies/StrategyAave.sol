@@ -1,22 +1,17 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "../../libraries/errors/AssetManagementErrors.sol";
-import "../../libraries/math/IporMath.sol";
 import "../../interfaces/IStrategyAave.sol";
-import "../../security/IporOwnableUpgradeable.sol";
 import "../interfaces/aave/AaveLendingPoolV2.sol";
 import "../interfaces/aave/AaveLendingPoolProviderV2.sol";
 import "../interfaces/aave/AaveIncentivesInterface.sol";
 import "../interfaces/aave/StakedAaveInterface.sol";
+import "../../libraries/math/IporMath.sol";
+import "../../libraries/errors/AssetManagementErrors.sol";
 import "./StrategyCore.sol";
 
 contract StrategyAave is StrategyCore, IStrategyAave {
@@ -80,13 +75,53 @@ contract StrategyAave is StrategyCore, IStrategyAave {
     /**
      * @dev get current APY, represented in 18 decimals
      */
-    function getApr() external view override returns (uint256 apr) {
+    function getApy() external view override returns (uint256 apy) {
         address lendingPoolAddress = _provider.getLendingPool();
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
         AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(lendingPoolAddress);
 
         DataTypesContract.ReserveData memory reserveData = lendingPool.getReserveData(_asset);
-        apr = IporMath.division(reserveData.currentLiquidityRate, (10**9));
+        uint256 apr = IporMath.division(reserveData.currentLiquidityRate, (10 ** 9));
+        apy = aprToApy(apr);
+    }
+
+    function aprToApy(uint256 apr) internal pure returns (uint256) {
+        uint256 rate = IporMath.division(apr, 31536000) + 1e18;
+        return ratePerSecondToApy(rate) - 1e18;
+    }
+
+    function ratePerSecondToApy(uint256 rate) internal pure returns (uint256) {
+        uint256 rate4 = IporMath.division(rate * rate * rate * rate, 1e54);
+        uint256 rate16 = IporMath.division(rate4 * rate4 * rate4 * rate4, 1e54);
+        uint256 rate64 = IporMath.division(rate16 * rate16 * rate16 * rate16, 1e54);
+        uint256 rate256 = IporMath.division(rate64 * rate64 * rate64 * rate64, 1e54);
+        uint256 rate1024 = IporMath.division(rate256 * rate256 * rate256 * rate256, 1e54);
+        uint256 rate4096 = IporMath.division(rate1024 * rate1024 * rate1024 * rate1024, 1e54);
+        uint256 rate16384 = IporMath.division(rate4096 * rate4096 * rate4096 * rate4096, 1e54);
+        uint256 rate65536 = IporMath.division(rate16384 * rate16384 * rate16384 * rate16384, 1e54);
+        uint256 rate262144 = IporMath.division(rate65536 * rate65536 * rate65536 * rate65536, 1e54);
+        uint256 rate1048576 = IporMath.division(rate262144 * rate262144 * rate262144 * rate262144, 1e54);
+        uint256 rate4194304 = IporMath.division(rate1048576 * rate1048576 * rate1048576 * rate1048576, 1e54);
+        uint256 rate16777216 = IporMath.division(rate4194304 * rate4194304 * rate4194304 * rate4194304, 1e54);
+
+        return poweredRatePerSecondToApy(rate64, rate256, rate4096, rate65536, rate1048576, rate4194304, rate16777216);
+    }
+
+    function poweredRatePerSecondToApy(
+        uint256 rate64,
+        uint256 rate256,
+        uint256 rate4096,
+        uint256 rate65536,
+        uint256 rate1048576,
+        uint256 rate4194304,
+        uint256 rate16777216
+    ) internal pure returns (uint256) {
+        uint256 rate640 = IporMath.division(rate256 * rate256 * rate64 * rate64, 1e54);
+        uint256 rate12544 = IporMath.division(rate4096 * rate4096 * rate4096 * rate256, 1e54);
+        uint256 rate2162688 = IporMath.division(rate1048576 * rate1048576 * rate65536, 1e36);
+        uint256 rate29360128 = IporMath.division(rate16777216 * rate4194304 * rate4194304 * rate4194304, 1e54);
+
+        return IporMath.division(rate29360128 * rate2162688 * rate12544 * rate640, 1e54);
     }
 
     /**
@@ -104,13 +139,9 @@ contract StrategyAave is StrategyCore, IStrategyAave {
      * @notice deposit can only done by owner.
      * @param wadAmount amount to deposit in _aave lending.
      */
-    function deposit(uint256 wadAmount)
-        external
-        override
-        whenNotPaused
-        onlyAssetManagement
-        returns (uint256 depositedAmount)
-    {
+    function deposit(
+        uint256 wadAmount
+    ) external override whenNotPaused onlyAssetManagement returns (uint256 depositedAmount) {
         address asset = _asset;
         uint256 assetDecimals = IERC20Metadata(asset).decimals();
 
@@ -130,13 +161,9 @@ contract StrategyAave is StrategyCore, IStrategyAave {
      * @notice withdraw can only done by AssetManagement.
      * @param wadAmount amount to withdraw from _aave lending.
      */
-    function withdraw(uint256 wadAmount)
-        external
-        override
-        whenNotPaused
-        onlyAssetManagement
-        returns (uint256 withdrawnAmount)
-    {
+    function withdraw(
+        uint256 wadAmount
+    ) external override whenNotPaused onlyAssetManagement returns (uint256 withdrawnAmount) {
         address asset = _asset;
         uint256 assetDecimals = IERC20Metadata(asset).decimals();
         uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
@@ -167,8 +194,8 @@ contract StrategyAave is StrategyCore, IStrategyAave {
 
     /**
      * @dev Claim extra reward of Governace token(AAVE).
-     * @notice you have to claim first staked _aave then _aave token. 
-        so you have to claim beforeClaim function. 
+     * @notice you have to claim first staked _aave then _aave token.
+        so you have to claim beforeClaim function.
         when window is open you can call this function to claim _aave
      */
     function doClaim() external override whenNotPaused nonReentrant onlyOwner {

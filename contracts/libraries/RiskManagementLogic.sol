@@ -3,21 +3,26 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 
-import "../libraries/Constants.sol";
-import "../libraries/math/IporMath.sol";
+import "../interfaces/types/AmmTypes.sol";
 import "../interfaces/IAmmStorage.sol";
 import "../interfaces/IIporRiskManagementOracle.sol";
-import "../interfaces/IAssetManagement.sol";
-import "../governance/AmmConfigurationManager.sol";
-import "../amm/libraries/types/AmmInternalTypes.sol";
-import "contracts/amm/spread/ISpread28DaysLens.sol";
-import "contracts/amm/spread/ISpread60DaysLens.sol";
-import "contracts/amm/spread/ISpread90DaysLens.sol";
-import "contracts/libraries/errors/AmmErrors.sol";
+import "../amm/spread/ISpread28DaysLens.sol";
+import "../amm/spread/ISpread60DaysLens.sol";
+import "../amm/spread/ISpread90DaysLens.sol";
+import "./Constants.sol";
+import "./errors/AmmErrors.sol";
+import "./math/IporMath.sol";
 
 library RiskManagementLogic {
     using Address for address;
 
+    /// @notice Stuct describing the context for calculating the offered rate
+    /// @param asset Asset address
+    /// @param ammStorage AMM storage address
+    /// @param iporRiskManagementOracle IPOR risk management oracle address
+    /// @param spreadRouter Spread router address
+    /// @param minLeverage Minimum leverage
+    /// @param indexValue IPOR Index value
     struct SpreadOfferedRateContext {
         address asset;
         address ammStorage;
@@ -27,16 +32,22 @@ library RiskManagementLogic {
         uint256 indexValue;
     }
 
+    /// @notice Calculates the offered rate
+    /// @param direction Swap direction
+    /// @param tenor Swap tenor
+    /// @param swapNotional Swap notional
+    /// @param spreadOfferedRateCtx Context for calculating the offered rate
+    /// @return Offered rate
     function calculateOfferedRate(
         uint256 direction,
         IporTypes.SwapTenor tenor,
         uint256 swapNotional,
         SpreadOfferedRateContext memory spreadOfferedRateCtx
-    ) internal returns (uint256) {
+    ) internal view returns (uint256) {
         IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(spreadOfferedRateCtx.ammStorage)
             .getBalancesForOpenSwap();
 
-        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = getRiskIndicators(
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicators = getRiskIndicators(
             spreadOfferedRateCtx.asset,
             direction,
             tenor,
@@ -47,47 +58,57 @@ library RiskManagementLogic {
 
         return
             abi.decode(
-                spreadOfferedRateCtx.spreadRouter.functionCall(
+                spreadOfferedRateCtx.spreadRouter.functionStaticCall(
                     abi.encodeWithSelector(
                         determineSpreadMethodSig(direction, tenor),
                         spreadOfferedRateCtx.asset,
                         swapNotional,
                         riskIndicators.maxLeveragePerLeg,
                         riskIndicators.maxCollateralRatioPerLeg,
-                        riskIndicators.spread,
+                        riskIndicators.baseSpreadPerLeg,
                         balance.totalCollateralPayFixed,
                         balance.totalCollateralReceiveFixed,
                         balance.liquidityPool,
                         balance.totalNotionalPayFixed,
                         balance.totalNotionalReceiveFixed,
                         spreadOfferedRateCtx.indexValue,
-                        riskIndicators.fixedRateCap
+                        riskIndicators.fixedRateCapPerLeg
                     )
                 ),
                 (uint256)
             );
     }
 
+    /// @notice Gets the risk indicators for an open swap
+    /// @param asset Asset address
+    /// @param direction Swap direction
+    /// @param tenor Swap tenor
+    /// @param liquidityPoolBalance Liquidity pool balance
+    /// @param cfgMinLeverage Minimum leverage from Protocol configuration
+    /// @param cfgIporRiskManagementOracle IPOR risk management oracle address from Protocol configuration
+    /// @return riskIndicators Risk indicators
     function getRiskIndicators(
         address asset,
         uint256 direction,
         IporTypes.SwapTenor tenor,
-        uint256 liquidityPool,
+        uint256 liquidityPoolBalance,
         uint256 cfgMinLeverage,
         address cfgIporRiskManagementOracle
-    ) internal view returns (AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators) {
+    ) internal view returns (AmmTypes.OpenSwapRiskIndicators memory riskIndicators) {
         uint256 maxNotionalPerLeg;
-        uint256 maxCollateralRatio;
 
         (
             maxNotionalPerLeg,
             riskIndicators.maxCollateralRatioPerLeg,
-            maxCollateralRatio,
-            riskIndicators.spread,
-            riskIndicators.fixedRateCap
+            riskIndicators.maxCollateralRatio,
+            riskIndicators.baseSpreadPerLeg,
+            riskIndicators.fixedRateCapPerLeg
         ) = IIporRiskManagementOracle(cfgIporRiskManagementOracle).getOpenSwapParameters(asset, direction, tenor);
 
-        uint256 maxCollateralPerLeg = IporMath.division(liquidityPool * riskIndicators.maxCollateralRatioPerLeg, 1e18);
+        uint256 maxCollateralPerLeg = IporMath.division(
+            liquidityPoolBalance * riskIndicators.maxCollateralRatioPerLeg,
+            1e18
+        );
 
         if (maxCollateralPerLeg > 0) {
             riskIndicators.maxLeveragePerLeg = _leverageInRange(
@@ -99,6 +120,10 @@ library RiskManagementLogic {
         }
     }
 
+    /// @notice Determines the spread method signature based on the swap direction and tenor
+    /// @param direction Swap direction
+    /// @param tenor Swap tenor
+    /// @return Spread method signature
     function determineSpreadMethodSig(uint256 direction, IporTypes.SwapTenor tenor) internal pure returns (bytes4) {
         if (direction == 0) {
             if (tenor == IporTypes.SwapTenor.DAYS_28) {

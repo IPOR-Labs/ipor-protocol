@@ -4,28 +4,28 @@ pragma solidity 0.8.20;
 import {TestCommons} from "../../../TestCommons.sol";
 import {DataUtils} from "../../../utils/DataUtils.sol";
 import {TestConstants} from "../../../utils/TestConstants.sol";
-import {StrategyAave} from "contracts/vault/strategies/StrategyAave.sol";
-import {StrategyCompound} from "contracts/vault/strategies/StrategyCompound.sol";
-import {MockStrategy} from "contracts/mocks/assetManagement/MockStrategy.sol";
-import {AssetManagementDai} from "contracts/vault/AssetManagementDai.sol";
-import {AssetManagementUsdc} from "contracts/vault/AssetManagementUsdc.sol";
-import {MockTestnetToken} from "contracts/mocks/tokens/MockTestnetToken.sol";
-import {MockADAI} from "contracts/mocks/assetManagement/aave/MockADAI.sol";
-import {MockCToken} from "contracts/mocks/assetManagement/compound/MockCToken.sol";
-import {AAVEMockedToken} from "contracts/mocks/tokens/AAVEMockedToken.sol";
-import {MockComptroller} from "contracts/mocks/assetManagement/compound/MockComptroller.sol";
-import {MockedCOMPToken} from "contracts/mocks/tokens/MockedCOMPToken.sol";
-import {MockWhitePaper} from "contracts/mocks/assetManagement/compound/MockWhitePaper.sol";
-import {MockAaveLendingPoolProvider} from "contracts/mocks/assetManagement/aave/MockAaveLendingPoolProvider.sol";
-import {MockAaveLendingPoolCore} from "contracts/mocks/assetManagement/aave/MockAaveLendingPoolCore.sol";
-import {MockAaveLendingPoolV2} from "contracts/mocks/assetManagement/aave/MockAaveLendingPoolV2.sol";
-import {AaveInterestRateMockStrategyV2} from "contracts/mocks/assetManagement/aave/MockAaveInterestRateStrategyV2.sol";
-import {MockAaveStableDebtToken} from "contracts/mocks/assetManagement/aave/MockAaveStableDebtToken.sol";
-import {MockAaveVariableDebtToken} from "contracts/mocks/assetManagement/aave/MockAaveVariableDebtToken.sol";
-import {MockProviderAave} from "contracts/mocks/assetManagement/aave/MockProviderAave.sol";
-import {MockStakedAave} from "contracts/mocks/assetManagement/aave/MockStakedAave.sol";
-import {MockAaveIncentivesController} from "contracts/mocks/assetManagement/aave/MockAaveIncentivesController.sol";
-import {IvToken} from "contracts/tokens/IvToken.sol";
+import {StrategyAave} from "@ipor-protocol/contracts/vault/strategies/StrategyAave.sol";
+import {StrategyCompound} from "@ipor-protocol/contracts/vault/strategies/StrategyCompound.sol";
+import {MockStrategy} from "@ipor-protocol/test/mocks/assetManagement/MockStrategy.sol";
+import {AssetManagementDai} from "@ipor-protocol/contracts/vault/AssetManagementDai.sol";
+import {AssetManagementUsdc} from "@ipor-protocol/contracts/vault/AssetManagementUsdc.sol";
+import {MockTestnetToken} from "@ipor-protocol/test/mocks/tokens/MockTestnetToken.sol";
+import {MockADAI} from "@ipor-protocol/test/mocks/assetManagement/aave/MockADAI.sol";
+import {MockCToken} from "@ipor-protocol/test/mocks/assetManagement/compound/MockCToken.sol";
+import {AAVEMockedToken} from "@ipor-protocol/test/mocks/tokens/AAVEMockedToken.sol";
+import {MockComptroller} from "@ipor-protocol/test/mocks/assetManagement/compound/MockComptroller.sol";
+import {MockedCOMPToken} from "@ipor-protocol/test/mocks/tokens/MockedCOMPToken.sol";
+import {MockWhitePaper} from "@ipor-protocol/test/mocks/assetManagement/compound/MockWhitePaper.sol";
+import {MockAaveLendingPoolProvider} from "@ipor-protocol/test/mocks/assetManagement/aave/MockAaveLendingPoolProvider.sol";
+import {MockAaveLendingPoolCore} from "@ipor-protocol/test/mocks/assetManagement/aave/MockAaveLendingPoolCore.sol";
+import {MockAaveLendingPoolV2} from "@ipor-protocol/test/mocks/assetManagement/aave/MockAaveLendingPoolV2.sol";
+import {AaveInterestRateMockStrategyV2} from "@ipor-protocol/test/mocks/assetManagement/aave/MockAaveInterestRateStrategyV2.sol";
+import {MockAaveStableDebtToken} from "@ipor-protocol/test/mocks/assetManagement/aave/MockAaveStableDebtToken.sol";
+import {MockAaveVariableDebtToken} from "@ipor-protocol/test/mocks/assetManagement/aave/MockAaveVariableDebtToken.sol";
+import {MockProviderAave} from "@ipor-protocol/test/mocks/assetManagement/aave/MockProviderAave.sol";
+import {MockStakedAave} from "@ipor-protocol/test/mocks/assetManagement/aave/MockStakedAave.sol";
+import {MockAaveIncentivesController} from "@ipor-protocol/test/mocks/assetManagement/aave/MockAaveIncentivesController.sol";
+import {IvToken} from "@ipor-protocol/contracts/tokens/IvToken.sol";
 
 contract AssetManagementWithdrawTest is TestCommons, DataUtils {
     MockTestnetToken internal _daiMockedToken;
@@ -118,7 +118,7 @@ contract AssetManagementWithdrawTest is TestCommons, DataUtils {
 		_aDaiMockedToken = getMockADAI(address(_daiMockedToken), _admin);
         _aaveMockedToken = getTokenAave();
         _lendingPoolAave = new MockAaveLendingPoolV2(
-			address(_daiMockedToken), 
+			address(_daiMockedToken),
 			address(_aDaiMockedToken)
         );
         _mockStakedAave = getMockStakedAave(address(_aaveMockedToken));
@@ -160,7 +160,7 @@ contract AssetManagementWithdrawTest is TestCommons, DataUtils {
 		_setupAssetManagement();
     }
 
-	function testShouldWithdrawFromAaveWhenOnlyAaveHasFundsAndAaveHasMaxApr() public {
+	function testShouldWithdrawFromAaveWhenOnlyAaveHasFundsAndAaveHasMaxApy() public {
 		// given
 		_daiMockedToken.approve(_admin, TestConstants.USD_10_000_18DEC);
 		_daiMockedToken.approve(address(_assetManagementDai), TestConstants.USD_10_000_18DEC);
@@ -170,7 +170,7 @@ contract AssetManagementWithdrawTest is TestCommons, DataUtils {
 		uint256 userIvTokenBefore = _ivTokenDai.balanceOf(_admin);
 		assertEq(aaveBalanceBefore, TestConstants.USD_10_18DEC);
 		assertEq(userIvTokenBefore, TestConstants.USD_10_18DEC);
-		// when 
+		// when
 		_assetManagementDai.withdraw(TestConstants.USD_10_18DEC);
 		// then
 		uint256 aaveBalanceAfter = _strategyAaveDai.balanceOf();
@@ -181,7 +181,7 @@ contract AssetManagementWithdrawTest is TestCommons, DataUtils {
 		assertEq(iporVaultBalance, TestConstants.ZERO);
 	}
 
-	function testShouldWithdrawFromAaveWhenOnlyAaveHasFundsAndAaveDoesNotHaveMaxApr() public {
+	function testShouldWithdrawFromAaveWhenOnlyAaveHasFundsAndAaveDoesNotHaveMaxApy() public {
 		// given
 		_daiMockedToken.approve(_admin, TestConstants.USD_10_000_18DEC);
 		_daiMockedToken.approve(address(_assetManagementDai), TestConstants.USD_10_000_18DEC);
@@ -203,7 +203,7 @@ contract AssetManagementWithdrawTest is TestCommons, DataUtils {
 		assertEq(iporVaultBalance, TestConstants.ZERO);
 	}
 
-	function testShouldWithdrawPartOfFundsFromAaveWhenOnlyAaveHasFundsAndAaveHasMaxApr() public {
+	function testShouldWithdrawPartOfFundsFromAaveWhenOnlyAaveHasFundsAndAaveHasMaxApy() public {
 		// given
 		_daiMockedToken.approve(_admin, TestConstants.USD_10_000_18DEC);
 		_daiMockedToken.approve(address(_assetManagementDai), TestConstants.USD_10_000_18DEC);
@@ -224,7 +224,7 @@ contract AssetManagementWithdrawTest is TestCommons, DataUtils {
 		assertEq(iporVaultBalance, TestConstants.ZERO);
 	}
 
-	function testShouldWithdrawFromAaveWhenOnlyAaveHasFundsAndAaveDoesNotHaveMaxAprCase2() public {
+	function testShouldWithdrawFromAaveWhenOnlyAaveHasFundsAndAaveDoesNotHaveMaxApyCase2() public {
 		// given
 		_daiMockedToken.approve(_admin, TestConstants.USD_10_000_18DEC);
 		_daiMockedToken.approve(address(_assetManagementDai), TestConstants.USD_10_000_18DEC);
@@ -246,7 +246,7 @@ contract AssetManagementWithdrawTest is TestCommons, DataUtils {
 		assertEq(iporVaultBalance, TestConstants.ZERO);
 	}
 
-	function testShouldWithdrawFromCompoundWhenOnlyCompoundHasFundsAndCompoundHasMaxApr() public {
+	function testShouldWithdrawFromCompoundWhenOnlyCompoundHasFundsAndCompoundHasMaxApy() public {
 		// given
 		_daiMockedToken.approve(_admin, TestConstants.USD_10_000_18DEC);
 		_daiMockedToken.approve(address(_assetManagementDai), TestConstants.USD_10_000_18DEC);
@@ -266,7 +266,7 @@ contract AssetManagementWithdrawTest is TestCommons, DataUtils {
 		assertEq(iporVaultBalance, TestConstants.ZERO);
 	}
 
-	function testShouldWithdrawFromCompoundWhenOnlyCompoundHasFundsAndCompoundDoesNotHaveMaxApr() public {
+	function testShouldWithdrawFromCompoundWhenOnlyCompoundHasFundsAndCompoundDoesNotHaveMaxApy() public {
 		// given
 		_daiMockedToken.approve(_admin, TestConstants.USD_10_000_18DEC);
 		_daiMockedToken.approve(address(_assetManagementDai), TestConstants.USD_10_000_18DEC);
@@ -285,9 +285,9 @@ contract AssetManagementWithdrawTest is TestCommons, DataUtils {
 		assertEq(compoundBalanceAfter, TestConstants.ZERO);
 		assertEq(userIvTokenAfter, TestConstants.ZERO);
 		assertEq(iporVaultBalance, TestConstants.ZERO);
-	} 
+	}
 
-	function testShouldWithdrawPartOfFundsFromCompoundWhenOnlyCompoundHasFundsAndCompoundHasMaxApr() public {
+	function testShouldWithdrawPartOfFundsFromCompoundWhenOnlyCompoundHasFundsAndCompoundHasMaxApy() public {
 		// given
 		_daiMockedToken.approve(_admin, TestConstants.USD_10_000_18DEC);
 		_daiMockedToken.approve(address(_assetManagementDai), TestConstants.USD_10_000_18DEC);
@@ -306,9 +306,9 @@ contract AssetManagementWithdrawTest is TestCommons, DataUtils {
 		assertEq(userIvTokenAfter, 4 * TestConstants.D18);
 		assertEq(iporVaultBalance, TestConstants.ZERO);
 	}
- 
-	function testShouldWithdrawFromCompoundWhenOnlyCompoundHasFundsAndCompoundDoesNotHaveMaxAprCase2() public {
-		// given 
+
+	function testShouldWithdrawFromCompoundWhenOnlyCompoundHasFundsAndCompoundDoesNotHaveMaxApyCase2() public {
+		// given
 		_daiMockedToken.approve(_admin, TestConstants.USD_10_000_18DEC);
 		_daiMockedToken.approve(address(_assetManagementDai), TestConstants.USD_10_000_18DEC);
 		_assetManagementDai.deposit(TestConstants.USD_10_18DEC);
@@ -328,7 +328,7 @@ contract AssetManagementWithdrawTest is TestCommons, DataUtils {
 		assertEq(iporVaultBalance, TestConstants.ZERO);
 	}
 
-	function testShouldWithdrawFromAaveWhenDepositToBothButCompoundHasMaxApr() public {
+	function testShouldWithdrawFromAaveWhenDepositToBothButCompoundHasMaxApy() public {
 		// given
 		_lendingPoolAave.setCurrentLiquidityRate(TC_AAVE_CURRENT_LIQUIDITY_RATE);
 		_daiMockedToken.approve(_admin, TestConstants.USD_10_000_18DEC);
@@ -355,7 +355,7 @@ contract AssetManagementWithdrawTest is TestCommons, DataUtils {
 		assertEq(iporVaultBalance, TestConstants.ZERO);
 	}
 
-	function testShouldWithdrawFromCompoundWhenDepositToBothButCompoundHasMaxApr() public {
+	function testShouldWithdrawFromCompoundWhenDepositToBothButCompoundHasMaxApy() public {
 		// given
 		_lendingPoolAave.setCurrentLiquidityRate(TC_AAVE_CURRENT_LIQUIDITY_RATE);
 		_daiMockedToken.approve(_admin, TestConstants.USD_10_000_18DEC);
@@ -383,7 +383,7 @@ contract AssetManagementWithdrawTest is TestCommons, DataUtils {
 		assertEq(iporVaultBalance, TestConstants.ZERO);
 	}
 
-	function testShouldWithdrawFromCompoundWhenDepositToBothButAaveHasMaxApr() public {
+	function testShouldWithdrawFromCompoundWhenDepositToBothButAaveHasMaxApy() public {
 		// given
 		_daiMockedToken.approve(_admin, TestConstants.USD_10_000_18DEC);
 		_daiMockedToken.approve(address(_assetManagementDai), TestConstants.USD_10_000_18DEC);
@@ -409,7 +409,7 @@ contract AssetManagementWithdrawTest is TestCommons, DataUtils {
 		assertEq(iporVaultBalance, TestConstants.ZERO);
 	}
 
-	function testShouldWithdrawFromAaveWhenDepositToBothButAaveHasMaxAprButInCompoundHasLessBalance() public {
+	function testShouldWithdrawFromAaveWhenDepositToBothButAaveHasMaxApyButInCompoundHasLessBalance() public {
 		// given
 		_lendingPoolAave.setCurrentLiquidityRate(TC_AAVE_CURRENT_LIQUIDITY_RATE);
 		_daiMockedToken.approve(_admin, TestConstants.USD_10_000_18DEC);
@@ -481,7 +481,7 @@ contract AssetManagementWithdrawTest is TestCommons, DataUtils {
 		assertEq(iporVaultBalance, TestConstants.ZERO);
 	}
 
-	function testShouldWithdrawFromCompoundWhenDepositToBothButAaveHasMaxAprCase2() public {
+	function testShouldWithdrawFromCompoundWhenDepositToBothButAaveHasMaxApyCase2() public {
 		// given
 		_lendingPoolAave.setCurrentLiquidityRate(TC_AAVE_CURRENT_LIQUIDITY_RATE);
 		_daiMockedToken.approve(_admin, TestConstants.USD_10_000_18DEC);
@@ -509,7 +509,7 @@ contract AssetManagementWithdrawTest is TestCommons, DataUtils {
 		assertEq(iporVaultBalance, TestConstants.ZERO);
 	}
 
-	function testShouldWithdrawDaiFromAaveWhenNotAllInOneStrategyAndDepositToBothButAaveHasMaxApr() public {
+	function testShouldWithdrawDaiFromAaveWhenNotAllInOneStrategyAndDepositToBothButAaveHasMaxApy() public {
 		// given
 		_lendingPoolAave.setCurrentLiquidityRate(TC_AAVE_CURRENT_LIQUIDITY_RATE);
 		_daiMockedToken.approve(_admin, TestConstants.USD_10_000_18DEC);
@@ -537,7 +537,7 @@ contract AssetManagementWithdrawTest is TestCommons, DataUtils {
 		assertEq(iporVaultBalance, TestConstants.ZERO);
 	}
 
-	function testShouldWithdrawUsdcFromAaveWhenNotAllInOneStrategyAndDepositToBothButAaveHasMaxApr() public {
+	function testShouldWithdrawUsdcFromAaveWhenNotAllInOneStrategyAndDepositToBothButAaveHasMaxApy() public {
 		// given
 		MockTestnetToken usdcMockedToken = getTokenUsdc();
 		IvToken ivTokenUsdc = new IvToken("IvToken", "IVT", address(usdcMockedToken));
@@ -554,17 +554,17 @@ contract AssetManagementWithdrawTest is TestCommons, DataUtils {
 		assetManagementUsdc.setAmmTreasury(_admin);
 		usdcMockedToken.approve(_admin, TestConstants.USD_10_000_6DEC);
 		usdcMockedToken.approve(address(assetManagementUsdc), TestConstants.USD_10_000_6DEC);
-		strategyAaveUsdc.setApr(3 * TestConstants.D18);
+		strategyAaveUsdc.setApy(3 * TestConstants.D18);
 		assetManagementUsdc.deposit(40 * TestConstants.D18);
 		uint256 aaaveBalanceBefore = strategyAaveUsdc.balanceOf();
 		assertEq(aaaveBalanceBefore, 40 * TestConstants.D18);
-		strategyCompoundUsdc.setApr(4 * TestConstants.D18);
+		strategyCompoundUsdc.setApy(4 * TestConstants.D18);
 		assetManagementUsdc.deposit(40 * TestConstants.D18);
 		uint256 compoundBalanceBefore = strategyCompoundUsdc.balanceOf();
 		uint256 userIvTokenBefore = ivTokenUsdc.balanceOf(_admin);
 		assertEq(compoundBalanceBefore, 40 * TestConstants.D18);
 		assertEq(userIvTokenBefore, 80 * TestConstants.D18);
-		strategyAaveUsdc.setApr(5 * TestConstants.D18);
+		strategyAaveUsdc.setApy(5 * TestConstants.D18);
 		// when
 		assetManagementUsdc.withdraw(50 * TestConstants.D18);
 		// then
@@ -578,7 +578,7 @@ contract AssetManagementWithdrawTest is TestCommons, DataUtils {
 		assertEq(iporVaultBalance, TestConstants.ZERO);
 	}
 
-	function testShouldWithdrawFromCompoundWhenNotAllAmountInOneStrategyAndDepositToBothButAaveHasMaxApr() public {
+	function testShouldWithdrawFromCompoundWhenNotAllAmountInOneStrategyAndDepositToBothButAaveHasMaxApy() public {
 		// given
 		_lendingPoolAave.setCurrentLiquidityRate(TC_AAVE_CURRENT_LIQUIDITY_RATE);
 		_daiMockedToken.approve(_admin, TestConstants.USD_10_000_18DEC);

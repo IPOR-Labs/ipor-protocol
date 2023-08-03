@@ -3,8 +3,8 @@ pragma solidity 0.8.20;
 
 import "./types/IporTypes.sol";
 
+/// @title Interface responsible for reading the AMM Pools state and configuration.
 interface IAmmPoolsLens {
-
     /// @dev A struct to represent a pool configuration.
     /// @param asset The address of the asset.
     /// @param decimals The number of decimal places the asset uses.
@@ -36,11 +36,5 @@ interface IAmmPoolsLens {
     /// @param asset The address of the asset.
     /// @return IporTypes.AmmBalancesMemory The balance of the AMM Treasury.
     function getAmmBalance(address asset) external view returns (IporTypes.AmmBalancesMemory memory);
-
-    /// @notice Returns the contribution of a specific account to the Liquidity Pool.
-    /// @param asset The address of the asset.
-    /// @param account The address of the account for which to fetch the contribution.
-    /// @return uint256 The account's contribution to the Liquidity Pool, represented in 18 decimals.
-    function getLiquidityPoolAccountContribution(address asset, address account) external view returns (uint256);
 
 }

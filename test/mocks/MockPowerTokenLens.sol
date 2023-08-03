@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "contracts/interfaces/IPowerTokenLens.sol";
+import "../../contracts/interfaces/IPowerTokenLens.sol";
 import "../utils/builder/BuilderUtils.sol";
 
 contract MockPowerTokenLens is IPowerTokenLens {
@@ -30,7 +30,7 @@ contract MockPowerTokenLens is IPowerTokenLens {
     function getPwTokensInCooldown(address account)
         external
         view
-        returns (PowerTokenTypes.PwTokenCooldown memory)
+        returns (PwTokenCooldown memory)
     {
         return _data.activeCooldown;
     }

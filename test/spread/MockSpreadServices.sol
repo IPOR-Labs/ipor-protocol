@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "contracts/amm/spread/ISpread28Days.sol";
-import "contracts/amm/spread/ISpread60Days.sol";
-import "contracts/amm/spread/ISpread90Days.sol";
-import "contracts/amm/spread/ISpreadCloseSwapService.sol";
-import "contracts/amm/spread/ISpread28DaysLens.sol";
-import "contracts/amm/spread/ISpread60DaysLens.sol";
-import "contracts/amm/spread/ISpread90DaysLens.sol";
+import "../../contracts/amm/spread/ISpread28Days.sol";
+import "../../contracts/amm/spread/ISpread60Days.sol";
+import "../../contracts/amm/spread/ISpread90Days.sol";
+import "../../contracts/amm/spread/ISpreadCloseSwapService.sol";
+import "../../contracts/amm/spread/ISpread28DaysLens.sol";
+import "../../contracts/amm/spread/ISpread60DaysLens.sol";
+import "../../contracts/amm/spread/ISpread90DaysLens.sol";
 
 contract MockSpreadServices is
     ISpread28Days,
@@ -65,27 +65,26 @@ contract MockSpreadServices is
         return;
     }
 
-    function calculateOfferedRatePayFixed28Days(IporTypes.SpreadInputs calldata spreadInputs)
-    external
-    override
-    returns (uint256 quoteValue){
-        return 280;}
+    function calculateOfferedRatePayFixed28Days(
+        IporTypes.SpreadInputs calldata spreadInputs
+    ) external view override returns (uint256 quoteValue) {
+        return 280;
+    }
 
-    function calculateOfferedRateReceiveFixed28Days(IporTypes.SpreadInputs calldata spreadInputs)
-    external
-    override
-    returns (uint256 quoteValue){
+    function calculateOfferedRateReceiveFixed28Days(
+        IporTypes.SpreadInputs calldata spreadInputs
+    ) external view override returns (uint256 quoteValue) {
         return 281;
     }
 
-    function spreadFunction28DaysConfig() external pure override returns (uint256[] memory){
+    function spreadFunction28DaysConfig() external pure override returns (uint256[] memory) {
         uint256[] memory mock = new uint256[](20);
         return mock;
     }
 
     function calculateOfferedRatePayFixed60Days(
         IporTypes.SpreadInputs calldata spreadInputs
-    ) external override returns (uint256 quoteValue){
+    ) external override returns (uint256 quoteValue) {
         return 600;
     }
 
@@ -95,24 +94,24 @@ contract MockSpreadServices is
         return 601;
     }
 
-    function spreadFunction60DaysConfig() external pure override returns (uint256[] memory){
+    function spreadFunction60DaysConfig() external pure override returns (uint256[] memory) {
         uint256[] memory mock = new uint256[](20);
         return mock;
     }
 
     function calculateOfferedRatePayFixed90Days(
         IporTypes.SpreadInputs calldata spreadInputs
-    ) external override returns (uint256 quoteValue){
+    ) external override returns (uint256 quoteValue) {
         return 900;
     }
 
     function calculateOfferedRateReceiveFixed90Days(
         IporTypes.SpreadInputs calldata spreadInputs
-    ) external override returns (uint256 quoteValue){
+    ) external override returns (uint256 quoteValue) {
         return 901;
     }
 
-    function spreadFunction90DaysConfig() external pure override returns (uint256[] memory){
+    function spreadFunction90DaysConfig() external pure override returns (uint256[] memory) {
         uint256[] memory mock = new uint256[](20);
         return mock;
     }

@@ -5,12 +5,11 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "../interfaces/IOraclePublisher.sol";
+import "../interfaces/IProxyImplementation.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/IporOracleErrors.sol";
-import "../interfaces/IIporOracle.sol";
-import "../interfaces/IIporRiskManagementOracle.sol";
-import "../interfaces/IOraclePublisher.sol";
+import "../security/PauseManager.sol";
 import "../security/IporOwnableUpgradeable.sol";
 
 /**
@@ -23,7 +22,8 @@ contract OraclePublisher is
     PausableUpgradeable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-    IOraclePublisher
+    IOraclePublisher,
+    IProxyImplementation
 {
     using Address for address;
 
@@ -31,6 +31,11 @@ contract OraclePublisher is
     address internal immutable _iporRiskManagementOracle;
 
     mapping(address => uint256) internal _updaters;
+
+    modifier onlyPauseGuardian() {
+        require(PauseManager.isPauseGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
+        _;
+    }
 
     modifier onlyUpdater() {
         require(_updaters[_msgSender()] == 1, IporOracleErrors.CALLER_NOT_UPDATER);
@@ -90,12 +95,28 @@ contract OraclePublisher is
         return _updaters[updater];
     }
 
-    function pause() external override onlyOwner {
+    function pause() external override onlyPauseGuardian {
         _pause();
     }
 
     function unpause() external override onlyOwner {
         _unpause();
+    }
+
+    function isPauseGuardian(address account) external view override returns (bool) {
+        return PauseManager.isPauseGuardian(account);
+    }
+
+    function addPauseGuardian(address guardian) external override onlyOwner {
+        PauseManager.addPauseGuardian(guardian);
+    }
+
+    function removePauseGuardian(address guardian) external override onlyOwner {
+        PauseManager.removePauseGuardian(guardian);
+    }
+
+    function getImplementation() external view override returns (address) {
+        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
 
     //solhint-disable no-empty-blocks

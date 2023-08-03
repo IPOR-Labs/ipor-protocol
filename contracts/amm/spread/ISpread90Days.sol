@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "contracts/interfaces/types/IporTypes.sol";
+import "../../interfaces/types/IporTypes.sol";
 
+/// @title Spread interface for tenor 90 days service
 interface ISpread90Days {
     /// @notice Calculates the quote value for a fixed 90-day period on the pay-fixed side based on the provided spread inputs.
     /// @param spreadInputs The spread inputs required for the calculation.

@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "../../TestCommons.sol";
+import "test/TestCommons.sol";
 import "../DaiAmm.sol";
 import "../UsdcAmm.sol";
 import "../UsdtAmm.sol";
@@ -24,7 +24,7 @@ contract JosephRebalance is Test, TestCommons {
 
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
-        daiAmm.overrideCompoundStrategyWithZeroApr(address(this));
+        daiAmm.overrideCompoundStrategyWithZeroApy(address(this));
         uint256 balanceAmmTreasuryDaiBefore = IIpToken(daiAmm.dai()).balanceOf(address(daiAmm.ammTreasury()));
         uint256 balanceAmmTreasuryIvDaiBefore = ERC20(daiAmm.ivDai()).balanceOf(address(daiAmm.ammTreasury()));
         uint256 balanceAaveStrategyBefore = daiAmm.strategyAave().balanceOf();
@@ -56,7 +56,7 @@ contract JosephRebalance is Test, TestCommons {
 
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
-        daiAmm.overrideCompoundStrategyWithZeroApr(address(this));
+        daiAmm.overrideCompoundStrategyWithZeroApy(address(this));
         joseph.rebalance();
         StrategyAave newStrategyAave = daiAmm.createAaveStrategy();
 
@@ -102,7 +102,7 @@ contract JosephRebalance is Test, TestCommons {
 
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
-        daiAmm.overrideCompoundStrategyWithZeroApr(address(this));
+        daiAmm.overrideCompoundStrategyWithZeroApy(address(this));
         joseph.rebalance();
         vm.prank(user);
         joseph.redeem(15_000e18);
@@ -144,7 +144,7 @@ contract JosephRebalance is Test, TestCommons {
 
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
-        usdcAmm.overrideCompoundStrategyWithZeroApr(address(this));
+        usdcAmm.overrideCompoundStrategyWithZeroApy(address(this));
         uint256 balanceAmmTreasuryBefore = IIpToken(usdcAmm.usdc()).balanceOf(address(usdcAmm.ammTreasury()));
         uint256 balanceAmmTreasuryIvBefore = ERC20(usdcAmm.ivUsdc()).balanceOf(address(usdcAmm.ammTreasury()));
         uint256 balanceAaveStrategyBefore = usdcAmm.strategyAave().balanceOf();
@@ -176,7 +176,7 @@ contract JosephRebalance is Test, TestCommons {
 
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
-        usdcAmm.overrideCompoundStrategyWithZeroApr(address(this));
+        usdcAmm.overrideCompoundStrategyWithZeroApy(address(this));
         joseph.rebalance();
 
         uint256 balanceAmmTreasuryBefore = IIpToken(usdcAmm.usdc()).balanceOf(address(usdcAmm.ammTreasury()));
@@ -213,7 +213,7 @@ contract JosephRebalance is Test, TestCommons {
 
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
-        usdcAmm.overrideCompoundStrategyWithZeroApr(address(this));
+        usdcAmm.overrideCompoundStrategyWithZeroApy(address(this));
         joseph.rebalance();
 
         uint256 balanceAmmTreasuryBefore = IIpToken(usdcAmm.usdc()).balanceOf(address(usdcAmm.ammTreasury()));
@@ -250,7 +250,7 @@ contract JosephRebalance is Test, TestCommons {
 
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
-        usdcAmm.overrideCompoundStrategyWithZeroApr(address(this));
+        usdcAmm.overrideCompoundStrategyWithZeroApy(address(this));
         joseph.rebalance();
         StrategyAave newStrategyAave = usdcAmm.createAaveStrategy();
 
@@ -296,7 +296,7 @@ contract JosephRebalance is Test, TestCommons {
 
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
-        usdcAmm.overrideCompoundStrategyWithZeroApr(address(this));
+        usdcAmm.overrideCompoundStrategyWithZeroApy(address(this));
         joseph.rebalance();
         vm.prank(user);
         joseph.redeem(17_000e18);
@@ -335,7 +335,7 @@ contract JosephRebalance is Test, TestCommons {
 
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
-        usdtAmm.overrideAaveStrategyWithZeroApr(address(this));
+        usdtAmm.overrideAaveStrategyWithZeroApy(address(this));
         uint256 balanceAmmTreasuryBefore = IIpToken(usdtAmm.usdt()).balanceOf(address(usdtAmm.ammTreasury()));
         uint256 balanceAmmTreasuryIvBefore = ERC20(usdtAmm.ivUsdt()).balanceOf(address(usdtAmm.ammTreasury()));
         uint256 balanceCompoundStrategyBefore = usdtAmm.strategyCompound().balanceOf();
@@ -367,7 +367,7 @@ contract JosephRebalance is Test, TestCommons {
 
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
-        usdtAmm.overrideAaveStrategyWithZeroApr(address(this));
+        usdtAmm.overrideAaveStrategyWithZeroApy(address(this));
         joseph.rebalance();
         vm.warp(block.timestamp + 10000);
         StrategyCompound newStrategyCompound = usdtAmm.createCompoundStrategy();

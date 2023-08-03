@@ -4,26 +4,26 @@ pragma solidity 0.8.20;
 import {TestCommons} from "../../../TestCommons.sol";
 import {DataUtils} from "../../../utils/DataUtils.sol";
 import {TestConstants} from "../../../utils/TestConstants.sol";
-import {StrategyAave} from "contracts/vault/strategies/StrategyAave.sol";
-import {StrategyCompound} from "contracts/vault/strategies/StrategyCompound.sol";
-import {AssetManagementDai} from "contracts/vault/AssetManagementDai.sol";
-import {MockTestnetToken} from "contracts/mocks/tokens/MockTestnetToken.sol";
-import {MockADAI} from "contracts/mocks/assetManagement/aave/MockADAI.sol";
-import {MockCToken} from "contracts/mocks/assetManagement/compound/MockCToken.sol";
-import {AAVEMockedToken} from "contracts/mocks/tokens/AAVEMockedToken.sol";
-import {MockComptroller} from "contracts/mocks/assetManagement/compound/MockComptroller.sol";
-import {MockedCOMPToken} from "contracts/mocks/tokens/MockedCOMPToken.sol";
-import {MockWhitePaper} from "contracts/mocks/assetManagement/compound/MockWhitePaper.sol";
-import {MockAaveLendingPoolProvider} from "contracts/mocks/assetManagement/aave/MockAaveLendingPoolProvider.sol";
-import {MockAaveLendingPoolCore} from "contracts/mocks/assetManagement/aave/MockAaveLendingPoolCore.sol";
-import {MockAaveLendingPoolV2} from "contracts/mocks/assetManagement/aave/MockAaveLendingPoolV2.sol";
-import {AaveInterestRateMockStrategyV2} from "contracts/mocks/assetManagement/aave/MockAaveInterestRateStrategyV2.sol";
-import {MockAaveStableDebtToken} from "contracts/mocks/assetManagement/aave/MockAaveStableDebtToken.sol";
-import {MockAaveVariableDebtToken} from "contracts/mocks/assetManagement/aave/MockAaveVariableDebtToken.sol";
-import {MockProviderAave} from "contracts/mocks/assetManagement/aave/MockProviderAave.sol";
-import {MockStakedAave} from "contracts/mocks/assetManagement/aave/MockStakedAave.sol";
-import {MockAaveIncentivesController} from "contracts/mocks/assetManagement/aave/MockAaveIncentivesController.sol";
-import {IvToken} from "contracts/tokens/IvToken.sol";
+import {StrategyAave} from "@ipor-protocol/contracts/vault/strategies/StrategyAave.sol";
+import {StrategyCompound} from "@ipor-protocol/contracts/vault/strategies/StrategyCompound.sol";
+import {AssetManagementDai} from "@ipor-protocol/contracts/vault/AssetManagementDai.sol";
+import {MockTestnetToken} from "@ipor-protocol/test/mocks/tokens/MockTestnetToken.sol";
+import {MockADAI} from "@ipor-protocol/test/mocks/assetManagement/aave/MockADAI.sol";
+import {MockCToken} from "@ipor-protocol/test/mocks/assetManagement/compound/MockCToken.sol";
+import {AAVEMockedToken} from "@ipor-protocol/test/mocks/tokens/AAVEMockedToken.sol";
+import {MockComptroller} from "@ipor-protocol/test/mocks/assetManagement/compound/MockComptroller.sol";
+import {MockedCOMPToken} from "@ipor-protocol/test/mocks/tokens/MockedCOMPToken.sol";
+import {MockWhitePaper} from "@ipor-protocol/test/mocks/assetManagement/compound/MockWhitePaper.sol";
+import {MockAaveLendingPoolProvider} from "@ipor-protocol/test/mocks/assetManagement/aave/MockAaveLendingPoolProvider.sol";
+import {MockAaveLendingPoolCore} from "@ipor-protocol/test/mocks/assetManagement/aave/MockAaveLendingPoolCore.sol";
+import {MockAaveLendingPoolV2} from "@ipor-protocol/test/mocks/assetManagement/aave/MockAaveLendingPoolV2.sol";
+import {AaveInterestRateMockStrategyV2} from "@ipor-protocol/test/mocks/assetManagement/aave/MockAaveInterestRateStrategyV2.sol";
+import {MockAaveStableDebtToken} from "@ipor-protocol/test/mocks/assetManagement/aave/MockAaveStableDebtToken.sol";
+import {MockAaveVariableDebtToken} from "@ipor-protocol/test/mocks/assetManagement/aave/MockAaveVariableDebtToken.sol";
+import {MockProviderAave} from "@ipor-protocol/test/mocks/assetManagement/aave/MockProviderAave.sol";
+import {MockStakedAave} from "@ipor-protocol/test/mocks/assetManagement/aave/MockStakedAave.sol";
+import {MockAaveIncentivesController} from "@ipor-protocol/test/mocks/assetManagement/aave/MockAaveIncentivesController.sol";
+import {IvToken} from "@ipor-protocol/contracts/tokens/IvToken.sol";
 
 contract AssetManagementDepositTest is TestCommons, DataUtils {
     MockTestnetToken internal _daiMockedToken;
@@ -162,24 +162,24 @@ contract AssetManagementDepositTest is TestCommons, DataUtils {
         _setupAssetManagement();
     }
 
-    function testShouldChangeAaveAPR() public {
+    function testShouldChangeAaveAPY() public {
         // given
-        uint256 apyBefore = _strategyAaveDai.getApr();
+        uint256 apyBefore = _strategyAaveDai.getApy();
         // when
         _lendingPoolAave.setCurrentLiquidityRate((TestConstants.RAY_UINT128 / 100) * 5);
         // then
-        uint256 apyAfter = _strategyAaveDai.getApr();
+        uint256 apyAfter = _strategyAaveDai.getApy();
         assertEq(apyBefore, 20000000000000000);
         assertEq(apyAfter, 50000000000000000);
     }
 
     function testShouldChangeCompoundAPR() public {
         // given
-        uint256 apyBefore = _strategyCompoundDai.getApr();
+        uint256 apyBefore = _strategyCompoundDai.getApy();
         // when
         _mockCDAI.setSupplyRate(uint128(10));
         // then
-        uint256 apyAfter = _strategyCompoundDai.getApr();
+        uint256 apyAfter = _strategyCompoundDai.getApy();
 		assertEq(apyBefore, 90148815177415640);
 		assertEq(apyAfter, 26280000);
     }
@@ -392,7 +392,7 @@ contract AssetManagementDepositTest is TestCommons, DataUtils {
         _assetManagementDai.deposit(TestConstants.USD_10_18DEC); // into Compound
         _lendingPoolAave.setCurrentLiquidityRate((TestConstants.RAY_UINT128 / 100) * 10);
         // when
-        _assetManagementDai.migrateAssetToStrategyWithMaxApr();
+        _assetManagementDai.migrateAssetToStrategyWithMaxApy();
         // then
         uint256 compoundBalance = _strategyCompoundDai.balanceOf();
         uint256 aaveBalance = _strategyAaveDai.balanceOf();
@@ -408,7 +408,7 @@ contract AssetManagementDepositTest is TestCommons, DataUtils {
         _assetManagementDai.deposit(TestConstants.USD_10_18DEC); // into Aave
         _lendingPoolAave.setCurrentLiquidityRate(TestConstants.RAY_UINT128 / 100);
         // when
-        _assetManagementDai.migrateAssetToStrategyWithMaxApr();
+        _assetManagementDai.migrateAssetToStrategyWithMaxApy();
         // then
         uint256 compoundBalance = _strategyCompoundDai.balanceOf();
         uint256 aaveBalance = _strategyAaveDai.balanceOf();

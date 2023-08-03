@@ -4,26 +4,33 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "../libraries/errors/IporErrors.sol";
-import "../libraries/errors/IporOracleErrors.sol";
 import "../interfaces/types/IporTypes.sol";
 import "../interfaces/types/IporOracleTypes.sol";
+import "../interfaces/IIporOracle.sol";
+import "../interfaces/IProxyImplementation.sol";
+import "../libraries/errors/IporErrors.sol";
+import "../libraries/errors/IporOracleErrors.sol";
 import "../libraries/Constants.sol";
 import "../libraries/math/IporMath.sol";
-import "../interfaces/IIporOracle.sol";
-import "../interfaces/IIporAlgorithm.sol";
+import "../libraries/math/InterestRates.sol";
+import "../security/PauseManager.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/IporLogic.sol";
-import "../libraries/math/InterestRates.sol";
 
 /**
  * @title IPOR Index Oracle Contract
  *
  * @author IPOR Labs
  */
-contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, IporOwnableUpgradeable, IIporOracle {
+contract IporOracle is
+    Initializable,
+    PausableUpgradeable,
+    UUPSUpgradeable,
+    IporOwnableUpgradeable,
+    IIporOracle,
+    IProxyImplementation
+{
     using SafeCast for uint256;
     using IporLogic for IporOracleTypes.IPOR;
 
@@ -36,6 +43,11 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
     mapping(address => uint256) internal _updaters;
     mapping(address => IporOracleTypes.IPOR) internal _indexes;
+
+    modifier onlyPauseGuardian() {
+        require(PauseManager.isPauseGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
+        _;
+    }
 
     modifier onlyUpdater() {
         require(_updaters[_msgSender()] == 1, IporOracleErrors.CALLER_NOT_UPDATER);
@@ -82,6 +94,8 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         }
     }
 
+    /// @notice Step required after IporOracle upgrade from v1 to v2 for supported assets.
+    /// @param assets List of assets.
     function postUpgrade(address[] memory assets) public onlyOwner {
         uint256 assetsLength = assets.length;
 
@@ -118,16 +132,9 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         return (_usdt, _usdtInitialIbtPrice, _usdc, _usdcInitialIbtPrice, _dai, _daiInitialIbtPrice);
     }
 
-    function getIndex(address asset)
-        external
-        view
-        override
-        returns (
-            uint256 indexValue,
-            uint256 ibtPrice,
-            uint256 lastUpdateTimestamp
-        )
-    {
+    function getIndex(
+        address asset
+    ) external view override returns (uint256 indexValue, uint256 ibtPrice, uint256 lastUpdateTimestamp) {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
         require(ipor.lastUpdateTimestamp > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
         return (
@@ -137,13 +144,10 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         );
     }
 
-    function getAccruedIndex(uint256 calculateTimestamp, address asset)
-        external
-        view
-        virtual
-        override
-        returns (IporTypes.AccruedIpor memory accruedIpor)
-    {
+    function getAccruedIndex(
+        uint256 calculateTimestamp,
+        address asset
+    ) external view virtual override returns (IporTypes.AccruedIpor memory accruedIpor) {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
         require(ipor.lastUpdateTimestamp > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
 
@@ -153,12 +157,10 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         );
     }
 
-    function calculateAccruedIbtPrice(address asset, uint256 calculateTimestamp)
-        external
-        view
-        override
-        returns (uint256)
-    {
+    function calculateAccruedIbtPrice(
+        address asset,
+        uint256 calculateTimestamp
+    ) external view override returns (uint256) {
         return _calculateAccruedIbtPrice(asset, _indexes[asset], calculateTimestamp);
     }
 
@@ -166,12 +168,10 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _updateIndex(asset, indexValue, block.timestamp);
     }
 
-    function updateIndexes(address[] memory assets, uint256[] memory indexValues)
-        external
-        override
-        onlyUpdater
-        whenNotPaused
-    {
+    function updateIndexes(
+        address[] memory assets,
+        uint256[] memory indexValues
+    ) external override onlyUpdater whenNotPaused {
         _updateIndexes(assets, indexValues, block.timestamp);
     }
 
@@ -207,7 +207,7 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         return _indexes[asset].lastUpdateTimestamp > 0;
     }
 
-    function pause() external override onlyOwner {
+    function pause() external override onlyPauseGuardian {
         _pause();
     }
 
@@ -215,11 +215,23 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _unpause();
     }
 
-    function _updateIndexes(
-        address[] memory assets,
-        uint256[] memory indexValues,
-        uint256 updateTimestamp
-    ) internal {
+    function isPauseGuardian(address account) external view override returns (bool) {
+        return PauseManager.isPauseGuardian(account);
+    }
+
+    function addPauseGuardian(address guardian) external override onlyOwner {
+        PauseManager.addPauseGuardian(guardian);
+    }
+
+    function removePauseGuardian(address guardian) external override onlyOwner {
+        PauseManager.removePauseGuardian(guardian);
+    }
+
+    function getImplementation() external view override returns (address) {
+        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
+    }
+
+    function _updateIndexes(address[] memory assets, uint256[] memory indexValues, uint256 updateTimestamp) internal {
         uint256 assetsLength = assets.length;
         require(assetsLength == indexValues.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
 
@@ -231,18 +243,7 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         }
     }
 
-    function _updateIndex(
-        address asset,
-        uint256 indexValue,
-        uint256 updateTimestamp
-    )
-        internal
-        returns (
-            uint256 newIndexValue,
-            uint256 newIbtPrice,
-            uint256 lastUpdateTimestamp
-        )
-    {
+    function _updateIndex(address asset, uint256 indexValue, uint256 updateTimestamp) internal {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
 
         require(ipor.lastUpdateTimestamp > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
@@ -259,10 +260,6 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             indexValue.toUint64(),
             updateTimestamp.toUint32()
         );
-
-        newIndexValue = indexValue;
-        newIbtPrice = IporMath.division(newQuasiIbtPrice, Constants.YEAR_IN_SECONDS);
-        lastUpdateTimestamp = updateTimestamp;
 
         emit IporIndexUpdate(asset, indexValue, newQuasiIbtPrice, updateTimestamp);
     }

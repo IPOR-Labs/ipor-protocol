@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "../../../contracts/mocks/MockIporWeighted.sol";
+import "../../mocks/MockIporWeighted.sol";
 contract IporWeightedBuilder is Test {
     struct BuilderData {
         address iporOracle;

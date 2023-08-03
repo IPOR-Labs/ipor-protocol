@@ -3,23 +3,25 @@ pragma solidity 0.8.20;
 
 library AssetManagementErrors {
     // 500-599-assetManagement
+
+    /// @notice asset mismatch
     string public constant ASSET_MISMATCH = "IPOR_500";
 
-    // only assetManagement can have access to function
+    // @notice caller is not asset management contract
     string public constant CALLER_NOT_ASSET_MANAGEMENT = "IPOR_501";
 
+    /// @notice treasury address is incorrect
     string public constant INCORRECT_TREASURY_ADDRESS = "IPOR_502";
 
-    //@notice amount should be > 0
+    /// @notice iv token value which should be minted is too low
     string public constant IV_TOKEN_MINT_AMOUNT_TOO_LOW = "IPOR_503";
 
-    //@notice amount should be > 0
+    /// @notice iv token value which should be burned is too low
     string public constant IV_TOKEN_BURN_AMOUNT_TOO_LOW = "IPOR_504";
 
-    // only Treasury Manager can access the function
+    /// @notice only Treasury Manager can access the function
     string public constant CALLER_NOT_TREASURY_MANAGER = "IPOR_505";
 
-    // problem with redeem shared token
+    /// @notice  problem with redeem shared token
     string public constant SHARED_TOKEN_REDEEM_ERROR = "IPOR_506";
-
 }

@@ -2,6 +2,7 @@
 pragma solidity 0.8.20;
 
 import "../../../interfaces/types/IporTypes.sol";
+import "../../../interfaces/types/AmmTypes.sol";
 
 /// @notice The types used in the AmmTreasury's interface.
 /// @dev All values, where applicable, are represented in 18 decimals.
@@ -30,23 +31,57 @@ library AmmInternalTypes {
         IporTypes.AccruedIpor accruedIpor;
     }
 
-    struct OpenSwapRiskIndicators {
-        uint256 maxCollateralRatio;
-        uint256 maxCollateralRatioPerLeg;
-        uint256 maxLeveragePerLeg;
-        int256 spread;
-        uint256 fixedRateCap;
+    /// @notice Risk indicators context data
+    struct RiskIndicatorsContext {
+        /// @notice Asset address for which the risk indicators are calculated.
+        address asset;
+        /// @notice Ipor Risk Management Oracle address.
+        address iporRiskManagementOracle;
+        /// @notice Tenor of the swap.
+        IporTypes.SwapTenor tenor;
+        /// @notice AMM Liquidity Pool balance.
+        uint256 liquidityPoolBalance;
+        /// @notice AMM Min Leverage allowed for a swap.
+        uint256 minLeverage;
     }
 
+    /// @notice Spread context data
+    struct SpreadContext {
+        /// @notice Asset address for which the spread is calculated.
+        address asset;
+        /// @notice Signature of spread method used to calculate spread.
+        bytes4 spreadFunctionSig;
+        /// @notice Tenor of the swap.
+        IporTypes.SwapTenor tenor;
+        /// @notice Swap's notional
+        uint256 notional;
+        /// @notice Minimum leverage allowed for a swap.
+        uint256 minLeverage;
+        /// @notice Ipor Index Value
+        uint256 indexValue;
+        /// @notice Risk Indicators data for a opened swap used to calculate spread.
+        AmmTypes.OpenSwapRiskIndicators riskIndicators;
+        /// @notice AMM Balance for a opened swap used to calculate spread.
+        IporTypes.AmmBalancesForOpenSwapMemory balance;
+    }
+
+    /// @notice Open swap item - element of linked list of swaps
     struct OpenSwapItem {
+        /// @notice Swap ID
         uint32 swapId;
+        /// @notcie Next swap ID in linked list
         uint32 nextSwapId;
+        /// @notice Previous swap ID in linked list
         uint32 previousSwapId;
+        /// @notice Timestamp of the swap opening
         uint32 openSwapTimestamp;
     }
 
+    /// @notice Open swap list structure
     struct OpenSwapList {
+        /// @notice Head swap ID
         uint32 headSwapId;
+        /// @notice Swaps mapping, where key is swap ID
         mapping(uint32 => OpenSwapItem) swaps;
     }
 }

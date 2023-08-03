@@ -1,10 +1,9 @@
 //  SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "contracts/oracles/IporRiskManagementOracle.sol";
+import "../../../contracts/oracles/IporRiskManagementOracle.sol";
 import "../TestConstants.sol";
 import "forge-std/Test.sol";
-import "./BuilderUtils.sol";
 import "../../../contracts/interfaces/types/IporRiskManagementOracleTypes.sol";
 
 contract IporRiskManagementOracleBuilder is Test {

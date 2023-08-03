@@ -2,19 +2,18 @@
 pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
-import "../TestCommons.sol";
+import "test/TestCommons.sol";
 import "../utils/TestConstants.sol";
 import {IporOracleUtils} from "../utils/IporOracleUtils.sol";
 import {AmmTreasuryUtils} from "../utils/AmmTreasuryUtils.sol";
-import {AmmStorageUtils} from "../utils/AmmStorageUtils.sol";
 import {JosephUtils} from "../utils/JosephUtils.sol";
 import {AssetManagementUtils} from "../utils/AssetManagementUtils.sol";
 import {IporRiskManagementOracleUtils} from "../utils/IporRiskManagementOracleUtils.sol";
 import "contracts/amm/AmmStorage.sol";
 import "contracts/libraries/Constants.sol";
-import "contracts/mocks/tokens/MockTestnetToken.sol";
-import "contracts/mocks/spread/MockSpreadModel.sol";
-import "contracts/mocks/assetManagement/MockCaseBaseAssetManagement.sol";
+import "test/mocks/tokens/MockTestnetToken.sol";
+import "test/mocks/spread/MockSpreadModel.sol";
+import "test/mocks/assetManagement/MockCaseBaseAssetManagement.sol";
 import "contracts/interfaces/IIporRiskManagementOracle.sol";
 import "contracts/itf/ItfIporOracle.sol";
 import "contracts/itf/ItfAmmTreasury.sol";
@@ -22,7 +21,7 @@ import "contracts/itf/ItfAssetManagement.sol";
 import "contracts/itf/ItfJoseph.sol";
 import "contracts/itf/ItfIporOracle.sol";
 import "contracts/tokens/IpToken.sol";
-import "contracts/mocks/MockIporWeighted.sol";
+import "test/mocks/MockIporWeighted.sol";
 
 contract DataUtils is
     Test,
@@ -30,7 +29,6 @@ contract DataUtils is
     IporOracleUtils,
     IporRiskManagementOracleUtils,
     AmmTreasuryUtils,
-    AmmStorageUtils,
     JosephUtils,
     AssetManagementUtils
 {

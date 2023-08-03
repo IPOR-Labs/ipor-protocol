@@ -1,193 +1,10 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 
-import "contracts/interfaces/types/IporTypes.sol";
+import "./types/IporTypes.sol";
 import "./types/IporRiskManagementOracleTypes.sol";
 
 interface IIporRiskManagementOracle {
-    /// @notice Returns current version of IIporRiskManagementOracle's
-    /// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
-    /// @return current IIporRiskManagementOracle version
-    function getVersion() external pure returns (uint256);
-
-    /// @notice Gets risk indicators and base spread for a given asset, swap direction and tenor. Rates represented in 6 decimals. 1 = 0.0001%
-    /// @param asset underlying / stablecoin address supported in Ipor Protocol
-    /// @param direction swap direction, 0 = pay fixed, 1 = receive fixed
-    /// @param tenor swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
-    /// @return maxNotionalPerLeg maximum notional value for given leg
-    /// @return maxCollateralRatioPerLeg maximum collateral ratio for given leg
-    /// @return maxCollateralRatio maximum collateral ratio for both legs
-    /// @return spread spread for given direction and tenor
-    function getOpenSwapParameters(
-        address asset,
-        uint256 direction,
-        IporTypes.SwapTenor tenor
-    )
-        external
-        view
-        returns (
-            uint256 maxNotionalPerLeg,
-            uint256 maxCollateralRatioPerLeg,
-            uint256 maxCollateralRatio,
-            int256 spread,
-            uint256 fixedRateCap
-        );
-
-    /// @notice Gets risk indicators for a given asset. Amounts and rates represented in 18 decimals.
-    /// @param asset underlying / stablecoin address supported in Ipor Protocol
-    /// @return maxNotionalPayFixed maximum notional value for pay fixed leg
-    /// @return maxNotionalReceiveFixed maximum notional value for receive fixed leg
-    /// @return maxCollateralRatioPayFixed maximum collateral ratio for pay fixed leg
-    /// @return maxCollateralRatioReceiveFixed maximum collateral ratio for receive fixed leg
-    /// @return maxCollateralRatio maximum collateral ratio for both legs
-    /// @return lastUpdateTimestamp Last risk indicators update done by off-chain service
-    function getRiskIndicators(address asset)
-        external
-        view
-        returns (
-            uint256 maxNotionalPayFixed,
-            uint256 maxNotionalReceiveFixed,
-            uint256 maxCollateralRatioPayFixed,
-            uint256 maxCollateralRatioReceiveFixed,
-            uint256 maxCollateralRatio,
-            uint256 lastUpdateTimestamp
-        );
-
-    /// @notice Gets base spreads for a given asset. Rates represented in 18 decimals.
-    /// @param asset underlying / stablecoin address supported in Ipor Protocol
-    /// @return lastUpdateTimestamp Last base spreads update done by off-chain service
-    /// @return spread28dPayFixed spread for 28 days pay fixed swap
-    /// @return spread28dReceiveFixed spread for 28 days receive fixed swap
-    /// @return spread60dPayFixed spread for 60 days pay fixed swap
-    /// @return spread60dReceiveFixed spread for 60 days receive fixed swap
-    /// @return spread90dPayFixed spread for 90 days pay fixed swap
-    /// @return spread90dReceiveFixed spread for 90 days receive fixed swap
-    function getBaseSpreads(address asset)
-        external
-        view
-        returns (
-            uint256 lastUpdateTimestamp,
-            int256 spread28dPayFixed,
-            int256 spread28dReceiveFixed,
-            int256 spread60dPayFixed,
-            int256 spread60dReceiveFixed,
-            int256 spread90dPayFixed,
-            int256 spread90dReceiveFixed
-        );
-
-    /// @notice Gets fixed rate cap for a given asset. Rates represented in 18 decimals.
-    /// @param asset underlying / stablecoin address supported in Ipor Protocol
-    /// @return lastUpdateTimestamp Last base spreads update done by off-chain service
-    /// @return fixedRateCap28dPayFixed fixed rate cap for 28 days pay fixed swap
-    /// @return fixedRateCap28dReceiveFixed fixed rate cap for 28 days receive fixed swap
-    /// @return fixedRateCap60dPayFixed fixed rate cap for 60 days pay fixed swap
-    /// @return fixedRateCap60dReceiveFixed fixed rate cap for 60 days receive fixed swap
-    /// @return fixedRateCap90dPayFixed fixed rate cap for 90 days pay fixed swap
-    /// @return fixedRateCap90dReceiveFixed fixed rate cap for 90 days receive fixed swap
-    function getFixedRateCaps(address asset)
-        external
-        view
-        returns (
-            uint256 lastUpdateTimestamp,
-            uint256 fixedRateCap28dPayFixed,
-            uint256 fixedRateCap28dReceiveFixed,
-            uint256 fixedRateCap60dPayFixed,
-            uint256 fixedRateCap60dReceiveFixed,
-            uint256 fixedRateCap90dPayFixed,
-            uint256 fixedRateCap90dReceiveFixed
-        );
-
-    /// @notice Updates risk indicators for a given asset. Values and rates are not represented in 18 decimals.
-    /// @dev Emmits {RiskIndicatorsUpdated} event.
-    /// @param asset underlying / stablecoin address supported by IPOR Protocol
-    /// @param maxNotionalPayFixed maximum notional value for pay fixed leg, 1 = 10k
-    /// @param maxNotionalReceiveFixed maximum notional value for receive fixed leg, 1 = 10k
-    /// @param maxCollateralRatioPayFixed maximum collateral ratio for pay fixed leg, 1 = 0.01%
-    /// @param maxCollateralRatioReceiveFixed maximum collateral ratio for receive fixed leg, 1 = 0.01%
-    /// @param maxCollateralRatio maximum collateral ratio for both legs, 1 = 0.01%
-    function updateRiskIndicators(
-        address asset,
-        uint256 maxNotionalPayFixed,
-        uint256 maxNotionalReceiveFixed,
-        uint256 maxCollateralRatioPayFixed,
-        uint256 maxCollateralRatioReceiveFixed,
-        uint256 maxCollateralRatio
-    ) external;
-
-    /// @notice Updates risk indicators for a multiple assets. Values and rates are not represented in 18 decimals.
-    /// @dev Emmits {RiskIndicatorsUpdated} event.
-    /// @param asset underlying / stablecoin addresses supported by IPOR Protocol
-    /// @param maxNotionalPayFixed maximum notional value for pay fixed leg, 1 = 10k
-    /// @param maxNotionalReceiveFixed maximum notional value for receive fixed leg, 1 = 10k
-    /// @param maxCollateralRatioPayFixed maximum collateral ratio for pay fixed leg, 1 = 0.01%
-    /// @param maxCollateralRatioReceiveFixed maximum collateral ratio for receive fixed leg, 1 = 0.01%
-    /// @param maxCollateralRatio maximum collateral ratio for both legs, 1 = 0.01%
-    function updateRiskIndicators(
-        address[] memory asset,
-        uint256[] memory maxNotionalPayFixed,
-        uint256[] memory maxNotionalReceiveFixed,
-        uint256[] memory maxCollateralRatioPayFixed,
-        uint256[] memory maxCollateralRatioReceiveFixed,
-        uint256[] memory maxCollateralRatio
-    ) external;
-
-    /// @notice Updates base spreads and fixed rate caps for a given asset. Rates are not represented in 18 decimals
-    /// @dev Emmits {BaseSpreadsUpdated} event.
-    /// @param asset underlying / stablecoin address supported by IPOR Protocol
-    /// @param baseSpreadsAndFixedRateCaps base spreads and fixed rate caps for a given asset
-    function updateBaseSpreadsAndFixedRateCaps(
-        address asset,
-        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps calldata baseSpreadsAndFixedRateCaps
-    ) external;
-
-    /// @notice Updates base spreads and fixed rate caps for a multiple assets.
-    /// @dev Emmits {BaseSpreadsUpdated} event.
-    /// @param asset underlying / stablecoin addresses supported by IPOR Protocol
-    /// @param baseSpreadsAndFixedRateCaps base spread and fixed rate cap for each maturities and both legs
-    function updateBaseSpreadsAndFixedRateCaps(
-        address[] memory asset,
-        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[] calldata baseSpreadsAndFixedRateCaps
-    ) external;
-
-    /// @notice Adds asset which IPOR Protocol will support. Function available only for Owner.
-    /// @param asset underlying / stablecoin address which will be supported by IPOR Protocol.
-    /// @param riskIndicators risk indicators
-    /// @param baseSpreadsAndFixedRateCaps base spread and fixed rate cap for each maturities and both legs
-    function addAsset(
-        address asset,
-        IporRiskManagementOracleTypes.RiskIndicators calldata riskIndicators,
-        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps calldata baseSpreadsAndFixedRateCaps
-    ) external;
-
-    /// @notice Removes asset which IPOR Protocol will not support. Function available only for Owner.
-    /// @param asset  underlying / stablecoin address which current is supported by IPOR Protocol.
-    function removeAsset(address asset) external;
-
-    /// @notice Checks if given asset is supported by IPOR Protocol.
-    /// @param asset underlying / stablecoin address
-    function isAssetSupported(address asset) external view returns (bool);
-
-    /// @notice Adds new Updater. Updater has right to update indicators. Function available only for Owner.
-    /// @param newUpdater new updater address
-    function addUpdater(address newUpdater) external;
-
-    /// @notice Removes Updater. Function available only for Owner.
-    /// @param updater updater address
-    function removeUpdater(address updater) external;
-
-    /// @notice Checks if given account is an Updater.
-    /// @param account account for checking
-    /// @return 0 if account is not updater, 1 if account is updater.
-    function isUpdater(address account) external view returns (uint256);
-
-    /// @notice Pauses current smart contract, it can be executed only by the Owner
-    /// @dev Emits {Paused} event from IporOracle.
-    function pause() external;
-
-    /// @notice Unpauses current smart contract, it can be executed only by the Owner
-    /// @dev Emits {Unpaused} event from IporOracle.
-    function unpause() external;
-
     /// @notice event emitted when risk indicators are updated. Values and rates are not represented in 18 decimals.
     /// @param asset underlying / stablecoin address supported by IPOR Protocol
     /// @param maxNotionalPayFixed maximum notional value for pay fixed leg, 1 = 10k
@@ -255,4 +72,181 @@ interface IIporRiskManagementOracle {
     /// @notice event emitted when updater is removed
     /// @param updater address
     event IporRiskManagementOracleUpdaterRemoved(address indexed updater);
+
+    /// @notice Returns current version of IIporRiskManagementOracle's
+    /// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
+    /// @return current IIporRiskManagementOracle version
+    function getVersion() external pure returns (uint256);
+
+    /// @notice Gets risk indicators and base spread for a given asset, swap direction and tenor. Rates represented in 6 decimals. 1 = 0.0001%
+    /// @param asset underlying / stablecoin address supported in Ipor Protocol
+    /// @param direction swap direction, 0 = pay fixed, 1 = receive fixed
+    /// @param tenor swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
+    /// @return maxNotionalPerLeg maximum notional value for given leg
+    /// @return maxCollateralRatioPerLeg maximum collateral ratio for given leg
+    /// @return maxCollateralRatio maximum collateral ratio for both legs
+    /// @return baseSpreadPerLeg spread for given direction and tenor
+    /// @return fixedRateCapPerLeg fixed rate cap for given direction and tenor
+    function getOpenSwapParameters(
+        address asset,
+        uint256 direction,
+        IporTypes.SwapTenor tenor
+    )
+        external
+        view
+        returns (
+            uint256 maxNotionalPerLeg,
+            uint256 maxCollateralRatioPerLeg,
+            uint256 maxCollateralRatio,
+            int256 baseSpreadPerLeg,
+            uint256 fixedRateCapPerLeg
+        );
+
+    /// @notice Gets risk indicators for a given asset. Amounts and rates represented in 18 decimals.
+    /// @param asset underlying / stablecoin address supported in Ipor Protocol
+    /// @return maxNotionalPayFixed maximum notional value for pay fixed leg
+    /// @return maxNotionalReceiveFixed maximum notional value for receive fixed leg
+    /// @return maxCollateralRatioPayFixed maximum collateral ratio for pay fixed leg
+    /// @return maxCollateralRatioReceiveFixed maximum collateral ratio for receive fixed leg
+    /// @return maxCollateralRatio maximum collateral ratio for both legs
+    /// @return lastUpdateTimestamp Last risk indicators update done by off-chain service
+    function getRiskIndicators(
+        address asset
+    )
+        external
+        view
+        returns (
+            uint256 maxNotionalPayFixed,
+            uint256 maxNotionalReceiveFixed,
+            uint256 maxCollateralRatioPayFixed,
+            uint256 maxCollateralRatioReceiveFixed,
+            uint256 maxCollateralRatio,
+            uint256 lastUpdateTimestamp
+        );
+
+    /// @notice Gets base spreads for a given asset. Rates represented in 18 decimals.
+    /// @param asset underlying / stablecoin address supported in Ipor Protocol
+    /// @return lastUpdateTimestamp Last base spreads update done by off-chain service
+    /// @return spread28dPayFixed spread for 28 days pay fixed swap
+    /// @return spread28dReceiveFixed spread for 28 days receive fixed swap
+    /// @return spread60dPayFixed spread for 60 days pay fixed swap
+    /// @return spread60dReceiveFixed spread for 60 days receive fixed swap
+    /// @return spread90dPayFixed spread for 90 days pay fixed swap
+    /// @return spread90dReceiveFixed spread for 90 days receive fixed swap
+    function getBaseSpreads(
+        address asset
+    )
+        external
+        view
+        returns (
+            uint256 lastUpdateTimestamp,
+            int256 spread28dPayFixed,
+            int256 spread28dReceiveFixed,
+            int256 spread60dPayFixed,
+            int256 spread60dReceiveFixed,
+            int256 spread90dPayFixed,
+            int256 spread90dReceiveFixed
+        );
+
+    /// @notice Gets fixed rate cap for a given asset. Rates represented in 18 decimals.
+    /// @param asset underlying / stablecoin address supported in Ipor Protocol
+    /// @return lastUpdateTimestamp Last base spreads update done by off-chain service
+    /// @return fixedRateCap28dPayFixed fixed rate cap for 28 days pay fixed swap
+    /// @return fixedRateCap28dReceiveFixed fixed rate cap for 28 days receive fixed swap
+    /// @return fixedRateCap60dPayFixed fixed rate cap for 60 days pay fixed swap
+    /// @return fixedRateCap60dReceiveFixed fixed rate cap for 60 days receive fixed swap
+    /// @return fixedRateCap90dPayFixed fixed rate cap for 90 days pay fixed swap
+    /// @return fixedRateCap90dReceiveFixed fixed rate cap for 90 days receive fixed swap
+    function getFixedRateCaps(
+        address asset
+    )
+        external
+        view
+        returns (
+            uint256 lastUpdateTimestamp,
+            uint256 fixedRateCap28dPayFixed,
+            uint256 fixedRateCap28dReceiveFixed,
+            uint256 fixedRateCap60dPayFixed,
+            uint256 fixedRateCap60dReceiveFixed,
+            uint256 fixedRateCap90dPayFixed,
+            uint256 fixedRateCap90dReceiveFixed
+        );
+
+    /// @notice Checks if given asset is supported by IPOR Protocol.
+    /// @param asset underlying / stablecoin address
+    function isAssetSupported(address asset) external view returns (bool);
+
+    /// @notice Checks if given account is an Updater.
+    /// @param account account for checking
+    /// @return 0 if account is not updater, 1 if account is updater.
+    function isUpdater(address account) external view returns (uint256);
+
+    /// @notice Updates risk indicators for a given asset. Values and rates are not represented in 18 decimals.
+    /// @dev Emmits {RiskIndicatorsUpdated} event.
+    /// @param asset underlying / stablecoin address supported by IPOR Protocol
+    /// @param maxNotionalPayFixed maximum notional value for pay fixed leg, 1 = 10k
+    /// @param maxNotionalReceiveFixed maximum notional value for receive fixed leg, 1 = 10k
+    /// @param maxCollateralRatioPayFixed maximum collateral ratio for pay fixed leg, 1 = 0.01%
+    /// @param maxCollateralRatioReceiveFixed maximum collateral ratio for receive fixed leg, 1 = 0.01%
+    /// @param maxCollateralRatio maximum collateral ratio for both legs, 1 = 0.01%
+    function updateRiskIndicators(
+        address asset,
+        uint256 maxNotionalPayFixed,
+        uint256 maxNotionalReceiveFixed,
+        uint256 maxCollateralRatioPayFixed,
+        uint256 maxCollateralRatioReceiveFixed,
+        uint256 maxCollateralRatio
+    ) external;
+
+    /// @notice Updates base spreads and fixed rate caps for a given asset. Rates are not represented in 18 decimals
+    /// @dev Emmits {BaseSpreadsUpdated} event.
+    /// @param asset underlying / stablecoin address supported by IPOR Protocol
+    /// @param baseSpreadsAndFixedRateCaps base spreads and fixed rate caps for a given asset
+    function updateBaseSpreadsAndFixedRateCaps(
+        address asset,
+        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps calldata baseSpreadsAndFixedRateCaps
+    ) external;
+
+    /// @notice Adds asset which IPOR Protocol will support. Function available only for Owner.
+    /// @param asset underlying / stablecoin address which will be supported by IPOR Protocol.
+    /// @param riskIndicators risk indicators
+    /// @param baseSpreadsAndFixedRateCaps base spread and fixed rate cap for each maturities and both legs
+    function addAsset(
+        address asset,
+        IporRiskManagementOracleTypes.RiskIndicators calldata riskIndicators,
+        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps calldata baseSpreadsAndFixedRateCaps
+    ) external;
+
+    /// @notice Removes asset which IPOR Protocol will not support. Function available only for Owner.
+    /// @param asset  underlying / stablecoin address which current is supported by IPOR Protocol.
+    function removeAsset(address asset) external;
+
+    /// @notice Adds new Updater. Updater has right to update indicators. Function available only for Owner.
+    /// @param newUpdater new updater address
+    function addUpdater(address newUpdater) external;
+
+    /// @notice Removes Updater. Function available only for Owner.
+    /// @param updater updater address
+    function removeUpdater(address updater) external;
+
+    /// @notice Pauses current smart contract, it can be executed only by the Pause Guardian
+    /// @dev Emits {Paused} event from IporOracle.
+    function pause() external;
+
+    /// @notice Unpauses current smart contract, it can be executed only by the Owner
+    /// @dev Emits {Unpaused} event from IporOracle.
+    function unpause() external;
+
+    /// @notice Checks if given account is a pause guardian.
+    /// @param account The address of the account to be checked.
+    /// @return true if account is a pause guardian.
+    function isPauseGuardian(address account) external view returns (bool);
+
+    /// @notice Adds a pause guardian to the list of guardians. Function available only for the Owner.
+    /// @param guardian The address of the pause guardian to be added.
+    function addPauseGuardian(address guardian) external;
+
+    /// @notice Removes a pause guardian from the list of guardians. Function available only for the Owner.
+    /// @param guardian The address of the pause guardian to be removed.
+    function removePauseGuardian(address guardian) external;
 }

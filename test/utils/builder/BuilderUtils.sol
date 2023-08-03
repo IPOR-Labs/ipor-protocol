@@ -1,17 +1,18 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
-import "../../../contracts/mocks/tokens/MockTestnetToken.sol";
 import "../../../contracts/tokens/IpToken.sol";
 import "../../../contracts/tokens/IvToken.sol";
-import "../../../contracts/itf/ItfIporOracle.sol";
+import "../../../contracts/oracles/IporOracle.sol";
 import "../../../contracts/oracles/IporRiskManagementOracle.sol";
-import "../../../contracts/mocks/MockIporWeighted.sol";
+import "../../mocks/MockIporWeighted.sol";
 import "../../../contracts/amm/AmmStorage.sol";
 import "../../../contracts/amm/AmmTreasury.sol";
 import "../../../contracts/amm/spread/SpreadRouter.sol";
-import "../../../contracts/itf/ItfAssetManagement.sol";
+import "../../../contracts/vault/AssetManagement.sol";
 import "../../../contracts/router/IporProtocolRouter.sol";
-import "../../mocks/MockSpreadXDays.sol";
+import "../../../contracts/interfaces/IAmmOpenSwapLens.sol";
+import "../../../contracts/interfaces/IAmmCloseSwapLens.sol";
+import "../../mocks/tokens/MockTestnetToken.sol";
 
 contract BuilderUtils {
     struct IporProtocol {
@@ -19,6 +20,8 @@ contract BuilderUtils {
         IAmmSwapsLens ammSwapsLens;
         IAmmPoolsService ammPoolsService;
         IAmmPoolsLens ammPoolsLens;
+        IAmmOpenSwapLens ammOpenSwapLens;
+        IAmmCloseSwapLens ammCloseSwapLens;
         IAmmOpenSwapService ammOpenSwapService;
         IAmmCloseSwapService ammCloseSwapService;
         IAmmGovernanceService ammGovernanceService;
@@ -26,12 +29,12 @@ contract BuilderUtils {
         MockTestnetToken asset;
         IpToken ipToken;
         IvToken ivToken;
-        ItfIporOracle iporOracle;
+        IporOracle iporOracle;
         IporRiskManagementOracle iporRiskManagementOracle;
         MockIporWeighted iporWeighted;
         AmmStorage ammStorage;
         SpreadRouter spreadRouter;
-        ItfAssetManagement assetManagement;
+        AssetManagement assetManagement;
         AmmTreasury ammTreasury;
         ILiquidityMiningLens liquidityMiningLens;
         IPowerTokenLens powerTokenLens;
@@ -54,7 +57,7 @@ contract BuilderUtils {
         uint256 delegatedPowerTokensToLiquidityMiningBalanceOf;
         uint256 getUnstakeWithoutCooldownFee;
         uint256 unstakeWithoutCooldownFee;
-        PowerTokenTypes.PwTokenCooldown activeCooldown;
+        IPowerTokenLens.PwTokenCooldown activeCooldown;
         uint256 coolDownInSeconds;
         uint256 exchangeRate;
         uint256 totalSupplyBase;
@@ -162,7 +165,10 @@ contract BuilderUtils {
         CASE9,
         /// @dev Pay Fixed Quote Value 51%
         /// @dev Receive Fixed Quote Value 0%
-        CASE10
+        CASE10,
+        /// @dev Pay Fixed Quote Value 1%
+        /// @dev Receive Fixed Quote Value 0%
+        CASE11
     }
 
     enum Spread60DaysTestCase {

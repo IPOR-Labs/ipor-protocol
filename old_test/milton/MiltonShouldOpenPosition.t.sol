@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "../TestCommons.sol";
+import "test/TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
 import "contracts/amm/AmmStorage.sol";
-import "contracts/mocks/spread/MockSpreadModel.sol";
+import "test/mocks/spread/MockSpreadModel.sol";
 import "contracts/interfaces/types/IporTypes.sol";
 import "contracts/interfaces/types/AmmStorageTypes.sol";
 
@@ -457,7 +457,7 @@ contract AmmTreasuryShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils 
         );
         (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, _iporProtocol.ammTreasury);
         assertEq(TestConstants.ZERO, swaps.length, "Incorrect swaps length");
-        assertEq(actualBalances.actualPayoff, -int256(expectedBalances.expectedPayoffAbs), "Incorrect payoff");
+        assertEq(actualBalances.actualPnlValue, -int256(expectedBalances.expectedPnlValueAbs), "Incorrect PnL");
         assertEq(
             actualBalances.actualSumOfBalances,
             expectedBalances.expectedSumOfBalancesBeforePayout,

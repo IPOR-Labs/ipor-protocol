@@ -1,7 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "../interfaces/types/IporTypes.sol";
+import "../interfaces/types/AmmTypes.sol";
+import "../interfaces/IIpToken.sol";
+import "../interfaces/IAmmTreasury.sol";
+import "../interfaces/IAmmPoolsService.sol";
+import "../interfaces/IAmmStorage.sol";
 import "../libraries/Constants.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/AmmErrors.sol";
@@ -9,15 +14,11 @@ import "../libraries/errors/AmmPoolsErrors.sol";
 import "../libraries/math/IporMath.sol";
 import "../libraries/AssetManagementLogic.sol";
 import "../libraries/AmmLib.sol";
-import "../interfaces/types/IporTypes.sol";
-import "../interfaces/types/AmmTypes.sol";
-import "../interfaces/IIpToken.sol";
-import "../interfaces/IAmmTreasury.sol";
-import "../interfaces/IAmmPoolsService.sol";
-import "../interfaces/IAmmStorage.sol";
 import "../governance/AmmConfigurationManager.sol";
+import "../libraries/IporContractValidator.sol";
 
 contract AmmPoolsService is IAmmPoolsService {
+    using IporContractValidator for address;
     using SafeCast for int256;
     using SafeCast for uint256;
     using SafeCast for uint32;
@@ -59,70 +60,39 @@ contract AmmPoolsService is IAmmPoolsService {
         AmmPoolsServicePoolConfiguration memory daiPoolCfg,
         address iporOracle
     ) {
-        require(usdtPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool asset"));
-        require(usdtPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ipToken"));
-        require(usdtPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammStorage"));
-        require(
-            usdtPoolCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammTreasury")
-        );
-        require(
-            usdtPoolCfg.assetManagement != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool assetManagement")
-        );
-
-        require(usdcPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool asset"));
-        require(usdcPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ipToken"));
-        require(usdcPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammStorage"));
-        require(
-            usdcPoolCfg.ammTreasury != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammTreasury")
-        );
-        require(
-            usdcPoolCfg.assetManagement != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool assetManagement")
-        );
-
-        require(daiPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool asset"));
-        require(daiPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ipToken"));
-        require(daiPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammStorage"));
-        require(daiPoolCfg.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammTreasury"));
-        require(
-            daiPoolCfg.assetManagement != address(0),
-            string.concat(IporErrors.WRONG_ADDRESS, " DAI pool assetManagement")
-        );
-
-        _usdt = usdtPoolCfg.asset;
+        _usdt = usdtPoolCfg.asset.checkAddress();
         _usdtDecimals = usdtPoolCfg.decimals;
-        _usdtIpToken = usdtPoolCfg.ipToken;
-        _usdtAmmStorage = usdtPoolCfg.ammStorage;
-        _usdtAmmTreasury = usdtPoolCfg.ammTreasury;
-        _usdtAssetManagement = usdtPoolCfg.assetManagement;
+        _usdtIpToken = usdtPoolCfg.ipToken.checkAddress();
+        _usdtAmmStorage = usdtPoolCfg.ammStorage.checkAddress();
+        _usdtAmmTreasury = usdtPoolCfg.ammTreasury.checkAddress();
+        _usdtAssetManagement = usdtPoolCfg.assetManagement.checkAddress();
         _usdtRedeemFeeRate = usdtPoolCfg.redeemFeeRate;
         _usdtRedeemLpMaxCollateralRatio = usdtPoolCfg.redeemLpMaxCollateralRatio;
 
-        _usdc = usdcPoolCfg.asset;
+        _usdc = usdcPoolCfg.asset.checkAddress();
         _usdcDecimals = usdcPoolCfg.decimals;
-        _usdcIpToken = usdcPoolCfg.ipToken;
-        _usdcAmmStorage = usdcPoolCfg.ammStorage;
-        _usdcAmmTreasury = usdcPoolCfg.ammTreasury;
-        _usdcAssetManagement = usdcPoolCfg.assetManagement;
+        _usdcIpToken = usdcPoolCfg.ipToken.checkAddress();
+        _usdcAmmStorage = usdcPoolCfg.ammStorage.checkAddress();
+        _usdcAmmTreasury = usdcPoolCfg.ammTreasury.checkAddress();
+        _usdcAssetManagement = usdcPoolCfg.assetManagement.checkAddress();
         _usdcRedeemFeeRate = usdcPoolCfg.redeemFeeRate;
         _usdcRedeemLpMaxCollateralRatio = usdcPoolCfg.redeemLpMaxCollateralRatio;
 
-        _dai = daiPoolCfg.asset;
+        _dai = daiPoolCfg.asset.checkAddress();
         _daiDecimals = daiPoolCfg.decimals;
-        _daiIpToken = daiPoolCfg.ipToken;
-        _daiAmmStorage = daiPoolCfg.ammStorage;
-        _daiAmmTreasury = daiPoolCfg.ammTreasury;
-        _daiAssetManagement = daiPoolCfg.assetManagement;
+        _daiIpToken = daiPoolCfg.ipToken.checkAddress();
+        _daiAmmStorage = daiPoolCfg.ammStorage.checkAddress();
+        _daiAmmTreasury = daiPoolCfg.ammTreasury.checkAddress();
+        _daiAssetManagement = daiPoolCfg.assetManagement.checkAddress();
         _daiRedeemFeeRate = daiPoolCfg.redeemFeeRate;
         _daiRedeemLpMaxCollateralRatio = daiPoolCfg.redeemLpMaxCollateralRatio;
 
-        _iporOracle = iporOracle;
+        _iporOracle = iporOracle.checkAddress();
     }
 
-    function getAmmPoolServiceConfiguration(address asset) external view override returns (AmmPoolsServicePoolConfiguration memory) {
+    function getAmmPoolServiceConfiguration(
+        address asset
+    ) external view override returns (AmmPoolsServicePoolConfiguration memory) {
         return _getPoolConfiguration(asset);
     }
 
@@ -192,11 +162,7 @@ contract AmmPoolsService is IAmmPoolsService {
         }
     }
 
-    function _provideLiquidity(
-        address asset,
-        address beneficiary,
-        uint256 assetAmount
-    ) internal {
+    function _provideLiquidity(address asset, address beneficiary, uint256 assetAmount) internal {
         AmmPoolsServicePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
             poolCfg.asset
@@ -218,12 +184,10 @@ contract AmmPoolsService is IAmmPoolsService {
         IAmmStorage(poolCfg.ammStorage).addLiquidityInternal(
             beneficiary,
             wadAssetAmount,
-            uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
-            uint256(ammPoolsParamsCfg.maxLpAccountContribution) * 1e18
+            uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18
         );
 
-    IERC20Upgradeable(poolCfg.asset).safeTransferFrom(msg.sender, poolCfg.ammTreasury, assetAmount);
-
+        IERC20Upgradeable(poolCfg.asset).safeTransferFrom(msg.sender, poolCfg.ammTreasury, assetAmount);
 
         uint256 ipTokenAmount = IporMath.division(wadAssetAmount * 1e18, exchangeRate);
 
@@ -242,11 +206,7 @@ contract AmmPoolsService is IAmmPoolsService {
         );
     }
 
-    function _redeem(
-        address asset,
-        address beneficiary,
-        uint256 ipTokenAmount
-    ) internal {
+    function _redeem(address asset, address beneficiary, uint256 ipTokenAmount) internal {
         AmmPoolsServicePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         require(
@@ -269,11 +229,16 @@ contract AmmPoolsService is IAmmPoolsService {
 
         require(exchangeRate > 0, AmmErrors.LIQUIDITY_POOL_IS_EMPTY);
 
-        AmmTypes.RedeemAmount memory redeemAmount = _calculateRedeemAmount(
+        AmmTypes.RedeemAmount memory redeemAmountStruct = _calculateRedeemAmount(
             poolCfg.decimals,
             ipTokenAmount,
             exchangeRate,
             poolCfg.redeemFeeRate
+        );
+
+        require(
+            redeemAmountStruct.redeemAmount > 0 && redeemAmountStruct.wadRedeemAmount > 0,
+            AmmPoolsErrors.CANNOT_REDEEM_ASSET_AMOUNT_TOO_LOW
         );
 
         uint256 wadAmmTreasuryErc20Balance = IporMath.convertToWad(
@@ -282,36 +247,41 @@ contract AmmPoolsService is IAmmPoolsService {
         );
 
         require(
-            wadAmmTreasuryErc20Balance + balance.vault > redeemAmount.wadRedeemAmount,
+            wadAmmTreasuryErc20Balance + balance.vault > redeemAmountStruct.wadRedeemAmount,
             AmmPoolsErrors.INSUFFICIENT_ERC20_BALANCE
         );
 
-        _rebalanceIfNeededBeforeRedeem(poolCfg, wadAmmTreasuryErc20Balance, balance.vault, redeemAmount.wadRedeemAmount);
+        _rebalanceIfNeededBeforeRedeem(
+            poolCfg,
+            wadAmmTreasuryErc20Balance,
+            balance.vault,
+            redeemAmountStruct.wadRedeemAmount
+        );
 
         require(
             _calculateRedeemedCollateralRatio(
                 balance.liquidityPool,
                 balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
-                redeemAmount.wadRedeemAmount
+                redeemAmountStruct.wadRedeemAmount
             ) <= poolCfg.redeemLpMaxCollateralRatio,
             AmmPoolsErrors.REDEEM_LP_COLLATERAL_RATIO_EXCEEDED
         );
 
         IIpToken(poolCfg.ipToken).burn(msg.sender, ipTokenAmount);
 
-        IAmmStorage(poolCfg.ammStorage).subtractLiquidityInternal(redeemAmount.wadRedeemAmount);
+        IAmmStorage(poolCfg.ammStorage).subtractLiquidityInternal(redeemAmountStruct.wadRedeemAmount);
 
-        IERC20Upgradeable(asset).safeTransferFrom(poolCfg.ammTreasury, beneficiary, redeemAmount.redeemAmount);
+        IERC20Upgradeable(asset).safeTransferFrom(poolCfg.ammTreasury, beneficiary, redeemAmountStruct.redeemAmount);
 
         emit Redeem(
             block.timestamp,
             poolCfg.ammTreasury,
             beneficiary,
             exchangeRate,
-            redeemAmount.wadAssetAmount,
+            redeemAmountStruct.wadAssetAmount,
             ipTokenAmount,
-            redeemAmount.wadRedeemFee,
-            redeemAmount.wadRedeemAmount
+            redeemAmountStruct.wadRedeemFee,
+            redeemAmountStruct.wadRedeemAmount
         );
     }
 
@@ -369,14 +339,14 @@ contract AmmPoolsService is IAmmPoolsService {
     ) internal pure returns (AmmTypes.RedeemAmount memory redeemAmount) {
         uint256 wadAssetAmount = IporMath.division(ipTokenAmount * exchangeRate, 1e18);
         uint256 wadRedeemFee = IporMath.division(wadAssetAmount * cfgRedeemFeeRate, 1e18);
-        uint256 redeemAmount = IporMath.convertWadToAssetDecimals(wadAssetAmount - wadRedeemFee, assetDecimals);
+        uint256 redeemAmountLocal = IporMath.convertWadToAssetDecimals(wadAssetAmount - wadRedeemFee, assetDecimals);
 
         return
             AmmTypes.RedeemAmount({
                 wadAssetAmount: wadAssetAmount,
                 wadRedeemFee: wadRedeemFee,
-                redeemAmount: redeemAmount,
-                wadRedeemAmount: IporMath.convertToWad(redeemAmount, assetDecimals)
+                redeemAmount: redeemAmountLocal,
+                wadRedeemAmount: IporMath.convertToWad(redeemAmountLocal, assetDecimals)
             });
     }
 
@@ -459,7 +429,11 @@ contract AmmPoolsService is IAmmPoolsService {
     ) internal pure returns (uint256) {
         uint256 denominator = totalLiquidityPoolBalance - redeemedAmount;
         if (denominator > 0) {
-            return IporMath.division(totalCollateralBalance * 1e18, totalLiquidityPoolBalance - redeemedAmount);
+            if (totalLiquidityPoolBalance <= redeemedAmount) {
+                return Constants.MAX_VALUE;
+            } else {
+                return IporMath.division(totalCollateralBalance * 1e18, totalLiquidityPoolBalance - redeemedAmount);
+            }
         } else {
             return Constants.MAX_VALUE;
         }
