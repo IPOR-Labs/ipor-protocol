@@ -17,6 +17,7 @@ import "../../../../contracts/interfaces/IStrategyAave.sol";
 import "../../../../contracts/interfaces/IIporOracle.sol";
 import "../../../../contracts/amm/MiltonDai.sol";
 import "../../../../contracts/amm/pool/Joseph.sol";
+import "../../../../contracts/mocks/milton/MockCase0MiltonDai.sol";
 
 contract StanleyAaveDaiTest is Test {
     address public constant dai = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
@@ -48,7 +49,7 @@ contract StanleyAaveDaiTest is Test {
         MiltonStorage miltonStorageDaiObj = new MiltonStorage();
         vm.etch(miltonStorageDai, address(miltonStorageDaiObj).code);
 
-        MiltonDai milton = new MiltonDai();
+        MockCase0MiltonDai milton = new MockCase0MiltonDai();
         vm.etch(miltonDai, address(milton).code);
     }
 
@@ -675,6 +676,7 @@ contract StanleyAaveDaiTest is Test {
 
         _upgradeStanleyDsr();
 
+        vm.warp(block.timestamp + 1 days);
         vm.prank(_user);
         IJosephInternal(josephDai).rebalance();
 
@@ -706,7 +708,7 @@ contract StanleyAaveDaiTest is Test {
 
         IStrategyDsr(strategyDsr).pause();
 
-        vm.warp(block.timestamp + 1 days);
+        vm.warp(block.timestamp + 2 days);
         vm.prank(_user);
         IJosephInternal(josephDai).rebalance();
 
@@ -715,14 +717,20 @@ contract StanleyAaveDaiTest is Test {
         uint256 strategyDsrBalanceBeforeClose = IStrategyDsr(strategyDsr).balanceOf();
         uint256 strategyAaveBalanceBeforeClose = IStrategyDsr(strategyAaveDai).balanceOf();
 
-        vm.warp(block.timestamp + 25 days);
+        vm.warp(block.timestamp + 22 days);
         //when
         vm.prank(_user);
         milton.closeSwapPayFixed(swapId1);
+
+        vm.warp(block.timestamp + 1 days);
         vm.prank(_user);
         milton.closeSwapPayFixed(swapId2);
+
+        vm.warp(block.timestamp + 1 days);
         vm.prank(_user);
         milton.closeSwapReceiveFixed(swapId3);
+
+        vm.warp(block.timestamp + 1 days);
         vm.prank(_user);
         milton.closeSwapReceiveFixed(swapId4);
 
