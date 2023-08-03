@@ -14,6 +14,7 @@ import "../../../../contracts/interfaces/IStanleyInternal.sol";
 import "../../../../contracts/interfaces/IStrategyDsr.sol";
 import "../../../../contracts/interfaces/IStrategyCompound.sol";
 import "../../../../contracts/interfaces/IStrategyAave.sol";
+import "../../../../contracts/interfaces/IIporOracle.sol";
 import "../../../../contracts/amm/MiltonDai.sol";
 import "../../../../contracts/amm/pool/Joseph.sol";
 
@@ -22,6 +23,7 @@ contract StanleyAaveDaiTest is Test {
     address public constant sDai = 0x83F20F44975D03b1b09e64809B757c47f942BEeA;
     address public constant ivDai = 0xf93E0edc76f3147C63F53E7eD245330b96009B26;
     address public constant ipDai = 0x8537b194BFf354c4738E9F3C81d67E3371DaDAf8;
+    address public constant iporOracle = 0x421C69EAa54646294Db30026aeE80D01988a6876;
     address public constant miltonDai = 0xEd7d74AA7eB1f12F83dA36DFaC1de2257b4e7523;
     address public constant miltonStorageDai = 0xb99f2a02c0851efdD417bd6935d2eFcd23c56e61;
     address public constant josephDai = 0x086d4daab14741b195deE65aFF050ba184B65045;
@@ -45,491 +47,495 @@ contract StanleyAaveDaiTest is Test {
 
         MiltonStorage miltonStorageDaiObj = new MiltonStorage();
         vm.etch(miltonStorageDai, address(miltonStorageDaiObj).code);
+
+        MiltonDai milton = new MiltonDai();
+        vm.etch(miltonDai, address(milton).code);
     }
 
-    //
-    //    function testShouldBeTheSameBalanceAfterUpgrade() public {
-    //        //given
-    //        IStanley stanley = IStanley(stanleyDai);
-    //        uint256 balanceBefore = stanley.totalBalance(0xEd7d74AA7eB1f12F83dA36DFaC1de2257b4e7523);
-    //        balanceBefore = IporMath.division(balanceBefore, 1e7);
-    //
-    //        //when
-    //        _upgradeStanleyDsr();
-    //
-    //        //then
-    //        StanleyDsrDai stanleyV2 = StanleyDsrDai(stanleyDai);
-    //        uint256 balanceAfter = stanleyV2.totalBalance(0xEd7d74AA7eB1f12F83dA36DFaC1de2257b4e7523);
-    //        balanceAfter = IporMath.division(balanceAfter, 1e7);
-    //
-    //        assertEq(balanceBefore, balanceAfter);
-    //    }
-    //
-    //    function testShouldBeTheSameAprAfterUpgrade() public {
-    //        //given
-    //        IStanleyInternal stanley = IStanleyInternal(stanleyDai);
-    //
-    //        address strategyAaveBefore = stanley.getStrategyAave();
-    //        address strategyCompoundBefore = stanley.getStrategyCompound();
-    //
-    //        uint256 aprAaveBefore = IStrategy(strategyAaveBefore).getApr();
-    //        uint256 aprCompoundBefore = IStrategy(strategyCompoundBefore).getApr();
-    //
-    //        //when
-    //        _upgradeStanleyDsr();
-    //
-    //        //then
-    //        address strategyAaveAfter = stanley.getStrategyAave();
-    //        address strategyCompoundAfter = stanley.getStrategyCompound();
-    //
-    //        uint256 aprAaveAfter = IStrategyDsr(strategyAaveAfter).getApr();
-    //        uint256 aprCompoundAfter = IStrategyDsr(strategyCompoundAfter).getApr();
-    //        uint256 aprDsrAfter = IStrategyDsr(strategyDsr).getApr();
-    //
-    //        assertEq(aprAaveBefore, aprAaveAfter);
-    //        assertEq(aprCompoundBefore, aprCompoundAfter);
-    //    }
-    //
-    //    function testShouldRebalanceAfterUpgrade() public {
-    //        //given
-    //        IJosephInternal joseph = IJosephInternal(josephDai);
-    //        _upgradeStanleyDsr();
-    //
-    //        uint256 aaveApr = IStrategyDsr(strategyAaveDai).getApr();
-    //        uint256 compoundApr = IStrategyDsr(strategyCompoundDai).getApr();
-    //        uint256 dsrApr = IStrategyDsr(strategyDsr).getApr();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyAaveDai).pause();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyCompoundDai).pause();
-    //
-    //        //when
-    //        vm.prank(0xA21603c271C6f41CdC83E70a0691171eBB7db40A);
-    //        joseph.rebalance();
-    //
-    //        //then
-    //        uint256 balanceDsr = IStrategyDsr(strategyDsr).balanceOf();
-    //        uint256 balanceAave = IStrategyDsr(strategyAaveDai).balanceOf();
-    //        uint256 balanceCompound = IStrategyDsr(strategyCompoundDai).balanceOf();
-    //    }
-    //
-    //    function testShouldCalculateTheSameExchangeRateAfterUpgrade() public {
-    //        //given
-    //        IStanley stanley = IStanley(stanleyDai);
-    //        uint256 exchangeRateBefore = stanley.calculateExchangeRate();
-    //
-    //        //when
-    //        _upgradeStanleyDsr();
-    //
-    //        //then
-    //        uint256 exchangeRateAfter = stanley.calculateExchangeRate();
-    //        assertEq(exchangeRateBefore, exchangeRateAfter);
-    //    }
-    //
-    //    function testShouldCalculateExchangeRateAfterUpgradeAndProvideLiquidityWithRebalance() public {
-    //        //given
-    //        IStanley stanley = IStanley(stanleyDai);
-    //        uint256 exchangeRateBefore = stanley.calculateExchangeRate();
-    //
-    //        _upgradeStanleyDsr();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyAaveDai).pause();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyCompoundDai).pause();
-    //
-    //        deal(address(dai), _user, 1_000_000e18);
-    //
-    //        IJoseph joseph = IJoseph(josephDai);
-    //
-    //        vm.startPrank(_user);
-    //        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
-    //        joseph.provideLiquidity(50_000 * 1e18);
-    //        vm.stopPrank();
-    //
-    //        //then
-    //        uint256 balanceDsr = IStrategyDsr(strategyDsr).balanceOf();
-    //        uint256 balanceAave = IStrategyDsr(strategyAaveDai).balanceOf();
-    //        uint256 balanceCompound = IStrategyDsr(strategyCompoundDai).balanceOf();
-    //
-    //        uint256 exchangeRateAfter = stanley.calculateExchangeRate();
-    //        assertEq(exchangeRateBefore, exchangeRateAfter);
-    //    }
-    //
-    //    function testShouldProvideAndRedeemFromDsrStrategy() public {
-    //        //given
-    //        IStanley stanley = IStanley(stanleyDai);
-    //
-    //        _upgradeStanleyDsr();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyAaveDai).pause();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyCompoundDai).pause();
-    //
-    //        deal(address(dai), _user, 1_000_000e18);
-    //
-    //        IJoseph joseph = IJoseph(josephDai);
-    //
-    //        vm.startPrank(_user);
-    //        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
-    //        joseph.provideLiquidity(70_000 * 1e18);
-    //        vm.stopPrank();
-    //
-    //        uint256 strategyDsrBalanceBeforeRedeem = IStrategyDsr(strategyDsr).balanceOf();
-    //        uint256 strategyAaveBalanceBeforeRedeem = IStrategyDsr(strategyAaveDai).balanceOf();
-    //        uint256 strategyCompoundBalanceBeforeRedeem = IStrategyDsr(strategyCompoundDai).balanceOf();
-    //
-    //        uint256 ipTokenAmount = IIpToken(ipDai).balanceOf(_user);
-    //
-    //        vm.warp(block.timestamp + 1 days);
-    //        //when
-    //        vm.prank(_user);
-    //        joseph.redeem(ipTokenAmount);
-    //
-    //        uint256 strategyDsrBalanceAfterRedeem = IStrategyDsr(strategyDsr).balanceOf();
-    //        uint256 strategyAaveBalanceAfterRedeem = IStrategyDsr(strategyAaveDai).balanceOf();
-    //        uint256 strategyCompoundBalanceAfterRedeem = IStrategyDsr(strategyCompoundDai).balanceOf();
-    //
-    //        assertGt(strategyDsrBalanceBeforeRedeem, strategyDsrBalanceAfterRedeem, "dsr great than");
-    //        assertEq(strategyDsrBalanceAfterRedeem, 0, "dsr zero");
-    //
-    //        assertLe(strategyAaveBalanceBeforeRedeem, strategyAaveBalanceAfterRedeem, "aave");
-    //        assertLe(
-    //            strategyCompoundBalanceBeforeRedeem,
-    //            strategyCompoundBalanceAfterRedeem,
-    //            "compound"
-    //        );
-    //    }
-    //
-    //    function testShouldRedeemFromTwoStrategiesCompoundAndDsr() public {
-    //        //given
-    //        IStanley stanley = IStanley(stanleyDai);
-    //
-    //        _upgradeStanleyDsr();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyAaveDai).pause();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyCompoundDai).pause();
-    //
-    //        deal(address(dai), _user, 100_000e18);
-    //
-    //        IJoseph joseph = IJoseph(josephDai);
-    //
-    //        vm.startPrank(_user);
-    //        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
-    //        /// @dev first provide trigger rebalance
-    //        joseph.provideLiquidity(70_000 * 1e18);
-    //        joseph.provideLiquidity(10_000 * 1e18);
-    //        joseph.provideLiquidity(10_000 * 1e18);
-    //        joseph.provideLiquidity(10_000 * 1e18);
-    //        vm.stopPrank();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyCompoundDai).unpause();
-    //
-    //        uint256 strategyDsrBalanceBeforeRedeem = IStrategyDsr(strategyDsr).balanceOf();
-    //        uint256 strategyAaveBalanceBeforeRedeem = IStrategyDsr(strategyAaveDai).balanceOf();
-    //        uint256 strategyCompoundBalanceBeforeRedeem = IStrategyDsr(strategyCompoundDai).balanceOf();
-    //
-    //        uint256 ipTokenAmountBefore = IIpToken(ipDai).balanceOf(_user);
-    //
-    //        vm.warp(block.timestamp + 1 days);
-    //        //when
-    //        vm.prank(_user);
-    //        joseph.redeem(ipTokenAmountBefore);
-    //
-    //        uint256 ipTokenAmountAfter = IIpToken(ipDai).balanceOf(_user);
-    //
-    //        uint256 assetBalanceAfter = IERC20Upgradeable(dai).balanceOf(_user);
-    //
-    //        uint256 strategyDsrBalanceAfterRedeem = IStrategyDsr(strategyDsr).balanceOf();
-    //        uint256 strategyAaveBalanceAfterRedeem = IStrategyDsr(strategyAaveDai).balanceOf();
-    //        uint256 strategyCompoundBalanceAfterRedeem = IStrategyDsr(strategyCompoundDai).balanceOf();
-    //
-    //        assertEq(ipTokenAmountAfter, 0, "ipTokenAmount");
-    //
-    //        assertGt(strategyDsrBalanceBeforeRedeem, strategyDsrBalanceAfterRedeem, "dsr great than");
-    //        assertGt(strategyDsrBalanceAfterRedeem, 0, "dsr zero");
-    //
-    //        assertLe(strategyAaveBalanceBeforeRedeem, strategyAaveBalanceAfterRedeem, "aave");
-    //        assertEq(strategyCompoundBalanceAfterRedeem, 0, "compound");
-    //    }
-    //
-    //    function testShouldRedeemFromTwoStrategiesCompoundAndAave() public {
-    //        //given
-    //        IStanley stanley = IStanley(stanleyDai);
-    //
-    //        _upgradeStanleyDsr();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyAaveDai).pause();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyCompoundDai).pause();
-    //
-    //        deal(address(dai), _user, 100_000e18);
-    //
-    //        IJoseph joseph = IJoseph(josephDai);
-    //
-    //        vm.startPrank(_user);
-    //        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
-    //        /// @dev first provide trigger rebalance
-    //        joseph.provideLiquidity(70_000 * 1e18);
-    //        joseph.provideLiquidity(10_000 * 1e18);
-    //        joseph.provideLiquidity(10_000 * 1e18);
-    //        joseph.provideLiquidity(10_000 * 1e18);
-    //        vm.stopPrank();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyCompoundDai).unpause();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyAaveDai).unpause();
-    //
-    //        IStrategyDsr(strategyDsr).pause();
-    //
-    //        uint256 strategyDsrBalanceBeforeRedeem = IStrategyDsr(strategyDsr).balanceOf();
-    //        uint256 strategyAaveBalanceBeforeRedeem = IStrategyDsr(strategyAaveDai).balanceOf();
-    //        uint256 strategyCompoundBalanceBeforeRedeem = IStrategyDsr(strategyCompoundDai).balanceOf();
-    //
-    //        uint256 ipTokenAmountBefore = IIpToken(ipDai).balanceOf(_user);
-    //
-    //        vm.warp(block.timestamp + 1 days);
-    //        //when
-    //        vm.prank(_user);
-    //        joseph.redeem(ipTokenAmountBefore);
-    //
-    //        uint256 ipTokenAmountAfter = IIpToken(ipDai).balanceOf(_user);
-    //
-    //        uint256 strategyDsrBalanceAfterRedeem = IStrategyDsr(strategyDsr).balanceOf();
-    //        uint256 strategyAaveBalanceAfterRedeem = IStrategyDsr(strategyAaveDai).balanceOf();
-    //        uint256 strategyCompoundBalanceAfterRedeem = IStrategyDsr(strategyCompoundDai).balanceOf();
-    //
-    //        assertEq(ipTokenAmountAfter, 0, "ipTokenAmount");
-    //
-    //        assertLt(strategyDsrBalanceBeforeRedeem, strategyDsrBalanceAfterRedeem, "dsr great than");
-    //        assertGt(strategyDsrBalanceAfterRedeem, 0, "dsr zero");
-    //
-    //        assertGt(strategyAaveBalanceBeforeRedeem, strategyAaveBalanceAfterRedeem, "aave");
-    //        assertGt(
-    //            strategyCompoundBalanceBeforeRedeem,
-    //            strategyCompoundBalanceAfterRedeem,
-    //            "compound"
-    //        );
-    //    }
-    //
-    //    function testShouldDepositOnlyInDsrStrategyAndEarnInterest() public {
-    //        //given
-    //        IStanley stanley = IStanley(stanleyDai);
-    //
-    //        _upgradeStanleyDsr();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyAaveDai).pause();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyCompoundDai).pause();
-    //
-    //        deal(address(dai), _user, 100_000e18);
-    //
-    //        IJoseph joseph = IJoseph(josephDai);
-    //
-    //        vm.startPrank(_user);
-    //        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
-    //        joseph.provideLiquidity(70_000 * 1e18);
-    //        vm.stopPrank();
-    //
-    //        uint256 strategyDsrBalanceBefore = IStrategyDsr(strategyDsr).balanceOf();
-    //        uint256 aprBefore = IStrategyDsr(strategyDsr).getApr();
-    //
-    //        vm.warp(block.timestamp + 365 days);
-    //
-    //        //when
-    //        uint256 strategyDsrBalanceAfter = IStrategyDsr(strategyDsr).balanceOf();
-    //
-    //        //then
-    //
-    //        uint256 expectedBalanceAndInterest = IporMath.division(
-    //            strategyDsrBalanceBefore +
-    //                IporMath.division(strategyDsrBalanceBefore * aprBefore, 1e18),
-    //            1e7
-    //        );
-    //        uint256 actualBalanceAndInterest = IporMath.division(strategyDsrBalanceAfter, 1e7);
-    //
-    //        assertGt(strategyDsrBalanceAfter, strategyDsrBalanceBefore, "dsr great than");
-    //        assertEq(expectedBalanceAndInterest, actualBalanceAndInterest, "dsr apr");
-    //    }
-    //
-    //    function testShouldProvideLiquidity() public {
-    //        //given
-    //        IStanley stanley = IStanley(stanleyDai);
-    //
-    //        _upgradeStanleyDsr();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyAaveDai).pause();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyCompoundDai).pause();
-    //
-    //        deal(address(dai), _user, 100_000e18);
-    //
-    //        IJoseph joseph = IJoseph(josephDai);
-    //
-    //        uint256 strategyDsrBalanceBefore = IStrategyDsr(strategyDsr).balanceOf();
-    //
-    //        //when
-    //        vm.startPrank(_user);
-    //        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
-    //        joseph.provideLiquidity(70_000 * 1e18);
-    //        vm.stopPrank();
-    //
-    //        //then
-    //        uint256 strategyDsrBalanceAfter = IStrategyDsr(strategyDsr).balanceOf();
-    //
-    //        assertGt(strategyDsrBalanceAfter, strategyDsrBalanceBefore, "dsr balance");
-    //    }
-    //
-    //    function testShouldRedeemLiquidity() public {
-    //        //given
-    //        IStanley stanley = IStanley(stanleyDai);
-    //
-    //        _upgradeStanleyDsr();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyAaveDai).pause();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyCompoundDai).pause();
-    //
-    //        deal(address(dai), _user, 100_000e18);
-    //
-    //        IJoseph joseph = IJoseph(josephDai);
-    //
-    //        vm.startPrank(_user);
-    //        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
-    //        joseph.provideLiquidity(70_000 * 1e18);
-    //        vm.stopPrank();
-    //
-    //        uint256 strategyDsrBalanceBeforeRedeem = IStrategyDsr(strategyDsr).balanceOf();
-    //
-    //        uint256 ipTokenAmount = IIpToken(ipDai).balanceOf(_user);
-    //
-    //        vm.warp(block.timestamp + 1 days);
-    //        //when
-    //        vm.prank(_user);
-    //        joseph.redeem(ipTokenAmount);
-    //
-    //        //then
-    //        uint256 strategyDsrBalanceAfterRedeem = IStrategyDsr(strategyDsr).balanceOf();
-    //
-    //        assertGt(strategyDsrBalanceBeforeRedeem, strategyDsrBalanceAfterRedeem, "dsr balance");
-    //
-    //        assertEq(strategyDsrBalanceAfterRedeem, 0, "dsr balance zero");
-    //    }
-    //
-    //    function testShouldWithdrawFromAllStrategies() public {
-    //        //given
-    //        IStanley stanley = IStanley(stanleyDai);
-    //
-    //        _upgradeStanleyDsr();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyAaveDai).pause();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyCompoundDai).pause();
-    //
-    //        deal(address(dai), _user, 100_000e18);
-    //
-    //        IJoseph joseph = IJoseph(josephDai);
-    //
-    //        vm.startPrank(_user);
-    //        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
-    //        joseph.provideLiquidity(70_000 * 1e18);
-    //        vm.stopPrank();
-    //
-    //        uint256 strategyDsrBalanceBefore = IStrategyDsr(strategyDsr).balanceOf();
-    //        uint256 strategyCompoundBalanceBefore = IStrategyCompound(strategyCompoundDai).balanceOf();
-    //        uint256 strategyAaveBalanceBefore = IStrategyAave(strategyAaveDai).balanceOf();
-    //        uint256 ammBalanceBefore = IERC20Upgradeable(dai).balanceOf(address(miltonDai));
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyAaveDai).unpause();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyCompoundDai).unpause();
-    //
-    //        //when
-    //        vm.prank(_iporProtocolOwner);
-    //        IJosephInternal(josephDai).withdrawAllFromStanley();
-    //
-    //        //then
-    //        uint256 strategyDsrBalanceAfter = IStrategyDsr(strategyDsr).balanceOf();
-    //        uint256 strategyCompoundBalanceAfter = IStrategyCompound(strategyCompoundDai).balanceOf();
-    //        uint256 strategyAaveBalanceAfter = IStrategyAave(strategyAaveDai).balanceOf();
-    //        uint256 ammBalanceAfter = IERC20Upgradeable(dai).balanceOf(address(miltonDai));
-    //
-    //        assertEq(strategyDsrBalanceAfter, 0, "dsr balance");
-    //        assertEq(strategyCompoundBalanceAfter, 0, "compound balance");
-    //        assertEq(strategyAaveBalanceAfter, 0, "aave balance");
-    //        assertGe(
-    //            ammBalanceAfter,
-    //            ammBalanceBefore +
-    //                strategyDsrBalanceBefore +
-    //                strategyCompoundBalanceBefore +
-    //                strategyAaveBalanceBefore,
-    //            "amm balance"
-    //        );
-    //    }
-    //
-    //    function testShouldRebalanceToDsrWhenRestIsPaused() public {
-    //        //given
-    //        IStanley stanley = IStanley(stanleyDai);
-    //
-    //        _upgradeStanleyDsr();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyAaveDai).pause();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IStrategyDsr(strategyCompoundDai).pause();
-    //
-    //        deal(address(dai), _user, 100_000e18);
-    //
-    //        IJoseph joseph = IJoseph(josephDai);
-    //
-    //        vm.startPrank(_user);
-    //        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
-    //        joseph.provideLiquidity(70_000 * 1e18);
-    //        joseph.provideLiquidity(10_000 * 1e18);
-    //        joseph.provideLiquidity(10_000 * 1e18);
-    //        joseph.provideLiquidity(10_000 * 1e18);
-    //        vm.stopPrank();
-    //
-    //        uint256 strategyDsrBalanceBefore = IStrategyDsr(strategyDsr).balanceOf();
-    //
-    //        vm.prank(_iporProtocolOwner);
-    //        IJosephInternal(josephDai).addAppointedToRebalance(_user);
-    //
-    //        //when
-    //        vm.warp(block.timestamp + 1 days);
-    //        vm.prank(_user);
-    //        IJosephInternal(josephDai).rebalance();
-    //
-    //        //then
-    //        uint256 strategyDsrBalanceAfter = IStrategyDsr(strategyDsr).balanceOf();
-    //        assertGe(strategyDsrBalanceAfter, strategyDsrBalanceBefore, "dsr balance");
-    //    }
+    function testShouldBeTheSameBalanceAfterUpgrade() public {
+        //given
+        IStanley stanley = IStanley(stanleyDai);
+        uint256 balanceBefore = stanley.totalBalance(0xEd7d74AA7eB1f12F83dA36DFaC1de2257b4e7523);
+        balanceBefore = IporMath.division(balanceBefore, 1e7);
 
-    function testShouldCloseSwapAndWithdrawFromDsrStrategy() public {
+        //when
+        _upgradeStanleyDsr();
+
+        //then
+        StanleyDsrDai stanleyV2 = StanleyDsrDai(stanleyDai);
+        uint256 balanceAfter = stanleyV2.totalBalance(0xEd7d74AA7eB1f12F83dA36DFaC1de2257b4e7523);
+        balanceAfter = IporMath.division(balanceAfter, 1e7);
+
+        assertEq(balanceBefore, balanceAfter);
+    }
+
+    function testShouldBeTheSameAprAfterUpgrade() public {
+        //given
+        IStanleyInternal stanley = IStanleyInternal(stanleyDai);
+
+        address strategyAaveBefore = stanley.getStrategyAave();
+        address strategyCompoundBefore = stanley.getStrategyCompound();
+
+        uint256 aprAaveBefore = IStrategy(strategyAaveBefore).getApr();
+        uint256 aprCompoundBefore = IStrategy(strategyCompoundBefore).getApr();
+
+        //when
+        _upgradeStanleyDsr();
+
+        //then
+        address strategyAaveAfter = stanley.getStrategyAave();
+        address strategyCompoundAfter = stanley.getStrategyCompound();
+
+        uint256 aprAaveAfter = IStrategyDsr(strategyAaveAfter).getApr();
+        uint256 aprCompoundAfter = IStrategyDsr(strategyCompoundAfter).getApr();
+        uint256 aprDsrAfter = IStrategyDsr(strategyDsr).getApr();
+
+        assertEq(aprAaveBefore, aprAaveAfter);
+        assertEq(aprCompoundBefore, aprCompoundAfter);
+    }
+
+    function testShouldRebalanceAfterUpgrade() public {
+        //given
+        IJosephInternal joseph = IJosephInternal(josephDai);
+        _upgradeStanleyDsr();
+
+        uint256 aaveApr = IStrategyDsr(strategyAaveDai).getApr();
+        uint256 compoundApr = IStrategyDsr(strategyCompoundDai).getApr();
+        uint256 dsrApr = IStrategyDsr(strategyDsr).getApr();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyAaveDai).pause();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).pause();
+
+        //when
+        vm.prank(0xA21603c271C6f41CdC83E70a0691171eBB7db40A);
+        joseph.rebalance();
+
+        //then
+        uint256 balanceDsr = IStrategyDsr(strategyDsr).balanceOf();
+        uint256 balanceAave = IStrategyDsr(strategyAaveDai).balanceOf();
+        uint256 balanceCompound = IStrategyDsr(strategyCompoundDai).balanceOf();
+    }
+
+    function testShouldCalculateTheSameExchangeRateAfterUpgrade() public {
+        //given
+        IStanley stanley = IStanley(stanleyDai);
+        uint256 exchangeRateBefore = stanley.calculateExchangeRate();
+
+        //when
+        _upgradeStanleyDsr();
+
+        //then
+        uint256 exchangeRateAfter = stanley.calculateExchangeRate();
+        assertEq(exchangeRateBefore, exchangeRateAfter);
+    }
+
+    function testShouldCalculateExchangeRateAfterUpgradeAndProvideLiquidityWithRebalance() public {
+        //given
+        IStanley stanley = IStanley(stanleyDai);
+        uint256 exchangeRateBefore = stanley.calculateExchangeRate();
+
+        _upgradeStanleyDsr();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyAaveDai).pause();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).pause();
+
+        deal(address(dai), _user, 1_000_000e18);
+
+        IJoseph joseph = IJoseph(josephDai);
+
+        vm.startPrank(_user);
+        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
+        joseph.provideLiquidity(50_000 * 1e18);
+        vm.stopPrank();
+
+        //then
+        uint256 balanceDsr = IStrategyDsr(strategyDsr).balanceOf();
+        uint256 balanceAave = IStrategyDsr(strategyAaveDai).balanceOf();
+        uint256 balanceCompound = IStrategyDsr(strategyCompoundDai).balanceOf();
+
+        uint256 exchangeRateAfter = stanley.calculateExchangeRate();
+        assertEq(exchangeRateBefore, exchangeRateAfter);
+    }
+
+    function testShouldProvideAndRedeemFromDsrStrategy() public {
+        //given
+        IStanley stanley = IStanley(stanleyDai);
+
+        _upgradeStanleyDsr();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyAaveDai).pause();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).pause();
+
+        deal(address(dai), _user, 1_000_000e18);
+
+        IJoseph joseph = IJoseph(josephDai);
+
+        vm.startPrank(_user);
+        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
+        joseph.provideLiquidity(70_000 * 1e18);
+        vm.stopPrank();
+
+        uint256 strategyDsrBalanceBeforeRedeem = IStrategyDsr(strategyDsr).balanceOf();
+        uint256 strategyAaveBalanceBeforeRedeem = IStrategyDsr(strategyAaveDai).balanceOf();
+        uint256 strategyCompoundBalanceBeforeRedeem = IStrategyDsr(strategyCompoundDai).balanceOf();
+
+        uint256 ipTokenAmount = IIpToken(ipDai).balanceOf(_user);
+
+        vm.warp(block.timestamp + 1 days);
+        //when
+        vm.prank(_user);
+        joseph.redeem(ipTokenAmount);
+
+        uint256 strategyDsrBalanceAfterRedeem = IStrategyDsr(strategyDsr).balanceOf();
+        uint256 strategyAaveBalanceAfterRedeem = IStrategyDsr(strategyAaveDai).balanceOf();
+        uint256 strategyCompoundBalanceAfterRedeem = IStrategyDsr(strategyCompoundDai).balanceOf();
+
+        assertGt(strategyDsrBalanceBeforeRedeem, strategyDsrBalanceAfterRedeem, "dsr great than");
+        assertEq(strategyDsrBalanceAfterRedeem, 0, "dsr zero");
+
+        assertLe(strategyAaveBalanceBeforeRedeem, strategyAaveBalanceAfterRedeem, "aave");
+        assertLe(
+            strategyCompoundBalanceBeforeRedeem,
+            strategyCompoundBalanceAfterRedeem,
+            "compound"
+        );
+    }
+
+    function testShouldRedeemFromTwoStrategiesCompoundAndDsr() public {
+        //given
+        IStanley stanley = IStanley(stanleyDai);
+
+        _upgradeStanleyDsr();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyAaveDai).pause();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).pause();
+
+        deal(address(dai), _user, 100_000e18);
+
+        IJoseph joseph = IJoseph(josephDai);
+
+        vm.startPrank(_user);
+        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
+        /// @dev first provide trigger rebalance
+        joseph.provideLiquidity(70_000 * 1e18);
+        joseph.provideLiquidity(10_000 * 1e18);
+        joseph.provideLiquidity(10_000 * 1e18);
+        joseph.provideLiquidity(10_000 * 1e18);
+        vm.stopPrank();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).unpause();
+
+        uint256 strategyDsrBalanceBeforeRedeem = IStrategyDsr(strategyDsr).balanceOf();
+        uint256 strategyAaveBalanceBeforeRedeem = IStrategyDsr(strategyAaveDai).balanceOf();
+        uint256 strategyCompoundBalanceBeforeRedeem = IStrategyDsr(strategyCompoundDai).balanceOf();
+
+        uint256 ipTokenAmountBefore = IIpToken(ipDai).balanceOf(_user);
+
+        vm.warp(block.timestamp + 1 days);
+        //when
+        vm.prank(_user);
+        joseph.redeem(ipTokenAmountBefore);
+
+        uint256 ipTokenAmountAfter = IIpToken(ipDai).balanceOf(_user);
+
+        uint256 assetBalanceAfter = IERC20Upgradeable(dai).balanceOf(_user);
+
+        uint256 strategyDsrBalanceAfterRedeem = IStrategyDsr(strategyDsr).balanceOf();
+        uint256 strategyAaveBalanceAfterRedeem = IStrategyDsr(strategyAaveDai).balanceOf();
+        uint256 strategyCompoundBalanceAfterRedeem = IStrategyDsr(strategyCompoundDai).balanceOf();
+
+        assertEq(ipTokenAmountAfter, 0, "ipTokenAmount");
+
+        assertGt(strategyDsrBalanceBeforeRedeem, strategyDsrBalanceAfterRedeem, "dsr great than");
+        assertGt(strategyDsrBalanceAfterRedeem, 0, "dsr zero");
+
+        assertLe(strategyAaveBalanceBeforeRedeem, strategyAaveBalanceAfterRedeem, "aave");
+        assertEq(strategyCompoundBalanceAfterRedeem, 0, "compound");
+    }
+
+    function testShouldRedeemFromTwoStrategiesCompoundAndAave() public {
+        //given
+        IStanley stanley = IStanley(stanleyDai);
+
+        _upgradeStanleyDsr();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyAaveDai).pause();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).pause();
+
+        deal(address(dai), _user, 100_000e18);
+
+        IJoseph joseph = IJoseph(josephDai);
+
+        vm.startPrank(_user);
+        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
+        /// @dev first provide trigger rebalance
+        joseph.provideLiquidity(70_000 * 1e18);
+        joseph.provideLiquidity(10_000 * 1e18);
+        joseph.provideLiquidity(10_000 * 1e18);
+        joseph.provideLiquidity(10_000 * 1e18);
+        vm.stopPrank();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).unpause();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyAaveDai).unpause();
+
+        IStrategyDsr(strategyDsr).pause();
+
+        uint256 strategyDsrBalanceBeforeRedeem = IStrategyDsr(strategyDsr).balanceOf();
+        uint256 strategyAaveBalanceBeforeRedeem = IStrategyDsr(strategyAaveDai).balanceOf();
+        uint256 strategyCompoundBalanceBeforeRedeem = IStrategyDsr(strategyCompoundDai).balanceOf();
+
+        uint256 ipTokenAmountBefore = IIpToken(ipDai).balanceOf(_user);
+
+        vm.warp(block.timestamp + 1 days);
+        //when
+        vm.prank(_user);
+        joseph.redeem(ipTokenAmountBefore);
+
+        uint256 ipTokenAmountAfter = IIpToken(ipDai).balanceOf(_user);
+
+        uint256 strategyDsrBalanceAfterRedeem = IStrategyDsr(strategyDsr).balanceOf();
+        uint256 strategyAaveBalanceAfterRedeem = IStrategyDsr(strategyAaveDai).balanceOf();
+        uint256 strategyCompoundBalanceAfterRedeem = IStrategyDsr(strategyCompoundDai).balanceOf();
+
+        assertEq(ipTokenAmountAfter, 0, "ipTokenAmount");
+
+        assertLt(strategyDsrBalanceBeforeRedeem, strategyDsrBalanceAfterRedeem, "dsr great than");
+        assertGt(strategyDsrBalanceAfterRedeem, 0, "dsr zero");
+
+        assertGt(strategyAaveBalanceBeforeRedeem, strategyAaveBalanceAfterRedeem, "aave");
+        assertGt(
+            strategyCompoundBalanceBeforeRedeem,
+            strategyCompoundBalanceAfterRedeem,
+            "compound"
+        );
+    }
+
+    function testShouldDepositOnlyInDsrStrategyAndEarnInterest() public {
+        //given
+        IStanley stanley = IStanley(stanleyDai);
+
+        _upgradeStanleyDsr();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyAaveDai).pause();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).pause();
+
+        deal(address(dai), _user, 100_000e18);
+
+        IJoseph joseph = IJoseph(josephDai);
+
+        vm.startPrank(_user);
+        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
+        joseph.provideLiquidity(70_000 * 1e18);
+        vm.stopPrank();
+
+        uint256 strategyDsrBalanceBefore = IStrategyDsr(strategyDsr).balanceOf();
+        uint256 aprBefore = IStrategyDsr(strategyDsr).getApr();
+
+        vm.warp(block.timestamp + 365 days);
+
+        //when
+        uint256 strategyDsrBalanceAfter = IStrategyDsr(strategyDsr).balanceOf();
+
+        //then
+
+        uint256 expectedBalanceAndInterest = IporMath.division(
+            strategyDsrBalanceBefore +
+                IporMath.division(strategyDsrBalanceBefore * aprBefore, 1e18),
+            1e7
+        );
+        uint256 actualBalanceAndInterest = IporMath.division(strategyDsrBalanceAfter, 1e7);
+
+        assertGt(strategyDsrBalanceAfter, strategyDsrBalanceBefore, "dsr great than");
+        assertEq(expectedBalanceAndInterest, actualBalanceAndInterest, "dsr apr");
+    }
+
+    function testShouldProvideLiquidity() public {
+        //given
+        IStanley stanley = IStanley(stanleyDai);
+
+        _upgradeStanleyDsr();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyAaveDai).pause();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).pause();
+
+        deal(address(dai), _user, 100_000e18);
+
+        IJoseph joseph = IJoseph(josephDai);
+
+        uint256 strategyDsrBalanceBefore = IStrategyDsr(strategyDsr).balanceOf();
+
+        //when
+        vm.startPrank(_user);
+        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
+        joseph.provideLiquidity(70_000 * 1e18);
+        vm.stopPrank();
+
+        //then
+        uint256 strategyDsrBalanceAfter = IStrategyDsr(strategyDsr).balanceOf();
+
+        assertGt(strategyDsrBalanceAfter, strategyDsrBalanceBefore, "dsr balance");
+    }
+
+    function testShouldRedeemLiquidity() public {
+        //given
+        IStanley stanley = IStanley(stanleyDai);
+
+        _upgradeStanleyDsr();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyAaveDai).pause();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).pause();
+
+        deal(address(dai), _user, 100_000e18);
+
+        IJoseph joseph = IJoseph(josephDai);
+
+        vm.startPrank(_user);
+        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
+        joseph.provideLiquidity(70_000 * 1e18);
+        vm.stopPrank();
+
+        uint256 strategyDsrBalanceBeforeRedeem = IStrategyDsr(strategyDsr).balanceOf();
+
+        uint256 ipTokenAmount = IIpToken(ipDai).balanceOf(_user);
+
+        vm.warp(block.timestamp + 1 days);
+        //when
+        vm.prank(_user);
+        joseph.redeem(ipTokenAmount);
+
+        //then
+        uint256 strategyDsrBalanceAfterRedeem = IStrategyDsr(strategyDsr).balanceOf();
+
+        assertGt(strategyDsrBalanceBeforeRedeem, strategyDsrBalanceAfterRedeem, "dsr balance");
+
+        assertEq(strategyDsrBalanceAfterRedeem, 0, "dsr balance zero");
+    }
+
+    function testShouldWithdrawFromAllStrategies() public {
+        //given
+        IStanley stanley = IStanley(stanleyDai);
+
+        _upgradeStanleyDsr();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyAaveDai).pause();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).pause();
+
+        deal(address(dai), _user, 100_000e18);
+
+        IJoseph joseph = IJoseph(josephDai);
+
+        vm.startPrank(_user);
+        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
+        joseph.provideLiquidity(70_000 * 1e18);
+        vm.stopPrank();
+
+        uint256 strategyDsrBalanceBefore = IStrategyDsr(strategyDsr).balanceOf();
+        uint256 strategyCompoundBalanceBefore = IStrategyCompound(strategyCompoundDai).balanceOf();
+        uint256 strategyAaveBalanceBefore = IStrategyAave(strategyAaveDai).balanceOf();
+        uint256 ammBalanceBefore = IERC20Upgradeable(dai).balanceOf(address(miltonDai));
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyAaveDai).unpause();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).unpause();
+
+        //when
+        vm.prank(_iporProtocolOwner);
+        IJosephInternal(josephDai).withdrawAllFromStanley();
+
+        //then
+        uint256 strategyDsrBalanceAfter = IStrategyDsr(strategyDsr).balanceOf();
+        uint256 strategyCompoundBalanceAfter = IStrategyCompound(strategyCompoundDai).balanceOf();
+        uint256 strategyAaveBalanceAfter = IStrategyAave(strategyAaveDai).balanceOf();
+        uint256 ammBalanceAfter = IERC20Upgradeable(dai).balanceOf(address(miltonDai));
+
+        assertEq(strategyDsrBalanceAfter, 0, "dsr balance");
+        assertEq(strategyCompoundBalanceAfter, 0, "compound balance");
+        assertEq(strategyAaveBalanceAfter, 0, "aave balance");
+        assertGe(
+            ammBalanceAfter,
+            ammBalanceBefore +
+                strategyDsrBalanceBefore +
+                strategyCompoundBalanceBefore +
+                strategyAaveBalanceBefore,
+            "amm balance"
+        );
+    }
+
+    function testShouldRebalanceToDsrWhenRestIsPaused() public {
+        //given
+        IStanley stanley = IStanley(stanleyDai);
+
+        _upgradeStanleyDsr();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyAaveDai).pause();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).pause();
+
+        deal(address(dai), _user, 100_000e18);
+
+        IJoseph joseph = IJoseph(josephDai);
+
+        vm.startPrank(_user);
+        IERC20Upgradeable(dai).approve(address(joseph), type(uint256).max);
+        joseph.provideLiquidity(70_000 * 1e18);
+        joseph.provideLiquidity(10_000 * 1e18);
+        joseph.provideLiquidity(10_000 * 1e18);
+        joseph.provideLiquidity(10_000 * 1e18);
+        vm.stopPrank();
+
+        uint256 strategyDsrBalanceBefore = IStrategyDsr(strategyDsr).balanceOf();
+
+        vm.prank(_iporProtocolOwner);
+        IJosephInternal(josephDai).addAppointedToRebalance(_user);
+
+        //when
+        vm.warp(block.timestamp + 1 days);
+        vm.prank(_user);
+        IJosephInternal(josephDai).rebalance();
+
+        //then
+        uint256 strategyDsrBalanceAfter = IStrategyDsr(strategyDsr).balanceOf();
+        assertGe(strategyDsrBalanceAfter, strategyDsrBalanceBefore, "dsr balance");
+    }
+
+    function testShouldNotCloseSwapAndWithdrawFromDsrStrategyBecauseTwoStratiegiesPausedAndNotEnoughCashInAmmAndAm()
+        public
+    {
         //given
         IStanley stanley = IStanley(stanleyDai);
         Joseph joseph = Joseph(josephDai);
@@ -552,21 +558,181 @@ contract StanleyAaveDaiTest is Test {
         vm.prank(_user);
         IJosephInternal(josephDai).rebalance();
 
-        uint256 miltonBalance = IERC20Upgradeable(dai).balanceOf(address(miltonDai));
-        console2.log("miltonBalance", miltonBalance);
-
         deal(dai, _user, 500_000e18);
-        //approve dai
         vm.prank(_user);
         IERC20Upgradeable(dai).approve(address(miltonDai), type(uint256).max);
 
-        uint256 totalAmount = 5_000 * 1e18;
+        uint256 totalAmount = 100_000 * 1e18;
 
         vm.prank(_user);
-        milton.openSwapReceiveFixed(totalAmount, 1e16, 100e18);
+        uint256 swapId = milton.openSwapPayFixed(totalAmount, 1e18, 500 * 1e18);
+
+        (uint256 indexValue, , , , ) = IIporOracle(iporOracle).getIndex(address(dai));
+
+        vm.prank(_iporProtocolOwner);
+        IIporOracle(iporOracle).addUpdater(_user);
+
+        vm.prank(_user);
+        IIporOracle(iporOracle).updateIndex(address(dai), 5e17);
+
+        vm.warp(block.timestamp + 25 days);
+        vm.prank(_user);
+        IJosephInternal(josephDai).rebalance();
+
+        uint256 miltonBalance = IERC20Upgradeable(dai).balanceOf(address(miltonDai));
+
+        uint256 strategyDsrBalance = IStrategyDsr(strategyDsr).balanceOf();
+
+        vm.expectRevert("IPOR_322");
+        vm.prank(_user);
+        milton.closeSwapPayFixed(swapId);
     }
 
-    //    function testShouldCloseSwapAndWithdrawFromTwoStrategiesIfNeeded() public {}
+    function testShouldCloseSwapAndWithdrawFromDsrStrategyAndCompound() public {
+        //given
+        IStanley stanley = IStanley(stanleyDai);
+        Joseph joseph = Joseph(josephDai);
+        Milton milton = Milton(miltonDai);
+
+        vm.prank(_iporProtocolOwner);
+        joseph.setMiltonStanleyBalanceRatio(1e14);
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyAaveDai).pause();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).pause();
+
+        vm.prank(_iporProtocolOwner);
+        IJosephInternal(josephDai).addAppointedToRebalance(_user);
+
+        _upgradeStanleyDsr();
+
+        vm.prank(_user);
+        IJosephInternal(josephDai).rebalance();
+
+        deal(dai, _user, 500_000e18);
+        vm.prank(_user);
+        IERC20Upgradeable(dai).approve(address(miltonDai), type(uint256).max);
+
+        uint256 totalAmount = 100_000 * 1e18;
+
+        vm.prank(_user);
+        uint256 swapId = milton.openSwapPayFixed(totalAmount, 1e18, 500 * 1e18);
+
+        (uint256 indexValue, , , , ) = IIporOracle(iporOracle).getIndex(address(dai));
+
+        vm.prank(_iporProtocolOwner);
+        IIporOracle(iporOracle).addUpdater(_user);
+
+        vm.prank(_user);
+        IIporOracle(iporOracle).updateIndex(address(dai), 5e17);
+
+        vm.warp(block.timestamp + 25 days);
+        vm.prank(_user);
+        IJosephInternal(josephDai).rebalance();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).unpause();
+
+        uint256 strategyDsrBalanceBeforeClose = IStrategyDsr(strategyDsr).balanceOf();
+        uint256 strategyCompoundBalanceBeforeClose = IStrategyDsr(strategyCompoundDai).balanceOf();
+
+        //when
+        vm.prank(_user);
+        milton.closeSwapPayFixed(swapId);
+
+        //then
+        uint256 strategyDsrBalanceAfterClose = IStrategyDsr(strategyDsr).balanceOf();
+        uint256 strategyCompoundBalanceAfterClose = IStrategyDsr(strategyCompoundDai).balanceOf();
+
+        assertLt(strategyDsrBalanceAfterClose, strategyDsrBalanceBeforeClose, "dsr balance");
+        assertLt(
+            strategyCompoundBalanceAfterClose,
+            strategyCompoundBalanceBeforeClose,
+            "compound balance"
+        );
+        assertEq(strategyCompoundBalanceAfterClose, 0, "compound balance zero");
+    }
+
+    function testShouldCloseSwapAndWithdrawFromDsrStrategyAndAave() public {
+        //given
+        IStanley stanley = IStanley(stanleyDai);
+        Joseph joseph = Joseph(josephDai);
+        Milton milton = Milton(miltonDai);
+
+        vm.prank(_iporProtocolOwner);
+        joseph.setMiltonStanleyBalanceRatio(1e14);
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyAaveDai).pause();
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyCompoundDai).pause();
+
+        vm.prank(_iporProtocolOwner);
+        IJosephInternal(josephDai).addAppointedToRebalance(_user);
+
+        _upgradeStanleyDsr();
+
+        vm.prank(_user);
+        IJosephInternal(josephDai).rebalance();
+
+        deal(dai, _user, 500_000e18);
+        vm.prank(_user);
+        IERC20Upgradeable(dai).approve(address(miltonDai), type(uint256).max);
+
+        uint256 totalAmount = 100_000 * 1e18;
+
+        vm.prank(_user);
+        uint256 swapId1 = milton.openSwapPayFixed(totalAmount, 1e18, 500 * 1e18);
+        vm.prank(_user);
+        uint256 swapId2 = milton.openSwapPayFixed(totalAmount, 1e18, 500 * 1e18);
+        vm.prank(_user);
+        uint256 swapId3 = milton.openSwapReceiveFixed(totalAmount, 0, 500 * 1e18);
+        vm.prank(_user);
+        uint256 swapId4 = milton.openSwapReceiveFixed(totalAmount, 0, 500 * 1e18);
+
+        (uint256 indexValue, , , , ) = IIporOracle(iporOracle).getIndex(address(dai));
+
+        vm.prank(_iporProtocolOwner);
+        IIporOracle(iporOracle).addUpdater(_user);
+
+        vm.prank(_user);
+        IIporOracle(iporOracle).updateIndex(address(dai), 5e17);
+
+        vm.prank(_iporProtocolOwner);
+        IStrategyDsr(strategyAaveDai).unpause();
+
+        IStrategyDsr(strategyDsr).pause();
+
+        vm.warp(block.timestamp + 1 days);
+        vm.prank(_user);
+        IJosephInternal(josephDai).rebalance();
+
+        IStrategyDsr(strategyDsr).unpause();
+
+        uint256 strategyDsrBalanceBeforeClose = IStrategyDsr(strategyDsr).balanceOf();
+        uint256 strategyAaveBalanceBeforeClose = IStrategyDsr(strategyAaveDai).balanceOf();
+
+        vm.warp(block.timestamp + 25 days);
+        //when
+        vm.prank(_user);
+        milton.closeSwapPayFixed(swapId1);
+        vm.prank(_user);
+        milton.closeSwapPayFixed(swapId2);
+        vm.prank(_user);
+        milton.closeSwapReceiveFixed(swapId3);
+        vm.prank(_user);
+        milton.closeSwapReceiveFixed(swapId4);
+
+        //then
+        uint256 strategyDsrBalanceAfterClose = IStrategyDsr(strategyDsr).balanceOf();
+        uint256 strategyAaveBalanceAfterClose = IStrategyDsr(strategyAaveDai).balanceOf();
+
+        assertEq(strategyDsrBalanceAfterClose, 0, "dsr balance");
+        assertLt(strategyAaveBalanceAfterClose, strategyAaveBalanceBeforeClose, "aave balance");
+    }
 
     function _upgradeStanleyDsr() internal {
         StanleyDsrDai implementation = new StanleyDsrDai(

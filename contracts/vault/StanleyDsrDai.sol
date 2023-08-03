@@ -15,7 +15,6 @@ import "../interfaces/IStrategy.sol";
 import "../interfaces/IStrategyDsr.sol";
 import "../interfaces/IStanleyDsr.sol";
 import "../security/IporOwnableUpgradeable.sol";
-import "forge-std/console2.sol";
 
 interface IAsset {
     function getAsset() external view returns (address);
@@ -192,7 +191,6 @@ contract StanleyDsrDai is
         onlyMilton
         returns (uint256 vaultBalance, uint256 depositedAmount)
     {
-        console2.log("deposit start");
         require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
         StrategiesData memory strategiesData = _getStrategiesData();
