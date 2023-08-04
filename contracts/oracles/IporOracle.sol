@@ -84,6 +84,8 @@ contract IporOracle is
 
         uint256 assetsLength = assets.length;
 
+        require(assetsLength == updateTimestamps.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
+
         for (uint256 i; i != assetsLength; ) {
             require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
 
