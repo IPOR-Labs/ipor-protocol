@@ -431,12 +431,6 @@ contract AmmPoolsService is IAmmPoolsService {
             return Constants.MAX_VALUE;
         }
 
-        uint256 denominator = totalLiquidityPoolBalance - redeemedAmount;
-
-        if (denominator > 0) {
-            return IporMath.division(totalCollateralBalance * 1e18, totalLiquidityPoolBalance - redeemedAmount);
-        } else {
-            return Constants.MAX_VALUE;
-        }
+        return IporMath.division(totalCollateralBalance * 1e18, totalLiquidityPoolBalance - redeemedAmount);
     }
 }
