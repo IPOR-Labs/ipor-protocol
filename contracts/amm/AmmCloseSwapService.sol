@@ -163,6 +163,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
 
         AmmTypes.Swap memory swap = IAmmStorage(poolCfg.ammStorage).getSwap(direction, swapId);
 
+        require(swap.id > 0, AmmErrors.INCORRECT_SWAP_ID);
+
         int256 swapPnlValueToDate;
 
         if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {

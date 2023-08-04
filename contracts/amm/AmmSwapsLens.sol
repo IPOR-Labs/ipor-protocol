@@ -90,6 +90,9 @@ contract AmmSwapsLens is IAmmSwapsLens {
     function getPnlPayFixed(address asset, uint256 swapId) external view override returns (int256) {
         IAmmStorage ammStorage = _getAmmStorage(asset);
         AmmTypes.Swap memory swap = ammStorage.getSwap(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, swapId);
+
+        require(swap.id > 0, AmmErrors.INCORRECT_SWAP_ID);
+
         uint256 accruedIbtPrice = IIporOracle(_iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
         return swap.calculatePnlPayFixed(block.timestamp, accruedIbtPrice);
     }
@@ -97,6 +100,9 @@ contract AmmSwapsLens is IAmmSwapsLens {
     function getPnlReceiveFixed(address asset, uint256 swapId) external view override returns (int256) {
         IAmmStorage ammStorage = _getAmmStorage(asset);
         AmmTypes.Swap memory swap = ammStorage.getSwap(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, swapId);
+
+        require(swap.id > 0, AmmErrors.INCORRECT_SWAP_ID);
+
         uint256 accruedIbtPrice = IIporOracle(_iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
         return swap.calculatePnlReceiveFixed(block.timestamp, accruedIbtPrice);
     }
@@ -116,7 +122,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         address asset,
         IporTypes.SwapTenor tenor,
         uint256 notional
-    ) external override view returns (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed) {
+    ) external view override returns (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed) {
         require(notional > 0, AmmErrors.INVALID_NOTIONAL);
 
         SwapLensPoolConfiguration memory poolCfg = _getSwapLensPoolConfiguration(asset);
@@ -251,17 +257,11 @@ contract AmmSwapsLens is IAmmSwapsLens {
             swapId = swapIds[i];
 
             if (swapId.direction == 0) {
-                swap = ammStorage.getSwap(
-                    AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-                    swapId.id
-                );
+                swap = ammStorage.getSwap(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, swapId.id);
                 swapValue = swap.calculatePnlPayFixed(block.timestamp, accruedIbtPrice);
                 mappedSwaps[i] = _mapSwap(asset, swap, 0, swapValue);
             } else {
-                swap = ammStorage.getSwap(
-                    AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-                    swapId.id
-                );
+                swap = ammStorage.getSwap(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, swapId.id);
                 swapValue = swap.calculatePnlReceiveFixed(block.timestamp, accruedIbtPrice);
                 mappedSwaps[i] = _mapSwap(asset, swap, 1, swapValue);
             }
