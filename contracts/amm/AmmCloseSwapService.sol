@@ -809,7 +809,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                 if (absPnlValue < minPnlValueToCloseBeforeMaturityByBuyer) {
                     if (msgSender == swap.buyer) {
                         if (swapEndTimestamp - poolCfg.timeBeforeMaturityAllowedToCloseSwapByBuyer > closeTimestamp) {
-                            return (AmmTypes.SwapClosableStatus.SWAP_CANNOT_CLOSE_CLOSING_TOO_EARLY_FOR_BUYER, true);
+                            return (AmmTypes.SwapClosableStatus.SWAP_IS_CLOSABLE, true);
                         }
                     } else {
                         if (

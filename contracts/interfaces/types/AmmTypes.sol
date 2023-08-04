@@ -146,13 +146,11 @@ library AmmTypes {
     /// 0 - Swap is closable
     /// 1 - Swap is already closed
     /// 2 - Swap state required Buyer or Liquidator to close. Sender is not Buyer nor Liquidator.
-    /// 3 - Cannot close swap, closing is too early for Buyer
-    /// 4 - Cannot close swap, closing is too early for Community
+    /// 3 - Cannot close swap, closing is too early for Community
     enum SwapClosableStatus {
         SWAP_IS_CLOSABLE,
         SWAP_ALREADY_CLOSED,
         SWAP_REQUIRED_BUYER_OR_LIQUIDATOR_TO_CLOSE,
-        SWAP_CANNOT_CLOSE_CLOSING_TOO_EARLY_FOR_BUYER,
         SWAP_CANNOT_CLOSE_CLOSING_TOO_EARLY_FOR_COMMUNITY
     }
 
