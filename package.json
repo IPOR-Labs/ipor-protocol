@@ -14,8 +14,8 @@
         "solhint": "./node_modules/.bin/solhint -f table contracts/**/*.sol"
     },
     "dependencies": {
-        "@openzeppelin/contracts": "4.9.0",
-        "@openzeppelin/contracts-upgradeable": "4.9.0",
+        "@openzeppelin/contracts": "4.9.3",
+        "@openzeppelin/contracts-upgradeable": "4.9.3",
         "abdk-libraries-solidity": "3.2.0"
     }
 }
