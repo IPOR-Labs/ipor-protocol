@@ -10,10 +10,12 @@ contract IporProtocolRouterBuilder is Test {
     struct BuilderData {
         address ammSwapsLens;
         address ammPoolsLens;
+        address ammPoolsLensEth;
         address assetManagementLens;
         address ammOpenSwapService;
         address ammCloseSwapService;
         address ammPoolsService;
+        address ammPoolsServiceEth;
         address ammGovernanceService;
         address liquidityMiningLens;
         address powerTokenLens;
@@ -88,7 +90,9 @@ contract IporProtocolRouterBuilder is Test {
             liquidityMiningLens: builderData.liquidityMiningLens,
             powerTokenLens: builderData.powerTokenLens,
             flowService: builderData.flowService,
-            stakeService: builderData.stakeService
+            stakeService: builderData.stakeService,
+            ammPoolsServiceEth: builderData.ammPoolsServiceEth,
+            ammPoolsLensEth: builderData.ammPoolsLensEth
         });
 
         ERC1967Proxy proxy = _constructProxy(address(new IporProtocolRouter(deployedContracts)));
@@ -105,10 +109,12 @@ contract IporProtocolRouterBuilder is Test {
         IporProtocolRouter.DeployedContracts memory deployedContracts = IporProtocolRouter.DeployedContracts({
             ammSwapsLens: builderData.ammSwapsLens,
             ammPoolsLens: builderData.ammPoolsLens,
+            ammPoolsLensEth: builderData.ammPoolsLensEth,
             assetManagementLens: builderData.assetManagementLens,
             ammOpenSwapService: builderData.ammOpenSwapService,
             ammCloseSwapService: builderData.ammCloseSwapService,
             ammPoolsService: builderData.ammPoolsService,
+            ammPoolsServiceEth: builderData.ammPoolsServiceEth,
             ammGovernanceService: builderData.ammGovernanceService,
             liquidityMiningLens: builderData.liquidityMiningLens,
             powerTokenLens: builderData.powerTokenLens,

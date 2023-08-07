@@ -117,7 +117,9 @@ contract TestForkCommons is Test {
                 ammOpenSwapService,
                 ammCloseSwapService,
                 ammPoolsService,
+                _getUserAddress(123),
                 ammGovernanceService,
+                _getUserAddress(123),
                 _getUserAddress(123),
                 _getUserAddress(123),
                 _getUserAddress(123),
@@ -584,11 +586,6 @@ contract TestForkCommons is Test {
             iporProtocolRouterProxy
         );
 
-        console2.log("AmmTreasury(miltonProxyDai)", AmmTreasury(miltonProxyDai).owner());
-        console2.log("AmmTreasury(miltonProxyUsdc)", AmmTreasury(miltonProxyUsdc).owner());
-        console2.log("AmmTreasury(miltonProxyUsdt)", AmmTreasury(miltonProxyUsdt).owner());
-        console2.log("IporOwnableUpgradeable(miltonProxyDai)", IporOwnableUpgradeable(miltonProxyDai).owner());
-        console2.log("owner", owner);
         vm.startPrank(owner);
         AmmTreasury(miltonProxyDai).upgradeTo(address(daiTreasuryImplementation));
         AmmTreasury(miltonProxyUsdc).upgradeTo(address(usdcTreasuryImplementation));

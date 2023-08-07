@@ -12,6 +12,7 @@ import "../libraries/math/IporMath.sol";
 import "../libraries/errors/AmmPoolsErrors.sol";
 import "../governance/AmmConfigurationManager.sol";
 import "../libraries/IporContractValidator.sol";
+import "forge-std/console2.sol";
 
 contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     using IporContractValidator for address;
@@ -159,6 +160,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         uint32 newAutoRebalanceThresholdInThousands,
         uint16 newAmmTreasuryAndAssetManagementRatio
     ) external override {
+        console2.log("XXXXXXXXXXXX");
         AmmConfigurationManager.setAmmPoolsParams(
             asset,
             newMaxLiquidityPoolBalance,

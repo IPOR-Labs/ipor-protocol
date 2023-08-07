@@ -22,6 +22,8 @@ import "../interfaces/IProxyImplementation.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/IporContractValidator.sol";
 import "./AccessControl.sol";
+import "../ethMarket/IAmmPoolsLensEth.sol";
+import "../ethMarket/IAmmPoolsServiceEth.sol";
 
 /// @title Entry point for IPOR protocol
 contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementation {
@@ -42,6 +44,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
     address public immutable _powerTokenLens;
     address public immutable _flowService;
     address public immutable _stakeService;
+    address public immutable _ammPoolsServiceEth;
+    address public immutable _ammPoolsLensEth;
 
     struct DeployedContracts {
         address ammSwapsLens;
@@ -55,6 +59,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         address powerTokenLens;
         address flowService;
         address stakeService;
+        address ammPoolsServiceEth;
+        address ammPoolsLensEth;
     }
 
     constructor(DeployedContracts memory deployedContracts) {
@@ -69,6 +75,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         _powerTokenLens = deployedContracts.powerTokenLens.checkAddress();
         _flowService = deployedContracts.flowService.checkAddress();
         _stakeService = deployedContracts.stakeService.checkAddress();
+        _ammPoolsServiceEth = deployedContracts.ammPoolsServiceEth.checkAddress();
+        _ammPoolsLensEth = deployedContracts.ammPoolsLensEth.checkAddress();
         _disableInitializers();
     }
 
@@ -93,18 +101,20 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
     function getConfiguration() external view returns (DeployedContracts memory) {
         return
             DeployedContracts({
-                ammSwapsLens: _ammSwapsLens,
-                ammPoolsLens: _ammPoolsLens,
-                assetManagementLens: _ammManagementLens,
-                ammOpenSwapService: _ammOpenSwapService,
-                ammCloseSwapService: _ammCloseSwapService,
-                ammPoolsService: _ammPoolsService,
-                ammGovernanceService: _ammGovernanceService,
-                liquidityMiningLens: _liquidityMiningLens,
-                powerTokenLens: _powerTokenLens,
-                flowService: _flowService,
-                stakeService: _stakeService
-            });
+            ammSwapsLens: _ammSwapsLens,
+            ammPoolsLens: _ammPoolsLens,
+            assetManagementLens: _ammManagementLens,
+            ammOpenSwapService: _ammOpenSwapService,
+            ammCloseSwapService: _ammCloseSwapService,
+            ammPoolsService: _ammPoolsService,
+            ammGovernanceService: _ammGovernanceService,
+            liquidityMiningLens: _liquidityMiningLens,
+            powerTokenLens: _powerTokenLens,
+            flowService: _flowService,
+            stakeService: _stakeService,
+            ammPoolsServiceEth: _ammPoolsServiceEth,
+            ammPoolsLensEth: _ammPoolsLensEth
+        });
     }
 
     /// @notice Allows to execute batch of calls in one transaction using IPOR protocol business methods
@@ -113,8 +123,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         uint256 length = calls.length;
         address implementation;
 
-        for (uint256 i; i != length; ) {
-            implementation = _getRouterImplementation(bytes4(calls[i][:4]), BATCH_OPERATION);
+        for (uint256 i; i != length;) {
+            implementation = _getRouterImplementation(bytes4(calls[i][: 4]), BATCH_OPERATION);
             implementation.functionDelegateCall(calls[i]);
             unchecked {
                 ++i;
@@ -156,6 +166,12 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
                 _nonReentrantBefore();
             }
             return _ammCloseSwapService;
+        } else if
+        (_checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceEth.provideLiquidityStEth.selector)) {
+            if (batchOperation == 0) {
+                _nonReentrantBefore();
+            }
+            return _ammPoolsServiceEth;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsService.provideLiquidityUsdt.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsService.provideLiquidityUsdc.selector) ||
@@ -283,6 +299,10 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             sig == IAmmCloseSwapLens.getClosingSwapDetails.selector
         ) {
             return _ammCloseSwapService;
+        } else if (
+        sig == IAmmPoolsLensEth.getExchangeRate.selector
+        ) {
+            return _ammPoolsLensEth;
         }
 
         revert(IporErrors.ROUTER_INVALID_SIGNATURE);
@@ -294,18 +314,18 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         bytes memory result;
         // solhint-disable-next-line no-inline-assembly
         assembly {
-            // Copy msg.data. We take full control of memory in this inline assembly
-            // block because it will not return to Solidity code. We overwrite the
-            // Solidity scratch pad at memory position 0.
+        // Copy msg.data. We take full control of memory in this inline assembly
+        // block because it will not return to Solidity code. We overwrite the
+        // Solidity scratch pad at memory position 0.
             calldatacopy(0, 0, calldatasize())
 
-            // Call the implementation.
-            // out and outsize are 0 because we don't know the size yet.
+        // Call the implementation.
+        // out and outsize are 0 because we don't know the size yet.
             result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)
         }
         _nonReentrantAfter();
         assembly {
-            // Copy the returned data.
+        // Copy the returned data.
             returndatacopy(0, 0, returndatasize())
 
             switch result
@@ -314,7 +334,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
                 revert(0, returndatasize())
             }
             default {
-                return(0, returndatasize())
+                return (0, returndatasize())
             }
         }
     }
