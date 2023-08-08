@@ -17,7 +17,6 @@ import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/types/AmmInternalTypes.sol";
 import "./libraries/types/StorageInternalTypes.sol";
 import "./libraries/SoapIndicatorRebalanceLogic.sol";
-import "forge-std/console2.sol";
 
 //@dev all stored values related to tokens are in 18 decimals.
 contract AmmStorage is
@@ -233,8 +232,7 @@ contract AmmStorage is
         require(assetAmount > 0, AmmErrors.DEPOSIT_AMOUNT_IS_TOO_LOW);
 
         uint128 newLiquidityPoolBalance = _balances.liquidityPool + assetAmount.toUint128();
-        console2.log("newLiquidityPoolBalance", cfgMaxLiquidityPoolBalance);
-        require(cfgMaxLiquidityPoolBalance <= cfgMaxLiquidityPoolBalance, AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH);
+        require(newLiquidityPoolBalance <= cfgMaxLiquidityPoolBalance, AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH);
 
         _balances.liquidityPool = newLiquidityPoolBalance;
     }

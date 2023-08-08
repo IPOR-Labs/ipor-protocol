@@ -160,7 +160,6 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         uint32 newAutoRebalanceThresholdInThousands,
         uint16 newAmmTreasuryAndAssetManagementRatio
     ) external override {
-        console2.log("XXXXXXXXXXXX");
         AmmConfigurationManager.setAmmPoolsParams(
             asset,
             newMaxLiquidityPoolBalance,

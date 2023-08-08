@@ -5,34 +5,34 @@ import "./AmmLibEth.sol";
 import "../libraries/IporContractValidator.sol";
 import "./IAmmPoolsLensEth.sol";
 
-contract AmmPoolsServiceEth is IAmmPoolsLensEth {
+contract AmmPoolsLensEth is IAmmPoolsLensEth {
     using IporContractValidator for address;
 
     address public immutable stEth;
     address public immutable wEth;
-    address public immutable ethIpToken;
-    address public immutable ethAmmTreasury;
-    uint256 public immutable ethRedeemFeeRate;
+    address public immutable ipEth;
+    address public immutable ammTreasuryEth;
+    uint256 public immutable redeemFeeRateEth;
 
     constructor(
         address stEthTemp,
         address wEthTemp,
-        address ethIpTokenTemp,
-        address ethAmmTreasuryTemp,
+        address ipEthTemp,
+        address ammTreasuryEthTemp,
         address iporProtocolRouterTemp,
-        uint256 ethRedeemFeeRateTemp
+        uint256 redeemFeeRateEthTemp
     ) {
         stEth = stEthTemp.checkAddress();
         wEth = wEthTemp.checkAddress();
-        ethIpToken = ethIpTokenTemp.checkAddress();
-        ethAmmTreasury = ethAmmTreasuryTemp.checkAddress();
-        ethRedeemFeeRate = ethRedeemFeeRateTemp;
+        ipEth = ipEthTemp.checkAddress();
+        ammTreasuryEth = ammTreasuryEthTemp.checkAddress();
+        redeemFeeRateEth = redeemFeeRateEthTemp;
     }
 
 
 
-    function getExchangeRate() external view returns(uint256) {
-        return AmmLibEth.getExchangeRate(stEth, ethAmmTreasury, ethIpToken);
+    function getIpEthExchangeRate() external view returns(uint256) {
+        return AmmLibEth.getExchangeRate(stEth, ammTreasuryEth, ipEth);
 
     }
 
