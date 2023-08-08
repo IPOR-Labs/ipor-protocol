@@ -426,6 +426,7 @@ contract MiltonStorage is
         onlyMilton
     {
         uint256 currentVaultBalance = _balances.vault;
+
         // We nedd this because for compound if we deposit and withdraw we could get negative intrest based on rounds
         require(
             vaultBalance + withdrawnAmount >= currentVaultBalance,

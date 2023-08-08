@@ -256,16 +256,19 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
             miltonStorageAddresses,
             mockCase0JosephAddresses
         );
+
         vm.startPrank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         iporOracle.itfUpdateIndex(address(_usdcMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         vm.stopPrank();
-        vm.prank(_liquidityProvider);
+
+        vm.startPrank(_liquidityProvider);
         mockCase0Josephs.mockCase0JosephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
         mockCase0Josephs.mockCase0JosephUsdc.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
         mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
         vm.stopPrank();
+
         // when
         vm.startPrank(_userTwo);
         mockCase0Miltons.mockCase0MiltonUsdt.itfOpenSwapPayFixed(
