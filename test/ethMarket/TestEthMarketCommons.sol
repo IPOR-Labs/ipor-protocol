@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
+import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "forge-std/Test.sol";
 import "../mocks/EmptyRouterImplementation.sol";
-import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/ethMarket/AmmTreasuryEth.sol";
 import "../../contracts/ethMarket/AmmPoolsServiceEth.sol";
@@ -26,7 +26,7 @@ contract TestEthMarketCommons is Test {
     uint256 public redeemFeeRateEth = 1;
 
     address public ipEth;
-    address public iporProtocolRouter;
+    address payable public iporProtocolRouter;
     address public ammTreasuryEth;
     address public ammGovernanceService;
     address public ammPoolsServiceEth;
@@ -56,7 +56,7 @@ contract TestEthMarketCommons is Test {
         vm.prank(owner);
         address implementation = address(new EmptyRouterImplementation());
         ERC1967Proxy proxy = _constructProxy(implementation);
-        iporProtocolRouter = address(proxy);
+        iporProtocolRouter = payable(address(proxy));
     }
 
     function _createIpEth() private {
@@ -177,8 +177,13 @@ contract TestEthMarketCommons is Test {
     function _setupUser(address user) internal {
         deal(user, 1_000_000e18);
         vm.startPrank(user);
+
         IStETH(stEth).submit{value: 50_000e18}(address(0));
         IStETH(stEth).approve(iporProtocolRouter, type(uint256).max);
+
+        IWETH9(wEth).deposit{value: 50_000e18}();
+        IWETH9(wEth).approve(iporProtocolRouter, type(uint256).max);
+
         vm.stopPrank();
     }
 

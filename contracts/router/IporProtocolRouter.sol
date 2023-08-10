@@ -84,6 +84,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         _delegate(_getRouterImplementation(msg.sig, SINGLE_OPERATION));
     }
 
+    receive() external payable {}
+
     function initialize(bool paused) external initializer {
         __UUPSUpgradeable_init();
         OwnerManager.transferOwnership(msg.sender);
@@ -166,7 +168,10 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
                 _nonReentrantBefore();
             }
             return _ammCloseSwapService;
-        } else if (_checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceEth.provideLiquidityStEth.selector)) {
+        } else if (
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceEth.provideLiquidityStEth.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceEth.provideLiquidityWEth.selector)
+        ) {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }

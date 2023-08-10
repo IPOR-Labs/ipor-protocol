@@ -69,7 +69,7 @@ contract TestForkCommons is Test {
 
     // new contracts for v2
     address public iporRiskManagementOracleProxy;
-    address public iporProtocolRouterProxy;
+    address payable public iporProtocolRouterProxy;
     address public ammSwapsLens;
     address public ammPoolsLens;
     address public assetManagementLens;
@@ -235,7 +235,7 @@ contract TestForkCommons is Test {
         vm.prank(owner);
         address implementation = address(new EmptyRouterImplementation());
         ERC1967Proxy proxy = _constructProxy(implementation);
-        iporProtocolRouterProxy = address(proxy);
+        iporProtocolRouterProxy = payable(address(proxy));
     }
 
     function _createAmmSwapsLens() private {

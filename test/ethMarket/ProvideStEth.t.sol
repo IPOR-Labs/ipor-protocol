@@ -223,4 +223,6 @@ contract ProvideStEthTest is TestEthMarketCommons {
         vm.expectRevert(bytes(AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH));
         IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth(userOne, provideAmount);
     }
+
+    // todo add tests for events
 }

@@ -69,8 +69,8 @@ contract IporProtocolRouterBuilder is Test {
     function buildEmptyProxy() public returns (IporProtocolRouter) {
         vm.startPrank(_owner);
 
-        ERC1967Proxy proxy = _constructProxy(address(new EmptyRouterImplementation()));
-        IporProtocolRouter iporProtocolRouter = IporProtocolRouter(address(proxy));
+        address payable proxy = _constructProxy(new EmptyRouterImplementation());
+        IporProtocolRouter iporProtocolRouter = IporProtocolRouter(proxy);
         vm.stopPrank();
         delete builderData;
         return iporProtocolRouter;
@@ -95,15 +95,15 @@ contract IporProtocolRouterBuilder is Test {
             ammPoolsLensEth: builderData.ammPoolsLensEth
         });
 
-        ERC1967Proxy proxy = _constructProxy(address(new IporProtocolRouter(deployedContracts)));
-        IporProtocolRouter iporProtocolRouter = IporProtocolRouter(address(proxy));
+        address payable proxy = _constructProxy(new IporProtocolRouter(deployedContracts));
+        IporProtocolRouter iporProtocolRouter = IporProtocolRouter(proxy);
 
         vm.stopPrank();
         delete builderData;
         return iporProtocolRouter;
     }
 
-    function upgrade(address routerAddress) public {
+    function upgrade(address payable routerAddress) public {
         vm.startPrank(_owner);
 
         IporProtocolRouter.DeployedContracts memory deployedContracts = IporProtocolRouter.DeployedContracts({
@@ -128,7 +128,14 @@ contract IporProtocolRouterBuilder is Test {
         vm.stopPrank();
     }
 
-    function _constructProxy(address impl) internal returns (ERC1967Proxy proxy) {
-        proxy = new ERC1967Proxy(address(impl), abi.encodeWithSignature("initialize(bool)", false));
+    function _constructProxy(EmptyRouterImplementation impl) internal returns (address payable proxy) {
+        proxy = payable(address(
+            new ERC1967Proxy(address(impl), abi.encodeWithSignature("initialize(bool)", false))
+        ));
+    }
+    function _constructProxy(IporProtocolRouter impl) internal returns (address payable proxy) {
+        proxy = payable(address(
+            new ERC1967Proxy(address(impl), abi.encodeWithSignature("initialize(bool)", false))
+        ));
     }
 }
