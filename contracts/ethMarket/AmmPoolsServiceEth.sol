@@ -73,14 +73,11 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         );
     }
 
-    // custom error statement
-
     function provideLiquidityWEth(address beneficiary, uint256 wEthAmount) external override onlyRouter {
         require(wEthAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
         require(beneficiary != address(0), IporErrors.WRONG_ADDRESS);
 
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
-
         uint256 newPoolBalance = wEthAmount + IStETH(wEth).balanceOf(ammTreasuryEth);
 
         require(
@@ -89,9 +86,24 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         );
 
         IStETH(wEth).safeTransferFrom(msg.sender, address(this), wEthAmount);
-
         IWETH9(wEth).withdraw(wEthAmount);
+
         _depositEth(wEthAmount, beneficiary);
+    }
+
+    function provideLiquidityEth(address beneficiary, uint256 ethAmount) external payable onlyRouter {
+        require(ethAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
+        require(msg.value > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
+        require(beneficiary != address(0), IporErrors.WRONG_ADDRESS);
+
+        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
+        uint256 newPoolBalance = ethAmount + IStETH(wEth).balanceOf(ammTreasuryEth);
+        require(
+            newPoolBalance <= uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
+            AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH
+        );
+
+        _depositEth(ethAmount, beneficiary);
     }
 
     function _depositEth(uint256 ethAmount, address beneficiary) private {
@@ -117,7 +129,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
                 );
             }
         } catch {
-            revert IAmmPoolsServiceEth.StEthSubmitFailed({amount: ethAmount});
+            revert IAmmPoolsServiceEth.StEthSubmitFailed({amount: ethAmount, errorCode: AmmErrors.STETH_SUBMIT_FAILED});
         }
     }
 }

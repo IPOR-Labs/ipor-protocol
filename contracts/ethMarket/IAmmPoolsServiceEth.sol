@@ -6,7 +6,9 @@ interface IAmmPoolsServiceEth {
 
     function provideLiquidityWEth(address beneficiary, uint256 assetAmount) external;
 
-    error StEthSubmitFailed(uint256 amount);
+    function provideLiquidityEth(address beneficiary, uint256 assetAmount) external payable;
+
+    error StEthSubmitFailed(uint256 amount, string errorCode);
 
     event ProvideStEthLiquidity(
         uint256 timestamp,

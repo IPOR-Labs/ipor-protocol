@@ -80,7 +80,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         _disableInitializers();
     }
 
-    fallback() external {
+    fallback() external payable {
         _delegate(_getRouterImplementation(msg.sig, SINGLE_OPERATION));
     }
 
@@ -121,7 +121,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
 
     /// @notice Allows to execute batch of calls in one transaction using IPOR protocol business methods
     /// @param calls array of encoded calls
-    function batchExecutor(bytes[] calldata calls) external nonReentrant {
+    function batchExecutor(bytes[] calldata calls) external payable nonReentrant {
         uint256 length = calls.length;
         address implementation;
 
@@ -131,6 +131,10 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             unchecked {
                 ++i;
             }
+        }
+        uint256 remainingGas = address(this).balance;
+        if(remainingGas > 0) {
+            payable(msg.sender).transfer(remainingGas);
         }
     }
 
@@ -170,7 +174,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             return _ammCloseSwapService;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceEth.provideLiquidityStEth.selector) ||
-            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceEth.provideLiquidityWEth.selector)
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceEth.provideLiquidityWEth.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceEth.provideLiquidityEth.selector)
         ) {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
@@ -324,6 +329,10 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             // Call the implementation.
             // out and outsize are 0 because we don't know the size yet.
             result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)
+        }
+        uint256 remainingGas = address(this).balance;
+        if(remainingGas > 0) {
+            payable(msg.sender).transfer(remainingGas);
         }
         _nonReentrantAfter();
         assembly {
