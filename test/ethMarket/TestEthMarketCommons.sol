@@ -23,7 +23,7 @@ contract TestEthMarketCommons is Test {
 
     // new contracts for v2 ethMarket
     // todo: change when implement redeem
-    uint256 public redeemFeeRateEth = 1;
+    uint256 public redeemFeeRateEth = 5e15;
 
     address public ipEth;
     address payable public iporProtocolRouter;

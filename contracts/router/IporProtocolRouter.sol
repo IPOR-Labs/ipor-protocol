@@ -175,7 +175,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceEth.provideLiquidityStEth.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceEth.provideLiquidityWEth.selector) ||
-            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceEth.provideLiquidityEth.selector)
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceEth.provideLiquidityEth.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceEth.redeemFromAmmPoolStEth.selector)
         ) {
             if (batchOperation == 0) {
                 _nonReentrantBefore();

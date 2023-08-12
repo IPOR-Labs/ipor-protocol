@@ -73,7 +73,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         );
     }
 
-    function provideLiquidityWEth(address beneficiary, uint256 wEthAmount) external override payable onlyRouter {
+    function provideLiquidityWEth(address beneficiary, uint256 wEthAmount) external payable override onlyRouter {
         require(wEthAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
         require(beneficiary != address(0), IporErrors.WRONG_ADDRESS);
 
@@ -97,13 +97,43 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         require(beneficiary != address(0), IporErrors.WRONG_ADDRESS);
 
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
-        uint256 newPoolBalance = ethAmount + IStETH(wEth).balanceOf(ammTreasuryEth);
+        uint256 newPoolBalance = ethAmount + IStETH(stEth).balanceOf(ammTreasuryEth);
         require(
             newPoolBalance <= uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
             AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH
         );
 
         _depositEth(ethAmount, beneficiary);
+    }
+
+    function redeemFromAmmPoolStEth(address beneficiary, uint256 ipTokenAmount) external onlyRouter {
+        require(
+            ipTokenAmount > 0 && ipTokenAmount <= IIpToken(ipEth).balanceOf(msg.sender),
+            AmmPoolsErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW
+        );
+        require(beneficiary != address(0), IporErrors.WRONG_ADDRESS);
+
+    uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ammTreasuryEth, ipEth);
+
+        uint256 stEthAmount = IporMath.division(ipTokenAmount * exchangeRate, 1e18);
+        uint256 amountToRedeem = IporMath.division(stEthAmount * (1e18 - redeemFeeRateEth), 1e18);
+
+        require(amountToRedeem > 0, AmmPoolsErrors.CANNOT_REDEEM_ASSET_AMOUNT_TOO_LOW);
+
+        IIpToken(ipEth).burn(msg.sender, ipTokenAmount);
+
+        IStETH(stEth).safeTransferFrom(ammTreasuryEth, beneficiary, amountToRedeem);
+
+        emit RedeemStEth(
+            block.timestamp,
+            ammTreasuryEth,
+            msg.sender,
+            beneficiary,
+            exchangeRate,
+            ipTokenAmount,
+            stEthAmount,
+            amountToRedeem
+        );
     }
 
     function _depositEth(uint256 ethAmount, address beneficiary) private {

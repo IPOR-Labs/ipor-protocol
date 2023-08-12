@@ -8,6 +8,8 @@ interface IAmmPoolsServiceEth {
 
     function provideLiquidityEth(address beneficiary, uint256 assetAmount) external payable;
 
+    function redeemFromAmmPoolStEth(address beneficiary, uint256 ipTokenAmount) external;
+
     error StEthSubmitFailed(uint256 amount, string errorCode);
 
     event ProvideStEthLiquidity(
@@ -30,4 +32,16 @@ interface IAmmPoolsServiceEth {
         uint256 amountStEth,
         uint256 ipTokenAmount
     );
+
+    event RedeemStEth(
+        uint256 timestamp,
+        address tresury,
+        address from,
+        address beneficiary,
+        uint256 exchangeRate,
+        uint256 ipTokenAmount,
+        uint256 assetAmount,
+        uint256 redeemAmount
+    );
+
 }
