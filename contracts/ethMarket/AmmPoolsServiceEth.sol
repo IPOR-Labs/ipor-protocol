@@ -45,7 +45,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         _;
     }
 
-    function provideLiquidityStEth(address beneficiary, uint256 assetAmount) external override onlyRouter {
+    function provideLiquidityStEth(address beneficiary, uint256 assetAmount) external payable override onlyRouter {
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
 
         uint256 newPoolBalance = assetAmount + IStETH(stEth).balanceOf(ammTreasuryEth);
@@ -73,7 +73,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         );
     }
 
-    function provideLiquidityWEth(address beneficiary, uint256 wEthAmount) external override onlyRouter {
+    function provideLiquidityWEth(address beneficiary, uint256 wEthAmount) external override payable onlyRouter {
         require(wEthAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
         require(beneficiary != address(0), IporErrors.WRONG_ADDRESS);
 

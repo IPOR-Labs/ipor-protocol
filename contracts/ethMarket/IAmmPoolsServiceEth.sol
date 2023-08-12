@@ -2,9 +2,9 @@
 pragma solidity 0.8.20;
 
 interface IAmmPoolsServiceEth {
-    function provideLiquidityStEth(address beneficiary, uint256 assetAmount) external;
+    function provideLiquidityStEth(address beneficiary, uint256 assetAmount) external payable;
 
-    function provideLiquidityWEth(address beneficiary, uint256 assetAmount) external;
+    function provideLiquidityWEth(address beneficiary, uint256 assetAmount) external payable;
 
     function provideLiquidityEth(address beneficiary, uint256 assetAmount) external payable;
 

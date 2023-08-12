@@ -5,7 +5,7 @@ import "forge-std/Test.sol";
 import "./TestEthMarketCommons.sol";
 import "../../contracts/libraries/errors/AmmErrors.sol";
 
-contract ProvideWEth is TestEthMarketCommons {
+contract ProvideEth is TestEthMarketCommons {
     function setUp() public {
         vm.createSelectFork(vm.envString("PROVIDER_URL"), 17810000);
         _init();
