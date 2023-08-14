@@ -15,11 +15,11 @@ contract ProvideBatchExecutor is TestEthMarketCommons {
     function testShouldProvideLiquidityWhenBatchExecutorIsUsed() external {
         // given
         uint userEthBalanceBefore = userOne.balance;
-        uint userIpEthBalanceBefore = IERC20(ipEth).balanceOf(userOne);
+        uint userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
         uint userStEthBalanceBefore = IStETH(stEth).balanceOf(userOne);
         uint userWEthBalanceBefore = IERC20(wEth).balanceOf(userOne);
 
-        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpEthExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
         uint ammTreasuryStEthBalanceBefore = IStETH(stEth).balanceOf(ammTreasuryEth);
 
         bytes[] memory requestData = new bytes[](3);
@@ -46,11 +46,11 @@ contract ProvideBatchExecutor is TestEthMarketCommons {
 
         // then
         uint userEthBalanceAfter = userOne.balance;
-        uint userIpEthBalanceAfter = IERC20(ipEth).balanceOf(userOne);
+        uint userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
         uint userStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
         uint userWethBalanceAfter = IERC20(wEth).balanceOf(userOne);
 
-        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpEthExchangeRate();
+        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
         uint ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryEth);
 
         assertEq(
@@ -58,7 +58,7 @@ contract ProvideBatchExecutor is TestEthMarketCommons {
             userEthBalanceBefore - 100e18,
             " balance of userOne should be decreased by 100e18"
         );
-        assertEq(userIpEthBalanceBefore, 0, " balance of userOne should be 0");
+        assertEq(userIpstEthBalanceBefore, 0, " balance of userOne should be 0");
         assertEq(userStEthBalanceBefore, 49999999999999999999999, " balance of userOne should be 49999999999999999999999");
         assertEq(userWEthBalanceBefore, 50_000e18, " balance of userOne should be 50_000e18");
         assertEq(exchangeRateBefore, exchangeRateAfter, " exchange rate should not be changed");
@@ -69,7 +69,7 @@ contract ProvideBatchExecutor is TestEthMarketCommons {
         );
 
         assertEq(
-            userIpEthBalanceAfter,
+            userIpstEthBalanceAfter,
             299999999999999999999,
             " balance of userOne should be increased by 299999999999999999999"
         );

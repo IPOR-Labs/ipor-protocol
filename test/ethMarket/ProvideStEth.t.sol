@@ -15,7 +15,7 @@ contract ProvideStEthTest is TestEthMarketCommons {
         //given
 
         //when
-        uint exchangeRate = IAmmPoolsLensEth(iporProtocolRouter).getIpEthExchangeRate();
+        uint exchangeRate = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
         //then
         assertEq(exchangeRate, 1e18, "exchangeRate should be 1");
     }
@@ -23,7 +23,7 @@ contract ProvideStEthTest is TestEthMarketCommons {
     function testShouldRevertWhen0Amount() external {
         // given
         uint userStEthBalanceBefore = IStETH(stEth).balanceOf(userOne);
-        uint userIpEthBalanceBefore = IERC20(ipEth).balanceOf(userOne);
+        uint userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
 
         // when
         vm.expectRevert(bytes(AmmPoolsErrors.IP_TOKEN_MINT_AMOUNT_TOO_LOW));
@@ -31,16 +31,16 @@ contract ProvideStEthTest is TestEthMarketCommons {
 
         // then
         uint userStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
-        uint userIpEthBalanceAfter = IERC20(ipEth).balanceOf(userOne);
+        uint userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
 
         assertEq(userStEthBalanceBefore, userStEthBalanceAfter, "user balance of stEth should not change");
-        assertEq(userIpEthBalanceBefore, userIpEthBalanceAfter, "user ipEth balance should not change");
+        assertEq(userIpstEthBalanceBefore, userIpstEthBalanceAfter, "user ipstEth balance should not change");
     }
 
     function testShouldRevertWhenBeneficiaryIs0Address() external {
         // given
         uint userStEthBalanceBefore = IStETH(stEth).balanceOf(userOne);
-        uint userIpEthBalanceBefore = IERC20(ipEth).balanceOf(userOne);
+        uint userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
         uint provideAmount = 100e18;
 
         // when
@@ -50,20 +50,20 @@ contract ProvideStEthTest is TestEthMarketCommons {
 
         // then
         uint userStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
-        uint userIpEthBalanceAfter = IERC20(ipEth).balanceOf(userOne);
+        uint userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
 
         assertEq(userStEthBalanceBefore, userStEthBalanceAfter, "user balance of stEth should not change");
-        assertEq(userIpEthBalanceBefore, userIpEthBalanceAfter, "user ipEth balance should not change");
+        assertEq(userIpstEthBalanceBefore, userIpstEthBalanceAfter, "user ipstEth balance should not change");
     }
 
     function testShouldProvideStEthToOwnAddressWhenBeneficiaryIsSender() external {
         // given
         uint userStEthBalanceBefore = IStETH(stEth).balanceOf(userOne);
-        uint userIpEthBalanceBefore = IERC20(ipEth).balanceOf(userOne);
+        uint userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
         uint ammTreasuryStEthBalanceBefore = IStETH(stEth).balanceOf(ammTreasuryEth);
 
         uint provideAmount = 100e18;
-        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpEthExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
 
         // when
         vm.prank(userOne);
@@ -71,18 +71,18 @@ contract ProvideStEthTest is TestEthMarketCommons {
 
         // then
         uint userStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
-        uint userIpEthBalanceAfter = IERC20(ipEth).balanceOf(userOne);
+        uint userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
         uint ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryEth);
 
-        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpEthExchangeRate();
+        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
 
         assertEq(
             userStEthBalanceBefore - provideAmount,
             userStEthBalanceAfter,
             "user balance of stEth should decrease"
         );
-        assertEq(userIpEthBalanceBefore + provideAmount, userIpEthBalanceAfter, "user ipEth balance should increase");
-        assertEq(userIpEthBalanceAfter, provideAmount, "user ipEth balance should be equal to provideAmount");
+        assertEq(userIpstEthBalanceBefore + provideAmount, userIpstEthBalanceAfter, "user ipstEth balance should increase");
+        assertEq(userIpstEthBalanceAfter, provideAmount, "user ipstEth balance should be equal to provideAmount");
         assertEq(ammTreasuryStEthBalanceBefore, 0, "amm treasury balance should be 0");
         assertEq(
             ammTreasuryStEthBalanceAfter,
@@ -95,13 +95,13 @@ contract ProvideStEthTest is TestEthMarketCommons {
     function testShouldProvideStEthToOtherAddressWhenBeneficiaryIsNotSender() external {
         // given
         uint userOneStEthBalanceBefore = IStETH(stEth).balanceOf(userOne);
-        uint userOneIpEthBalanceBefore = IERC20(ipEth).balanceOf(userOne);
+        uint userOneIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
         uint userTwoStEthBalanceBefore = IStETH(stEth).balanceOf(userTwo);
-        uint userTwoIpEthBalanceBefore = IERC20(ipEth).balanceOf(userTwo);
+        uint userTwoIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userTwo);
         uint ammTreasuryStEthBalanceBefore = IStETH(stEth).balanceOf(ammTreasuryEth);
 
         uint provideAmount = 100e18;
-        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpEthExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
 
         // when
         vm.prank(userOne);
@@ -109,25 +109,25 @@ contract ProvideStEthTest is TestEthMarketCommons {
 
         // then
         uint userOneStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
-        uint userOneIpEthBalanceAfter = IERC20(ipEth).balanceOf(userOne);
+        uint userOneIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
         uint userTwoStEthBalanceAfter = IStETH(stEth).balanceOf(userTwo);
-        uint userTwoIpEthBalanceAfter = IERC20(ipEth).balanceOf(userTwo);
+        uint userTwoIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userTwo);
         uint ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryEth);
-        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpEthExchangeRate();
+        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
 
         assertEq(
             userOneStEthBalanceBefore - provideAmount,
             userOneStEthBalanceAfter,
             "user balance of stEth should decrease"
         );
-        assertEq(userOneIpEthBalanceBefore, userOneIpEthBalanceAfter, "user ipEth balance should not change");
+        assertEq(userOneIpstEthBalanceBefore, userOneIpstEthBalanceAfter, "user ipstEth balance should not change");
         assertEq(userTwoStEthBalanceBefore, userTwoStEthBalanceAfter, "user balance of stEth should not change");
         assertEq(
-            userTwoIpEthBalanceBefore + provideAmount,
-            userTwoIpEthBalanceAfter,
-            "user ipEth balance should increase"
+            userTwoIpstEthBalanceBefore + provideAmount,
+            userTwoIpstEthBalanceAfter,
+            "user ipstEth balance should increase"
         );
-        assertEq(userTwoIpEthBalanceAfter, provideAmount, "user ipEth balance should be equal to provideAmount");
+        assertEq(userTwoIpstEthBalanceAfter, provideAmount, "user ipstEth balance should be equal to provideAmount");
         assertEq(ammTreasuryStEthBalanceBefore, 0, "amm treasury balance should be 0");
         assertEq(
             ammTreasuryStEthBalanceAfter,
@@ -140,13 +140,13 @@ contract ProvideStEthTest is TestEthMarketCommons {
     function testShouldProvide10TimesStEth() external {
         // given
         uint userOneStEthBalanceBefore = IStETH(stEth).balanceOf(userOne);
-        uint userOneIpEthBalanceBefore = IERC20(ipEth).balanceOf(userOne);
+        uint userOneIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
         uint userTwoStEthBalanceBefore = IStETH(stEth).balanceOf(userTwo);
-        uint userTwoIpEthBalanceBefore = IERC20(ipEth).balanceOf(userTwo);
+        uint userTwoIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userTwo);
         uint ammTreasuryStEthBalanceBefore = IStETH(stEth).balanceOf(ammTreasuryEth);
 
         uint provideAmount = 10e18;
-        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpEthExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
 
         // when
         for (uint i; i < 10; ++i) {
@@ -158,11 +158,11 @@ contract ProvideStEthTest is TestEthMarketCommons {
 
         // then
         uint userOneStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
-        uint userOneIpEthBalanceAfter = IERC20(ipEth).balanceOf(userOne);
+        uint userOneIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
         uint userTwoStEthBalanceAfter = IStETH(stEth).balanceOf(userTwo);
-        uint userTwoIpEthBalanceAfter = IERC20(ipEth).balanceOf(userTwo);
+        uint userTwoIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userTwo);
         uint ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryEth);
-        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpEthExchangeRate();
+        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
 
         assertEq(
             userOneStEthBalanceBefore,
@@ -175,9 +175,9 @@ contract ProvideStEthTest is TestEthMarketCommons {
             "user balance of stEth should be 49999999999999999999999"
         );
         assertEq(
-            userOneIpEthBalanceBefore + provideAmount * 10,
-            userOneIpEthBalanceAfter,
-            "user ipEth balance should increase"
+            userOneIpstEthBalanceBefore + provideAmount * 10,
+            userOneIpstEthBalanceAfter,
+            "user ipstEth balance should increase"
         );
         assertEq(
             userTwoStEthBalanceBefore,
@@ -190,9 +190,9 @@ contract ProvideStEthTest is TestEthMarketCommons {
             "user balance of stEth should be 49999999999999999999999"
         );
         assertEq(
-            userTwoIpEthBalanceBefore + provideAmount * 10,
-            userTwoIpEthBalanceAfter,
-            "user ipEth balance should increase"
+            userTwoIpstEthBalanceBefore + provideAmount * 10,
+            userTwoIpstEthBalanceAfter,
+            "user ipstEth balance should increase"
         );
         assertEq(exchangeRateBefore, exchangeRateAfter, "exchangeRate should not change");
         assertEq(ammTreasuryStEthBalanceBefore, 0, "amm treasury balance should be 0");
@@ -202,8 +202,8 @@ contract ProvideStEthTest is TestEthMarketCommons {
             "amm treasury balance should be 199999999999999999979"
         );
 
-        console2.log("IERC20(ipEth): ", IERC20(ipEth).totalSupply());
-        console2.log("IAmmPoolsLensEth(iporProtocolRouter).getIpEthExchangeRate(): ", IAmmPoolsLensEth(iporProtocolRouter).getIpEthExchangeRate());
+        console2.log("IERC20(ipstEth): ", IERC20(ipstEth).totalSupply());
+        console2.log("IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate(): ", IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate());
         console2.log("IStETH(stEth).balanceOf(ammTreasuryEth): ", IStETH(stEth).balanceOf(ammTreasuryEth));
         // 49_999 999999999999999999 (userOne Balance)
         //-   100 000000000000000000 (transfer to ammTreasury)

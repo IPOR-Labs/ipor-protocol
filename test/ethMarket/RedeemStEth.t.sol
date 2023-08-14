@@ -17,7 +17,7 @@ contract RedeemStEth is TestEthMarketCommons {
     function testShouldRevertWhen0Amount() external {
         // given
         uint userStEthBalanceBefore = IStETH(stEth).balanceOf(userOne);
-        uint userIpEthBalanceBefore = IERC20(ipEth).balanceOf(userOne);
+        uint userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
 
         // when
         vm.prank(userOne);
@@ -26,16 +26,16 @@ contract RedeemStEth is TestEthMarketCommons {
 
         // then
         uint userStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
-        uint userIpEthBalanceAfter = IERC20(ipEth).balanceOf(userOne);
+        uint userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
 
         assertEq(userStEthBalanceBefore, userStEthBalanceAfter, "user balance of stEth should not change");
-        assertEq(userIpEthBalanceBefore, userIpEthBalanceAfter, "user ipEth balance should not change");
+        assertEq(userIpstEthBalanceBefore, userIpstEthBalanceAfter, "user ipstEth balance should not change");
     }
 
     function testShouldRevertWhenBeneficiaryIs0Address() external {
         // given
         uint userStEthBalanceBefore = IStETH(stEth).balanceOf(userOne);
-        uint userIpEthBalanceBefore = IERC20(ipEth).balanceOf(userOne);
+        uint userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
         uint redeemAmount = 100e18;
 
         // when
@@ -45,16 +45,16 @@ contract RedeemStEth is TestEthMarketCommons {
 
         // then
         uint userStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
-        uint userIpEthBalanceAfter = IERC20(ipEth).balanceOf(userOne);
+        uint userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
 
         assertEq(userStEthBalanceBefore, userStEthBalanceAfter, "user balance of stEth should not change");
-        assertEq(userIpEthBalanceBefore, userIpEthBalanceAfter, "user ipEth balance should not change");
+        assertEq(userIpstEthBalanceBefore, userIpstEthBalanceAfter, "user ipstEth balance should not change");
     }
 
     function testShouldReventWhenAmountBigerThenBalance() external {
         // given
         uint userStEthBalanceBefore = IStETH(stEth).balanceOf(userOne);
-        uint userIpEthBalanceBefore = IERC20(ipEth).balanceOf(userOne);
+        uint userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
 
         // when
         vm.prank(userOne);
@@ -63,17 +63,17 @@ contract RedeemStEth is TestEthMarketCommons {
 
         // then
         uint userStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
-        uint userIpEthBalanceAfter = IERC20(ipEth).balanceOf(userOne);
+        uint userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
 
         assertEq(userStEthBalanceBefore, userStEthBalanceAfter, "user balance of stEth should not change");
-        assertEq(userIpEthBalanceBefore, userIpEthBalanceAfter, "user ipEth balance should not change");
+        assertEq(userIpstEthBalanceBefore, userIpstEthBalanceAfter, "user ipstEth balance should not change");
     }
 
     function testShouldBeAbleToRedeem() external {
         // given
         uint userStEthBalanceBefore = IStETH(stEth).balanceOf(userOne);
-        uint userIpEthBalanceBefore = IERC20(ipEth).balanceOf(userOne);
-        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpEthExchangeRate();
+        uint userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
+        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
         uint redeemAmount = 100e18;
 
         // when
@@ -82,19 +82,19 @@ contract RedeemStEth is TestEthMarketCommons {
 
         // then
         uint userStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
-        uint userIpEthBalanceAfter = IERC20(ipEth).balanceOf(userOne);
-        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpEthExchangeRate();
+        uint userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
+        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
 
         assertTrue(userStEthBalanceBefore < userStEthBalanceAfter, "user balance of stEth should increase");
-        assertTrue(userIpEthBalanceBefore > userIpEthBalanceAfter, "user ipEth balance should decrease");
+        assertTrue(userIpstEthBalanceBefore > userIpstEthBalanceAfter, "user ipstEth balance should decrease");
         assertTrue(exchangeRateBefore < exchangeRateAfter, "exchange rate should increase");
     }
     function testShouldBeAbleToRedeemWhenBeneficiaryIsNotSender() external {
         // given
         uint userStEthBalanceBefore = IStETH(stEth).balanceOf(userOne);
         uint userTwoStEthBalanceBefore = IStETH(stEth).balanceOf(userTwo);
-        uint userIpEthBalanceBefore = IERC20(ipEth).balanceOf(userOne);
-        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpEthExchangeRate();
+        uint userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
+        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
         uint redeemAmount = 100e18;
 
         // when
@@ -104,12 +104,12 @@ contract RedeemStEth is TestEthMarketCommons {
         // then
         uint userStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
         uint userTwoStEthBalanceAfter = IStETH(stEth).balanceOf(userTwo);
-        uint userIpEthBalanceAfter = IERC20(ipEth).balanceOf(userOne);
-        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpEthExchangeRate();
+        uint userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
+        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
 
         assertEq(userStEthBalanceBefore, userStEthBalanceAfter, "user balance of stEth should not change");
         assertTrue(userTwoStEthBalanceBefore < userTwoStEthBalanceAfter, "user balance of stEth should increase");
-        assertTrue(userIpEthBalanceBefore > userIpEthBalanceAfter, "user ipEth balance should decrease");
+        assertTrue(userIpstEthBalanceBefore > userIpstEthBalanceAfter, "user ipstEth balance should decrease");
         assertTrue(exchangeRateBefore < exchangeRateAfter, "exchange rate should increase");
     }
 

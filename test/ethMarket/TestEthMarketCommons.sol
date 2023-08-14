@@ -25,7 +25,7 @@ contract TestEthMarketCommons is Test {
     // todo: change when implement redeem
     uint256 public redeemFeeRateEth = 5e15;
 
-    address public ipEth;
+    address public ipstEth;
     address payable public iporProtocolRouter;
     address public ammTreasuryEth;
     address public ammGovernanceService;
@@ -39,7 +39,7 @@ contract TestEthMarketCommons is Test {
     function _init() internal {
         _createEmptyRouterImplementation();
 
-        _createIpEth();
+        _createIpstEth();
         _createAmmTreasuryEth();
         _createAmmPoolServiceEth();
         _createAmmPoolsLensEth();
@@ -59,11 +59,11 @@ contract TestEthMarketCommons is Test {
         iporProtocolRouter = payable(address(proxy));
     }
 
-    function _createIpEth() private {
+    function _createIpstEth() private {
         vm.startPrank(owner);
-        IpToken token = new IpToken("IP ETH", "ipEth", stEth);
+        IpToken token = new IpToken("IP ETH", "ipstEth", stEth);
         token.setJoseph(iporProtocolRouter);
-        ipEth = address(token);
+        ipstEth = address(token);
         vm.stopPrank();
     }
 
@@ -79,7 +79,7 @@ contract TestEthMarketCommons is Test {
         AmmPoolsServiceEth pool = new AmmPoolsServiceEth(
             stEth,
             wEth,
-            ipEth,
+            ipstEth,
             ammTreasuryEth,
             iporProtocolRouter,
             redeemFeeRateEth
@@ -93,7 +93,7 @@ contract TestEthMarketCommons is Test {
         AmmPoolsLensEth lens = new AmmPoolsLensEth(
             stEth,
             wEth,
-            ipEth,
+            ipstEth,
             ammTreasuryEth,
             iporProtocolRouter,
             redeemFeeRateEth

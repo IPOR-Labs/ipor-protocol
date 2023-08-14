@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 interface IAmmPoolsLensEth {
 
-    function getIpEthExchangeRate() external view returns(uint256);
+    function getIpstEthExchangeRate() external view returns(uint256);
 
     }
 

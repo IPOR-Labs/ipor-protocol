@@ -309,7 +309,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             sig == IAmmCloseSwapLens.getClosingSwapDetails.selector
         ) {
             return _ammCloseSwapService;
-        } else if (sig == IAmmPoolsLensEth.getIpEthExchangeRate.selector) {
+        } else if (sig == IAmmPoolsLensEth.getIpstEthExchangeRate.selector) {
             return _ammPoolsLensEth;
         }
 
