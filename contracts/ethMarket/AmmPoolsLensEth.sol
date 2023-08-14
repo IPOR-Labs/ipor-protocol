@@ -29,11 +29,7 @@ contract AmmPoolsLensEth is IAmmPoolsLensEth {
         redeemFeeRateEth = redeemFeeRateEthTemp;
     }
 
-
-
-    function getIpstEthExchangeRate() external view returns(uint256) {
+    function getIpstEthExchangeRate() external view returns (uint256) {
         return AmmLibEth.getExchangeRate(stEth, ammTreasuryEth, ipstEth);
-
     }
-
 }

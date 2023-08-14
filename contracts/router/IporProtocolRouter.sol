@@ -21,9 +21,9 @@ import "../interfaces/IPowerTokenStakeService.sol";
 import "../interfaces/IProxyImplementation.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/IporContractValidator.sol";
-import "./AccessControl.sol";
 import "../ethMarket/IAmmPoolsLensEth.sol";
 import "../ethMarket/IAmmPoolsServiceEth.sol";
+import "./AccessControl.sol";
 
 /// @title Entry point for IPOR protocol
 contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementation {
@@ -84,8 +84,6 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         _delegate(_getRouterImplementation(msg.sig, SINGLE_OPERATION));
     }
 
-    receive() external payable {}
-
     function initialize(bool paused) external initializer {
         __UUPSUpgradeable_init();
         OwnerManager.transferOwnership(msg.sender);
@@ -137,6 +135,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             payable(msg.sender).transfer(remainingGas);
         }
     }
+
+    receive() external payable {}
 
     function _getRouterImplementation(bytes4 sig, uint256 batchOperation) internal returns (address) {
         if (
@@ -331,9 +331,9 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             // out and outsize are 0 because we don't know the size yet.
             result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)
         }
-        uint256 remainingGas = address(this).balance;
-        if(remainingGas > 0) {
-            payable(msg.sender).transfer(remainingGas);
+        uint256 ethToReturn = address(this).balance;
+        if(ethToReturn > 0) {
+            payable(msg.sender).transfer(ethToReturn);
         }
         _nonReentrantAfter();
         assembly {

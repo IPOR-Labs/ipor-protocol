@@ -21,7 +21,7 @@ contract AmmTreasuryEth is
     ReentrancyGuardUpgradeable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-IAmmTreasuryEth,
+    IAmmTreasuryEth,
     IProxyImplementation
 {
     using IporContractValidator for address;

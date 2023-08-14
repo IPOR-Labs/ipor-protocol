@@ -5,13 +5,13 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../libraries/IporContractValidator.sol";
 import "../libraries/math/IporMath.sol";
 import "../libraries/errors/AmmErrors.sol";
+import "../libraries/StorageLib.sol";
 import "../interfaces/IIpToken.sol";
+import "../governance/AmmConfigurationManager.sol";
 import "./IStETH.sol";
 import "./IWETH9.sol";
 import "./AmmLibEth.sol";
 import "./IAmmPoolsServiceEth.sol";
-import "../libraries/StorageLib.sol";
-import "../governance/AmmConfigurationManager.sol";
 
 contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
     using IporContractValidator for address;
@@ -113,7 +113,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         );
         require(beneficiary != address(0), IporErrors.WRONG_ADDRESS);
 
-    uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ammTreasuryEth, ipstEth);
+        uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ammTreasuryEth, ipstEth);
 
         uint256 stEthAmount = IporMath.division(ipTokenAmount * exchangeRate, 1e18);
         uint256 amountToRedeem = IporMath.division(stEthAmount * (1e18 - redeemFeeRateEth), 1e18);
