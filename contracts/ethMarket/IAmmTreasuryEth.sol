@@ -7,7 +7,7 @@ interface IAmmTreasuryEth {
     function router() external view returns (address);
 
     /// @notice Retrieves the configuration addresses for stEth and the router.
-    /// @return The addresses of stEth and the router respectively.
+    /// return (asset, router) The addresses of stEth and the router respectively.
     /// @dev This function provides a way to access the current configuration of the contract.
     function getConfiguration() external view returns (address asset, address router);
 
@@ -20,13 +20,13 @@ interface IAmmTreasuryEth {
     /// @notice Pauses the contract and revokes the approval of stEth tokens for the router.
     /// @dev This function can only be called by the pause guardian.
     /// It revokes the approval of stEth tokens for the router and then pauses the contract.
-    /// @require Caller must be the pause guardian.
+    /// require Caller must be the pause guardian.
     function pause() external;
 
     /// @notice Unpauses the contract and forcefully approves the router to transfer an unlimited amount of stEth tokens.
     /// @dev This function can only be called by the contract owner.
     /// It unpauses the contract and then forcefully sets the approval of stEth tokens for the router to the maximum possible value.
-    /// @require Caller must be the contract owner.
+    /// require Caller must be the contract owner.
     function unpause() external;
 
     /// @notice Checks if the given account is a pause guardian.
@@ -39,13 +39,13 @@ interface IAmmTreasuryEth {
     /// @param guardian Address of the account to be added as a pause guardian.
     /// @dev This function can only be called by the contract owner.
     /// It delegates the addition of a new pause guardian to the PauseManager.
-    /// @require Caller must be the contract owner.
+    /// require Caller must be the contract owner.
     function addPauseGuardian(address guardian) external;
 
     /// @notice Removes an existing pause guardian from the contract.
     /// @param guardian Address of the account to be removed as a pause guardian.
     /// @dev This function can only be called by the contract owner.
     /// It delegates the removal of a pause guardian to the PauseManager.
-    /// @require Caller must be the contract owner.
+    /// require Caller must be the contract owner.
     function removePauseGuardian(address guardian) external;
 }

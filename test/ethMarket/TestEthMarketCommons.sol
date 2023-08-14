@@ -95,7 +95,6 @@ contract TestEthMarketCommons is Test {
             wEth,
             ipstEth,
             ammTreasuryEth,
-            iporProtocolRouter,
             redeemFeeRateEth
         );
         ammPoolsLensEth = address(lens);

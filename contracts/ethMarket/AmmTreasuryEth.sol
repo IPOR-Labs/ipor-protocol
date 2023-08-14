@@ -40,9 +40,9 @@ contract AmmTreasuryEth is
         _;
     }
 
-    constructor(address stEthTemp, address routerTemp) {
-        stEth = stEthTemp.checkAddress();
-        router = routerTemp.checkAddress();
+    constructor(address stEthInput, address routerInput) {
+        stEth = stEthInput.checkAddress();
+        router = routerInput.checkAddress();
 
         _disableInitializers();
     }

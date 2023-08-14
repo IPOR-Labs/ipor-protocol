@@ -25,21 +25,22 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
     address public immutable iporProtocolRouter;
 
     constructor(
-        address stEthTemp,
-        address wEthTemp,
-        address ipstEthTemp,
-        address ammTreasuryEthTemp,
-        address iporProtocolRouterTemp,
-        uint256 ethRedeemFeeRateTemp
+        address stEthInput,
+        address wEthInput,
+        address ipstEthInput,
+        address ammTreasuryEthInput,
+        address iporProtocolRouterInput,
+        uint256 ethRedeemFeeRateInput
     ) {
-        stEth = stEthTemp.checkAddress();
-        wEth = wEthTemp.checkAddress();
-        ipstEth = ipstEthTemp.checkAddress();
-        ammTreasuryEth = ammTreasuryEthTemp.checkAddress();
-        iporProtocolRouter = iporProtocolRouterTemp.checkAddress();
-        redeemFeeRateEth = ethRedeemFeeRateTemp;
+        stEth = stEthInput.checkAddress();
+        wEth = wEthInput.checkAddress();
+        ipstEth = ipstEthInput.checkAddress();
+        ammTreasuryEth = ammTreasuryEthInput.checkAddress();
+        iporProtocolRouter = iporProtocolRouterInput.checkAddress();
+        redeemFeeRateEth = ethRedeemFeeRateInput;
     }
 
+    // todo: maybe we should remove this modifier??
     modifier onlyRouter() {
         require(address(this) == iporProtocolRouter, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
         _;
@@ -78,7 +79,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         require(beneficiary != address(0), IporErrors.WRONG_ADDRESS);
 
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
-        uint256 newPoolBalance = wEthAmount + IStETH(wEth).balanceOf(ammTreasuryEth);
+        uint256 newPoolBalance = wEthAmount + IStETH(stEth).balanceOf(ammTreasuryEth);
 
         require(
             newPoolBalance <= uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
