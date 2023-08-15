@@ -118,4 +118,6 @@ library AmmErrors {
 
     /// @notice Average interest rate cannot be zero when close swap
     string public constant AVERAGE_INTEREST_RATE_WHEN_CLOSE_SWAP_CANNOT_BE_ZERO = "IPOR_337";
+
+    string public constant STETH_SUBMIT_FAILED = "IPOR_338";
 }

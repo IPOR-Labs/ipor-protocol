@@ -232,7 +232,6 @@ contract AmmStorage is
         require(assetAmount > 0, AmmErrors.DEPOSIT_AMOUNT_IS_TOO_LOW);
 
         uint128 newLiquidityPoolBalance = _balances.liquidityPool + assetAmount.toUint128();
-
         require(newLiquidityPoolBalance <= cfgMaxLiquidityPoolBalance, AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH);
 
         _balances.liquidityPool = newLiquidityPoolBalance;

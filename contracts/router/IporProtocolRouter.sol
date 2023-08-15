@@ -21,6 +21,8 @@ import "../interfaces/IPowerTokenStakeService.sol";
 import "../interfaces/IProxyImplementation.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/IporContractValidator.sol";
+import "../ethMarket/IAmmPoolsLensEth.sol";
+import "../ethMarket/IAmmPoolsServiceEth.sol";
 import "./AccessControl.sol";
 
 /// @title Entry point for IPOR protocol
@@ -42,6 +44,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
     address public immutable _powerTokenLens;
     address public immutable _flowService;
     address public immutable _stakeService;
+    address public immutable _ammPoolsServiceEth;
+    address public immutable _ammPoolsLensEth;
 
     struct DeployedContracts {
         address ammSwapsLens;
@@ -55,6 +59,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         address powerTokenLens;
         address flowService;
         address stakeService;
+        address ammPoolsServiceEth;
+        address ammPoolsLensEth;
     }
 
     constructor(DeployedContracts memory deployedContracts) {
@@ -69,10 +75,12 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         _powerTokenLens = deployedContracts.powerTokenLens.checkAddress();
         _flowService = deployedContracts.flowService.checkAddress();
         _stakeService = deployedContracts.stakeService.checkAddress();
+        _ammPoolsServiceEth = deployedContracts.ammPoolsServiceEth.checkAddress();
+        _ammPoolsLensEth = deployedContracts.ammPoolsLensEth.checkAddress();
         _disableInitializers();
     }
 
-    fallback() external {
+    fallback() external payable {
         _delegate(_getRouterImplementation(msg.sig, SINGLE_OPERATION));
     }
 
@@ -103,13 +111,15 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
                 liquidityMiningLens: _liquidityMiningLens,
                 powerTokenLens: _powerTokenLens,
                 flowService: _flowService,
-                stakeService: _stakeService
+                stakeService: _stakeService,
+                ammPoolsServiceEth: _ammPoolsServiceEth,
+                ammPoolsLensEth: _ammPoolsLensEth
             });
     }
 
     /// @notice Allows to execute batch of calls in one transaction using IPOR protocol business methods
     /// @param calls array of encoded calls
-    function batchExecutor(bytes[] calldata calls) external nonReentrant {
+    function batchExecutor(bytes[] calldata calls) external payable nonReentrant {
         uint256 length = calls.length;
         address implementation;
 
@@ -120,7 +130,13 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
                 ++i;
             }
         }
+        uint256 remainingGas = address(this).balance;
+        if(remainingGas > 0) {
+            payable(msg.sender).transfer(remainingGas);
+        }
     }
+
+    receive() external payable {}
 
     function _getRouterImplementation(bytes4 sig, uint256 batchOperation) internal returns (address) {
         if (
@@ -156,6 +172,16 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
                 _nonReentrantBefore();
             }
             return _ammCloseSwapService;
+        } else if (
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceEth.provideLiquidityStEth.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceEth.provideLiquidityWEth.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceEth.provideLiquidityEth.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceEth.redeemFromAmmPoolStEth.selector)
+        ) {
+            if (batchOperation == 0) {
+                _nonReentrantBefore();
+            }
+            return _ammPoolsServiceEth;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsService.provideLiquidityUsdt.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsService.provideLiquidityUsdc.selector) ||
@@ -283,6 +309,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             sig == IAmmCloseSwapLens.getClosingSwapDetails.selector
         ) {
             return _ammCloseSwapService;
+        } else if (sig == IAmmPoolsLensEth.getIpstEthExchangeRate.selector) {
+            return _ammPoolsLensEth;
         }
 
         revert(IporErrors.ROUTER_INVALID_SIGNATURE);
@@ -302,6 +330,10 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             // Call the implementation.
             // out and outsize are 0 because we don't know the size yet.
             result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)
+        }
+        uint256 ethToReturn = address(this).balance;
+        if(ethToReturn > 0) {
+            payable(msg.sender).transfer(ethToReturn);
         }
         _nonReentrantAfter();
         assembly {

@@ -1,0 +1,30 @@
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity 0.8.20;
+
+import "../../contracts/ethMarket/IStETH.sol";
+import "../mocks/tokens/MockTestnetToken.sol";
+
+contract MockStETH  is IStETH, MockTestnetToken  {
+
+    constructor(
+        string memory name,
+        string memory symbol,
+        uint256 initialSupply,
+        uint8 decimalsInput
+    ) MockTestnetToken(name, symbol, initialSupply, 18) {
+        _mint(msg.sender, initialSupply);
+    }
+
+    function getPooledEthByShares(uint256 _sharesAmount) external view override returns (uint256) {
+        return 0;
+    }
+
+    function getSharesByPooledEth(uint256 _pooledEthAmount) external view override returns (uint256) {
+        return 0;
+}
+
+    function submit(address _referral) external payable override returns (uint256) {
+        return 1;
+    }
+
+}

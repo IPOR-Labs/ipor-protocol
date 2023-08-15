@@ -15,5 +15,7 @@ contract EmptyRouterImplementation is UUPSUpgradeable, AccessControl, IProxyImpl
         return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
 
+    receive() external payable {}
+
     function _authorizeUpgrade(address) internal override onlyOwner {}
 }

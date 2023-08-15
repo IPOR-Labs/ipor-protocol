@@ -10,8 +10,8 @@ import "../interfaces/IAmmGovernanceService.sol";
 import "../interfaces/IAmmGovernanceLens.sol";
 import "../libraries/math/IporMath.sol";
 import "../libraries/errors/AmmPoolsErrors.sol";
-import "../governance/AmmConfigurationManager.sol";
 import "../libraries/IporContractValidator.sol";
+import "../governance/AmmConfigurationManager.sol";
 
 contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     using IporContractValidator for address;
