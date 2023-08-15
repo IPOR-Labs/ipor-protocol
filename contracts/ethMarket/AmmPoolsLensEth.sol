@@ -12,20 +12,17 @@ contract AmmPoolsLensEth is IAmmPoolsLensEth {
     address public immutable wEth;
     address public immutable ipstEth;
     address public immutable ammTreasuryEth;
-    uint256 public immutable redeemFeeRateEth;
 
     constructor(
         address stEthInput,
         address wEthInput,
         address ipstEthInput,
-        address ammTreasuryEthInput,
-        uint256 redeemFeeRateEthInput
+        address ammTreasuryEthInput
     ) {
         stEth = stEthInput.checkAddress();
         wEth = wEthInput.checkAddress();
         ipstEth = ipstEthInput.checkAddress();
         ammTreasuryEth = ammTreasuryEthInput.checkAddress();
-        redeemFeeRateEth = redeemFeeRateEthInput;
     }
 
     function getIpstEthExchangeRate() external view returns (uint256) {

@@ -94,9 +94,7 @@ contract TestEthMarketCommons is Test {
             stEth,
             wEth,
             ipstEth,
-            ammTreasuryEth,
-            redeemFeeRateEth
-        );
+            ammTreasuryEth);
         ammPoolsLensEth = address(lens);
         vm.stopPrank();
     }
