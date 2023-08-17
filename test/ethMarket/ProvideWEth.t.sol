@@ -36,7 +36,7 @@ contract ProvideWEth is TestEthMarketCommons {
 
         // when
         vm.prank(userOne);
-        vm.expectRevert(bytes(IporErrors.WRONG_ADDRESS));
+        vm.expectRevert(bytes("ERC20: mint to the zero address"));
         IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityWEth(address(0), provideAmount);
 
         // then

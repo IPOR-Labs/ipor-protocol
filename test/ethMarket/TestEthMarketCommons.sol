@@ -92,7 +92,6 @@ contract TestEthMarketCommons is Test {
         vm.startPrank(owner);
         AmmPoolsLensEth lens = new AmmPoolsLensEth(
             stEth,
-            wEth,
             ipstEth,
             ammTreasuryEth);
         ammPoolsLensEth = address(lens);

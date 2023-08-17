@@ -15,14 +15,6 @@ contract MockStETH  is IStETH, MockTestnetToken  {
         _mint(msg.sender, initialSupply);
     }
 
-    function getPooledEthByShares(uint256 _sharesAmount) external view override returns (uint256) {
-        return 0;
-    }
-
-    function getSharesByPooledEth(uint256 _pooledEthAmount) external view override returns (uint256) {
-        return 0;
-}
-
     function submit(address _referral) external payable override returns (uint256) {
         return 1;
     }

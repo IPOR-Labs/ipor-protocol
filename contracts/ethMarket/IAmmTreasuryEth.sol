@@ -2,8 +2,6 @@
 pragma solidity 0.8.20;
 
 interface IAmmTreasuryEth {
-    function asset() external view returns (address);
-
     function router() external view returns (address);
 
     /// @notice Retrieves the configuration addresses for stEth and the router.

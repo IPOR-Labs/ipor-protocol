@@ -9,18 +9,15 @@ contract AmmPoolsLensEth is IAmmPoolsLensEth {
     using IporContractValidator for address;
 
     address public immutable stEth;
-    address public immutable wEth;
     address public immutable ipstEth;
     address public immutable ammTreasuryEth;
 
     constructor(
         address stEthInput,
-        address wEthInput,
         address ipstEthInput,
         address ammTreasuryEthInput
     ) {
         stEth = stEthInput.checkAddress();
-        wEth = wEthInput.checkAddress();
         ipstEth = ipstEthInput.checkAddress();
         ammTreasuryEth = ammTreasuryEthInput.checkAddress();
     }

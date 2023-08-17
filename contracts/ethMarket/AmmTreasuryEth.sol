@@ -67,10 +67,6 @@ contract AmmTreasuryEth is
         return 1;
     }
 
-    function asset() external view override returns (address) {
-        return stEth;
-    }
-
     function pause() external override onlyPauseGuardian {
         IERC20Upgradeable(stEth).safeApprove(router, 0);
         _pause();

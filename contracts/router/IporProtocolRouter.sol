@@ -130,13 +130,14 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
                 ++i;
             }
         }
-        uint256 remainingGas = address(this).balance;
-        if(remainingGas > 0) {
-            payable(msg.sender).transfer(remainingGas);
+        uint256 remainingEth = address(this).balance;
+        if(remainingEth > 0) {
+            payable(msg.sender).transfer(remainingEth);
         }
     }
 
-    receive() external payable {}
+    receive() external payable {
+    }
 
     function _getRouterImplementation(bytes4 sig, uint256 batchOperation) internal returns (address) {
         if (
@@ -331,9 +332,9 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             // out and outsize are 0 because we don't know the size yet.
             result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)
         }
-        uint256 ethToReturn = address(this).balance;
-        if(ethToReturn > 0) {
-            payable(msg.sender).transfer(ethToReturn);
+        uint256 remainingEth = address(this).balance;
+        if(remainingEth > 0) {
+            payable(msg.sender).transfer(remainingEth);
         }
         _nonReentrantAfter();
         assembly {

@@ -4,12 +4,12 @@ pragma solidity 0.8.20;
 interface IAmmPoolsServiceEth {
     /// @notice Allows the router to provide liquidity in the form of stEth to the AMM pool.
     /// @param beneficiary Address that will receive the minted ipstEth tokens in exchange for the provided stEth.
-    /// @param assetAmount Amount of stEth tokens to be provided as liquidity.
+    /// @param stEthAmount Amount of stEth tokens to be provided as liquidity.
     /// @dev This function can only be called by the router. It calculates the new pool balance, checks if it's within the allowed limit,
     /// calculates the exchange rate, transfers the stEth from the sender to the AMM treasury, and mints ipstEth tokens to the beneficiary.
     /// An event is emitted after the liquidity is provided.
     /// require The new pool balance after adding the provided stEth should not exceed the maximum allowed pool balance.
-    function provideLiquidityStEth(address beneficiary, uint256 assetAmount) external payable;
+    function provideLiquidityStEth(address beneficiary, uint256 stEthAmount) external payable;
 
     /// @notice Allows the router to provide liquidity in the form of wEth to the AMM pool.
     /// @param beneficiary Address that will benefit from the provided liquidity.
@@ -47,7 +47,7 @@ interface IAmmPoolsServiceEth {
 
     error StEthSubmitFailed(uint256 amount, string errorCode);
 
-    event ProvideStEthLiquidity(
+    event ProvideLiquidityStEth(
         uint256 timestamp,
         address from,
         address beneficiary,
@@ -57,7 +57,7 @@ interface IAmmPoolsServiceEth {
         uint256 ipTokenAmount
     );
 
-    event ProvideEthLiquidity(
+    event ProvideLiquidityEth(
         uint256 timestamp,
         address from,
         address beneficiary,

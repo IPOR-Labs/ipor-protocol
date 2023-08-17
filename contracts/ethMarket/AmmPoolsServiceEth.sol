@@ -16,6 +16,7 @@ import "./IAmmPoolsServiceEth.sol";
 contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
     using IporContractValidator for address;
     using SafeERC20 for IStETH;
+    using SafeERC20 for IWETH9;
 
     address public immutable stEth;
     address public immutable wEth;
@@ -40,16 +41,10 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         redeemFeeRateEth = ethRedeemFeeRateInput;
     }
 
-    // todo: maybe we should remove this modifier??
-    modifier onlyRouter() {
-        require(address(this) == iporProtocolRouter, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
-        _;
-    }
-
-    function provideLiquidityStEth(address beneficiary, uint256 assetAmount) external payable override onlyRouter {
+    function provideLiquidityStEth(address beneficiary, uint256 stEthAmount) external payable override {
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
 
-        uint256 newPoolBalance = assetAmount + IStETH(stEth).balanceOf(ammTreasuryEth);
+        uint256 newPoolBalance = stEthAmount + IStETH(stEth).balanceOf(ammTreasuryEth);
 
         require(
             newPoolBalance <= uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
@@ -58,25 +53,24 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
 
         uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ammTreasuryEth, ipstEth);
 
-        IStETH(stEth).safeTransferFrom(msg.sender, ammTreasuryEth, assetAmount);
+        IStETH(stEth).safeTransferFrom(msg.sender, ammTreasuryEth, stEthAmount);
 
-        uint256 ipTokenAmount = IporMath.division(assetAmount * 1e18, exchangeRate);
+        uint256 ipTokenAmount = IporMath.division(stEthAmount * 1e18, exchangeRate);
         IIpToken(ipstEth).mint(beneficiary, ipTokenAmount);
 
-        emit IAmmPoolsServiceEth.ProvideStEthLiquidity(
+        emit IAmmPoolsServiceEth.ProvideLiquidityStEth(
             block.timestamp,
             msg.sender,
             beneficiary,
             ammTreasuryEth,
             exchangeRate,
-            assetAmount,
+            stEthAmount,
             ipTokenAmount
         );
     }
 
-    function provideLiquidityWEth(address beneficiary, uint256 wEthAmount) external payable override onlyRouter {
+    function provideLiquidityWEth(address beneficiary, uint256 wEthAmount) external payable override {
         require(wEthAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-        require(beneficiary != address(0), IporErrors.WRONG_ADDRESS);
 
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
         uint256 newPoolBalance = wEthAmount + IStETH(stEth).balanceOf(ammTreasuryEth);
@@ -86,16 +80,15 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
             AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH
         );
 
-        IStETH(wEth).safeTransferFrom(msg.sender, address(this), wEthAmount);
+        IWETH9(wEth).safeTransferFrom(msg.sender, iporProtocolRouter, wEthAmount);
         IWETH9(wEth).withdraw(wEthAmount);
 
         _depositEth(wEthAmount, beneficiary);
     }
 
-    function provideLiquidityEth(address beneficiary, uint256 ethAmount) external payable onlyRouter {
+    function provideLiquidityEth(address beneficiary, uint256 ethAmount) external payable {
         require(ethAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
         require(msg.value > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-        require(beneficiary != address(0), IporErrors.WRONG_ADDRESS);
 
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
         uint256 newPoolBalance = ethAmount + IStETH(stEth).balanceOf(ammTreasuryEth);
@@ -107,7 +100,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         _depositEth(ethAmount, beneficiary);
     }
 
-    function redeemFromAmmPoolStEth(address beneficiary, uint256 ipTokenAmount) external onlyRouter {
+    function redeemFromAmmPoolStEth(address beneficiary, uint256 ipTokenAmount) external {
         require(
             ipTokenAmount > 0 && ipTokenAmount <= IIpToken(ipstEth).balanceOf(msg.sender),
             AmmPoolsErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW
@@ -139,7 +132,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
 
     function _depositEth(uint256 ethAmount, address beneficiary) private {
         try IStETH(stEth).submit{value: ethAmount}(address(0)) {
-            uint256 stEthAmount = IStETH(stEth).balanceOf(address(this));
+            uint256 stEthAmount = IStETH(stEth).balanceOf(iporProtocolRouter);
             if (stEthAmount > 0) {
                 uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ammTreasuryEth, ipstEth);
 
@@ -148,7 +141,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
                 uint256 ipTokenAmount = IporMath.division(stEthAmount * 1e18, exchangeRate);
                 IIpToken(ipstEth).mint(beneficiary, ipTokenAmount);
 
-                emit IAmmPoolsServiceEth.ProvideEthLiquidity(
+                emit IAmmPoolsServiceEth.ProvideLiquidityEth(
                     block.timestamp,
                     msg.sender,
                     beneficiary,
