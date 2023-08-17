@@ -138,7 +138,7 @@ contract AmmPoolsService is IAmmPoolsService {
         );
 
         uint256 totalBalance = wadAmmTreasuryAssetBalance +
-            IAssetManagement(poolCfg.assetManagement).totalBalance(poolCfg.ammTreasury);
+            IAssetManagement(poolCfg.assetManagement).totalBalance();
 
         require(totalBalance > 0, AmmPoolsErrors.ASSET_MANAGEMENT_BALANCE_IS_EMPTY);
 

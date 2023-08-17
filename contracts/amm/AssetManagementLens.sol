@@ -51,7 +51,6 @@ contract AssetManagementLens is IAssetManagementLens {
         AssetManagementConfiguration memory assetManagementConfiguration = _getAssetManagementConfiguration(asset);
         return
             IAssetManagement(assetManagementConfiguration.assetManagement).totalBalance(
-                assetManagementConfiguration.ammTreasury
             );
     }
 

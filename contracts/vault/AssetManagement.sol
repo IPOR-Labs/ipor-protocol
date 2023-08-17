@@ -107,8 +107,9 @@ abstract contract AssetManagement is
         return _strategyCompound;
     }
 
-    function totalBalance(address who) external view override returns (uint256) {
-        return _totalBalance(who);
+    function totalBalance() external view override returns (uint256) {
+        // todo removed
+        return _totalBalance(address(0));
     }
 
     function calculateExchangeRate() external view override returns (uint256 exchangeRate) {
@@ -338,11 +339,12 @@ abstract contract AssetManagement is
         }
     }
 
-    function _totalBalance(address who) internal view returns (uint256) {
+    function _totalBalance() internal view returns (uint256) {
         IStrategy strategyAave = IStrategy(_strategyAave);
         IStrategy strategyCompound = IStrategy(_strategyCompound);
         (, uint256 exchangeRate, , ) = _calcExchangeRate(strategyAave, strategyCompound);
-        return IporMath.division(_ivToken.balanceOf(who) * exchangeRate, 1e18);
+        // todo remove
+        return IporMath.division(_ivToken.balanceOf(address(0)) * exchangeRate, 1e18);
     }
 
     function _setStrategy(

@@ -5,9 +5,8 @@ pragma solidity 0.8.20;
 /// @notice AssetManagement is responsible for delegating assets stored in AmmTreasury to money markets where they can earn interest.
 interface IAssetManagement {
     /// @notice Gets total balance of account `who`,  transferred assets to AssetManagement.
-    /// @param who Account for which total balance is returned.
     /// @return Total balance for specific account given as a parameter, represented in 18 decimals.
-    function totalBalance(address who) external view returns (uint256);
+    function totalBalance() external view returns (uint256);
 
     /// @notice Calculated exchange rate between ivToken and the underlying asset. Asset is specific to AssetManagement's intance (ex. USDC, USDT, DAI, etc.)
     /// @return Current exchange rate between ivToken and the underlying asset, represented in 18 decimals.
