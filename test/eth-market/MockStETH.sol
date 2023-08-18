@@ -4,7 +4,7 @@ pragma solidity 0.8.20;
 import "../../contracts/eth-market/IStETH.sol";
 import "../mocks/tokens/MockTestnetToken.sol";
 
-contract MockStETH  is IStETH, MockTestnetToken  {
+contract MockStETH is IStETH, MockTestnetToken  {
 
     constructor(
         string memory name,
