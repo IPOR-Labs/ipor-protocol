@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 import "../libraries/math/IporMath.sol";
 import "../interfaces/IIpToken.sol";
-import "./IStETH.sol";
+import "./interfaces/IStETH.sol";
 
 
 library AmmLibEth {

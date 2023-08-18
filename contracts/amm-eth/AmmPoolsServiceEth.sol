@@ -8,10 +8,10 @@ import "../libraries/errors/AmmErrors.sol";
 import "../libraries/StorageLib.sol";
 import "../interfaces/IIpToken.sol";
 import "../governance/AmmConfigurationManager.sol";
-import "./IStETH.sol";
-import "./IWETH9.sol";
+import "./interfaces/IStETH.sol";
+import "./interfaces/IWETH9.sol";
 import "./AmmLibEth.sol";
-import "./IAmmPoolsServiceEth.sol";
+import "./interfaces/IAmmPoolsServiceEth.sol";
 
 contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
     using IporContractValidator for address;

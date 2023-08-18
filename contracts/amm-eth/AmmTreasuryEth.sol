@@ -13,7 +13,7 @@ import "../libraries/errors/IporErrors.sol";
 import "../libraries/IporContractValidator.sol";
 import "../security/PauseManager.sol";
 import "../security/IporOwnableUpgradeable.sol";
-import "./IAmmTreasuryEth.sol";
+import "./interfaces/IAmmTreasuryEth.sol";
 
 contract AmmTreasuryEth is
     Initializable,
@@ -64,7 +64,7 @@ contract AmmTreasuryEth is
     }
 
     function getVersion() external pure returns (uint256) {
-        return 1;
+        return 2000;
     }
 
     function pause() external override onlyPauseGuardian {

@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 import "./AmmLibEth.sol";
 import "../libraries/IporContractValidator.sol";
-import "./IAmmPoolsLensEth.sol";
+import "./interfaces/IAmmPoolsLensEth.sol";
 
 contract AmmPoolsLensEth is IAmmPoolsLensEth {
     using IporContractValidator for address;
