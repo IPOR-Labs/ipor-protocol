@@ -15,11 +15,10 @@ library AmmLibEth {
     /// @dev The exchange rate is calculated based on the balance of stEth in the AMM Treasury and the total supply of ipTokenEth.
     /// If the total supply of ipTokenEth is zero, the function returns 1e18.
     function getExchangeRate(address stEth, address ammTreasuryEth, address ipTokenEth) internal view returns (uint256) {
-        uint256 balance = IStETH(stEth).balanceOf(ammTreasuryEth);
         uint256 ipTokenTotalSupply = IIpToken(ipTokenEth).totalSupply();
 
         if (ipTokenTotalSupply > 0) {
-            return IporMath.division(balance * 1e18, ipTokenTotalSupply);
+            return IporMath.division(IStETH(stEth).balanceOf(ammTreasuryEth) * 1e18, ipTokenTotalSupply);
         } else {
             return 1e18;
         }

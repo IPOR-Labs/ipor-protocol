@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "../../contracts/eth-market/IStETH.sol";
+import "../../contracts/amm-eth/IStETH.sol";
 import "../mocks/tokens/MockTestnetToken.sol";
 
 contract MockStETH is IStETH, MockTestnetToken  {
