@@ -21,8 +21,8 @@ import "../interfaces/IPowerTokenStakeService.sol";
 import "../interfaces/IProxyImplementation.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/IporContractValidator.sol";
-import "../ethMarket/IAmmPoolsLensEth.sol";
-import "../ethMarket/IAmmPoolsServiceEth.sol";
+import "../eth-market/IAmmPoolsLensEth.sol";
+import "../eth-market/IAmmPoolsServiceEth.sol";
 import "./AccessControl.sol";
 
 /// @title Entry point for IPOR protocol
