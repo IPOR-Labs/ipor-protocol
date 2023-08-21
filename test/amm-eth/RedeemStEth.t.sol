@@ -51,7 +51,7 @@ contract RedeemStEth is TestEthMarketCommons {
         assertEq(userIpstEthBalanceBefore, userIpstEthBalanceAfter, "user ipstEth balance should not change");
     }
 
-    function testShouldReventWhenAmountBigerThenBalance() external {
+    function testShouldRevertWhenAmountBiggerThenBalance() external {
         // given
         uint userStEthBalanceBefore = IStETH(stEth).balanceOf(userOne);
         uint userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
@@ -89,6 +89,7 @@ contract RedeemStEth is TestEthMarketCommons {
         assertTrue(userIpstEthBalanceBefore > userIpstEthBalanceAfter, "user ipstEth balance should decrease");
         assertTrue(exchangeRateBefore < exchangeRateAfter, "exchange rate should increase");
     }
+
     function testShouldBeAbleToRedeemWhenBeneficiaryIsNotSender() external {
         // given
         uint userStEthBalanceBefore = IStETH(stEth).balanceOf(userOne);
@@ -112,7 +113,4 @@ contract RedeemStEth is TestEthMarketCommons {
         assertTrue(userIpstEthBalanceBefore > userIpstEthBalanceAfter, "user ipstEth balance should decrease");
         assertTrue(exchangeRateBefore < exchangeRateAfter, "exchange rate should increase");
     }
-
-
-
 }

@@ -4,8 +4,7 @@ pragma solidity 0.8.20;
 import "../../contracts/amm-eth/interfaces/IStETH.sol";
 import "../mocks/tokens/MockTestnetToken.sol";
 
-contract MockStETH is IStETH, MockTestnetToken  {
-
+contract MockStETH is IStETH, MockTestnetToken {
     constructor(
         string memory name,
         string memory symbol,
@@ -18,5 +17,4 @@ contract MockStETH is IStETH, MockTestnetToken  {
     function submit(address _referral) external payable override returns (uint256) {
         return 1;
     }
-
 }

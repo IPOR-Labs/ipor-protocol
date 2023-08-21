@@ -59,14 +59,14 @@ contract ProvideBatchExecutor is TestEthMarketCommons {
             " balance of userOne should be decreased by 100e18"
         );
         assertEq(userIpstEthBalanceBefore, 0, " balance of userOne should be 0");
-        assertEq(userStEthBalanceBefore, 49999999999999999999999, " balance of userOne should be 49999999999999999999999");
+        assertEq(
+            userStEthBalanceBefore,
+            49999999999999999999999,
+            " balance of userOne should be 49999999999999999999999"
+        );
         assertEq(userWEthBalanceBefore, 50_000e18, " balance of userOne should be 50_000e18");
         assertEq(exchangeRateBefore, exchangeRateAfter, " exchange rate should not be changed");
-        assertEq(
-            ammTreasuryStEthBalanceBefore,
-            0,
-            "balance of ammTreasuryEth should be 0 before providing liquidity"
-        );
+        assertEq(ammTreasuryStEthBalanceBefore, 0, "balance of ammTreasuryEth should be 0 before providing liquidity");
 
         assertEq(
             userIpstEthBalanceAfter,

@@ -8,8 +8,8 @@ interface IAmmPoolsServiceEth {
     /// @param stEthAmount Amount of stEth tokens to be provided as liquidity.
     /// @dev This function can only be called by the router. It calculates the new pool balance, checks if it's within the allowed limit,
     /// calculates the exchange rate, transfers the stEth from the sender to the AMM treasury, and mints ipstEth tokens to the beneficiary.
-    /// An event is emitted after the liquidity is provided.
-    /// require The new pool balance after adding the provided stEth should not exceed the maximum allowed pool balance.
+    /// An event IAmmPoolsServiceEth.ProvideLiquidityStEth is emitted after the liquidity is provided.
+    /// require the new pool balance after adding the provided stEth should not exceed the maximum allowed pool balance.
     function provideLiquidityStEth(address beneficiary, uint256 stEthAmount) external payable;
 
     /// @notice Allows the router to provide liquidity in the form of wEth to the AMM pool.
@@ -18,6 +18,7 @@ interface IAmmPoolsServiceEth {
     /// @dev This function can only be called by the router. It checks the validity of the provided wEth amount and beneficiary address,
     /// calculates the new pool balance, checks if it's within the allowed limit, transfers the wEth from the sender to the contract,
     /// withdraws the wEth to convert it to Ether, and then deposits the Ether to the beneficiary.
+    /// An event IAmmPoolsServiceEth.ProvideLiquidityEth is emitted after the liquidity is provided.
     /// require The provided wEth amount should be greater than zero.
     /// require The beneficiary address should not be the zero address.
     /// require The new pool balance after adding the provided wEth should not exceed the maximum allowed pool balance.
@@ -29,6 +30,7 @@ interface IAmmPoolsServiceEth {
     /// @dev This function can only be called by the router. It checks the validity of the provided Ether amount, the sent Ether value,
     /// and the beneficiary address, calculates the new pool balance, and checks if it's within the allowed limit.
     /// The Ether is then deposited to the beneficiary.
+    /// An event IAmmPoolsServiceEth.ProvideLiquidityEth is emitted after the liquidity is provided.
     /// require The provided Ether amount should be greater than zero.
     /// require The sent Ether value with the transaction should be greater than zero.
     /// require The beneficiary address should not be the zero address.

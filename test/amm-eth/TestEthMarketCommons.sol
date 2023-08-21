@@ -90,10 +90,7 @@ contract TestEthMarketCommons is Test {
 
     function _createAmmPoolsLensEth() private {
         vm.startPrank(owner);
-        AmmPoolsLensEth lens = new AmmPoolsLensEth(
-            stEth,
-            ipstEth,
-            ammTreasuryEth);
+        AmmPoolsLensEth lens = new AmmPoolsLensEth(stEth, ipstEth, ammTreasuryEth);
         ammPoolsLensEth = address(lens);
         vm.stopPrank();
     }

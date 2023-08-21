@@ -6,6 +6,27 @@ import "./TestEthMarketCommons.sol";
 import "../../contracts/libraries/errors/AmmErrors.sol";
 
 contract ProvideStEthTest is TestEthMarketCommons {
+    event ProvideLiquidityStEth(
+        uint256 timestamp,
+        address from,
+        address beneficiary,
+        address to,
+        uint256 exchangeRate,
+        uint256 assetAmount,
+        uint256 ipTokenAmount
+    );
+
+    event RedeemStEth(
+        uint256 timestamp,
+        address ammTreasuryEth,
+        address from,
+        address beneficiary,
+        uint256 exchangeRate,
+        uint256 amountStEth,
+        uint256 redeemedAmountStEth,
+        uint256 ipTokenAmount
+    );
+
     function setUp() public {
         vm.createSelectFork(vm.envString("PROVIDER_URL"), 17810000);
         _init();
@@ -81,7 +102,11 @@ contract ProvideStEthTest is TestEthMarketCommons {
             userStEthBalanceAfter,
             "user balance of stEth should decrease"
         );
-        assertEq(userIpstEthBalanceBefore + provideAmount, userIpstEthBalanceAfter, "user ipstEth balance should increase");
+        assertEq(
+            userIpstEthBalanceBefore + provideAmount,
+            userIpstEthBalanceAfter,
+            "user ipstEth balance should increase"
+        );
         assertEq(userIpstEthBalanceAfter, provideAmount, "user ipstEth balance should be equal to provideAmount");
         assertEq(ammTreasuryStEthBalanceBefore, 0, "amm treasury balance should be 0");
         assertEq(
@@ -203,7 +228,10 @@ contract ProvideStEthTest is TestEthMarketCommons {
         );
 
         console2.log("IERC20(ipstEth): ", IERC20(ipstEth).totalSupply());
-        console2.log("IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate(): ", IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate());
+        console2.log(
+            "IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate(): ",
+            IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate()
+        );
         console2.log("IStETH(stEth).balanceOf(ammTreasuryEth): ", IStETH(stEth).balanceOf(ammTreasuryEth));
         // 49_999 999999999999999999 (userOne Balance)
         //-   100 000000000000000000 (transfer to ammTreasury)
@@ -224,5 +252,83 @@ contract ProvideStEthTest is TestEthMarketCommons {
         IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth(userOne, provideAmount);
     }
 
-    // todo add tests for events
+    function testShouldEmitProvideLiquidityStEthBeneficiaryIsNotSender() public {
+        // given
+        uint provideAmount = 100e18;
+        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint256 ipTokenAmount = IporMath.division(provideAmount * 1e18, exchangeRateBefore);
+
+        vm.prank(userOne);
+        vm.expectEmit(true, true, true, true);
+        //then
+        emit ProvideLiquidityStEth(
+            block.timestamp,
+            userOne,
+            userTwo,
+            ammTreasuryEth,
+            exchangeRateBefore,
+            provideAmount,
+            ipTokenAmount
+        );
+
+        // when
+        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth{value: provideAmount}(userTwo, provideAmount);
+    }
+
+    function testShouldEmitRedeemStEthBeneficiaryIsNotSender() public {
+        // given
+        uint provideAmount = 100e18;
+        uint256 amountStEth = 99999999999999999999;
+        uint256 redeemedAmountStEth = 99499999999999999999;
+        uint256 ipTokenAmount = 99999999999999999999;
+
+        vm.prank(userOne);
+        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth{value: provideAmount}(userTwo, provideAmount);
+
+        uint exchangeRate = 1000000000000000000;
+
+        vm.prank(userTwo);
+        vm.expectEmit(true, true, true, true);
+        //then
+        emit RedeemStEth(
+            block.timestamp,
+            ammTreasuryEth,
+            userTwo,
+            userOne,
+            exchangeRate,
+            amountStEth,
+            redeemedAmountStEth,
+            ipTokenAmount
+        );
+
+        //when
+        IAmmPoolsServiceEth(iporProtocolRouter).redeemFromAmmPoolStEth(userOne, amountStEth);
+    }
+
+    function testShouldRevertBecauseUserOneDoesntHaveIpstEthTokensToRedeem() public {
+        uint provideAmount = 100e18;
+        uint256 amountStEth = 99999999999999999999;
+
+        vm.prank(userOne);
+        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth{value: provideAmount}(userTwo, provideAmount);
+
+        /// @dev userOne provide liquidity on behalf of userTwo
+        vm.prank(userOne);
+        //then
+        vm.expectRevert(bytes(AmmPoolsErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW));
+
+        //when
+        IAmmPoolsServiceEth(iporProtocolRouter).redeemFromAmmPoolStEth(userTwo, amountStEth);
+    }
+
+    function testShouldRevertWhenProvideLiquidityDirectlyOnService() public {
+        //given
+        uint provideAmount = 100e18;
+
+        vm.prank(userOne);
+        //then
+        vm.expectRevert(bytes(AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH));
+        //when
+        IAmmPoolsServiceEth(ammPoolsServiceEth).provideLiquidityStEth{value: provideAmount}(userTwo, provideAmount);
+    }
 }
