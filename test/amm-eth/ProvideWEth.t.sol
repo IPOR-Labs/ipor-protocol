@@ -254,7 +254,7 @@ contract ProvideWEth is TestEthMarketCommons {
         );
 
         // when
-        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityWEth{value: provideAmount}(userTwo, provideAmount);
+        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityWEth(userTwo, provideAmount);
     }
 
     function testShouldEmitRedeemStEthBeneficiaryIsNotSender() public {
@@ -265,7 +265,7 @@ contract ProvideWEth is TestEthMarketCommons {
         uint256 ipTokenAmount = 99999999999999999999;
 
         vm.prank(userOne);
-        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityWEth{value: provideAmount}(userTwo, provideAmount);
+        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityWEth(userTwo, provideAmount);
 
         uint exchangeRate = 1000000000000000000;
 
@@ -292,7 +292,7 @@ contract ProvideWEth is TestEthMarketCommons {
         uint256 amountStEth = 99999999999999999999;
 
         vm.prank(userOne);
-        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityWEth{value: provideAmount}(userTwo, provideAmount);
+        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityWEth(userTwo, provideAmount);
 
         /// @dev userOne provide liquidity on behalf of userTwo
         vm.prank(userOne);
@@ -311,6 +311,6 @@ contract ProvideWEth is TestEthMarketCommons {
         //then
         vm.expectRevert(bytes(AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH));
         //when
-        IAmmPoolsServiceEth(ammPoolsServiceEth).provideLiquidityWEth{value: provideAmount}(userTwo, provideAmount);
+        IAmmPoolsServiceEth(ammPoolsServiceEth).provideLiquidityWEth(userTwo, provideAmount);
     }
 }

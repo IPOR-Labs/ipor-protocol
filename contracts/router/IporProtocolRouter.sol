@@ -130,10 +130,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
                 ++i;
             }
         }
-        uint256 remainingEth = address(this).balance;
-        if (remainingEth > 0) {
-            payable(msg.sender).transfer(remainingEth);
-        }
+
+        _returnBackRemainingEth();
     }
 
     receive() external payable {}
@@ -331,11 +329,10 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             // out and outsize are 0 because we don't know the size yet.
             result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)
         }
-        uint256 remainingEth = address(this).balance;
-        if (remainingEth > 0) {
-            payable(msg.sender).transfer(remainingEth);
-        }
+
+        _returnBackRemainingEth();
         _nonReentrantAfter();
+
         assembly {
             // Copy the returned data.
             returndatacopy(0, 0, returndatasize())
@@ -347,6 +344,18 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             }
             default {
                 return(0, returndatasize())
+            }
+        }
+    }
+
+    function _returnBackRemainingEth() private {
+        uint256 remainingEth = address(this).balance;
+
+        if (remainingEth > 0) {
+            (bool success, ) = msg.sender.call{value: remainingEth}("");
+
+            if (!success) {
+                revert(IporErrors.ROUTER_RETURN_BACK_ETH_FAILED);
             }
         }
     }
