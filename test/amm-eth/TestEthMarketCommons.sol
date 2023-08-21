@@ -61,7 +61,7 @@ contract TestEthMarketCommons is Test {
 
     function _createIpstEth() private {
         vm.startPrank(owner);
-        IpToken token = new IpToken("IP ETH", "ipstEth", stEth);
+        IpToken token = new IpToken("IP stETH", "ipstEth", stEth);
         token.setJoseph(iporProtocolRouter);
         ipstEth = address(token);
         vm.stopPrank();

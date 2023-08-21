@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
+/// @title Interface of the AmmPoolsServiceEth contract.
 interface IAmmPoolsServiceEth {
     /// @notice Allows the router to provide liquidity in the form of stEth to the AMM pool.
     /// @param beneficiary Address that will receive the minted ipstEth tokens in exchange for the provided stEth.
@@ -45,8 +46,19 @@ interface IAmmPoolsServiceEth {
     /// require The calculated stEth amount to redeem after accounting for the fee should be greater than zero.
     function redeemFromAmmPoolStEth(address beneficiary, uint256 ipTokenAmount) external;
 
+    /// @notice Error appeared when submitted ETH amount to in stETH contract is too high.
+    /// @param amount Amount of ETH which was submitted to stETH contract.
+    /// @param errorCode IPOR Protocol error code.
     error StEthSubmitFailed(uint256 amount, string errorCode);
 
+    /// @notice Event emitted when liquidity is provided in the form of stEth.
+    /// @param timestamp Timestamp of the transaction.
+    /// @param from Address of the sender.
+    /// @param beneficiary Address that will receive the minted ipstEth tokens in exchange for the provided stEth.
+    /// @param to Address of the AMM treasury.
+    /// @param exchangeRate Exchange rate between stEth and ipstEth.
+    /// @param assetAmount Amount of stEth tokens provided as liquidity.
+    /// @param ipTokenAmount Amount of ipstEth tokens minted in exchange for the provided stEth.
     event ProvideLiquidityStEth(
         uint256 timestamp,
         address from,
@@ -57,6 +69,15 @@ interface IAmmPoolsServiceEth {
         uint256 ipTokenAmount
     );
 
+    /// @notice Event emitted when liquidity is provided in the form of wEth.
+    /// @param timestamp Timestamp of the transaction.
+    /// @param from Address of the sender.
+    /// @param beneficiary Address that will benefit from the provided liquidity.
+    /// @param to Address of the AMM treasury.
+    /// @param exchangeRate Exchange rate between wEth and ipstEth.
+    /// @param amountEth Amount of ETH provided as liquidity.
+    /// @param amountStEth Amount of stEth tokens submitted to StETH contract based on amountEth
+    /// @param ipTokenAmount Amount of ipstEth tokens minted in exchange for the provided stEth.
     event ProvideLiquidityEth(
         uint256 timestamp,
         address from,
@@ -68,14 +89,23 @@ interface IAmmPoolsServiceEth {
         uint256 ipTokenAmount
     );
 
+    /// @notice Event emitted when liquidity is redeemed from the AMM pool in exchange for stEth.
+    /// @param timestamp Timestamp of the transaction.
+    /// @param ammTreasuryEth Address of the AMM Treasury contract.
+    /// @param from Address of the sender. From who ipstEth tokens were burned.
+    /// @param beneficiary Address that will receive the redeemed stEth tokens.
+    /// @param exchangeRate Exchange rate between stEth and ipstEth.
+    /// @param amountStEth Amount of stEth tokens redeemed.
+    /// @param redeemedAmountStEth Amount of stEth tokens redeemed after accounting for the fee.
+    /// @param ipTokenAmount Amount of ipstEth tokens redeemed.
     event RedeemStEth(
         uint256 timestamp,
-        address tresury,
+        address ammTreasuryEth,
         address from,
         address beneficiary,
         uint256 exchangeRate,
-        uint256 ipTokenAmount,
-        uint256 assetAmount,
-        uint256 redeemAmount
+        uint256 amountStEth,
+        uint256 redeemedAmountStEth,
+        uint256 ipTokenAmount
     );
 }

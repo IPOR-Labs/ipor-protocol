@@ -64,7 +64,7 @@ contract AmmTreasuryEth is
     }
 
     function getVersion() external pure returns (uint256) {
-        return 2000;
+        return 2_000;
     }
 
     function pause() external override onlyPauseGuardian {

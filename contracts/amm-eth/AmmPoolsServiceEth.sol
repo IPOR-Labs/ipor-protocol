@@ -51,7 +51,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
             AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH
         );
 
-        uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ammTreasuryEth, ipstEth);
+        uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ipstEth, ammTreasuryEth);
 
         IStETH(stEth).safeTransferFrom(msg.sender, ammTreasuryEth, stEthAmount);
 
@@ -107,7 +107,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         );
         require(beneficiary != address(0), IporErrors.WRONG_ADDRESS);
 
-        uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ammTreasuryEth, ipstEth);
+        uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ipstEth, ammTreasuryEth);
 
         uint256 stEthAmount = IporMath.division(ipTokenAmount * exchangeRate, 1e18);
         uint256 amountToRedeem = IporMath.division(stEthAmount * (1e18 - redeemFeeRateEth), 1e18);
@@ -124,17 +124,18 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
             msg.sender,
             beneficiary,
             exchangeRate,
-            ipTokenAmount,
             stEthAmount,
-            amountToRedeem
+            amountToRedeem,
+            ipTokenAmount
         );
     }
 
     function _depositEth(uint256 ethAmount, address beneficiary) private {
         try IStETH(stEth).submit{value: ethAmount}(address(0)) {
             uint256 stEthAmount = IStETH(stEth).balanceOf(iporProtocolRouter);
+
             if (stEthAmount > 0) {
-                uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ammTreasuryEth, ipstEth);
+                uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ipstEth, ammTreasuryEth);
 
                 IStETH(stEth).safeTransfer(ammTreasuryEth, stEthAmount);
 

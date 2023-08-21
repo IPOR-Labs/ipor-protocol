@@ -131,13 +131,12 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             }
         }
         uint256 remainingEth = address(this).balance;
-        if(remainingEth > 0) {
+        if (remainingEth > 0) {
             payable(msg.sender).transfer(remainingEth);
         }
     }
 
-    receive() external payable {
-    }
+    receive() external payable {}
 
     function _getRouterImplementation(bytes4 sig, uint256 batchOperation) internal returns (address) {
         if (
@@ -333,7 +332,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)
         }
         uint256 remainingEth = address(this).balance;
-        if(remainingEth > 0) {
+        if (remainingEth > 0) {
             payable(msg.sender).transfer(remainingEth);
         }
         _nonReentrantAfter();

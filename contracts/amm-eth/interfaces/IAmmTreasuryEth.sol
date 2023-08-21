@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
+/// @notice Interface of the AmmTreasuryEth contract.
 interface IAmmTreasuryEth {
+    /// @notice Gets router address.
     function router() external view returns (address);
 
     /// @notice Retrieves the configuration addresses for stEth and the router.
