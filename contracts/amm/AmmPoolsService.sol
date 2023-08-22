@@ -200,6 +200,7 @@ contract AmmPoolsService is IAmmPoolsService {
             block.timestamp,
             msg.sender,
             poolCfg.ammTreasury,
+            beneficiary,
             exchangeRate,
             wadAssetAmount,
             ipTokenAmount
