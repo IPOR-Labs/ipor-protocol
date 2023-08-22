@@ -891,6 +891,9 @@ contract IporProtocolFactory is Test {
         deployerContracts.liquidityMiningLens = address(_liquidityMiningLensBuilder.build());
         deployerContracts.flowService = address(_powerTokenFlowsServiceBuilder.build());
         deployerContracts.stakeService = address(_powerTokenStakeServiceBuilder.build());
+//      todo fix addresses
+        deployerContracts.ammPoolsLensEth = address(123);
+        deployerContracts.ammPoolsServiceEth = address(123);
 
         vm.startPrank(address(_owner));
         IporProtocolRouter(amm.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
@@ -1099,6 +1102,9 @@ contract IporProtocolFactory is Test {
         deployerContracts.liquidityMiningLens = address(_liquidityMiningLensBuilder.build());
         deployerContracts.flowService = address(_powerTokenFlowsServiceBuilder.build());
         deployerContracts.stakeService = address(_powerTokenStakeServiceBuilder.build());
+//        todo fix addresses
+        deployerContracts.ammPoolsServiceEth = address(123);
+        deployerContracts.ammPoolsLensEth = address(123);
 
         vm.startPrank(address(_owner));
         IporProtocolRouter(iporProtocol.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
@@ -1280,6 +1286,10 @@ contract IporProtocolFactory is Test {
         deployerContracts.flowService = address(_powerTokenFlowsServiceBuilder.build());
         deployerContracts.stakeService = address(_powerTokenStakeServiceBuilder.build());
 
+//        todo fix addresses
+        deployerContracts.ammPoolsLensEth = address(123);
+        deployerContracts.ammPoolsServiceEth =address(123);
+
         vm.startPrank(address(_owner));
         IporProtocolRouter(iporProtocol.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
         vm.stopPrank();
@@ -1310,6 +1320,9 @@ contract IporProtocolFactory is Test {
         }
 
         IporProtocolRouter.DeployedContracts memory deployerContracts;
+        //todo Fix
+        deployerContracts.ammPoolsLensEth = address(123);
+        deployerContracts.ammPoolsServiceEth = address(123);
 
         deployerContracts.ammSwapsLens = address(
             new AmmSwapsLens(

@@ -10,10 +10,12 @@ contract IporProtocolRouterBuilder is Test {
     struct BuilderData {
         address ammSwapsLens;
         address ammPoolsLens;
+        address ammPoolsLensEth;
         address assetManagementLens;
         address ammOpenSwapService;
         address ammCloseSwapService;
         address ammPoolsService;
+        address ammPoolsServiceEth;
         address ammGovernanceService;
         address liquidityMiningLens;
         address powerTokenLens;
@@ -67,8 +69,8 @@ contract IporProtocolRouterBuilder is Test {
     function buildEmptyProxy() public returns (IporProtocolRouter) {
         vm.startPrank(_owner);
 
-        ERC1967Proxy proxy = _constructProxy(address(new EmptyRouterImplementation()));
-        IporProtocolRouter iporProtocolRouter = IporProtocolRouter(address(proxy));
+        address payable proxy = _constructProxy(new EmptyRouterImplementation());
+        IporProtocolRouter iporProtocolRouter = IporProtocolRouter(proxy);
         vm.stopPrank();
         delete builderData;
         return iporProtocolRouter;
@@ -88,27 +90,31 @@ contract IporProtocolRouterBuilder is Test {
             liquidityMiningLens: builderData.liquidityMiningLens,
             powerTokenLens: builderData.powerTokenLens,
             flowService: builderData.flowService,
-            stakeService: builderData.stakeService
+            stakeService: builderData.stakeService,
+            ammPoolsServiceEth: builderData.ammPoolsServiceEth,
+            ammPoolsLensEth: builderData.ammPoolsLensEth
         });
 
-        ERC1967Proxy proxy = _constructProxy(address(new IporProtocolRouter(deployedContracts)));
-        IporProtocolRouter iporProtocolRouter = IporProtocolRouter(address(proxy));
+        address payable proxy = _constructProxy(new IporProtocolRouter(deployedContracts));
+        IporProtocolRouter iporProtocolRouter = IporProtocolRouter(proxy);
 
         vm.stopPrank();
         delete builderData;
         return iporProtocolRouter;
     }
 
-    function upgrade(address routerAddress) public {
+    function upgrade(address payable routerAddress) public {
         vm.startPrank(_owner);
 
         IporProtocolRouter.DeployedContracts memory deployedContracts = IporProtocolRouter.DeployedContracts({
             ammSwapsLens: builderData.ammSwapsLens,
             ammPoolsLens: builderData.ammPoolsLens,
+            ammPoolsLensEth: builderData.ammPoolsLensEth,
             assetManagementLens: builderData.assetManagementLens,
             ammOpenSwapService: builderData.ammOpenSwapService,
             ammCloseSwapService: builderData.ammCloseSwapService,
             ammPoolsService: builderData.ammPoolsService,
+            ammPoolsServiceEth: builderData.ammPoolsServiceEth,
             ammGovernanceService: builderData.ammGovernanceService,
             liquidityMiningLens: builderData.liquidityMiningLens,
             powerTokenLens: builderData.powerTokenLens,
@@ -122,7 +128,14 @@ contract IporProtocolRouterBuilder is Test {
         vm.stopPrank();
     }
 
-    function _constructProxy(address impl) internal returns (ERC1967Proxy proxy) {
-        proxy = new ERC1967Proxy(address(impl), abi.encodeWithSignature("initialize(bool)", false));
+    function _constructProxy(EmptyRouterImplementation impl) internal returns (address payable proxy) {
+        proxy = payable(address(
+            new ERC1967Proxy(address(impl), abi.encodeWithSignature("initialize(bool)", false))
+        ));
+    }
+    function _constructProxy(IporProtocolRouter impl) internal returns (address payable proxy) {
+        proxy = payable(address(
+            new ERC1967Proxy(address(impl), abi.encodeWithSignature("initialize(bool)", false))
+        ));
     }
 }
