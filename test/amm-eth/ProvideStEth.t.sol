@@ -331,4 +331,102 @@ contract ProvideStEthTest is TestEthMarketCommons {
         //when
         IAmmPoolsServiceEth(ammPoolsServiceEth).provideLiquidityStEth(userTwo, provideAmount);
     }
+
+    function testShouldProvideEthToWhenBeneficiaryIsNotSenderAndReturnRestOfEthAndDirectTransferEthBeforeByTheSameUser()
+        external
+    {
+        // given
+        uint userEthBalanceBefore = userOne.balance;
+        uint userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
+        uint ammTreasuryStEthBalanceBefore = IStETH(stEth).balanceOf(ammTreasuryEth);
+
+        uint provideAmount = 100e18;
+        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+
+        /// @dev direct eth transfer
+        vm.prank(userOne);
+        (bool success, ) = iporProtocolRouter.call{value: 7e18}("");
+
+        assertEq(success, true, "direct eth transfer success");
+
+        // when
+        vm.prank(userOne);
+        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth{value: 10e18}(userOne, provideAmount);
+
+        // then
+        uint userEthBalanceAfter = userOne.balance;
+        uint userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
+        uint ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryEth);
+
+        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+
+        uint routerEthBalance = address(iporProtocolRouter).balance;
+
+        assertEq(routerEthBalance, 0, "routerEthBalance should be 0");
+
+        assertEq(userEthBalanceBefore, 900_000e18, "user balance of Eth should be 900_000e18");
+        assertEq(userEthBalanceAfter, 900_000e18, "user balance of Eth should be 900_000e18");
+        assertEq(userIpstEthBalanceBefore, 0, "user ipstEth balance should be 0");
+        assertEq(
+            userIpstEthBalanceAfter,
+            100000000000000000000,
+            "user ipstEth balance should be 100000000000000000000"
+        );
+        assertEq(ammTreasuryStEthBalanceBefore, 0, "amm treasury balance should be 0");
+        assertEq(
+            ammTreasuryStEthBalanceAfter,
+            99999999999999999999,
+            "amm treasury balance should be 99999999999999999999"
+        );
+        assertEq(exchangeRateBefore, exchangeRateAfter, "exchangeRate should not change");
+    }
+
+    function testShouldProvideEthToWhenBeneficiaryIsNotSenderAndReturnRestOfEthAndDirectTransferEthBeforeByDifferentUser()
+        external
+    {
+        // given
+        uint userEthBalanceBefore = userOne.balance;
+        uint userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
+        uint ammTreasuryStEthBalanceBefore = IStETH(stEth).balanceOf(ammTreasuryEth);
+
+        uint provideAmount = 100e18;
+        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+
+        /// @dev direct eth transfer
+        vm.prank(userTwo);
+        (bool success, ) = iporProtocolRouter.call{value: 7e18}("");
+
+        assertEq(success, true, "direct eth transfer success");
+
+        // when
+        vm.prank(userOne);
+        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth{value: 10e18}(userOne, provideAmount);
+
+        // then
+        uint userEthBalanceAfter = userOne.balance;
+        uint userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
+        uint ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryEth);
+
+        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+
+        uint routerEthBalance = address(iporProtocolRouter).balance;
+
+        assertEq(routerEthBalance, 0, "routerEthBalance should be 0");
+
+        assertEq(userEthBalanceBefore, 900_000e18, "user balance of Eth should be 900_000e18");
+        assertEq(userEthBalanceAfter, 900_007e18, "user balance of Eth should be 900_007e18");
+        assertEq(userIpstEthBalanceBefore, 0, "user ipstEth balance should be 0");
+        assertEq(
+            userIpstEthBalanceAfter,
+            100000000000000000000,
+            "user ipstEth balance should be 100000000000000000000"
+        );
+        assertEq(ammTreasuryStEthBalanceBefore, 0, "amm treasury balance should be 0");
+        assertEq(
+            ammTreasuryStEthBalanceAfter,
+            99999999999999999999,
+            "amm treasury balance should be 99999999999999999999"
+        );
+        assertEq(exchangeRateBefore, exchangeRateAfter, "exchangeRate should not change");
+    }
 }

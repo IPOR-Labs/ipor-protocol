@@ -349,10 +349,10 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
     }
 
     function _returnBackRemainingEth() private {
-        uint256 remainingEth = address(this).balance;
+        uint256 routerEthBalance = address(this).balance;
 
-        if (remainingEth > 0) {
-            (bool success, ) = msg.sender.call{value: remainingEth}("");
+        if (routerEthBalance > 0) {
+            (bool success, ) = msg.sender.call{value: routerEthBalance}("");
 
             if (!success) {
                 revert(IporErrors.ROUTER_RETURN_BACK_ETH_FAILED);

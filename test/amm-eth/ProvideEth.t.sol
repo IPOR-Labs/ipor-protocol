@@ -140,14 +140,14 @@ contract ProvideEth is TestEthMarketCommons {
         );
 
         // then
-        uint userWEthBalanceAfter = userOne.balance;
+        uint userEthBalanceAfter = userOne.balance;
         uint userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
         uint ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryEth);
 
         uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
 
         assertEq(userEthBalanceBefore, 900_000e18, "user balance of Eth should be 900_000e18");
-        assertEq(userWEthBalanceAfter, 899_900e18, "user balance of Eth should be 899_900e18");
+        assertEq(userEthBalanceAfter, 899_900e18, "user balance of Eth should be 899_900e18");
         assertEq(userIpstEthBalanceBefore, 0, "user ipstEth balance should be 0");
         assertEq(userIpstEthBalanceAfter, 99999999999999999999, "user ipstEth balance should be 99999999999999999999");
         assertEq(ammTreasuryStEthBalanceBefore, 0, "amm treasury balance should be 0");
@@ -355,5 +355,101 @@ contract ProvideEth is TestEthMarketCommons {
         vm.expectRevert(bytes(AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH));
         //when
         IAmmPoolsServiceEth(ammPoolsServiceEth).provideLiquidityEth{value: provideAmount}(userTwo, provideAmount);
+    }
+
+    function testShouldProvideEthToWhenBeneficiaryIsNotSenderAndReturnRestOfEthAndDirectTransferEthBeforeByTheSameUser()
+        external
+    {
+        // given
+        uint userEthBalanceBefore = userOne.balance;
+        uint userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
+        uint ammTreasuryStEthBalanceBefore = IStETH(stEth).balanceOf(ammTreasuryEth);
+
+        uint provideAmount = 100e18;
+        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+
+        /// @dev direct eth transfer
+        vm.prank(userOne);
+        (bool success, ) = iporProtocolRouter.call{value: 7e18}("");
+
+        assertEq(success, true, "direct eth transfer success");
+
+        // when
+        vm.prank(userOne);
+        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityEth{value: provideAmount + 10e18}(
+            userOne,
+            provideAmount
+        );
+
+        // then
+        uint userEthBalanceAfter = userOne.balance;
+        uint userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
+        uint ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryEth);
+
+        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+
+        uint routerEthBalance = address(iporProtocolRouter).balance;
+
+        assertEq(routerEthBalance, 0, "routerEthBalance should be 0");
+
+        assertEq(userEthBalanceBefore, 900_000e18, "user balance of Eth should be 900_000e18");
+        assertEq(userEthBalanceAfter, 899_900e18, "user balance of Eth should be 899_900e18");
+        assertEq(userIpstEthBalanceBefore, 0, "user ipstEth balance should be 0");
+        assertEq(userIpstEthBalanceAfter, 99999999999999999999, "user ipstEth balance should be 99999999999999999999");
+        assertEq(ammTreasuryStEthBalanceBefore, 0, "amm treasury balance should be 0");
+        assertEq(
+            ammTreasuryStEthBalanceAfter,
+            99999999999999999998,
+            "amm treasury balance should be 99999999999999999998"
+        );
+        assertEq(exchangeRateBefore, exchangeRateAfter, "exchangeRate should not change");
+    }
+
+    function testShouldProvideEthToWhenBeneficiaryIsNotSenderAndReturnRestOfEthAndDirectTransferEthBeforeByDifferentUser()
+        external
+    {
+        // given
+        uint userEthBalanceBefore = userOne.balance;
+        uint userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
+        uint ammTreasuryStEthBalanceBefore = IStETH(stEth).balanceOf(ammTreasuryEth);
+
+        uint provideAmount = 100e18;
+        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+
+        /// @dev direct eth transfer
+        vm.prank(userTwo);
+        (bool success, ) = iporProtocolRouter.call{value: 7e18}("");
+
+        assertEq(success, true, "direct eth transfer success");
+
+        // when
+        vm.prank(userOne);
+        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityEth{value: provideAmount + 10e18}(
+            userOne,
+            provideAmount
+        );
+
+        // then
+        uint userEthBalanceAfter = userOne.balance;
+        uint userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
+        uint ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryEth);
+
+        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+
+        uint routerEthBalance = address(iporProtocolRouter).balance;
+
+        assertEq(routerEthBalance, 0, "routerEthBalance should be 0");
+
+        assertEq(userEthBalanceBefore, 900_000e18, "user balance of Eth should be 900_000e18");
+        assertEq(userEthBalanceAfter, 899_907e18, "user balance of Eth should be 899_907e18");
+        assertEq(userIpstEthBalanceBefore, 0, "user ipstEth balance should be 0");
+        assertEq(userIpstEthBalanceAfter, 99999999999999999999, "user ipstEth balance should be 99999999999999999999");
+        assertEq(ammTreasuryStEthBalanceBefore, 0, "amm treasury balance should be 0");
+        assertEq(
+            ammTreasuryStEthBalanceAfter,
+            99999999999999999998,
+            "amm treasury balance should be 99999999999999999998"
+        );
+        assertEq(exchangeRateBefore, exchangeRateAfter, "exchangeRate should not change");
     }
 }
