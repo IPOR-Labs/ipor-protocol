@@ -65,9 +65,9 @@ interface IAmmPoolsServiceEth {
     /// @param ipTokenAmount Amount of ipstEth tokens minted in exchange for the provided stEth.
     event ProvideLiquidityStEth(
         uint256 timestamp,
-        address from,
-        address beneficiary,
-        address to,
+        address indexed from,
+        address indexed beneficiary,
+        address indexed to,
         uint256 exchangeRate,
         uint256 assetAmount,
         uint256 ipTokenAmount
@@ -84,9 +84,9 @@ interface IAmmPoolsServiceEth {
     /// @param ipTokenAmount Amount of ipstEth tokens minted in exchange for the provided stEth.
     event ProvideLiquidityEth(
         uint256 timestamp,
-        address from,
-        address beneficiary,
-        address to,
+        address indexed from,
+        address indexed beneficiary,
+        address indexed to,
         uint256 exchangeRate,
         uint256 amountEth,
         uint256 amountStEth,
@@ -104,9 +104,9 @@ interface IAmmPoolsServiceEth {
     /// @param ipTokenAmount Amount of ipstEth tokens redeemed.
     event RedeemStEth(
         uint256 timestamp,
-        address ammTreasuryEth,
-        address from,
-        address beneficiary,
+        address indexed ammTreasuryEth,
+        address indexed from,
+        address indexed beneficiary,
         uint256 exchangeRate,
         uint256 amountStEth,
         uint256 redeemedAmountStEth,
