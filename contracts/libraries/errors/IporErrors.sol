@@ -57,4 +57,7 @@ library IporErrors {
 
     /// @notice Asset is not supported
     string public constant ASSET_NOT_SUPPORTED = "IPOR_017";
+
+    /// @notice Return back ETH failed in Ipor Protocol Router
+    string public constant ROUTER_RETURN_BACK_ETH_FAILED = "IPOR_018";
 }

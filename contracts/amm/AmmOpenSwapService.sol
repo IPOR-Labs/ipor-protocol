@@ -191,7 +191,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
-        require(beneficiary != address(0), "AmmOpenSwapService: beneficiary is zero address");
         Context memory context = Context({
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_60,

@@ -80,12 +80,18 @@ jobs:
 
       - name: Run Forge tests
         if: inputs.test-enabled
+        env:
+          FORK_URL: ${{ secrets.FORK_URL }}
+          PROVIDER_URL: ${{ secrets.FORK_URL }}
         run: |
           forge test ${{ inputs.test-options }} -vvv
         id: test
 
       - name: Run Forge fork tests
         if: inputs.fork-test-enabled
+        env:
+          FORK_URL: ${{ secrets.FORK_URL }}
+          PROVIDER_URL: ${{ secrets.FORK_URL }}
         run: |
           forge test ${{ inputs.fork-test-options }} --fork-url ${{ secrets.FORK_URL }} -vvv
         id: fork-test

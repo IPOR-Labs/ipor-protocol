@@ -163,6 +163,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
 
         AmmTypes.Swap memory swap = IAmmStorage(poolCfg.ammStorage).getSwap(direction, swapId);
 
+        require(swap.id > 0, AmmErrors.INCORRECT_SWAP_ID);
+
         int256 swapPnlValueToDate;
 
         if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
@@ -807,7 +809,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                 if (absPnlValue < minPnlValueToCloseBeforeMaturityByBuyer) {
                     if (msgSender == swap.buyer) {
                         if (swapEndTimestamp - poolCfg.timeBeforeMaturityAllowedToCloseSwapByBuyer > closeTimestamp) {
-                            return (AmmTypes.SwapClosableStatus.SWAP_CANNOT_CLOSE_CLOSING_TOO_EARLY_FOR_BUYER, true);
+                            return (AmmTypes.SwapClosableStatus.SWAP_IS_CLOSABLE, true);
                         }
                     } else {
                         if (
