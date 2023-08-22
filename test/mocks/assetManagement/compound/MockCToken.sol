@@ -31,15 +31,18 @@ contract MockCToken is ERC20, CErc20Mock {
         string memory code
     ) public ERC20(name, code) {
         require(asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " asset address cannot be 0"));
-        require(interestRateModelInput != address(0), string.concat(IporErrors.WRONG_ADDRESS, " interest rate model address cannot be 0"));
+        require(
+            interestRateModelInput != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " interest rate model address cannot be 0")
+        );
 
         _asset = asset;
         _interestRateModel = interestRateModelInput;
         _detiomal = decimal;
         _exchangeRate = 1325321471291866029;
         _supplyRate = 32847953230;
-        _mint(address(this), 10**14); // 1.000.000 cToken
-        _mint(msg.sender, 10**13); // 100.000 cToken
+        _mint(address(this), 1_000_000 * 1e8); // 1.000.000 cToken
+        _mint(msg.sender, 100_000 * 1e8); // 100.000 cToken
     }
 
     function decimals() public view override returns (uint8) {

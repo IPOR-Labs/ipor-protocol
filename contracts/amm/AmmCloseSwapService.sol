@@ -883,6 +883,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                     IporMath.convertToWad(ammTreasuryErc20BalanceBeforeRedeem, poolCfg.decimals),
                     balance.vault,
                     wadTransferAmount + wadPayoutForLiquidator,
+                    /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals, example 45% = 4500, so to achieve number in 18 decimals we need to multiply by 1e14
                     uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) * 1e14
                 );
 

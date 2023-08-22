@@ -24,14 +24,17 @@ contract MockCDAI is ERC20, CErc20Mock {
 
     constructor(address dai, address interestRateModel) public ERC20("cDAI", "cDAI") {
         require(dai != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI asset address cannot be 0"));
-        require(interestRateModel != address(0), string.concat(IporErrors.WRONG_ADDRESS, " interest rate model address cannot be 0"));
+        require(
+            interestRateModel != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " interest rate model address cannot be 0")
+        );
 
         _dai = dai;
         _interestRateModel = interestRateModel;
         _exchangeRate = 200000000000000000;
         _supplyRate = 32847953230;
-        _mint(address(this), 10**14); // 1.000.000 cDAI
-        _mint(msg.sender, 10**13); // 100.000 cDAI
+        _mint(address(this), 1_000_000 * 1e8); // 1.000.000 cDAI
+        _mint(msg.sender, 100_000 * 1e8); // 100.000 cDAI
     }
 
     function decimals() public pure override returns (uint8) {
@@ -44,7 +47,7 @@ contract MockCDAI is ERC20, CErc20Mock {
 
     function mint(uint256 amount) external override returns (uint256) {
         require(IERC20(_dai).transferFrom(msg.sender, address(this), amount), "Error during transferFrom"); // 1 DAI
-        _mint(msg.sender, IporMath.division((amount * 10**18), _exchangeRate));
+        _mint(msg.sender, IporMath.division((amount * 1e18), _exchangeRate));
 
         return 0;
     }
@@ -52,7 +55,7 @@ contract MockCDAI is ERC20, CErc20Mock {
     function redeem(uint256 amount) external override returns (uint256) {
         _burn(msg.sender, amount);
         require(
-            IERC20(_dai).transfer(msg.sender, IporMath.division(amount * _exchangeRate, 10**18)),
+            IERC20(_dai).transfer(msg.sender, IporMath.division(amount * _exchangeRate, 1e18)),
             "Error during transfer"
         ); // 1 DAI
         return 0;
