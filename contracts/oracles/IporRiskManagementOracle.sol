@@ -166,6 +166,8 @@ contract IporRiskManagementOracle is
     {
         (maxNotionalPerLeg, maxCollateralRatioPerLeg, maxCollateralRatio) = _getRiskIndicatorsPerLeg(asset, direction);
         (baseSpreadPerLeg, fixedRateCapPerLeg) = _getSpread(asset, direction, tenor);
+        /// @dev baseSpreadPerLeg is a value in percentage with 4 decimals (example: 1 = 0.0001%), so we need to multiply by 1e12 to achieve value in 18 decimals.
+        /// @dev fixedRateCapPerLeg is a value in percentage with 2 decimals (example: 100 = 1%, 1 = 0.01%), so we need to multiply by 1e14 to achieve value in 18 decimals.
         return (
             maxNotionalPerLeg,
             maxCollateralRatioPerLeg,
@@ -217,9 +219,11 @@ contract IporRiskManagementOracle is
             baseSpreadsAndFixedRateCaps.lastUpdateTimestamp > 0,
             IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED
         );
+        /// @dev Spread value is represented in percentage with 4 decimals (example: 1 = 0.0001%, more details check in structure description `IporRiskManagementOracleStorageTypes.BaseSpreadsAndFixedRateCapsStorage`),
+        /// in return values are represented in 18 decimals, so we need to multiply by 1e12.
         return (
             uint256(baseSpreadsAndFixedRateCaps.lastUpdateTimestamp),
-            int256(baseSpreadsAndFixedRateCaps.spread28dPayFixed) * 1e12, // 1 = 0.01%
+            int256(baseSpreadsAndFixedRateCaps.spread28dPayFixed) * 1e12,
             int256(baseSpreadsAndFixedRateCaps.spread28dReceiveFixed) * 1e12,
             int256(baseSpreadsAndFixedRateCaps.spread60dPayFixed) * 1e12,
             int256(baseSpreadsAndFixedRateCaps.spread60dReceiveFixed) * 1e12,
@@ -383,12 +387,15 @@ contract IporRiskManagementOracle is
     {
         IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage memory indicators = _indicators[asset];
         require(indicators.lastUpdateTimestamp > 0, IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED);
+
+        /// @dev Multiplication by 1e22 or by 1e14 is needed to achieve WAD number used internally in calculations (value represented in 18 decimals)
+        /// For more information check description for `IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage`
         return (
-            uint256(indicators.maxNotionalPayFixed) * 1e22, // 1 = 10k notional
-            uint256(indicators.maxNotionalReceiveFixed) * 1e22,
-            uint256(indicators.maxCollateralRatioPayFixed) * 1e14, // 1 = 0.01%
-            uint256(indicators.maxCollateralRatioReceiveFixed) * 1e14,
-            uint256(indicators.maxCollateralRatio) * 1e14,
+            uint256(indicators.maxNotionalPayFixed) * 1e22, /// @dev field represents number without decimals and with multiplication of 10_000,  1 = 10k
+            uint256(indicators.maxNotionalReceiveFixed) * 1e22, /// @dev field represents number without decimals and with multiplication of 10_000,  1 = 10k
+            uint256(indicators.maxCollateralRatioPayFixed) * 1e14, /// @dev Value represents percentage with 2 decimals, example: 100 = 1%, 1 = 0.01%, 10000 = 100%
+            uint256(indicators.maxCollateralRatioReceiveFixed) * 1e14, /// @dev Value represents percentage with 2 decimals, example: 100 = 1%, 1 = 0.01%, 10000 = 100%
+            uint256(indicators.maxCollateralRatio) * 1e14, /// @dev Value represents percentage with 2 decimals, example: 100 = 1%, 1 = 0.01%, 10000 = 100%
             uint256(indicators.lastUpdateTimestamp)
         );
     }
@@ -413,6 +420,8 @@ contract IporRiskManagementOracle is
         }
     }
 
+    /// @return int256 - base spread, value represents percentage with 4 decimals, example: 1 = 0.0001%
+    /// @return uint256 - fixed rate cap, value represents percentage with 2 decimals, example: 100 = 1%
     function _getSpread(
         address asset,
         uint256 direction,
@@ -489,9 +498,12 @@ contract IporRiskManagementOracle is
             baseSpreadsAndFixedRateCaps.lastUpdateTimestamp > 0,
             IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED
         );
+
+        /// @dev Cap values represent percentage with 2 decimals, example: 100 = 1%, 1 = 0.01%, 10000 = 100%
+        /// To achieve WAD number used internally in calculations (value represented in 18 decimals) we need to multiply by 1e14
         return (
             baseSpreadsAndFixedRateCaps.lastUpdateTimestamp,
-            baseSpreadsAndFixedRateCaps.fixedRateCap28dPayFixed * 1e14, // 1 = 0.01%
+            baseSpreadsAndFixedRateCaps.fixedRateCap28dPayFixed * 1e14,
             baseSpreadsAndFixedRateCaps.fixedRateCap28dReceiveFixed * 1e14,
             baseSpreadsAndFixedRateCaps.fixedRateCap60dPayFixed * 1e14,
             baseSpreadsAndFixedRateCaps.fixedRateCap60dReceiveFixed * 1e14,
