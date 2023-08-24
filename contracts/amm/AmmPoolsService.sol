@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "../interfaces/types/IporTypes.sol";
 import "../interfaces/types/AmmTypes.sol";
 import "../interfaces/IIpToken.sol";
@@ -88,6 +89,17 @@ contract AmmPoolsService is IAmmPoolsService {
         _daiRedeemLpMaxCollateralRatio = daiPoolCfg.redeemLpMaxCollateralRatio;
 
         _iporOracle = iporOracle.checkAddress();
+
+        require(
+            _usdtRedeemFeeRate <= 1e18 && _usdcRedeemFeeRate <= 1e18 && _daiRedeemFeeRate <= 1e18,
+            AmmPoolsErrors.CFG_INVALID_REDEEM_FEE_RATE
+        );
+        require(
+            _usdtRedeemLpMaxCollateralRatio <= 1e18 &&
+                _usdcRedeemLpMaxCollateralRatio <= 1e18 &&
+                _daiRedeemLpMaxCollateralRatio <= 1e18,
+            AmmPoolsErrors.CFG_INVALID_REDEEM_LP_MAX_COLLATERAL_RATIO
+        );
     }
 
     function getAmmPoolServiceConfiguration(
