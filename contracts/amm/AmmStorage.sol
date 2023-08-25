@@ -29,7 +29,11 @@ contract AmmStorage is
 {
     using IporContractValidator for address;
     using SafeCast for uint256;
+    using SafeCast for int256;
+
     using SoapIndicatorRebalanceLogic for AmmStorageTypes.SoapIndicators;
+
+    int256 private constant INTEREST_THRESHOLD = -1e18;
 
     address private immutable _iporProtocolRouter;
     address private immutable _ammTreasury;
@@ -320,36 +324,32 @@ contract AmmStorage is
         return _updateOpenedSwapWhenCloseReceiveFixed(swap.tenor, swap.id);
     }
 
+    /// @dev vaultBalance is the balance of the vault after the withdraw
     function updateStorageWhenWithdrawFromAssetManagement(
         uint256 withdrawnAmount,
         uint256 vaultBalance
     ) external override onlyAmmTreasury {
         uint256 currentVaultBalance = _balances.vault;
-        // We nedd this because for compound if we deposit and withdraw we could get negative intrest based on rounds
-        require(vaultBalance + withdrawnAmount >= currentVaultBalance, AmmErrors.INTEREST_FROM_STRATEGY_BELOW_ZERO);
+        uint256 currentLiquidityPoolBalance = _balances.liquidityPool;
 
-        uint256 interest = vaultBalance + withdrawnAmount - currentVaultBalance;
+        int256 interest = (vaultBalance + withdrawnAmount).toInt256() - currentVaultBalance.toInt256();
 
-        uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
-
-        _balances.liquidityPool = liquidityPoolBalance.toUint128();
-        _balances.vault = vaultBalance.toUint128();
+        _updateStorageWhenInteractionWithAssetManagement(currentLiquidityPoolBalance, vaultBalance, interest);
     }
 
     function updateStorageWhenDepositToAssetManagement(
         uint256 depositAmount,
         uint256 vaultBalance
     ) external override onlyAmmTreasury {
+        /// @dev vaultBalance is the balance of the vault after the deposit depositAmount, so should always be vaultBalance >= depositAmount
         require(vaultBalance >= depositAmount, AmmErrors.VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE);
 
         uint256 currentVaultBalance = _balances.vault;
+        uint256 currentLiquidityPoolBalance = _balances.liquidityPool;
 
-        require(currentVaultBalance <= (vaultBalance - depositAmount), AmmErrors.INTEREST_FROM_STRATEGY_BELOW_ZERO);
+        int256 interest = (vaultBalance - depositAmount).toInt256() - currentVaultBalance.toInt256();
 
-        uint256 interest = currentVaultBalance > 0 ? (vaultBalance - currentVaultBalance - depositAmount) : 0;
-        _balances.vault = vaultBalance.toUint128();
-        uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
-        _balances.liquidityPool = liquidityPoolBalance.toUint128();
+        _updateStorageWhenInteractionWithAssetManagement(currentLiquidityPoolBalance, vaultBalance, interest);
     }
 
     function updateStorageWhenTransferToCharlieTreasuryInternal(
@@ -428,6 +428,21 @@ contract AmmStorage is
             averageInterestRate: soapIndicatorsReceiveFixed.averageInterestRate,
             rebalanceTimestamp: soapIndicatorsReceiveFixed.rebalanceTimestamp
         });
+    }
+
+    function _updateStorageWhenInteractionWithAssetManagement(
+        uint256 ammLiquidityPoolBalance,
+        uint256 vaultBalance,
+        int256 interest
+    ) internal {
+        /// @dev allow to have negative interest but not lower than INTEREST_THRESHOLD
+        require(interest >= INTEREST_THRESHOLD, AmmErrors.INTEREST_FROM_STRATEGY_EXCEEDED_THRESHOLD);
+        require(ammLiquidityPoolBalance.toInt256() >= -interest, AmmErrors.LIQUIDITY_POOL_AMOUNT_TOO_LOW);
+
+        ammLiquidityPoolBalance = ammLiquidityPoolBalance + interest.toUint256();
+
+        _balances.liquidityPool = ammLiquidityPoolBalance.toUint128();
+        _balances.vault = vaultBalance.toUint128();
     }
 
     function _getPositions(
