@@ -529,7 +529,7 @@ contract AmmStorage is
             _balances.liquidityPool =
                 _balances.liquidityPool -
                 absPnlValue.toUint128() +
-                swapUnwindOpeningFeeLPAmount.toUint128();
+                swapUnwindOpeningFeeLPAmount.toUint128(); //TODO: do unit test which assume what is in pnl value!!
         } else {
             /// @dev AMM earns, Buyer looses,
             _balances.liquidityPool =

@@ -505,7 +505,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
 
         (transferredToBuyer, payoutForLiquidator) = _transferTokensBasedOnPnlValue(
             beneficiary,
-            pnlValue,
+            pnlValue - swapUnwindOpeningFeeLPAmount.toInt256() - swapUnwindOpeningFeeTreasuryAmount.toInt256(), //TODO: do test for that whas is going in transfer!
             swap,
             poolCfg
         );
@@ -638,10 +638,18 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         }
     }
 
-    /// @notice Calculate swap unwind when unwind is required
+    /// @notice Calculate swap unwind when unwind is required.
     /// @param direction swap direction
     /// @param closeTimestamp close timestamp
-    /// @param swapPnlValueToDate swap PnL to specific date current date
+    /// @param swapPnlValueToDate swap PnL to a specific date (in particular case to current date)
+    /// @param indexValue index value
+    /// @param swap swap struct
+    /// @param poolCfg pool configuration
+    /// @return swapUnwindPnlValue swap unwind PnL value
+    /// @return swapUnwindFeeAmount swap unwind opening fee amount
+    /// @return swapUnwindFeeLPAmount swap unwind opening fee LP amount
+    /// @return swapUnwindFeeTreasuryAmount swap unwind opening fee treasury amount
+    /// @return swapPnlValue swap PnL value includes swap PnL to date, swap unwind PnL value, this value NOT INCLUDE swap unwind fee amount.
     function _calculateSwapUnwindWhenUnwindRequired(
         AmmTypes.SwapDirection direction,
         uint256 closeTimestamp,
@@ -654,9 +662,9 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         view
         returns (
             int256 swapUnwindPnlValue,
-            uint256 swapUnwindOpeningFeeAmount,
-            uint256 swapUnwindOpeningFeeLPAmount,
-            uint256 swapUnwindOpeningFeeTreasuryAmount,
+            uint256 swapUnwindFeeAmount,
+            uint256 swapUnwindFeeLPAmount,
+            uint256 swapUnwindFeeTreasuryAmount,
             int256 swapPnlValue
         )
     {
@@ -685,16 +693,31 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         );
 
         swapUnwindPnlValue = swap.calculateSwapUnwindPnlValue(direction, closeTimestamp, oppositeLegFixedRate);
+        /// @dev Not allow to have swap unwind pnl absolute value larger than swap collateral.
+        swapUnwindPnlValue = IporSwapLogic.normalizePnlValue(swap.collateral, swapUnwindPnlValue);
 
-        swapUnwindOpeningFeeAmount = swap.calculateSwapUnwindOpeningFeeAmount(closeTimestamp, poolCfg.unwindingFeeRate);
+        swapPnlValue = swapPnlValueToDate + swapUnwindPnlValue;
+        swapPnlValue = IporSwapLogic.normalizePnlValue(swap.collateral, swapPnlValue);
 
-        (swapUnwindOpeningFeeLPAmount, swapUnwindOpeningFeeTreasuryAmount) = IporSwapLogic.splitOpeningFeeAmount(
-            swapUnwindOpeningFeeAmount,
+        /// @dev swap unwind fee amount is independent of the swap unwind pnl value, takes into consideration notional.
+        swapUnwindFeeAmount = swap.calculateSwapUnwindOpeningFeeAmount(closeTimestamp, poolCfg.unwindingFeeRate);
+
+        require(
+            swap.collateral.toInt256() + swapPnlValue > swapUnwindFeeAmount.toInt256(),
+            "collateral left is not sufficient to cover the fee to open swap"
+        );
+
+        /// @dev payoff = Collateral + Normalise(PNL + Normalise(Unwinding Amount)) - UF
+        /// @dev pnlValue = Normalise(PNL + Normalise(Unwinding Amount)) - UF
+        /// @dev UF = LPFee + TreasuryFee, UF - Unwind Fee
+        /// @dev payoff = Collateral + pnlValue
+
+        (swapUnwindFeeLPAmount, swapUnwindFeeTreasuryAmount) = IporSwapLogic.splitOpeningFeeAmount(
+            swapUnwindFeeAmount,
             poolCfg.unwindingFeeTreasuryPortionRate
         );
 
-        swapPnlValue = swapPnlValueToDate + swapUnwindPnlValue - swapUnwindOpeningFeeAmount.toInt256();
-        swapPnlValue = IporSwapLogic.normalizePnlValue(swap.collateral, swapPnlValue);
+        swapPnlValue = swapPnlValueToDate + swapUnwindPnlValue; //- swapUnwindFeeAmount.toInt256();
     }
 
     /**

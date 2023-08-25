@@ -109,11 +109,7 @@ interface IAmmStorage {
     /// @param assetAmount amount of asset added to balance of Liquidity Pool, represented in 18 decimals
     /// @param cfgMaxLiquidityPoolBalance max liquidity pool balance taken from AmmPoolsService configuration, represented in 18 decimals.
     /// @dev Function is only available to AmmPoolsService, can be executed only by IPOR Protocol Router as internal interaction.
-    function addLiquidityInternal(
-        address account,
-        uint256 assetAmount,
-        uint256 cfgMaxLiquidityPoolBalance
-    ) external;
+    function addLiquidityInternal(address account, uint256 assetAmount, uint256 cfgMaxLiquidityPoolBalance) external;
 
     /// @notice subtract liquidity from the Liquidity Pool. Function available only to Router.
     /// @param assetAmount amount of asset subtracted from Liquidity Pool, represented in 18 decimals
@@ -144,7 +140,9 @@ interface IAmmStorage {
     /// @dev Function is only available to AmmCloseSwapService, it can be executed only by IPOR Protocol Router as internal interaction.
     /// @param swap The swap structure containing IPOR swap information.
     /// @param pnlValue The amount that the trader has earned or lost on the swap, represented in 18 decimals.
-    ///              It can be negative.
+    /// pnValue can be negative, pnlValue NOT INCLUDE potential unwind fee.
+    /// @param swapUnwindOpeningFeeLPAmount unwind fee which is accounted on AMM Liquidity Pool balance.
+    /// @param swapUnwindOpeningFeeTreasuryAmount unwind fee which is accounted on AMM Treasury balance.
     /// @param closingTimestamp The moment when the swap was closed.
     /// @return closedSwap A memory struct representing the closed swap.
     function updateStorageWhenCloseSwapPayFixedInternal(
@@ -159,7 +157,9 @@ interface IAmmStorage {
     /// @dev Function is only available to AmmCloseSwapService, it can be executed only by IPOR Protocol Router as internal interaction.
     /// @param swap The swap structure containing IPOR swap information.
     /// @param pnlValue The amount that the trader has earned or lost on the swap, represented in 18 decimals.
-    ///              It can be negative.
+    /// pnValue can be negative, pnlValue NOT INCLUDE potential unwind fee.
+    /// @param swapUnwindOpeningFeeLPAmount unwind fee which is accounted on AMM Liquidity Pool balance.
+    /// @param swapUnwindOpeningFeeTreasuryAmount unwind fee which is accounted on AMM Treasury balance.
     /// @param closingTimestamp The moment when the swap was closed.
     /// @return closedSwap A memory struct representing the closed swap.
     function updateStorageWhenCloseSwapReceiveFixedInternal(
@@ -211,5 +211,4 @@ interface IAmmStorage {
     /// @notice Removes a pause guardian from the list of guardians. Function available only for the Owner.
     /// @param guardian The address of the pause guardian to be removed.
     function removePauseGuardian(address guardian) external;
-
 }
