@@ -118,11 +118,13 @@ contract AmmTreasury is
     }
 
     function pause() external override onlyPauseGuardian {
+        IERC20Upgradeable(_asset).safeApprove(_router, 0);
         _pause();
     }
 
     function unpause() external override onlyOwner {
         _unpause();
+        IERC20Upgradeable(_asset).forceApprove(_router, Constants.MAX_VALUE);
     }
 
     function isPauseGuardian(address account) external view override returns (bool) {
