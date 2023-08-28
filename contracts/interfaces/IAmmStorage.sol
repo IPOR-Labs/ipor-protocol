@@ -141,15 +141,15 @@ interface IAmmStorage {
     /// @param swap The swap structure containing IPOR swap information.
     /// @param pnlValue The amount that the trader has earned or lost on the swap, represented in 18 decimals.
     /// pnValue can be negative, pnlValue NOT INCLUDE potential unwind fee.
-    /// @param swapUnwindOpeningFeeLPAmount unwind fee which is accounted on AMM Liquidity Pool balance.
-    /// @param swapUnwindOpeningFeeTreasuryAmount unwind fee which is accounted on AMM Treasury balance.
+    /// @param swapUnwindFeeLPAmount unwind fee which is accounted on AMM Liquidity Pool balance.
+    /// @param swapUnwindFeeTreasuryAmount unwind fee which is accounted on AMM Treasury balance.
     /// @param closingTimestamp The moment when the swap was closed.
     /// @return closedSwap A memory struct representing the closed swap.
     function updateStorageWhenCloseSwapPayFixedInternal(
         AmmTypes.Swap memory swap,
         int256 pnlValue,
-        uint256 swapUnwindOpeningFeeLPAmount,
-        uint256 swapUnwindOpeningFeeTreasuryAmount,
+        uint256 swapUnwindFeeLPAmount,
+        uint256 swapUnwindFeeTreasuryAmount,
         uint256 closingTimestamp
     ) external returns (AmmInternalTypes.OpenSwapItem memory closedSwap);
 
@@ -158,15 +158,15 @@ interface IAmmStorage {
     /// @param swap The swap structure containing IPOR swap information.
     /// @param pnlValue The amount that the trader has earned or lost on the swap, represented in 18 decimals.
     /// pnValue can be negative, pnlValue NOT INCLUDE potential unwind fee.
-    /// @param swapUnwindOpeningFeeLPAmount unwind fee which is accounted on AMM Liquidity Pool balance.
-    /// @param swapUnwindOpeningFeeTreasuryAmount unwind fee which is accounted on AMM Treasury balance.
+    /// @param swapUnwindFeeLPAmount unwind fee which is accounted on AMM Liquidity Pool balance.
+    /// @param swapUnwindFeeTreasuryAmount unwind fee which is accounted on AMM Treasury balance.
     /// @param closingTimestamp The moment when the swap was closed.
     /// @return closedSwap A memory struct representing the closed swap.
     function updateStorageWhenCloseSwapReceiveFixedInternal(
         AmmTypes.Swap memory swap,
         int256 pnlValue,
-        uint256 swapUnwindOpeningFeeLPAmount,
-        uint256 swapUnwindOpeningFeeTreasuryAmount,
+        uint256 swapUnwindFeeLPAmount,
+        uint256 swapUnwindFeeTreasuryAmount,
         uint256 closingTimestamp
     ) external returns (AmmInternalTypes.OpenSwapItem memory closedSwap);
 

@@ -111,7 +111,10 @@ contract BuilderUtils {
 
     enum AmmCloseSwapServiceTestCase {
         DEFAULT,
-        CASE1
+        /// @dev unwindFee = 99%
+        CASE1,
+        /// @dev unwindFee = 15%
+        CASE2
     }
 
     enum AmmPoolsServiceTestCase {
