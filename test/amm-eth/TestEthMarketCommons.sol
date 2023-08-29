@@ -35,6 +35,7 @@ contract TestEthMarketCommons is Test {
     // tests data
     address public userOne = address(11);
     address public userTwo = address(22);
+    address public userThree = address(33);
 
     function _init() internal {
         _createEmptyRouterImplementation();
@@ -50,6 +51,7 @@ contract TestEthMarketCommons is Test {
 
         _setupUser(userOne);
         _setupUser(userTwo);
+        _setupUser(userThree);
     }
 
     function _createEmptyRouterImplementation() private {

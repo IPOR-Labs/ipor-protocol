@@ -158,6 +158,7 @@ contract AmmStorage is
         } else {
             revert(AmmErrors.UNSUPPORTED_DIRECTION);
         }
+
         return
             AmmTypes.Swap(
                 swap.id,
