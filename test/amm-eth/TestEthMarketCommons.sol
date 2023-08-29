@@ -49,9 +49,9 @@ contract TestEthMarketCommons is Test {
 
         _setupPools();
 
-        _setupUser(userOne);
-        _setupUser(userTwo);
-        _setupUser(userThree);
+        _setupUser(userOne, 50_000e18);
+        _setupUser(userTwo, 50_000e18);
+        _setupUser(userThree, 10_000e18);
     }
 
     function _createEmptyRouterImplementation() private {
@@ -169,18 +169,19 @@ contract TestEthMarketCommons is Test {
         vm.stopPrank();
     }
 
-    function _setupUser(address user) internal {
+    function _setupUser(address user, uint256 value) internal {
         deal(user, 1_000_000e18);
         vm.startPrank(user);
 
-        IStETH(stEth).submit{value: 50_000e18}(address(0));
+        IStETH(stEth).submit{value: value}(address(0));
         IStETH(stEth).approve(iporProtocolRouter, type(uint256).max);
 
-        IWETH9(wEth).deposit{value: 50_000e18}();
+        IWETH9(wEth).deposit{value: value}();
         IWETH9(wEth).approve(iporProtocolRouter, type(uint256).max);
 
         vm.stopPrank();
     }
+
 
     function _constructProxy(address impl) private returns (ERC1967Proxy proxy) {
         vm.prank(owner);

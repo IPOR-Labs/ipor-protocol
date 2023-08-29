@@ -145,7 +145,6 @@ contract RedeemStEth is TestEthMarketCommons {
         vm.prank(userTwo);
         IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth(userTwo, 1_000e18);
 
-        uint256 stEthUserThreeBefore = IStETH(stEth).balanceOf(userThree);
         vm.prank(userThree);
         IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth(userThree, 1_000e18);
 

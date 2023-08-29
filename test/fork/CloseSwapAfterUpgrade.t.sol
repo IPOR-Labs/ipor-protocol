@@ -43,6 +43,7 @@ interface IMiltonStorage {
 
 contract CloseSwapAfterUpgradeTest is TestForkCommons {
     using SafeERC20 for ERC20;
+
     function setUp() public {
         vm.createSelectFork(vm.envString("PROVIDER_URL"), 17210000);
     }
