@@ -190,7 +190,7 @@ contract IpTokenTest is TestCommons {
     function prepareIpToken() private returns (IpToken) {
         vm.startPrank(_admin);
         IpToken ipToken = new IpToken("IpToken", "IPT", DAI);
-        ipToken.setJoseph(_router);
+        ipToken.setRouter(_router);
         vm.stopPrank();
         return ipToken;
     }

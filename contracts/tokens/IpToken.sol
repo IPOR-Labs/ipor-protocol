@@ -41,7 +41,11 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
         return _asset;
     }
 
-    function setJoseph(address newRouter) external override onlyOwner {
+    function getRouter() external view override returns (address) {
+        return _router;
+    }
+
+    function setRouter(address newRouter) external override onlyOwner {
         require(newRouter != address(0), IporErrors.WRONG_ADDRESS);
         _router = newRouter;
         emit RouterChanged(newRouter);

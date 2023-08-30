@@ -25,6 +25,7 @@ import "../../contracts/amm/AmmPoolsService.sol";
 import "../../contracts/amm/AmmGovernanceService.sol";
 import "../../contracts/amm/AmmStorage.sol";
 import "../../contracts/amm/AmmTreasury.sol";
+import "./IIpTokenV1.sol";
 
 contract TestForkCommons is Test {
     address public constant owner = 0xD92E9F039E4189c342b4067CC61f5d063960D248;
@@ -598,9 +599,9 @@ contract TestForkCommons is Test {
 
     function _setUpIpTokens() private {
         vm.startPrank(owner);
-        IIpToken(ipDAI).setJoseph(iporProtocolRouterProxy);
-        IIpToken(ipUSDC).setJoseph(iporProtocolRouterProxy);
-        IIpToken(ipUSDT).setJoseph(iporProtocolRouterProxy);
+        IIpTokenV1(ipDAI).setJoseph(iporProtocolRouterProxy);
+        IIpTokenV1(ipUSDC).setJoseph(iporProtocolRouterProxy);
+        IIpTokenV1(ipUSDT).setJoseph(iporProtocolRouterProxy);
         vm.stopPrank();
     }
 

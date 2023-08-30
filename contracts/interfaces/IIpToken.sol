@@ -10,10 +10,13 @@ interface IIpToken is IERC20 {
     /// @return asset / stablecoin address
     function getAsset() external view returns (address);
 
+    /// @notice Gets the Router's address.
+    function getRouter() external view returns (address);
+
     /// @notice Sets Router's address. IpToken contract Owner only
     /// @dev only Router can mint or burn ipTokens. Function emits `RouterChanged` event.
     /// @param newRouter Router's address
-    function setJoseph(address newRouter) external;
+    function setRouter(address newRouter) external;
 
     /// @notice Creates the ipTokens in the `amount` given and assigns them to the `account`
     /// @dev Emits {Transfer} from ERC20 asset and {Mint} event from ipToken

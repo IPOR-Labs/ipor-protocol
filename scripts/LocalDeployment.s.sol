@@ -342,9 +342,9 @@ contract LocalDeployment is Script {
         system.usdc.ipToken = address(new IpToken("IP USDC", "ipUSDC", address(system.usdc.asset)));
         system.dai.ipToken = address(new IpToken("IP DAI", "ipDAI", address(system.dai.asset)));
 
-        IpToken(system.usdt.ipToken).setJoseph(system.routerProxy);
-        IpToken(system.usdc.ipToken).setJoseph(system.routerProxy);
-        IpToken(system.dai.ipToken).setJoseph(system.routerProxy);
+        IpToken(system.usdt.ipToken).setRouter(system.routerProxy);
+        IpToken(system.usdc.ipToken).setRouter(system.routerProxy);
+        IpToken(system.dai.ipToken).setRouter(system.routerProxy);
     }
 
     function deployIvTokens(System memory system) public {
