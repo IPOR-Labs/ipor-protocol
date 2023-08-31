@@ -15,6 +15,11 @@ interface IAssetManagementLens {
         address ammTreasury;
     }
 
+    /// @notice Gets the AssetManagement configuration for the given asset.
+    /// @param asset The address of the asset.
+    /// @return AssetManagementConfiguration The AssetManagement configuration for the given asset.
+    function getAssetManagementConfiguration(address asset) external view returns (AssetManagementConfiguration memory);
+
     /// @notice Gets balance of the AmmTreasury contract in the AssetManagement.
     /// @dev This includes assets transferred to AssetManagement.
     /// @param asset The address of the asset.

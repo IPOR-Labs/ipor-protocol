@@ -33,18 +33,18 @@ contract AmmSwapsLens is IAmmSwapsLens {
     address internal immutable _daiAmmTreasury;
     uint256 internal immutable _daiMinLeverage;
 
-    address internal immutable _iporOracle;
-    address internal immutable _riskManagementOracle;
+    address public immutable iporOracle;
+    address public immutable riskManagementOracle;
 
-    address internal immutable _spreadRouter;
+    address public immutable spreadRouter;
 
     constructor(
         SwapLensPoolConfiguration memory usdtCfg,
         SwapLensPoolConfiguration memory usdcCfg,
         SwapLensPoolConfiguration memory daiCfg,
-        address iporOracle,
-        address riskManagementOracle,
-        address spreadRouter
+        address iporOracleInput,
+        address riskManagementOracleInput,
+        address spreadRouterInput
     ) {
         _usdtAsset = usdtCfg.asset.checkAddress();
         _usdtAmmStorage = usdtCfg.ammStorage.checkAddress();
@@ -61,9 +61,9 @@ contract AmmSwapsLens is IAmmSwapsLens {
         _daiAmmTreasury = daiCfg.ammTreasury.checkAddress();
         _daiMinLeverage = daiCfg.minLeverage;
 
-        _iporOracle = iporOracle.checkAddress();
-        _riskManagementOracle = riskManagementOracle.checkAddress();
-        _spreadRouter = spreadRouter.checkAddress();
+        iporOracle = iporOracleInput.checkAddress();
+        riskManagementOracle = riskManagementOracleInput.checkAddress();
+        spreadRouter = spreadRouterInput.checkAddress();
     }
 
     function getSwapLensPoolConfiguration(

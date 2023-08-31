@@ -32,13 +32,13 @@ contract AmmPoolsLens is IAmmPoolsLens {
     address internal immutable _daiAmmTreasury;
     address internal immutable _daiAssetManagement;
 
-    address internal immutable _iporOracle;
+    address public immutable iporOracle;
 
     constructor(
         AmmPoolsLensPoolConfiguration memory usdtPoolCfg,
         AmmPoolsLensPoolConfiguration memory usdcPoolCfg,
         AmmPoolsLensPoolConfiguration memory daiPoolCfg,
-        address iporOracle
+        address iporOracleInput
     ) {
         _usdt = usdtPoolCfg.asset.checkAddress();
         _usdtDecimals = usdtPoolCfg.decimals;
@@ -61,7 +61,7 @@ contract AmmPoolsLens is IAmmPoolsLens {
         _daiAmmTreasury = daiPoolCfg.ammTreasury.checkAddress();
         _daiAssetManagement = daiPoolCfg.assetManagement.checkAddress();
 
-        _iporOracle = iporOracle.checkAddress();
+        iporOracle = iporOracleInput.checkAddress();
     }
 
     function getAmmPoolsLensConfiguration(

@@ -52,13 +52,13 @@ contract AmmPoolsService is IAmmPoolsService {
     uint256 internal immutable _daiRedeemFeeRate;
     uint256 internal immutable _daiRedeemLpMaxCollateralRatio;
 
-    address internal immutable _iporOracle;
+    address public immutable iporOracle;
 
     constructor(
         AmmPoolsServicePoolConfiguration memory usdtPoolCfg,
         AmmPoolsServicePoolConfiguration memory usdcPoolCfg,
         AmmPoolsServicePoolConfiguration memory daiPoolCfg,
-        address iporOracle
+        address iporOracleInput
     ) {
         _usdt = usdtPoolCfg.asset.checkAddress();
         _usdtDecimals = usdtPoolCfg.decimals;
@@ -87,7 +87,7 @@ contract AmmPoolsService is IAmmPoolsService {
         _daiRedeemFeeRate = daiPoolCfg.redeemFeeRate;
         _daiRedeemLpMaxCollateralRatio = daiPoolCfg.redeemLpMaxCollateralRatio;
 
-        _iporOracle = iporOracle.checkAddress();
+        iporOracle = iporOracleInput.checkAddress();
     }
 
     function getAmmPoolServiceConfiguration(
@@ -174,7 +174,7 @@ contract AmmPoolsService is IAmmPoolsService {
         model.ammStorage = poolCfg.ammStorage;
         model.ammTreasury = poolCfg.ammTreasury;
         model.assetManagement = poolCfg.assetManagement;
-        model.iporOracle = _iporOracle;
+        model.iporOracle = iporOracle;
         IporTypes.AmmBalancesMemory memory balance = model.getAccruedBalance();
         uint256 exchangeRate = model.getExchangeRate(balance.liquidityPool);
         require(exchangeRate > 0, AmmErrors.LIQUIDITY_POOL_IS_EMPTY);
@@ -221,7 +221,7 @@ contract AmmPoolsService is IAmmPoolsService {
         model.ammStorage = poolCfg.ammStorage;
         model.ammTreasury = poolCfg.ammTreasury;
         model.assetManagement = poolCfg.assetManagement;
-        model.iporOracle = _iporOracle;
+        model.iporOracle = iporOracle;
 
         IporTypes.AmmBalancesMemory memory balance = model.getAccruedBalance();
 

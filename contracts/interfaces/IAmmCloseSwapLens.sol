@@ -35,6 +35,15 @@ interface IAmmCloseSwapLens {
         uint256 minLeverage;
     }
 
+    /// @notice Returns Ipor Oracle address.
+    function iporOracle() external view returns (address);
+
+    /// @notice Returns Ipor Risk Management Oracle address.
+    function iporRiskManagementOracle() external view returns (address);
+
+    /// @notice Returns Spread Router address.
+    function spreadRouter() external view returns (address);
+
     /// @notice Returns the configuration of the AmmCloseSwapService for a given pool (asset).
     /// @param asset asset address
     /// @return AmmCloseSwapServicePoolConfiguration struct representing the configuration of the AmmCloseSwapService for a given pool (asset).

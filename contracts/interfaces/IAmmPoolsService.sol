@@ -69,6 +69,9 @@ interface IAmmPoolsService {
         uint256 redeemAmount
     );
 
+    /// @notice Gets IPOR Oracle address.
+    function iporOracle() external view returns (address);
+
     /// @notice Gets the configuration of the pool for the given asset in AmmPoolsService.
     /// @param asset The address of the asset.
     /// @return The pool configuration.

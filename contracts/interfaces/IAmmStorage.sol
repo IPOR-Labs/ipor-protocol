@@ -13,6 +13,11 @@ interface IAmmStorage {
     /// @return current AmmTreasury Storage version, integer
     function getVersion() external pure returns (uint256);
 
+    /// @notice Gets the configuration of the IPOR AMM Storage.
+    /// @return ammTreasury address of the AmmTreasury contract
+    /// @return router address of the IPOR Protocol Router contract
+    function getConfiguration() external view returns (address ammTreasury, address router);
+
     /// @notice Gets last swap ID.
     /// @dev swap ID is incremented when new position is opened, last swap ID is used in Pay Fixed and Receive Fixed swaps.
     /// @dev ID is global for all swaps, regardless if they are Pay Fixed or Receive Fixed in tenor 28, 60 or 90 days.
@@ -109,11 +114,7 @@ interface IAmmStorage {
     /// @param assetAmount amount of asset added to balance of Liquidity Pool, represented in 18 decimals
     /// @param cfgMaxLiquidityPoolBalance max liquidity pool balance taken from AmmPoolsService configuration, represented in 18 decimals.
     /// @dev Function is only available to AmmPoolsService, can be executed only by IPOR Protocol Router as internal interaction.
-    function addLiquidityInternal(
-        address account,
-        uint256 assetAmount,
-        uint256 cfgMaxLiquidityPoolBalance
-    ) external;
+    function addLiquidityInternal(address account, uint256 assetAmount, uint256 cfgMaxLiquidityPoolBalance) external;
 
     /// @notice subtract liquidity from the Liquidity Pool. Function available only to Router.
     /// @param assetAmount amount of asset subtracted from Liquidity Pool, represented in 18 decimals
@@ -211,5 +212,4 @@ interface IAmmStorage {
     /// @notice Removes a pause guardian from the list of guardians. Function available only for the Owner.
     /// @param guardian The address of the pause guardian to be removed.
     function removePauseGuardian(address guardian) external;
-
 }

@@ -22,7 +22,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
     address public immutable wEth;
     address public immutable ipstEth;
     address public immutable ammTreasuryEth;
-    uint256 public immutable redeemFeeRateEth;
+    uint256 public immutable redeemFeeRateStEth;
     address public immutable iporProtocolRouter;
 
     constructor(
@@ -38,7 +38,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         ipstEth = ipstEthInput.checkAddress();
         ammTreasuryEth = ammTreasuryEthInput.checkAddress();
         iporProtocolRouter = iporProtocolRouterInput.checkAddress();
-        redeemFeeRateEth = ethRedeemFeeRateInput;
+        redeemFeeRateStEth = ethRedeemFeeRateInput;
     }
 
     function provideLiquidityStEth(address beneficiary, uint256 stEthAmount) external payable override {
@@ -110,7 +110,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ipstEth, ammTreasuryEth);
 
         uint256 stEthAmount = IporMath.division(ipTokenAmount * exchangeRate, 1e18);
-        uint256 amountToRedeem = IporMath.division(stEthAmount * (1e18 - redeemFeeRateEth), 1e18);
+        uint256 amountToRedeem = IporMath.division(stEthAmount * (1e18 - redeemFeeRateStEth), 1e18);
 
         require(amountToRedeem > 0, AmmPoolsErrors.CANNOT_REDEEM_ASSET_AMOUNT_TOO_LOW);
 

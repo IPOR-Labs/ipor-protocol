@@ -74,17 +74,17 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
     uint256 internal immutable _daiMinLiquidationThresholdToCloseBeforeMaturityByBuyer;
     uint256 internal immutable _daiMinLeverage;
 
-    address internal immutable _iporOracle;
-    address internal immutable _iporRiskManagementOracle;
-    address internal immutable _spreadRouter;
+    address public immutable iporOracle;
+    address public immutable iporRiskManagementOracle;
+    address public immutable spreadRouter;
 
     constructor(
         AmmCloseSwapServicePoolConfiguration memory usdtPoolCfg,
         AmmCloseSwapServicePoolConfiguration memory usdcPoolCfg,
         AmmCloseSwapServicePoolConfiguration memory daiPoolCfg,
-        address iporOracle,
-        address iporRiskManagementOracle,
-        address spreadRouter
+        address iporOracleInput,
+        address iporRiskManagementOracleInput,
+        address spreadRouterInput
     ) {
         _usdt = usdtPoolCfg.asset.checkAddress();
         _usdtDecimals = usdtPoolCfg.decimals;
@@ -137,9 +137,9 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             .minLiquidationThresholdToCloseBeforeMaturityByBuyer;
         _daiMinLeverage = daiPoolCfg.minLeverage;
 
-        _iporOracle = iporOracle.checkAddress();
-        _iporRiskManagementOracle = iporRiskManagementOracle.checkAddress();
-        _spreadRouter = spreadRouter.checkAddress();
+        iporOracle = iporOracleInpu.checkAddress();
+        iporRiskManagementOracle = iporRiskManagementOracleInput.checkAddress();
+        spreadRouter = spreadRouterInput.checkAddress();
     }
 
     function getAmmCloseSwapServicePoolConfiguration(
@@ -156,7 +156,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
     ) external view override returns (AmmTypes.ClosingSwapDetails memory closingSwapDetails) {
         AmmCloseSwapServicePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
-        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(_iporOracle).getAccruedIndex(
+        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(iporOracle).getAccruedIndex(
             block.timestamp,
             poolCfg.asset
         );
@@ -439,7 +439,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                 poolCfg
             );
 
-        ISpreadCloseSwapService(_spreadRouter).updateTimeWeightedNotionalOnClose(
+        ISpreadCloseSwapService(spreadRouter).updateTimeWeightedNotionalOnClose(
             poolCfg.asset,
             0,
             swap.tenor,
@@ -486,7 +486,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                 swap,
                 poolCfg
             );
-        ISpreadCloseSwapService(_spreadRouter).updateTimeWeightedNotionalOnClose(
+        ISpreadCloseSwapService(spreadRouter).updateTimeWeightedNotionalOnClose(
             poolCfg.asset,
             1,
             swap.tenor,
@@ -528,7 +528,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         closedSwaps = new AmmTypes.IporSwapClosingResult[](swapIdsLength);
         AmmTypes.Swap memory swap;
 
-        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(_iporOracle).getAccruedIndex(
+        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(iporOracle).getAccruedIndex(
             block.timestamp,
             poolCfg.asset
         );
@@ -677,8 +677,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             RiskManagementLogic.SpreadOfferedRateContext({
                 asset: poolCfg.asset,
                 ammStorage: poolCfg.ammStorage,
-                iporRiskManagementOracle: _iporRiskManagementOracle,
-                spreadRouter: _spreadRouter,
+                iporRiskManagementOracle: iporRiskManagementOracle,
+                spreadRouter: spreadRouter,
                 minLeverage: poolCfg.minLeverage,
                 indexValue: indexValue
             })
