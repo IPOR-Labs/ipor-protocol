@@ -55,7 +55,6 @@ contract AmmShouldClosePositionTest is TestCommons {
         uint256 ammERC20BalanceBefore = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         uint256 userERC20BalanceBefore = _iporProtocol.asset.balanceOf(_userTwo);
         uint256 assetManagementBalanceBefore = _iporProtocol.assetManagement.totalBalance(
-            address(_iporProtocol.ammTreasury)
         );
 
         uint256[] memory pfSwapIds = new uint256[](1);
@@ -71,7 +70,6 @@ contract AmmShouldClosePositionTest is TestCommons {
         uint256 ammERC20BalanceAfter = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         uint256 userERC20BalanceAfter = _iporProtocol.asset.balanceOf(_userTwo);
         uint256 assetManagementBalanceAfter = _iporProtocol.assetManagement.totalBalance(
-            address(_iporProtocol.ammTreasury)
         );
 
         assertEq(ammERC20BalanceBefore, 17_890e6, "ammERC20BalanceBefore");
@@ -115,7 +113,6 @@ contract AmmShouldClosePositionTest is TestCommons {
         uint256 ammERC20BalanceBefore = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         uint256 userERC20BalanceBefore = _iporProtocol.asset.balanceOf(_userTwo);
         uint256 assetManagementBalanceBefore = _iporProtocol.assetManagement.totalBalance(
-            address(_iporProtocol.ammTreasury)
         );
 
         uint256[] memory pfSwapIds = new uint256[](1);
@@ -130,9 +127,7 @@ contract AmmShouldClosePositionTest is TestCommons {
         // then
         uint256 ammERC20BalanceAfter = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         uint256 userERC20BalanceAfter = _iporProtocol.asset.balanceOf(_userTwo);
-        uint256 assetManagementBalanceAfter = _iporProtocol.assetManagement.totalBalance(
-            address(_iporProtocol.ammTreasury)
-        );
+        uint256 assetManagementBalanceAfter = _iporProtocol.assetManagement.totalBalance();
 
         assertEq(ammERC20BalanceBefore, 19800e6, "ammERC20BalanceBefore");
         assertEq(userERC20BalanceBefore, 9_990_000e6, "userERC20BalanceBefore");

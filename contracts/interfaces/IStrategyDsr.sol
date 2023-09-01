@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 /// @title Interface for interaction with  Stanley's strategy.
 /// @notice Strategy represents an external DeFi protocol and acts as and wrapper that standarizes the API of the external protocol.
@@ -19,7 +19,7 @@ interface IStrategyDsr {
     /// @notice Gets annualised interest rate (APR) for this strategy. Returns current APY from Dai Savings Rate.
     /// @return APR value, represented in 18 decimals.
     /// @dev APY = dsr^(365*24*60*60), dsr represented in 27 decimals
-    function getApr() external view returns (uint256);
+    function getApy() external view returns (uint256);
 
     /// @notice Gets balance for given asset (underlying / stablecoin) allocated to this strategy.
     /// @return balance for given asset, represented in 18 decimals.

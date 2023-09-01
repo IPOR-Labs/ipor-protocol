@@ -108,8 +108,7 @@ abstract contract AssetManagement is
     }
 
     function totalBalance() external view override returns (uint256) {
-        // todo removed
-        return _totalBalance(address(0));
+        return _totalBalance();
     }
 
     function calculateExchangeRate() external view override returns (uint256 exchangeRate) {

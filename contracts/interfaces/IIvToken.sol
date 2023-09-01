@@ -3,6 +3,7 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+//TODO: remove
 /// @title Interface of IvToken, which is IPOR Vault Token managed by AssetManagement in IPOR Protocol for a given asset.
 interface IIvToken is IERC20 {
     /// @notice Gets asset / stablecoin address which is associated with this IvToken smart contract instance

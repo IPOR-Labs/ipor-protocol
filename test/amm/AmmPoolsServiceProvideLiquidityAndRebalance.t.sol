@@ -39,7 +39,6 @@ contract JosephAutoRebalance is TestCommons {
         vm.stopPrank();
 
         uint256 assetManagementBalanceBefore = _iporProtocol.assetManagement.totalBalance(
-            address(_iporProtocol.ammTreasury)
         );
         uint256 ammTreasuryBalanceBefore = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
 
@@ -50,7 +49,7 @@ contract JosephAutoRebalance is TestCommons {
 
         //then
         assertEq(
-            _iporProtocol.assetManagement.totalBalance(address(_iporProtocol.ammTreasury)),
+            _iporProtocol.assetManagement.totalBalance(),
             assetManagementBalanceBefore
         );
         assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)), ammTreasuryBalanceBefore);
@@ -81,7 +80,6 @@ contract JosephAutoRebalance is TestCommons {
         vm.stopPrank();
 
         uint256 assetManagementBalanceBefore = _iporProtocol.assetManagement.totalBalance(
-            address(_iporProtocol.ammTreasury)
         );
         uint256 ammTreasuryBalanceBefore = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
 
@@ -93,7 +91,7 @@ contract JosephAutoRebalance is TestCommons {
 
         //then
         assertTrue(
-            _iporProtocol.assetManagement.totalBalance(address(_iporProtocol.ammTreasury)) !=
+            _iporProtocol.assetManagement.totalBalance() !=
                 assetManagementBalanceBefore
         );
         assertTrue(_iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)) != ammTreasuryBalanceBefore);
@@ -135,7 +133,7 @@ contract JosephAutoRebalance is TestCommons {
 
         //then
         assertEq(
-            _iporProtocol.assetManagement.totalBalance(address(_iporProtocol.ammTreasury)),
+            _iporProtocol.assetManagement.totalBalance(),
             expectedAssetManagementBalance,
             "incorrect asset management balance"
         );
@@ -183,7 +181,7 @@ contract JosephAutoRebalance is TestCommons {
 
         //then
         assertEq(
-            _iporProtocol.assetManagement.totalBalance(address(_iporProtocol.ammTreasury)),
+            _iporProtocol.assetManagement.totalBalance(),
             expectedAssetManagementBalance
         );
         assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)), expectedAmmTreasuryBalance);

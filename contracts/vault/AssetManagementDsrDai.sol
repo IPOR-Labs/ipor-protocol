@@ -11,7 +11,7 @@ import "../libraries/Constants.sol";
 import "../libraries/math/IporMath.sol";
 import "../libraries/errors/AssetManagementErrors.sol";
 import "../interfaces/IIvToken.sol";
-import "../interfaces/IStrategy.sol";
+
 import "../interfaces/IStrategyDsr.sol";
 import "../interfaces/IAssetManagementDsr.sol";
 import "../security/IporOwnableUpgradeable.sol";
@@ -29,9 +29,6 @@ contract AssetManagementDsrDai is
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    uint256 private constant _SUPPORTED_STRATEGIES_VOLUME = 3;
-    uint256 private constant _HIGHEST_APY_STRATEGY_ARRAY_INDEX = 2;
-
     /// @dev deprecated
     address internal _assetDeprecated;
     /// @dev deprecated
@@ -43,15 +40,14 @@ contract AssetManagementDsrDai is
     /// @dev deprecated
     address internal _strategyCompoundDeprecated;
 
-    uint256 public constant override getVersion = 2000;
-    address public immutable asset;
-    address public immutable ammTreasury;
+    uint256 public constant getVersion = 2_000;
+
     address public immutable strategyAave;
     address public immutable strategyCompound;
     address public immutable strategyDsr;
 
     modifier onlyAmmTreasury() {
-        require(_msgSender() == ammTreasury, IporErrors.CALLER_NOT_MILTON);
+        require(_msgSender() == ammTreasury, IporErrors.CALLER_NOT_AMM_TREASURY);
         _;
     }
 
@@ -67,19 +63,10 @@ contract AssetManagementDsrDai is
         address strategyAaveInput,
         address strategyCompoundInput,
         address strategyDsrInput
-    ) {
-        require(assetInput != address(0), IporErrors.WRONG_ADDRESS);
-        require(ammTreasuryInput != address(0), IporErrors.WRONG_ADDRESS);
+    ) AssetManagementCore(assetInput, ammTreasuryInput) {
         require(strategyAaveInput != address(0), IporErrors.WRONG_ADDRESS);
         require(strategyCompoundInput != address(0), IporErrors.WRONG_ADDRESS);
         require(strategyDsrInput != address(0), IporErrors.WRONG_ADDRESS);
-
-        require(_getDecimals() == IERC20MetadataUpgradeable(assetInput).decimals(), IporErrors.WRONG_DECIMALS);
-
-        require(
-            _getDecimals() == IERC20MetadataUpgradeable(IAsset(ammTreasuryInput).getAsset()).decimals(),
-            IporErrors.WRONG_DECIMALS
-        );
 
         require(
             _getDecimals() == IERC20MetadataUpgradeable(IAsset(strategyAaveInput).getAsset()).decimals(),
@@ -96,19 +83,15 @@ contract AssetManagementDsrDai is
             IporErrors.WRONG_DECIMALS
         );
 
-        require(_getDecimals() == IERC20MetadataUpgradeable(ivToken).decimals(), IporErrors.WRONG_DECIMALS);
-
         IStrategy strategyAaveObj = IStrategy(strategyAaveInput);
-        require(strategyAaveObj.getAsset() == address(assetInput), StanleyErrors.ASSET_MISMATCH);
+        require(strategyAaveObj.getAsset() == address(assetInput), AssetManagementErrors.ASSET_MISMATCH);
 
         IStrategy strategyCompoundObj = IStrategy(strategyCompoundInput);
-        require(strategyCompoundObj.getAsset() == address(assetInput), StanleyErrors.ASSET_MISMATCH);
+        require(strategyCompoundObj.getAsset() == address(assetInput), AssetManagementErrors.ASSET_MISMATCH);
 
         IStrategyDsr strategyDsrObj = IStrategyDsr(strategyDsrInput);
-        require(strategyDsrObj.getAsset() == address(assetInput), StanleyErrors.ASSET_MISMATCH);
+        require(strategyDsrObj.getAsset() == address(assetInput), AssetManagementErrors.ASSET_MISMATCH);
 
-        asset = assetInput;
-        ammTreasury = ammTreasuryInput;
         strategyAave = strategyAaveInput;
         strategyCompound = strategyCompoundInput;
         strategyDsr = strategyDsrInput;
@@ -148,7 +131,7 @@ contract AssetManagementDsrDai is
             ) {
                 require(
                     tryDepositedAmount > 0 && tryDepositedAmount <= amount,
-                    StanleyErrors.STRATEGY_INCORRECT_DEPOSITED_AMOUNT
+                    AssetManagementErrors.STRATEGY_INCORRECT_DEPOSITED_AMOUNT
                 );
 
                 depositedAmount = tryDepositedAmount;
@@ -160,7 +143,7 @@ contract AssetManagementDsrDai is
             }
         }
 
-        require(wasDepositedToStrategy != address(0x0), StanleyErrors.DEPOSIT_TO_STRATEGY_FAILED);
+        require(wasDepositedToStrategy != address(0x0), AssetManagementErrors.DEPOSIT_TO_STRATEGY_FAILED);
 
         emit Deposit(block.timestamp, _msgSender(), wasDepositedToStrategy, depositedAmount);
 
@@ -251,10 +234,10 @@ contract AssetManagementDsrDai is
             emit Withdraw(block.timestamp, _msgSender(), withdrawnAmount);
         }
 
-        vaultBalance = _calculateTotalBalanceSorted(sortedStrategies);
+        vaultBalance = _calculateTotalBalance(sortedStrategies);
     }
 
-    function _getDecimals() internal pure virtual returns (uint256) {
+    function _getDecimals() internal pure override returns (uint256) {
         return 18;
     }
 

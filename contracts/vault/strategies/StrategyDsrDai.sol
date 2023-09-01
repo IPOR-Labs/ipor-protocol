@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
@@ -32,16 +32,12 @@ contract StrategyDsrDai is
     address internal immutable _pot;
 
     modifier onlyStanley() {
-        require(_msgSender() == _stanley, StanleyErrors.CALLER_NOT_STANLEY);
+        require(_msgSender() == _stanley, AssetManagementErrors.CALLER_NOT_ASSET_MANAGEMENT);
         _;
     }
 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(
-        address asset,
-        address shareToken,
-        address stanley
-    ) {
+    constructor(address asset, address shareToken, address stanley) {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(shareToken != address(0), IporErrors.WRONG_ADDRESS);
         require(stanley != address(0), IporErrors.WRONG_ADDRESS);
@@ -78,7 +74,7 @@ contract StrategyDsrDai is
         return _stanley;
     }
 
-    function getApr() external view override returns (uint256 apy) {
+    function getApy() external view override returns (uint256 apy) {
         return IporMath.convertToWad(IporMath.rayPow(IPot(_pot).dsr(), 365 days) - 1e27, 27);
     }
 
@@ -87,25 +83,13 @@ contract StrategyDsrDai is
         return ISavingsDai(_shareToken).convertToAssets(shares);
     }
 
-    function deposit(uint256 wadAmount)
-        external
-        override
-        whenNotPaused
-        onlyStanley
-        returns (uint256 depositedAmount)
-    {
+    function deposit(uint256 wadAmount) external override whenNotPaused onlyStanley returns (uint256 depositedAmount) {
         IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(this), wadAmount);
         ISavingsDai(_shareToken).deposit(wadAmount, address(this));
         depositedAmount = wadAmount;
     }
 
-    function withdraw(uint256 wadAmount)
-        external
-        override
-        whenNotPaused
-        onlyStanley
-        returns (uint256 withdrawnAmount)
-    {
+    function withdraw(uint256 wadAmount) external override whenNotPaused onlyStanley returns (uint256 withdrawnAmount) {
         ISavingsDai(_shareToken).withdraw(wadAmount, _msgSender(), address(this));
         withdrawnAmount = wadAmount;
     }
