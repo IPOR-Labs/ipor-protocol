@@ -6,7 +6,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20Metadat
 import "../libraries/errors/IporErrors.sol";
 import "../interfaces/IStrategy.sol";
 
-interface IAsset {
+interface IAssetCheck {
     function getAsset() external view returns (address);
 }
 
@@ -31,7 +31,7 @@ abstract contract AssetManagementCore {
         require(_getDecimals() == IERC20MetadataUpgradeable(assetInput).decimals(), IporErrors.WRONG_DECIMALS);
 
         require(
-            _getDecimals() == IERC20MetadataUpgradeable(IAsset(ammTreasuryInput).getAsset()).decimals(),
+            _getDecimals() == IERC20MetadataUpgradeable(IAssetCheck(ammTreasuryInput).getAsset()).decimals(),
             IporErrors.WRONG_DECIMALS
         );
 

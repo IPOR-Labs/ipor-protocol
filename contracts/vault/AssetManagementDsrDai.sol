@@ -68,29 +68,29 @@ contract AssetManagementDsrDai is
         require(strategyCompoundInput != address(0), IporErrors.WRONG_ADDRESS);
         require(strategyDsrInput != address(0), IporErrors.WRONG_ADDRESS);
 
-        require(
-            _getDecimals() == IERC20MetadataUpgradeable(IAsset(strategyAaveInput).getAsset()).decimals(),
-            IporErrors.WRONG_DECIMALS
-        );
-
-        require(
-            _getDecimals() == IERC20MetadataUpgradeable(IAsset(strategyCompoundInput).getAsset()).decimals(),
-            IporErrors.WRONG_DECIMALS
-        );
-
-        require(
-            _getDecimals() == IERC20MetadataUpgradeable(IAsset(strategyDsrInput).getAsset()).decimals(),
-            IporErrors.WRONG_DECIMALS
-        );
-
-        IStrategy strategyAaveObj = IStrategy(strategyAaveInput);
-        require(strategyAaveObj.getAsset() == address(assetInput), AssetManagementErrors.ASSET_MISMATCH);
-
-        IStrategy strategyCompoundObj = IStrategy(strategyCompoundInput);
-        require(strategyCompoundObj.getAsset() == address(assetInput), AssetManagementErrors.ASSET_MISMATCH);
+//        require(
+//            _getDecimals() == IERC20MetadataUpgradeable(IAssetCheck(strategyAaveInput).getAsset()).decimals(),
+//            IporErrors.WRONG_DECIMALS
+//        );
+//
+//        require(
+//            _getDecimals() == IERC20MetadataUpgradeable(IAssetCheck(strategyCompoundInput).getAsset()).decimals(),
+//            IporErrors.WRONG_DECIMALS
+//        );
+//
+//        require(
+//            _getDecimals() == IERC20MetadataUpgradeable(IAssetCheck(strategyDsrInput).getAsset()).decimals(),
+//            IporErrors.WRONG_DECIMALS
+//        );
+//
+//        IStrategy strategyAaveObj = IStrategy(strategyAaveInput);
+//        require(strategyAaveObj.getAsset() == address(assetInput), AssetManagementErrors.ASSET_MISMATCH);
+//
+//        IStrategy strategyCompoundObj = IStrategy(strategyCompoundInput);
+//        require(strategyCompoundObj.getAsset() == address(assetInput), AssetManagementErrors.ASSET_MISMATCH);
 
         IStrategyDsr strategyDsrObj = IStrategyDsr(strategyDsrInput);
-        require(strategyDsrObj.getAsset() == address(assetInput), AssetManagementErrors.ASSET_MISMATCH);
+        require(strategyDsrObj.asset() == address(assetInput), AssetManagementErrors.ASSET_MISMATCH);
 
         strategyAave = strategyAaveInput;
         strategyCompound = strategyCompoundInput;

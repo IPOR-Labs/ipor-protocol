@@ -25,6 +25,10 @@ import "../../contracts/amm/AmmPoolsService.sol";
 import "../../contracts/amm/AmmGovernanceService.sol";
 import "../../contracts/amm/AmmStorage.sol";
 import "../../contracts/amm/AmmTreasury.sol";
+import "../../contracts/vault/strategies/StrategyDsrDai.sol";
+import "../../contracts/vault/AssetManagementDsrDai.sol";
+import "../../contracts/vault/strategies/StrategyAave.sol";
+import "../../contracts/vault/strategies/StrategyCompound.sol";
 
 contract TestForkCommons is Test {
     address public constant owner = 0xD92E9F039E4189c342b4067CC61f5d063960D248;
@@ -37,6 +41,8 @@ contract TestForkCommons is Test {
     address public constant aDAI = 0x028171bCA77440897B824Ca71D1c56caC55b68A3;
     address public constant aUSDC = 0xBcca60bB61934080951369a648Fb03DF4F96263C;
     address public constant aUSDT = 0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811;
+
+    address public constant sDai = 0x83F20F44975D03b1b09e64809B757c47f942BEeA;
 
     address public constant ipDAI = 0x8537b194BFf354c4738E9F3C81d67E3371DaDAf8;
     address public constant ipUSDC = 0x7c0e72f431FD69560D951e4C04A4de3657621a88;
@@ -59,6 +65,16 @@ contract TestForkCommons is Test {
     address public constant stanleyProxyDai = 0xA6aC8B6AF789319A1Db994E25760Eb86F796e2B0;
     address public constant stanleyProxyUsdc = 0x7aa7b0B738C2570C2f9F892cB7cA5bB89b9BF260;
     address public constant stanleyProxyUsdt = 0x8e679C1d67Af0CD4b314896856f09ece9E64D6B5;
+
+    address public constant strategyAaveProxyUsdt = 0x58703DA5295794ed4E82323fcce7371272c5127D;
+    address public constant strategyAaveProxyUsdc = 0x77fCaE921e3df22810c5a1aC1D33f2586BbA028f;
+    address public constant strategyAaveProxyDai = 0x526d0047725D48BBc6e24C7B82A3e47C1AF1f62f;
+
+    address public constant strategyCompoundProxyUsdt = 0xE4cD9AA68Be5b5276573E24FA7A0007da29aB5B1;
+    address public constant strategyCompoundProxyUsdc = 0xe5257cf3Bd0eFD397227981fe7bbd55c7582f526;
+    address public constant strategyCompoundProxyDai = 0x87CEF19aCa214d12082E201e6130432Df39fc774;
+
+    address public constant strategyDsrProxyDai = 0xc26be51E50a358eC6d366147d78Ab94E9597239C;
 
     address public constant oracleUpdater = 0xC3A53976E9855d815A08f577C2BEef2a799470b7;
 
@@ -103,7 +119,20 @@ contract TestForkCommons is Test {
         _createAmmGovernanceService();
         _updateIporRouterImplementation();
         _switchMiltonStorageToAmmStorage();
+
+        _switchStrategyAaveDaiToV2();
+        _switchStrategyAaveUsdcToV2();
+        _switchStrategyAaveUsdtToV2();
+
+        _switchStrategyCompoundDaiToV2();
+        _switchStrategyCompoundUsdcToV2();
+        _switchStrategyCompoundUsdtToV2();
+
+        _switchStrategyDsrDaiV1toV2();
+        _switchStanleyDsrDaiToAssetManagementDsrDai();
+
         _switchMiltonToAmmTreasury();
+
         _setUpIpTokens();
         _setAmmPoolsParams();
     }
@@ -545,6 +574,71 @@ contract TestForkCommons is Test {
         console2.log("ammGovernanceService: ", ammGovernanceService);
     }
 
+    function _switchStrategyAaveDaiToV2() internal {
+        StrategyAaveDai impl = new StrategyAaveDai();
+        vm.startPrank(owner);
+        StrategyAaveDai(strategyAaveProxyDai).upgradeTo(address(impl));
+        vm.stopPrank();
+    }
+
+    function _switchStrategyAaveUsdcToV2() internal {
+        StrategyAaveUsdc impl = new StrategyAaveUsdc();
+        vm.startPrank(owner);
+        StrategyAaveUsdc(strategyAaveProxyUsdc).upgradeTo(address(impl));
+        vm.stopPrank();
+    }
+
+    function _switchStrategyAaveUsdtToV2() internal {
+        StrategyAaveUsdt impl = new StrategyAaveUsdt();
+        vm.startPrank(owner);
+        StrategyAaveUsdt(strategyAaveProxyUsdt).upgradeTo(address(impl));
+        vm.stopPrank();
+    }
+
+    function _switchStrategyCompoundDaiToV2() internal {
+        StrategyCompoundDai impl = new StrategyCompoundDai();
+        vm.startPrank(owner);
+        StrategyCompoundDai(strategyCompoundProxyDai).upgradeTo(address(impl));
+        vm.stopPrank();
+    }
+
+    function _switchStrategyCompoundUsdcToV2() internal {
+        StrategyCompoundUsdc impl = new StrategyCompoundUsdc();
+        vm.startPrank(owner);
+        StrategyCompoundUsdc(strategyCompoundProxyUsdc).upgradeTo(address(impl));
+        vm.stopPrank();
+    }
+
+    function _switchStrategyCompoundUsdtToV2() internal {
+        StrategyCompoundUsdt impl = new StrategyCompoundUsdt();
+        vm.startPrank(owner);
+        StrategyCompoundUsdt(strategyCompoundProxyUsdt).upgradeTo(address(impl));
+        vm.stopPrank();
+    }
+
+    function _switchStrategyDsrDaiV1toV2() internal {
+        StrategyDsrDai impl = new StrategyDsrDai(DAI, sDai, address(stanleyProxyDai));
+        vm.startPrank(owner);
+        StrategyDsrDai(strategyDsrProxyDai).upgradeTo(address(impl));
+        vm.stopPrank();
+    }
+
+
+
+    function _switchStanleyDsrDaiToAssetManagementDsrDai() internal {
+        AssetManagementDsrDai impl = new AssetManagementDsrDai(
+            DAI,
+            miltonProxyDai,
+            strategyAaveProxyDai,
+            strategyCompoundProxyDai,
+            strategyDsrProxyDai
+        );
+
+        //        vm.startPrank(owner);
+        //        AssetManagementDsrDai(stanleyProxyDai).upgradeTo(address(impl));
+        //        vm.stopPrank();
+    }
+
     function _switchMiltonStorageToAmmStorage() private {
         AmmStorage daiStorageImplementation = new AmmStorage(iporProtocolRouterProxy, miltonProxyDai);
         AmmStorage usdcStorageImplementation = new AmmStorage(iporProtocolRouterProxy, miltonProxyUsdc);
@@ -609,24 +703,9 @@ contract TestForkCommons is Test {
 
     function _setAmmPoolsParams() private {
         vm.startPrank(owner);
-        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(
-            DAI,
-            type(uint32).max,
-            0,
-            5000
-        );
-        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(
-            USDC,
-            type(uint32).max,
-            0,
-            5000
-        );
-        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(
-            USDT,
-            type(uint32).max,
-            0,
-            5000
-        );
+        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, 0, 5000);
+        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(USDC, type(uint32).max, 0, 5000);
+        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(USDT, type(uint32).max, 0, 5000);
         vm.stopPrank();
     }
 

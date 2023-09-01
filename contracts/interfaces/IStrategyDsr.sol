@@ -11,10 +11,10 @@ interface IStrategyDsr {
 
     /// @notice Gets asset / underlying token / stablecoin which is assocciated with this Strategy instance
     /// @return asset / underlying token / stablecoin address
-    function getAsset() external view returns (address);
+    function asset() external view returns (address);
 
     /// @notice Returns strategy's share token address
-    function getShareToken() external view returns (address);
+    function shareToken() external view returns (address);
 
     /// @notice Gets annualised interest rate (APR) for this strategy. Returns current APY from Dai Savings Rate.
     /// @return APR value, represented in 18 decimals.
@@ -35,9 +35,6 @@ interface IStrategyDsr {
     /// @param amount asset amount represented in 18 decimals.
     /// @return withdrawnAmount The final amount withdrawn, represented in 18 decimals
     function withdraw(uint256 amount) external returns (uint256 withdrawnAmount);
-
-    /// @notice Gets Stanley address.
-    function getStanley() external view returns (address);
 
     /// @notice Pauses current smart contract, it can be executed only by the Owner
     /// @dev Emits {Paused} event from Strategy implementation.

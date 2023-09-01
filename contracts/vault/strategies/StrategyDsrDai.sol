@@ -26,26 +26,28 @@ contract StrategyDsrDai is
     using SafeCast for uint256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    address internal immutable _asset;
-    address internal immutable _shareToken;
-    address internal immutable _stanley;
-    address internal immutable _pot;
+    uint256 public constant override getVersion = 2_000;
 
-    modifier onlyStanley() {
-        require(_msgSender() == _stanley, AssetManagementErrors.CALLER_NOT_ASSET_MANAGEMENT);
+    address public immutable asset;
+    address public immutable shareToken;
+    address public immutable assetManagement;
+    address public immutable pot;
+
+    modifier onlyAssetManagement() {
+        require(_msgSender() == assetManagement, AssetManagementErrors.CALLER_NOT_ASSET_MANAGEMENT);
         _;
     }
 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address asset, address shareToken, address stanley) {
-        require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(shareToken != address(0), IporErrors.WRONG_ADDRESS);
-        require(stanley != address(0), IporErrors.WRONG_ADDRESS);
+    constructor(address assetInput, address shareTokenInput, address assetManagementInput) {
+        require(assetInput != address(0), IporErrors.WRONG_ADDRESS);
+        require(shareTokenInput != address(0), IporErrors.WRONG_ADDRESS);
+        require(assetManagementInput != address(0), IporErrors.WRONG_ADDRESS);
 
-        _asset = asset;
-        _shareToken = shareToken;
-        _stanley = stanley;
-        _pot = ISavingsDai(shareToken).pot();
+        asset = assetInput;
+        shareToken = shareTokenInput;
+        assetManagement = assetManagementInput;
+        pot = ISavingsDai(shareTokenInput).pot();
 
         _disableInitializers();
     }
@@ -55,42 +57,30 @@ contract StrategyDsrDai is
         __Ownable_init();
         __UUPSUpgradeable_init();
 
-        IERC20Upgradeable(_asset).safeApprove(_shareToken, type(uint256).max);
-    }
-
-    function getVersion() external pure override returns (uint256) {
-        return 1;
-    }
-
-    function getAsset() external view override returns (address) {
-        return _asset;
-    }
-
-    function getShareToken() external view override returns (address) {
-        return _shareToken;
-    }
-
-    function getStanley() external view override returns (address) {
-        return _stanley;
+        IERC20Upgradeable(asset).safeApprove(shareToken, type(uint256).max);
     }
 
     function getApy() external view override returns (uint256 apy) {
-        return IporMath.convertToWad(IporMath.rayPow(IPot(_pot).dsr(), 365 days) - 1e27, 27);
+        return IporMath.convertToWad(IporMath.rayPow(IPot(pot).dsr(), 365 days) - 1e27, 27);
     }
 
     function balanceOf() external view override returns (uint256) {
-        uint256 shares = ISavingsDai(_shareToken).balanceOf(address(this));
-        return ISavingsDai(_shareToken).convertToAssets(shares);
+        uint256 shares = ISavingsDai(shareToken).balanceOf(address(this));
+        return ISavingsDai(shareToken).convertToAssets(shares);
     }
 
-    function deposit(uint256 wadAmount) external override whenNotPaused onlyStanley returns (uint256 depositedAmount) {
-        IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(this), wadAmount);
-        ISavingsDai(_shareToken).deposit(wadAmount, address(this));
+    function deposit(
+        uint256 wadAmount
+    ) external override whenNotPaused onlyAssetManagement returns (uint256 depositedAmount) {
+        IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), wadAmount);
+        ISavingsDai(shareToken).deposit(wadAmount, address(this));
         depositedAmount = wadAmount;
     }
 
-    function withdraw(uint256 wadAmount) external override whenNotPaused onlyStanley returns (uint256 withdrawnAmount) {
-        ISavingsDai(_shareToken).withdraw(wadAmount, _msgSender(), address(this));
+    function withdraw(
+        uint256 wadAmount
+    ) external override whenNotPaused onlyAssetManagement returns (uint256 withdrawnAmount) {
+        ISavingsDai(shareToken).withdraw(wadAmount, _msgSender(), address(this));
         withdrawnAmount = wadAmount;
     }
 
