@@ -164,7 +164,7 @@ contract MiltonConfiguration is Test, TestCommons {
         // when
         uint256 actualValue = _miltonDai.getMaxLpUtilizationPerLegRate();
         // then
-        assertEq(actualValue, 0 * TestConstants.D15);
+        assertEq(actualValue, 1 * TestConstants.D15);
     }
 
     function testShouldSetupInitValueForIncomeFeePercentage() public {
@@ -213,7 +213,7 @@ contract MiltonConfiguration is Test, TestCommons {
         // when
         uint256 actualValue = _miltonDai.getMaxLeverage();
         // then
-        assertEq(actualValue, 500 * TestConstants.D18);
+        assertEq(actualValue, 100 * TestConstants.D18);
     }
 
     function testShouldSetupInitValueForMaxLeverageValueUsdc() public {
@@ -227,7 +227,7 @@ contract MiltonConfiguration is Test, TestCommons {
         // when
         uint256 actualValue = _miltonUsdt.getMaxLeverage();
         // then
-        assertEq(actualValue, 500 * TestConstants.D18);
+        assertEq(actualValue, 100 * TestConstants.D18);
     }
 
     function testShouldSetupInitValueForMinLeverageValue() public {
