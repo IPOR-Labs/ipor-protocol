@@ -18,6 +18,7 @@ import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/AssetManagementErrors.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "../security/PauseManager.sol";
+import "forge-std/console2.sol";
 
 /// @title AssetManagement represents Asset Management module responsible for investing AmmTreasury's cash in external DeFi protocols.
 abstract contract AssetManagement is
@@ -316,6 +317,7 @@ abstract contract AssetManagement is
     }
 
     function getImplementation() external view override returns (address) {
+        console2.log("getImplementation");
         return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
 

@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "../../../contracts/tokens/IvToken.sol";
 import "../../../contracts/vault/AssetManagementUsdt.sol";
 import "../../../contracts/vault/AssetManagementUsdc.sol";
 import "../../../contracts/vault/AssetManagementDai.sol";
-import "../../../contracts/vault/AssetManagement.sol";
+import "../../../contracts/vault/AssetManagementDai.sol";
 
 import "./BuilderUtils.sol";
 import "./StrategyAaveBuilder.sol";
@@ -17,9 +16,10 @@ contract AssetManagementBuilder is Test {
     struct BuilderData {
         BuilderUtils.AssetType assetType;
         address asset;
-        address ivToken;
+        address ammTreasury;
         address strategyAave;
         address strategyCompound;
+        address strategyDsr;
         address assetManagementImplementation;
     }
 
@@ -41,11 +41,6 @@ contract AssetManagementBuilder is Test {
         return this;
     }
 
-    function withIvToken(address ivToken) public returns (AssetManagementBuilder) {
-        builderData.ivToken = ivToken;
-        return this;
-    }
-
     function withStrategyAave(address strategyAave) public returns (AssetManagementBuilder) {
         builderData.strategyAave = strategyAave;
         return this;
@@ -53,6 +48,16 @@ contract AssetManagementBuilder is Test {
 
     function withStrategyCompound(address strategyCompound) public returns (AssetManagementBuilder) {
         builderData.strategyCompound = strategyCompound;
+        return this;
+    }
+
+    function withStrategyDsr(address strategyDsr) public returns (AssetManagementBuilder) {
+        builderData.strategyDsr = strategyDsr;
+        return this;
+    }
+
+    function withAmmTreasury(address ammTreasury) public returns (AssetManagementBuilder) {
+        builderData.ammTreasury = ammTreasury;
         return this;
     }
 
@@ -65,7 +70,6 @@ contract AssetManagementBuilder is Test {
 
     function _buildStrategiesDai() internal {
         require(builderData.asset != address(0), "Asset address is not set");
-        require(builderData.ivToken != address(0), "IvToken address is not set");
 
         if (builderData.strategyAave == address(0)) {
             StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(_owner);
@@ -86,7 +90,6 @@ contract AssetManagementBuilder is Test {
 
     function _buildStrategiesUsdt() internal {
         require(builderData.asset != address(0), "Asset address is not set");
-        require(builderData.ivToken != address(0), "IvToken address is not set");
 
         if (builderData.strategyAave == address(0)) {
             StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(_owner);
@@ -107,7 +110,6 @@ contract AssetManagementBuilder is Test {
 
     function _buildStrategiesUsdc() internal {
         require(builderData.asset != address(0), "Asset address is not set");
-        require(builderData.ivToken != address(0), "IvToken address is not set");
 
         if (builderData.strategyAave == address(0)) {
             StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(_owner);
@@ -126,25 +128,17 @@ contract AssetManagementBuilder is Test {
         }
     }
 
-    function build() public returns (AssetManagement) {
+    function build() public returns (AssetManagementDai) {
         require(builderData.asset != address(0), "Asset address is not set");
-        require(builderData.ivToken != address(0), "IvToken address is not set");
 
         _buildStrategies();
 
         vm.startPrank(_owner);
-
         ERC1967Proxy proxy = _constructProxy(address(_buildAssetManagementImplementation()));
-        AssetManagement assetManagement = AssetManagement(address(proxy));
-
-        MockTestnetStrategy strategyAave = MockTestnetStrategy(builderData.strategyAave);
-        MockTestnetStrategy strategyCompound = MockTestnetStrategy(builderData.strategyCompound);
-
-        strategyAave.setAssetManagement(address(assetManagement));
-        strategyCompound.setAssetManagement(address(assetManagement));
         vm.stopPrank();
+
         delete builderData;
-        return assetManagement;
+        return AssetManagementDai(address(proxy));
     }
 
     function _buildAssetManagementImplementation() internal returns (address assetManagementImpl) {
@@ -152,11 +146,33 @@ contract AssetManagementBuilder is Test {
             assetManagementImpl = builderData.assetManagementImplementation;
         } else {
             if (builderData.assetType == BuilderUtils.AssetType.DAI) {
-                assetManagementImpl = address(new AssetManagementDai());
+                assetManagementImpl = address(
+                    new AssetManagementDai(
+                        builderData.asset,
+                        builderData.ammTreasury,
+                        builderData.strategyAave,
+                        builderData.strategyCompound,
+                        builderData.strategyDsr
+                    )
+                );
             } else if (builderData.assetType == BuilderUtils.AssetType.USDT) {
-                assetManagementImpl = address(new AssetManagementUsdt());
+                assetManagementImpl = address(
+                    new AssetManagementUsdt(
+                        builderData.asset,
+                        builderData.ammTreasury,
+                        builderData.strategyAave,
+                        builderData.strategyCompound
+                    )
+                );
             } else if (builderData.assetType == BuilderUtils.AssetType.USDC) {
-                assetManagementImpl = address(new AssetManagementUsdc());
+                assetManagementImpl = address(
+                    new AssetManagementUsdc(
+                        builderData.asset,
+                        builderData.ammTreasury,
+                        builderData.strategyAave,
+                        builderData.strategyCompound
+                    )
+                );
             } else {
                 revert("Asset type not supported");
             }
@@ -176,15 +192,6 @@ contract AssetManagementBuilder is Test {
     }
 
     function _constructProxy(address impl) internal returns (ERC1967Proxy proxy) {
-        proxy = new ERC1967Proxy(
-            address(impl),
-            abi.encodeWithSignature(
-                "initialize(address,address,address,address)",
-                builderData.asset,
-                builderData.ivToken,
-                builderData.strategyAave,
-                builderData.strategyCompound
-            )
-        );
+        proxy = new ERC1967Proxy(address(impl), abi.encodeWithSignature("initialize()"));
     }
 }

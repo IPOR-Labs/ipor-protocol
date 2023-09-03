@@ -8,7 +8,7 @@ import "../../mocks/MockIporWeighted.sol";
 import "../../../contracts/amm/AmmStorage.sol";
 import "../../../contracts/amm/AmmTreasury.sol";
 import "../../../contracts/amm/spread/SpreadRouter.sol";
-import "../../../contracts/vault/AssetManagement.sol";
+import "../../../contracts/vault/AssetManagementCore.sol";
 import "../../../contracts/router/IporProtocolRouter.sol";
 import "../../../contracts/interfaces/IAmmOpenSwapLens.sol";
 import "../../../contracts/interfaces/IAmmCloseSwapLens.sol";
@@ -34,7 +34,7 @@ contract BuilderUtils {
         MockIporWeighted iporWeighted;
         AmmStorage ammStorage;
         SpreadRouter spreadRouter;
-        AssetManagement assetManagement;
+        AssetManagementCore assetManagement;
         AmmTreasury ammTreasury;
         ILiquidityMiningLens liquidityMiningLens;
         IPowerTokenLens powerTokenLens;

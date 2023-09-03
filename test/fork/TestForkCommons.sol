@@ -26,7 +26,7 @@ import "../../contracts/amm/AmmGovernanceService.sol";
 import "../../contracts/amm/AmmStorage.sol";
 import "../../contracts/amm/AmmTreasury.sol";
 import "../../contracts/vault/strategies/StrategyDsrDai.sol";
-import "../../contracts/vault/AssetManagementDsrDai.sol";
+import "../../contracts/vault/AssetManagementDai.sol";
 import "../../contracts/vault/strategies/StrategyAave.sol";
 import "../../contracts/vault/strategies/StrategyCompound.sol";
 
@@ -626,7 +626,7 @@ contract TestForkCommons is Test {
 
 
     function _switchStanleyDsrDaiToAssetManagementDsrDai() internal {
-        AssetManagementDsrDai impl = new AssetManagementDsrDai(
+        AssetManagementDai impl = new AssetManagementDai(
             DAI,
             miltonProxyDai,
             strategyAaveProxyDai,

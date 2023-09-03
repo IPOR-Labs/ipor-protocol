@@ -28,6 +28,10 @@ contract MockStrategy is IStrategy {
         withdrawnAmount = amount;
     }
 
+    function asset() external view returns (address) {
+        return _asset;
+    }
+
     function getAsset() external view returns (address) {
         return _asset;
     }
