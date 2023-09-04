@@ -23,7 +23,7 @@ interface IStrategyDsr {
 
     /// @notice Gets balance for given asset (underlying / stablecoin) allocated to this strategy.
     /// @return balance for given asset, represented in 18 decimals.
-    function balanceOf() external returns (uint256);
+    function balanceOf() external view returns (uint256);
 
     /// @notice Deposits asset amount from Stanley to this specific Strategy. Function available only for Stanley.
     /// @dev Emits {Transfer} from ERC20 asset. If available then events from external DeFi protocol assocciated with this strategy.
@@ -43,4 +43,18 @@ interface IStrategyDsr {
     /// @notice Unpauses current smart contract, it can be executed only by the Owner
     /// @dev Emits {Unpaused} event from Strategy implementation.
     function unpause() external;
+
+    /// @notice Checks if given account is a pause guardian.
+    /// @param account The address of the account to be checked.
+    /// @return true if account is a pause guardian.
+    function isPauseGuardian(address account) external view returns (bool);
+
+    /// @notice Adds a pause guardian to the list of guardians. Function available only for the Owner.
+    /// @param guardian The address of the pause guardian to be added.
+    function addPauseGuardian(address guardian) external;
+
+    /// @notice Removes a pause guardian from the list of guardians. Function available only for the Owner.
+    /// @param guardian The address of the pause guardian to be removed.
+    function removePauseGuardian(address guardian) external;
+
 }

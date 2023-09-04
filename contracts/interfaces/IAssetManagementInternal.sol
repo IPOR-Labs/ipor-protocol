@@ -32,7 +32,7 @@ interface IAssetManagementInternal {
     /// @return strategyMaxApy address of the Strategy with the highest APY
     /// @return strategyAave address of the AAVE Strategy
     /// @return strategyCompound address of the Compound Strategy
-    function getMaxApyStrategy()
+    function getSortedStrategiesWithApy()
         external
         view
         returns (address strategyMaxApy, address strategyAave, address strategyCompound);

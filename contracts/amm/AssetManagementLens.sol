@@ -4,7 +4,7 @@ pragma solidity 0.8.20;
 import "../interfaces/IAssetManagementLens.sol";
 import "../interfaces/IAssetManagement.sol";
 import "../interfaces/IAssetManagementInternal.sol";
-import "../interfaces/IStrategy.sol";
+import "../interfaces/IStrategyDsr.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/IporContractValidator.sol";
 
@@ -64,7 +64,7 @@ contract AssetManagementLens is IAssetManagementLens {
         IAssetManagementInternal assetManagement = IAssetManagementInternal(
             assetManagementConfiguration.assetManagement
         );
-        return IStrategy(assetManagement.getStrategyAave()).balanceOf();
+        return IStrategyDsr(assetManagement.getStrategyAave()).balanceOf();
     }
 
     function balanceOfStrategyCompound(address asset) external view returns (uint256) {
@@ -72,7 +72,7 @@ contract AssetManagementLens is IAssetManagementLens {
         IAssetManagementInternal assetManagement = IAssetManagementInternal(
             assetManagementConfiguration.assetManagement
         );
-        return IStrategy(assetManagement.getStrategyCompound()).balanceOf();
+        return IStrategyDsr(assetManagement.getStrategyCompound()).balanceOf();
     }
 
     function _getAssetManagementConfiguration(

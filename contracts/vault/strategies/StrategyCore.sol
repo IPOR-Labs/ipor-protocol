@@ -5,12 +5,15 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "../../interfaces/IStrategy.sol";
 import "../../interfaces/IProxyImplementation.sol";
 import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/errors/AssetManagementErrors.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 import "../../security/PauseManager.sol";
+import "../../interfaces/IStrategyDsr.sol";
+import "../../libraries/IporContractValidator.sol";
 
 abstract contract StrategyCore is
     Initializable,
@@ -19,16 +22,27 @@ abstract contract StrategyCore is
     UUPSUpgradeable,
     IporOwnableUpgradeable,
     IStrategy,
+    IStrategyDsr,
     IProxyImplementation
 {
-    address internal _asset;
-    address internal _shareToken;
-    address internal _assetManagement;
+    using IporContractValidator for address;
+    address public immutable asset;
+    uint256 public immutable assetDecimals;
+    address public immutable shareToken;
+    address public immutable assetManagement;
+
+    /// @dev deprecated
+    address internal _assetDeprecated;
+    /// @dev deprecated
+    address internal _shareTokenDeprecated;
+    /// @dev deprecated
+    address internal _assetManagementDeprecated;
+
     address internal _treasury;
     address internal _treasuryManager;
 
     modifier onlyAssetManagement() {
-        require(_msgSender() == _assetManagement, AssetManagementErrors.CALLER_NOT_ASSET_MANAGEMENT);
+        require(_msgSender() == assetManagement, AssetManagementErrors.CALLER_NOT_ASSET_MANAGEMENT);
         _;
     }
 
@@ -42,29 +56,18 @@ abstract contract StrategyCore is
         _;
     }
 
+    constructor(address assetInput, uint256 assetDecimalsInput, address shareTokenInput, address assetManagementInput) {
+        asset = assetInput.checkAddress();
+
+        require(assetDecimalsInput == IERC20MetadataUpgradeable(assetInput).decimals(), IporErrors.WRONG_DECIMALS);
+
+        assetDecimals = assetDecimalsInput;
+        shareToken = shareTokenInput.checkAddress();
+        assetManagement = assetManagementInput.checkAddress();
+    }
+
     function getVersion() external pure override returns (uint256) {
         return 2_000;
-    }
-
-    function getAsset() external view override returns (address) {
-        return _asset;
-    }
-
-    /**
-     * @dev Share token to track _asset (DAI -> cDAI)
-     */
-    function getShareToken() external view override returns (address) {
-        return _shareToken;
-    }
-
-    function getAssetManagement() external view override returns (address) {
-        return _assetManagement;
-    }
-
-    function setAssetManagement(address newAssetManagement) external whenNotPaused onlyOwner {
-        require(newAssetManagement != address(0), IporErrors.WRONG_ADDRESS);
-        _assetManagement = newAssetManagement;
-        emit AssetManagementChanged(newAssetManagement);
     }
 
     function getTreasuryManager() external view override returns (address) {

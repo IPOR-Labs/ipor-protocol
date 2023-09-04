@@ -42,6 +42,10 @@ contract TestForkCommons is Test {
     address public constant aUSDC = 0xBcca60bB61934080951369a648Fb03DF4F96263C;
     address public constant aUSDT = 0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811;
 
+    address public constant cDAI = 0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643;
+    address public constant cUSDC = 0x39AA39c021dfbaE8faC545936693aC917d5E7563;
+    address public constant cUSDT = 0xf650C3d88D12dB855b8bf7D11Be6C55A4e07dCC9;
+
     address public constant sDai = 0x83F20F44975D03b1b09e64809B757c47f942BEeA;
 
     address public constant ipDAI = 0x8537b194BFf354c4738E9F3C81d67E3371DaDAf8;
@@ -82,6 +86,9 @@ contract TestForkCommons is Test {
     address public constant stakedAAVE = 0x4da27a545c0c5B758a6BA100e3a049001de870f5;
     address public constant aaveLendingPoolAddressProvider = 0xB53C1a33016B2DC2fF3653530bfF1848a515c8c5;
     address public constant aaveIncentivesController = 0xd784927Ff2f95ba542BfC824c8a8a98F3495f6b5;
+
+    address public constant COMP = 0xc00e94Cb662C3520282E6f5717214004A7f26888;
+    address public constant comptroller = 0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B;
 
     // new contracts for v2
     address public iporRiskManagementOracleProxy;
@@ -575,44 +582,90 @@ contract TestForkCommons is Test {
     }
 
     function _switchStrategyAaveDaiToV2() internal {
-        StrategyAaveDai impl = new StrategyAaveDai();
+        StrategyAave impl = new StrategyAave(
+            DAI,
+            18,
+            aDAI,
+            stanleyProxyDai,
+            AAVE,
+            stakedAAVE,
+            aaveLendingPoolAddressProvider,
+            stakedAAVE,
+            aaveIncentivesController
+        );
         vm.startPrank(owner);
-        StrategyAaveDai(strategyAaveProxyDai).upgradeTo(address(impl));
+        StrategyAave(strategyAaveProxyDai).upgradeTo(address(impl));
         vm.stopPrank();
     }
 
     function _switchStrategyAaveUsdcToV2() internal {
-        StrategyAaveUsdc impl = new StrategyAaveUsdc();
+        StrategyAave impl = new StrategyAave(
+            USDC,
+            6,
+            aUSDC,
+            stanleyProxyUsdc,
+            AAVE,
+            stakedAAVE,
+            aaveLendingPoolAddressProvider,
+            stakedAAVE,
+            aaveIncentivesController
+        );
         vm.startPrank(owner);
-        StrategyAaveUsdc(strategyAaveProxyUsdc).upgradeTo(address(impl));
+        StrategyAave(strategyAaveProxyUsdc).upgradeTo(address(impl));
         vm.stopPrank();
     }
 
     function _switchStrategyAaveUsdtToV2() internal {
-        StrategyAaveUsdt impl = new StrategyAaveUsdt();
+        StrategyAave impl = new StrategyAave(
+            USDT,
+            6,
+            aUSDT,
+            stanleyProxyUsdt,
+            AAVE,
+            stakedAAVE,
+            aaveLendingPoolAddressProvider,
+            stakedAAVE,
+            aaveIncentivesController
+        );
         vm.startPrank(owner);
-        StrategyAaveUsdt(strategyAaveProxyUsdt).upgradeTo(address(impl));
+        StrategyAave(strategyAaveProxyUsdt).upgradeTo(address(impl));
         vm.stopPrank();
     }
 
     function _switchStrategyCompoundDaiToV2() internal {
-        StrategyCompoundDai impl = new StrategyCompoundDai();
+        StrategyCompound impl = new StrategyCompound(DAI, 18, cDAI, address(stanleyProxyDai), 7200, comptroller, COMP);
         vm.startPrank(owner);
-        StrategyCompoundDai(strategyCompoundProxyDai).upgradeTo(address(impl));
+        StrategyCompound(strategyCompoundProxyDai).upgradeTo(address(impl));
         vm.stopPrank();
     }
 
     function _switchStrategyCompoundUsdcToV2() internal {
-        StrategyCompoundUsdc impl = new StrategyCompoundUsdc();
+        StrategyCompound impl = new StrategyCompound(
+            USDC,
+            6,
+            cUSDC,
+            address(stanleyProxyUsdc),
+            7200,
+            comptroller,
+            COMP
+        );
         vm.startPrank(owner);
-        StrategyCompoundUsdc(strategyCompoundProxyUsdc).upgradeTo(address(impl));
+        StrategyCompound(strategyCompoundProxyUsdc).upgradeTo(address(impl));
         vm.stopPrank();
     }
 
     function _switchStrategyCompoundUsdtToV2() internal {
-        StrategyCompoundUsdt impl = new StrategyCompoundUsdt();
+        StrategyCompound impl = new StrategyCompound(
+            USDT,
+            6,
+            cUSDT,
+            address(stanleyProxyUsdt),
+            7200,
+            comptroller,
+            COMP
+        );
         vm.startPrank(owner);
-        StrategyCompoundUsdt(strategyCompoundProxyUsdt).upgradeTo(address(impl));
+        StrategyCompound(strategyCompoundProxyUsdt).upgradeTo(address(impl));
         vm.stopPrank();
     }
 

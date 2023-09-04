@@ -190,21 +190,18 @@ contract StrategyPauseManagerTest is Test {
     }
 
     function createStrategy() internal returns (StrategyCore) {
-        StrategyCore strategy = new StrategyCompoundUsdc();
+        StrategyCore strategy = new StrategyCompound(
+            address(usdc),
+            6,
+            address(this),
+            address(this),
+            7200,
+            address(this),
+            address(this)
+        );
         vm.startPrank(_owner);
         StrategyCore proxy = StrategyCore(
-            address(
-                new ERC1967Proxy(
-                    address(strategy),
-                    abi.encodeWithSignature(
-                        "initialize(address,address,address,address)",
-                        address(usdc),
-                        address(ivUsdc),
-                        address(this),
-                        address(this)
-                    )
-                )
-            )
+            address(new ERC1967Proxy(address(strategy), abi.encodeWithSignature("initialize()")))
         );
         vm.stopPrank();
         return proxy;

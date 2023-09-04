@@ -10,48 +10,44 @@ import "../interfaces/compound/CErc20.sol";
 import "../interfaces/compound/ComptrollerInterface.sol";
 import "../../libraries/math/IporMath.sol";
 import "./StrategyCore.sol";
+import "../../libraries/IporContractValidator.sol";
 
 contract StrategyCompound is StrategyCore, IStrategyCompound {
+    using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    uint256 private _blocksPerDay;
-    ComptrollerInterface private _comptroller;
-    IERC20Upgradeable private _compToken;
+    uint256 public immutable blocksPerDay;
+    ComptrollerInterface public immutable comptroller;
+    IERC20Upgradeable public immutable compToken;
+
+    uint256 private _blocksPerDayDeprecated;
+    ComptrollerInterface private _comptrollerDeprecated;
+    IERC20Upgradeable private _compTokenDeprecated;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
+    constructor(
+        address assetInput,
+        uint256 assetDecimalsInput,
+        address shareTokenInput,
+        address assetManagementInput,
+        uint256 blocksPerDayInput,
+        address comptrollerInput,
+        address compTokenInput
+    ) StrategyCore(assetInput, assetDecimalsInput, shareTokenInput, assetManagementInput) {
+        blocksPerDay = blocksPerDayInput;
+        comptroller = ComptrollerInterface(comptrollerInput.checkAddress());
+        compToken = IERC20Upgradeable(compTokenInput.checkAddress());
+
         _disableInitializers();
     }
 
-    /**
-     * @dev Deploy StrategyCompound.
-     * @notice Deploy StrategyCompound.
-     * @param asset underlying token like DAI, USDT etc.
-     * @param shareToken share token like cDAI
-     * @param comptroller _comptroller to claim comp
-     * @param compToken comp token.
-     */
-    function initialize(
-        address asset,
-        address shareToken,
-        address comptroller,
-        address compToken
-    ) public initializer nonReentrant {
+    function initialize() public initializer nonReentrant {
         __Pausable_init();
         __Ownable_init();
         __UUPSUpgradeable_init();
 
-        require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(shareToken != address(0), IporErrors.WRONG_ADDRESS);
-        require(comptroller != address(0), IporErrors.WRONG_ADDRESS);
-        require(compToken != address(0), IporErrors.WRONG_ADDRESS);
+        IERC20Upgradeable(asset).safeApprove(shareToken, type(uint256).max);
 
-        _asset = asset;
-        _shareToken = shareToken;
-        _comptroller = ComptrollerInterface(comptroller);
-        _compToken = IERC20Upgradeable(compToken);
-        IERC20Upgradeable(_asset).safeApprove(shareToken, type(uint256).max);
-        _blocksPerDay = 7200;
         _treasuryManager = _msgSender();
     }
 
@@ -59,8 +55,8 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
      * @notice gets current APY in Compound Protocol.
      */
     function getApy() external view override returns (uint256 apy) {
-        uint256 cRate = CErc20(_shareToken).supplyRatePerBlock(); // interest % per block
-        uint256 ratePerDay = cRate * _blocksPerDay + 1e18;
+        uint256 cRate = CErc20(shareToken).supplyRatePerBlock(); // interest % per block
+        uint256 ratePerDay = cRate * blocksPerDay + 1e18;
 
         uint256 ratePerDay4 = IporMath.division(ratePerDay * ratePerDay * ratePerDay * ratePerDay, 1e54);
         uint256 ratePerDay8 = IporMath.division(ratePerDay4 * ratePerDay4, 1e18);
@@ -83,12 +79,12 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
     /// In both cases we have 18 decimals which is number of decimals supported in IPOR Protocol.
     /// @return uint256 AssetManagement Strategy's asset amount in Compound represented in 18 decimals
     function balanceOf() external view override returns (uint256) {
-        CErc20 shareToken = CErc20(_shareToken);
+        CErc20 shareToken = CErc20(shareToken);
 
         return (
             IporMath.division(
                 (shareToken.exchangeRateStored() * shareToken.balanceOf(address(this))),
-                (10**IERC20Metadata(_asset).decimals())
+                (10 ** IERC20Metadata(asset).decimals())
             )
         );
     }
@@ -98,18 +94,12 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
      * @notice deposit can only done by AssetManagement .
      * @param wadAmount amount to deposit in compound lending, amount represented in 18 decimals
      */
-    function deposit(uint256 wadAmount)
-        external
-        override
-        whenNotPaused
-        onlyAssetManagement
-        returns (uint256 depositedAmount)
-    {
-        address asset = _asset;
-        uint256 assetDecimals = IERC20Metadata(asset).decimals();
+    function deposit(
+        uint256 wadAmount
+    ) external override whenNotPaused onlyAssetManagement returns (uint256 depositedAmount) {
         uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
         IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), amount);
-        CErc20(_shareToken).mint(amount);
+        CErc20(shareToken).mint(amount);
         depositedAmount = IporMath.convertToWad(amount, assetDecimals);
     }
 
@@ -118,23 +108,15 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
      * @notice withdraw can only done by AssetManagement.
      * @param wadAmount candidate amount to withdraw from compound lending, amount represented in 18 decimals
      */
-    function withdraw(uint256 wadAmount)
-        external
-        override
-        whenNotPaused
-        onlyAssetManagement
-        returns (uint256 withdrawnAmount)
-    {
-        address asset = _asset;
-        uint256 assetDecimals = IERC20Metadata(asset).decimals();
+    function withdraw(
+        uint256 wadAmount
+    ) external override whenNotPaused onlyAssetManagement returns (uint256 withdrawnAmount) {
         uint256 amount = IporMath.convertWadToAssetDecimalsWithoutRound(wadAmount, assetDecimals);
 
-        CErc20 shareToken = CErc20(_shareToken);
+        CErc20 shareToken = CErc20(shareToken);
 
         // Transfer assets from Compound to Strategy
-        uint256 redeemStatus = shareToken.redeem(
-            IporMath.division(amount * 1e18, shareToken.exchangeRateStored())
-        );
+        uint256 redeemStatus = shareToken.redeem(IporMath.division(amount * 1e18, shareToken.exchangeRateStored()));
 
         require(redeemStatus == 0, AssetManagementErrors.SHARED_TOKEN_REDEEM_ERROR);
 
@@ -151,14 +133,13 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
      */
     function doClaim() external override whenNotPaused nonReentrant onlyOwner {
         address treasury = _treasury;
-        IERC20Upgradeable compToken = _compToken;
 
         require(treasury != address(0), IporErrors.WRONG_ADDRESS);
 
         address[] memory assets = new address[](1);
-        assets[0] = _shareToken;
+        assets[0] = shareToken;
 
-        _comptroller.claimComp(address(this), assets);
+        comptroller.claimComp(address(this), assets);
 
         uint256 balance = compToken.balanceOf(address(this));
 
@@ -166,16 +147,4 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
 
         emit DoClaim(_msgSender(), assets[0], treasury, balance);
     }
-
-    function setBlocksPerDay(uint256 newBlocksPerDay) external whenNotPaused onlyOwner {
-        require(newBlocksPerDay > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-        _blocksPerDay = newBlocksPerDay;
-        emit BlocksPerDayChanged(newBlocksPerDay);
-    }
 }
-
-contract StrategyCompoundUsdt is StrategyCompound {}
-
-contract StrategyCompoundUsdc is StrategyCompound {}
-
-contract StrategyCompoundDai is StrategyCompound {}

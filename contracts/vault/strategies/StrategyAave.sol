@@ -13,62 +13,56 @@ import "../interfaces/aave/StakedAaveInterface.sol";
 import "../../libraries/math/IporMath.sol";
 import "../../libraries/errors/AssetManagementErrors.sol";
 import "./StrategyCore.sol";
+import "../../libraries/IporContractValidator.sol";
 
 contract StrategyAave is StrategyCore, IStrategyAave {
+    using IporContractValidator for address;
     using SafeCast for uint256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    address private _aave;
-    address private _stkAave;
+    address public immutable aave;
+    address public immutable stkAave;
+    AaveLendingPoolProviderV2 public immutable provider;
+    StakedAaveInterface public immutable stakedAaveInterface;
+    AaveIncentivesInterface public immutable aaveIncentive;
 
-    AaveLendingPoolProviderV2 private _provider;
-    StakedAaveInterface private _stakedAaveInterface;
-    AaveIncentivesInterface private _aaveIncentive;
+    address private _aaveDeprecated;
+    address private _stkAaveDeprecated;
+
+    AaveLendingPoolProviderV2 private _providerDeprecated;
+    StakedAaveInterface private _stakedAaveInterfaceDeprecated;
+    AaveIncentivesInterface private _aaveIncentiveDeprecated;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
+    constructor(
+        address assetInput,
+        uint256 assetDecimalsInput,
+        address shareTokenInput,
+        address assetManagementInput,
+        address aaveInput,
+        address stkAaveInput,
+        address providerInput,
+        address stakedAaveInterfaceInput,
+        address aaaveIncentiveInput
+    ) StrategyCore(assetInput, assetDecimalsInput, shareTokenInput, assetManagementInput) {
+        aave = aaveInput.checkAddress();
+        stkAave = stkAaveInput.checkAddress();
+        provider = AaveLendingPoolProviderV2(providerInput.checkAddress());
+        stakedAaveInterface = StakedAaveInterface(stakedAaveInterfaceInput.checkAddress());
+        aaveIncentive = AaveIncentivesInterface(aaaveIncentiveInput.checkAddress());
+
         _disableInitializers();
     }
 
-    /**
-     * @param asset underlying token like DAI, USDT etc.
-     * @param aToken share token like aDAI etc.
-     * @param addressesProvider AAVE address _provider.
-     * @param stkAave stakedAAVE token.
-     * @param aaveIncentive AAVE incentive to claim AAVE token.
-     * @param aaveToken AAVE ERC20 token address.
-     */
-    function initialize(
-        address asset,
-        address aToken,
-        address addressesProvider,
-        address stkAave,
-        address aaveIncentive,
-        address aaveToken
-    ) public initializer nonReentrant {
+    function initialize() public initializer nonReentrant {
         __Pausable_init();
         __Ownable_init();
         __UUPSUpgradeable_init();
 
-        require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(aToken != address(0), IporErrors.WRONG_ADDRESS);
-        require(addressesProvider != address(0), IporErrors.WRONG_ADDRESS);
-        require(stkAave != address(0), IporErrors.WRONG_ADDRESS);
-        require(aaveIncentive != address(0), IporErrors.WRONG_ADDRESS);
-        require(aaveToken != address(0), IporErrors.WRONG_ADDRESS);
-
-        _asset = asset;
-        _shareToken = aToken;
-        _provider = AaveLendingPoolProviderV2(addressesProvider);
-
-        address lendingPoolAddress = _provider.getLendingPool();
+        address lendingPoolAddress = provider.getLendingPool();
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
-        IERC20Upgradeable(_asset).safeApprove(lendingPoolAddress, type(uint256).max);
+        IERC20Upgradeable(asset).safeApprove(lendingPoolAddress, type(uint256).max);
 
-        _stakedAaveInterface = StakedAaveInterface(stkAave);
-        _aaveIncentive = AaveIncentivesInterface(aaveIncentive);
-        _stkAave = stkAave;
-        _aave = aaveToken;
         _treasuryManager = _msgSender();
     }
 
@@ -76,11 +70,11 @@ contract StrategyAave is StrategyCore, IStrategyAave {
      * @dev get current APY, represented in 18 decimals
      */
     function getApy() external view override returns (uint256 apy) {
-        address lendingPoolAddress = _provider.getLendingPool();
+        address lendingPoolAddress = provider.getLendingPool();
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
         AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(lendingPoolAddress);
 
-        DataTypesContract.ReserveData memory reserveData = lendingPool.getReserveData(_asset);
+        DataTypesContract.ReserveData memory reserveData = lendingPool.getReserveData(asset);
         uint256 apr = IporMath.division(reserveData.currentLiquidityRate, (10 ** 9));
         apy = aprToApy(apr);
     }
@@ -129,7 +123,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
      * returns amount of stable based on aToken volume in ration 1:1 with stable in 18 decimals
      */
     function balanceOf() external view override returns (uint256) {
-        IERC20Metadata shareToken = IERC20Metadata(_shareToken);
+        IERC20Metadata shareToken = IERC20Metadata(shareToken);
         uint256 balance = shareToken.balanceOf(address(this));
         return IporMath.convertToWad(balance, shareToken.decimals());
     }
@@ -142,13 +136,10 @@ contract StrategyAave is StrategyCore, IStrategyAave {
     function deposit(
         uint256 wadAmount
     ) external override whenNotPaused onlyAssetManagement returns (uint256 depositedAmount) {
-        address asset = _asset;
-        uint256 assetDecimals = IERC20Metadata(asset).decimals();
-
         uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
         IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), amount);
 
-        address lendingPoolAddress = _provider.getLendingPool();
+        address lendingPoolAddress = provider.getLendingPool();
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
 
         AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(lendingPoolAddress);
@@ -164,11 +155,9 @@ contract StrategyAave is StrategyCore, IStrategyAave {
     function withdraw(
         uint256 wadAmount
     ) external override whenNotPaused onlyAssetManagement returns (uint256 withdrawnAmount) {
-        address asset = _asset;
-        uint256 assetDecimals = IERC20Metadata(asset).decimals();
         uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
 
-        address lendingPoolAddress = _provider.getLendingPool();
+        address lendingPoolAddress = provider.getLendingPool();
 
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
 
@@ -186,9 +175,9 @@ contract StrategyAave is StrategyCore, IStrategyAave {
     function beforeClaim() external override whenNotPaused nonReentrant onlyOwner {
         require(_treasury != address(0), AssetManagementErrors.INCORRECT_TREASURY_ADDRESS);
         address[] memory shareTokens = new address[](1);
-        shareTokens[0] = _shareToken;
-        _aaveIncentive.claimRewards(shareTokens, type(uint256).max, address(this));
-        _stakedAaveInterface.cooldown();
+        shareTokens[0] = shareToken;
+        aaveIncentive.claimRewards(shareTokens, type(uint256).max, address(this));
+        stakedAaveInterface.cooldown();
         emit DoBeforeClaim(_msgSender(), shareTokens);
     }
 
@@ -203,41 +192,22 @@ contract StrategyAave is StrategyCore, IStrategyAave {
 
         require(treasury != address(0), AssetManagementErrors.INCORRECT_TREASURY_ADDRESS);
 
-        uint256 cooldownStartTimestamp = _stakedAaveInterface.stakersCooldowns(address(this));
-        uint256 cooldownSeconds = _stakedAaveInterface.COOLDOWN_SECONDS();
-        uint256 unstakeWindow = _stakedAaveInterface.UNSTAKE_WINDOW();
+        uint256 cooldownStartTimestamp = stakedAaveInterface.stakersCooldowns(address(this));
+        uint256 cooldownSeconds = stakedAaveInterface.COOLDOWN_SECONDS();
+        uint256 unstakeWindow = stakedAaveInterface.UNSTAKE_WINDOW();
 
         if (
             block.timestamp > cooldownStartTimestamp + cooldownSeconds &&
             (block.timestamp - (cooldownStartTimestamp + cooldownSeconds)) <= unstakeWindow
         ) {
-            address aave = _aave;
-
             // claim AAVE governace token second after claim stakedAave token
-            _stakedAaveInterface.redeem(address(this), IERC20Upgradeable(_stkAave).balanceOf(address(this)));
+            stakedAaveInterface.redeem(address(this), IERC20Upgradeable(stkAave).balanceOf(address(this)));
 
             uint256 balance = IERC20Upgradeable(aave).balanceOf(address(this));
 
             IERC20Upgradeable(aave).safeTransfer(treasury, balance);
 
-            emit DoClaim(_msgSender(), _shareToken, treasury, balance);
+            emit DoClaim(_msgSender(), shareToken, treasury, balance);
         }
     }
-
-    /**
-     * @dev Change staked AAVE token address.
-     * @notice Change can only done by current governance.
-     * @param newStkAave stakedAAVE token
-     */
-    function setStkAave(address newStkAave) external whenNotPaused onlyOwner {
-        require(newStkAave != address(0), IporErrors.WRONG_ADDRESS);
-        _stkAave = newStkAave;
-        emit StkAaveChanged(newStkAave);
-    }
 }
-
-contract StrategyAaveUsdt is StrategyAave {}
-
-contract StrategyAaveUsdc is StrategyAave {}
-
-contract StrategyAaveDai is StrategyAave {}

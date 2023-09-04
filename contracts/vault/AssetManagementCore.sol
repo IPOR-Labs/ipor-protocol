@@ -10,14 +10,12 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/IporContractValidator.sol";
-import "../interfaces/IStrategy.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "../interfaces/IProxyImplementation.sol";
-//TODO: remove
-import "../interfaces/IIvToken.sol";
+
 import "../interfaces/IStrategyDsr.sol";
 import "../interfaces/IAssetManagementDsr.sol";
-
+import "../libraries/errors/AssetManagementErrors.sol";
 import "../security/PauseManager.sol";
 import "../libraries/Constants.sol";
 import "../libraries/math/IporMath.sol";
@@ -47,7 +45,7 @@ abstract contract AssetManagementCore is
     /// @dev deprecated
     address internal _assetDeprecated;
     /// @dev deprecated
-    IIvToken internal _ivTokenDeprecated;
+    address internal _ivTokenDeprecated;
     /// @dev deprecated
     address internal _miltonDeprecated;
     /// @dev deprecated
@@ -60,15 +58,6 @@ abstract contract AssetManagementCore is
     uint256 public immutable supportedStrategiesVolume;
     uint256 public immutable highestApyStrategyArrayIndex;
 
-    constructor(address assetInput, address ammTreasuryInput, uint256 supportedStrategiesVolumeInput, uint256 highestApyStrategyArrayIndexInput) {
-        require(_getDecimals() == IERC20MetadataUpgradeable(assetInput).decimals(), IporErrors.WRONG_DECIMALS);
-
-        asset = assetInput.checkAddress();
-        ammTreasury = ammTreasuryInput.checkAddress();
-        supportedStrategiesVolume = supportedStrategiesVolumeInput;
-        highestApyStrategyArrayIndex = highestApyStrategyArrayIndexInput;
-    }
-
     modifier onlyAmmTreasury() {
         require(_msgSender() == ammTreasury, IporErrors.CALLER_NOT_AMM_TREASURY);
         _;
@@ -79,12 +68,70 @@ abstract contract AssetManagementCore is
         _;
     }
 
+    constructor(
+        address assetInput,
+        address ammTreasuryInput,
+        uint256 supportedStrategiesVolumeInput,
+        uint256 highestApyStrategyArrayIndexInput
+    ) {
+        require(_getDecimals() == IERC20MetadataUpgradeable(assetInput).decimals(), IporErrors.WRONG_DECIMALS);
+
+        asset = assetInput.checkAddress();
+        ammTreasury = ammTreasuryInput.checkAddress();
+        supportedStrategiesVolume = supportedStrategiesVolumeInput;
+        highestApyStrategyArrayIndex = highestApyStrategyArrayIndexInput;
+    }
+
+    function initialize() public initializer {
+        __Pausable_init();
+        __Ownable_init();
+        __UUPSUpgradeable_init();
+    }
+
     function getImplementation() external view override returns (address) {
         return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
 
     function totalBalance() external view override returns (uint256) {
         return _calculateTotalBalance(_getStrategiesData());
+    }
+
+    function deposit(
+        uint256 amount
+    ) external override whenNotPaused onlyAmmTreasury returns (uint256 vaultBalance, uint256 depositedAmount) {
+        require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
+        uint256 assetAmount = IporMath.convertWadToAssetDecimals(amount, _getDecimals());
+        require(assetAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
+
+        StrategyData[] memory sortedStrategies = _getSortedStrategiesWithApy(_getStrategiesData());
+
+        IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), assetAmount);
+
+        address wasDepositedToStrategy = address(0x0);
+
+        for (uint256 i; i < supportedStrategiesVolume; ++i) {
+            try IStrategyDsr(sortedStrategies[highestApyStrategyArrayIndex - i].strategy).deposit(amount) returns (
+                uint256 tryDepositedAmount
+            ) {
+                require(
+                    tryDepositedAmount > 0 && tryDepositedAmount <= amount,
+                    AssetManagementErrors.STRATEGY_INCORRECT_DEPOSITED_AMOUNT
+                );
+
+                depositedAmount = tryDepositedAmount;
+                wasDepositedToStrategy = sortedStrategies[highestApyStrategyArrayIndex - i].strategy;
+
+                break;
+            } catch {
+                continue;
+            }
+        }
+
+        require(wasDepositedToStrategy != address(0x0), AssetManagementErrors.DEPOSIT_TO_STRATEGY_FAILED);
+
+        emit Deposit(block.timestamp, _msgSender(), wasDepositedToStrategy, depositedAmount);
+
+        vaultBalance = _calculateTotalBalance(sortedStrategies) + depositedAmount;
     }
 
     function withdraw(
@@ -101,6 +148,10 @@ abstract contract AssetManagementCore is
         returns (uint256 withdrawnAmount, uint256 vaultBalance)
     {
         return _withdraw(type(uint256).max);
+    }
+
+    function getSortedStrategiesWithApy() external view returns (StrategyData[] memory sortedStrategies) {
+        sortedStrategies = _getSortedStrategiesWithApy(_getStrategiesData());
     }
 
     function grantMaxAllowanceForSpender(address asset, address spender) external onlyOwner {
@@ -133,9 +184,50 @@ abstract contract AssetManagementCore is
 
     function _getDecimals() internal pure virtual returns (uint256);
 
-    function _withdraw(uint256 amount) internal virtual returns (uint256 withdrawnAmount, uint256 vaultBalance);
-
     function _getStrategiesData() internal view virtual returns (StrategyData[] memory sortedStrategies);
+
+    function _withdraw(uint256 amount) internal returns (uint256 withdrawnAmount, uint256 vaultBalance) {
+        require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
+
+        StrategyData[] memory sortedStrategies = _getSortedStrategiesWithApy(_getStrategiesData());
+
+        uint256 amountToWithdraw = amount;
+
+        for (uint256 i; i < supportedStrategiesVolume; ++i) {
+            try
+                IStrategyDsr(sortedStrategies[i].strategy).withdraw(
+                    sortedStrategies[i].balance <= amountToWithdraw ? sortedStrategies[i].balance : amountToWithdraw
+                )
+            returns (uint256 tryWithdrawnAmount) {
+                amountToWithdraw = tryWithdrawnAmount > amountToWithdraw ? 0 : amountToWithdraw - tryWithdrawnAmount;
+
+                sortedStrategies[i].balance = tryWithdrawnAmount > sortedStrategies[i].balance
+                    ? 0
+                    : sortedStrategies[i].balance - tryWithdrawnAmount;
+            } catch {
+                /// @dev If strategy withdraw fails, try to withdraw from next strategy
+                continue;
+            }
+
+            if (amountToWithdraw <= 1e18) {
+                break;
+            }
+        }
+
+        /// @dev Always all collected assets on Stanley are withdrawn to Milton
+        uint256 withdrawnAssetAmount = IERC20Upgradeable(asset).balanceOf(address(this));
+
+        if (withdrawnAssetAmount > 0) {
+            /// @dev Always transfer all assets from Stanley to Milton
+            IERC20Upgradeable(asset).safeTransfer(_msgSender(), withdrawnAssetAmount);
+
+            withdrawnAmount = IporMath.convertToWad(withdrawnAssetAmount, _getDecimals());
+
+            emit Withdraw(block.timestamp, _msgSender(), withdrawnAmount);
+        }
+
+        vaultBalance = _calculateTotalBalance(sortedStrategies);
+    }
 
     function _calculateTotalBalance(
         StrategyData[] memory sortedStrategies
@@ -143,18 +235,15 @@ abstract contract AssetManagementCore is
         for (uint256 i; i < supportedStrategiesVolume; ++i) {
             totalBalance += sortedStrategies[i].balance;
         }
-        totalBalance += IERC20Upgradeable(asset).balanceOf(address(this));
+        totalBalance += IporMath.convertToWad(IERC20Upgradeable(asset).balanceOf(address(this)), _getDecimals());
     }
 
-    //TODO: change name
-    function getMaxApyStrategy() external view returns (StrategyData[] memory sortedStrategies) {
-        sortedStrategies = _getMaxApyStrategy(_getStrategiesData());
-    }
-
-    function _getMaxApyStrategy(StrategyData[] memory strategies) internal view returns (StrategyData[] memory) {
+    function _getSortedStrategiesWithApy(
+        StrategyData[] memory strategies
+    ) internal view returns (StrategyData[] memory) {
         uint256 length = strategies.length;
         for (uint256 i; i < length; ++i) {
-            strategies[i].apy = IStrategy(strategies[i].strategy).getApy();
+            strategies[i].apy = IStrategyDsr(strategies[i].strategy).getApy();
         }
         return _sortApy(strategies);
     }

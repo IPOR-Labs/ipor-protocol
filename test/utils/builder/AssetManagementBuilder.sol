@@ -74,6 +74,7 @@ contract AssetManagementBuilder is Test {
         if (builderData.strategyAave == address(0)) {
             StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(_owner);
             strategyAaveBuilder.withAsset(builderData.asset);
+            strategyAaveBuilder.withAssetDecimals(18);
             strategyAaveBuilder.withShareTokenDai();
             MockTestnetStrategy strategyAave = strategyAaveBuilder.build();
             builderData.strategyAave = address(strategyAave);
@@ -82,6 +83,7 @@ contract AssetManagementBuilder is Test {
         if (builderData.strategyCompound == address(0)) {
             StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(_owner);
             strategyCompoundBuilder.withAsset(builderData.asset);
+            strategyCompoundBuilder.withAssetDecimals(18);
             strategyCompoundBuilder.withShareTokenDai();
             MockTestnetStrategy strategyCompound = strategyCompoundBuilder.build();
             builderData.strategyCompound = address(strategyCompound);
@@ -94,6 +96,7 @@ contract AssetManagementBuilder is Test {
         if (builderData.strategyAave == address(0)) {
             StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(_owner);
             strategyAaveBuilder.withAsset(builderData.asset);
+            strategyAaveBuilder.withAssetDecimals(6);
             strategyAaveBuilder.withShareTokenUsdt();
             MockTestnetStrategy strategyAave = strategyAaveBuilder.build();
             builderData.strategyAave = address(strategyAave);
@@ -102,6 +105,7 @@ contract AssetManagementBuilder is Test {
         if (builderData.strategyCompound == address(0)) {
             StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(_owner);
             strategyCompoundBuilder.withAsset(builderData.asset);
+            strategyCompoundBuilder.withAssetDecimals(6);
             strategyCompoundBuilder.withShareTokenUsdt();
             MockTestnetStrategy strategyCompound = strategyCompoundBuilder.build();
             builderData.strategyCompound = address(strategyCompound);
@@ -114,6 +118,7 @@ contract AssetManagementBuilder is Test {
         if (builderData.strategyAave == address(0)) {
             StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(_owner);
             strategyAaveBuilder.withAsset(builderData.asset);
+            strategyAaveBuilder.withAssetDecimals(6);
             strategyAaveBuilder.withShareTokenUsdc();
             MockTestnetStrategy strategyAave = strategyAaveBuilder.build();
             builderData.strategyAave = address(strategyAave);
@@ -122,6 +127,7 @@ contract AssetManagementBuilder is Test {
         if (builderData.strategyCompound == address(0)) {
             StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(_owner);
             strategyCompoundBuilder.withAsset(builderData.asset);
+            strategyCompoundBuilder.withAssetDecimals(6);
             strategyCompoundBuilder.withShareTokenUsdc();
             MockTestnetStrategy strategyCompound = strategyCompoundBuilder.build();
             builderData.strategyCompound = address(strategyCompound);

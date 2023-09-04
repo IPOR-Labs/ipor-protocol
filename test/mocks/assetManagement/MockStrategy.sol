@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.20;
 import "../../../contracts/interfaces/IStrategy.sol";
+import "../../../contracts/interfaces/IStrategyDsr.sol";
 
 // simple mock for total _balance tests
-contract MockStrategy is IStrategy {
+contract MockStrategy is IStrategy, IStrategyDsr {
     address private _assetManagement;
     uint256 private _balance;
     address private _shareTokens;
@@ -13,6 +14,12 @@ contract MockStrategy is IStrategy {
     address private _owner;
     address private _treasury;
     address private _treasuryManager;
+
+    constructor(address assetInput, address shareTokensInput) {
+        _owner = msg.sender;
+        _asset = assetInput;
+        _shareTokens = shareTokensInput;
+    }
 
     function getVersion() external pure override returns (uint256) {
         return 2_000;
@@ -40,13 +47,13 @@ contract MockStrategy is IStrategy {
 
     function unpause() external override {}
 
-    function isPauseGuardian(address account) external view override returns (bool) {
+    function isPauseGuardian(address account) external view  returns (bool) {
         return false;
     }
 
-    function addPauseGuardian(address guardian) external override {}
+    function addPauseGuardian(address guardian) external  {}
 
-    function removePauseGuardian(address guardian) external override {}
+    function removePauseGuardian(address guardian) external  {}
 
     function setAsset(address asset) external {
         _asset = asset;
@@ -68,12 +75,8 @@ contract MockStrategy is IStrategy {
         _balance = balance;
     }
 
-    function getShareToken() external view override returns (address) {
+    function shareToken() external view override returns (address) {
         return _shareTokens;
-    }
-
-    function setShareToken(address shareToken) external {
-        _shareTokens = shareToken;
     }
 
     function getTreasuryManager() external view override returns (address) {
@@ -100,11 +103,4 @@ contract MockStrategy is IStrategy {
 
     function beforeClaim() external {}
 
-    function getAssetManagement() external view override returns (address) {
-        return _assetManagement;
-    }
-
-    function setAssetManagement(address assetManagement) external {
-        _assetManagement = assetManagement;
-    }
 }

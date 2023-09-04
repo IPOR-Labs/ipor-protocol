@@ -18,21 +18,21 @@ contract MockTestnetStrategy is StrategyCore {
     uint256 private _lastUpdateBalance;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
+    constructor(
+        address assetInput,
+        uint256 assetDecimalsInput,
+        address shareTokenInput,
+        address assetManagementInput
+    ) StrategyCore(assetInput, assetDecimalsInput, shareTokenInput, assetManagementInput) {
         _disableInitializers();
     }
 
-    function initialize(address asset, address shareToken) public initializer nonReentrant {
+    function initialize() public initializer nonReentrant {
         __Pausable_init();
         __Ownable_init();
         __UUPSUpgradeable_init();
 
-        require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(shareToken != address(0), IporErrors.WRONG_ADDRESS);
-
-        _asset = asset;
         _treasuryManager = _msgSender();
-        _shareToken = shareToken;
     }
 
     function getApy() external pure override returns (uint256) {
@@ -44,7 +44,6 @@ contract MockTestnetStrategy is StrategyCore {
     }
 
     function deposit(uint256 wadAmount) external override onlyAssetManagement returns (uint256 depositedAmount) {
-        address asset = _asset;
         uint256 assetDecimals = IERC20Metadata(asset).decimals();
 
         uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
@@ -58,7 +57,6 @@ contract MockTestnetStrategy is StrategyCore {
     }
 
     function withdraw(uint256 wadAmount) external override onlyAssetManagement returns (uint256) {
-        address asset = _asset;
         uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, IERC20Metadata(asset).decimals());
         uint256 newDepositsBalance = _calculateNewBalance() -
             IporMath.convertToWad(amount, IERC20Metadata(asset).decimals());

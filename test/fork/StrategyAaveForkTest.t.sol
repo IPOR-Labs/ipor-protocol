@@ -5,20 +5,26 @@ import "./TestForkCommons.sol";
 import "../../contracts/vault/strategies/StrategyAave.sol";
 
 contract StrategyAaveForkTest is TestForkCommons {
+    function _initStrategy(
+        address asset,
+        address aToken,
+        address assetManagementProxy
+    ) internal returns (StrategyAave) {
+        StrategyAave daiAaveStrategyImplementation = new StrategyAave(
+            asset,
+            18,
+            aToken,
+            assetManagementProxy,
+            AAVE,
+            stakedAAVE,
+            aaveLendingPoolAddressProvider,
+            stakedAAVE,
+            aaveIncentivesController
+        );
 
-    function _initStrategy(address asset, address aToken) internal returns (StrategyAave) {
-        StrategyAave daiAaveStrategyImplementation = new StrategyAave();
         ERC1967Proxy proxy = new ERC1967Proxy(
             address(daiAaveStrategyImplementation),
-            abi.encodeWithSignature(
-                "initialize(address,address,address,address,address,address)",
-                asset,
-                aToken,
-                aaveLendingPoolAddressProvider,
-                stakedAAVE,
-                aaveIncentivesController,
-                AAVE
-            )
+            abi.encodeWithSignature("initialize()")
         );
         return StrategyAave(address(proxy));
     }
@@ -26,7 +32,7 @@ contract StrategyAaveForkTest is TestForkCommons {
     function testApyCalculationForUSDC() public {
         // given
         vm.rollFork(17_469_715);
-        StrategyAave strategyAave = _initStrategy(USDC, aUSDC);
+        StrategyAave strategyAave = _initStrategy(USDC, aUSDC, stanleyProxyUsdc);
 
         // when
         uint256 apy = strategyAave.getApy();
@@ -36,7 +42,7 @@ contract StrategyAaveForkTest is TestForkCommons {
     function testApyCalculationForUSDT() public {
         // given
         vm.rollFork(17_469_715);
-        StrategyAave strategyAave = _initStrategy(USDT, aUSDT);
+        StrategyAave strategyAave = _initStrategy(USDT, aUSDT, stanleyProxyUsdt);
 
         // when
         uint256 apy = strategyAave.getApy();
@@ -46,7 +52,7 @@ contract StrategyAaveForkTest is TestForkCommons {
     function testApyCalculationForDAI() public {
         // given
         vm.rollFork(17_469_715);
-        StrategyAave strategyAave = _initStrategy(DAI, aDAI);
+        StrategyAave strategyAave = _initStrategy(DAI, aDAI, stanleyProxyDai);
 
         // when
         uint256 apy = strategyAave.getApy();

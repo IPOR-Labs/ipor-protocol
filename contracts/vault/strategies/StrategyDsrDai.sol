@@ -14,6 +14,8 @@ import "../../security/IporOwnableUpgradeable.sol";
 import "../interfaces/dsr/IPot.sol";
 import "../interfaces/dsr/ISavingsDai.sol";
 import "../../interfaces/IStrategyDsr.sol";
+import "../../interfaces/IProxyImplementation.sol";
+import "../../security/PauseManager.sol";
 
 contract StrategyDsrDai is
     Initializable,
@@ -21,7 +23,8 @@ contract StrategyDsrDai is
     ReentrancyGuardUpgradeable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-    IStrategyDsr
+    IStrategyDsr,
+    IProxyImplementation
 {
     using SafeCast for uint256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -90,6 +93,22 @@ contract StrategyDsrDai is
 
     function unpause() external override onlyOwner {
         _unpause();
+    }
+
+    function isPauseGuardian(address account) external view override returns (bool) {
+        return PauseManager.isPauseGuardian(account);
+    }
+
+    function addPauseGuardian(address guardian) external override onlyOwner {
+        PauseManager.addPauseGuardian(guardian);
+    }
+
+    function removePauseGuardian(address guardian) external override onlyOwner {
+        PauseManager.removePauseGuardian(guardian);
+    }
+
+    function getImplementation() external view override returns (address) {
+        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
 
     //solhint-disable no-empty-blocks

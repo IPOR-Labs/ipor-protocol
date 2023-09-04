@@ -28,17 +28,11 @@ contract AssetManagementProxyImplementationTest is TestCommons {
         _assetBuilder.withDAI();
         MockTestnetToken asset = _assetBuilder.build();
 
-        _strategyAaveDai = new MockStrategy();
-        _strategyAaveDai.setAsset(address(asset));
-        _strategyAaveDai.setShareToken(address(asset));
+        _strategyAaveDai = new MockStrategy(address(asset), address(asset));
 
-        _strategyCompoundDai = new MockStrategy();
-        _strategyCompoundDai.setAsset(address(asset));
-        _strategyCompoundDai.setShareToken(address(asset));
+        _strategyCompoundDai = new MockStrategy(address(asset), address(asset));
 
-        _strategyDsrDai = new MockStrategy();
-        _strategyDsrDai.setAsset(address(asset));
-        _strategyDsrDai.setShareToken(address(asset));
+        _strategyDsrDai = new MockStrategy(address(asset), address(asset));
 
         AmmTreasury ammTreasury = new AmmTreasury(address(asset), 18, address(asset), address(asset), address(asset));
 
@@ -68,17 +62,11 @@ contract AssetManagementProxyImplementationTest is TestCommons {
         _assetBuilder.withDAI();
         MockTestnetToken asset = _assetBuilder.build();
 
-        _strategyAaveDai = new MockStrategy();
-        _strategyAaveDai.setAsset(address(asset));
-        _strategyAaveDai.setShareToken(address(asset));
+        _strategyAaveDai = new MockStrategy(address(asset), address(asset));
 
-        _strategyCompoundDai = new MockStrategy();
-        _strategyCompoundDai.setAsset(address(asset));
-        _strategyCompoundDai.setShareToken(address(asset));
+        _strategyCompoundDai = new MockStrategy(address(asset), address(asset));
 
-        _strategyDsrDai = new MockStrategy();
-        _strategyDsrDai.setAsset(address(asset));
-        _strategyDsrDai.setShareToken(address(asset));
+        _strategyDsrDai = new MockStrategy(address(asset), address(asset));
 
         AmmTreasury ammTreasury = new AmmTreasury(address(asset), 18, address(asset), address(asset), address(asset));
 

@@ -8,7 +8,9 @@ import "forge-std/Test.sol";
 contract StrategyCompoundBuilder is Test {
     struct BuilderData {
         address asset;
+        uint256 assetDecimals;
         address shareToken;
+        address assetManagementProxy;
     }
 
     BuilderData private builderData;
@@ -24,8 +26,18 @@ contract StrategyCompoundBuilder is Test {
         return this;
     }
 
+    function withAssetDecimals(uint256 assetDecimals) public returns (StrategyCompoundBuilder) {
+        builderData.assetDecimals = assetDecimals;
+        return this;
+    }
+
     function withShareToken(address shareToken) public returns (StrategyCompoundBuilder) {
         builderData.shareToken = shareToken;
+        return this;
+    }
+
+    function withAssetManagementProxy(address assetManagementProxy) public returns (StrategyCompoundBuilder) {
+        builderData.assetManagementProxy = assetManagementProxy;
         return this;
     }
 
@@ -54,16 +66,23 @@ contract StrategyCompoundBuilder is Test {
         require(builderData.asset != address(0), "Asset address is not set");
         require(builderData.shareToken != address(0), "ShareToken address is not set");
         vm.startPrank(_owner);
-        ERC1967Proxy proxy = _constructProxy(address(new MockTestnetStrategy()));
+
+        ERC1967Proxy proxy = _constructProxy(
+            address(
+                new MockTestnetStrategy(
+                    builderData.asset,
+                    builderData.assetDecimals,
+                    builderData.shareToken,
+                    builderData.assetManagementProxy
+                )
+            )
+        );
         MockTestnetStrategy strategy = MockTestnetStrategy(address(proxy));
         vm.stopPrank();
         return strategy;
     }
 
     function _constructProxy(address impl) internal returns (ERC1967Proxy proxy) {
-        proxy = new ERC1967Proxy(
-            address(impl),
-            abi.encodeWithSignature("initialize(address,address)", builderData.asset, builderData.shareToken)
-        );
+        proxy = new ERC1967Proxy(address(impl), abi.encodeWithSignature("initialize()"));
     }
 }
