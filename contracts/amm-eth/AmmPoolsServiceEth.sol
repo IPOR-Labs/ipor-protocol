@@ -39,6 +39,8 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         ammTreasuryEth = ammTreasuryEthInput.checkAddress();
         iporProtocolRouter = iporProtocolRouterInput.checkAddress();
         redeemFeeRateEth = ethRedeemFeeRateInput;
+
+        require(ethRedeemFeeRateInput <= 1e18, AmmPoolsErrors.CFG_INVALID_REDEEM_FEE_RATE);
     }
 
     function provideLiquidityStEth(address beneficiary, uint256 stEthAmount) external payable override {
