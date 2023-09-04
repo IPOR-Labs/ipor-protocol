@@ -86,6 +86,8 @@ contract AssetManagementProxyImplementationTest is TestCommons {
             new AssetManagementDai(
                 address(asset),
                 address(ammTreasury),
+                3,
+                2,
                 address(_strategyAaveDai),
                 address(_strategyCompoundDai),
                 address(_strategyDsrDai)

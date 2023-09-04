@@ -17,9 +17,18 @@ contract AssetManagementUsdc is AssetManagementCore {
     constructor(
         address assetInput,
         address ammTreasuryInput,
+        uint256 supportedStrategiesVolumeInput,
+        uint256 highestApyStrategyArrayIndexInput,
         address strategyAaveInput,
         address strategyCompoundInput
-    ) AssetManagementCore(assetInput, ammTreasuryInput) {
+    )
+        AssetManagementCore(
+            assetInput,
+            ammTreasuryInput,
+            supportedStrategiesVolumeInput,
+            highestApyStrategyArrayIndexInput
+        )
+    {
         require(strategyAaveInput != address(0), IporErrors.WRONG_ADDRESS);
         require(strategyCompoundInput != address(0), IporErrors.WRONG_ADDRESS);
 
@@ -75,8 +84,8 @@ contract AssetManagementUsdc is AssetManagementCore {
 
         address wasDepositedToStrategy = address(0x0);
 
-        for (uint256 i; i < _SUPPORTED_STRATEGIES_VOLUME; ++i) {
-            try IStrategy(sortedStrategies[_HIGHEST_APY_STRATEGY_ARRAY_INDEX - i].strategy).deposit(amount) returns (
+        for (uint256 i; i < supportedStrategiesVolume; ++i) {
+            try IStrategy(sortedStrategies[highestApyStrategyArrayIndex - i].strategy).deposit(amount) returns (
                 uint256 tryDepositedAmount
             ) {
                 require(
@@ -85,7 +94,7 @@ contract AssetManagementUsdc is AssetManagementCore {
                 );
 
                 depositedAmount = tryDepositedAmount;
-                wasDepositedToStrategy = sortedStrategies[_HIGHEST_APY_STRATEGY_ARRAY_INDEX - i].strategy;
+                wasDepositedToStrategy = sortedStrategies[highestApyStrategyArrayIndex - i].strategy;
 
                 break;
             } catch {
@@ -109,11 +118,11 @@ contract AssetManagementUsdc is AssetManagementCore {
 
         uint256 amountToWithdraw = amount;
 
-        for (uint256 i; i < _SUPPORTED_STRATEGIES_VOLUME; ++i) {
+        for (uint256 i; i < supportedStrategiesVolume; ++i) {
             try
-            IStrategy(sortedStrategies[i].strategy).withdraw(
-                sortedStrategies[i].balance <= amountToWithdraw ? sortedStrategies[i].balance : amountToWithdraw
-            )
+                IStrategy(sortedStrategies[i].strategy).withdraw(
+                    sortedStrategies[i].balance <= amountToWithdraw ? sortedStrategies[i].balance : amountToWithdraw
+                )
             returns (uint256 tryWithdrawnAmount) {
                 amountToWithdraw = tryWithdrawnAmount > amountToWithdraw ? 0 : amountToWithdraw - tryWithdrawnAmount;
 
@@ -148,11 +157,10 @@ contract AssetManagementUsdc is AssetManagementCore {
     }
 
     function _getStrategiesData() internal view override returns (StrategyData[] memory sortedStrategies) {
-        sortedStrategies = new StrategyData[](_SUPPORTED_STRATEGIES_VOLUME);
+        sortedStrategies = new StrategyData[](supportedStrategiesVolume);
         sortedStrategies[0].strategy = strategyAave;
         sortedStrategies[0].balance = IStrategy(strategyAave).balanceOf();
         sortedStrategies[1].strategy = strategyCompound;
         sortedStrategies[1].balance = IStrategy(strategyCompound).balanceOf();
     }
-
 }

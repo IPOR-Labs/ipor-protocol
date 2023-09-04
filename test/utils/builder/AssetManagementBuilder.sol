@@ -150,6 +150,8 @@ contract AssetManagementBuilder is Test {
                     new AssetManagementDai(
                         builderData.asset,
                         builderData.ammTreasury,
+                        3,
+                        2,
                         builderData.strategyAave,
                         builderData.strategyCompound,
                         builderData.strategyDsr
@@ -160,6 +162,8 @@ contract AssetManagementBuilder is Test {
                     new AssetManagementUsdt(
                         builderData.asset,
                         builderData.ammTreasury,
+                        2,
+                        1,
                         builderData.strategyAave,
                         builderData.strategyCompound
                     )
@@ -169,6 +173,8 @@ contract AssetManagementBuilder is Test {
                     new AssetManagementUsdc(
                         builderData.asset,
                         builderData.ammTreasury,
+                        2,
+                        1,
                         builderData.strategyAave,
                         builderData.strategyCompound
                     )

@@ -623,12 +623,12 @@ contract TestForkCommons is Test {
         vm.stopPrank();
     }
 
-
-
     function _switchStanleyDsrDaiToAssetManagementDsrDai() internal {
         AssetManagementDai impl = new AssetManagementDai(
             DAI,
             miltonProxyDai,
+            3,
+            2,
             strategyAaveProxyDai,
             strategyCompoundProxyDai,
             strategyDsrProxyDai

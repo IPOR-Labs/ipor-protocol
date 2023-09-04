@@ -55,18 +55,18 @@ abstract contract AssetManagementCore is
     /// @dev deprecated
     address internal _strategyCompoundDeprecated;
 
-    //TODO: change to immutable because others strategies will be added
-    uint256 internal constant _SUPPORTED_STRATEGIES_VOLUME = 3;
-    uint256 internal constant _HIGHEST_APY_STRATEGY_ARRAY_INDEX = 2;
-
     address public immutable asset;
     address public immutable ammTreasury;
+    uint256 public immutable supportedStrategiesVolume;
+    uint256 public immutable highestApyStrategyArrayIndex;
 
-    constructor(address assetInput, address ammTreasuryInput) {
+    constructor(address assetInput, address ammTreasuryInput, uint256 supportedStrategiesVolumeInput, uint256 highestApyStrategyArrayIndexInput) {
         require(_getDecimals() == IERC20MetadataUpgradeable(assetInput).decimals(), IporErrors.WRONG_DECIMALS);
 
         asset = assetInput.checkAddress();
         ammTreasury = ammTreasuryInput.checkAddress();
+        supportedStrategiesVolume = supportedStrategiesVolumeInput;
+        highestApyStrategyArrayIndex = highestApyStrategyArrayIndexInput;
     }
 
     modifier onlyAmmTreasury() {
@@ -140,7 +140,7 @@ abstract contract AssetManagementCore is
     function _calculateTotalBalance(
         StrategyData[] memory sortedStrategies
     ) internal view returns (uint256 totalBalance) {
-        for (uint256 i; i < _SUPPORTED_STRATEGIES_VOLUME; ++i) {
+        for (uint256 i; i < supportedStrategiesVolume; ++i) {
             totalBalance += sortedStrategies[i].balance;
         }
         totalBalance += IERC20Upgradeable(asset).balanceOf(address(this));
