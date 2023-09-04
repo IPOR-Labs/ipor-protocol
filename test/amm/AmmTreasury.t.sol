@@ -30,11 +30,24 @@ contract AmmTreasuryTest is TestCommons {
         _iporProtocol.ammTreasury.addPauseGuardian(_admin);
         bool pausedBefore = _iporProtocol.ammTreasury.paused();
 
+        uint256 allowanceBefore = IERC20Upgradeable(address(_iporProtocol.asset)).allowance(
+            address(_iporProtocol.ammTreasury),
+            address(_iporProtocol.router)
+        );
+
         // when
         _iporProtocol.ammTreasury.pause();
 
         // then
         bool pausedAfter = _iporProtocol.ammTreasury.paused();
+
+        uint256 allowanceAfter = IERC20Upgradeable(address(_iporProtocol.asset)).allowance(
+            address(_iporProtocol.ammTreasury),
+            address(_iporProtocol.router)
+        );
+
+        assertGt(allowanceBefore, 0);
+        assertEq(allowanceAfter, 0);
 
         assertEq(pausedBefore, false);
         assertEq(pausedAfter, true);
@@ -93,11 +106,24 @@ contract AmmTreasuryTest is TestCommons {
 
         bool pausedBefore = _iporProtocol.ammTreasury.paused();
 
+        uint256 allowanceBefore = IERC20Upgradeable(address(_iporProtocol.asset)).allowance(
+            address(_iporProtocol.ammTreasury),
+            address(_iporProtocol.router)
+        );
+
         // when
         _iporProtocol.ammTreasury.unpause();
 
         // then
         bool pausedAfter = _iporProtocol.ammTreasury.paused();
+
+        uint256 allowanceAfter = IERC20Upgradeable(address(_iporProtocol.asset)).allowance(
+            address(_iporProtocol.ammTreasury),
+            address(_iporProtocol.router)
+        );
+
+        assertEq(allowanceBefore, 0);
+        assertEq(allowanceAfter, Constants.MAX_VALUE);
 
         assertEq(pausedBefore, true);
         assertEq(pausedAfter, false);
