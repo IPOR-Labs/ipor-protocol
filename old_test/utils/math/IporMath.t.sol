@@ -86,7 +86,7 @@ contract IporMathTest is Test {
 
         assetConvertWadToAssetDecimalsWithoutRound(0, 18, 0);
         assetConvertWadToAssetDecimalsWithoutRound(0, 9, 0);
-        assetConvertWadToAssetDecimalsWithoutRound(N1__0_18DEC, 36, N1__0_18DEC * 10**18);
+        assetConvertWadToAssetDecimalsWithoutRound(N1__0_18DEC, 36, N1__0_18DEC * 1e18);
         assetConvertWadToAssetDecimalsWithoutRound(N1__0_18DEC, 0, 1);
         assetConvertWadToAssetDecimalsWithoutRound(N1__0_18DEC, 18, N1__0_18DEC);
         assetConvertWadToAssetDecimalsWithoutRound(N1__0_18DEC, 16, N1__0_18DEC / 100);
@@ -108,7 +108,7 @@ contract IporMathTest is Test {
         assetConvertWadToAssetDecimals(0, 18, 0);
         assetConvertWadToAssetDecimals(0, 9, 0);
         assetConvertWadToAssetDecimals(N1__0_18DEC, 20, N1__0_18DEC * 100);
-        assetConvertWadToAssetDecimals(N1__0_18DEC, 36, N1__0_18DEC * 10**18);
+        assetConvertWadToAssetDecimals(N1__0_18DEC, 36, N1__0_18DEC * 1e18);
         assetConvertWadToAssetDecimals(N1__0_18DEC, 0, 1);
         assetConvertWadToAssetDecimals(N1__0_18DEC, 18, N1__0_18DEC);
         assetConvertWadToAssetDecimals(N1__0_18DEC, 16, N1__0_18DEC / 100);
@@ -131,7 +131,7 @@ contract IporMathTest is Test {
 
         assetConvertToWad(0, 18, 0);
         assetConvertToWad(N1__0_18DEC, 36, 1);
-        assetConvertToWad(N1__0_18DEC, 0, N1__0_18DEC * 10**18);
+        assetConvertToWad(N1__0_18DEC, 0, N1__0_18DEC * 1e18);
         assetConvertToWad(N1__0_18DEC, 18, N1__0_18DEC);
         assetConvertToWad(N1__0_18DEC, 16, N1__0_18DEC * 100);
 

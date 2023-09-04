@@ -86,6 +86,12 @@ contract AmmStorage is
         __UUPSUpgradeable_init();
     }
 
+    /// @dev In v1 name of field was quasiHypotheticalInterestCumulative in v2 in that slot is stored hypotheticalInterestCumulative calculated in different way.
+    /// In V1 quasiHypotheticalInterestCumulative is a sum of chunks: totalNotional * averageInterestRate * (calculateTimestamp - lastRebalanceTimestamp) * Constants.D18;
+    /// stored value is without division by 1e36 * Constants.YEAR_IN_SECONDS - that is why it is called quasi.
+    /// In V2 hypotheticalInterestCumulative store sum chunks v2 = value * e^(averageInterestRate * time). This value is not quasi, so we don't need to divide by 1e36 * Constants.YEAR_IN_SECONDS.
+    /// After upgrade V1 to V2 code operates on non-quasi value, so we need to divide by 1e36 * Constants.YEAR_IN_SECONDS to achieve current hypothetical interest cumulative from v1.
+    /// This value is base value for further calculation including continuous compounding formula in v2.
     function postUpgrade() public onlyOwner {
         _soapIndicatorsPayFixed.hypotheticalInterestCumulative = IporMath.division(
             _soapIndicatorsPayFixed.hypotheticalInterestCumulative,

@@ -96,6 +96,7 @@ library DemandSpreadLibs {
             inputData.totalCollateralReceiveFixed
         );
 
+        /// @dev 1e36 = 1e18 * 1e18, To achieve result in 18 decimals when there is multiplication of 3 numbers in 18 decimals, we need to divide by 1e36.
         uint256 notionalDepth = IporMath.division(
             lpDepth * inputData.maxLeveragePerLeg * inputData.maxLpCollateralRatioPerLegRate,
             1e36
@@ -142,6 +143,7 @@ library DemandSpreadLibs {
             inputData.totalCollateralReceiveFixed
         );
 
+        /// @dev 1e36 = 1e18 * 1e18, To achieve result in 18 decimals when there is multiplication of 3 numbers in 18 decimals, we need to divide by 1e36.
         uint256 notionalDepth = IporMath.division(
             lpDepth * inputData.maxLeveragePerLeg * inputData.maxLpCollateralRatioPerLegRate,
             1e36

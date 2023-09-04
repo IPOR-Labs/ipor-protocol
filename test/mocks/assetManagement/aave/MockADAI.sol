@@ -10,7 +10,7 @@ import "../../../../contracts/vault/interfaces/aave/AToken.sol";
 contract MockADAI is ERC20, AToken {
     address private _dai;
     address private _controller;
-    uint256 private _price = 10**18;
+    uint256 private _price = 1e18;
 
     constructor(
         address dai, address tokenOwner) ERC20("aDAI", "aDAI") {
@@ -18,8 +18,8 @@ contract MockADAI is ERC20, AToken {
         require(tokenOwner != address(0), string.concat(IporErrors.WRONG_ADDRESS, " token owner address cannot be 0"));
 
         _dai = dai;
-        _mint(address(this), 10**24); // 1.000.000 aDAI
-        _mint(tokenOwner, 10**23); // 100.000 aDAI
+        _mint(address(this), 1e24); // 1.000.000 aDAI
+        _mint(tokenOwner, 1e23); // 100.000 aDAI
     }
 
     function UNDERLYING_ASSET_ADDRESS() external view returns (address) {

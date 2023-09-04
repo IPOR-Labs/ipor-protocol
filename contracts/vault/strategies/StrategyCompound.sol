@@ -55,9 +55,10 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         _treasuryManager = _msgSender();
     }
 
-    /**
-     * @notice gets current APY in Compound Protocol.
-     */
+    ///  @notice gets current APY in Compound Protocol.
+    /// @dev To achieve number in 18 decimals where we have multiplication of 2 numbers in 18 decimals we need to divide by 1e18.
+    /// @dev 1e54 it is a 1e18 * 1e18 * 1e18, to achieve number in 18 decimals when there is multiplication of 3 numbers in 18 decimals, we need to divide by 1e54.
+    /// @dev 1e36 it is a 1e18 * 1e18, to achieve number in 18 decimals when there is multiplication of 2 numbers in 18 decimals, we need to divide by 1e36.
     function getApy() external view override returns (uint256 apy) {
         uint256 cRate = CErc20(_shareToken).supplyRatePerBlock(); // interest % per block
         uint256 ratePerDay = cRate * _blocksPerDay + 1e18;
@@ -88,7 +89,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         return (
             IporMath.division(
                 (shareToken.exchangeRateStored() * shareToken.balanceOf(address(this))),
-                (10**IERC20Metadata(_asset).decimals())
+                (10 ** IERC20Metadata(_asset).decimals())
             )
         );
     }
@@ -98,13 +99,9 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
      * @notice deposit can only done by AssetManagement .
      * @param wadAmount amount to deposit in compound lending, amount represented in 18 decimals
      */
-    function deposit(uint256 wadAmount)
-        external
-        override
-        whenNotPaused
-        onlyAssetManagement
-        returns (uint256 depositedAmount)
-    {
+    function deposit(
+        uint256 wadAmount
+    ) external override whenNotPaused onlyAssetManagement returns (uint256 depositedAmount) {
         address asset = _asset;
         uint256 assetDecimals = IERC20Metadata(asset).decimals();
         uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
@@ -118,13 +115,9 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
      * @notice withdraw can only done by AssetManagement.
      * @param wadAmount candidate amount to withdraw from compound lending, amount represented in 18 decimals
      */
-    function withdraw(uint256 wadAmount)
-        external
-        override
-        whenNotPaused
-        onlyAssetManagement
-        returns (uint256 withdrawnAmount)
-    {
+    function withdraw(
+        uint256 wadAmount
+    ) external override whenNotPaused onlyAssetManagement returns (uint256 withdrawnAmount) {
         address asset = _asset;
         uint256 assetDecimals = IERC20Metadata(asset).decimals();
         uint256 amount = IporMath.convertWadToAssetDecimalsWithoutRound(wadAmount, assetDecimals);
@@ -132,9 +125,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         CErc20 shareToken = CErc20(_shareToken);
 
         // Transfer assets from Compound to Strategy
-        uint256 redeemStatus = shareToken.redeem(
-            IporMath.division(amount * 1e18, shareToken.exchangeRateStored())
-        );
+        uint256 redeemStatus = shareToken.redeem(IporMath.division(amount * 1e18, shareToken.exchangeRateStored()));
 
         require(redeemStatus == 0, AssetManagementErrors.SHARED_TOKEN_REDEEM_ERROR);
 
