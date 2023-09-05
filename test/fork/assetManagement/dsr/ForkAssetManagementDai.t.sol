@@ -33,7 +33,7 @@ interface IStrategyV1 {
 }
 
 /// @dev Tests verify Asset Management when upgrade from v1 to v2, with assumption that DSR is already deployed
-contract AssetManagementDsrDaiTest is TestForkCommons {
+contract ForkAssetManagementDaiTest is TestForkCommons {
     address internal _admin;
     address internal _user;
 
