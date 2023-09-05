@@ -187,6 +187,7 @@ contract AmmPoolsService is IAmmPoolsService {
         model.ammTreasury = poolCfg.ammTreasury;
         model.assetManagement = poolCfg.assetManagement;
         model.iporOracle = _iporOracle;
+
         IporTypes.AmmBalancesMemory memory balance = model.getAccruedBalance();
         uint256 exchangeRate = model.getExchangeRate(balance.liquidityPool);
         require(exchangeRate > 0, AmmErrors.LIQUIDITY_POOL_IS_EMPTY);

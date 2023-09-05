@@ -138,7 +138,7 @@ contract TestForkCommons is Test {
         _switchStrategyCompoundUsdtToV2();
 
         _switchStrategyDsrDaiV1toV2();
-        _switchStanleyDsrDaiToAssetManagementDsrDai();
+        _switchStanleyToAssetManagement();
 
         _switchMiltonToAmmTreasury();
 
@@ -680,7 +680,7 @@ contract TestForkCommons is Test {
         vm.stopPrank();
     }
 
-    function _switchStanleyDsrDaiToAssetManagementDsrDai() internal {
+    function _switchStanleyToAssetManagement() internal {
         AssetManagementDai assetManagementDai = new AssetManagementDai(
             DAI,
             miltonProxyDai,
@@ -765,9 +765,9 @@ contract TestForkCommons is Test {
         AmmTreasury(miltonProxyDai).upgradeTo(address(daiTreasuryImplementation));
         AmmTreasury(miltonProxyUsdc).upgradeTo(address(usdcTreasuryImplementation));
         AmmTreasury(miltonProxyUsdt).upgradeTo(address(usdtTreasuryImplementation));
-        AmmTreasury(miltonProxyDai).grandMaxAllowanceForSpender(iporProtocolRouterProxy);
-        AmmTreasury(miltonProxyUsdc).grandMaxAllowanceForSpender(iporProtocolRouterProxy);
-        AmmTreasury(miltonProxyUsdt).grandMaxAllowanceForSpender(iporProtocolRouterProxy);
+        AmmTreasury(miltonProxyDai).grantMaxAllowanceForSpender(iporProtocolRouterProxy);
+        AmmTreasury(miltonProxyUsdc).grantMaxAllowanceForSpender(iporProtocolRouterProxy);
+        AmmTreasury(miltonProxyUsdt).grantMaxAllowanceForSpender(iporProtocolRouterProxy);
         vm.stopPrank();
     }
 

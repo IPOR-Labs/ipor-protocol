@@ -109,7 +109,7 @@ contract AmmTreasury is
         IAmmStorage(_ammStorage).updateStorageWhenWithdrawFromAssetManagement(withdrawnAmount, vaultBalance);
     }
 
-    function grandMaxAllowanceForSpender(address spender) external override onlyOwner {
+    function grantMaxAllowanceForSpender(address spender) external override onlyOwner {
         IERC20Upgradeable(_asset).forceApprove(spender, Constants.MAX_VALUE);
     }
 

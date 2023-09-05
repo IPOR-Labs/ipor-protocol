@@ -436,7 +436,7 @@ contract AmmStorage is
         require(interest >= INTEREST_THRESHOLD, AmmErrors.INTEREST_FROM_STRATEGY_EXCEEDED_THRESHOLD);
         require(ammLiquidityPoolBalance.toInt256() >= -interest, AmmErrors.LIQUIDITY_POOL_AMOUNT_TOO_LOW);
 
-        ammLiquidityPoolBalance = ammLiquidityPoolBalance + interest.toUint256();
+        ammLiquidityPoolBalance = (ammLiquidityPoolBalance.toInt256() + interest).toUint256();
 
         _balances.liquidityPool = ammLiquidityPoolBalance.toUint128();
         _balances.vault = vaultBalance.toUint128();
