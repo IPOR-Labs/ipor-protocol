@@ -298,17 +298,12 @@ contract AmmStorage is
     function updateStorageWhenCloseSwapPayFixedInternal(
         AmmTypes.Swap memory swap,
         int256 pnlValue,
-        uint256 swapUnwindOpeningFeeLPAmount,
-        uint256 swapUnwindOpeningFeeTreasuryAmount,
+        uint256 swapUnwindFeeLPAmount,
+        uint256 swapUnwindFeeTreasuryAmount,
         uint256 closingTimestamp
     ) external override onlyRouter returns (AmmInternalTypes.OpenSwapItem memory closedSwap) {
         _updateSwapsWhenClosePayFixed(swap);
-        _updateBalancesWhenCloseSwapPayFixed(
-            swap,
-            pnlValue,
-            swapUnwindOpeningFeeLPAmount,
-            swapUnwindOpeningFeeTreasuryAmount
-        );
+        _updateBalancesWhenCloseSwapPayFixed(swap, pnlValue, swapUnwindFeeLPAmount, swapUnwindFeeTreasuryAmount);
         _updateSoapIndicatorsWhenCloseSwapPayFixed(swap, closingTimestamp);
         return _updateOpenedSwapWhenClosePayFixed(swap.tenor, swap.id);
     }
@@ -316,17 +311,12 @@ contract AmmStorage is
     function updateStorageWhenCloseSwapReceiveFixedInternal(
         AmmTypes.Swap memory swap,
         int256 pnlValue,
-        uint256 swapUnwindOpeningFeeLPAmount,
-        uint256 swapUnwindOpeningFeeTreasuryAmount,
+        uint256 swapUnwindFeeLPAmount,
+        uint256 swapUnwindFeeTreasuryAmount,
         uint256 closingTimestamp
     ) external override onlyRouter returns (AmmInternalTypes.OpenSwapItem memory closedSwap) {
         _updateSwapsWhenCloseReceiveFixed(swap);
-        _updateBalancesWhenCloseSwapReceiveFixed(
-            swap,
-            pnlValue,
-            swapUnwindOpeningFeeLPAmount,
-            swapUnwindOpeningFeeTreasuryAmount
-        );
+        _updateBalancesWhenCloseSwapReceiveFixed(swap, pnlValue, swapUnwindFeeLPAmount, swapUnwindFeeTreasuryAmount);
         _updateSoapIndicatorsWhenCloseSwapReceiveFixed(swap, closingTimestamp);
         return _updateOpenedSwapWhenCloseReceiveFixed(swap.tenor, swap.id);
     }
@@ -520,27 +510,27 @@ contract AmmStorage is
     function _updateBalancesWhenCloseSwapPayFixed(
         AmmTypes.Swap memory swap,
         int256 pnlValue,
-        uint256 swapUnwindOpeningFeeLPAmount,
-        uint256 swapUnwindOpeningFeeTreasuryAmount
+        uint256 swapUnwindFeeLPAmount,
+        uint256 swapUnwindFeeTreasuryAmount
     ) internal {
-        _updateBalancesWhenCloseSwap(pnlValue, swapUnwindOpeningFeeLPAmount, swapUnwindOpeningFeeTreasuryAmount);
+        _updateBalancesWhenCloseSwap(pnlValue, swapUnwindFeeLPAmount, swapUnwindFeeTreasuryAmount);
         _balances.totalCollateralPayFixed = _balances.totalCollateralPayFixed - swap.collateral.toUint128();
     }
 
     function _updateBalancesWhenCloseSwapReceiveFixed(
         AmmTypes.Swap memory swap,
         int256 pnlValue,
-        uint256 swapUnwindOpeningFeeLPAmount,
-        uint256 swapUnwindOpeningFeeTreasuryAmount
+        uint256 swapUnwindFeeLPAmount,
+        uint256 swapUnwindFeeTreasuryAmount
     ) internal {
-        _updateBalancesWhenCloseSwap(pnlValue, swapUnwindOpeningFeeLPAmount, swapUnwindOpeningFeeTreasuryAmount);
+        _updateBalancesWhenCloseSwap(pnlValue, swapUnwindFeeLPAmount, swapUnwindFeeTreasuryAmount);
         _balances.totalCollateralReceiveFixed = _balances.totalCollateralReceiveFixed - swap.collateral.toUint128();
     }
 
     function _updateBalancesWhenCloseSwap(
         int256 pnlValue,
-        uint256 swapUnwindOpeningFeeLPAmount,
-        uint256 swapUnwindOpeningFeeTreasuryAmount
+        uint256 swapUnwindFeeLPAmount,
+        uint256 swapUnwindFeeTreasuryAmount
     ) internal {
         uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
@@ -551,15 +541,15 @@ contract AmmStorage is
             _balances.liquidityPool =
                 _balances.liquidityPool -
                 absPnlValue.toUint128() +
-                swapUnwindOpeningFeeLPAmount.toUint128();
+                swapUnwindFeeLPAmount.toUint128();
         } else {
             /// @dev AMM earns, Buyer looses,
             _balances.liquidityPool =
                 _balances.liquidityPool +
                 absPnlValue.toUint128() +
-                swapUnwindOpeningFeeLPAmount.toUint128();
+                swapUnwindFeeLPAmount.toUint128();
         }
-        _balances.treasury = _balances.treasury + swapUnwindOpeningFeeTreasuryAmount.toUint128();
+        _balances.treasury = _balances.treasury + swapUnwindFeeTreasuryAmount.toUint128();
     }
 
     function _updateSwapsWhenOpen(

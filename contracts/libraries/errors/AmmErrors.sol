@@ -122,5 +122,6 @@ library AmmErrors {
     /// @notice Submit ETH to stETH contract failed.
     string public constant STETH_SUBMIT_FAILED = "IPOR_338";
 
-
+    /// @notice Collateral is not sufficient to cover unwind swap
+    string public constant COLLATERAL_IS_NOT_SUFFICIENT_TO_COVER_UNWIND_SWAP = "IPOR_339";
 }
