@@ -54,9 +54,10 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         _treasuryManager = _msgSender();
     }
 
-    /**
-     * @notice gets current APY in Compound Protocol.
-     */
+    ///  @notice gets current APY in Compound Protocol.
+    /// @dev To achieve number in 18 decimals where we have multiplication of 2 numbers in 18 decimals we need to divide by 1e18.
+    /// @dev 1e54 it is a 1e18 * 1e18 * 1e18, to achieve number in 18 decimals when there is multiplication of 3 numbers in 18 decimals, we need to divide by 1e54.
+    /// @dev 1e36 it is a 1e18 * 1e18, to achieve number in 18 decimals when there is multiplication of 2 numbers in 18 decimals, we need to divide by 1e36.
     function getApy() external view override returns (uint256 apy) {
         uint256 cRate = CErc20(shareToken).supplyRatePerBlock(); // interest % per block
         uint256 ratePerDay = cRate * blocksPerDay + 1e18;

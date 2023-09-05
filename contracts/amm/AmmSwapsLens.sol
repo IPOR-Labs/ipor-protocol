@@ -16,7 +16,6 @@ contract AmmSwapsLens is IAmmSwapsLens {
     using IporContractValidator for address;
     using IporSwapLogic for AmmTypes.Swap;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
-    using AmmLib for AmmInternalTypes.RiskIndicatorsContext;
 
     address internal immutable _usdtAsset;
     address internal immutable _usdtAmmStorage;
@@ -133,13 +132,6 @@ contract AmmSwapsLens is IAmmSwapsLens {
         IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(poolCfg.ammStorage)
             .getBalancesForOpenSwap();
 
-        AmmTypes.OpenSwapRiskIndicators memory riskIndicatorsPayFixed = _getRiskIndicators(
-            asset,
-            tenor,
-            balance.liquidityPool,
-            poolCfg.minLeverage,
-            0
-        );
         AmmInternalTypes.SpreadContext memory spreadContextPayFixed;
         spreadContextPayFixed.asset = asset;
         spreadContextPayFixed.spreadFunctionSig = payFixedSig;
@@ -147,17 +139,17 @@ contract AmmSwapsLens is IAmmSwapsLens {
         spreadContextPayFixed.notional = notional;
         spreadContextPayFixed.minLeverage = poolCfg.minLeverage;
         spreadContextPayFixed.indexValue = indexValue;
-        spreadContextPayFixed.riskIndicators = riskIndicatorsPayFixed;
-        spreadContextPayFixed.balance = balance;
-        offeredRatePayFixed = _getOfferedRatePerLeg(spreadContextPayFixed);
-
-        AmmTypes.OpenSwapRiskIndicators memory riskIndicatorsReceiveFixed = _getRiskIndicators(
+        spreadContextPayFixed.riskIndicators = RiskManagementLogic.getRiskIndicators(
             asset,
+            0,
             tenor,
             balance.liquidityPool,
             poolCfg.minLeverage,
-            1
+            _riskManagementOracle
         );
+        spreadContextPayFixed.balance = balance;
+        offeredRatePayFixed = _getOfferedRatePerLeg(spreadContextPayFixed);
+
         AmmInternalTypes.SpreadContext memory spreadContextReceiveFixed;
         spreadContextReceiveFixed.asset = asset;
         spreadContextReceiveFixed.spreadFunctionSig = receiveFixedSig;
@@ -165,7 +157,14 @@ contract AmmSwapsLens is IAmmSwapsLens {
         spreadContextReceiveFixed.notional = notional;
         spreadContextReceiveFixed.minLeverage = poolCfg.minLeverage;
         spreadContextReceiveFixed.indexValue = indexValue;
-        spreadContextReceiveFixed.riskIndicators = riskIndicatorsReceiveFixed;
+        spreadContextReceiveFixed.riskIndicators = RiskManagementLogic.getRiskIndicators(
+            asset,
+            1,
+            tenor,
+            balance.liquidityPool,
+            poolCfg.minLeverage,
+            _riskManagementOracle
+        );
         spreadContextReceiveFixed.balance = balance;
         offeredRateReceiveFixed = _getOfferedRatePerLeg(spreadContextReceiveFixed);
     }
@@ -193,24 +192,6 @@ contract AmmSwapsLens is IAmmSwapsLens {
             ),
             (uint256)
         );
-    }
-
-    function _getRiskIndicators(
-        address asset,
-        IporTypes.SwapTenor tenor,
-        uint256 liquidityPoolBalance,
-        uint256 minLeverage,
-        uint256 direction
-    ) internal view returns (AmmTypes.OpenSwapRiskIndicators memory riskIndicators) {
-        AmmInternalTypes.RiskIndicatorsContext memory riskIndicatorsContext;
-
-        riskIndicatorsContext.asset = asset;
-        riskIndicatorsContext.iporRiskManagementOracle = _riskManagementOracle;
-        riskIndicatorsContext.tenor = tenor;
-        riskIndicatorsContext.liquidityPoolBalance = liquidityPoolBalance;
-        riskIndicatorsContext.minLeverage = minLeverage;
-
-        riskIndicators = riskIndicatorsContext.getRiskIndicators(direction);
     }
 
     function getBalancesForOpenSwap(

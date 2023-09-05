@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "../interfaces/types/IporTypes.sol";
 import "../interfaces/types/AmmTypes.sol";
 import "../interfaces/IIpToken.sol";
@@ -88,6 +89,17 @@ contract AmmPoolsService is IAmmPoolsService {
         _daiRedeemLpMaxCollateralRatio = daiPoolCfg.redeemLpMaxCollateralRatio;
 
         _iporOracle = iporOracle.checkAddress();
+
+        require(
+            _usdtRedeemFeeRate <= 1e18 && _usdcRedeemFeeRate <= 1e18 && _daiRedeemFeeRate <= 1e18,
+            AmmPoolsErrors.CFG_INVALID_REDEEM_FEE_RATE
+        );
+        require(
+            _usdtRedeemLpMaxCollateralRatio <= 1e18 &&
+                _usdcRedeemLpMaxCollateralRatio <= 1e18 &&
+                _daiRedeemLpMaxCollateralRatio <= 1e18,
+            AmmPoolsErrors.CFG_INVALID_REDEEM_LP_MAX_COLLATERAL_RATIO
+        );
     }
 
     function getAmmPoolServiceConfiguration(
@@ -143,6 +155,7 @@ contract AmmPoolsService is IAmmPoolsService {
 
         uint256 ratio = IporMath.division(wadAmmTreasuryAssetBalance * 1e18, totalBalance);
 
+        /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals, example 45% = 4500, so to achieve number in 18 decimals we need to multiply by 1e14
         uint256 ammTreasuryAssetManagementBalanceRatio = uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) *
             1e14;
 
@@ -355,6 +368,7 @@ contract AmmPoolsService is IAmmPoolsService {
         uint256 vaultBalance,
         uint256 wadOperationAmount
     ) internal {
+        /// @dev 1e21 explanation: autoRebalanceThresholdInThousands represents value in thousands without decimals, example threshold=10 it is 10_000*1e18, so to achieve number in 18 decimals we need to multiply by 1e21
         uint256 autoRebalanceThreshold = uint256(ammPoolsParamsCfg.autoRebalanceThresholdInThousands) * 1e21;
 
         if (autoRebalanceThreshold > 0 && wadOperationAmount >= autoRebalanceThreshold) {
@@ -365,6 +379,7 @@ contract AmmPoolsService is IAmmPoolsService {
                     poolCfg.decimals
                 ),
                 vaultBalance,
+                /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals, example 45% = 4500, so to achieve number in 18 decimals we need to multiply by 1e14
                 uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) * 1e14
             );
 
@@ -402,6 +417,7 @@ contract AmmPoolsService is IAmmPoolsService {
             poolCfg.asset
         );
 
+        /// @dev 1e21 explanation: autoRebalanceThresholdInThousands represents value in thousands without decimals, example threshold=10 it is 10_000*1e18, so to achieve number in 18 decimals we need to multiply by 1e21
         uint256 autoRebalanceThreshold = uint256(ammPoolsParamsCfg.autoRebalanceThresholdInThousands) * 1e21;
 
         if (
@@ -412,6 +428,7 @@ contract AmmPoolsService is IAmmPoolsService {
                 wadAmmTreasuryErc20Balance,
                 vaultBalance,
                 wadOperationAmount,
+                /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals, example 45% = 4500, so to achieve number in 18 decimals we need to multiply by 1e14
                 uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) * 1e14
             );
 

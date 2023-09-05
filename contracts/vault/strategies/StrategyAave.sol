@@ -88,6 +88,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         return ratePerSecondToApy(rate) - 1e18;
     }
 
+    /// @dev 1e54 it is a 1e18 * 1e18 * 1e18, to achieve number in 18 decimals when there is multiplication of 3 numbers in 18 decimals, we need to divide by 1e54.
     function ratePerSecondToApy(uint256 rate) internal pure returns (uint256) {
         uint256 rate4 = IporMath.division(rate * rate * rate * rate, 1e54);
         uint256 rate16 = IporMath.division(rate4 * rate4 * rate4 * rate4, 1e54);
@@ -105,6 +106,8 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         return poweredRatePerSecondToApy(rate64, rate256, rate4096, rate65536, rate1048576, rate4194304, rate16777216);
     }
 
+    /// @dev 1e54 it is a 1e18 * 1e18 * 1e18, to achieve number in 18 decimals when there is multiplication of 3 numbers in 18 decimals, we need to divide by 1e54.
+    /// @dev 1e36 it is a 1e18 * 1e18, to achieve number in 18 decimals when there is multiplication of 2 numbers in 18 decimals, we need to divide by 1e36.
     function poweredRatePerSecondToApy(
         uint256 rate64,
         uint256 rate256,

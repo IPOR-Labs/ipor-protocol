@@ -94,7 +94,7 @@ contract TestForkCommons is Test {
 
     // new contracts for v2
     address public iporRiskManagementOracleProxy;
-    address public iporProtocolRouterProxy;
+    address payable public iporProtocolRouterProxy;
     address public ammSwapsLens;
     address public ammPoolsLens;
     address public assetManagementLens;
@@ -156,6 +156,8 @@ contract TestForkCommons is Test {
                 ammCloseSwapService,
                 ammPoolsService,
                 ammGovernanceService,
+                _getUserAddress(123),
+                _getUserAddress(123),
                 _getUserAddress(123),
                 _getUserAddress(123),
                 _getUserAddress(123),
@@ -271,7 +273,7 @@ contract TestForkCommons is Test {
         vm.prank(owner);
         address implementation = address(new EmptyRouterImplementation());
         ERC1967Proxy proxy = _constructProxy(implementation);
-        iporProtocolRouterProxy = address(proxy);
+        iporProtocolRouterProxy = payable(address(proxy));
     }
 
     function _createAmmSwapsLens() private {
@@ -759,11 +761,6 @@ contract TestForkCommons is Test {
             iporProtocolRouterProxy
         );
 
-        console2.log("AmmTreasury(miltonProxyDai)", AmmTreasury(miltonProxyDai).owner());
-        console2.log("AmmTreasury(miltonProxyUsdc)", AmmTreasury(miltonProxyUsdc).owner());
-        console2.log("AmmTreasury(miltonProxyUsdt)", AmmTreasury(miltonProxyUsdt).owner());
-        console2.log("IporOwnableUpgradeable(miltonProxyDai)", IporOwnableUpgradeable(miltonProxyDai).owner());
-        console2.log("owner", owner);
         vm.startPrank(owner);
         AmmTreasury(miltonProxyDai).upgradeTo(address(daiTreasuryImplementation));
         AmmTreasury(miltonProxyUsdc).upgradeTo(address(usdcTreasuryImplementation));

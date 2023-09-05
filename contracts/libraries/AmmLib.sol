@@ -105,43 +105,6 @@ library AmmLib {
         return accruedBalance;
     }
 
-    /// @notice Gets risk indicators for open swap
-    /// @param context AMM model skeleton of the pool
-    /// @param direction direction of the swap
-    /// @return riskIndicators risk indicators for open swap
-    function getRiskIndicators(
-        AmmInternalTypes.RiskIndicatorsContext memory context,
-        uint256 direction
-    ) internal view returns (AmmTypes.OpenSwapRiskIndicators memory riskIndicators) {
-        uint256 maxNotionalPerLeg;
-
-        (
-            maxNotionalPerLeg,
-            riskIndicators.maxCollateralRatioPerLeg,
-            riskIndicators.maxCollateralRatio,
-            riskIndicators.baseSpreadPerLeg,
-            riskIndicators.fixedRateCapPerLeg
-        ) = IIporRiskManagementOracle(context.iporRiskManagementOracle).getOpenSwapParameters(
-            context.asset,
-            direction,
-            context.tenor
-        );
-
-        uint256 maxCollateralPerLeg = IporMath.division(
-            context.liquidityPoolBalance * riskIndicators.maxCollateralRatioPerLeg,
-            1e18
-        );
-
-        if (maxCollateralPerLeg > 0) {
-            riskIndicators.maxLeveragePerLeg = _leverageInRange(
-                IporMath.division(maxNotionalPerLeg * 1e18, maxCollateralPerLeg),
-                context.minLeverage
-            );
-        } else {
-            riskIndicators.maxLeveragePerLeg = context.minLeverage;
-        }
-    }
-
     function _leverageInRange(uint256 leverage, uint256 cfgMinLeverage) internal pure returns (uint256) {
         if (leverage > Constants.WAD_LEVERAGE_1000) {
             return Constants.WAD_LEVERAGE_1000;

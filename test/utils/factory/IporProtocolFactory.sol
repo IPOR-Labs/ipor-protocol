@@ -831,6 +831,9 @@ contract IporProtocolFactory is Test {
         deployerContracts.liquidityMiningLens = address(_liquidityMiningLensBuilder.build());
         deployerContracts.flowService = address(_powerTokenFlowsServiceBuilder.build());
         deployerContracts.stakeService = address(_powerTokenStakeServiceBuilder.build());
+        //      todo fix addresses
+        deployerContracts.ammPoolsLensEth = address(123);
+        deployerContracts.ammPoolsServiceEth = address(123);
 
         vm.startPrank(address(_owner));
         IporProtocolRouter(amm.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
@@ -1039,6 +1042,9 @@ contract IporProtocolFactory is Test {
         deployerContracts.liquidityMiningLens = address(_liquidityMiningLensBuilder.build());
         deployerContracts.flowService = address(_powerTokenFlowsServiceBuilder.build());
         deployerContracts.stakeService = address(_powerTokenStakeServiceBuilder.build());
+        //        todo fix addresses
+        deployerContracts.ammPoolsServiceEth = address(123);
+        deployerContracts.ammPoolsLensEth = address(123);
 
         vm.startPrank(address(_owner));
         IporProtocolRouter(iporProtocol.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
@@ -1220,6 +1226,10 @@ contract IporProtocolFactory is Test {
         deployerContracts.flowService = address(_powerTokenFlowsServiceBuilder.build());
         deployerContracts.stakeService = address(_powerTokenStakeServiceBuilder.build());
 
+        //        todo fix addresses
+        deployerContracts.ammPoolsLensEth = address(123);
+        deployerContracts.ammPoolsServiceEth = address(123);
+
         vm.startPrank(address(_owner));
         IporProtocolRouter(iporProtocol.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
         vm.stopPrank();
@@ -1250,6 +1260,9 @@ contract IporProtocolFactory is Test {
         }
 
         IporProtocolRouter.DeployedContracts memory deployerContracts;
+        //todo Fix
+        deployerContracts.ammPoolsLensEth = address(123);
+        deployerContracts.ammPoolsServiceEth = address(123);
 
         deployerContracts.ammSwapsLens = address(
             new AmmSwapsLens(
@@ -1576,7 +1589,23 @@ contract IporProtocolFactory is Test {
                 ammStorage: ammStorage,
                 ammTreasury: ammTreasury,
                 assetManagement: assetManagement,
-                unwindingFeeRate: 5 * 1e14,
+                unwindingFeeRate: 99 * 1e16,
+                unwindingFeeTreasuryPortionRate: 5 * 1e14,
+                maxLengthOfLiquidatedSwapsPerLeg: 10,
+                timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
+                timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
+                minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
+                minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
+                minLeverage: 10 * 1e18
+            });
+        } else if (closeSwapServiceTestCase == BuilderUtils.AmmCloseSwapServiceTestCase.CASE2) {
+            poolCfg = IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration({
+                asset: address(asset),
+                decimals: IERC20MetadataUpgradeable(asset).decimals(),
+                ammStorage: ammStorage,
+                ammTreasury: ammTreasury,
+                assetManagement: assetManagement,
+                unwindingFeeRate: 15 * 1e16,
                 unwindingFeeTreasuryPortionRate: 5 * 1e14,
                 maxLengthOfLiquidatedSwapsPerLeg: 10,
                 timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
