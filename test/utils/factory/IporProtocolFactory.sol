@@ -132,6 +132,10 @@ contract IporProtocolFactory is Test {
     function getFullInstance(AmmConfig memory cfg) public returns (Amm memory amm) {
         amm.router = _iporProtocolRouterBuilder.buildEmptyProxy();
 
+        amm.usdt.assetManagement = _assetManagementBuilder.buildEmptyProxy();
+        amm.usdc.assetManagement = _assetManagementBuilder.buildEmptyProxy();
+        amm.dai.assetManagement = _assetManagementBuilder.buildEmptyProxy();
+
         amm.usdt.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
         amm.usdc.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
         amm.dai.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
@@ -227,23 +231,26 @@ contract IporProtocolFactory is Test {
         amm.usdc.spreadRouter = amm.spreadRouter;
         amm.dai.spreadRouter = amm.spreadRouter;
 
-        amm.usdt.assetManagement = _assetManagementBuilder
+        _assetManagementBuilder
             .withAssetType(BuilderUtils.AssetType.USDT)
             .withAsset(address(amm.usdt.asset))
-            .withAssetManagementImplementation(cfg.usdtAssetManagementImplementation)
-            .build();
+            .withAmmTreasury(address(amm.usdt.ammTreasury))
+            .withAssetManagementProxyAddress(address(amm.usdt.assetManagement))
+            .upgrade();
 
-        amm.usdc.assetManagement = _assetManagementBuilder
+        _assetManagementBuilder
             .withAssetType(BuilderUtils.AssetType.USDC)
             .withAsset(address(amm.usdc.asset))
-            .withAssetManagementImplementation(cfg.usdcAssetManagementImplementation)
-            .build();
+            .withAmmTreasury(address(amm.usdc.ammTreasury))
+            .withAssetManagementProxyAddress(address(amm.usdc.assetManagement))
+            .upgrade();
 
-        amm.dai.assetManagement = _assetManagementBuilder
+        _assetManagementBuilder
             .withAssetType(BuilderUtils.AssetType.DAI)
             .withAsset(address(amm.dai.asset))
-            .withAssetManagementImplementation(cfg.daiAssetManagementImplementation)
-            .build();
+            .withAmmTreasury(address(amm.dai.ammTreasury))
+            .withAssetManagementProxyAddress(address(amm.dai.assetManagement))
+            .upgrade();
 
         _ammTreasuryBuilder
             .withAsset(address(amm.usdt.asset))
@@ -276,10 +283,6 @@ contract IporProtocolFactory is Test {
         amm.usdt.ipToken.setJoseph(address(amm.router));
         amm.usdc.ipToken.setJoseph(address(amm.router));
         amm.dai.ipToken.setJoseph(address(amm.router));
-
-        //        amm.usdt.assetManagement.setAmmTreasury((address(amm.usdt.ammTreasury)));
-        //        amm.usdc.assetManagement.setAmmTreasury((address(amm.usdc.ammTreasury)));
-        //        amm.dai.assetManagement.setAmmTreasury((address(amm.dai.ammTreasury)));
 
         amm.usdt.ammTreasury.grandMaxAllowanceForSpender(address(amm.usdt.assetManagement));
         amm.usdc.ammTreasury.grandMaxAllowanceForSpender(address(amm.usdc.assetManagement));
@@ -577,7 +580,6 @@ contract IporProtocolFactory is Test {
             .withAmmTreasury(address(iporProtocol.ammTreasury))
             .withAssetManagementProxyAddress(address(iporProtocol.assetManagement))
             .upgrade();
-
 
         _ammTreasuryBuilder
             .withAsset(address(iporProtocol.asset))

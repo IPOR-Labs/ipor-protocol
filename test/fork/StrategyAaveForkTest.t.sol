@@ -7,12 +7,13 @@ import "../../contracts/vault/strategies/StrategyAave.sol";
 contract StrategyAaveForkTest is TestForkCommons {
     function _initStrategy(
         address asset,
+        uint256 assetDecimals,
         address aToken,
         address assetManagementProxy
     ) internal returns (StrategyAave) {
         StrategyAave daiAaveStrategyImplementation = new StrategyAave(
             asset,
-            18,
+            assetDecimals,
             aToken,
             assetManagementProxy,
             AAVE,
@@ -32,7 +33,7 @@ contract StrategyAaveForkTest is TestForkCommons {
     function testApyCalculationForUSDC() public {
         // given
         vm.rollFork(17_469_715);
-        StrategyAave strategyAave = _initStrategy(USDC, aUSDC, stanleyProxyUsdc);
+        StrategyAave strategyAave = _initStrategy(USDC, 6, aUSDC, stanleyProxyUsdc);
 
         // when
         uint256 apy = strategyAave.getApy();
@@ -42,7 +43,7 @@ contract StrategyAaveForkTest is TestForkCommons {
     function testApyCalculationForUSDT() public {
         // given
         vm.rollFork(17_469_715);
-        StrategyAave strategyAave = _initStrategy(USDT, aUSDT, stanleyProxyUsdt);
+        StrategyAave strategyAave = _initStrategy(USDT, 6, aUSDT, stanleyProxyUsdt);
 
         // when
         uint256 apy = strategyAave.getApy();
@@ -52,7 +53,7 @@ contract StrategyAaveForkTest is TestForkCommons {
     function testApyCalculationForDAI() public {
         // given
         vm.rollFork(17_469_715);
-        StrategyAave strategyAave = _initStrategy(DAI, aDAI, stanleyProxyDai);
+        StrategyAave strategyAave = _initStrategy(DAI, 18, aDAI, stanleyProxyDai);
 
         // when
         uint256 apy = strategyAave.getApy();

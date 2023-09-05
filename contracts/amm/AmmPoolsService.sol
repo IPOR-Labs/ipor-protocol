@@ -137,8 +137,7 @@ contract AmmPoolsService is IAmmPoolsService {
             poolCfg.decimals
         );
 
-        uint256 totalBalance = wadAmmTreasuryAssetBalance +
-            IAssetManagement(poolCfg.assetManagement).totalBalance();
+        uint256 totalBalance = wadAmmTreasuryAssetBalance + IAssetManagement(poolCfg.assetManagement).totalBalance();
 
         require(totalBalance > 0, AmmPoolsErrors.ASSET_MANAGEMENT_BALANCE_IS_EMPTY);
 
@@ -148,16 +147,16 @@ contract AmmPoolsService is IAmmPoolsService {
             1e14;
 
         if (ratio > ammTreasuryAssetManagementBalanceRatio) {
-            uint256 assetAmount = wadAmmTreasuryAssetBalance -
+            uint256 wadAssetAmount = wadAmmTreasuryAssetBalance -
                 IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18);
-            if (assetAmount > 0) {
-                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagementInternal(assetAmount);
+            if (wadAssetAmount > 0) {
+                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagementInternal(wadAssetAmount);
             }
         } else {
-            uint256 assetAmount = IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18) -
+            uint256 wadAssetAmount = IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18) -
                 wadAmmTreasuryAssetBalance;
-            if (assetAmount > 0) {
-                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagementInternal(assetAmount);
+            if (wadAssetAmount > 0) {
+                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagementInternal(wadAssetAmount);
             }
         }
     }

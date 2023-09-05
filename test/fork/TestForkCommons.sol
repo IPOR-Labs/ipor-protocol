@@ -27,6 +27,8 @@ import "../../contracts/amm/AmmStorage.sol";
 import "../../contracts/amm/AmmTreasury.sol";
 import "../../contracts/vault/strategies/StrategyDsrDai.sol";
 import "../../contracts/vault/AssetManagementDai.sol";
+import "../../contracts/vault/AssetManagementUsdt.sol";
+import "../../contracts/vault/AssetManagementUsdc.sol";
 import "../../contracts/vault/strategies/StrategyAave.sol";
 import "../../contracts/vault/strategies/StrategyCompound.sol";
 
@@ -677,7 +679,7 @@ contract TestForkCommons is Test {
     }
 
     function _switchStanleyDsrDaiToAssetManagementDsrDai() internal {
-        AssetManagementDai impl = new AssetManagementDai(
+        AssetManagementDai assetManagementDai = new AssetManagementDai(
             DAI,
             miltonProxyDai,
             3,
@@ -687,9 +689,35 @@ contract TestForkCommons is Test {
             strategyDsrProxyDai
         );
 
-        //        vm.startPrank(owner);
-        //        AssetManagementDsrDai(stanleyProxyDai).upgradeTo(address(impl));
-        //        vm.stopPrank();
+        vm.startPrank(owner);
+        AssetManagementDai(stanleyProxyDai).upgradeTo(address(assetManagementDai));
+        vm.stopPrank();
+
+        AssetManagementUsdt assetManagementUsdt = new AssetManagementUsdt(
+            USDT,
+            miltonProxyUsdt,
+            2,
+            1,
+            strategyAaveProxyUsdt,
+            strategyCompoundProxyUsdt
+        );
+
+        vm.startPrank(owner);
+        AssetManagementUsdt(stanleyProxyUsdt).upgradeTo(address(assetManagementUsdt));
+        vm.stopPrank();
+
+        AssetManagementUsdc assetManagementUsdc = new AssetManagementUsdc(
+            USDC,
+            miltonProxyUsdc,
+            2,
+            1,
+            strategyAaveProxyUsdc,
+            strategyCompoundProxyUsdc
+        );
+
+        vm.startPrank(owner);
+        AssetManagementUsdc(stanleyProxyUsdc).upgradeTo(address(assetManagementUsdc));
+        vm.stopPrank();
     }
 
     function _switchMiltonStorageToAmmStorage() private {
