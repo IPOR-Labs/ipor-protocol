@@ -18,12 +18,6 @@ contract MockStrategyTestnetTest is TestCommons {
 
     AssetBuilder internal _assetBuilder = new AssetBuilder(address(this));
 
-    //    function setStrategiesAssetManagement(address assetManagement) public {
-    //        _mockStrategyDai.setAssetManagement(assetManagement);
-    //        _mockStrategyUsdt.setAssetManagement(assetManagement);
-    //        _mockStrategyUsdc.setAssetManagement(assetManagement);
-    //    }
-
     function approveStrategies() public {
         _daiMockedToken.approve(address(_mockStrategyDai), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
         _usdtMockedToken.approve(address(_mockStrategyUsdt), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
@@ -55,10 +49,12 @@ contract MockStrategyTestnetTest is TestCommons {
         _assetBuilder.withUSDT();
         _shareToken6Decimals = _assetBuilder.build();
 
+        _admin = address(this);
+
         _mockStrategyDai = getMockTestnetStrategy(address(_daiMockedToken), 18, address(_shareToken18Decimals), _admin);
         _mockStrategyUsdt = getMockTestnetStrategy(address(_usdtMockedToken), 6, address(_shareToken6Decimals), _admin);
         _mockStrategyUsdc = getMockTestnetStrategy(address(_usdcMockedToken), 6, address(_shareToken6Decimals), _admin);
-        _admin = address(this);
+
         _userOne = _getUserAddress(1);
         _userTwo = _getUserAddress(2);
         _userThree = _getUserAddress(3);
@@ -236,10 +232,7 @@ contract MockStrategyTestnetTest is TestCommons {
             shareToken,
             assetManagementProxy
         );
-        ERC1967Proxy strategyProxy = new ERC1967Proxy(
-            address(strategyImpl),
-            abi.encodeWithSignature("initialize(address,address)", asset, shareToken)
-        );
+        ERC1967Proxy strategyProxy = new ERC1967Proxy(address(strategyImpl), abi.encodeWithSignature("initialize()"));
         return MockTestnetStrategy(address(strategyProxy));
     }
 }

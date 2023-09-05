@@ -303,6 +303,7 @@ contract IporProtocolFactory is Test {
     ) public returns (BuilderUtils.IporProtocol memory iporProtocol) {
         iporProtocol.router = _iporProtocolRouterBuilder.buildEmptyProxy();
         iporProtocol.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
+        iporProtocol.assetManagement = _assetManagementBuilder.buildEmptyProxy();
 
         _assetBuilder.withUSDT();
         iporProtocol.asset = _assetBuilder.build();
@@ -355,11 +356,12 @@ contract IporProtocolFactory is Test {
 
         iporProtocol.spreadRouter = _spreadRouterBuilder.build();
 
-        iporProtocol.assetManagement = _assetManagementBuilder
+        _assetManagementBuilder
             .withAssetType(BuilderUtils.AssetType.USDT)
             .withAsset(address(iporProtocol.asset))
-            .withAssetManagementImplementation(cfg.assetManagementImplementation)
-            .build();
+            .withAmmTreasury(address(iporProtocol.ammTreasury))
+            .withAssetManagementProxyAddress(address(iporProtocol.assetManagement))
+            .upgrade();
 
         _ammTreasuryBuilder
             .withAsset(address(iporProtocol.asset))
@@ -407,6 +409,7 @@ contract IporProtocolFactory is Test {
     ) public returns (BuilderUtils.IporProtocol memory iporProtocol) {
         iporProtocol.router = _iporProtocolRouterBuilder.buildEmptyProxy();
         iporProtocol.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
+        iporProtocol.assetManagement = _assetManagementBuilder.buildEmptyProxy();
 
         _assetBuilder.withUSDC();
         iporProtocol.asset = _assetBuilder.build();
@@ -461,11 +464,12 @@ contract IporProtocolFactory is Test {
 
         iporProtocol.spreadRouter = _spreadRouterBuilder.build();
 
-        iporProtocol.assetManagement = _assetManagementBuilder
+        _assetManagementBuilder
             .withAssetType(BuilderUtils.AssetType.USDC)
             .withAsset(address(iporProtocol.asset))
-            .withAssetManagementImplementation(cfg.assetManagementImplementation)
-            .build();
+            .withAmmTreasury(address(iporProtocol.ammTreasury))
+            .withAssetManagementProxyAddress(address(iporProtocol.assetManagement))
+            .upgrade();
 
         _ammTreasuryBuilder
             .withAsset(address(iporProtocol.asset))
@@ -513,6 +517,7 @@ contract IporProtocolFactory is Test {
     ) public returns (BuilderUtils.IporProtocol memory iporProtocol) {
         iporProtocol.router = _iporProtocolRouterBuilder.buildEmptyProxy();
         iporProtocol.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
+        iporProtocol.assetManagement = _assetManagementBuilder.buildEmptyProxy();
 
         _assetBuilder.withDAI();
 
@@ -566,15 +571,13 @@ contract IporProtocolFactory is Test {
 
         iporProtocol.spreadRouter = _spreadRouterBuilder.build();
 
-
-
-        iporProtocol.assetManagement = _assetManagementBuilder
+        _assetManagementBuilder
             .withAssetType(BuilderUtils.AssetType.DAI)
             .withAsset(address(iporProtocol.asset))
-            .withAssetManagementImplementation(cfg.assetManagementImplementation)
-
             .withAmmTreasury(address(iporProtocol.ammTreasury))
-            .build();
+            .withAssetManagementProxyAddress(address(iporProtocol.assetManagement))
+            .upgrade();
+
 
         _ammTreasuryBuilder
             .withAsset(address(iporProtocol.asset))
@@ -598,7 +601,6 @@ contract IporProtocolFactory is Test {
 
         vm.startPrank(address(_owner));
 
-        //        iporProtocol.assetManagement.setAmmTreasury((address(iporProtocol.ammTreasury)));
         iporProtocol.ammTreasury.grandMaxAllowanceForSpender(address(iporProtocol.assetManagement));
 
         iporProtocol.ipToken.setJoseph(address(iporProtocol.router));

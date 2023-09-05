@@ -20,8 +20,11 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
     ComptrollerInterface public immutable comptroller;
     IERC20Upgradeable public immutable compToken;
 
+    /// @dev deprecated
     uint256 private _blocksPerDayDeprecated;
+    /// @dev deprecated
     ComptrollerInterface private _comptrollerDeprecated;
+    /// @dev deprecated
     IERC20Upgradeable private _compTokenDeprecated;
 
     /// @custom:oz-upgrades-unsafe-allow constructor

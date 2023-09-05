@@ -38,6 +38,7 @@ abstract contract AssetManagementCore is
 
     struct StrategyData {
         address strategy;
+        /// @dev balance in 18 decimals
         uint256 balance;
         uint256 apy;
     }

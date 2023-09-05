@@ -26,6 +26,7 @@ abstract contract StrategyCore is
     IProxyImplementation
 {
     using IporContractValidator for address;
+
     address public immutable asset;
     uint256 public immutable assetDecimals;
     address public immutable shareToken;

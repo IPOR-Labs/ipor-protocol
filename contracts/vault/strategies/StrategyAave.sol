@@ -26,11 +26,15 @@ contract StrategyAave is StrategyCore, IStrategyAave {
     StakedAaveInterface public immutable stakedAaveInterface;
     AaveIncentivesInterface public immutable aaveIncentive;
 
+    /// @dev deprecated
     address private _aaveDeprecated;
+    /// @dev deprecated
     address private _stkAaveDeprecated;
-
+    /// @dev deprecated
     AaveLendingPoolProviderV2 private _providerDeprecated;
+    /// @dev deprecated
     StakedAaveInterface private _stakedAaveInterfaceDeprecated;
+    /// @dev deprecated
     AaveIncentivesInterface private _aaveIncentiveDeprecated;
 
     /// @custom:oz-upgrades-unsafe-allow constructor

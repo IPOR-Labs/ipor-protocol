@@ -13,7 +13,7 @@ contract AssetManagementMaxApyStrategyTest is TestCommons {
     AssetBuilder internal _assetBuilder = new AssetBuilder(address(this));
     AssetManagementBuilder internal _assetManagementBuilder = new AssetManagementBuilder(address(this));
 
-    AssetManagementDai internal _assetManagementDai;
+    AssetManagementCore internal _assetManagementDai;
     MockStrategy internal _strategyAaveDai;
     MockStrategy internal _strategyCompoundDai;
     MockStrategy internal _strategyDsrDai;

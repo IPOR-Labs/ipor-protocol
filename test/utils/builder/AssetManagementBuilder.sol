@@ -5,10 +5,9 @@ import "../../../contracts/vault/AssetManagementUsdt.sol";
 import "../../../contracts/vault/AssetManagementUsdc.sol";
 import "../../../contracts/vault/AssetManagementDai.sol";
 import "../../../contracts/vault/AssetManagementDai.sol";
-
+import "../../mocks/EmptyAssetManagementImplementation.sol";
 import "./BuilderUtils.sol";
-import "./StrategyAaveBuilder.sol";
-import "./StrategyCompoundBuilder.sol";
+import "./MockTestnetStrategyBuilder.sol";
 
 import "forge-std/Test.sol";
 
@@ -21,6 +20,7 @@ contract AssetManagementBuilder is Test {
         address strategyCompound;
         address strategyDsr;
         address assetManagementImplementation;
+        address assetManagementProxyAddress;
     }
 
     BuilderData private builderData;
@@ -68,83 +68,156 @@ contract AssetManagementBuilder is Test {
         return this;
     }
 
-    function _buildStrategiesDai() internal {
+    function withAssetManagementProxyAddress(
+        address assetManagementProxyAddress
+    ) public returns (AssetManagementBuilder) {
+        builderData.assetManagementProxyAddress = assetManagementProxyAddress;
+        return this;
+    }
+
+    function _buildStrategiesForUpgradeDai() internal {
         require(builderData.asset != address(0), "Asset address is not set");
 
         if (builderData.strategyAave == address(0)) {
-            StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(_owner);
+            MockTestnetStrategyBuilder strategyAaveBuilder = new MockTestnetStrategyBuilder(_owner);
             strategyAaveBuilder.withAsset(builderData.asset);
             strategyAaveBuilder.withAssetDecimals(18);
             strategyAaveBuilder.withShareTokenDai();
+            strategyAaveBuilder.withAssetManagementProxy(builderData.assetManagementProxyAddress);
             MockTestnetStrategy strategyAave = strategyAaveBuilder.build();
             builderData.strategyAave = address(strategyAave);
+
         }
 
         if (builderData.strategyCompound == address(0)) {
-            StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(_owner);
+            MockTestnetStrategyBuilder strategyCompoundBuilder = new MockTestnetStrategyBuilder(_owner);
             strategyCompoundBuilder.withAsset(builderData.asset);
             strategyCompoundBuilder.withAssetDecimals(18);
             strategyCompoundBuilder.withShareTokenDai();
+            strategyCompoundBuilder.withAssetManagementProxy(builderData.assetManagementProxyAddress);
             MockTestnetStrategy strategyCompound = strategyCompoundBuilder.build();
             builderData.strategyCompound = address(strategyCompound);
         }
+
+        if (builderData.strategyDsr == address(0)) {
+            MockTestnetStrategyBuilder strategyDsrBuilder = new MockTestnetStrategyBuilder(_owner);
+            strategyDsrBuilder.withAsset(builderData.asset);
+            strategyDsrBuilder.withAssetDecimals(18);
+            strategyDsrBuilder.withShareTokenDai();
+            strategyDsrBuilder.withAssetManagementProxy(builderData.assetManagementProxyAddress);
+            MockTestnetStrategy strategyDsr = strategyDsrBuilder.build();
+            builderData.strategyDsr = address(strategyDsr);
+        }
     }
 
-    function _buildStrategiesUsdt() internal {
+    function _buildStrategiesForUpgradeUsdt() internal {
         require(builderData.asset != address(0), "Asset address is not set");
 
         if (builderData.strategyAave == address(0)) {
-            StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(_owner);
+            MockTestnetStrategyBuilder strategyAaveBuilder = new MockTestnetStrategyBuilder(_owner);
             strategyAaveBuilder.withAsset(builderData.asset);
             strategyAaveBuilder.withAssetDecimals(6);
             strategyAaveBuilder.withShareTokenUsdt();
+            strategyAaveBuilder.withAssetManagementProxy(builderData.assetManagementProxyAddress);
             MockTestnetStrategy strategyAave = strategyAaveBuilder.build();
             builderData.strategyAave = address(strategyAave);
         }
 
         if (builderData.strategyCompound == address(0)) {
-            StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(_owner);
+            MockTestnetStrategyBuilder strategyCompoundBuilder = new MockTestnetStrategyBuilder(_owner);
             strategyCompoundBuilder.withAsset(builderData.asset);
             strategyCompoundBuilder.withAssetDecimals(6);
             strategyCompoundBuilder.withShareTokenUsdt();
+            strategyCompoundBuilder.withAssetManagementProxy(builderData.assetManagementProxyAddress);
             MockTestnetStrategy strategyCompound = strategyCompoundBuilder.build();
             builderData.strategyCompound = address(strategyCompound);
         }
     }
 
-    function _buildStrategiesUsdc() internal {
+    function _buildStrategiesForUpgradeUsdc() internal {
         require(builderData.asset != address(0), "Asset address is not set");
 
         if (builderData.strategyAave == address(0)) {
-            StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(_owner);
+            MockTestnetStrategyBuilder strategyAaveBuilder = new MockTestnetStrategyBuilder(_owner);
             strategyAaveBuilder.withAsset(builderData.asset);
             strategyAaveBuilder.withAssetDecimals(6);
             strategyAaveBuilder.withShareTokenUsdc();
+            strategyAaveBuilder.withAssetManagementProxy(builderData.assetManagementProxyAddress);
             MockTestnetStrategy strategyAave = strategyAaveBuilder.build();
             builderData.strategyAave = address(strategyAave);
         }
 
         if (builderData.strategyCompound == address(0)) {
-            StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(_owner);
+            MockTestnetStrategyBuilder strategyCompoundBuilder = new MockTestnetStrategyBuilder(_owner);
             strategyCompoundBuilder.withAsset(builderData.asset);
             strategyCompoundBuilder.withAssetDecimals(6);
             strategyCompoundBuilder.withShareTokenUsdc();
+            strategyCompoundBuilder.withAssetManagementProxy(builderData.assetManagementProxyAddress);
             MockTestnetStrategy strategyCompound = strategyCompoundBuilder.build();
             builderData.strategyCompound = address(strategyCompound);
         }
     }
 
-    function build() public returns (AssetManagementDai) {
-        require(builderData.asset != address(0), "Asset address is not set");
+    function buildEmptyProxy() public returns (AssetManagementCore) {
+        vm.startPrank(_owner);
+        ERC1967Proxy proxy = _constructProxy(address(new EmptyAssetManagementImplementation()));
+        AssetManagementCore assetManagement = AssetManagementCore(address(proxy));
+        vm.stopPrank();
+        delete builderData;
+        return assetManagement;
+    }
 
-        _buildStrategies();
+    function build() public returns (AssetManagementCore) {
+        require(builderData.asset != address(0), "Asset address is not set");
+        require(builderData.ammTreasury != address(0), "AmmTreasury address is not set");
+        require(builderData.strategyAave != address(0), "Strategy Aave address is not set");
+        require(builderData.strategyCompound != address(0), "Strategy Compound address is not set");
 
         vm.startPrank(_owner);
         ERC1967Proxy proxy = _constructProxy(address(_buildAssetManagementImplementation()));
         vm.stopPrank();
 
         delete builderData;
-        return AssetManagementDai(address(proxy));
+        return AssetManagementCore(address(proxy));
+    }
+
+    function upgrade() public {
+        require(builderData.assetManagementProxyAddress != address(0), "assetManagementProxyAddress is required");
+
+//        vm.startPrank(_owner);
+        AssetManagementCore assetManagement = AssetManagementCore(builderData.assetManagementProxyAddress);
+
+        address implementation;
+
+        if (address(builderData.assetManagementImplementation) == address(0)) {
+            _buildStrategiesForUpgrade();
+            implementation = address(_buildAssetManagementImplementation());
+        }
+//        vm.stopPrank();
+
+        vm.startPrank(_owner);
+        assetManagement.upgradeTo(implementation);
+
+
+        /// @dev grant max allowance for spender only for test purposes because MockTestnetStrategy are used
+        if (builderData.assetType == BuilderUtils.AssetType.DAI) {
+            assetManagement.grantMaxAllowanceForSpender(builderData.asset,builderData.strategyAave);
+            assetManagement.grantMaxAllowanceForSpender(builderData.asset,builderData.strategyCompound);
+            assetManagement.grantMaxAllowanceForSpender(builderData.asset,builderData.strategyDsr);
+        }
+
+        if (builderData.assetType == BuilderUtils.AssetType.USDT) {
+            assetManagement.grantMaxAllowanceForSpender(builderData.asset,builderData.strategyAave);
+            assetManagement.grantMaxAllowanceForSpender(builderData.asset,builderData.strategyCompound);
+        }
+
+        if (builderData.assetType == BuilderUtils.AssetType.USDC) {
+            assetManagement.grantMaxAllowanceForSpender(builderData.asset,builderData.strategyAave);
+            assetManagement.grantMaxAllowanceForSpender(builderData.asset,builderData.strategyCompound);
+        }
+        vm.stopPrank();
+
+
     }
 
     function _buildAssetManagementImplementation() internal returns (address assetManagementImpl) {
@@ -152,6 +225,8 @@ contract AssetManagementBuilder is Test {
             assetManagementImpl = builderData.assetManagementImplementation;
         } else {
             if (builderData.assetType == BuilderUtils.AssetType.DAI) {
+                require(builderData.strategyDsr != address(0), "Strategy DSR address is not set");
+
                 assetManagementImpl = address(
                     new AssetManagementDai(
                         builderData.asset,
@@ -191,13 +266,13 @@ contract AssetManagementBuilder is Test {
         }
     }
 
-    function _buildStrategies() internal {
+    function _buildStrategiesForUpgrade() internal {
         if (builderData.assetType == BuilderUtils.AssetType.DAI) {
-            _buildStrategiesDai();
+            _buildStrategiesForUpgradeDai();
         } else if (builderData.assetType == BuilderUtils.AssetType.USDT) {
-            _buildStrategiesUsdt();
+            _buildStrategiesForUpgradeUsdt();
         } else if (builderData.assetType == BuilderUtils.AssetType.USDC) {
-            _buildStrategiesUsdc();
+            _buildStrategiesForUpgradeUsdc();
         } else {
             revert("Asset type not supported");
         }
