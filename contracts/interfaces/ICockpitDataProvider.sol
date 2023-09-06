@@ -24,11 +24,6 @@ interface ICockpitDataProvider {
     /// @return sender ipToken balance represented in 18 decimals
     function getMyIpTokenBalance(address asset) external view returns (uint256);
 
-    /// @notice Gets sender's ivToken balance
-    /// @param asset asset / stablecoin address
-    /// @return sender ivToken balance represented in 18 decimals
-    function getMyIvTokenBalance(address asset) external view returns (uint256);
-
     /// @notice Gets sender's allowance in AmmTreasury
     /// @param asset asset / stablecoin address
     /// @return sender allowance in AmmTreasury represented in decimals specific for given asset

@@ -2,7 +2,6 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "../../contracts/tokens/IvToken.sol";
 import "../../contracts/vault/strategies/StrategyCore.sol";
 import "../../contracts/vault/strategies/StrategyCompound.sol";
 import "../mocks/tokens/MockTestnetToken.sol";
@@ -14,7 +13,6 @@ contract StrategyPauseManagerTest is Test {
     address private _user2;
 
     MockTestnetToken private usdc = new MockTestnetToken("Mocked USDC", "USDC", 100_000_000 * 1e6, uint8(6));
-    IvToken ivUsdc = new IvToken("IV USDC", "ivUSDC", address(usdc));
 
     function setUp() public {
         _owner = vm.rememberKey(1);

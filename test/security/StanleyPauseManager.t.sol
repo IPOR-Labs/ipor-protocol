@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../../contracts/vault/AssetManagementUsdc.sol";
-import "../../contracts/tokens/IvToken.sol";
+
 import "../mocks/assetManagement/MockTestnetStrategy.sol";
 import "forge-std/Test.sol";
 import "../mocks/tokens/MockTestnetToken.sol";

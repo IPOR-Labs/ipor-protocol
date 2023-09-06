@@ -6,19 +6,16 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "../../../contracts/libraries/errors/IporErrors.sol";
 import "../../../contracts/libraries/math/IporMath.sol";
-import "../../../contracts/interfaces/IAssetManagement.sol";
+import "../../../contracts/interfaces/IAssetManagementDsr.sol";
 
-contract MockCaseBaseAssetManagement is IAssetManagement {
+contract MockCaseBaseAssetManagement is IAssetManagementDsr {
     using SafeERC20 for IERC20;
     IERC20 private _asset;
 
     uint256 private _balance;
 
-    function initialize(address asset, address ivToken, address strategyAave, address strategyCompound) public {
-        require(
-            ivToken != address(0) || strategyAave != address(0) || strategyCompound != address(0),
-            IporErrors.WRONG_ADDRESS
-        );
+    function initialize(address asset, address strategyAave, address strategyCompound) public {
+        require(strategyAave != address(0) || strategyCompound != address(0), IporErrors.WRONG_ADDRESS);
         _asset = IERC20(asset);
     }
 
@@ -34,9 +31,6 @@ contract MockCaseBaseAssetManagement is IAssetManagement {
         return _balance;
     }
 
-    function calculateExchangeRate() external pure override returns (uint256) {
-        return 0;
-    }
 
     //@dev for test purposes, simulation that IporVault earn some money for recipient
     function forTestDeposit(address recipient, uint256 assetAmount) external returns (uint256 balance) {

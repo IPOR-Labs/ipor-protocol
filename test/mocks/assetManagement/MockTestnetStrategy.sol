@@ -75,7 +75,7 @@ contract MockTestnetStrategy is StrategyCore {
         return _depositsBalance;
     }
 
-    function doClaim() external override onlyOwner {}
+    function doClaim() external onlyOwner {}
 
     function beforeClaim() external onlyOwner {}
 

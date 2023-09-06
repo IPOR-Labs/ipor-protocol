@@ -1,11 +1,11 @@
 //solhint-disable no-empty-blocks
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.20;
-import "../../../contracts/interfaces/IStrategy.sol";
+
 import "../../../contracts/interfaces/IStrategyDsr.sol";
 
 // simple mock for total _balance tests
-contract MockStrategy is IStrategy, IStrategyDsr {
+contract MockStrategy is IStrategyDsr {
     address private _assetManagement;
     uint256 private _balance;
     address private _shareTokens;
@@ -47,13 +47,13 @@ contract MockStrategy is IStrategy, IStrategyDsr {
 
     function unpause() external override {}
 
-    function isPauseGuardian(address account) external view  returns (bool) {
+    function isPauseGuardian(address account) external view returns (bool) {
         return false;
     }
 
-    function addPauseGuardian(address guardian) external  {}
+    function addPauseGuardian(address guardian) external {}
 
-    function removePauseGuardian(address guardian) external  {}
+    function removePauseGuardian(address guardian) external {}
 
     function setAsset(address asset) external {
         _asset = asset;
@@ -79,7 +79,7 @@ contract MockStrategy is IStrategy, IStrategyDsr {
         return _shareTokens;
     }
 
-    function getTreasuryManager() external view override returns (address) {
+    function getTreasuryManager() external view returns (address) {
         return _treasuryManager;
     }
 
@@ -87,7 +87,7 @@ contract MockStrategy is IStrategy, IStrategyDsr {
         _treasuryManager = manager;
     }
 
-    function getTreasury() external view override returns (address) {
+    function getTreasury() external view returns (address) {
         return _treasury;
     }
 
@@ -95,12 +95,9 @@ contract MockStrategy is IStrategy, IStrategyDsr {
         _treasury = treasury;
     }
 
-    function doClaim() external override {}
-
     function transferOwnership(address newOwner) external {
         _owner = newOwner;
     }
 
     function beforeClaim() external {}
-
 }

@@ -179,7 +179,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
      * @notice Internal method.
 
      */
-    function beforeClaim() external override whenNotPaused nonReentrant onlyOwner {
+    function beforeClaim() external whenNotPaused nonReentrant onlyOwner {
         require(_treasury != address(0), AssetManagementErrors.INCORRECT_TREASURY_ADDRESS);
         address[] memory shareTokens = new address[](1);
         shareTokens[0] = shareToken;
@@ -194,7 +194,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         so you have to claim beforeClaim function.
         when window is open you can call this function to claim _aave
      */
-    function doClaim() external override whenNotPaused nonReentrant onlyOwner {
+    function doClaim() external whenNotPaused nonReentrant onlyOwner {
         address treasury = _treasury;
 
         require(treasury != address(0), AssetManagementErrors.INCORRECT_TREASURY_ADDRESS);

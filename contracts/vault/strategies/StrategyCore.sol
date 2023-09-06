@@ -6,7 +6,6 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
-import "../../interfaces/IStrategy.sol";
 import "../../interfaces/IProxyImplementation.sol";
 import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/errors/AssetManagementErrors.sol";
@@ -21,7 +20,6 @@ abstract contract StrategyCore is
     ReentrancyGuardUpgradeable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-    IStrategy,
     IStrategyDsr,
     IProxyImplementation
 {
@@ -41,6 +39,21 @@ abstract contract StrategyCore is
 
     address internal _treasury;
     address internal _treasuryManager;
+
+    /// @notice Emmited when doClaim function had been executed.
+    /// @param claimedBy account that executes claim action
+    /// @param shareToken share token assocciated with one strategy
+    /// @param treasury Treasury address where claimed tokens are transferred.
+    /// @param amount S
+    event DoClaim(address indexed claimedBy, address indexed shareToken, address indexed treasury, uint256 amount);
+
+    /// @notice Emmited when Treasury address has changed
+    /// @param newTreasury new Treasury address
+    event TreasuryChanged(address newTreasury);
+
+    /// @notice Emmited when Treasury Manager address has changed
+    /// @param newTreasuryManager new Treasury Manager address
+    event TreasuryManagerChanged(address newTreasuryManager);
 
     modifier onlyAssetManagement() {
         require(_msgSender() == assetManagement, AssetManagementErrors.CALLER_NOT_ASSET_MANAGEMENT);
@@ -71,7 +84,7 @@ abstract contract StrategyCore is
         return 2_000;
     }
 
-    function getTreasuryManager() external view override returns (address) {
+    function getTreasuryManager() external view returns (address) {
         return _treasuryManager;
     }
 
@@ -81,7 +94,7 @@ abstract contract StrategyCore is
         emit TreasuryManagerChanged(manager);
     }
 
-    function getTreasury() external view override returns (address) {
+    function getTreasury() external view returns (address) {
         return _treasury;
     }
 

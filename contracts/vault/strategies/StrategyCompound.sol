@@ -135,7 +135,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
     /**
      * @dev Claim extra reward of Governace token(COMP).
      */
-    function doClaim() external override whenNotPaused nonReentrant onlyOwner {
+    function doClaim() external whenNotPaused nonReentrant onlyOwner {
         address treasury = _treasury;
 
         require(treasury != address(0), IporErrors.WRONG_ADDRESS);

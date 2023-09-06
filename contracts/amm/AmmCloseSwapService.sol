@@ -877,8 +877,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         if (beneficiary == buyer) {
             wadTransferAmount = wadTransferAmount + wadLiquidationDepositAmount;
         } else {
-            //transfer liquidation deposit amount from AmmTreasury to Liquidator address (beneficiary),
-            // transfer to be made outside this function, to avoid multiple transfers
+            /// @dev transfer liquidation deposit amount from AmmTreasury to Liquidator address (beneficiary),
+            /// transfer to be made outside this function, to avoid multiple transfers
             wadPayoutForLiquidator = wadLiquidationDepositAmount;
         }
 

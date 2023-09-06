@@ -15,6 +15,7 @@ import "../interfaces/IProxyImplementation.sol";
 
 import "../interfaces/IStrategyDsr.sol";
 import "../interfaces/IAssetManagementDsr.sol";
+import "../interfaces/IAssetManagementGov.sol";
 import "../libraries/errors/AssetManagementErrors.sol";
 import "../security/PauseManager.sol";
 import "../libraries/Constants.sol";
@@ -31,6 +32,7 @@ abstract contract AssetManagementCore is
     UUPSUpgradeable,
     IporOwnableUpgradeable,
     IAssetManagementDsr,
+    IAssetManagementGov,
     IProxyImplementation
 {
     using IporContractValidator for address;
