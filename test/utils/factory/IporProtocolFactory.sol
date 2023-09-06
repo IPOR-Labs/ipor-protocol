@@ -388,7 +388,6 @@ contract IporProtocolFactory is Test {
 
         vm.startPrank(address(_owner));
 
-        //        iporProtocol.assetManagement.setAmmTreasury((address(iporProtocol.ammTreasury)));
         iporProtocol.ammTreasury.grantMaxAllowanceForSpender(address(iporProtocol.assetManagement));
 
         iporProtocol.ipToken.setJoseph(address(iporProtocol.router));

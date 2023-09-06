@@ -86,7 +86,6 @@ contract AssetManagementBuilder is Test {
             strategyAaveBuilder.withAssetManagementProxy(builderData.assetManagementProxyAddress);
             MockTestnetStrategy strategyAave = strategyAaveBuilder.build();
             builderData.strategyAave = address(strategyAave);
-
         }
 
         if (builderData.strategyCompound == address(0)) {
@@ -184,7 +183,6 @@ contract AssetManagementBuilder is Test {
     function upgrade() public {
         require(builderData.assetManagementProxyAddress != address(0), "assetManagementProxyAddress is required");
 
-//        vm.startPrank(_owner);
         AssetManagementCore assetManagement = AssetManagementCore(builderData.assetManagementProxyAddress);
 
         address implementation;
@@ -193,31 +191,29 @@ contract AssetManagementBuilder is Test {
             _buildStrategiesForUpgrade();
             implementation = address(_buildAssetManagementImplementation());
         }
-//        vm.stopPrank();
 
         vm.startPrank(_owner);
         assetManagement.upgradeTo(implementation);
 
-
         /// @dev grant max allowance for spender only for test purposes because MockTestnetStrategy are used
         if (builderData.assetType == BuilderUtils.AssetType.DAI) {
-            assetManagement.grantMaxAllowanceForSpender(builderData.asset,builderData.strategyAave);
-            assetManagement.grantMaxAllowanceForSpender(builderData.asset,builderData.strategyCompound);
-            assetManagement.grantMaxAllowanceForSpender(builderData.asset,builderData.strategyDsr);
+            assetManagement.grantMaxAllowanceForSpender(builderData.asset, builderData.strategyAave);
+            assetManagement.grantMaxAllowanceForSpender(builderData.asset, builderData.strategyCompound);
+            assetManagement.grantMaxAllowanceForSpender(builderData.asset, builderData.strategyDsr);
         }
 
         if (builderData.assetType == BuilderUtils.AssetType.USDT) {
-            assetManagement.grantMaxAllowanceForSpender(builderData.asset,builderData.strategyAave);
-            assetManagement.grantMaxAllowanceForSpender(builderData.asset,builderData.strategyCompound);
+            assetManagement.grantMaxAllowanceForSpender(builderData.asset, builderData.strategyAave);
+            assetManagement.grantMaxAllowanceForSpender(builderData.asset, builderData.strategyCompound);
         }
 
         if (builderData.assetType == BuilderUtils.AssetType.USDC) {
-            assetManagement.grantMaxAllowanceForSpender(builderData.asset,builderData.strategyAave);
-            assetManagement.grantMaxAllowanceForSpender(builderData.asset,builderData.strategyCompound);
+            assetManagement.grantMaxAllowanceForSpender(builderData.asset, builderData.strategyAave);
+            assetManagement.grantMaxAllowanceForSpender(builderData.asset, builderData.strategyCompound);
         }
         vm.stopPrank();
 
-
+        delete builderData;
     }
 
     function _buildAssetManagementImplementation() internal returns (address assetManagementImpl) {

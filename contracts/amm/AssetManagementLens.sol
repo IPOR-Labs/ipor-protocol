@@ -51,24 +51,6 @@ contract AssetManagementLens is IAssetManagementLens {
         return IAssetManagement(assetManagementConfiguration.assetManagement).totalBalance();
     }
 
-//    function balanceOfStrategyAave(address asset) external view returns (uint256) {
-//        AssetManagementConfiguration memory assetManagementConfiguration = _getAssetManagementConfiguration(asset);
-//        IAssetManagementInternal assetManagement = IAssetManagementInternal(
-//            assetManagementConfiguration.assetManagement
-//        );
-//        return IStrategy.sol(assetManagement.getStrategyAave()).balanceOf();
-//    }
-//
-//    function balanceOfStrategyCompound(address asset) external view returns (uint256) {
-//        AssetManagementConfiguration memory assetManagementConfiguration = _getAssetManagementConfiguration(asset);
-//        IAssetManagementInternal assetManagement = IAssetManagementInternal(
-//            assetManagementConfiguration.assetManagement
-//        );
-//        return IStrategy.sol(assetManagement.getStrategyCompound()).balanceOf();
-//    }
-
-    //TODO: balance of dsr
-
     function _getAssetManagementConfiguration(
         address asset
     ) internal view returns (AssetManagementConfiguration memory) {

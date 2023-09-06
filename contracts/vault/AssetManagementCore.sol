@@ -20,10 +20,6 @@ import "../libraries/IporContractValidator.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "../security/PauseManager.sol";
 
-interface IAssetCheck {
-    function getAsset() external view returns (address);
-}
-
 abstract contract AssetManagementCore is
     Initializable,
     PausableUpgradeable,
@@ -76,12 +72,12 @@ abstract contract AssetManagementCore is
         uint256 supportedStrategiesVolumeInput,
         uint256 highestApyStrategyArrayIndexInput
     ) {
-        require(_getDecimals() == IERC20MetadataUpgradeable(assetInput).decimals(), IporErrors.WRONG_DECIMALS);
-
         asset = assetInput.checkAddress();
         ammTreasury = ammTreasuryInput.checkAddress();
         supportedStrategiesVolume = supportedStrategiesVolumeInput;
         highestApyStrategyArrayIndex = highestApyStrategyArrayIndexInput;
+
+        require(_getDecimals() == IERC20MetadataUpgradeable(assetInput).decimals(), IporErrors.WRONG_DECIMALS);
     }
 
     function initialize() public initializer {

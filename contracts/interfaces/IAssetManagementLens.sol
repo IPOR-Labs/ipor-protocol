@@ -20,15 +20,4 @@ interface IAssetManagementLens {
     /// @param asset The address of the asset.
     /// @return uint256 The total balance for the specified account, represented in 18 decimals.
     function balanceOfAmmTreasuryInAssetManagement(address asset) external view returns (uint256);
-
-//    /// @notice Get the balance of AAVE strategy in Asset Management module for the given asset.
-//    /// @param asset The address of the asset.
-//    /// @return uint256 The balance of the account in the AAVE protocol.
-//    function balanceOfStrategyAave(address asset) external view returns (uint256);
-//
-//    /// @notice Get the balance of Compound strategy in Asset Management module for the given asset.
-//    /// @param asset The address of the asset.
-//    /// @return uint256 The balance of the account in the Compound protocol.
-//    function balanceOfStrategyCompound(address asset) external view returns (uint256);
-
 }

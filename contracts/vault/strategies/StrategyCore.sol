@@ -21,7 +21,7 @@ abstract contract StrategyCore is
     ReentrancyGuardUpgradeable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-IStrategy,
+    IStrategy,
     IProxyImplementation,
     IIporContractCommonGov
 {

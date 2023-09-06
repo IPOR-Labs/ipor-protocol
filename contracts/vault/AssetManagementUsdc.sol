@@ -6,6 +6,7 @@ import "../libraries/errors/AssetManagementErrors.sol";
 import "./AssetManagementCore.sol";
 
 contract AssetManagementUsdc is AssetManagementCore {
+    using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     uint256 public constant getVersion = 2_000;
@@ -29,35 +30,21 @@ contract AssetManagementUsdc is AssetManagementCore {
             highestApyStrategyArrayIndexInput
         )
     {
-        require(strategyAaveInput != address(0), IporErrors.WRONG_ADDRESS);
-        require(strategyCompoundInput != address(0), IporErrors.WRONG_ADDRESS);
+        strategyAave = strategyAaveInput.checkAddress();
+        strategyCompound = strategyCompoundInput.checkAddress();
 
-        //        require(
-        //            _getDecimals() == IERC20MetadataUpgradeable(IAssetCheck(strategyAaveInput).getAsset()).decimals(),
-        //            IporErrors.WRONG_DECIMALS
-        //        );
-        //
-        //        require(
-        //            _getDecimals() == IERC20MetadataUpgradeable(IAssetCheck(strategyCompoundInput).getAsset()).decimals(),
-        //            IporErrors.WRONG_DECIMALS
-        //        );
-        //
-        //        require(
-        //            _getDecimals() == IERC20MetadataUpgradeable(IAssetCheck(strategyDsrInput).getAsset()).decimals(),
-        //            IporErrors.WRONG_DECIMALS
-        //        );
-        //
-        //        IStrategy strategyAaveObj = IStrategy(strategyAaveInput);
-        //        require(strategyAaveObj.getAsset() == address(assetInput), AssetManagementErrors.ASSET_MISMATCH);
-        //
-        //        IStrategy strategyCompoundObj = IStrategy(strategyCompoundInput);
-        //        require(strategyCompoundObj.getAsset() == address(assetInput), AssetManagementErrors.ASSET_MISMATCH);
+        require(
+            _getDecimals() == IERC20MetadataUpgradeable(IStrategy(strategyAaveInput).asset()).decimals(),
+            IporErrors.WRONG_DECIMALS
+        );
 
-        //        IStrategy.sol strategyDsrObj = IStrategy.sol(strategyDsrInput);
-        //        require(strategyDsrObj.asset() == address(assetInput), AssetManagementErrors.ASSET_MISMATCH);
+        require(
+            _getDecimals() == IERC20MetadataUpgradeable(IStrategy(strategyCompoundInput).asset()).decimals(),
+            IporErrors.WRONG_DECIMALS
+        );
 
-        strategyAave = strategyAaveInput;
-        strategyCompound = strategyCompoundInput;
+        require(IStrategy(strategyAaveInput).asset() == address(assetInput), AssetManagementErrors.ASSET_MISMATCH);
+        require(IStrategy(strategyCompoundInput).asset() == address(assetInput), AssetManagementErrors.ASSET_MISMATCH);
 
         _disableInitializers();
     }
