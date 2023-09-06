@@ -22,29 +22,9 @@ contract AssetManagementUsdt is AssetManagement {
         uint256 highestApyStrategyArrayIndexInput,
         address strategyAaveInput,
         address strategyCompoundInput
-    )
-        AssetManagement(
-            assetInput,
-            ammTreasuryInput,
-            supportedStrategiesVolumeInput,
-            highestApyStrategyArrayIndexInput
-        )
-    {
+    ) AssetManagement(assetInput, ammTreasuryInput, supportedStrategiesVolumeInput, highestApyStrategyArrayIndexInput) {
         strategyAave = strategyAaveInput.checkAddress();
         strategyCompound = strategyCompoundInput.checkAddress();
-
-        require(
-            _getDecimals() == IERC20MetadataUpgradeable(IStrategy(strategyAaveInput).asset()).decimals(),
-            IporErrors.WRONG_DECIMALS
-        );
-
-        require(
-            _getDecimals() == IERC20MetadataUpgradeable(IStrategy(strategyCompoundInput).asset()).decimals(),
-            IporErrors.WRONG_DECIMALS
-        );
-
-        require(IStrategy(strategyAaveInput).asset() == address(assetInput), AssetManagementErrors.ASSET_MISMATCH);
-        require(IStrategy(strategyCompoundInput).asset() == address(assetInput), AssetManagementErrors.ASSET_MISMATCH);
 
         _disableInitializers();
     }

@@ -22,36 +22,10 @@ contract AssetManagementDai is AssetManagement {
         address strategyAaveInput,
         address strategyCompoundInput,
         address strategyDsrInput
-    )
-        AssetManagement(
-            assetInput,
-            ammTreasuryInput,
-            supportedStrategiesVolumeInput,
-            highestApyStrategyArrayIndexInput
-        )
-    {
+    ) AssetManagement(assetInput, ammTreasuryInput, supportedStrategiesVolumeInput, highestApyStrategyArrayIndexInput) {
         strategyAave = strategyAaveInput.checkAddress();
         strategyCompound = strategyCompoundInput.checkAddress();
         strategyDsr = strategyDsrInput.checkAddress();
-
-        require(
-            _getDecimals() == IERC20MetadataUpgradeable(IStrategy(strategyAaveInput).asset()).decimals(),
-            IporErrors.WRONG_DECIMALS
-        );
-
-        require(
-            _getDecimals() == IERC20MetadataUpgradeable(IStrategy(strategyCompoundInput).asset()).decimals(),
-            IporErrors.WRONG_DECIMALS
-        );
-
-        require(
-            _getDecimals() == IERC20MetadataUpgradeable(IStrategy(strategyDsrInput).asset()).decimals(),
-            IporErrors.WRONG_DECIMALS
-        );
-
-        require(IStrategy(strategyAaveInput).asset() == address(assetInput), AssetManagementErrors.ASSET_MISMATCH);
-        require(IStrategy(strategyCompoundInput).asset() == address(assetInput), AssetManagementErrors.ASSET_MISMATCH);
-        require(IStrategy(strategyDsrInput).asset() == address(assetInput), AssetManagementErrors.ASSET_MISMATCH);
 
         _disableInitializers();
     }
