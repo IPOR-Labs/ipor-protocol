@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "./AssetManagementCore.sol";
+import "./AssetManagement.sol";
 
-contract AssetManagementDai is AssetManagementCore {
+contract AssetManagementDai is AssetManagement {
     using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -23,7 +23,7 @@ contract AssetManagementDai is AssetManagementCore {
         address strategyCompoundInput,
         address strategyDsrInput
     )
-        AssetManagementCore(
+        AssetManagement(
             assetInput,
             ammTreasuryInput,
             supportedStrategiesVolumeInput,

@@ -12,7 +12,7 @@ contract AssetManagementProxyImplementationTest is TestCommons {
     AssetBuilder internal _assetBuilder = new AssetBuilder(address(this));
     AssetManagementBuilder internal _assetManagementBuilder = new AssetManagementBuilder(address(this));
 
-    AssetManagementCore internal _assetManagementDai;
+    AssetManagement internal _assetManagementDai;
     MockStrategy internal _strategyAaveDai;
     MockStrategy internal _strategyCompoundDai;
     MockStrategy internal _strategyDsrDai;

@@ -20,7 +20,7 @@ import "../libraries/IporContractValidator.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "../security/PauseManager.sol";
 
-abstract contract AssetManagementCore is
+abstract contract AssetManagement is
     Initializable,
     PausableUpgradeable,
     ReentrancyGuardUpgradeable,

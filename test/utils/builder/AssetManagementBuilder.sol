@@ -157,16 +157,16 @@ contract AssetManagementBuilder is Test {
         }
     }
 
-    function buildEmptyProxy() public returns (AssetManagementCore) {
+    function buildEmptyProxy() public returns (AssetManagement) {
         vm.startPrank(_owner);
         ERC1967Proxy proxy = _constructProxy(address(new EmptyAssetManagementImplementation()));
-        AssetManagementCore assetManagement = AssetManagementCore(address(proxy));
+        AssetManagement assetManagement = AssetManagement(address(proxy));
         vm.stopPrank();
         delete builderData;
         return assetManagement;
     }
 
-    function build() public returns (AssetManagementCore) {
+    function build() public returns (AssetManagement) {
         require(builderData.asset != address(0), "Asset address is not set");
         require(builderData.ammTreasury != address(0), "AmmTreasury address is not set");
         require(builderData.strategyAave != address(0), "Strategy Aave address is not set");
@@ -177,13 +177,13 @@ contract AssetManagementBuilder is Test {
         vm.stopPrank();
 
         delete builderData;
-        return AssetManagementCore(address(proxy));
+        return AssetManagement(address(proxy));
     }
 
     function upgrade() public {
         require(builderData.assetManagementProxyAddress != address(0), "assetManagementProxyAddress is required");
 
-        AssetManagementCore assetManagement = AssetManagementCore(builderData.assetManagementProxyAddress);
+        AssetManagement assetManagement = AssetManagement(builderData.assetManagementProxyAddress);
 
         address implementation;
 

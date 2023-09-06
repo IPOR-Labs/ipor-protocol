@@ -24,7 +24,7 @@ contract AssetManagementPauseManagerTest is Test {
 //
 //    function testShouldEmitPauseGuardianAddedEvent() public {
 //        // given
-//        AssetManagementCore assetManagement = createAssetManagement();
+//        AssetManagement.sol assetManagement = createAssetManagement();
 //
 //        // when & then
 //        vm.startPrank(_owner);
@@ -35,7 +35,7 @@ contract AssetManagementPauseManagerTest is Test {
 //
 //    function testShouldEmitPauseGuardianRemovedEvent() public {
 //        // given
-//        AssetManagementCore assetManagement = createAssetManagement();
+//        AssetManagement.sol assetManagement = createAssetManagement();
 //        vm.startPrank(_owner);
 //        assetManagement.addPauseGuardian(_user1);
 //
@@ -47,7 +47,7 @@ contract AssetManagementPauseManagerTest is Test {
 //
 //    function testShouldNotPauseIfNoPauseGuardianIsSet() public {
 //        // given
-//        AssetManagementCore assetManagement = createAssetManagement();
+//        AssetManagement.sol assetManagement = createAssetManagement();
 //
 //        // when & then
 //        vm.startPrank(_user1);
@@ -57,7 +57,7 @@ contract AssetManagementPauseManagerTest is Test {
 //
 //    function testShouldNotPauseWhenCalledByNonPauseGuardian() public {
 //        // given
-//        AssetManagementCore assetManagement = createAssetManagement();
+//        AssetManagement.sol assetManagement = createAssetManagement();
 //        vm.prank(_owner);
 //        assetManagement.addPauseGuardian(_user1);
 //
@@ -69,7 +69,7 @@ contract AssetManagementPauseManagerTest is Test {
 //
 //    function testShouldPauseWhenCalledByPauseGuardian() public {
 //        // given
-//        AssetManagementCore assetManagement = createAssetManagement();
+//        AssetManagement.sol assetManagement = createAssetManagement();
 //        assertFalse(assetManagement.paused());
 //        vm.prank(_owner);
 //        assetManagement.addPauseGuardian(_user1);
@@ -84,7 +84,7 @@ contract AssetManagementPauseManagerTest is Test {
 //
 //    function testShouldNotPauseWhenCalledByRemovedPauseGuardian() public {
 //        // given
-//        AssetManagementCore assetManagement = createAssetManagement();
+//        AssetManagement.sol assetManagement = createAssetManagement();
 //        assertFalse(assetManagement.paused());
 //        vm.prank(_owner);
 //        assetManagement.addPauseGuardian(_user1);
@@ -102,7 +102,7 @@ contract AssetManagementPauseManagerTest is Test {
 //
 //    function testShouldNotRemovePauseGuardianWhenCalledByNonOwner() public {
 //        // given
-//        AssetManagementCore assetManagement = createAssetManagement();
+//        AssetManagement.sol assetManagement = createAssetManagement();
 //
 //        // when & then
 //        vm.startPrank(_user2);
@@ -112,7 +112,7 @@ contract AssetManagementPauseManagerTest is Test {
 //
 //    function testShouldNotAddPauseGuardianWhenCalledByNonOwner() public {
 //        // given
-//        AssetManagementCore assetManagement = createAssetManagement();
+//        AssetManagement.sol assetManagement = createAssetManagement();
 //
 //        // when & then
 //        vm.startPrank(_user2);
@@ -122,7 +122,7 @@ contract AssetManagementPauseManagerTest is Test {
 //
 //    function testShouldUnpauseWhenCalledByOwner() public {
 //        // given
-//        AssetManagementCore assetManagement = createAssetManagement();
+//        AssetManagement.sol assetManagement = createAssetManagement();
 //        assertFalse(assetManagement.paused());
 //        vm.prank(_owner);
 //        assetManagement.addPauseGuardian(_user1);
@@ -140,7 +140,7 @@ contract AssetManagementPauseManagerTest is Test {
 //
 //    function testShouldNotUnpauseWhenCalledByPauseGuardian() public {
 //        // given
-//        AssetManagementCore assetManagement = createAssetManagement();
+//        AssetManagement.sol assetManagement = createAssetManagement();
 //        assertFalse(assetManagement.paused());
 //        vm.prank(_owner);
 //        assetManagement.addPauseGuardian(_user1);
@@ -159,7 +159,7 @@ contract AssetManagementPauseManagerTest is Test {
 //
 //    function testShouldOwnerCannotPauseWhenNotPauseGuardian() public {
 //        // given
-//        AssetManagementCore assetManagement = createAssetManagement();
+//        AssetManagement.sol assetManagement = createAssetManagement();
 //        assertFalse(assetManagement.paused());
 //
 //        // when & then
@@ -171,7 +171,7 @@ contract AssetManagementPauseManagerTest is Test {
 //
 //    function testShouldPauseGuardianCannotAddPauseGuardian() public {
 //        // given
-//        AssetManagementCore assetManagement = createAssetManagement();
+//        AssetManagement.sol assetManagement = createAssetManagement();
 //        vm.prank(_owner);
 //        assetManagement.addPauseGuardian(_user1);
 //
@@ -183,7 +183,7 @@ contract AssetManagementPauseManagerTest is Test {
 //
 //    function testShouldPauseGuardianCannotRemovePauseGuardian() public {
 //        // given
-//        AssetManagementCore assetManagement = createAssetManagement();
+//        AssetManagement.sol assetManagement = createAssetManagement();
 //        vm.startPrank(_owner);
 //        assetManagement.addPauseGuardian(_user1);
 //        assetManagement.addPauseGuardian(_user2);
@@ -208,7 +208,7 @@ contract AssetManagementPauseManagerTest is Test {
 //            );
 //    }
 //
-//    function createAssetManagement() internal returns (AssetManagementCore) {
+//    function createAssetManagement() internal returns (AssetManagement.sol) {
 //        vm.startPrank(_owner);
 //        MockTestnetStrategy strategy = createStrategy();
 //        AssetManagementUsdc implementation = new AssetManagementUsdc();

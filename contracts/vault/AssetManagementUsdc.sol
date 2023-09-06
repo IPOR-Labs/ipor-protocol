@@ -3,9 +3,9 @@ pragma solidity 0.8.20;
 
 import "../libraries/errors/AssetManagementErrors.sol";
 
-import "./AssetManagementCore.sol";
+import "./AssetManagement.sol";
 
-contract AssetManagementUsdc is AssetManagementCore {
+contract AssetManagementUsdc is AssetManagement {
     using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -23,7 +23,7 @@ contract AssetManagementUsdc is AssetManagementCore {
         address strategyAaveInput,
         address strategyCompoundInput
     )
-        AssetManagementCore(
+        AssetManagement(
             assetInput,
             ammTreasuryInput,
             supportedStrategiesVolumeInput,

@@ -13,7 +13,7 @@ contract AssetManagementMaxApyStrategyTest is TestCommons {
     AssetBuilder internal _assetBuilder = new AssetBuilder(address(this));
     AssetManagementBuilder internal _assetManagementBuilder = new AssetManagementBuilder(address(this));
 
-    AssetManagementCore internal _assetManagementDai;
+    AssetManagement internal _assetManagementDai;
     MockStrategy internal _strategyAaveDai;
     MockStrategy internal _strategyCompoundDai;
     MockStrategy internal _strategyDsrDai;
@@ -52,7 +52,7 @@ contract AssetManagementMaxApyStrategyTest is TestCommons {
         _strategyAaveDai.setApy(100000);
         _strategyCompoundDai.setApy(99999);
         // when
-        AssetManagementCore.StrategyData[] memory sortedStrategies = _assetManagementDai.getSortedStrategiesWithApy();
+        AssetManagement.StrategyData[] memory sortedStrategies = _assetManagementDai.getSortedStrategiesWithApy();
         // then
         assertEq(sortedStrategies[2].strategy, address(_strategyAaveDai));
     }
@@ -62,7 +62,7 @@ contract AssetManagementMaxApyStrategyTest is TestCommons {
         _strategyAaveDai.setApy(10);
         _strategyCompoundDai.setApy(10);
         // when
-        AssetManagementCore.StrategyData[] memory sortedStrategies = _assetManagementDai.getSortedStrategiesWithApy();
+        AssetManagement.StrategyData[] memory sortedStrategies = _assetManagementDai.getSortedStrategiesWithApy();
         // then
         assertEq(sortedStrategies[2].strategy, address(_strategyAaveDai));
     }
@@ -72,7 +72,7 @@ contract AssetManagementMaxApyStrategyTest is TestCommons {
         _strategyAaveDai.setApy(1000);
         _strategyCompoundDai.setApy(99999);
         // when
-        AssetManagementCore.StrategyData[] memory sortedStrategies = _assetManagementDai.getSortedStrategiesWithApy();
+        AssetManagement.StrategyData[] memory sortedStrategies = _assetManagementDai.getSortedStrategiesWithApy();
         // then
         assertEq(sortedStrategies[2].strategy, address(_strategyCompoundDai));
     }
