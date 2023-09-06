@@ -49,7 +49,7 @@ abstract contract AssetManagementCore is
     /// @dev deprecated
     address internal _ivTokenDeprecated;
     /// @dev deprecated
-    address internal _miltonDeprecated;
+    address internal _AmmTreasuryDeprecated;
     /// @dev deprecated
     address internal _strategyAaveDeprecated;
     /// @dev deprecated
@@ -216,11 +216,11 @@ abstract contract AssetManagementCore is
             }
         }
 
-        /// @dev Always all collected assets on Stanley are withdrawn to Milton
+        /// @dev Always all collected assets on AssetManagement are withdrawn to AmmTreasury
         uint256 withdrawnAssetAmount = IERC20Upgradeable(asset).balanceOf(address(this));
 
         if (withdrawnAssetAmount > 0) {
-            /// @dev Always transfer all assets from Stanley to Milton
+            /// @dev Always transfer all assets from AssetManagement to AmmTreasury
             IERC20Upgradeable(asset).safeTransfer(_msgSender(), withdrawnAssetAmount);
 
             withdrawnAmount = IporMath.convertToWad(withdrawnAssetAmount, _getDecimals());

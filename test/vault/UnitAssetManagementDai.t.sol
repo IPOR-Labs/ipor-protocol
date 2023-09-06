@@ -7,7 +7,7 @@ import "../TestCommons.sol";
 import "./MockStrategyWithTransfers.sol";
 import "../../contracts/vault/AssetManagementDai.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "./MockMiltonForStanley.sol";
+import "./MockAmmTreasuryForAssetManagement.sol";
 
 contract UnitAssetManagementDaiTest is TestCommons {
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -22,7 +22,7 @@ contract UnitAssetManagementDaiTest is TestCommons {
     function setUp() public {
         _admin = vm.rememberKey(1);
         (_dai, , ) = _getStables();
-        _ammTreasury = address(new MockMiltonForStanley(address(_dai)));
+        _ammTreasury = address(new MockAmmTreasuryForAssetManagement(address(_dai)));
         _strategyAave = new MockStrategyWithTransfers();
         _strategyAave.setAsset(address(_dai));
         _strategyCompound = new MockStrategyWithTransfers();

@@ -4,11 +4,11 @@ pragma solidity 0.8.20;
 /// @title Interface for interaction with standalone IPOR smart contract by DAO government with common methods.
 interface IIporContractCommonGov {
     /// @notice Pauses current smart contract. It can be executed only by the Owner.
-    /// @dev Emits {Paused} event from Stanley.
+    /// @dev Emits {Paused} event from AssetManagement.
     function pause() external;
 
     /// @notice Unpauses current smart contract. It can be executed only by the Owner
-    /// @dev Emits {Unpaused} event from Stanley.
+    /// @dev Emits {Unpaused} event from AssetManagement.
     function unpause() external;
 
     /// @notice Checks if given account is a pause guardian.
