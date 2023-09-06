@@ -6,11 +6,11 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 import "../../interfaces/IStrategyCompound.sol";
+import "../../libraries/IporContractValidator.sol";
 import "../interfaces/compound/CErc20.sol";
 import "../interfaces/compound/ComptrollerInterface.sol";
 import "../../libraries/math/IporMath.sol";
 import "./StrategyCore.sol";
-import "../../libraries/IporContractValidator.sol";
 
 contract StrategyCompound is StrategyCore, IStrategyCompound {
     using IporContractValidator for address;

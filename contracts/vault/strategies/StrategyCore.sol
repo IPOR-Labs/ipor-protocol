@@ -7,13 +7,13 @@ import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "../../interfaces/IProxyImplementation.sol";
+import "../../interfaces/IIporContractCommonGov.sol";
+import "../../interfaces/IStrategy.sol";
 import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/errors/AssetManagementErrors.sol";
+import "../../libraries/IporContractValidator.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 import "../../security/PauseManager.sol";
-import "../../interfaces/IStrategy.sol";
-import "../../libraries/IporContractValidator.sol";
-import "../../interfaces/IIporContractCommonGov.sol";
 
 abstract contract StrategyCore is
     Initializable,

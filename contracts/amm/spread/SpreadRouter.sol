@@ -11,9 +11,9 @@ import "../../amm/spread/ISpread60DaysLens.sol";
 import "../../amm/spread/ISpread90DaysLens.sol";
 import "../../amm/spread/ISpreadStorageLens.sol";
 import "../../amm/spread/ISpreadCloseSwapService.sol";
+import "../../libraries/IporContractValidator.sol";
 import "../../amm/spread/SpreadAccessControl.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
-import "../../libraries/IporContractValidator.sol";
 
 /// @title Single entry point for all spread models
 contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl, IProxyImplementation {

@@ -6,6 +6,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../../interfaces/IStrategyAave.sol";
+import "../../libraries/IporContractValidator.sol";
 import "../interfaces/aave/AaveLendingPoolV2.sol";
 import "../interfaces/aave/AaveLendingPoolProviderV2.sol";
 import "../interfaces/aave/AaveIncentivesInterface.sol";
@@ -13,7 +14,6 @@ import "../interfaces/aave/StakedAaveInterface.sol";
 import "../../libraries/math/IporMath.sol";
 import "../../libraries/errors/AssetManagementErrors.sol";
 import "./StrategyCore.sol";
-import "../../libraries/IporContractValidator.sol";
 
 contract StrategyAave is StrategyCore, IStrategyAave {
     using IporContractValidator for address;

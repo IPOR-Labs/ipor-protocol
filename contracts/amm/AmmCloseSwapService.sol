@@ -11,14 +11,14 @@ import "../interfaces/IAmmCloseSwapLens.sol";
 import "../interfaces/IAmmCloseSwapService.sol";
 import "./spread/ISpreadCloseSwapService.sol";
 import "../libraries/errors/IporErrors.sol";
+import "../libraries/math/IporMath.sol";
+import "../libraries/IporContractValidator.sol";
 import "../governance/AmmConfigurationManager.sol";
 import "../security/OwnerManager.sol";
-import "../libraries/math/IporMath.sol";
 import "../libraries/AmmLib.sol";
 import "../libraries/AssetManagementLogic.sol";
 import "../libraries/RiskManagementLogic.sol";
 import "./libraries/IporSwapLogic.sol";
-import "../libraries/IporContractValidator.sol";
 import "./libraries/types/AmmInternalTypes.sol";
 
 contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {

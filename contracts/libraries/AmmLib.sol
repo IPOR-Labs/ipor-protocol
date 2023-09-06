@@ -9,10 +9,10 @@ import "../interfaces/IIporOracle.sol";
 import "../interfaces/IAmmStorage.sol";
 import "../interfaces/IAssetManagement.sol";
 import "../interfaces/IIporRiskManagementOracle.sol";
-import "./Constants.sol";
-import "./math/IporMath.sol";
 import "./errors/IporErrors.sol";
 import "./errors/AmmErrors.sol";
+import "./Constants.sol";
+import "./math/IporMath.sol";
 import "../amm/libraries/SoapIndicatorLogic.sol";
 
 /// @title AMM basic logic library

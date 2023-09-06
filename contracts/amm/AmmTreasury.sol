@@ -11,12 +11,12 @@ import "../interfaces/IAmmTreasury.sol";
 import "../interfaces/IAmmStorage.sol";
 import "../interfaces/IAssetManagement.sol";
 import "../interfaces/IProxyImplementation.sol";
+import "../interfaces/IIporContractCommonGov.sol";
 import "../libraries/Constants.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/IporContractValidator.sol";
 import "../security/PauseManager.sol";
 import "../security/IporOwnableUpgradeable.sol";
-import "../interfaces/IIporContractCommonGov.sol";
 
 contract AmmTreasury is
     Initializable,

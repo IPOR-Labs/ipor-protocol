@@ -3,13 +3,13 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 import "../interfaces/IAmmSwapsLens.sol";
+import "../libraries/IporContractValidator.sol";
 import "./spread/ISpread28DaysLens.sol";
 import "./spread/ISpread60DaysLens.sol";
 import "./spread/ISpread90DaysLens.sol";
 import "../libraries/AmmLib.sol";
 import "../libraries/RiskManagementLogic.sol";
 import "./libraries/IporSwapLogic.sol";
-import "../libraries/IporContractValidator.sol";
 
 contract AmmSwapsLens is IAmmSwapsLens {
     using Address for address;

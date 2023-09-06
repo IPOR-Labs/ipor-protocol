@@ -6,10 +6,10 @@ import "../../amm/spread/ISpread60Days.sol";
 import "../../amm/spread/ISpread60DaysLens.sol";
 import "../../libraries/errors/IporOracleErrors.sol";
 import "../../libraries/errors/IporErrors.sol";
+import "../../libraries/IporContractValidator.sol";
 import "../../amm/spread/DemandSpreadLibs.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
 import "../../amm/spread/OfferedRateCalculationLibs.sol";
-import "../../libraries/IporContractValidator.sol";
 
 contract Spread60Days is ISpread60Days, ISpread60DaysLens {
     using IporContractValidator for address;

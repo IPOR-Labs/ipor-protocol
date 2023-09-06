@@ -5,11 +5,11 @@ import "../../interfaces/IAmmStorage.sol";
 import "../../amm/spread/ISpreadCloseSwapService.sol";
 import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/errors/AmmErrors.sol";
+import "../../libraries/IporContractValidator.sol";
 import "../../amm/libraries/types/AmmInternalTypes.sol";
 import "../../amm/libraries/IporSwapLogic.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
 import "../../amm/spread/CalculateTimeWeightedNotionalLibs.sol";
-import "../../libraries/IporContractValidator.sol";
 
 contract SpreadCloseSwapService is ISpreadCloseSwapService {
     using IporContractValidator for address;

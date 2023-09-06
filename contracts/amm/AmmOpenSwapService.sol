@@ -16,11 +16,10 @@ import "../libraries/math/IporMath.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/AmmErrors.sol";
 import "../libraries/errors/AmmErrors.sol";
+import "../libraries/IporContractValidator.sol";
 import "../libraries/RiskManagementLogic.sol";
 import "./libraries/types/AmmInternalTypes.sol";
 import "./libraries/IporSwapLogic.sol";
-
-import "../libraries/IporContractValidator.sol";
 
 contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
     using Address for address;

@@ -9,6 +9,7 @@ import "../interfaces/types/IporTypes.sol";
 import "../interfaces/types/IporOracleTypes.sol";
 import "../interfaces/IIporOracle.sol";
 import "../interfaces/IProxyImplementation.sol";
+import "../interfaces/IIporContractCommonGov.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/IporOracleErrors.sol";
 import "../libraries/Constants.sol";
@@ -17,7 +18,6 @@ import "../libraries/math/InterestRates.sol";
 import "../security/PauseManager.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/IporLogic.sol";
-import "../interfaces/IIporContractCommonGov.sol";
 
 /**
  * @title IPOR Index Oracle Contract

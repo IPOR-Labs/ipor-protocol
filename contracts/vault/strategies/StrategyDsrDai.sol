@@ -10,13 +10,13 @@ import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../../libraries/errors/AssetManagementErrors.sol";
 import "../../libraries/math/IporMath.sol";
-import "../../security/IporOwnableUpgradeable.sol";
 import "../interfaces/dsr/IPot.sol";
 import "../interfaces/dsr/ISavingsDai.sol";
 import "../../interfaces/IStrategy.sol";
 import "../../interfaces/IProxyImplementation.sol";
-import "../../security/PauseManager.sol";
 import "../../interfaces/IIporContractCommonGov.sol";
+import "../../security/PauseManager.sol";
+import "../../security/IporOwnableUpgradeable.sol";
 
 contract StrategyDsrDai is
     Initializable,
@@ -24,7 +24,7 @@ contract StrategyDsrDai is
     ReentrancyGuardUpgradeable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-IStrategy,
+    IStrategy,
     IProxyImplementation,
     IIporContractCommonGov
 {

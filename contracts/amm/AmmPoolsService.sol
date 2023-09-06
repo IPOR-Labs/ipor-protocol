@@ -13,10 +13,10 @@ import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/AmmErrors.sol";
 import "../libraries/errors/AmmPoolsErrors.sol";
 import "../libraries/math/IporMath.sol";
+import "../libraries/IporContractValidator.sol";
 import "../libraries/AssetManagementLogic.sol";
 import "../libraries/AmmLib.sol";
 import "../governance/AmmConfigurationManager.sol";
-import "../libraries/IporContractValidator.sol";
 
 contract AmmPoolsService is IAmmPoolsService {
     using IporContractValidator for address;

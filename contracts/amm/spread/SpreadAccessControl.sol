@@ -3,9 +3,9 @@ pragma solidity 0.8.20;
 
 import "../../libraries/errors/AmmErrors.sol";
 import "../../libraries/errors/IporErrors.sol";
+import "../../libraries/IporContractValidator.sol";
 import "../../security/PauseManager.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
-import "../../libraries/IporContractValidator.sol";
 
 /// @title Contract responsible for managing access control for the Spread Router
 contract SpreadAccessControl {
