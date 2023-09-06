@@ -13,9 +13,10 @@ import "../../libraries/math/IporMath.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 import "../interfaces/dsr/IPot.sol";
 import "../interfaces/dsr/ISavingsDai.sol";
-import "../../interfaces/IStrategyDsr.sol";
+import "../../interfaces/IStrategy.sol";
 import "../../interfaces/IProxyImplementation.sol";
 import "../../security/PauseManager.sol";
+import "../../interfaces/IIporContractCommonGov.sol";
 
 contract StrategyDsrDai is
     Initializable,
@@ -23,8 +24,9 @@ contract StrategyDsrDai is
     ReentrancyGuardUpgradeable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-    IStrategyDsr,
-    IProxyImplementation
+IStrategy,
+    IProxyImplementation,
+    IIporContractCommonGov
 {
     using SafeCast for uint256;
     using SafeERC20Upgradeable for IERC20Upgradeable;

@@ -9,13 +9,14 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../interfaces/IAmmTreasury.sol";
 import "../interfaces/IAmmStorage.sol";
-import "../interfaces/IAssetManagementDsr.sol";
+import "../interfaces/IAssetManagement.sol";
 import "../interfaces/IProxyImplementation.sol";
 import "../libraries/Constants.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/IporContractValidator.sol";
 import "../security/PauseManager.sol";
 import "../security/IporOwnableUpgradeable.sol";
+import "../interfaces/IIporContractCommonGov.sol";
 
 contract AmmTreasury is
     Initializable,
@@ -24,7 +25,8 @@ contract AmmTreasury is
     UUPSUpgradeable,
     IporOwnableUpgradeable,
     IAmmTreasury,
-    IProxyImplementation
+    IProxyImplementation,
+    IIporContractCommonGov
 {
     using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -94,18 +96,22 @@ contract AmmTreasury is
     /// @notice Joseph deposits to AssetManagement asset amount from AmmTreasury.
     /// @param wadAssetAmount underlying token amount represented in 18 decimals
     function depositToAssetManagementInternal(uint256 wadAssetAmount) external onlyRouter nonReentrant whenNotPaused {
-        (uint256 vaultBalance, uint256 depositedAmount) = IAssetManagementDsr(_assetManagement).deposit(wadAssetAmount);
+        (uint256 vaultBalance, uint256 depositedAmount) = IAssetManagement(_assetManagement).deposit(wadAssetAmount);
         IAmmStorage(_ammStorage).updateStorageWhenDepositToAssetManagement(depositedAmount, vaultBalance);
     }
 
     //@param wadAssetAmount underlying token amount represented in 18 decimals
-    function withdrawFromAssetManagementInternal(uint256 wadAssetAmount) external nonReentrant onlyRouter whenNotPaused {
-        (uint256 withdrawnAmount, uint256 vaultBalance) = IAssetManagementDsr(_assetManagement).withdraw(wadAssetAmount);
+    function withdrawFromAssetManagementInternal(
+        uint256 wadAssetAmount
+    ) external nonReentrant onlyRouter whenNotPaused {
+        (uint256 withdrawnAmount, uint256 vaultBalance) = IAssetManagement(_assetManagement).withdraw(
+            wadAssetAmount
+        );
         IAmmStorage(_ammStorage).updateStorageWhenWithdrawFromAssetManagement(withdrawnAmount, vaultBalance);
     }
 
     function withdrawAllFromAssetManagementInternal() external nonReentrant onlyRouter whenNotPaused {
-        (uint256 withdrawnAmount, uint256 vaultBalance) = IAssetManagementDsr(_assetManagement).withdrawAll();
+        (uint256 withdrawnAmount, uint256 vaultBalance) = IAssetManagement(_assetManagement).withdrawAll();
         IAmmStorage(_ammStorage).updateStorageWhenWithdrawFromAssetManagement(withdrawnAmount, vaultBalance);
     }
 

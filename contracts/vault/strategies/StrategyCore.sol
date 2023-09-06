@@ -11,8 +11,9 @@ import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/errors/AssetManagementErrors.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 import "../../security/PauseManager.sol";
-import "../../interfaces/IStrategyDsr.sol";
+import "../../interfaces/IStrategy.sol";
 import "../../libraries/IporContractValidator.sol";
+import "../../interfaces/IIporContractCommonGov.sol";
 
 abstract contract StrategyCore is
     Initializable,
@@ -20,8 +21,9 @@ abstract contract StrategyCore is
     ReentrancyGuardUpgradeable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-    IStrategyDsr,
-    IProxyImplementation
+IStrategy,
+    IProxyImplementation,
+    IIporContractCommonGov
 {
     using IporContractValidator for address;
 

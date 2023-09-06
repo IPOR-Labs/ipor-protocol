@@ -17,6 +17,7 @@ import "../libraries/math/InterestRates.sol";
 import "../security/PauseManager.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/IporLogic.sol";
+import "../interfaces/IIporContractCommonGov.sol";
 
 /**
  * @title IPOR Index Oracle Contract
@@ -29,7 +30,8 @@ contract IporOracle is
     UUPSUpgradeable,
     IporOwnableUpgradeable,
     IIporOracle,
-    IProxyImplementation
+    IProxyImplementation,
+    IIporContractCommonGov
 {
     using SafeCast for uint256;
     using IporLogic for IporOracleTypes.IPOR;

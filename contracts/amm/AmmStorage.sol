@@ -17,6 +17,7 @@ import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/types/AmmInternalTypes.sol";
 import "./libraries/types/StorageInternalTypes.sol";
 import "./libraries/SoapIndicatorRebalanceLogic.sol";
+import "../interfaces/IIporContractCommonGov.sol";
 
 //@dev all stored values related to tokens are in 18 decimals.
 contract AmmStorage is
@@ -25,7 +26,8 @@ contract AmmStorage is
     UUPSUpgradeable,
     IporOwnableUpgradeable,
     IAmmStorage,
-    IProxyImplementation
+    IProxyImplementation,
+    IIporContractCommonGov
 {
     using IporContractValidator for address;
     using SafeCast for uint256;

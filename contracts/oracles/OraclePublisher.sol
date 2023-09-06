@@ -11,6 +11,7 @@ import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/IporOracleErrors.sol";
 import "../security/PauseManager.sol";
 import "../security/IporOwnableUpgradeable.sol";
+import "../interfaces/IIporContractCommonGov.sol";
 
 /**
  * @title IPOR Oracle Publisher contract
@@ -23,7 +24,8 @@ contract OraclePublisher is
     UUPSUpgradeable,
     IporOwnableUpgradeable,
     IOraclePublisher,
-    IProxyImplementation
+    IProxyImplementation,
+    IIporContractCommonGov
 {
     using Address for address;
 

@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.20;
 
-import "../../../contracts/interfaces/IStrategyDsr.sol";
+import "../../../contracts/interfaces/IStrategy.sol";
+import "../../../contracts/interfaces/IIporContractCommonGov.sol";
 
 // simple mock for total _balance tests
-contract MockStrategy is IStrategyDsr {
+contract MockStrategy is IStrategy, IIporContractCommonGov {
     address private _assetManagement;
     uint256 private _balance;
     address private _shareTokens;

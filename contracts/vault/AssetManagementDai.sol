@@ -54,7 +54,7 @@ contract AssetManagementDai is AssetManagementCore {
         //        IStrategy strategyCompoundObj = IStrategy(strategyCompoundInput);
         //        require(strategyCompoundObj.getAsset() == address(assetInput), AssetManagementErrors.ASSET_MISMATCH);
 
-        //        IStrategyDsr strategyDsrObj = IStrategyDsr(strategyDsrInput);
+        //        IStrategy.sol strategyDsrObj = IStrategy.sol(strategyDsrInput);
         //        require(strategyDsrObj.asset() == address(assetInput), AssetManagementErrors.ASSET_MISMATCH);
 
         strategyAave = strategyAaveInput;
@@ -71,10 +71,10 @@ contract AssetManagementDai is AssetManagementCore {
     function _getStrategiesData() internal view override returns (StrategyData[] memory sortedStrategies) {
         sortedStrategies = new StrategyData[](supportedStrategiesVolume);
         sortedStrategies[0].strategy = strategyAave;
-        sortedStrategies[0].balance = IStrategyDsr(strategyAave).balanceOf();
+        sortedStrategies[0].balance = IStrategy(strategyAave).balanceOf();
         sortedStrategies[1].strategy = strategyCompound;
-        sortedStrategies[1].balance = IStrategyDsr(strategyCompound).balanceOf();
+        sortedStrategies[1].balance = IStrategy(strategyCompound).balanceOf();
         sortedStrategies[2].strategy = strategyDsr;
-        sortedStrategies[2].balance = IStrategyDsr(strategyDsr).balanceOf();
+        sortedStrategies[2].balance = IStrategy(strategyDsr).balanceOf();
     }
 }

@@ -3,10 +3,11 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
-import "../../contracts/interfaces/IStrategyDsr.sol";
+import "../../contracts/interfaces/IStrategy.sol";
+import "../../contracts/interfaces/IIporContractCommonGov.sol";
 
 // simple mock for total _balance tests
-contract MockStrategyWithTransfers is IStrategyDsr {
+contract MockStrategyWithTransfers is IStrategy, IIporContractCommonGov {
     address private _stanley;
     uint256 private _balance;
     uint256 private _apy;

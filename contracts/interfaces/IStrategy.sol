@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-/// @title Interface for interaction with  Stanley's strategy.
+/// @title Interface for interaction with  Asset Management's strategy.
 /// @notice Strategy represents an external DeFi protocol and acts as and wrapper that standarizes the API of the external protocol.
-interface IStrategyDsr {
+interface IStrategy {
     /// @notice Returns current version of strategy
     /// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
     /// @return current Strategy's version
@@ -35,26 +35,4 @@ interface IStrategyDsr {
     /// @param amount asset amount represented in 18 decimals.
     /// @return withdrawnAmount The final amount withdrawn, represented in 18 decimals
     function withdraw(uint256 amount) external returns (uint256 withdrawnAmount);
-
-    /// @notice Pauses current smart contract, it can be executed only by the Owner
-    /// @dev Emits {Paused} event from Strategy implementation.
-    function pause() external;
-
-    /// @notice Unpauses current smart contract, it can be executed only by the Owner
-    /// @dev Emits {Unpaused} event from Strategy implementation.
-    function unpause() external;
-
-    /// @notice Checks if given account is a pause guardian.
-    /// @param account The address of the account to be checked.
-    /// @return true if account is a pause guardian.
-    function isPauseGuardian(address account) external view returns (bool);
-
-    /// @notice Adds a pause guardian to the list of guardians. Function available only for the Owner.
-    /// @param guardian The address of the pause guardian to be added.
-    function addPauseGuardian(address guardian) external;
-
-    /// @notice Removes a pause guardian from the list of guardians. Function available only for the Owner.
-    /// @param guardian The address of the pause guardian to be removed.
-    function removePauseGuardian(address guardian) external;
-
 }

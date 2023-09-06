@@ -13,9 +13,9 @@ import "../libraries/IporContractValidator.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "../interfaces/IProxyImplementation.sol";
 
-import "../interfaces/IStrategyDsr.sol";
-import "../interfaces/IAssetManagementDsr.sol";
-import "../interfaces/IAssetManagementGov.sol";
+import "../interfaces/IStrategy.sol";
+import "../interfaces/IAssetManagement.sol";
+import "../interfaces/IIporContractCommonGov.sol";
 import "../libraries/errors/AssetManagementErrors.sol";
 import "../security/PauseManager.sol";
 import "../libraries/Constants.sol";
@@ -31,8 +31,8 @@ abstract contract AssetManagementCore is
     ReentrancyGuardUpgradeable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-    IAssetManagementDsr,
-    IAssetManagementGov,
+    IAssetManagement,
+    IIporContractCommonGov,
     IProxyImplementation
 {
     using IporContractValidator for address;
@@ -113,7 +113,7 @@ abstract contract AssetManagementCore is
         address wasDepositedToStrategy = address(0x0);
 
         for (uint256 i; i < supportedStrategiesVolume; ++i) {
-            try IStrategyDsr(sortedStrategies[highestApyStrategyArrayIndex - i].strategy).deposit(amount) returns (
+            try IStrategy(sortedStrategies[highestApyStrategyArrayIndex - i].strategy).deposit(amount) returns (
                 uint256 tryDepositedAmount
             ) {
                 require(
@@ -157,12 +157,12 @@ abstract contract AssetManagementCore is
         sortedStrategies = _getSortedStrategiesWithApy(_getStrategiesData());
     }
 
-    function grantMaxAllowanceForSpender(address asset, address spender) external onlyOwner {
-        IERC20Upgradeable(asset).safeApprove(spender, Constants.MAX_VALUE);
+    function grantMaxAllowanceForSpender(address assetInput, address spender) external onlyOwner {
+        IERC20Upgradeable(assetInput).safeApprove(spender, Constants.MAX_VALUE);
     }
 
-    function revokeAllowanceForSpender(address asset, address spender) external onlyOwner {
-        IERC20Upgradeable(asset).safeApprove(spender, 0);
+    function revokeAllowanceForSpender(address assetInput, address spender) external onlyOwner {
+        IERC20Upgradeable(assetInput).safeApprove(spender, 0);
     }
 
     function pause() external override onlyPauseGuardian {
@@ -198,7 +198,7 @@ abstract contract AssetManagementCore is
 
         for (uint256 i; i < supportedStrategiesVolume; ++i) {
             try
-                IStrategyDsr(sortedStrategies[i].strategy).withdraw(
+                IStrategy(sortedStrategies[i].strategy).withdraw(
                     sortedStrategies[i].balance <= amountToWithdraw ? sortedStrategies[i].balance : amountToWithdraw
                 )
             returns (uint256 tryWithdrawnAmount) {
@@ -246,7 +246,7 @@ abstract contract AssetManagementCore is
     ) internal view returns (StrategyData[] memory) {
         uint256 length = strategies.length;
         for (uint256 i; i < length; ++i) {
-            strategies[i].apy = IStrategyDsr(strategies[i].strategy).getApy();
+            strategies[i].apy = IStrategy(strategies[i].strategy).getApy();
         }
         return _sortApy(strategies);
     }

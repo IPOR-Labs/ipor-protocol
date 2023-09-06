@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 /// @title Interface for interaction with Stanley DSR smart contract.
 /// @notice Stanley is responsible for delegating assets stored in Milton to Asset Management and forward to money market where they can earn interest.
-interface IAssetManagementDsr {
+interface IAssetManagement {
     /// @notice Gets total balance of Milton (AmmTreasury), transferred assets to Stanley.
     /// @return Total balance for specific account given as a parameter, represented in 18 decimals.
     function totalBalance() external view returns (uint256);

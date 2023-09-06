@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 
-/// @title Interface for interaction with Stanley DSR smart contract.
-/// @notice Stanley is responsible for delegating assets stored in Milton to Asset Management and forward to money market where they can earn interest.
-interface IAssetManagementGov {
+/// @title Interface for interaction with standalone IPOR smart contract by DAO government with common methods.
+interface IIporContractCommonGov {
     /// @notice Pauses current smart contract. It can be executed only by the Owner.
     /// @dev Emits {Paused} event from Stanley.
     function pause() external;

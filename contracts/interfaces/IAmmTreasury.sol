@@ -50,25 +50,4 @@ interface IAmmTreasury {
     /// @notice sets the zero allowance for a given spender. Action available only for AmmTreasury contract Owner.
     /// @param spender account which will have rights to transfer ERC20 underlying assets on behalf of AmmTreasury
     function revokeAllowanceForSpender(address spender) external;
-
-    /// @notice Pauses current smart contract, it can be executed only by the AmmTreasury contract Pause Guardian
-    /// @dev Emits {Paused} event from AmmTreasury.
-    function pause() external;
-
-    /// @notice Unpauses current smart contract, it can be executed only by the AmmTreasury contract Owner
-    /// @dev Emits {Unpaused} event from AmmTreasury.
-    function unpause() external;
-
-    /// @notice Checks if given account is a pause guardian.
-    /// @param account The address of the account to be checked.
-    /// @return true if account is a pause guardian.
-    function isPauseGuardian(address account) external view returns (bool);
-
-    /// @notice Adds a pause guardian to the list of guardians. Function available only for the Owner.
-    /// @param guardian The address of the pause guardian to be added.
-    function addPauseGuardian(address guardian) external;
-
-    /// @notice Removes a pause guardian from the list of guardians. Function available only for the Owner.
-    /// @param guardian The address of the pause guardian to be removed.
-    function removePauseGuardian(address guardian) external;
 }

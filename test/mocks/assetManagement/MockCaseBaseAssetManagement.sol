@@ -6,9 +6,9 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "../../../contracts/libraries/errors/IporErrors.sol";
 import "../../../contracts/libraries/math/IporMath.sol";
-import "../../../contracts/interfaces/IAssetManagementDsr.sol";
+import "../../../contracts/interfaces/IAssetManagement.sol";
 
-contract MockCaseBaseAssetManagement is IAssetManagementDsr {
+contract MockCaseBaseAssetManagement is IAssetManagement {
     using SafeERC20 for IERC20;
     IERC20 private _asset;
 

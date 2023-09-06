@@ -12,7 +12,7 @@ import "../../TestForkCommons.sol";
 //import "../../../../contracts/interfaces/IStanley.sol";
 //import "../../../../contracts/interfaces/IJosephInternal.sol";
 //import "../../../../contracts/interfaces/IStanleyInternal.sol";
-//import "../../../../contracts/interfaces/IStrategyDsr.sol";
+//import "../../../../contracts/interfaces/IStrategy.sol.sol";
 //import "../../../../contracts/interfaces/IStrategyCompound.sol";
 //import "../../../../contracts/interfaces/IStrategyAave.sol";
 //import "../../../../contracts/interfaces/IIporOracle.sol";
@@ -66,19 +66,19 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         _init();
 
         vm.prank(owner);
-        IStrategyDsr(strategyAaveProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
 
         vm.prank(owner);
-        IStrategyDsr(strategyCompoundProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
 
         vm.prank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, 10, 500);
 
         vm.prank(owner);
-        IStrategyDsr(strategyAaveProxyDai).pause();
+        IIporContractCommonGov(strategyAaveProxyDai).pause();
 
         vm.prank(owner);
-        IStrategyDsr(strategyCompoundProxyDai).pause();
+        IIporContractCommonGov(strategyCompoundProxyDai).pause();
 
         deal(address(DAI), _user, 1_000_000e18);
 
@@ -88,9 +88,9 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         IAmmPoolsService(iporProtocolRouterProxy).provideLiquidityDai(_user, 70_000 * 1e18);
         vm.stopPrank();
 
-        uint256 strategyDsrProxyDaiBalanceBeforeRedeem = IStrategyDsr(strategyDsrProxyDai).balanceOf();
-        uint256 strategyAaveBalanceBeforeRedeem = IStrategyDsr(strategyAaveProxyDai).balanceOf();
-        uint256 strategyCompoundBalanceBeforeRedeem = IStrategyDsr(strategyCompoundProxyDai).balanceOf();
+        uint256 strategyDsrProxyDaiBalanceBeforeRedeem = IStrategy(strategyDsrProxyDai).balanceOf();
+        uint256 strategyAaveBalanceBeforeRedeem = IStrategy(strategyAaveProxyDai).balanceOf();
+        uint256 strategyCompoundBalanceBeforeRedeem = IStrategy(strategyCompoundProxyDai).balanceOf();
 
         uint256 ipTokenAmount = IIpToken(ipDAI).balanceOf(_user);
 
@@ -100,9 +100,9 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         vm.prank(_user);
         IAmmPoolsService(iporProtocolRouterProxy).redeemFromAmmPoolDai(_user, ipTokenAmount);
 
-        uint256 strategyDsrProxyDaiBalanceAfterRedeem = IStrategyDsr(strategyDsrProxyDai).balanceOf();
-        uint256 strategyAaveBalanceAfterRedeem = IStrategyDsr(strategyAaveProxyDai).balanceOf();
-        uint256 strategyCompoundBalanceAfterRedeem = IStrategyDsr(strategyCompoundProxyDai).balanceOf();
+        uint256 strategyDsrProxyDaiBalanceAfterRedeem = IStrategy(strategyDsrProxyDai).balanceOf();
+        uint256 strategyAaveBalanceAfterRedeem = IStrategy(strategyAaveProxyDai).balanceOf();
+        uint256 strategyCompoundBalanceAfterRedeem = IStrategy(strategyCompoundProxyDai).balanceOf();
 
         assertGt(strategyDsrProxyDaiBalanceBeforeRedeem, strategyDsrProxyDaiBalanceAfterRedeem, "dsr great than");
 
@@ -115,19 +115,19 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         _init();
 
         vm.prank(owner);
-        IStrategyDsr(strategyAaveProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
 
         vm.prank(owner);
-        IStrategyDsr(strategyCompoundProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
 
         vm.prank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, 50, 500);
 
         vm.prank(owner);
-        IStrategyDsr(strategyAaveProxyDai).pause();
+        IIporContractCommonGov(strategyAaveProxyDai).pause();
 
         vm.prank(owner);
-        IStrategyDsr(strategyCompoundProxyDai).pause();
+        IIporContractCommonGov(strategyCompoundProxyDai).pause();
 
         deal(address(DAI), _user, 100_000e18);
 
@@ -141,11 +141,11 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         vm.stopPrank();
 
         vm.prank(owner);
-        IStrategyDsr(strategyCompoundProxyDai).unpause();
+        IIporContractCommonGov(strategyCompoundProxyDai).unpause();
 
-        uint256 strategyDsrProxyDaiBalanceBeforeRedeem = IStrategyDsr(strategyDsrProxyDai).balanceOf();
-        uint256 strategyAaveBalanceBeforeRedeem = IStrategyDsr(strategyAaveProxyDai).balanceOf();
-        uint256 strategyCompoundBalanceBeforeRedeem = IStrategyDsr(strategyCompoundProxyDai).balanceOf();
+        uint256 strategyDsrProxyDaiBalanceBeforeRedeem = IStrategy(strategyDsrProxyDai).balanceOf();
+        uint256 strategyAaveBalanceBeforeRedeem = IStrategy(strategyAaveProxyDai).balanceOf();
+        uint256 strategyCompoundBalanceBeforeRedeem = IStrategy(strategyCompoundProxyDai).balanceOf();
 
         uint256 ipTokenAmountBefore = IIpToken(ipDAI).balanceOf(_user);
 
@@ -159,9 +159,9 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
 
         uint256 assetBalanceAfter = IERC20Upgradeable(DAI).balanceOf(_user);
 
-        uint256 strategyDsrProxyDaiBalanceAfterRedeem = IStrategyDsr(strategyDsrProxyDai).balanceOf();
-        uint256 strategyAaveBalanceAfterRedeem = IStrategyDsr(strategyAaveProxyDai).balanceOf();
-        uint256 strategyCompoundBalanceAfterRedeem = IStrategyDsr(strategyCompoundProxyDai).balanceOf();
+        uint256 strategyDsrProxyDaiBalanceAfterRedeem = IStrategy(strategyDsrProxyDai).balanceOf();
+        uint256 strategyAaveBalanceAfterRedeem = IStrategy(strategyAaveProxyDai).balanceOf();
+        uint256 strategyCompoundBalanceAfterRedeem = IStrategy(strategyCompoundProxyDai).balanceOf();
 
         assertEq(ipTokenAmountAfter, 0, "ipTokenAmount");
 
@@ -177,19 +177,19 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         _init();
 
         vm.prank(owner);
-        IStrategyDsr(strategyAaveProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
 
         vm.prank(owner);
-        IStrategyDsr(strategyCompoundProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
 
         vm.prank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, 50, 500);
 
         vm.prank(owner);
-        IStrategyDsr(strategyAaveProxyDai).pause();
+        IIporContractCommonGov(strategyAaveProxyDai).pause();
 
         vm.prank(owner);
-        IStrategyDsr(strategyCompoundProxyDai).pause();
+        IIporContractCommonGov(strategyCompoundProxyDai).pause();
 
         deal(address(DAI), _user, 100_000e18);
 
@@ -198,13 +198,13 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         IAmmPoolsService(iporProtocolRouterProxy).provideLiquidityDai(_user, 70_000 * 1e18);
         vm.stopPrank();
 
-        uint256 strategyDsrProxyDaiBalanceBefore = IStrategyDsr(strategyDsrProxyDai).balanceOf();
-        uint256 apyBefore = IStrategyDsr(strategyDsrProxyDai).getApy();
+        uint256 strategyDsrProxyDaiBalanceBefore = IStrategy(strategyDsrProxyDai).balanceOf();
+        uint256 apyBefore = IStrategy(strategyDsrProxyDai).getApy();
 
         vm.warp(block.timestamp + 365 days);
 
         //when
-        uint256 strategyDsrProxyDaiBalanceAfter = IStrategyDsr(strategyDsrProxyDai).balanceOf();
+        uint256 strategyDsrProxyDaiBalanceAfter = IStrategy(strategyDsrProxyDai).balanceOf();
 
         //then
 
@@ -223,23 +223,23 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         _init();
 
         vm.prank(owner);
-        IStrategyDsr(strategyAaveProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
 
         vm.prank(owner);
-        IStrategyDsr(strategyCompoundProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
 
         vm.prank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, 50, 500);
 
         vm.prank(owner);
-        IStrategyDsr(strategyAaveProxyDai).pause();
+        IIporContractCommonGov(strategyAaveProxyDai).pause();
 
         vm.prank(owner);
-        IStrategyDsr(strategyCompoundProxyDai).pause();
+        IIporContractCommonGov(strategyCompoundProxyDai).pause();
 
         deal(address(DAI), _user, 1000_000 * 1e18);
 
-        uint256 strategyDsrProxyDaiBalanceBefore = IStrategyDsr(strategyDsrProxyDai).balanceOf();
+        uint256 strategyDsrProxyDaiBalanceBefore = IStrategy(strategyDsrProxyDai).balanceOf();
 
         //when
         vm.startPrank(_user);
@@ -248,7 +248,7 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         vm.stopPrank();
 
         //then
-        uint256 strategyDsrProxyDaiBalanceAfter = IStrategyDsr(strategyDsrProxyDai).balanceOf();
+        uint256 strategyDsrProxyDaiBalanceAfter = IStrategy(strategyDsrProxyDai).balanceOf();
 
         assertGt(strategyDsrProxyDaiBalanceAfter, strategyDsrProxyDaiBalanceBefore, "dsr balance");
     }
@@ -258,19 +258,19 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         _init();
 
         vm.prank(owner);
-        IStrategyDsr(strategyAaveProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
 
         vm.prank(owner);
-        IStrategyDsr(strategyCompoundProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
 
         vm.prank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, 50, 500);
 
         vm.prank(owner);
-        IStrategyDsr(strategyAaveProxyDai).pause();
+        IIporContractCommonGov(strategyAaveProxyDai).pause();
 
         vm.prank(owner);
-        IStrategyDsr(strategyCompoundProxyDai).pause();
+        IIporContractCommonGov(strategyCompoundProxyDai).pause();
 
         deal(address(DAI), _user, 100_000e18);
 
@@ -279,7 +279,7 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         IAmmPoolsService(iporProtocolRouterProxy).provideLiquidityDai(_user, 70_000 * 1e18);
         vm.stopPrank();
 
-        uint256 strategyDsrProxyDaiBalanceBeforeRedeem = IStrategyDsr(strategyDsrProxyDai).balanceOf();
+        uint256 strategyDsrProxyDaiBalanceBeforeRedeem = IStrategy(strategyDsrProxyDai).balanceOf();
 
         uint256 ipTokenAmount = IIpToken(ipDAI).balanceOf(_user);
 
@@ -289,7 +289,7 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         IAmmPoolsService(iporProtocolRouterProxy).redeemFromAmmPoolDai(_user, ipTokenAmount);
 
         //then
-        uint256 strategyDsrProxyDaiBalanceAfterRedeem = IStrategyDsr(strategyDsrProxyDai).balanceOf();
+        uint256 strategyDsrProxyDaiBalanceAfterRedeem = IStrategy(strategyDsrProxyDai).balanceOf();
 
         assertGt(strategyDsrProxyDaiBalanceBeforeRedeem, strategyDsrProxyDaiBalanceAfterRedeem, "dsr balance");
     }
@@ -299,19 +299,19 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         _init();
 
         vm.prank(owner);
-        IStrategyDsr(strategyAaveProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
 
         vm.prank(owner);
-        IStrategyDsr(strategyCompoundProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
 
         vm.prank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, 50, 500);
 
         vm.prank(owner);
-        IStrategyDsr(strategyAaveProxyDai).pause();
+        IIporContractCommonGov(strategyAaveProxyDai).pause();
 
         vm.prank(owner);
-        IStrategyDsr(strategyCompoundProxyDai).pause();
+        IIporContractCommonGov(strategyCompoundProxyDai).pause();
 
         deal(address(DAI), _user, 100_000e18);
 
@@ -320,16 +320,16 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         IAmmPoolsService(iporProtocolRouterProxy).provideLiquidityDai(_user, 70_000 * 1e18);
         vm.stopPrank();
 
-        uint256 strategyDsrProxyDaiBalanceBefore = IStrategyDsr(strategyDsrProxyDai).balanceOf();
-        uint256 strategyCompoundBalanceBefore = IStrategyDsr(strategyCompoundProxyDai).balanceOf();
-        uint256 strategyAaveBalanceBefore = IStrategyDsr(strategyAaveProxyDai).balanceOf();
+        uint256 strategyDsrProxyDaiBalanceBefore = IStrategy(strategyDsrProxyDai).balanceOf();
+        uint256 strategyCompoundBalanceBefore = IStrategy(strategyCompoundProxyDai).balanceOf();
+        uint256 strategyAaveBalanceBefore = IStrategy(strategyAaveProxyDai).balanceOf();
         uint256 ammBalanceBefore = IERC20Upgradeable(DAI).balanceOf(address(miltonProxyDai));
 
         vm.prank(owner);
-        IStrategyDsr(strategyAaveProxyDai).unpause();
+        IIporContractCommonGov(strategyAaveProxyDai).unpause();
 
         vm.prank(owner);
-        IStrategyDsr(strategyCompoundProxyDai).unpause();
+        IIporContractCommonGov(strategyCompoundProxyDai).unpause();
 
         vm.warp(block.timestamp + 1 days);
 
@@ -338,9 +338,9 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(DAI);
 
         //then
-        uint256 strategyDsrProxyDaiBalanceAfter = IStrategyDsr(strategyDsrProxyDai).balanceOf();
-        uint256 strategyCompoundBalanceAfter = IStrategyDsr(strategyCompoundProxyDai).balanceOf();
-        uint256 strategyAaveBalanceAfter = IStrategyDsr(strategyAaveProxyDai).balanceOf();
+        uint256 strategyDsrProxyDaiBalanceAfter = IStrategy(strategyDsrProxyDai).balanceOf();
+        uint256 strategyCompoundBalanceAfter = IStrategy(strategyCompoundProxyDai).balanceOf();
+        uint256 strategyAaveBalanceAfter = IStrategy(strategyAaveProxyDai).balanceOf();
         uint256 ammBalanceAfter = IERC20Upgradeable(DAI).balanceOf(address(miltonProxyDai));
 
         assertEq(strategyDsrProxyDaiBalanceAfter, 0, "dsr balance");
@@ -361,19 +361,19 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         _init();
 
         vm.prank(owner);
-        IStrategyDsr(strategyAaveProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
 
         vm.prank(owner);
-        IStrategyDsr(strategyCompoundProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
 
         vm.prank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, 50, 500);
 
         vm.prank(owner);
-        IStrategyDsr(strategyAaveProxyDai).pause();
+        IIporContractCommonGov(strategyAaveProxyDai).pause();
 
         vm.prank(owner);
-        IStrategyDsr(strategyCompoundProxyDai).pause();
+        IIporContractCommonGov(strategyCompoundProxyDai).pause();
 
         deal(address(DAI), _user, 100_000e18);
 
@@ -385,7 +385,7 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         IAmmPoolsService(iporProtocolRouterProxy).provideLiquidityDai(_user, 10_000 * 1e18);
         vm.stopPrank();
 
-        uint256 strategyDsrProxyDaiBalanceBefore = IStrategyDsr(strategyDsrProxyDai).balanceOf();
+        uint256 strategyDsrProxyDaiBalanceBefore = IStrategy(strategyDsrProxyDai).balanceOf();
 
         vm.prank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).addAppointedToRebalanceInAmm(DAI, _user);
@@ -396,7 +396,7 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         IAmmPoolsService(iporProtocolRouterProxy).rebalanceBetweenAmmTreasuryAndAssetManagement(DAI);
 
         //then
-        uint256 strategyDsrProxyDaiBalanceAfter = IStrategyDsr(strategyDsrProxyDai).balanceOf();
+        uint256 strategyDsrProxyDaiBalanceAfter = IStrategy(strategyDsrProxyDai).balanceOf();
         assertGe(strategyDsrProxyDaiBalanceAfter, strategyDsrProxyDaiBalanceBefore, "dsr balance");
     }
 
@@ -435,25 +435,25 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         vm.startPrank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(DAI);
 
-        IStrategyDsr(strategyAaveProxyDai).addPauseGuardian(owner);
-        IStrategyDsr(strategyCompoundProxyDai).addPauseGuardian(owner);
-        IStrategyDsr(strategyDsrProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyDsrProxyDai).addPauseGuardian(owner);
 
-        IStrategyDsr(strategyAaveProxyDai).pause();
-        IStrategyDsr(strategyCompoundProxyDai).pause();
+        IIporContractCommonGov(strategyAaveProxyDai).pause();
+        IIporContractCommonGov(strategyCompoundProxyDai).pause();
 
         IAmmGovernanceService(iporProtocolRouterProxy).depositToAssetManagement(DAI, 100 * 1e18);
 
-        IStrategyDsr(strategyAaveProxyDai).unpause();
-        IStrategyDsr(strategyDsrProxyDai).pause();
+        IIporContractCommonGov(strategyAaveProxyDai).unpause();
+        IIporContractCommonGov(strategyDsrProxyDai).pause();
 
         IAmmGovernanceService(iporProtocolRouterProxy).depositToAssetManagement(
             DAI,
             IERC20Upgradeable(DAI).balanceOf(miltonProxyDai) - 2e18
         );
 
-        IStrategyDsr(strategyAaveProxyDai).pause();
-        IStrategyDsr(strategyDsrProxyDai).unpause();
+        IIporContractCommonGov(strategyAaveProxyDai).pause();
+        IIporContractCommonGov(strategyDsrProxyDai).unpause();
 
         vm.stopPrank();
         /// @dev End - of preparation.
@@ -504,24 +504,24 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         vm.startPrank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(DAI);
 
-        IStrategyDsr(strategyAaveProxyDai).addPauseGuardian(owner);
-        IStrategyDsr(strategyCompoundProxyDai).addPauseGuardian(owner);
-        IStrategyDsr(strategyDsrProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyDsrProxyDai).addPauseGuardian(owner);
 
-        IStrategyDsr(strategyAaveProxyDai).pause();
-        IStrategyDsr(strategyDsrProxyDai).pause();
+        IIporContractCommonGov(strategyAaveProxyDai).pause();
+        IIporContractCommonGov(strategyDsrProxyDai).pause();
 
         /// @dev deposit only to Compound
         IAmmGovernanceService(iporProtocolRouterProxy).depositToAssetManagement(DAI, totalAmount);
 
-        IStrategyDsr(strategyDsrProxyDai).unpause();
-        IStrategyDsr(strategyCompoundProxyDai).pause();
+        IIporContractCommonGov(strategyDsrProxyDai).unpause();
+        IIporContractCommonGov(strategyCompoundProxyDai).pause();
 
         /// @dev deposit only to DSR
         IAmmGovernanceService(iporProtocolRouterProxy).depositToAssetManagement(DAI, totalAmount);
 
-        IStrategyDsr(strategyAaveProxyDai).unpause();
-        IStrategyDsr(strategyDsrProxyDai).pause();
+        IIporContractCommonGov(strategyAaveProxyDai).unpause();
+        IIporContractCommonGov(strategyDsrProxyDai).pause();
 
         // @dev most of assets transferred to Aaave
         IAmmGovernanceService(iporProtocolRouterProxy).depositToAssetManagement(
@@ -529,15 +529,15 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
             IERC20Upgradeable(DAI).balanceOf(miltonProxyDai) - 2e18
         );
 
-        IStrategyDsr(strategyAaveProxyDai).pause();
-        IStrategyDsr(strategyCompoundProxyDai).unpause();
-        IStrategyDsr(strategyDsrProxyDai).unpause();
+        IIporContractCommonGov(strategyAaveProxyDai).pause();
+        IIporContractCommonGov(strategyCompoundProxyDai).unpause();
+        IIporContractCommonGov(strategyDsrProxyDai).unpause();
 
         vm.stopPrank();
         /// @dev End - of preparation.
 
-        uint256 strategyDsrProxyDaiBalanceBeforeClose = IStrategyDsr(strategyDsrProxyDai).balanceOf();
-        uint256 strategyCompoundBalanceBeforeClose = IStrategyDsr(strategyCompoundProxyDai).balanceOf();
+        uint256 strategyDsrProxyDaiBalanceBeforeClose = IStrategy(strategyDsrProxyDai).balanceOf();
+        uint256 strategyCompoundBalanceBeforeClose = IStrategy(strategyCompoundProxyDai).balanceOf();
 
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = swapId;
@@ -548,8 +548,8 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(_user, swapPfIds, swapRfIds);
 
         //then
-        uint256 strategyDsrProxyDaiBalanceAfterClose = IStrategyDsr(strategyDsrProxyDai).balanceOf();
-        uint256 strategyCompoundBalanceAfterClose = IStrategyDsr(strategyCompoundProxyDai).balanceOf();
+        uint256 strategyDsrProxyDaiBalanceAfterClose = IStrategy(strategyDsrProxyDai).balanceOf();
+        uint256 strategyCompoundBalanceAfterClose = IStrategy(strategyCompoundProxyDai).balanceOf();
 
         assertLt(strategyDsrProxyDaiBalanceAfterClose, strategyDsrProxyDaiBalanceBeforeClose, "dsr balance");
         assertLt(strategyCompoundBalanceAfterClose, strategyCompoundBalanceBeforeClose, "compound balance");
@@ -607,24 +607,24 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         vm.startPrank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(DAI);
 
-        IStrategyDsr(strategyAaveProxyDai).addPauseGuardian(owner);
-        IStrategyDsr(strategyCompoundProxyDai).addPauseGuardian(owner);
-        IStrategyDsr(strategyDsrProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyDsrProxyDai).addPauseGuardian(owner);
 
-        IStrategyDsr(strategyCompoundProxyDai).pause();
-        IStrategyDsr(strategyDsrProxyDai).pause();
+        IIporContractCommonGov(strategyCompoundProxyDai).pause();
+        IIporContractCommonGov(strategyDsrProxyDai).pause();
 
         /// @dev deposit only to Aave
         IAmmGovernanceService(iporProtocolRouterProxy).depositToAssetManagement(DAI, 2 * totalAmount);
 
-        IStrategyDsr(strategyDsrProxyDai).unpause();
-        IStrategyDsr(strategyAaveProxyDai).pause();
+        IIporContractCommonGov(strategyDsrProxyDai).unpause();
+        IIporContractCommonGov(strategyAaveProxyDai).pause();
 
         /// @dev deposit only to DSR
         IAmmGovernanceService(iporProtocolRouterProxy).depositToAssetManagement(DAI, 2 * totalAmount);
 
-        IStrategyDsr(strategyCompoundProxyDai).unpause();
-        IStrategyDsr(strategyDsrProxyDai).pause();
+        IIporContractCommonGov(strategyCompoundProxyDai).unpause();
+        IIporContractCommonGov(strategyDsrProxyDai).pause();
 
         // @dev most of assets transferred to Compound
         IAmmGovernanceService(iporProtocolRouterProxy).depositToAssetManagement(
@@ -632,15 +632,15 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
             IERC20Upgradeable(DAI).balanceOf(miltonProxyDai) - 2e18
         );
 
-        IStrategyDsr(strategyAaveProxyDai).unpause();
-        IStrategyDsr(strategyCompoundProxyDai).pause();
-        IStrategyDsr(strategyDsrProxyDai).unpause();
+        IIporContractCommonGov(strategyAaveProxyDai).unpause();
+        IIporContractCommonGov(strategyCompoundProxyDai).pause();
+        IIporContractCommonGov(strategyDsrProxyDai).unpause();
 
         vm.stopPrank();
         /// @dev End - of preparation.
 
-        uint256 strategyDsrProxyDaiBalanceBeforeClose = IStrategyDsr(strategyDsrProxyDai).balanceOf();
-        uint256 strategyAaveBalanceBeforeClose = IStrategyDsr(strategyAaveProxyDai).balanceOf();
+        uint256 strategyDsrProxyDaiBalanceBeforeClose = IStrategy(strategyDsrProxyDai).balanceOf();
+        uint256 strategyAaveBalanceBeforeClose = IStrategy(strategyAaveProxyDai).balanceOf();
 
         uint256[] memory swapPfIds = new uint256[](2);
         swapPfIds[0] = swapId1;
@@ -656,8 +656,8 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(_user, swapPfIds, swapRfIds);
 
         //then
-        uint256 strategyDsrProxyDaiBalanceAfterClose = IStrategyDsr(strategyDsrProxyDai).balanceOf();
-        uint256 strategyAaveBalanceAfterClose = IStrategyDsr(strategyAaveProxyDai).balanceOf();
+        uint256 strategyDsrProxyDaiBalanceAfterClose = IStrategy(strategyDsrProxyDai).balanceOf();
+        uint256 strategyAaveBalanceAfterClose = IStrategy(strategyAaveProxyDai).balanceOf();
 
         assertEq(strategyDsrProxyDaiBalanceAfterClose, 0, "dsr balance");
         assertLt(strategyAaveBalanceAfterClose, strategyAaveBalanceBeforeClose, "aave balance");
