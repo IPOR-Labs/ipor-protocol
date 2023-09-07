@@ -264,7 +264,7 @@ contract CalculateWeightedNotionalLibsTest is TestCommons {
         );
     }
 
-    function testShouldReturnWeightedNotional() public {
+    function testShouldReturnWeightedNotionalWhenCalculationFor90DaysTenor() public {
         // given
         uint256 timestamp = 120 days;
         vm.warp(timestamp);
@@ -315,7 +315,7 @@ contract CalculateWeightedNotionalLibsTest is TestCommons {
 
         // when
         (uint256 timeWeightedNotionalPayFixed, uint256 timeWeightedNotionalReceiveFixed) = CalculateTimeWeightedNotionalLibs
-            .getTimeWeightedNotional(storageIds, maturities);
+            .getTimeWeightedNotional(storageIds, maturities, 90 days);
 
         // then
 
@@ -381,6 +381,248 @@ contract CalculateWeightedNotionalLibsTest is TestCommons {
             timeWeightedNotionalReceiveFixed28DaysResult +
                 timeWeightedNotionalReceiveFixed60DaysResult +
                 timeWeightedNotionalReceiveFixed90DaysResult,
+            "timeWeightedNotionalReceiveFixed should be equal to timeWeightedNotionalReceiveFixed28DaysResult + timeWeightedNotionalReceiveFixed90DaysResult"
+        );
+    }
+
+    function testShouldReturnWeightedNotionalWhenCalculationFor60DaysTenor() public {
+        // given
+        uint256 timestamp = 120 days;
+        vm.warp(timestamp);
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional28Days = _getWeightedNotionalMemory(
+            1,
+            SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai
+        );
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional60Days = _getWeightedNotionalMemory(
+            2,
+            SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysDai
+        );
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional90Days = _getWeightedNotionalMemory(
+            3,
+            SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysDai
+        );
+
+        weightedNotional28Days.lastUpdateTimePayFixed = timestamp - 10 days;
+        weightedNotional28Days.lastUpdateTimeReceiveFixed = timestamp - 10 days;
+        weightedNotional60Days.lastUpdateTimePayFixed = timestamp - 10 days;
+        weightedNotional60Days.lastUpdateTimeReceiveFixed = timestamp - 10 days;
+        weightedNotional90Days.lastUpdateTimePayFixed = timestamp - 10 days;
+        weightedNotional90Days.lastUpdateTimeReceiveFixed = timestamp - 10 days;
+
+        SpreadStorageLibs.saveTimeWeightedNotional(
+            SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai,
+            weightedNotional28Days
+        );
+
+        SpreadStorageLibs.saveTimeWeightedNotional(
+            SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysDai,
+            weightedNotional60Days
+        );
+
+        SpreadStorageLibs.saveTimeWeightedNotional(
+            SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysDai,
+            weightedNotional90Days
+        );
+
+        SpreadStorageLibs.StorageId[] memory storageIds = new SpreadStorageLibs.StorageId[](3);
+        storageIds[0] = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai;
+        storageIds[1] = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysDai;
+        storageIds[2] = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysDai;
+
+        uint256[] memory maturities = new uint256[](3);
+        maturities[0] = 28 days;
+        maturities[1] = 60 days;
+        maturities[2] = 90 days;
+
+        // when
+        (uint256 timeWeightedNotionalPayFixed, uint256 timeWeightedNotionalReceiveFixed) = CalculateTimeWeightedNotionalLibs
+            .getTimeWeightedNotional(storageIds, maturities, 60 days);
+
+        // then
+
+        uint256 timeWeightedNotionalPayFixed28DaysResult = CalculateTimeWeightedNotionalLibs.calculateTimeWeightedNotional(
+            weightedNotional28Days.timeWeightedNotionalPayFixed,
+            10 days,
+            28 days
+        );
+        uint256 timeWeightedNotionalPayFixed60DaysResult = CalculateTimeWeightedNotionalLibs.calculateTimeWeightedNotional(
+            weightedNotional60Days.timeWeightedNotionalPayFixed,
+            10 days,
+            60 days
+        );
+
+        uint256 timeWeightedNotionalPayFixed90DaysResult = CalculateTimeWeightedNotionalLibs.calculateTimeWeightedNotional(
+            weightedNotional90Days.timeWeightedNotionalPayFixed,
+            10 days,
+            90 days
+        );
+        uint256 timeWeightedNotionalReceiveFixed28DaysResult = CalculateTimeWeightedNotionalLibs.calculateTimeWeightedNotional(
+            weightedNotional28Days.timeWeightedNotionalReceiveFixed,
+            10 days,
+            28 days
+        );
+        uint256 timeWeightedNotionalReceiveFixed60DaysResult = CalculateTimeWeightedNotionalLibs.calculateTimeWeightedNotional(
+            weightedNotional60Days.timeWeightedNotionalReceiveFixed,
+            10 days,
+            60 days
+        );
+
+        uint256 timeWeightedNotionalReceiveFixed90DaysResult = CalculateTimeWeightedNotionalLibs.calculateTimeWeightedNotional(
+            weightedNotional90Days.timeWeightedNotionalReceiveFixed,
+            10 days,
+            90 days
+        );
+
+        assertTrue(
+            timeWeightedNotionalPayFixed <
+            weightedNotional28Days.timeWeightedNotionalPayFixed +
+            weightedNotional60Days.timeWeightedNotionalPayFixed +
+            weightedNotional90Days.timeWeightedNotionalPayFixed,
+            "timeWeightedNotionalPayFixed should be less than weightedNotional28Days + weightedNotional90Days"
+        );
+
+        assertEq(
+            timeWeightedNotionalPayFixed,
+            timeWeightedNotionalPayFixed28DaysResult +
+            timeWeightedNotionalPayFixed60DaysResult +
+            weightedNotional90Days.timeWeightedNotionalPayFixed,
+            "timeWeightedNotionalPayFixed should be equal to timeWeightedNotionalPayFixed28DaysResult + timeWeightedNotionalPayFixed90DaysResult"
+        );
+
+        assertTrue(
+            timeWeightedNotionalReceiveFixed <
+            weightedNotional28Days.timeWeightedNotionalReceiveFixed +
+            weightedNotional60Days.timeWeightedNotionalReceiveFixed +
+            weightedNotional90Days.timeWeightedNotionalReceiveFixed,
+            "timeWeightedNotionalReceiveFixed should be less than weightedNotional28Days + weightedNotional90Days"
+        );
+
+        assertEq(
+            timeWeightedNotionalReceiveFixed,
+            timeWeightedNotionalReceiveFixed28DaysResult +
+            timeWeightedNotionalReceiveFixed60DaysResult +
+            weightedNotional90Days.timeWeightedNotionalReceiveFixed,
+            "timeWeightedNotionalReceiveFixed should be equal to timeWeightedNotionalReceiveFixed28DaysResult + timeWeightedNotionalReceiveFixed90DaysResult"
+        );
+    }
+
+    function testShouldReturnWeightedNotionalWhenCalculationFor28DaysTenor() public {
+        // given
+        uint256 timestamp = 120 days;
+        vm.warp(timestamp);
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional28Days = _getWeightedNotionalMemory(
+            1,
+            SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai
+        );
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional60Days = _getWeightedNotionalMemory(
+            2,
+            SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysDai
+        );
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional90Days = _getWeightedNotionalMemory(
+            3,
+            SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysDai
+        );
+
+        weightedNotional28Days.lastUpdateTimePayFixed = timestamp - 10 days;
+        weightedNotional28Days.lastUpdateTimeReceiveFixed = timestamp - 10 days;
+        weightedNotional60Days.lastUpdateTimePayFixed = timestamp - 10 days;
+        weightedNotional60Days.lastUpdateTimeReceiveFixed = timestamp - 10 days;
+        weightedNotional90Days.lastUpdateTimePayFixed = timestamp - 10 days;
+        weightedNotional90Days.lastUpdateTimeReceiveFixed = timestamp - 10 days;
+
+        SpreadStorageLibs.saveTimeWeightedNotional(
+            SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai,
+            weightedNotional28Days
+        );
+
+        SpreadStorageLibs.saveTimeWeightedNotional(
+            SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysDai,
+            weightedNotional60Days
+        );
+
+        SpreadStorageLibs.saveTimeWeightedNotional(
+            SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysDai,
+            weightedNotional90Days
+        );
+
+        SpreadStorageLibs.StorageId[] memory storageIds = new SpreadStorageLibs.StorageId[](3);
+        storageIds[0] = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai;
+        storageIds[1] = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysDai;
+        storageIds[2] = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysDai;
+
+        uint256[] memory maturities = new uint256[](3);
+        maturities[0] = 28 days;
+        maturities[1] = 60 days;
+        maturities[2] = 90 days;
+
+        // when
+        (uint256 timeWeightedNotionalPayFixed, uint256 timeWeightedNotionalReceiveFixed) = CalculateTimeWeightedNotionalLibs
+            .getTimeWeightedNotional(storageIds, maturities, 28 days);
+
+        // then
+
+        uint256 timeWeightedNotionalPayFixed28DaysResult = CalculateTimeWeightedNotionalLibs.calculateTimeWeightedNotional(
+            weightedNotional28Days.timeWeightedNotionalPayFixed,
+            10 days,
+            28 days
+        );
+        uint256 timeWeightedNotionalPayFixed60DaysResult = CalculateTimeWeightedNotionalLibs.calculateTimeWeightedNotional(
+            weightedNotional60Days.timeWeightedNotionalPayFixed,
+            10 days,
+            60 days
+        );
+
+        uint256 timeWeightedNotionalPayFixed90DaysResult = CalculateTimeWeightedNotionalLibs.calculateTimeWeightedNotional(
+            weightedNotional90Days.timeWeightedNotionalPayFixed,
+            10 days,
+            90 days
+        );
+        uint256 timeWeightedNotionalReceiveFixed28DaysResult = CalculateTimeWeightedNotionalLibs.calculateTimeWeightedNotional(
+            weightedNotional28Days.timeWeightedNotionalReceiveFixed,
+            10 days,
+            28 days
+        );
+        uint256 timeWeightedNotionalReceiveFixed60DaysResult = CalculateTimeWeightedNotionalLibs.calculateTimeWeightedNotional(
+            weightedNotional60Days.timeWeightedNotionalReceiveFixed,
+            10 days,
+            60 days
+        );
+
+        uint256 timeWeightedNotionalReceiveFixed90DaysResult = CalculateTimeWeightedNotionalLibs.calculateTimeWeightedNotional(
+            weightedNotional90Days.timeWeightedNotionalReceiveFixed,
+            10 days,
+            90 days
+        );
+
+        assertTrue(
+            timeWeightedNotionalPayFixed <
+            weightedNotional28Days.timeWeightedNotionalPayFixed +
+            weightedNotional60Days.timeWeightedNotionalPayFixed +
+            weightedNotional90Days.timeWeightedNotionalPayFixed,
+            "timeWeightedNotionalPayFixed should be less than weightedNotional28Days + weightedNotional90Days"
+        );
+
+        assertEq(
+            timeWeightedNotionalPayFixed,
+            timeWeightedNotionalPayFixed28DaysResult +
+            weightedNotional60Days.timeWeightedNotionalPayFixed +
+            weightedNotional90Days.timeWeightedNotionalPayFixed,
+            "timeWeightedNotionalPayFixed should be equal to timeWeightedNotionalPayFixed28DaysResult + timeWeightedNotionalPayFixed90DaysResult"
+        );
+
+        assertTrue(
+            timeWeightedNotionalReceiveFixed <
+            weightedNotional28Days.timeWeightedNotionalReceiveFixed +
+            weightedNotional60Days.timeWeightedNotionalReceiveFixed +
+            weightedNotional90Days.timeWeightedNotionalReceiveFixed,
+            "timeWeightedNotionalReceiveFixed should be less than weightedNotional28Days + weightedNotional90Days"
+        );
+
+        assertEq(
+            timeWeightedNotionalReceiveFixed,
+            timeWeightedNotionalReceiveFixed28DaysResult +
+            weightedNotional60Days.timeWeightedNotionalReceiveFixed +
+            weightedNotional90Days.timeWeightedNotionalReceiveFixed,
             "timeWeightedNotionalReceiveFixed should be equal to timeWeightedNotionalReceiveFixed28DaysResult + timeWeightedNotionalReceiveFixed90DaysResult"
         );
     }

@@ -146,7 +146,8 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
             maxLpCollateralRatioPerLegRate: spreadInputs.maxLpCollateralRatioPerLegRate,
             tenorsInSeconds: new uint256[](3),
             timeWeightedNotionalStorageIds: new SpreadStorageLibs.StorageId[](3),
-            timeWeightedNotionalStorageId: SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai
+            timeWeightedNotionalStorageId: SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai,
+            calculationForTenorInSeconds: 28 days
         });
 
         inputData.tenorsInSeconds[0] = 28 days;
