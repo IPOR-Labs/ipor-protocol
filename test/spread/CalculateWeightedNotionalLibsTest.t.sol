@@ -102,7 +102,7 @@ contract CalculateWeightedNotionalLibsTest is TestCommons {
 
         newSwapNotional = newSwapNotional * 1e18;
 
-        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalBefore = SpreadStorageLibs.getTimeWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalBefore = SpreadStorageLibs.getTimeWeightedNotionalForAssetAndTenor(
             _storageIdIterationItem
         );
 
@@ -120,7 +120,7 @@ contract CalculateWeightedNotionalLibsTest is TestCommons {
         );
 
         // then
-        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibs.getTimeWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibs.getTimeWeightedNotionalForAssetAndTenor(
             _storageIdIterationItem
         );
 
@@ -154,7 +154,7 @@ contract CalculateWeightedNotionalLibsTest is TestCommons {
 
         newSwapNotional = newSwapNotional * 1e18;
 
-        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalBefore = SpreadStorageLibs.getTimeWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalBefore = SpreadStorageLibs.getTimeWeightedNotionalForAssetAndTenor(
             _storageIdIterationItem
         );
 
@@ -172,7 +172,7 @@ contract CalculateWeightedNotionalLibsTest is TestCommons {
         );
 
         // then
-        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibs.getTimeWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibs.getTimeWeightedNotionalForAssetAndTenor(
             _storageIdIterationItem
         );
 
@@ -219,7 +219,7 @@ contract CalculateWeightedNotionalLibsTest is TestCommons {
         );
 
         // then
-        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibs.getTimeWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibs.getTimeWeightedNotionalForAssetAndTenor(
             _storageIdIterationItem
         );
 
@@ -259,7 +259,7 @@ contract CalculateWeightedNotionalLibsTest is TestCommons {
         CalculateTimeWeightedNotionalLibs.updateTimeWeightedNotionalPayFixed(weightedNotionalBefore, newSwapNotional, 28 days);
 
         // then
-        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibs.getTimeWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibs.getTimeWeightedNotionalForAssetAndTenor(
             _storageIdIterationItem
         );
     }
@@ -288,17 +288,17 @@ contract CalculateWeightedNotionalLibsTest is TestCommons {
         weightedNotional90Days.lastUpdateTimePayFixed = timestamp - 10 days;
         weightedNotional90Days.lastUpdateTimeReceiveFixed = timestamp - 10 days;
 
-        SpreadStorageLibs.saveTimeWeightedNotional(
+        SpreadStorageLibs.saveTimeWeightedNotionalForAssetAndTenor(
             SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai,
             weightedNotional28Days
         );
 
-        SpreadStorageLibs.saveTimeWeightedNotional(
+        SpreadStorageLibs.saveTimeWeightedNotionalForAssetAndTenor(
             SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysDai,
             weightedNotional60Days
         );
 
-        SpreadStorageLibs.saveTimeWeightedNotional(
+        SpreadStorageLibs.saveTimeWeightedNotionalForAssetAndTenor(
             SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysDai,
             weightedNotional90Days
         );
@@ -409,17 +409,17 @@ contract CalculateWeightedNotionalLibsTest is TestCommons {
         weightedNotional90Days.lastUpdateTimePayFixed = timestamp - 10 days;
         weightedNotional90Days.lastUpdateTimeReceiveFixed = timestamp - 10 days;
 
-        SpreadStorageLibs.saveTimeWeightedNotional(
+        SpreadStorageLibs.saveTimeWeightedNotionalForAssetAndTenor(
             SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai,
             weightedNotional28Days
         );
 
-        SpreadStorageLibs.saveTimeWeightedNotional(
+        SpreadStorageLibs.saveTimeWeightedNotionalForAssetAndTenor(
             SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysDai,
             weightedNotional60Days
         );
 
-        SpreadStorageLibs.saveTimeWeightedNotional(
+        SpreadStorageLibs.saveTimeWeightedNotionalForAssetAndTenor(
             SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysDai,
             weightedNotional90Days
         );
@@ -530,17 +530,17 @@ contract CalculateWeightedNotionalLibsTest is TestCommons {
         weightedNotional90Days.lastUpdateTimePayFixed = timestamp - 10 days;
         weightedNotional90Days.lastUpdateTimeReceiveFixed = timestamp - 10 days;
 
-        SpreadStorageLibs.saveTimeWeightedNotional(
+        SpreadStorageLibs.saveTimeWeightedNotionalForAssetAndTenor(
             SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai,
             weightedNotional28Days
         );
 
-        SpreadStorageLibs.saveTimeWeightedNotional(
+        SpreadStorageLibs.saveTimeWeightedNotionalForAssetAndTenor(
             SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysDai,
             weightedNotional60Days
         );
 
-        SpreadStorageLibs.saveTimeWeightedNotional(
+        SpreadStorageLibs.saveTimeWeightedNotionalForAssetAndTenor(
             SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysDai,
             weightedNotional90Days
         );

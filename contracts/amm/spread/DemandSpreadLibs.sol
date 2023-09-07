@@ -58,7 +58,7 @@ library DemandSpreadLibs {
         /// @notice Storage id for a TimeWeightedNotional for a specific tenor and asset.
         SpreadStorageLibs.StorageId timeWeightedNotionalStorageId;
         // @notice Calculation for tenor in seconds
-        uint256 calculationForTenorInSeconds;
+        uint256 selectedTenorInSeconds;
     }
 
     /// @notice Gets the spread function configuration.
@@ -110,7 +110,7 @@ library DemandSpreadLibs {
         ) = CalculateTimeWeightedNotionalLibs.getTimeWeightedNotional(
                 inputData.timeWeightedNotionalStorageIds,
                 inputData.tenorsInSeconds,
-                inputData.calculationForTenorInSeconds
+                inputData.selectedTenorInSeconds
             );
 
         uint256 newWeightedNotionalPayFixed = oldWeightedNotionalPayFixed + inputData.swapNotional;
@@ -158,7 +158,7 @@ library DemandSpreadLibs {
         ) = CalculateTimeWeightedNotionalLibs.getTimeWeightedNotional(
                 inputData.timeWeightedNotionalStorageIds,
                 inputData.tenorsInSeconds,
-                inputData.calculationForTenorInSeconds
+                inputData.selectedTenorInSeconds
             );
 
         uint256 newWeightedNotionalReceiveFixed = oldWeightedNotionalReceiveFixed + inputData.swapNotional;

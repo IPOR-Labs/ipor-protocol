@@ -96,7 +96,7 @@ contract Spread60Days is ISpread60Days, ISpread60DaysLens {
 
         spreadValue = DemandSpreadLibs.calculatePayFixedSpread(inputData);
 
-        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getTimeWeightedNotionalForAssetAndTenor(
             inputData.timeWeightedNotionalStorageId
         );
 
@@ -122,7 +122,7 @@ contract Spread60Days is ISpread60Days, ISpread60DaysLens {
 
         spreadValue = DemandSpreadLibs.calculateReceiveFixedSpread(inputData);
 
-        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getTimeWeightedNotionalForAssetAndTenor(
             inputData.timeWeightedNotionalStorageId
         );
 
@@ -148,7 +148,7 @@ contract Spread60Days is ISpread60Days, ISpread60DaysLens {
             tenorsInSeconds: new uint256[](3),
             timeWeightedNotionalStorageIds: new SpreadStorageLibs.StorageId[](3),
             timeWeightedNotionalStorageId: SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysDai,
-            calculationForTenorInSeconds: 60 days
+            selectedTenorInSeconds: 60 days
         });
 
         inputData.tenorsInSeconds[0] = 28 days;
