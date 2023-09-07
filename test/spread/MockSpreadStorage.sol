@@ -9,13 +9,13 @@ contract MockSpreadStorage {
         SpreadStorageLibs.StorageId storageId,
         SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional28Days
     ) external {
-        SpreadStorageLibs.saveTimeWeightedNotional(storageId, weightedNotional28Days);
+        SpreadStorageLibs.saveTimeWeightedNotionalForAssetAndTenor(storageId, weightedNotional28Days);
     }
 
     function getWeightedNotional(SpreadStorageLibs.StorageId storageId)
     external
     returns (SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional28Days)
     {
-        return SpreadStorageLibs.getTimeWeightedNotional(storageId);
+        return SpreadStorageLibs.getTimeWeightedNotionalForAssetAndTenor(storageId);
     }
 }

@@ -59,7 +59,7 @@ contract CloseSwapAfterUpgradeTest is TestForkCommons {
         deal(DAI, user, 500_000e18);
 
         vm.prank(user);
-        uint256 swapId = IMilton(miltonProxyDai).openSwapPayFixed(2_000 * 1e18, 9e18, 100e18);
+        uint256 swapId = IMilton(miltonProxyDai).openSwapPayFixed(2_000 * 1e18, 9e18, 10e18);
 
         IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyDai).getSwapPayFixed(
             swapId
