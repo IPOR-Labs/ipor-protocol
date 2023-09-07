@@ -325,18 +325,18 @@ contract UnitAssetManagementDaiTest is TestCommons {
         uint256 ammTreasuryBalanceAfter = _dai.balanceOf(_ammTreasury);
         uint256 assetManagementBalanceAfter = _dai.balanceOf(address(_assetManagementDai));
 
-        assertEq(5_000e18, vaultBalance);
-        assertEq(1_000e18, withdrawnAmount);
-        assertEq(1_000e18, aaveBalanceBefore);
-        assertEq(2_000e18, compoundBalanceBefore);
-        assertEq(3_000e18, dsrBalanceBefore);
-        assertEq(0, aaveBalanceAfter);
-        assertEq(2_000e18, compoundBalanceAfter);
-        assertEq(3_000e18, dsrBalanceAfter);
-        assertEq(994_000e18, ammTreasuryBalanceBefore);
-        assertEq(0, assetManagementBalanceBefore);
-        assertEq(995_000e18, ammTreasuryBalanceAfter);
-        assertEq(0, assetManagementBalanceAfter);
+        assertEq(4_999e18, vaultBalance, "vaultBalance");
+        assertEq(1_001e18, withdrawnAmount, "withdrawnAmount");
+        assertEq(1_000e18, aaveBalanceBefore, "aaveBalanceBefore");
+        assertEq(2_000e18, compoundBalanceBefore, "compoundBalanceBefore");
+        assertEq(3_000e18, dsrBalanceBefore, "dsrBalanceBefore");
+        assertEq(0, aaveBalanceAfter, "aaveBalanceAfter");
+        assertEq(1_999e18, compoundBalanceAfter, "compoundBalanceAfter");
+        assertEq(3_000e18, dsrBalanceAfter, "dsrBalanceAfter");
+        assertEq(994_000e18, ammTreasuryBalanceBefore, "ammTreasuryBalanceBefore");
+        assertEq(0, assetManagementBalanceBefore, "assetManagementBalanceBefore");
+        assertEq(995_001e18, ammTreasuryBalanceAfter, "ammTreasuryBalanceAfter");
+        assertEq(0, assetManagementBalanceAfter, "assetManagementBalanceAfter");
     }
 
     function testShouldWithdrawFromCompoundWhenAaveWasPaused() external {
@@ -372,18 +372,18 @@ contract UnitAssetManagementDaiTest is TestCommons {
         uint256 ammTreasuryBalanceAfter = _dai.balanceOf(_ammTreasury);
         uint256 assetManagementBalanceAfter = _dai.balanceOf(address(_assetManagementDai));
 
-        assertEq(5_000e18, vaultBalance);
-        assertEq(1_000e18, withdrawnAmount);
-        assertEq(1_000e18, aaveBalanceBefore);
-        assertEq(2_000e18, compoundBalanceBefore);
-        assertEq(3_000e18, dsrBalanceBefore);
-        assertEq(1_000e18, aaveBalanceAfter);
-        assertEq(1_000e18, compoundBalanceAfter);
-        assertEq(3_000e18, dsrBalanceAfter);
-        assertEq(994_000e18, ammTreasuryBalanceBefore);
-        assertEq(0, assetManagementBalanceBefore);
-        assertEq(995_000e18, ammTreasuryBalanceAfter);
-        assertEq(0, assetManagementBalanceAfter);
+        assertEq(4_999e18, vaultBalance, "vaultBalance");
+        assertEq(1_001e18, withdrawnAmount, "withdrawnAmount");
+        assertEq(1_000e18, aaveBalanceBefore, "aaveBalanceBefore");
+        assertEq(2_000e18, compoundBalanceBefore, "compoundBalanceBefore");
+        assertEq(3_000e18, dsrBalanceBefore, "dsrBalanceBefore");
+        assertEq(1_000e18, aaveBalanceAfter, "aaveBalanceAfter");
+        assertEq(999e18, compoundBalanceAfter, "compoundBalanceAfter");
+        assertEq(3_000e18, dsrBalanceAfter, "dsrBalanceAfter");
+        assertEq(994_000e18, ammTreasuryBalanceBefore, "ammTreasuryBalanceBefore");
+        assertEq(0, assetManagementBalanceBefore, "assetManagementBalanceBefore");
+        assertEq(995_001e18, ammTreasuryBalanceAfter, "ammTreasuryBalanceAfter");
+        assertEq(0, assetManagementBalanceAfter, "assetManagementBalanceAfter");
     }
 
     function testShouldWithdrawFromAaveAndCompoundWhenDsrHasHighestApr() external {
@@ -418,18 +418,18 @@ contract UnitAssetManagementDaiTest is TestCommons {
         uint256 ammTreasuryBalanceAfter = _dai.balanceOf(_ammTreasury);
         uint256 assetManagementBalanceAfter = _dai.balanceOf(address(_assetManagementDai));
 
-        assertEq(4_000e18, vaultBalance);
-        assertEq(2_000e18, withdrawnAmount);
-        assertEq(1_000e18, aaveBalanceBefore);
-        assertEq(2_000e18, compoundBalanceBefore);
-        assertEq(3_000e18, dsrBalanceBefore);
-        assertEq(0, aaveBalanceAfter);
-        assertEq(1_000e18, compoundBalanceAfter);
-        assertEq(3_000e18, dsrBalanceAfter);
-        assertEq(994_000e18, ammTreasuryBalanceBefore);
-        assertEq(0, assetManagementBalanceBefore);
-        assertEq(996_000e18, ammTreasuryBalanceAfter);
-        assertEq(0, assetManagementBalanceAfter);
+        assertEq(3_999e18, vaultBalance, "vaultBalance");
+        assertEq(2_001e18, withdrawnAmount, "withdrawnAmount");
+        assertEq(1_000e18, aaveBalanceBefore, "aaveBalanceBefore");
+        assertEq(2_000e18, compoundBalanceBefore, "compoundBalanceBefore");
+        assertEq(3_000e18, dsrBalanceBefore, "dsrBalanceBefore");
+        assertEq(0, aaveBalanceAfter, "aaveBalanceAfter");
+        assertEq(999e18, compoundBalanceAfter, "compoundBalanceAfter");
+        assertEq(3_000e18, dsrBalanceAfter, "dsrBalanceAfter");
+        assertEq(994_000e18, ammTreasuryBalanceBefore, "ammTreasuryBalanceBefore");
+        assertEq(0, assetManagementBalanceBefore, "assetManagementBalanceBefore");
+        assertEq(996_001e18, ammTreasuryBalanceAfter, "ammTreasuryBalanceAfter");
+        assertEq(0, assetManagementBalanceAfter, "assetManagementBalanceAfter");
     }
 
     function testShouldWithdrawFromAaveAndDsrWhenCompoundHasNoAssets() external {
@@ -463,18 +463,18 @@ contract UnitAssetManagementDaiTest is TestCommons {
         uint256 ammTreasuryBalanceAfter = _dai.balanceOf(_ammTreasury);
         uint256 assetManagementBalanceAfter = _dai.balanceOf(address(_assetManagementDai));
 
-        assertEq(2_000e18, vaultBalance);
-        assertEq(2_000e18, withdrawnAmount);
-        assertEq(1_000e18, aaveBalanceBefore);
-        assertEq(0, compoundBalanceBefore);
-        assertEq(3_000e18, dsrBalanceBefore);
-        assertEq(0, aaveBalanceAfter);
-        assertEq(0, compoundBalanceAfter);
-        assertEq(2_000e18, dsrBalanceAfter);
-        assertEq(996_000e18, ammTreasuryBalanceBefore);
-        assertEq(0, assetManagementBalanceBefore);
-        assertEq(998_000e18, ammTreasuryBalanceAfter);
-        assertEq(0, assetManagementBalanceAfter);
+        assertEq(1_999e18, vaultBalance, "vaultBalance");
+        assertEq(2_001e18, withdrawnAmount, "withdrawnAmount");
+        assertEq(1_000e18, aaveBalanceBefore, "aaveBalanceBefore");
+        assertEq(0, compoundBalanceBefore, "compoundBalanceBefore");
+        assertEq(3_000e18, dsrBalanceBefore, "dsrBalanceBefore");
+        assertEq(0, aaveBalanceAfter, "aaveBalanceAfter");
+        assertEq(0, compoundBalanceAfter, "compoundBalanceAfter");
+        assertEq(1_999e18, dsrBalanceAfter, "dsrBalanceAfter");
+        assertEq(996_000e18, ammTreasuryBalanceBefore, "ammTreasuryBalanceBefore");
+        assertEq(0, assetManagementBalanceBefore, "assetManagementBalanceBefore");
+        assertEq(998_001e18, ammTreasuryBalanceAfter, "ammTreasuryBalanceAfter");
+        assertEq(0, assetManagementBalanceAfter, "assetManagementBalanceAfter");
     }
 
     function testShouldWithdrawAllWhenRequestMoreThenBalanceOfStanley() external {

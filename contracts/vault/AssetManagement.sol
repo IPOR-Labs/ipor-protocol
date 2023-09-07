@@ -191,6 +191,11 @@ abstract contract AssetManagement is
 
         uint256 amountToWithdraw = amount;
 
+        if (amount < (type(uint256).max - 1e18)) {
+            /// @dev Withdraw a little bit more to avoid rounding errors
+            amountToWithdraw = amount + 1e18;
+        }
+
         for (uint256 i; i < supportedStrategiesVolume; ++i) {
             try
                 IStrategy(sortedStrategies[i].strategy).withdraw(
@@ -205,10 +210,6 @@ abstract contract AssetManagement is
             } catch {
                 /// @dev If strategy withdraw fails, try to withdraw from next strategy
                 continue;
-            }
-
-            if (amountToWithdraw <= 1e18) {
-                break;
             }
         }
 
