@@ -189,24 +189,34 @@ abstract contract AssetManagement is
 
         StrategyData[] memory sortedStrategies = _getSortedStrategiesWithApy(_getStrategiesData());
 
+        uint256 strategyAmountToWithdraw;
         uint256 amountToWithdraw = amount;
 
         for (uint256 i; i < supportedStrategiesVolume; ++i) {
-            try
-                IStrategy(sortedStrategies[i].strategy).withdraw(
-                    sortedStrategies[i].balance <= amountToWithdraw ? sortedStrategies[i].balance : amountToWithdraw
-                )
-            returns (uint256 tryWithdrawnAmount) {
-                amountToWithdraw = tryWithdrawnAmount > amountToWithdraw ? 0 : amountToWithdraw - tryWithdrawnAmount;
+            strategyAmountToWithdraw = sortedStrategies[i].balance <= amountToWithdraw
+                ? sortedStrategies[i].balance
+                : amountToWithdraw;
 
-                sortedStrategies[i].balance = tryWithdrawnAmount > sortedStrategies[i].balance
-                    ? 0
-                    : sortedStrategies[i].balance - tryWithdrawnAmount;
-            } catch {
-                /// @dev If strategy withdraw fails, try to withdraw from next strategy
+            if (strategyAmountToWithdraw > 0) {
+                try IStrategy(sortedStrategies[i].strategy).withdraw(strategyAmountToWithdraw) returns (
+                    uint256 tryWithdrawnAmount
+                ) {
+                    amountToWithdraw = tryWithdrawnAmount > amountToWithdraw
+                        ? 0
+                        : amountToWithdraw - tryWithdrawnAmount;
+
+                    sortedStrategies[i].balance = tryWithdrawnAmount > sortedStrategies[i].balance
+                        ? 0
+                        : sortedStrategies[i].balance - tryWithdrawnAmount;
+                } catch {
+                    /// @dev If strategy withdraw fails, try to withdraw from next strategy
+                    continue;
+                }
+            } else {
                 continue;
             }
 
+            /// @dev For gas optimization - it is not worth to withdraw if remained amount to withdraw is less or equal than 1.
             if (amountToWithdraw <= 1e18) {
                 break;
             }
