@@ -48,7 +48,7 @@ library SpreadStorageLibs {
     /// @notice Saves time weighted notional for a specific asset and tenor
     /// @param timeWeightedNotionalStorageId The storage ID of the time weighted notional
     /// @param timeWeightedNotional The time weighted notional to save
-    function saveTimeWeightedNotional(
+    function saveTimeWeightedNotionalForAssetAndTenor(
         StorageId timeWeightedNotionalStorageId,
         SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional
     ) internal {
@@ -80,7 +80,7 @@ library SpreadStorageLibs {
 
     /// @notice Gets the time-weighted notional for a specific storage ID representing an asset and tenor
     /// @param timeWeightedNotionalStorageId The storage ID of the time weighted notional
-    function getTimeWeightedNotional(
+    function getTimeWeightedNotionalForAssetAndTenor(
         StorageId timeWeightedNotionalStorageId
     ) internal view returns (SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional28Days) {
         _checkTimeWeightedNotional(timeWeightedNotionalStorageId);

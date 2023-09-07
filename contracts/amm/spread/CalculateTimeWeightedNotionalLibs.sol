@@ -66,7 +66,7 @@ library CalculateTimeWeightedNotionalLibs {
             timeWeightedNotional.timeWeightedNotionalReceiveFixed = newSwapNotional + oldWeightedNotionalReceiveFixed;
         }
         timeWeightedNotional.lastUpdateTimeReceiveFixed = block.timestamp;
-        SpreadStorageLibs.saveTimeWeightedNotional(timeWeightedNotional.storageId, timeWeightedNotional);
+        SpreadStorageLibs.saveTimeWeightedNotionalForAssetAndTenor(timeWeightedNotional.storageId, timeWeightedNotional);
     }
 
     /// @notice Updates the time-weighted notional value for the pay fixed leg.
@@ -94,44 +94,71 @@ library CalculateTimeWeightedNotionalLibs {
             timeWeightedNotional.timeWeightedNotionalPayFixed = newSwapNotional + oldWeightedNotionalPayFixed;
         }
         timeWeightedNotional.lastUpdateTimePayFixed = block.timestamp;
-        SpreadStorageLibs.saveTimeWeightedNotional(timeWeightedNotional.storageId, timeWeightedNotional);
+        SpreadStorageLibs.saveTimeWeightedNotionalForAssetAndTenor(timeWeightedNotional.storageId, timeWeightedNotional);
     }
 
     /// @notice Calculates the time-weighted notional values for the pay fixed and receive fixed legs.
     /// @param timeWeightedNotionalStorageIds The array of storage IDs representing the time-weighted notional storage locations.
     /// @param tenorsInSeconds The array of maturities corresponding to each storage ID.
+    /// @param selectedTenorInSeconds The tenor in seconds used to calculate the time-weighted notional values.
     /// @return timeWeightedNotionalPayFixed The aggregated time-weighted notional value for the pay fixed leg.
     /// @return timeWeightedNotionalReceiveFixed The aggregated time-weighted notional value for the receive fixed leg.
     /// @dev This function is internal and used to calculate the aggregated time-weighted notional values for multiple storage IDs and maturities.
     function getTimeWeightedNotional(
         SpreadStorageLibs.StorageId[] memory timeWeightedNotionalStorageIds,
-        uint256[] memory tenorsInSeconds
+        uint256[] memory tenorsInSeconds,
+        uint256 selectedTenorInSeconds
     ) internal view returns (uint256 timeWeightedNotionalPayFixed, uint256 timeWeightedNotionalReceiveFixed) {
         uint256 length = timeWeightedNotionalStorageIds.length;
 
         SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional;
-        uint256 timeWeightedNotionalPayFixedTemp;
-        uint256 timeWeightedNotionalReceiveFixedTemp;
+        uint256 timeWeightedNotionalPayFixedIteration;
+        uint256 timeWeightedNotionalReceiveFixedIteration;
 
         for (uint256 i; i != length; ) {
-            timeWeightedNotional = SpreadStorageLibs.getTimeWeightedNotional(timeWeightedNotionalStorageIds[i]);
-            timeWeightedNotionalPayFixedTemp = calculateTimeWeightedNotional(
-                timeWeightedNotional.timeWeightedNotionalPayFixed,
-                block.timestamp - timeWeightedNotional.lastUpdateTimePayFixed,
-                tenorsInSeconds[i]
-            );
-            timeWeightedNotionalPayFixed = timeWeightedNotionalPayFixed + timeWeightedNotionalPayFixedTemp;
+            timeWeightedNotional = SpreadStorageLibs.getTimeWeightedNotionalForAssetAndTenor(timeWeightedNotionalStorageIds[i]);
+            timeWeightedNotionalPayFixedIteration = _isTimeWeightedNotionalRecalculationRequired(
+                timeWeightedNotional.lastUpdateTimePayFixed,
+                tenorsInSeconds[i],
+                selectedTenorInSeconds
+            )
+                ? calculateTimeWeightedNotional(
+                    timeWeightedNotional.timeWeightedNotionalPayFixed,
+                    block.timestamp - timeWeightedNotional.lastUpdateTimePayFixed,
+                    tenorsInSeconds[i]
+                )
+                : timeWeightedNotional.timeWeightedNotionalPayFixed;
+            timeWeightedNotionalPayFixed = timeWeightedNotionalPayFixed + timeWeightedNotionalPayFixedIteration;
 
-            timeWeightedNotionalReceiveFixedTemp = calculateTimeWeightedNotional(
-                timeWeightedNotional.timeWeightedNotionalReceiveFixed,
-                block.timestamp - timeWeightedNotional.lastUpdateTimeReceiveFixed,
-                tenorsInSeconds[i]
-            );
-            timeWeightedNotionalReceiveFixed = timeWeightedNotionalReceiveFixedTemp + timeWeightedNotionalReceiveFixed;
+            timeWeightedNotionalReceiveFixedIteration = _isTimeWeightedNotionalRecalculationRequired(
+                timeWeightedNotional.lastUpdateTimeReceiveFixed,
+                tenorsInSeconds[i],
+                selectedTenorInSeconds
+            )
+                ? calculateTimeWeightedNotional(
+                    timeWeightedNotional.timeWeightedNotionalReceiveFixed,
+                    block.timestamp - timeWeightedNotional.lastUpdateTimeReceiveFixed,
+                    tenorsInSeconds[i]
+                )
+                : timeWeightedNotional.timeWeightedNotionalReceiveFixed;
+            timeWeightedNotionalReceiveFixed = timeWeightedNotionalReceiveFixedIteration + timeWeightedNotionalReceiveFixed;
 
             unchecked {
                 ++i;
             }
         }
+    }
+
+    /// @notice Determines if the time-weighted notional should be recalculated based on the last update time and tenors.
+    /// @param lastUpdateTime The last time the notional was updated.
+    /// @param iterationTenorInSeconds The tenor duration in seconds.
+    /// @param selectedTenorInSeconds The duration in seconds for which the spread should be calculated for a given tenor.
+    /// @dev This function is internal and used to decide if a recalculation of the time-weighted notional is necessary.
+    function _isTimeWeightedNotionalRecalculationRequired(
+        uint256 lastUpdateTime,
+        uint256 iterationTenorInSeconds,
+        uint256 selectedTenorInSeconds
+    ) internal view returns (bool) {
+        return iterationTenorInSeconds + lastUpdateTime < block.timestamp + selectedTenorInSeconds;
     }
 }

@@ -39,7 +39,7 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
         }
         uint256 tenorInSeconds = IporSwapLogic.getTenorInSeconds(tenor);
         SpreadStorageLibs.StorageId storageId = _getStorageId(asset, tenor);
-        SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional = SpreadStorageLibs.getTimeWeightedNotionalForAssetAndTenor(
             storageId
         );
 
@@ -91,7 +91,7 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
             }
         }
 
-        SpreadStorageLibs.saveTimeWeightedNotional(storageId, timeWeightedNotional);
+        SpreadStorageLibs.saveTimeWeightedNotionalForAssetAndTenor(storageId, timeWeightedNotional);
     }
 
     function _getStorageId(
