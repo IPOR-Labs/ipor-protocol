@@ -44,10 +44,10 @@ abstract contract StrategyCore is
 
     /// @notice Emmited when doClaim function had been executed.
     /// @param claimedBy account that executes claim action
-    /// @param shareToken share token assocciated with one strategy
+    /// @param shareTokenAddress share token associated with one strategy
     /// @param treasury Treasury address where claimed tokens are transferred.
     /// @param amount S
-    event DoClaim(address indexed claimedBy, address indexed shareToken, address indexed treasury, uint256 amount);
+    event DoClaim(address indexed claimedBy, address indexed shareTokenAddress, address indexed treasury, uint256 amount);
 
     /// @notice Emmited when Treasury address has changed
     /// @param newTreasury new Treasury address
@@ -80,10 +80,6 @@ abstract contract StrategyCore is
         assetDecimals = assetDecimalsInput;
         shareToken = shareTokenInput.checkAddress();
         assetManagement = assetManagementInput.checkAddress();
-    }
-
-    function getVersion() external pure override returns (uint256) {
-        return 2_000;
     }
 
     function getTreasuryManager() external view returns (address) {

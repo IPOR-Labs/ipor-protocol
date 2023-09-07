@@ -2,23 +2,9 @@
 pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
-//import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "../../TestForkCommons.sol";
-
-//import "../../../../contracts/vault/strategies/StrategyDsrDai.sol";
-//import "../../../../contracts/vault/StanleyDsrDai.sol";
-//import "../../../../contracts/interfaces/IIpToken.sol";
-//import "../../../../contracts/interfaces/IStanley.sol";
-//import "../../../../contracts/interfaces/IJosephInternal.sol";
-//import "../../../../contracts/interfaces/IStanleyInternal.sol";
-//import "../../../../contracts/interfaces/IStrategy.sol.sol";
-//import "../../../../contracts/interfaces/IStrategyCompound.sol";
-//import "../../../../contracts/interfaces/IStrategyAave.sol";
-//import "../../../../contracts/interfaces/IIporOracle.sol";
-//import "../../../../contracts/amm/miltonProxyDai.sol";
-//import "../../../../contracts/amm/pool/Joseph.sol";
-//import "../../../../contracts/mocks/milton/MockCase0miltonProxyDai.sol";
 
 interface IStanleyV1 {
     function totalBalance(address who) external view returns (uint256);
@@ -26,10 +12,6 @@ interface IStanleyV1 {
     function getStrategyAave() external view returns (address);
 
     function getStrategyCompound() external view returns (address);
-}
-
-interface IStrategyV1 {
-    function getApr() external view returns (uint256);
 }
 
 /// @dev Tests verify Asset Management when upgrade from v1 to v2, with assumption that DSR is already deployed

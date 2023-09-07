@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 library IporMath {
-    uint256 private constant RAY = 10 ** 27;
+    uint256 private constant RAY = 1e27;
 
     //@notice Division with rounding up on last position, x, and y is with MD
     function division(uint256 x, uint256 y) internal pure returns (uint256 z) {

@@ -12,6 +12,8 @@ import "../../../contracts/vault/strategies/StrategyCore.sol";
 contract MockTestnetStrategy is StrategyCore {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
+    uint256 public constant getVersion = 2_000;
+
     // in wad
     uint256 private constant _APY = 35000000000000000;
     uint256 private _depositsBalance;

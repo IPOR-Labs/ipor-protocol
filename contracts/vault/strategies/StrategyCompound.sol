@@ -16,6 +16,8 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
     using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
+    uint256 public constant override getVersion = 2_000;
+
     uint256 public immutable blocksPerDay;
     ComptrollerInterface public immutable comptroller;
     IERC20Upgradeable public immutable compToken;
@@ -83,11 +85,11 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
     /// In both cases we have 18 decimals which is number of decimals supported in IPOR Protocol.
     /// @return uint256 AssetManagement Strategy's asset amount in Compound represented in 18 decimals
     function balanceOf() external view override returns (uint256) {
-        CErc20 shareToken = CErc20(shareToken);
+        CErc20 shareTokenContract = CErc20(shareToken);
 
         return (
             IporMath.division(
-                (shareToken.exchangeRateStored() * shareToken.balanceOf(address(this))),
+                (shareTokenContract.exchangeRateStored() * shareTokenContract.balanceOf(address(this))),
                 (10 ** IERC20Metadata(asset).decimals())
             )
         );
@@ -117,10 +119,12 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
     ) external override whenNotPaused onlyAssetManagement returns (uint256 withdrawnAmount) {
         uint256 amount = IporMath.convertWadToAssetDecimalsWithoutRound(wadAmount, assetDecimals);
 
-        CErc20 shareToken = CErc20(shareToken);
+        CErc20 shareTokenContract = CErc20(shareToken);
 
         // Transfer assets from Compound to Strategy
-        uint256 redeemStatus = shareToken.redeem(IporMath.division(amount * 1e18, shareToken.exchangeRateStored()));
+        uint256 redeemStatus = shareTokenContract.redeem(
+            IporMath.division(amount * 1e18, shareTokenContract.exchangeRateStored())
+        );
 
         require(redeemStatus == 0, AssetManagementErrors.SHARED_TOKEN_REDEEM_ERROR);
 
@@ -136,9 +140,9 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
      * @dev Claim extra reward of Governace token(COMP).
      */
     function doClaim() external whenNotPaused nonReentrant onlyOwner {
-        address treasury = _treasury;
+        address treasuryAddress = _treasury;
 
-        require(treasury != address(0), IporErrors.WRONG_ADDRESS);
+        require(treasuryAddress != address(0), IporErrors.WRONG_ADDRESS);
 
         address[] memory assets = new address[](1);
         assets[0] = shareToken;
@@ -147,8 +151,8 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
 
         uint256 balance = compToken.balanceOf(address(this));
 
-        compToken.safeTransfer(treasury, balance);
+        compToken.safeTransfer(treasuryAddress, balance);
 
-        emit DoClaim(_msgSender(), assets[0], treasury, balance);
+        emit DoClaim(_msgSender(), assets[0], treasuryAddress, balance);
     }
 }

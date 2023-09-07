@@ -182,7 +182,7 @@ abstract contract AssetManagement is
 
     function _getDecimals() internal pure virtual returns (uint256);
 
-    function _getStrategiesData() internal view virtual returns (StrategyData[] memory sortedStrategies);
+    function _getStrategiesData() internal view virtual returns (StrategyData[] memory strategies);
 
     function _withdraw(uint256 amount) internal returns (uint256 withdrawnAmount, uint256 vaultBalance) {
         require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);

@@ -19,10 +19,10 @@ import "../interfaces/IAmmPoolsService.sol";
 import "../interfaces/IPowerTokenFlowsService.sol";
 import "../interfaces/IPowerTokenStakeService.sol";
 import "../interfaces/IProxyImplementation.sol";
+import "../amm-eth/interfaces/IAmmPoolsServiceEth.sol";
+import "../amm-eth/interfaces/IAmmPoolsLensEth.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/IporContractValidator.sol";
-import "../amm-eth/interfaces/IAmmPoolsLensEth.sol";
-import "../amm-eth/interfaces/IAmmPoolsServiceEth.sol";
 import "./AccessControl.sol";
 
 /// @title Entry point for IPOR protocol
@@ -275,11 +275,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             sig == IAmmPoolsLens.getAmmBalance.selector
         ) {
             return _ammPoolsLens;
-        } else if (
-            sig == IAssetManagementLens.balanceOfAmmTreasuryInAssetManagement.selector //||
-//            sig == IAssetManagementLens.balanceOfStrategyAave.selector ||
-//            sig == IAssetManagementLens.balanceOfStrategyCompound.selector
-        ) {
+        } else if (sig == IAssetManagementLens.balanceOfAmmTreasuryInAssetManagement.selector) {
             return _ammManagementLens;
         } else if (
             sig == ILiquidityMiningLens.balanceOfLpTokensStakedInLiquidityMining.selector ||

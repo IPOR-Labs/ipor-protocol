@@ -20,6 +20,8 @@ contract StrategyAave is StrategyCore, IStrategyAave {
     using SafeCast for uint256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
+    uint256 public constant override getVersion = 2_000;
+
     address public immutable aave;
     address public immutable stkAave;
     AaveLendingPoolProviderV2 public immutable provider;
@@ -76,10 +78,11 @@ contract StrategyAave is StrategyCore, IStrategyAave {
     function getApy() external view override returns (uint256 apy) {
         address lendingPoolAddress = provider.getLendingPool();
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
-        AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(lendingPoolAddress);
 
-        DataTypesContract.ReserveData memory reserveData = lendingPool.getReserveData(asset);
+        AaveLendingPoolV2 lendingPoolContract = AaveLendingPoolV2(lendingPoolAddress);
+        DataTypesContract.ReserveData memory reserveData = lendingPoolContract.getReserveData(asset);
         uint256 apr = IporMath.division(reserveData.currentLiquidityRate, (10 ** 9));
+
         apy = aprToApy(apr);
     }
 
@@ -130,9 +133,9 @@ contract StrategyAave is StrategyCore, IStrategyAave {
      * returns amount of stable based on aToken volume in ration 1:1 with stable in 18 decimals
      */
     function balanceOf() external view override returns (uint256) {
-        IERC20Metadata shareToken = IERC20Metadata(shareToken);
-        uint256 balance = shareToken.balanceOf(address(this));
-        return IporMath.convertToWad(balance, shareToken.decimals());
+        IERC20Metadata shareTokenContract = IERC20Metadata(shareToken);
+        uint256 balance = shareTokenContract.balanceOf(address(this));
+        return IporMath.convertToWad(balance, shareTokenContract.decimals());
     }
 
     /**
@@ -149,8 +152,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         address lendingPoolAddress = provider.getLendingPool();
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
 
-        AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(lendingPoolAddress);
-        lendingPool.deposit(asset, amount, address(this), 0);
+        AaveLendingPoolV2(lendingPoolAddress).deposit(asset, amount, address(this), 0);
         depositedAmount = IporMath.convertToWad(amount, assetDecimals);
     }
 
@@ -168,7 +170,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
 
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
 
-        //Transfer assets from Aave directly to msgSender which is AssetManagement
+        /// @dev Transfer assets from Aave directly to msgSender which is AssetManagement
         uint256 withdrawnAmountAave = AaveLendingPoolV2(lendingPoolAddress).withdraw(asset, amount, _msgSender());
 
         withdrawnAmount = IporMath.convertToWad(withdrawnAmountAave, assetDecimals);
@@ -195,9 +197,9 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         when window is open you can call this function to claim _aave
      */
     function doClaim() external whenNotPaused nonReentrant onlyOwner {
-        address treasury = _treasury;
+        address treasuryAddress = _treasury;
 
-        require(treasury != address(0), AssetManagementErrors.INCORRECT_TREASURY_ADDRESS);
+        require(treasuryAddress != address(0), AssetManagementErrors.INCORRECT_TREASURY_ADDRESS);
 
         uint256 cooldownStartTimestamp = stakedAaveInterface.stakersCooldowns(address(this));
         uint256 cooldownSeconds = stakedAaveInterface.COOLDOWN_SECONDS();
@@ -207,14 +209,14 @@ contract StrategyAave is StrategyCore, IStrategyAave {
             block.timestamp > cooldownStartTimestamp + cooldownSeconds &&
             (block.timestamp - (cooldownStartTimestamp + cooldownSeconds)) <= unstakeWindow
         ) {
-            // claim AAVE governace token second after claim stakedAave token
+            /// @dev claim AAVE governance token second after claim stakedAave token
             stakedAaveInterface.redeem(address(this), IERC20Upgradeable(stkAave).balanceOf(address(this)));
 
             uint256 balance = IERC20Upgradeable(aave).balanceOf(address(this));
 
-            IERC20Upgradeable(aave).safeTransfer(treasury, balance);
+            IERC20Upgradeable(aave).safeTransfer(treasuryAddress, balance);
 
-            emit DoClaim(_msgSender(), shareToken, treasury, balance);
+            emit DoClaim(_msgSender(), shareToken, treasuryAddress, balance);
         }
     }
 }
