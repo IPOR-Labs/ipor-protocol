@@ -3,23 +3,24 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+
 import "../interfaces/types/IporTypes.sol";
 import "../interfaces/types/AmmTypes.sol";
 import "../interfaces/IIporOracle.sol";
 import "../interfaces/IAmmTreasury.sol";
 import "../interfaces/IAmmCloseSwapLens.sol";
 import "../interfaces/IAmmCloseSwapService.sol";
-import "./spread/ISpreadCloseSwapService.sol";
 import "../libraries/errors/IporErrors.sol";
-import "../governance/AmmConfigurationManager.sol";
-import "../security/OwnerManager.sol";
 import "../libraries/math/IporMath.sol";
+import "../libraries/IporContractValidator.sol";
 import "../libraries/AmmLib.sol";
 import "../libraries/AssetManagementLogic.sol";
 import "../libraries/RiskManagementLogic.sol";
+import "../governance/AmmConfigurationManager.sol";
+import "../security/OwnerManager.sol";
 import "./libraries/IporSwapLogic.sol";
-import "../libraries/IporContractValidator.sol";
 import "./libraries/types/AmmInternalTypes.sol";
+import "./spread/ISpreadCloseSwapService.sol";
 
 contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
     using Address for address;
@@ -877,8 +878,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         if (beneficiary == buyer) {
             wadTransferAmount = wadTransferAmount + wadLiquidationDepositAmount;
         } else {
-            //transfer liquidation deposit amount from AmmTreasury to Liquidator address (beneficiary),
-            // transfer to be made outside this function, to avoid multiple transfers
+            /// @dev transfer liquidation deposit amount from AmmTreasury to Liquidator address (beneficiary),
+            /// transfer to be made outside this function, to avoid multiple transfers
             wadPayoutForLiquidator = wadLiquidationDepositAmount;
         }
 
@@ -912,13 +913,22 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                     IporMath.convertToWad(ammTreasuryErc20BalanceBeforeRedeem, poolCfg.decimals),
                     balance.vault,
                     wadTransferAmount + wadPayoutForLiquidator,
-                    /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals, example 45% = 4500, so to achieve number in 18 decimals we need to multiply by 1e14
+                    /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals,
+                    /// example: 45% = 4500, so to achieve number in 18 decimals we need to multiply by 1e14
                     uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) * 1e14
                 );
 
                 if (rebalanceAmount < 0) {
                     IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagementInternal(
                         (-rebalanceAmount).toUint256()
+                    );
+
+                    /// @dev check if withdraw from asset management is enough to cover transfer amount
+                    /// @dev possible case when strategies are paused and assets are temporary locked
+                    require(
+                        totalTransferAmountAssetDecimals <=
+                            IERC20Upgradeable(poolCfg.asset).balanceOf(poolCfg.ammTreasury),
+                        AmmErrors.ASSET_MANAGEMENT_WITHDRAW_NOT_ENOUGH
                     );
                 }
             }

@@ -45,7 +45,8 @@ contract CloseSwapAfterUpgradeTest is TestForkCommons {
     using SafeERC20 for ERC20;
 
     function setUp() public {
-        vm.createSelectFork(vm.envString("PROVIDER_URL"), 17210000);
+        /// @dev blockchain state: with DSR before upgrade to v2
+        vm.createSelectFork(vm.envString("PROVIDER_URL"), 18070000);
     }
 
     function testShouldCloseSwapTenor28DaiPayFixed() public {
@@ -58,7 +59,7 @@ contract CloseSwapAfterUpgradeTest is TestForkCommons {
         deal(DAI, user, 500_000e18);
 
         vm.prank(user);
-        uint256 swapId = IMilton(miltonProxyDai).openSwapPayFixed(2000e18, 9e18, 10e18);
+        uint256 swapId = IMilton(miltonProxyDai).openSwapPayFixed(2_000 * 1e18, 9e18, 10e18);
 
         IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyDai).getSwapPayFixed(
             swapId
@@ -293,7 +294,7 @@ contract CloseSwapAfterUpgradeTest is TestForkCommons {
         deal(USDC, user, 500_000e6);
 
         vm.prank(user);
-        uint256 swapId = IMilton(miltonProxyUsdc).openSwapPayFixed(2000e6, 9e18, 100e18);
+        uint256 swapId = IMilton(miltonProxyUsdc).openSwapPayFixed(2_000 * 1e6, 9e18, 10e18);
 
         IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyUsdc).getSwapPayFixed(
             swapId

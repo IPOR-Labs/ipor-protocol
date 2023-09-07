@@ -4430,7 +4430,6 @@ contract AmmTreasuryShouldClosePositionTest is TestCommons, DataUtils, SwapUtils
         _iporProtocol.asset.approve(address(_iporProtocol.assetManagement), TestConstants.USD_1_000_000_000_18DEC);
 
         MockCaseBaseAssetManagement(address(_iporProtocol.assetManagement)).forTestDeposit(
-            address(_iporProtocol.ammTreasury),
             initAssetManagementBalance
         );
 

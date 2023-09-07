@@ -13,10 +13,10 @@ import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/AmmErrors.sol";
 import "../libraries/errors/AmmPoolsErrors.sol";
 import "../libraries/math/IporMath.sol";
+import "../libraries/IporContractValidator.sol";
 import "../libraries/AssetManagementLogic.sol";
 import "../libraries/AmmLib.sol";
 import "../governance/AmmConfigurationManager.sol";
-import "../libraries/IporContractValidator.sol";
 
 contract AmmPoolsService is IAmmPoolsService {
     using IporContractValidator for address;
@@ -149,8 +149,7 @@ contract AmmPoolsService is IAmmPoolsService {
             poolCfg.decimals
         );
 
-        uint256 totalBalance = wadAmmTreasuryAssetBalance +
-            IAssetManagement(poolCfg.assetManagement).totalBalance(poolCfg.ammTreasury);
+        uint256 totalBalance = wadAmmTreasuryAssetBalance + IAssetManagement(poolCfg.assetManagement).totalBalance();
 
         require(totalBalance > 0, AmmPoolsErrors.ASSET_MANAGEMENT_BALANCE_IS_EMPTY);
 
@@ -161,16 +160,16 @@ contract AmmPoolsService is IAmmPoolsService {
             1e14;
 
         if (ratio > ammTreasuryAssetManagementBalanceRatio) {
-            uint256 assetAmount = wadAmmTreasuryAssetBalance -
+            uint256 wadAssetAmount = wadAmmTreasuryAssetBalance -
                 IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18);
-            if (assetAmount > 0) {
-                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagementInternal(assetAmount);
+            if (wadAssetAmount > 0) {
+                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagementInternal(wadAssetAmount);
             }
         } else {
-            uint256 assetAmount = IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18) -
+            uint256 wadAssetAmount = IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18) -
                 wadAmmTreasuryAssetBalance;
-            if (assetAmount > 0) {
-                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagementInternal(assetAmount);
+            if (wadAssetAmount > 0) {
+                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagementInternal(wadAssetAmount);
             }
         }
     }
@@ -188,6 +187,7 @@ contract AmmPoolsService is IAmmPoolsService {
         model.ammTreasury = poolCfg.ammTreasury;
         model.assetManagement = poolCfg.assetManagement;
         model.iporOracle = _iporOracle;
+
         IporTypes.AmmBalancesMemory memory balance = model.getAccruedBalance();
         uint256 exchangeRate = model.getExchangeRate(balance.liquidityPool);
         require(exchangeRate > 0, AmmErrors.LIQUIDITY_POOL_IS_EMPTY);

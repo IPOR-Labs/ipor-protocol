@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 
-contract JosephAutoRebalance is TestCommons {
+contract AmmPoolsServiceProvideLiquidityAndRebalanceTest is TestCommons {
     IporProtocolFactory.IporProtocolConfig private _cfg;
     BuilderUtils.IporProtocol internal _iporProtocol;
 
@@ -38,9 +38,7 @@ contract JosephAutoRebalance is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_userOne, userPosition);
         vm.stopPrank();
 
-        uint256 assetManagementBalanceBefore = _iporProtocol.assetManagement.totalBalance(
-            address(_iporProtocol.ammTreasury)
-        );
+        uint256 assetManagementBalanceBefore = _iporProtocol.assetManagement.totalBalance();
         uint256 ammTreasuryBalanceBefore = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
 
         _iporProtocol.ammGovernanceService.addAppointedToRebalanceInAmm(address(_iporProtocol.asset), address(this));
@@ -49,10 +47,7 @@ contract JosephAutoRebalance is TestCommons {
         _iporProtocol.ammPoolsService.rebalanceBetweenAmmTreasuryAndAssetManagement(address(_iporProtocol.asset));
 
         //then
-        assertEq(
-            _iporProtocol.assetManagement.totalBalance(address(_iporProtocol.ammTreasury)),
-            assetManagementBalanceBefore
-        );
+        assertEq(_iporProtocol.assetManagement.totalBalance(), assetManagementBalanceBefore);
         assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)), ammTreasuryBalanceBefore);
     }
 
@@ -62,9 +57,9 @@ contract JosephAutoRebalance is TestCommons {
 
         uint32 autoRebalanceThreshold = 10;
         uint16 ammTreasuryAssetManagementRatio = 1500;
-        uint256 userPosition = 500000 * 1e6;
+        uint256 userPosition = 500_000 * 1e6;
 
-        vm.warp(100);
+        vm.warp(block.timestamp + 100);
 
         _iporProtocol.ammGovernanceService.setAmmPoolsParams(
             address(_iporProtocol.asset),
@@ -80,23 +75,25 @@ contract JosephAutoRebalance is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_userOne, userPosition);
         vm.stopPrank();
 
-        uint256 assetManagementBalanceBefore = _iporProtocol.assetManagement.totalBalance(
-            address(_iporProtocol.ammTreasury)
-        );
+        uint256 assetManagementBalanceBefore = _iporProtocol.assetManagement.totalBalance();
         uint256 ammTreasuryBalanceBefore = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
 
         _iporProtocol.ammGovernanceService.addAppointedToRebalanceInAmm(address(_iporProtocol.asset), address(this));
 
         //when
-        vm.warp(101);
+        vm.warp(block.timestamp + 1 days);
         _iporProtocol.ammPoolsService.rebalanceBetweenAmmTreasuryAndAssetManagement(address(_iporProtocol.asset));
 
         //then
         assertTrue(
-            _iporProtocol.assetManagement.totalBalance(address(_iporProtocol.ammTreasury)) !=
-                assetManagementBalanceBefore
+            _iporProtocol.assetManagement.totalBalance() != assetManagementBalanceBefore,
+            "incorrect asset management balance"
         );
-        assertTrue(_iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)) != ammTreasuryBalanceBefore);
+        assertNotEq(
+            _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)),
+            ammTreasuryBalanceBefore,
+            "incorrect amm treasury balance"
+        );
     }
 
     function testRebalanceAndProvideLiquiditySameTimestamp() public {
@@ -105,10 +102,10 @@ contract JosephAutoRebalance is TestCommons {
 
         uint32 autoRebalanceThreshold = 10;
         uint16 ammTreasuryAssetManagementRatio = 1500;
-        uint256 userPosition = 500000 * 1e6;
+        uint256 userPosition = 500_000 * 1e6;
 
-        uint256 expectedAmmTreasuryBalance = 150000000000;
-        uint256 expectedAssetManagementBalance = 850000000000000000000000;
+        uint256 expectedAmmTreasuryBalance = 150_000 * 1e6;
+        uint256 expectedAssetManagementBalance = 850_000 * 1e18;
 
         vm.warp(100);
 
@@ -134,8 +131,9 @@ contract JosephAutoRebalance is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_userOne, userPosition);
 
         //then
+
         assertEq(
-            _iporProtocol.assetManagement.totalBalance(address(_iporProtocol.ammTreasury)),
+            _iporProtocol.assetManagement.totalBalance(),
             expectedAssetManagementBalance,
             "incorrect asset management balance"
         );
@@ -155,7 +153,7 @@ contract JosephAutoRebalance is TestCommons {
         uint256 userPosition = 500000 * 1e6;
 
         uint256 expectedAmmTreasuryBalance = 150000000354;
-        uint256 expectedAssetManagementBalance = 850000002004415777544508;
+        uint256 expectedAssetManagementBalance = 850000002004415777875000;
 
         vm.warp(100);
 
@@ -182,10 +180,7 @@ contract JosephAutoRebalance is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_userOne, userPosition);
 
         //then
-        assertEq(
-            _iporProtocol.assetManagement.totalBalance(address(_iporProtocol.ammTreasury)),
-            expectedAssetManagementBalance
-        );
+        assertEq(_iporProtocol.assetManagement.totalBalance(), expectedAssetManagementBalance);
         assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)), expectedAmmTreasuryBalance);
     }
 }

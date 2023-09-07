@@ -71,7 +71,7 @@ contract AmmTreasuryTest is TestCommons {
         // admin
         _iporProtocol.ammTreasury.addPauseGuardian(_getUserAddress(1));
         _iporProtocol.ammTreasury.removePauseGuardian(_getUserAddress(1));
-        _iporProtocol.ammTreasury.grandMaxAllowanceForSpender(_getUserAddress(1));
+        _iporProtocol.ammTreasury.grantMaxAllowanceForSpender(_getUserAddress(1));
         _iporProtocol.ammTreasury.revokeAllowanceForSpender(_getUserAddress(1));
 
         // then

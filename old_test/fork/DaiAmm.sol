@@ -72,7 +72,6 @@ contract DaiAmm is Test, TestCommons, IporRiskManagementOracleUtils {
         _createAaveIncentivesController();
         _setupJoseph(owner);
         _setupIpToken();
-        _setupIvToken();
         _setupAmmTreasury();
         _setupAmmStorage();
         _setupAssetManagement();
@@ -126,10 +125,6 @@ contract DaiAmm is Test, TestCommons, IporRiskManagementOracleUtils {
 
     function _createIpDai() internal {
         ipDai = address(new IpToken("IP DAI", "ipDAI", dai));
-    }
-
-    function _createIvDai() internal {
-        ivDai = address(new IvToken("IV DAI", "ivDAI", dai));
     }
 
     function _createCompoundStrategy() internal returns (StrategyCompound) {
@@ -282,10 +277,6 @@ contract DaiAmm is Test, TestCommons, IporRiskManagementOracleUtils {
 
     function _setupAssetManagement() internal {
         assetManagement.setAmmTreasury(address(ammTreasury));
-    }
-
-    function _setupIvToken() internal {
-        IvToken(ivDai).setAssetManagement(address(assetManagement));
     }
 
     function _setupStrategyAave() internal {

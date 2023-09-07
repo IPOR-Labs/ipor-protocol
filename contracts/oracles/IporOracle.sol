@@ -9,6 +9,7 @@ import "../interfaces/types/IporTypes.sol";
 import "../interfaces/types/IporOracleTypes.sol";
 import "../interfaces/IIporOracle.sol";
 import "../interfaces/IProxyImplementation.sol";
+import "../interfaces/IIporContractCommonGov.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/IporOracleErrors.sol";
 import "../libraries/Constants.sol";
@@ -29,7 +30,8 @@ contract IporOracle is
     UUPSUpgradeable,
     IporOwnableUpgradeable,
     IIporOracle,
-    IProxyImplementation
+    IProxyImplementation,
+    IIporContractCommonGov
 {
     using SafeCast for uint256;
     using IporLogic for IporOracleTypes.IPOR;

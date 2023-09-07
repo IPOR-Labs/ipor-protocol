@@ -124,4 +124,7 @@ library AmmErrors {
 
     /// @notice Collateral is not sufficient to cover unwind swap
     string public constant COLLATERAL_IS_NOT_SUFFICIENT_TO_COVER_UNWIND_SWAP = "IPOR_339";
+
+    /// @notice Error when withdraw from asset management is not enough to cover transfer amount to buyer and/or beneficiary
+    string public constant ASSET_MANAGEMENT_WITHDRAW_NOT_ENOUGH = "IPOR_340";
 }

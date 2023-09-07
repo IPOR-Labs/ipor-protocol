@@ -2,7 +2,6 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "../../contracts/tokens/IvToken.sol";
 import "../../contracts/vault/strategies/StrategyCore.sol";
 import "../../contracts/vault/strategies/StrategyCompound.sol";
 import "../mocks/tokens/MockTestnetToken.sol";
@@ -14,7 +13,6 @@ contract StrategyPauseManagerTest is Test {
     address private _user2;
 
     MockTestnetToken private usdc = new MockTestnetToken("Mocked USDC", "USDC", 100_000_000 * 1e6, uint8(6));
-    IvToken ivUsdc = new IvToken("IV USDC", "ivUSDC", address(usdc));
 
     function setUp() public {
         _owner = vm.rememberKey(1);
@@ -190,21 +188,18 @@ contract StrategyPauseManagerTest is Test {
     }
 
     function createStrategy() internal returns (StrategyCore) {
-        StrategyCore strategy = new StrategyCompoundUsdc();
+        StrategyCore strategy = new StrategyCompound(
+            address(usdc),
+            6,
+            address(this),
+            address(this),
+            7200,
+            address(this),
+            address(this)
+        );
         vm.startPrank(_owner);
         StrategyCore proxy = StrategyCore(
-            address(
-                new ERC1967Proxy(
-                    address(strategy),
-                    abi.encodeWithSignature(
-                        "initialize(address,address,address,address)",
-                        address(usdc),
-                        address(ivUsdc),
-                        address(this),
-                        address(this)
-                    )
-                )
-            )
+            address(new ERC1967Proxy(address(strategy), abi.encodeWithSignature("initialize()")))
         );
         vm.stopPrank();
         return proxy;

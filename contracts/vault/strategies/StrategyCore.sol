@@ -5,10 +5,13 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "../../interfaces/IStrategy.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "../../interfaces/IProxyImplementation.sol";
+import "../../interfaces/IIporContractCommonGov.sol";
+import "../../interfaces/IStrategy.sol";
 import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/errors/AssetManagementErrors.sol";
+import "../../libraries/IporContractValidator.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 import "../../security/PauseManager.sol";
 
@@ -19,16 +22,43 @@ abstract contract StrategyCore is
     UUPSUpgradeable,
     IporOwnableUpgradeable,
     IStrategy,
-    IProxyImplementation
+    IProxyImplementation,
+    IIporContractCommonGov
 {
-    address internal _asset;
-    address internal _shareToken;
-    address internal _assetManagement;
+    using IporContractValidator for address;
+
+    address public immutable asset;
+    uint256 public immutable assetDecimals;
+    address public immutable shareToken;
+    address public immutable assetManagement;
+
+    /// @dev deprecated
+    address internal _assetDeprecated;
+    /// @dev deprecated
+    address internal _shareTokenDeprecated;
+    /// @dev deprecated
+    address internal _assetManagementDeprecated;
+
     address internal _treasury;
     address internal _treasuryManager;
 
+    /// @notice Emmited when doClaim function had been executed.
+    /// @param claimedBy account that executes claim action
+    /// @param shareTokenAddress share token associated with one strategy
+    /// @param treasury Treasury address where claimed tokens are transferred.
+    /// @param amount S
+    event DoClaim(address indexed claimedBy, address indexed shareTokenAddress, address indexed treasury, uint256 amount);
+
+    /// @notice Emmited when Treasury address has changed
+    /// @param newTreasury new Treasury address
+    event TreasuryChanged(address newTreasury);
+
+    /// @notice Emmited when Treasury Manager address has changed
+    /// @param newTreasuryManager new Treasury Manager address
+    event TreasuryManagerChanged(address newTreasuryManager);
+
     modifier onlyAssetManagement() {
-        require(_msgSender() == _assetManagement, AssetManagementErrors.CALLER_NOT_ASSET_MANAGEMENT);
+        require(_msgSender() == assetManagement, AssetManagementErrors.CALLER_NOT_ASSET_MANAGEMENT);
         _;
     }
 
@@ -42,32 +72,17 @@ abstract contract StrategyCore is
         _;
     }
 
-    function getVersion() external pure override returns (uint256) {
-        return 2_000;
+    constructor(address assetInput, uint256 assetDecimalsInput, address shareTokenInput, address assetManagementInput) {
+        asset = assetInput.checkAddress();
+
+        require(assetDecimalsInput == IERC20MetadataUpgradeable(assetInput).decimals(), IporErrors.WRONG_DECIMALS);
+
+        assetDecimals = assetDecimalsInput;
+        shareToken = shareTokenInput.checkAddress();
+        assetManagement = assetManagementInput.checkAddress();
     }
 
-    function getAsset() external view override returns (address) {
-        return _asset;
-    }
-
-    /**
-     * @dev Share token to track _asset (DAI -> cDAI)
-     */
-    function getShareToken() external view override returns (address) {
-        return _shareToken;
-    }
-
-    function getAssetManagement() external view override returns (address) {
-        return _assetManagement;
-    }
-
-    function setAssetManagement(address newAssetManagement) external whenNotPaused onlyOwner {
-        require(newAssetManagement != address(0), IporErrors.WRONG_ADDRESS);
-        _assetManagement = newAssetManagement;
-        emit AssetManagementChanged(newAssetManagement);
-    }
-
-    function getTreasuryManager() external view override returns (address) {
+    function getTreasuryManager() external view returns (address) {
         return _treasuryManager;
     }
 
@@ -77,7 +92,7 @@ abstract contract StrategyCore is
         emit TreasuryManagerChanged(manager);
     }
 
-    function getTreasury() external view override returns (address) {
+    function getTreasury() external view returns (address) {
         return _treasury;
     }
 

@@ -9,10 +9,10 @@ import "../interfaces/IIporOracle.sol";
 import "../interfaces/IAmmStorage.sol";
 import "../interfaces/IAssetManagement.sol";
 import "../interfaces/IIporRiskManagementOracle.sol";
-import "./Constants.sol";
-import "./math/IporMath.sol";
 import "./errors/IporErrors.sol";
 import "./errors/AmmErrors.sol";
+import "./Constants.sol";
+import "./math/IporMath.sol";
 import "../amm/libraries/SoapIndicatorLogic.sol";
 
 /// @title AMM basic logic library
@@ -94,7 +94,7 @@ library AmmLib {
         require(model.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " ammTreasury"));
         IporTypes.AmmBalancesMemory memory accruedBalance = IAmmStorage(model.ammStorage).getBalance();
 
-        uint256 actualVaultBalance = IAssetManagement(model.assetManagement).totalBalance(model.ammTreasury);
+        uint256 actualVaultBalance = IAssetManagement(model.assetManagement).totalBalance();
         int256 liquidityPool = accruedBalance.liquidityPool.toInt256() +
             actualVaultBalance.toInt256() -
             accruedBalance.vault.toInt256();
