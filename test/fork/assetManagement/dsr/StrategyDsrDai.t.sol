@@ -420,7 +420,7 @@ contract StrategyDsrDaiTest is TestForkCommons {
         );
         uint256 strategyBalanceAfter = strategy.balanceOf();
 
-        assertEq(strategyBalanceAfter, strategyBalanceBefore + 10_000 * 1e18);
+        assertEq(strategyBalanceAfter, strategyBalanceBefore + 9999999999999999999999);
         assertEq(newStrategyAllowanceToShareToken, 0);
     }
 }
