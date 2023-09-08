@@ -518,4 +518,155 @@ contract CloseSwapAfterUpgradeTest is TestForkCommons {
         );
         assertEq(0, uint256(swapAfterUpgradeAfterCloseStorage.state), "swap.state");
     }
+
+    function testShouldCloseInV2SwapFromV1AndNotUpdateTimeWeightedTenor28DaiPayFixed() public {
+        //given
+        address user = _getUserAddress(22);
+
+        vm.prank(user);
+        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
+
+        deal(DAI, user, 500_000e18);
+
+        vm.prank(user);
+        uint256 swapIdV1 = IMilton(miltonProxyDai).openSwapPayFixed(2_000 * 1e18, 9e18, 10e18);
+
+        IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyDai).getSwapPayFixed(
+            swapIdV1
+        );
+
+        vm.warp(block.timestamp + 5 days);
+
+        //when
+        _init();
+
+        //then
+//        vm.prank(user);
+//        ERC20(DAI).approve(iporProtocolRouterProxy, type(uint256).max);
+//
+//        vm.prank(user);
+//        uint256 swapIdV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapPayFixed28daysDai(
+//            user,
+//            2_000 * 1e18,
+//            9e18,
+//            10e18
+//        );
+
+//        IAmmSwapsLens.IporSwap[] memory swaps;
+//        (, swaps) = IAmmSwapsLens(iporProtocolRouterProxy).getSwaps(DAI, user, 0, 10);
+//        IAmmSwapsLens.IporSwap memory swapAfterUpgradeBeforeClose = swaps[0];
+//
+//        AmmTypes.Swap memory swapAfterUpgradeBeforeCloseStorage = IAmmStorage(miltonStorageProxyDai).getSwap(
+//            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+//            swapIdV1
+//        );
+
+        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalBeforeClose = SpreadStorageLens(
+            spreadRouter
+        ).getTimeWeightedNotional();
+
+        console2.log("KEY 0: ", timeWeightedNotionalBeforeClose[0].key);
+        console2.log(
+            "KEY 0 - timeWeightedNotionalPayFixed: ",
+            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed
+        );
+
+        //        /// @dev checking swap via Router
+        //        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeBeforeClose.id, "swapId");
+        //        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeBeforeClose.buyer, "swap.buyer");
+        //        assertEq(swapBeforeUpgrade.openTimestamp, swapAfterUpgradeBeforeClose.openTimestamp, "swap.openTimestamp");
+        //        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeBeforeClose.collateral, "swap.collateral");
+        //        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeBeforeClose.notional, "swap.notional");
+        //        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeBeforeClose.ibtQuantity, "swap.ibtQuantity");
+        //        assertEq(
+        //            swapBeforeUpgrade.fixedInterestRate,
+        //            swapAfterUpgradeBeforeClose.fixedInterestRate,
+        //            "swap.fixedInterestRate"
+        //        );
+        //        assertEq(
+        //            swapBeforeUpgrade.liquidationDepositAmount,
+        //            swapAfterUpgradeBeforeClose.liquidationDepositAmount,
+        //            "swap.liquidationDepositAmount"
+        //        );
+        //        assertEq(swapBeforeUpgrade.state, swapAfterUpgradeBeforeClose.state, "swap.state");
+        //
+        //        /// @dev checking swap via AmmStorage
+        //        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeBeforeCloseStorage.id, "swapId");
+        //        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeBeforeCloseStorage.buyer, "swap.buyer");
+        //        assertEq(
+        //            swapBeforeUpgrade.openTimestamp,
+        //            swapAfterUpgradeBeforeCloseStorage.openTimestamp,
+        //            "swap.openTimestamp"
+        //        );
+        //
+        //        assertEq(uint256(swapAfterUpgradeBeforeCloseStorage.tenor), uint256(IporTypes.SwapTenor.DAYS_28), "swap.tenor");
+        //        assertEq(swapBeforeUpgrade.idsIndex, swapAfterUpgradeBeforeCloseStorage.idsIndex, "swap.idsIndex");
+        //
+        //        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeBeforeCloseStorage.collateral, "swap.collateral");
+        //        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeBeforeCloseStorage.notional, "swap.notional");
+        //        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeBeforeCloseStorage.ibtQuantity, "swap.ibtQuantity");
+        //        assertEq(
+        //            swapBeforeUpgrade.fixedInterestRate,
+        //            swapAfterUpgradeBeforeCloseStorage.fixedInterestRate,
+        //            "swap.fixedInterestRate"
+        //        );
+        //        assertEq(
+        //            swapBeforeUpgrade.liquidationDepositAmount,
+        //            swapAfterUpgradeBeforeCloseStorage.liquidationDepositAmount,
+        //            "swap.liquidationDepositAmount"
+        //        );
+        //        assertEq(swapBeforeUpgrade.state, uint256(swapAfterUpgradeBeforeCloseStorage.state), "swap.state");
+        //
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = swapIdV1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
+        vm.prank(user);
+        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
+
+        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalAfterClose = SpreadStorageLens(
+            spreadRouter
+        ).getTimeWeightedNotional();
+
+        console2.log("AFTER KEY 0: ", timeWeightedNotionalAfterClose[0].key);
+        console2.log(
+            "AFTER KEY 0 - timeWeightedNotionalPayFixed: ",
+            timeWeightedNotionalAfterClose[1].timeWeightedNotional.timeWeightedNotionalPayFixed
+        );
+
+        assertEq(timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed, 0);
+        assertEq(timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed, 0);
+
+        //        AmmTypes.Swap memory swapAfterUpgradeAfterCloseStorage = AmmStorage(miltonStorageProxyDai).getSwap(
+        //            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+        //            swapId
+        //        );
+        //
+        //        /// @dev checking swap via AmmStorage
+        //        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeAfterCloseStorage.id, "swapId");
+        //        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeAfterCloseStorage.buyer, "swap.buyer");
+        //        assertEq(
+        //            swapBeforeUpgrade.openTimestamp,
+        //            swapAfterUpgradeBeforeCloseStorage.openTimestamp,
+        //            "swap.openTimestamp"
+        //        );
+        //
+        //        assertEq(uint256(swapAfterUpgradeAfterCloseStorage.tenor), uint256(IporTypes.SwapTenor.DAYS_28), "swap.tenor");
+        //        assertEq(swapBeforeUpgrade.idsIndex, swapAfterUpgradeAfterCloseStorage.idsIndex, "swap.idsIndex");
+        //
+        //        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeAfterCloseStorage.collateral, "swap.collateral");
+        //        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeAfterCloseStorage.notional, "swap.notional");
+        //        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeAfterCloseStorage.ibtQuantity, "swap.ibtQuantity");
+        //        assertEq(
+        //            swapBeforeUpgrade.fixedInterestRate,
+        //            swapAfterUpgradeAfterCloseStorage.fixedInterestRate,
+        //            "swap.fixedInterestRate"
+        //        );
+        //        assertEq(
+        //            swapBeforeUpgrade.liquidationDepositAmount,
+        //            swapAfterUpgradeAfterCloseStorage.liquidationDepositAmount,
+        //            "swap.liquidationDepositAmount"
+        //        );
+        //        assertEq(0, uint256(swapAfterUpgradeAfterCloseStorage.state), "swap.state");
+    }
 }
