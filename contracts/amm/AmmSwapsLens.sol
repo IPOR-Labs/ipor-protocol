@@ -33,8 +33,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
     uint256 internal immutable _daiMinLeverage;
 
     address public immutable iporOracle;
-    address public immutable riskManagementOracle;
-
+    address public immutable iporRiskManagementOracle;
     address public immutable spreadRouter;
 
     constructor(
@@ -42,7 +41,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         SwapLensPoolConfiguration memory usdcCfg,
         SwapLensPoolConfiguration memory daiCfg,
         address iporOracleInput,
-        address riskManagementOracleInput,
+        address iporRiskManagementOracleInput,
         address spreadRouterInput
     ) {
         _usdtAsset = usdtCfg.asset.checkAddress();
@@ -61,7 +60,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         _daiMinLeverage = daiCfg.minLeverage;
 
         iporOracle = iporOracleInput.checkAddress();
-        riskManagementOracle = riskManagementOracleInput.checkAddress();
+        iporRiskManagementOracle = iporRiskManagementOracleInput.checkAddress();
         spreadRouter = spreadRouterInput.checkAddress();
     }
 
@@ -145,7 +144,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
             tenor,
             balance.liquidityPool,
             poolCfg.minLeverage,
-            riskManagementOracle
+            iporRiskManagementOracle
         );
         spreadContextPayFixed.balance = balance;
         offeredRatePayFixed = _getOfferedRatePerLeg(spreadContextPayFixed);
@@ -163,7 +162,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
             tenor,
             balance.liquidityPool,
             poolCfg.minLeverage,
-            riskManagementOracle
+            iporRiskManagementOracle
         );
         spreadContextReceiveFixed.balance = balance;
         offeredRateReceiveFixed = _getOfferedRatePerLeg(spreadContextReceiveFixed);
@@ -217,7 +216,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
             tenor,
             balances.liquidityPool,
             swapLensPoolCfg.minLeverage,
-            riskManagementOracle
+            iporRiskManagementOracle
         );
     }
 
