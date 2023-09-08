@@ -19,7 +19,7 @@ contract ForkStrategyCompoundDepositTest is TestForkCommons {
         _user = vm.rememberKey(2);
     }
 
-    function testShouldDepositWhenNoInitialAllowanceToCompoundShareToken() public {
+    function testShouldDepositWhenNoInitialAllowanceToCompoundShareTokenDAI() public {
         // given
         _init();
         _createNewStrategyCompoundDai();
@@ -48,7 +48,40 @@ contract ForkStrategyCompoundDepositTest is TestForkCommons {
         );
         uint256 strategyBalanceAfter = strategy.balanceOf();
 
-        assertEq(strategyBalanceAfter, strategyBalanceBefore + 9999999999999883609072);
-        assertEq(newStrategyAllowanceToShareToken, 0);
+        assertEq(strategyBalanceAfter, strategyBalanceBefore + 9999999999999883609072, "strategyBalanceAfter");
+        assertEq(newStrategyAllowanceToShareToken, 0, "newStrategyAllowanceToShareToken");
+    }
+
+    function testShouldDepositWhenNoInitialAllowanceToCompoundShareTokenUSDT() public {
+        // given
+        _init();
+        _createNewStrategyCompoundUsdt();
+
+        deal(USDT, address(stanleyProxyUsdt), 1000_000 * 1e6);
+
+        StrategyCompound strategy = StrategyCompound(newStrategyCompoundUsdtProxy);
+
+        IERC20Upgradeable asset = IERC20Upgradeable(USDT);
+
+        vm.startPrank(address(stanleyProxyUsdt));
+        asset.safeApprove(address(strategy), type(uint256).max);
+        vm.stopPrank();
+
+        uint256 strategyBalanceBefore = strategy.balanceOf();
+
+        //when
+        vm.prank(address(stanleyProxyUsdt));
+        strategy.deposit(10_000 * 1e18);
+
+        //then
+
+        uint256 newStrategyAllowanceToShareToken = IERC20Upgradeable(asset).allowance(
+            address(newStrategyCompoundUsdtProxy),
+            cUSDT
+        );
+        uint256 strategyBalanceAfter = strategy.balanceOf();
+
+        assertEq(strategyBalanceAfter, strategyBalanceBefore + 9999999999999929307595, "strategyBalanceAfter");
+        assertEq(newStrategyAllowanceToShareToken, 0, "newStrategyAllowanceToShareToken");
     }
 }

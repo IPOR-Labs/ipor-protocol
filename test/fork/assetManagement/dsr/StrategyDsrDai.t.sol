@@ -392,7 +392,7 @@ contract StrategyDsrDaiTest is TestForkCommons {
         assertEq(withdrawnShares, sDaiShares);
     }
 
-    function testShouldDepositWhenNoInitialAllowanceToShareToken() public {
+    function testShouldDepositWhenNoInitialAllowanceToShareTokenDAI() public {
         // given
         _init();
         _createNewStrategyDsrDai();
@@ -420,7 +420,8 @@ contract StrategyDsrDaiTest is TestForkCommons {
         );
         uint256 strategyBalanceAfter = strategy.balanceOf();
 
-        assertEq(strategyBalanceAfter, strategyBalanceBefore + 9999999999999999999999);
-        assertEq(newStrategyAllowanceToShareToken, 0);
+        assertEq(strategyBalanceAfter, strategyBalanceBefore + 9999999999999999999999, "strategyBalanceAfter");
+        assertEq(newStrategyAllowanceToShareToken, 0, "newStrategyAllowanceToShareToken");
     }
+
 }

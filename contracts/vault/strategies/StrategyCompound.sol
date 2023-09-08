@@ -102,7 +102,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         uint256 wadAmount
     ) external override whenNotPaused onlyAssetManagement returns (uint256 depositedAmount) {
         uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
-        IERC20Upgradeable(asset).forceApprove(shareToken, wadAmount);
+        IERC20Upgradeable(asset).forceApprove(shareToken, amount);
         IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), amount);
         CErc20(shareToken).mint(amount);
         depositedAmount = IporMath.convertToWad(amount, assetDecimals);

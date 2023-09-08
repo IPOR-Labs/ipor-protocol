@@ -113,7 +113,9 @@ contract TestForkCommons is Test {
 
     address public newStrategyDsrDaiProxy;
     address public newStrategyAaveDaiProxy;
+    address public newStrategyAaveUsdtProxy;
     address public newStrategyCompoundDaiProxy;
+    address public newStrategyCompoundUsdtProxy;
 
     function _init() internal {
         (uint IporOracleVersionBefore, uint IporOracleVersionAfter) = _switchImplementationOfIporOracle();
@@ -211,6 +213,26 @@ contract TestForkCommons is Test {
         newStrategyAaveDaiProxy = address(proxy);
     }
 
+    function _createNewStrategyAaveUsdt () internal {
+        StrategyAave strategyAaveImpl = new StrategyAave(
+            USDT,
+            6,
+            aUSDT,
+            stanleyProxyUsdt,
+            AAVE,
+            stakedAAVE,
+            aaveLendingPoolAddressProvider,
+            stakedAAVE,
+            aaveIncentivesController
+        );
+
+        vm.startPrank(owner);
+        ERC1967Proxy proxy = new ERC1967Proxy(address(strategyAaveImpl), abi.encodeWithSignature("initialize()"));
+        vm.stopPrank();
+
+        newStrategyAaveUsdtProxy = address(proxy);
+    }
+
     function _createNewStrategyCompoundDai() internal {
         StrategyCompound strategyCompoundImpl = new StrategyCompound(
             DAI,
@@ -227,6 +249,24 @@ contract TestForkCommons is Test {
         vm.stopPrank();
 
         newStrategyCompoundDaiProxy = address(proxy);
+    }
+
+    function _createNewStrategyCompoundUsdt() internal {
+        StrategyCompound strategyCompoundImpl = new StrategyCompound(
+            USDT,
+            6,
+            cUSDT,
+            stanleyProxyUsdt,
+            7200,
+            comptroller,
+            COMP
+        );
+
+        vm.startPrank(owner);
+        ERC1967Proxy proxy = new ERC1967Proxy(address(strategyCompoundImpl), abi.encodeWithSignature("initialize()"));
+        vm.stopPrank();
+
+        newStrategyCompoundUsdtProxy = address(proxy);
     }
 
     function _switchImplementationOfIporOracle() private returns (uint256 versionBefore, uint256 versionAfter) {
