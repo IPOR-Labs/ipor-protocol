@@ -36,16 +36,16 @@ interface IAmmTreasuryEth {
     function isPauseGuardian(address account) external view returns (bool);
 
     /// @notice Adds a new pause guardian to the contract.
-    /// @param guardian Address of the account to be added as a pause guardian.
+    /// @param guardians List Addresses of the accounts to be added as a pause guardian.
     /// @dev This function can only be called by the contract owner.
     /// It delegates the addition of a new pause guardian to the PauseManager.
     /// require Caller must be the contract owner.
-    function addPauseGuardian(address guardian) external;
+    function addPauseGuardians(address[] calldata guardians) external;
 
     /// @notice Removes an existing pause guardian from the contract.
-    /// @param guardian Address of the account to be removed as a pause guardian.
+    /// @param guardians List addresses of the accounts to be removed as a pause guardian.
     /// @dev This function can only be called by the contract owner.
     /// It delegates the removal of a pause guardian to the PauseManager.
     /// require Caller must be the contract owner.
-    function removePauseGuardian(address guardian) external;
+    function removePauseGuardians(address[] calldata guardians) external;
 }

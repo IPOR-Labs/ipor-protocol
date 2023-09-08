@@ -119,7 +119,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
     function testShouldPauseSCWhenSenderIsPauseGuardian() public {
         // given
         bool pausedBefore = _iporRiskManagementOracle.paused();
-        _iporRiskManagementOracle.addPauseGuardian(_admin);
+
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
+        _iporRiskManagementOracle.addPauseGuardians(pauseGuardians);
 
         // when
         _iporRiskManagementOracle.pause();
@@ -133,7 +136,9 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
 
     function testShouldPauseSCSpecificMethods() public {
         // given
-        _iporRiskManagementOracle.addPauseGuardian(_admin);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
+        _iporRiskManagementOracle.addPauseGuardians(pauseGuardians);
         _iporRiskManagementOracle.pause();
         bool pausedBefore = _iporRiskManagementOracle.paused();
 
@@ -176,7 +181,9 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
 
     function testShouldNotPauseSmartContractSpecificMethodsWhenPaused() public {
         // given
-        _iporRiskManagementOracle.addPauseGuardian(_admin);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
+        _iporRiskManagementOracle.addPauseGuardians(pauseGuardians);
         _iporRiskManagementOracle.pause();
 
         bool pausedBefore = _iporRiskManagementOracle.paused();
@@ -194,10 +201,11 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
         vm.stopPrank();
 
         //admin
+        pauseGuardians[0] = address(this);
         _iporRiskManagementOracle.addUpdater(address(this));
         _iporRiskManagementOracle.removeUpdater(address(this));
-        _iporRiskManagementOracle.addPauseGuardian(address(this));
-        _iporRiskManagementOracle.removePauseGuardian(address(this));
+        _iporRiskManagementOracle.addPauseGuardians(pauseGuardians);
+        _iporRiskManagementOracle.removePauseGuardians(pauseGuardians);
 
         // then
         bool pausedAfter = _iporRiskManagementOracle.paused();
@@ -223,9 +231,11 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
 
     function testShouldUnpauseSmartContractWhenSenderIsAnAdmin() public {
         // given
-        _iporRiskManagementOracle.addPauseGuardian(_admin);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
+        _iporRiskManagementOracle.addPauseGuardians(pauseGuardians);
         _iporRiskManagementOracle.pause();
-        _iporRiskManagementOracle.removePauseGuardian(_admin);
+        _iporRiskManagementOracle.removePauseGuardians(pauseGuardians);
 
         bool pausedBefore = _iporRiskManagementOracle.paused();
 
@@ -241,9 +251,11 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
 
     function testShouldNotUnpauseSmartContractWhenSenderIsNotAnAdmin() public {
         // given
-        _iporRiskManagementOracle.addPauseGuardian(_admin);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
+        _iporRiskManagementOracle.addPauseGuardians(pauseGuardians);
         _iporRiskManagementOracle.pause();
-        _iporRiskManagementOracle.removePauseGuardian(_admin);
+        _iporRiskManagementOracle.removePauseGuardians(pauseGuardians);
 
         bool pausedBefore = _iporRiskManagementOracle.paused();
 

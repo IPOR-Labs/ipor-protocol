@@ -137,12 +137,12 @@ contract AmmTreasury is
         return PauseManager.isPauseGuardian(account);
     }
 
-    function addPauseGuardian(address guardian) external override onlyOwner {
-        PauseManager.addPauseGuardian(guardian);
+    function addPauseGuardians(address[] calldata guardians) external override onlyOwner {
+        PauseManager.addPauseGuardians(guardians);
     }
 
-    function removePauseGuardian(address guardian) external override onlyOwner {
-        PauseManager.removePauseGuardian(guardian);
+    function removePauseGuardians(address[] calldata guardians) external override onlyOwner {
+        PauseManager.removePauseGuardians(guardians);
     }
 
     function getImplementation() external view override returns (address) {

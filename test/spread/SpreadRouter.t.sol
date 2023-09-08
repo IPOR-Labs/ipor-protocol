@@ -16,6 +16,7 @@ contract SpreadRouterTest is TestCommons {
     address internal _closeSwapService;
     address internal _router;
     IporTypes.SpreadInputs internal _spreadInputs;
+    address[] internal  _pauseGuardians;
 
     function setUp() external {
         _iporProtocolRouter = _getUserAddress(10);
@@ -44,11 +45,14 @@ contract SpreadRouterTest is TestCommons {
             address(routerImplementation),
             abi.encodeWithSignature("initialize(bool)", false)
         );
+        _pauseGuardians = new address[](1);
+        _pauseGuardians[0] = _owner;
         _router = address(proxy);
-        SpreadAccessControl(_router).addPauseGuardian(_owner);
+        SpreadAccessControl(_router).addPauseGuardians(_pauseGuardians);
         vm.stopPrank();
 
         _spreadInputs = IporTypes.SpreadInputs(address(0x00), 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100);
+
     }
 
     function testShouldGetProperConfigurationWhenDeployd() external {
@@ -172,10 +176,11 @@ contract SpreadRouterTest is TestCommons {
         //given
         address user = _getUserAddress(12);
         bool isGuardianBefore = SpreadAccessControl(_router).isPauseGuardian(user);
+        _pauseGuardians[0] = user;
 
         //when
         vm.expectRevert(bytes(IporErrors.CALLER_NOT_OWNER));
-        SpreadAccessControl(_router).addPauseGuardian(user);
+        SpreadAccessControl(_router).addPauseGuardians(_pauseGuardians);
 
         //then
         bool isGuardianAfter = SpreadAccessControl(_router).isPauseGuardian(user);
@@ -186,13 +191,14 @@ contract SpreadRouterTest is TestCommons {
     function testShouldNotBeAbleToRemoveGuardianWhenNotOwner() external {
         //given
         address user = _getUserAddress(12);
+        _pauseGuardians[0] = user;
         vm.prank(_owner);
-        SpreadAccessControl(_router).addPauseGuardian(user);
+        SpreadAccessControl(_router).addPauseGuardians(_pauseGuardians);
         bool isGuardianBefore = SpreadAccessControl(_router).isPauseGuardian(user);
 
         //when
         vm.expectRevert(bytes(IporErrors.CALLER_NOT_OWNER));
-        SpreadAccessControl(_router).removePauseGuardian(user);
+        SpreadAccessControl(_router).removePauseGuardians(_pauseGuardians);
 
         //then
         bool isGuardianAfter = SpreadAccessControl(_router).isPauseGuardian(user);

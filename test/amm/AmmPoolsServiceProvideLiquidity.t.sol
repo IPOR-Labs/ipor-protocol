@@ -48,8 +48,11 @@ contract AmmPoolsServiceProvideLiquidity is TestCommons {
 
         bytes4[] memory methods = new bytes4[](1);
         methods[0] = _iporProtocol.ammPoolsService.provideLiquidityDai.selector;
+
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
         vm.prank(_admin);
-        AccessControl(router).addPauseGuardian(_admin);
+        AccessControl(router).addPauseGuardians(pauseGuardians);
         vm.prank(_admin);
         AccessControl(router).pause(methods);
         uint256 isPausedBefore = AccessControl(address(_iporProtocol.router)).paused(
@@ -83,8 +86,10 @@ contract AmmPoolsServiceProvideLiquidity is TestCommons {
         address router = address(_iporProtocol.router);
         bytes4[] memory methods = new bytes4[](1);
         methods[0] = _iporProtocol.ammPoolsService.provideLiquidityDai.selector;
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
         vm.prank(_admin);
-        AccessControl(router).addPauseGuardian(_admin);
+        AccessControl(router).addPauseGuardians(pauseGuardians);
         vm.prank(_admin);
         AccessControl(router).pause(methods);
         uint256 isPausedBefore = AccessControl(address(_iporProtocol.router)).paused(

@@ -50,9 +50,9 @@ contract MockStrategyWithTransfers is IStrategy, IIporContractCommonGov {
         return true;
     }
 
-    function addPauseGuardian(address guardian) external override  {}
+    function addPauseGuardians(address[] calldata guardians) external override  {}
 
-    function removePauseGuardian(address guardian) external override  {}
+    function removePauseGuardians(address[] calldata guardians) external override  {}
 
 
     function pause() external override {
