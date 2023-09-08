@@ -243,10 +243,10 @@ interface IIporRiskManagementOracle {
     function isPauseGuardian(address account) external view returns (bool);
 
     /// @notice Adds a pause guardian to the list of guardians. Function available only for the Owner.
-    /// @param guardian The address of the pause guardian to be added.
-    function addPauseGuardian(address guardian) external;
+    /// @param guardians The list addresses of the pause guardians to be added.
+    function addPauseGuardians(address[] calldata guardians) external;
 
     /// @notice Removes a pause guardian from the list of guardians. Function available only for the Owner.
-    /// @param guardian The address of the pause guardian to be removed.
-    function removePauseGuardian(address guardian) external;
+    /// @param guardians The list addresses of the pause guardians to be removed.
+    function removePauseGuardians(address[] calldata guardians) external;
 }

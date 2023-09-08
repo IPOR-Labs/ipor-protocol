@@ -46,12 +46,14 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
     function testShouldProvideAndRedeemFromDsrStrategy() public {
         //given
         _init();
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = owner;
 
         vm.prank(owner);
-        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardians(pauseGuardians);
 
         vm.prank(owner);
-        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardians(pauseGuardians);
 
         vm.prank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, 10, 500);
@@ -95,12 +97,14 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
     function testShouldRedeemFromTwoStrategiesCompoundAndDsr() public {
         //given
         _init();
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = owner;
 
         vm.prank(owner);
-        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardians(pauseGuardians);
 
         vm.prank(owner);
-        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardians(pauseGuardians);
 
         vm.prank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, 50, 500);
@@ -158,11 +162,14 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         //given
         _init();
 
-        vm.prank(owner);
-        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = owner;
 
         vm.prank(owner);
-        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardians(pauseGuardians);
+
+        vm.prank(owner);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardians(pauseGuardians);
 
         vm.prank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, 50, 500);
@@ -203,12 +210,14 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
     function testShouldProvideLiquidity() public {
         //given
         _init();
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = owner;
 
         vm.prank(owner);
-        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardians(pauseGuardians);
 
         vm.prank(owner);
-        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardians(pauseGuardians);
 
         vm.prank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, 50, 500);
@@ -239,11 +248,14 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         //given
         _init();
 
-        vm.prank(owner);
-        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = owner;
 
         vm.prank(owner);
-        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardians(pauseGuardians);
+
+        vm.prank(owner);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardians(pauseGuardians);
 
         vm.prank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, 50, 500);
@@ -280,11 +292,14 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         //given
         _init();
 
-        vm.prank(owner);
-        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = owner;
 
         vm.prank(owner);
-        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardians(pauseGuardians);
+
+        vm.prank(owner);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardians(pauseGuardians);
 
         vm.prank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, 50, 500);
@@ -341,12 +356,14 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
     function testShouldRebalanceToDsrWhenRestIsPaused() public {
         //given
         _init();
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = owner;
 
         vm.prank(owner);
-        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardians(pauseGuardians);
 
         vm.prank(owner);
-        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardians(pauseGuardians);
 
         vm.prank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, 50, 500);
@@ -417,9 +434,11 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         vm.startPrank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(DAI);
 
-        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
-        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
-        IIporContractCommonGov(strategyDsrProxyDai).addPauseGuardian(owner);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = owner;
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardians(pauseGuardians);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardians(pauseGuardians);
+        IIporContractCommonGov(strategyDsrProxyDai).addPauseGuardians(pauseGuardians);
 
         IIporContractCommonGov(strategyAaveProxyDai).pause();
         IIporContractCommonGov(strategyCompoundProxyDai).pause();
@@ -486,9 +505,11 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         vm.startPrank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(DAI);
 
-        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
-        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
-        IIporContractCommonGov(strategyDsrProxyDai).addPauseGuardian(owner);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = owner;
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardians(pauseGuardians);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardians(pauseGuardians);
+        IIporContractCommonGov(strategyDsrProxyDai).addPauseGuardians(pauseGuardians);
 
         IIporContractCommonGov(strategyAaveProxyDai).pause();
         IIporContractCommonGov(strategyDsrProxyDai).pause();
@@ -589,9 +610,11 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         vm.startPrank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(DAI);
 
-        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
-        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
-        IIporContractCommonGov(strategyDsrProxyDai).addPauseGuardian(owner);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = owner;
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardians(pauseGuardians);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardians(pauseGuardians);
+        IIporContractCommonGov(strategyDsrProxyDai).addPauseGuardians(pauseGuardians);
 
         IIporContractCommonGov(strategyCompoundProxyDai).pause();
         IIporContractCommonGov(strategyDsrProxyDai).pause();

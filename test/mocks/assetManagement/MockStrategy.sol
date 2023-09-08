@@ -52,9 +52,9 @@ contract MockStrategy is IStrategy, IIporContractCommonGov {
         return false;
     }
 
-    function addPauseGuardian(address guardian) external {}
+    function addPauseGuardians(address[] calldata guardians) external {}
 
-    function removePauseGuardian(address guardian) external {}
+    function removePauseGuardians(address[] calldata guardians) external {}
 
     function setAsset(address asset) external {
         _asset = asset;

@@ -966,7 +966,9 @@ contract AmmStorageTest is TestCommons {
     function testShouldPauseSCWhenSenderIsPauseGuardian() public {
         // given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-        _iporProtocol.ammStorage.addPauseGuardian(_admin);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
+        _iporProtocol.ammStorage.addPauseGuardians(pauseGuardians);
         bool pausedBefore = _iporProtocol.ammStorage.paused();
 
         // when
@@ -982,7 +984,9 @@ contract AmmStorageTest is TestCommons {
     function testShouldNotPauseSCSpecificMethods() public {
         // given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-        _iporProtocol.ammStorage.addPauseGuardian(_admin);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
+        _iporProtocol.ammStorage.addPauseGuardians(pauseGuardians);
         _iporProtocol.ammStorage.pause();
 
         bool pausedBefore = _iporProtocol.ammStorage.paused();
@@ -1004,8 +1008,9 @@ contract AmmStorageTest is TestCommons {
         vm.stopPrank();
 
         // admin
-        _iporProtocol.ammStorage.addPauseGuardian(_getUserAddress(1));
-        _iporProtocol.ammStorage.removePauseGuardian(_getUserAddress(1));
+        pauseGuardians[0] = _getUserAddress(1);
+        _iporProtocol.ammStorage.addPauseGuardians(pauseGuardians);
+        _iporProtocol.ammStorage.removePauseGuardians(pauseGuardians);
 
         // then
         bool pausedAfter = _iporProtocol.ammStorage.paused();
@@ -1033,9 +1038,11 @@ contract AmmStorageTest is TestCommons {
     function testShouldUnpauseSmartContractWhenSenderIsAnAdmin() public {
         // given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-        _iporProtocol.ammStorage.addPauseGuardian(_admin);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
+        _iporProtocol.ammStorage.addPauseGuardians(pauseGuardians);
         _iporProtocol.ammStorage.pause();
-        _iporProtocol.ammStorage.removePauseGuardian(_admin);
+        _iporProtocol.ammStorage.removePauseGuardians(pauseGuardians);
 
         bool pausedBefore = _iporProtocol.ammStorage.paused();
 
@@ -1052,9 +1059,11 @@ contract AmmStorageTest is TestCommons {
     function testShouldNotUnpauseSmartContractWhenSenderIsNotAnAdmin() public {
         // given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-        _iporProtocol.ammStorage.addPauseGuardian(_admin);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
+        _iporProtocol.ammStorage.addPauseGuardians(pauseGuardians);
         _iporProtocol.ammStorage.pause();
-        _iporProtocol.ammStorage.removePauseGuardian(_admin);
+        _iporProtocol.ammStorage.removePauseGuardians(pauseGuardians);
 
         bool pausedBefore = _iporProtocol.ammStorage.paused();
 
