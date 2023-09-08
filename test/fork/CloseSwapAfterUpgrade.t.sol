@@ -518,4 +518,393 @@ contract CloseSwapAfterUpgradeTest is TestForkCommons {
         );
         assertEq(0, uint256(swapAfterUpgradeAfterCloseStorage.state), "swap.state");
     }
+
+    function testShouldCloseInV2SwapFromV1AndNotUpdateTimeWeightedTenor28DaiPayFixed() public {
+        //given
+        address user = _getUserAddress(22);
+
+        vm.prank(user);
+        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
+
+        deal(DAI, user, 500_000e18);
+
+        vm.prank(user);
+        uint256 swapIdOneV1 = IMilton(miltonProxyDai).openSwapPayFixed(2_000 * 1e18, 9e18, 10e18);
+
+        vm.prank(user);
+        uint256 swapIdTwoV1 = IMilton(miltonProxyDai).openSwapPayFixed(2_000 * 1e18, 9e18, 10e18);
+
+        IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyDai).getSwapPayFixed(
+            swapIdOneV1
+        );
+
+        vm.warp(block.timestamp + 5 days);
+
+        //when
+        _init();
+
+        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalBeforeClose = SpreadStorageLens(
+            spreadRouter
+        ).getTimeWeightedNotional();
+
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = swapIdOneV1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
+        vm.prank(user);
+        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
+
+        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalAfterClose = SpreadStorageLens(
+            spreadRouter
+        ).getTimeWeightedNotional();
+
+        assertEq(timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed, 0);
+        assertEq(timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed, 0);
+    }
+
+    function testShouldCloseInV2SwapFromV1AndNotUpdateTimeWeightedTenor28DaiPayFixedTwoNewSwapInV2() public {
+        //given
+        address user = _getUserAddress(22);
+
+        vm.prank(user);
+        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
+
+        deal(DAI, user, 500_000e18);
+
+        vm.prank(user);
+        uint256 swapIdOneV1 = IMilton(miltonProxyDai).openSwapPayFixed(1_000 * 1e18, 9e18, 10e18);
+
+        vm.prank(user);
+        uint256 swapIdTwoV1 = IMilton(miltonProxyDai).openSwapPayFixed(1_000 * 1e18, 9e18, 10e18);
+
+        IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyDai).getSwapPayFixed(
+            swapIdOneV1
+        );
+
+        vm.warp(block.timestamp + 5 days);
+
+        //when
+        _init();
+
+        //then
+        vm.prank(user);
+        ERC20(DAI).approve(iporProtocolRouterProxy, type(uint256).max);
+
+        vm.prank(user);
+        uint256 swapIdThreeV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapPayFixed28daysDai(
+            user,
+            500 * 1e18,
+            9e18,
+            10e18
+        );
+
+        vm.prank(user);
+        uint256 swapIdFourV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapPayFixed28daysDai(
+            user,
+            1_000 * 1e18,
+            9e18,
+            10e18
+        );
+
+        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalBeforeClose = SpreadStorageLens(
+            spreadRouter
+        ).getTimeWeightedNotional();
+
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = swapIdOneV1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
+        vm.prank(user);
+        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
+
+        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalAfterClose = SpreadStorageLens(
+            spreadRouter
+        ).getTimeWeightedNotional();
+
+        assertEq(
+            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
+            14294000000000000000000,
+            "timeWeightedNotionalPayFixed before"
+        );
+        assertEq(
+            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
+            14294000000000000000000,
+            "timeWeightedNotionalPayFixed after"
+        );
+
+        assertEq(
+            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
+            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
+            "timeWeightedNotionalPayFixed"
+        );
+    }
+
+    function testShouldCloseInV2SwapFromV1AndNotUpdateTimeWeightedTenor28DaiPayFixedNewSwapInV2AndOneClosed() public {
+        //given
+        address user = _getUserAddress(22);
+
+        vm.prank(user);
+        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
+
+        deal(DAI, user, 500_000e18);
+
+        vm.prank(user);
+        uint256 swapIdOneV1 = IMilton(miltonProxyDai).openSwapPayFixed(1_000 * 1e18, 9e18, 10e18);
+
+        vm.prank(user);
+        uint256 swapIdTwoV1 = IMilton(miltonProxyDai).openSwapPayFixed(1_000 * 1e18, 9e18, 10e18);
+
+        IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyDai).getSwapPayFixed(
+            swapIdOneV1
+        );
+
+        vm.warp(block.timestamp + 5 days);
+
+        //when
+        _init();
+
+        //then
+        vm.prank(user);
+        ERC20(DAI).approve(iporProtocolRouterProxy, type(uint256).max);
+
+        vm.prank(user);
+        uint256 swapIdThreeV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapPayFixed28daysDai(
+            user,
+            500 * 1e18,
+            9e18,
+            10e18
+        );
+
+        vm.prank(user);
+        uint256 swapIdFourV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapPayFixed28daysDai(
+            user,
+            1_000 * 1e18,
+            9e18,
+            10e18
+        );
+
+        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalBeforeClose = SpreadStorageLens(
+            spreadRouter
+        ).getTimeWeightedNotional();
+
+        uint256[] memory swapPfIds = new uint256[](2);
+        swapPfIds[0] = swapIdOneV1;
+        swapPfIds[1] = swapIdFourV2;
+        uint256[] memory swapRfIds = new uint256[](0);
+
+        vm.prank(user);
+        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
+
+        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalAfterClose = SpreadStorageLens(
+            spreadRouter
+        ).getTimeWeightedNotional();
+
+        assertEq(
+            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
+            14294000000000000000000,
+            "timeWeightedNotionalPayFixed before"
+        );
+        assertEq(
+            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
+            4647000000000000000000,
+            "timeWeightedNotionalPayFixed after"
+        );
+
+        assertNotEq(
+            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
+            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
+            "timeWeightedNotionalPayFixed"
+        );
+    }
+
+    function testShouldCloseInV2SwapFromV1AndNotUpdateTimeWeightedTenor28DaiReceiveFixed() public {
+        //given
+        address user = _getUserAddress(22);
+
+        vm.prank(user);
+        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
+
+        deal(DAI, user, 500_000e18);
+
+        vm.prank(user);
+        uint256 swapIdOneV1 = IMilton(miltonProxyDai).openSwapReceiveFixed(2_000 * 1e18, 0, 10e18);
+
+        vm.prank(user);
+        uint256 swapIdTwoV1 = IMilton(miltonProxyDai).openSwapReceiveFixed(2_000 * 1e18, 0, 10e18);
+
+        vm.warp(block.timestamp + 5 days);
+
+        //when
+        _init();
+
+        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalBeforeClose = SpreadStorageLens(
+            spreadRouter
+        ).getTimeWeightedNotional();
+
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = swapIdOneV1;
+
+        vm.prank(user);
+        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
+
+        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalAfterClose = SpreadStorageLens(
+            spreadRouter
+        ).getTimeWeightedNotional();
+
+        assertEq(timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed, 0);
+        assertEq(timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed, 0);
+    }
+
+    function testShouldCloseInV2SwapFromV1AndNotUpdateTimeWeightedTenor28DaiReceiveFixedTwoNewSwapInV2() public {
+        //given
+        address user = _getUserAddress(22);
+
+        vm.prank(user);
+        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
+
+        deal(DAI, user, 500_000e18);
+
+        vm.prank(user);
+        uint256 swapIdOneV1 = IMilton(miltonProxyDai).openSwapReceiveFixed(1_000 * 1e18, 0, 10e18);
+
+        vm.prank(user);
+        uint256 swapIdTwoV1 = IMilton(miltonProxyDai).openSwapReceiveFixed(1_000 * 1e18, 0, 10e18);
+
+        vm.warp(block.timestamp + 5 days);
+
+        //when
+        _init();
+
+        //then
+        vm.prank(user);
+        ERC20(DAI).approve(iporProtocolRouterProxy, type(uint256).max);
+
+        vm.prank(user);
+        uint256 swapIdThreeV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapReceiveFixed28daysDai(
+            user,
+            500 * 1e18,
+            0,
+            10e18
+        );
+
+        vm.prank(user);
+        uint256 swapIdFourV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapReceiveFixed28daysDai(
+            user,
+            1_000 * 1e18,
+            0,
+            10e18
+        );
+
+        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalBeforeClose = SpreadStorageLens(
+            spreadRouter
+        ).getTimeWeightedNotional();
+
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = swapIdOneV1;
+
+        vm.prank(user);
+        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
+
+        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalAfterClose = SpreadStorageLens(
+            spreadRouter
+        ).getTimeWeightedNotional();
+
+        assertEq(
+            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
+            14294000000000000000000,
+            "timeWeightedNotionalReceiveFixed before"
+        );
+        assertEq(
+            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
+            14294000000000000000000,
+            "timeWeightedNotionalReceiveFixed after"
+        );
+
+        assertEq(
+            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
+            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
+            "timeWeightedNotionalReceiveFixed"
+        );
+    }
+
+    function testShouldCloseInV2SwapFromV1AndNotUpdateTimeWeightedTenor28DaiReceiveFixedNewSwapInV2AndOneClosed()
+        public
+    {
+        //given
+        address user = _getUserAddress(22);
+
+        vm.prank(user);
+        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
+
+        deal(DAI, user, 500_000e18);
+
+        vm.prank(user);
+        uint256 swapIdOneV1 = IMilton(miltonProxyDai).openSwapReceiveFixed(1_000 * 1e18, 0, 10e18);
+
+        vm.prank(user);
+        uint256 swapIdTwoV1 = IMilton(miltonProxyDai).openSwapReceiveFixed(1_000 * 1e18, 0, 10e18);
+
+        IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyDai)
+            .getSwapReceiveFixed(swapIdOneV1);
+
+        vm.warp(block.timestamp + 5 days);
+
+        //when
+        _init();
+
+        //then
+        vm.prank(user);
+        ERC20(DAI).approve(iporProtocolRouterProxy, type(uint256).max);
+
+        vm.prank(user);
+        uint256 swapIdThreeV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapReceiveFixed28daysDai(
+            user,
+            500 * 1e18,
+            0,
+            10e18
+        );
+
+        vm.prank(user);
+        uint256 swapIdFourV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapReceiveFixed28daysDai(
+            user,
+            1_000 * 1e18,
+            0,
+            10e18
+        );
+
+        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalBeforeClose = SpreadStorageLens(
+            spreadRouter
+        ).getTimeWeightedNotional();
+
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](2);
+        swapRfIds[0] = swapIdOneV1;
+        swapRfIds[1] = swapIdFourV2;
+
+        vm.prank(user);
+        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
+
+        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalAfterClose = SpreadStorageLens(
+            spreadRouter
+        ).getTimeWeightedNotional();
+
+        assertEq(
+            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
+            14294000000000000000000,
+            "timeWeightedNotionalReceiveFixed before"
+        );
+        assertEq(
+            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
+            4647000000000000000000,
+            "timeWeightedNotionalReceiveFixed after"
+        );
+
+        assertNotEq(
+            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
+            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
+            "timeWeightedNotionalReceiveFixed"
+        );
+    }
 }
