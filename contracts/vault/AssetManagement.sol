@@ -33,6 +33,8 @@ abstract contract AssetManagement is
     using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
+    uint256 private constant ROUNDING_ERROR_MARGIN = 1e18;
+
     struct StrategyData {
         address strategy;
         /// @dev balance in 18 decimals
@@ -145,7 +147,7 @@ abstract contract AssetManagement is
         onlyAmmTreasury
         returns (uint256 withdrawnAmount, uint256 vaultBalance)
     {
-        return _withdraw(type(uint256).max);
+        return _withdraw(type(uint256).max - ROUNDING_ERROR_MARGIN);
     }
 
     function getSortedStrategiesWithApy() external view returns (StrategyData[] memory sortedStrategies) {
@@ -192,6 +194,10 @@ abstract contract AssetManagement is
         uint256 strategyAmountToWithdraw;
         uint256 amountToWithdraw = amount;
 
+        /// @dev Withdraw a little bit more to get at least requested amount even if appears rounding error
+        /// in external DeFi protocol integrated with IPOR Asset Management
+        amountToWithdraw = amount + ROUNDING_ERROR_MARGIN;
+
         for (uint256 i; i < supportedStrategiesVolume; ++i) {
             strategyAmountToWithdraw = sortedStrategies[i].balance <= amountToWithdraw
                 ? sortedStrategies[i].balance
@@ -213,10 +219,6 @@ abstract contract AssetManagement is
             } catch {
                 /// @dev If strategy withdraw fails, try to withdraw from next strategy
                 continue;
-            }
-
-            if (amountToWithdraw <= 1e18) {
-                break;
             }
         }
 
