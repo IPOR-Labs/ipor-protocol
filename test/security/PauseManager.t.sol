@@ -73,6 +73,55 @@ contract PauseManagerTest is Test {
         assertFalse(result);
     }
 
+    function testShouldAdd2NewGuardians() public {
+        // given
+        address[] memory pauseGuardians = new address[](2);
+        pauseGuardians[0] = vm.rememberKey(2222);
+        pauseGuardians[1] = vm.rememberKey(3333);
+
+        assertFalse(pauseManagerMock.isPauseGuardian(pauseGuardians[0]));
+        assertFalse(pauseManagerMock.isPauseGuardian(pauseGuardians[1]));
+
+        // when
+        vm.expectEmit(true, true, true, true);
+        emit PauseGuardiansAdded(pauseGuardians);
+        pauseManagerMock.addPauseGuardians(pauseGuardians);
+
+        // then
+        assertTrue(pauseManagerMock.isPauseGuardian(pauseGuardians[0]));
+        assertTrue(pauseManagerMock.isPauseGuardian(pauseGuardians[1]));
+    }
+
+    function testShouldRemove2GuardiansWhen4WasAdded() public {
+        // given
+        address[] memory pauseGuardiansAdd = new address[](4);
+        address[] memory pauseGuardiansRemove = new address[](2);
+        pauseGuardiansAdd[0] = vm.rememberKey(2222);
+        pauseGuardiansAdd[1] = vm.rememberKey(3333);
+        pauseGuardiansAdd[2] = vm.rememberKey(4444);
+        pauseGuardiansAdd[3] = vm.rememberKey(5555);
+
+        pauseGuardiansRemove[0] = pauseGuardiansAdd[0];
+        pauseGuardiansRemove[1] = pauseGuardiansAdd[1];
+
+        pauseManagerMock.addPauseGuardians(pauseGuardiansAdd);
+
+        for(uint i = 0; i < pauseGuardiansAdd.length; i++) {
+            assertTrue(pauseManagerMock.isPauseGuardian(pauseGuardiansAdd[i]));
+        }
+
+        // when
+        vm.expectEmit(true, true, true, true);
+        emit PauseGuardiansRemoved(pauseGuardiansRemove);
+        pauseManagerMock.removePauseGuardians(pauseGuardiansRemove);
+
+        // then
+        assertFalse(pauseManagerMock.isPauseGuardian(pauseGuardiansAdd[0]));
+        assertFalse(pauseManagerMock.isPauseGuardian(pauseGuardiansAdd[1]));
+        assertTrue(pauseManagerMock.isPauseGuardian(pauseGuardiansAdd[2]));
+        assertTrue(pauseManagerMock.isPauseGuardian(pauseGuardiansAdd[3]));
+    }
+
     event PauseGuardiansAdded(address[] indexed pauseGuardians);
 
     event PauseGuardiansRemoved(address[] indexed pauseGuardians);
