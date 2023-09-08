@@ -88,6 +88,7 @@ contract ForkAssetManagementWithdrawTest is TestForkCommons {
 
         /// @dev Start - prepare strategies in this way that there part of cash in DSR and Aave
         vm.startPrank(owner);
+        IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(DAI);
 
         IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardians(_pauseGuardians);
         IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardians(_pauseGuardians);
