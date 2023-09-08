@@ -56,6 +56,7 @@ contract StrategyDsrDaiTest is TestForkCommons {
 
         uint256 stanleyErc20BalanceBefore = asset.balanceOf(address(stanleyProxyDai));
         uint256 strategyBalanceBeforeDeposit = strategy.balanceOf();
+
         //when
         vm.prank(address(stanleyProxyDai));
         strategy.deposit(amount);
@@ -389,5 +390,37 @@ contract StrategyDsrDaiTest is TestForkCommons {
 
         //then
         assertEq(withdrawnShares, sDaiShares);
+    }
+
+    function testShouldDepositWhenNoInitialAllowanceToShareToken() public {
+        // given
+        _init();
+        _createNewStrategyDsrDai();
+
+        deal(DAI, address(stanleyProxyDai), 1000_000 * 1e18);
+
+        StrategyDsrDai strategy = StrategyDsrDai(newStrategyDsrDaiProxy);
+
+        IERC20Upgradeable asset = IERC20Upgradeable(DAI);
+
+        vm.startPrank(address(stanleyProxyDai));
+        asset.safeApprove(address(strategy), type(uint256).max);
+        vm.stopPrank();
+
+        uint256 strategyBalanceBefore = strategy.balanceOf();
+
+        //when
+        vm.prank(address(stanleyProxyDai));
+        strategy.deposit(10_000 * 1e18);
+
+        //then
+        uint256 newStrategyAllowanceToShareToken = IERC20Upgradeable(asset).allowance(
+            address(newStrategyDsrDaiProxy),
+            sDai
+        );
+        uint256 strategyBalanceAfter = strategy.balanceOf();
+
+        assertEq(strategyBalanceAfter, strategyBalanceBefore + 10_000 * 1e18);
+        assertEq(newStrategyAllowanceToShareToken, 0);
     }
 }

@@ -104,9 +104,7 @@ contract AmmTreasury is
     function withdrawFromAssetManagementInternal(
         uint256 wadAssetAmount
     ) external nonReentrant onlyRouter whenNotPaused {
-        (uint256 withdrawnAmount, uint256 vaultBalance) = IAssetManagement(_assetManagement).withdraw(
-            wadAssetAmount
-        );
+        (uint256 withdrawnAmount, uint256 vaultBalance) = IAssetManagement(_assetManagement).withdraw(wadAssetAmount);
         IAmmStorage(_ammStorage).updateStorageWhenWithdrawFromAssetManagement(withdrawnAmount, vaultBalance);
     }
 

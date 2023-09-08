@@ -111,6 +111,10 @@ contract TestForkCommons is Test {
     address public ammPoolsService;
     address public ammGovernanceService;
 
+    address public newStrategyDsrDaiProxy;
+    address public newStrategyAaveDaiProxy;
+    address public newStrategyCompoundDaiProxy;
+
     function _init() internal {
         (uint IporOracleVersionBefore, uint IporOracleVersionAfter) = _switchImplementationOfIporOracle();
         uint iporRiskManagementOracleVersion = _createIporRiskManagementOracle();
@@ -175,6 +179,54 @@ contract TestForkCommons is Test {
 
     function _getUserAddress(uint256 number) internal returns (address) {
         return vm.rememberKey(number);
+    }
+
+    function _createNewStrategyDsrDai() internal {
+        StrategyDsrDai strategyDsrDaiImpl = new StrategyDsrDai(DAI, sDai, stanleyProxyDai);
+
+        vm.startPrank(owner);
+        ERC1967Proxy proxy = new ERC1967Proxy(address(strategyDsrDaiImpl), abi.encodeWithSignature("initialize()"));
+        vm.stopPrank();
+
+        newStrategyDsrDaiProxy = address(proxy);
+    }
+
+    function _createNewStrategyAaveDai() internal {
+        StrategyAave strategyAaveImpl = new StrategyAave(
+            DAI,
+            18,
+            aDAI,
+            stanleyProxyDai,
+            AAVE,
+            stakedAAVE,
+            aaveLendingPoolAddressProvider,
+            stakedAAVE,
+            aaveIncentivesController
+        );
+
+        vm.startPrank(owner);
+        ERC1967Proxy proxy = new ERC1967Proxy(address(strategyAaveImpl), abi.encodeWithSignature("initialize()"));
+        vm.stopPrank();
+
+        newStrategyAaveDaiProxy = address(proxy);
+    }
+
+    function _createNewStrategyCompoundDai() internal {
+        StrategyCompound strategyCompoundImpl = new StrategyCompound(
+            DAI,
+            18,
+            cDAI,
+            stanleyProxyDai,
+            7200,
+            comptroller,
+            COMP
+        );
+
+        vm.startPrank(owner);
+        ERC1967Proxy proxy = new ERC1967Proxy(address(strategyCompoundImpl), abi.encodeWithSignature("initialize()"));
+        vm.stopPrank();
+
+        newStrategyCompoundDaiProxy = address(proxy);
     }
 
     function _switchImplementationOfIporOracle() private returns (uint256 versionBefore, uint256 versionAfter) {

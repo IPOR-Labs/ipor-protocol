@@ -51,8 +51,6 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         __Ownable_init();
         __UUPSUpgradeable_init();
 
-        IERC20Upgradeable(asset).safeApprove(shareToken, type(uint256).max);
-
         _treasuryManager = _msgSender();
     }
 
@@ -104,6 +102,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         uint256 wadAmount
     ) external override whenNotPaused onlyAssetManagement returns (uint256 depositedAmount) {
         uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
+        IERC20Upgradeable(asset).forceApprove(shareToken, wadAmount);
         IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), amount);
         CErc20(shareToken).mint(amount);
         depositedAmount = IporMath.convertToWad(amount, assetDecimals);
