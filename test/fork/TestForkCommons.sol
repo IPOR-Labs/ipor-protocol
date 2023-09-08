@@ -2,6 +2,7 @@
 pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
+import "forge-std/console2.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../../contracts/oracles/IporOracle.sol";
 import "../../contracts/oracles/IporRiskManagementOracle.sol";
@@ -31,6 +32,7 @@ import "../../contracts/vault/AssetManagementUsdt.sol";
 import "../../contracts/vault/AssetManagementUsdc.sol";
 import "../../contracts/vault/strategies/StrategyAave.sol";
 import "../../contracts/vault/strategies/StrategyCompound.sol";
+
 
 contract TestForkCommons is Test {
     address public constant owner = 0xD92E9F039E4189c342b4067CC61f5d063960D248;
