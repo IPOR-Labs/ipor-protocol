@@ -152,6 +152,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
 
     function getClosingSwapDetails(
         address asset,
+        address account,
         AmmTypes.SwapDirection direction,
         uint256 swapId,
         uint256 closeTimestamp
@@ -178,6 +179,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         }
 
         (closingSwapDetails.closableStatus, closingSwapDetails.swapUnwindRequired) = _getClosableStatusForSwap(
+            account,
             swapPnlValueToDate,
             closeTimestamp,
             swap,
@@ -624,6 +626,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         AmmTypes.SwapClosableStatus closableStatus;
 
         (closableStatus, pnlValueStruct.swapUnwindRequired) = _getClosableStatusForSwap(
+            msg.sender,
             swapPnlValueToDate,
             closeTimestamp,
             swap,
@@ -782,12 +785,15 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
     }
 
     /// @notice Check closable status for Swap given as a parameter.
-    /// @param swap The swap to be checked
+    /// @param account The account which is closing the swap
     /// @param swapPnlValueToDate The pnl of the swap on a given date
     /// @param closeTimestamp The timestamp of closing
+    /// @param swap The swap to be checked
+    /// @param poolCfg Pool configuration
     /// @return closableStatus Closable status for Swap.
     /// @return swapUnwindRequired True if swap unwind is required.
     function _getClosableStatusForSwap(
+        address account,
         int256 swapPnlValueToDate,
         uint256 closeTimestamp,
         AmmTypes.Swap memory swap,
@@ -797,9 +803,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             return (AmmTypes.SwapClosableStatus.SWAP_ALREADY_CLOSED, false);
         }
 
-        address msgSender = msg.sender;
-
-        if (msgSender != OwnerManager.getOwner()) {
+        if (account != OwnerManager.getOwner()) {
             uint256 absPnlValue = IporMath.absoluteValue(swapPnlValueToDate);
 
             uint256 minPnlValueToCloseBeforeMaturityByCommunity = IporMath.percentOf(
@@ -812,8 +816,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             if (closeTimestamp >= swapEndTimestamp) {
                 if (absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity || absPnlValue == swap.collateral) {
                     if (
-                        AmmConfigurationManager.isSwapLiquidator(poolCfg.asset, msgSender) != true &&
-                        msgSender != swap.buyer
+                        AmmConfigurationManager.isSwapLiquidator(poolCfg.asset, account) != true &&
+                        account != swap.buyer
                     ) {
                         return (AmmTypes.SwapClosableStatus.SWAP_REQUIRED_BUYER_OR_LIQUIDATOR_TO_CLOSE, false);
                     }
@@ -829,15 +833,15 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                         absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity) || absPnlValue == swap.collateral
                 ) {
                     if (
-                        AmmConfigurationManager.isSwapLiquidator(poolCfg.asset, msgSender) != true &&
-                        msgSender != swap.buyer
+                        AmmConfigurationManager.isSwapLiquidator(poolCfg.asset, account) != true &&
+                        account != swap.buyer
                     ) {
                         return (AmmTypes.SwapClosableStatus.SWAP_REQUIRED_BUYER_OR_LIQUIDATOR_TO_CLOSE, false);
                     }
                 }
 
                 if (absPnlValue < minPnlValueToCloseBeforeMaturityByBuyer) {
-                    if (msgSender == swap.buyer) {
+                    if (account == swap.buyer) {
                         if (swapEndTimestamp - poolCfg.timeBeforeMaturityAllowedToCloseSwapByBuyer > closeTimestamp) {
                             return (AmmTypes.SwapClosableStatus.SWAP_IS_CLOSABLE, true);
                         }
