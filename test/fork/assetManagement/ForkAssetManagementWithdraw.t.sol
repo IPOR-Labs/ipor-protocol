@@ -9,6 +9,7 @@ import "../TestForkCommons.sol";
 contract ForkAssetManagementWithdrawTest is TestForkCommons {
     address internal _admin;
     address internal _user;
+    address[] internal _pauseGuardians;
 
     function setUp() public {
         /// @dev state of the blockchain: after deploy DSR, before upgrade to V2
@@ -16,6 +17,8 @@ contract ForkAssetManagementWithdrawTest is TestForkCommons {
         _admin = vm.rememberKey(1);
         _user = vm.rememberKey(2);
         _init();
+        _pauseGuardians = new address[](1);
+        _pauseGuardians[0] = owner;
     }
 
     function testShouldWithdrawFromStrategyWithLowestApy() public {
@@ -25,10 +28,9 @@ contract ForkAssetManagementWithdrawTest is TestForkCommons {
         /// @dev Start - prepare strategies in this way that there part of cash in DSR and Aave
         vm.startPrank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(DAI);
-
-        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
-        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
-        IIporContractCommonGov(strategyDsrProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardians(_pauseGuardians);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardians(_pauseGuardians);
+        IIporContractCommonGov(strategyDsrProxyDai).addPauseGuardians(_pauseGuardians);
 
         IIporContractCommonGov(strategyCompoundProxyDai).pause();
         IIporContractCommonGov(strategyDsrProxyDai).pause();
@@ -86,11 +88,10 @@ contract ForkAssetManagementWithdrawTest is TestForkCommons {
 
         /// @dev Start - prepare strategies in this way that there part of cash in DSR and Aave
         vm.startPrank(owner);
-        IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(DAI);
 
-        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
-        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
-        IIporContractCommonGov(strategyDsrProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardians(_pauseGuardians);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardians(_pauseGuardians);
+        IIporContractCommonGov(strategyDsrProxyDai).addPauseGuardians(_pauseGuardians);
 
         IIporContractCommonGov(strategyCompoundProxyDai).pause();
         IIporContractCommonGov(strategyDsrProxyDai).pause();
@@ -142,6 +143,7 @@ contract ForkAssetManagementWithdrawTest is TestForkCommons {
         /// @dev Compound with the lowest APY but paused so withdraw from DSR
         assertLt(IStrategy(strategyCompoundProxyDai).getApy(), IStrategy(strategyAaveProxyDai).getApy());
         assertLt(IStrategy(strategyCompoundProxyDai).getApy(), IStrategy(strategyDsrProxyDai).getApy());
+        console2.log(block.number);
     }
 
     function testShouldWithdrawFromMoreThanOneStrategy() public {
@@ -152,9 +154,9 @@ contract ForkAssetManagementWithdrawTest is TestForkCommons {
         vm.startPrank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(DAI);
 
-        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
-        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
-        IIporContractCommonGov(strategyDsrProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardians(_pauseGuardians);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardians(_pauseGuardians);
+        IIporContractCommonGov(strategyDsrProxyDai).addPauseGuardians(_pauseGuardians);
 
         IIporContractCommonGov(strategyCompoundProxyDai).pause();
         IIporContractCommonGov(strategyDsrProxyDai).pause();
@@ -204,9 +206,9 @@ contract ForkAssetManagementWithdrawTest is TestForkCommons {
         vm.startPrank(owner);
         IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(DAI);
 
-        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardian(owner);
-        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardian(owner);
-        IIporContractCommonGov(strategyDsrProxyDai).addPauseGuardian(owner);
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardians(_pauseGuardians);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardians(_pauseGuardians);
+        IIporContractCommonGov(strategyDsrProxyDai).addPauseGuardians(_pauseGuardians);
 
         IIporContractCommonGov(strategyCompoundProxyDai).pause();
         IIporContractCommonGov(strategyDsrProxyDai).pause();
