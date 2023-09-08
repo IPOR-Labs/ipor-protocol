@@ -2,6 +2,7 @@
 pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
+import "forge-std/console2.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../../contracts/oracles/IporOracle.sol";
 import "../../contracts/oracles/IporRiskManagementOracle.sol";
@@ -25,7 +26,14 @@ import "../../contracts/amm/AmmPoolsService.sol";
 import "../../contracts/amm/AmmGovernanceService.sol";
 import "../../contracts/amm/AmmStorage.sol";
 import "../../contracts/amm/AmmTreasury.sol";
+import "../../contracts/vault/strategies/StrategyDsrDai.sol";
+import "../../contracts/vault/AssetManagementDai.sol";
+import "../../contracts/vault/AssetManagementUsdt.sol";
+import "../../contracts/vault/AssetManagementUsdc.sol";
+import "../../contracts/vault/strategies/StrategyAave.sol";
+import "../../contracts/vault/strategies/StrategyCompound.sol";
 import "./IIpTokenV1.sol";
+
 
 contract TestForkCommons is Test {
     address public constant owner = 0xD92E9F039E4189c342b4067CC61f5d063960D248;
@@ -38,6 +46,12 @@ contract TestForkCommons is Test {
     address public constant aDAI = 0x028171bCA77440897B824Ca71D1c56caC55b68A3;
     address public constant aUSDC = 0xBcca60bB61934080951369a648Fb03DF4F96263C;
     address public constant aUSDT = 0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811;
+
+    address public constant cDAI = 0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643;
+    address public constant cUSDC = 0x39AA39c021dfbaE8faC545936693aC917d5E7563;
+    address public constant cUSDT = 0xf650C3d88D12dB855b8bf7D11Be6C55A4e07dCC9;
+
+    address public constant sDai = 0x83F20F44975D03b1b09e64809B757c47f942BEeA;
 
     address public constant ipDAI = 0x8537b194BFf354c4738E9F3C81d67E3371DaDAf8;
     address public constant ipUSDC = 0x7c0e72f431FD69560D951e4C04A4de3657621a88;
@@ -61,12 +75,25 @@ contract TestForkCommons is Test {
     address public constant stanleyProxyUsdc = 0x7aa7b0B738C2570C2f9F892cB7cA5bB89b9BF260;
     address public constant stanleyProxyUsdt = 0x8e679C1d67Af0CD4b314896856f09ece9E64D6B5;
 
+    address public constant strategyAaveProxyUsdt = 0x58703DA5295794ed4E82323fcce7371272c5127D;
+    address public constant strategyAaveProxyUsdc = 0x77fCaE921e3df22810c5a1aC1D33f2586BbA028f;
+    address public constant strategyAaveProxyDai = 0x526d0047725D48BBc6e24C7B82A3e47C1AF1f62f;
+
+    address public constant strategyCompoundProxyUsdt = 0xE4cD9AA68Be5b5276573E24FA7A0007da29aB5B1;
+    address public constant strategyCompoundProxyUsdc = 0xe5257cf3Bd0eFD397227981fe7bbd55c7582f526;
+    address public constant strategyCompoundProxyDai = 0x87CEF19aCa214d12082E201e6130432Df39fc774;
+
+    address public constant strategyDsrProxyDai = 0xc26be51E50a358eC6d366147d78Ab94E9597239C;
+
     address public constant oracleUpdater = 0xC3A53976E9855d815A08f577C2BEef2a799470b7;
 
     address public constant AAVE = 0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9;
     address public constant stakedAAVE = 0x4da27a545c0c5B758a6BA100e3a049001de870f5;
     address public constant aaveLendingPoolAddressProvider = 0xB53C1a33016B2DC2fF3653530bfF1848a515c8c5;
     address public constant aaveIncentivesController = 0xd784927Ff2f95ba542BfC824c8a8a98F3495f6b5;
+
+    address public constant COMP = 0xc00e94Cb662C3520282E6f5717214004A7f26888;
+    address public constant comptroller = 0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B;
 
     // new contracts for v2
     address public iporRiskManagementOracleProxy;
@@ -87,6 +114,12 @@ contract TestForkCommons is Test {
     address public ammPoolsService;
     address public ammGovernanceService;
 
+    address public newStrategyDsrDaiProxy;
+    address public newStrategyAaveDaiProxy;
+    address public newStrategyAaveUsdtProxy;
+    address public newStrategyCompoundDaiProxy;
+    address public newStrategyCompoundUsdtProxy;
+
     function _init() internal {
         (uint IporOracleVersionBefore, uint IporOracleVersionAfter) = _switchImplementationOfIporOracle();
         uint iporRiskManagementOracleVersion = _createIporRiskManagementOracle();
@@ -104,7 +137,20 @@ contract TestForkCommons is Test {
         _createAmmGovernanceService();
         _updateIporRouterImplementation();
         _switchMiltonStorageToAmmStorage();
+
+        _switchStrategyAaveDaiToV2();
+        _switchStrategyAaveUsdcToV2();
+        _switchStrategyAaveUsdtToV2();
+
+        _switchStrategyCompoundDaiToV2();
+        _switchStrategyCompoundUsdcToV2();
+        _switchStrategyCompoundUsdtToV2();
+
+        _switchStrategyDsrDaiV1toV2();
+        _switchStanleyToAssetManagement();
+
         _switchMiltonToAmmTreasury();
+
         _setUpIpTokens();
         _setAmmPoolsParams();
     }
@@ -138,6 +184,92 @@ contract TestForkCommons is Test {
 
     function _getUserAddress(uint256 number) internal returns (address) {
         return vm.rememberKey(number);
+    }
+
+    function _createNewStrategyDsrDai() internal {
+        StrategyDsrDai strategyDsrDaiImpl = new StrategyDsrDai(DAI, sDai, stanleyProxyDai);
+
+        vm.startPrank(owner);
+        ERC1967Proxy proxy = new ERC1967Proxy(address(strategyDsrDaiImpl), abi.encodeWithSignature("initialize()"));
+        vm.stopPrank();
+
+        newStrategyDsrDaiProxy = address(proxy);
+    }
+
+    function _createNewStrategyAaveDai() internal {
+        StrategyAave strategyAaveImpl = new StrategyAave(
+            DAI,
+            18,
+            aDAI,
+            stanleyProxyDai,
+            AAVE,
+            stakedAAVE,
+            aaveLendingPoolAddressProvider,
+            stakedAAVE,
+            aaveIncentivesController
+        );
+
+        vm.startPrank(owner);
+        ERC1967Proxy proxy = new ERC1967Proxy(address(strategyAaveImpl), abi.encodeWithSignature("initialize()"));
+        vm.stopPrank();
+
+        newStrategyAaveDaiProxy = address(proxy);
+    }
+
+    function _createNewStrategyAaveUsdt () internal {
+        StrategyAave strategyAaveImpl = new StrategyAave(
+            USDT,
+            6,
+            aUSDT,
+            stanleyProxyUsdt,
+            AAVE,
+            stakedAAVE,
+            aaveLendingPoolAddressProvider,
+            stakedAAVE,
+            aaveIncentivesController
+        );
+
+        vm.startPrank(owner);
+        ERC1967Proxy proxy = new ERC1967Proxy(address(strategyAaveImpl), abi.encodeWithSignature("initialize()"));
+        vm.stopPrank();
+
+        newStrategyAaveUsdtProxy = address(proxy);
+    }
+
+    function _createNewStrategyCompoundDai() internal {
+        StrategyCompound strategyCompoundImpl = new StrategyCompound(
+            DAI,
+            18,
+            cDAI,
+            stanleyProxyDai,
+            7200,
+            comptroller,
+            COMP
+        );
+
+        vm.startPrank(owner);
+        ERC1967Proxy proxy = new ERC1967Proxy(address(strategyCompoundImpl), abi.encodeWithSignature("initialize()"));
+        vm.stopPrank();
+
+        newStrategyCompoundDaiProxy = address(proxy);
+    }
+
+    function _createNewStrategyCompoundUsdt() internal {
+        StrategyCompound strategyCompoundImpl = new StrategyCompound(
+            USDT,
+            6,
+            cUSDT,
+            stanleyProxyUsdt,
+            7200,
+            comptroller,
+            COMP
+        );
+
+        vm.startPrank(owner);
+        ERC1967Proxy proxy = new ERC1967Proxy(address(strategyCompoundImpl), abi.encodeWithSignature("initialize()"));
+        vm.stopPrank();
+
+        newStrategyCompoundUsdtProxy = address(proxy);
     }
 
     function _switchImplementationOfIporOracle() private returns (uint256 versionBefore, uint256 versionAfter) {
@@ -548,6 +680,143 @@ contract TestForkCommons is Test {
         console2.log("ammGovernanceService: ", ammGovernanceService);
     }
 
+    function _switchStrategyAaveDaiToV2() internal {
+        StrategyAave impl = new StrategyAave(
+            DAI,
+            18,
+            aDAI,
+            stanleyProxyDai,
+            AAVE,
+            stakedAAVE,
+            aaveLendingPoolAddressProvider,
+            stakedAAVE,
+            aaveIncentivesController
+        );
+        vm.startPrank(owner);
+        StrategyAave(strategyAaveProxyDai).upgradeTo(address(impl));
+        vm.stopPrank();
+    }
+
+    function _switchStrategyAaveUsdcToV2() internal {
+        StrategyAave impl = new StrategyAave(
+            USDC,
+            6,
+            aUSDC,
+            stanleyProxyUsdc,
+            AAVE,
+            stakedAAVE,
+            aaveLendingPoolAddressProvider,
+            stakedAAVE,
+            aaveIncentivesController
+        );
+        vm.startPrank(owner);
+        StrategyAave(strategyAaveProxyUsdc).upgradeTo(address(impl));
+        vm.stopPrank();
+    }
+
+    function _switchStrategyAaveUsdtToV2() internal {
+        StrategyAave impl = new StrategyAave(
+            USDT,
+            6,
+            aUSDT,
+            stanleyProxyUsdt,
+            AAVE,
+            stakedAAVE,
+            aaveLendingPoolAddressProvider,
+            stakedAAVE,
+            aaveIncentivesController
+        );
+        vm.startPrank(owner);
+        StrategyAave(strategyAaveProxyUsdt).upgradeTo(address(impl));
+        vm.stopPrank();
+    }
+
+    function _switchStrategyCompoundDaiToV2() internal {
+        StrategyCompound impl = new StrategyCompound(DAI, 18, cDAI, address(stanleyProxyDai), 7200, comptroller, COMP);
+        vm.startPrank(owner);
+        StrategyCompound(strategyCompoundProxyDai).upgradeTo(address(impl));
+        vm.stopPrank();
+    }
+
+    function _switchStrategyCompoundUsdcToV2() internal {
+        StrategyCompound impl = new StrategyCompound(
+            USDC,
+            6,
+            cUSDC,
+            address(stanleyProxyUsdc),
+            7200,
+            comptroller,
+            COMP
+        );
+        vm.startPrank(owner);
+        StrategyCompound(strategyCompoundProxyUsdc).upgradeTo(address(impl));
+        vm.stopPrank();
+    }
+
+    function _switchStrategyCompoundUsdtToV2() internal {
+        StrategyCompound impl = new StrategyCompound(
+            USDT,
+            6,
+            cUSDT,
+            address(stanleyProxyUsdt),
+            7200,
+            comptroller,
+            COMP
+        );
+        vm.startPrank(owner);
+        StrategyCompound(strategyCompoundProxyUsdt).upgradeTo(address(impl));
+        vm.stopPrank();
+    }
+
+    function _switchStrategyDsrDaiV1toV2() internal {
+        StrategyDsrDai impl = new StrategyDsrDai(DAI, sDai, address(stanleyProxyDai));
+        vm.startPrank(owner);
+        StrategyDsrDai(strategyDsrProxyDai).upgradeTo(address(impl));
+        vm.stopPrank();
+    }
+
+    function _switchStanleyToAssetManagement() internal {
+        AssetManagementDai assetManagementDai = new AssetManagementDai(
+            DAI,
+            miltonProxyDai,
+            3,
+            2,
+            strategyAaveProxyDai,
+            strategyCompoundProxyDai,
+            strategyDsrProxyDai
+        );
+
+        vm.startPrank(owner);
+        AssetManagementDai(stanleyProxyDai).upgradeTo(address(assetManagementDai));
+        vm.stopPrank();
+
+        AssetManagementUsdt assetManagementUsdt = new AssetManagementUsdt(
+            USDT,
+            miltonProxyUsdt,
+            2,
+            1,
+            strategyAaveProxyUsdt,
+            strategyCompoundProxyUsdt
+        );
+
+        vm.startPrank(owner);
+        AssetManagementUsdt(stanleyProxyUsdt).upgradeTo(address(assetManagementUsdt));
+        vm.stopPrank();
+
+        AssetManagementUsdc assetManagementUsdc = new AssetManagementUsdc(
+            USDC,
+            miltonProxyUsdc,
+            2,
+            1,
+            strategyAaveProxyUsdc,
+            strategyCompoundProxyUsdc
+        );
+
+        vm.startPrank(owner);
+        AssetManagementUsdc(stanleyProxyUsdc).upgradeTo(address(assetManagementUsdc));
+        vm.stopPrank();
+    }
+
     function _switchMiltonStorageToAmmStorage() private {
         AmmStorage daiStorageImplementation = new AmmStorage(iporProtocolRouterProxy, miltonProxyDai);
         AmmStorage usdcStorageImplementation = new AmmStorage(iporProtocolRouterProxy, miltonProxyUsdc);
@@ -591,9 +860,9 @@ contract TestForkCommons is Test {
         AmmTreasury(miltonProxyDai).upgradeTo(address(daiTreasuryImplementation));
         AmmTreasury(miltonProxyUsdc).upgradeTo(address(usdcTreasuryImplementation));
         AmmTreasury(miltonProxyUsdt).upgradeTo(address(usdtTreasuryImplementation));
-        AmmTreasury(miltonProxyDai).grandMaxAllowanceForSpender(iporProtocolRouterProxy);
-        AmmTreasury(miltonProxyUsdc).grandMaxAllowanceForSpender(iporProtocolRouterProxy);
-        AmmTreasury(miltonProxyUsdt).grandMaxAllowanceForSpender(iporProtocolRouterProxy);
+        AmmTreasury(miltonProxyDai).grantMaxAllowanceForSpender(iporProtocolRouterProxy);
+        AmmTreasury(miltonProxyUsdc).grantMaxAllowanceForSpender(iporProtocolRouterProxy);
+        AmmTreasury(miltonProxyUsdt).grantMaxAllowanceForSpender(iporProtocolRouterProxy);
         vm.stopPrank();
     }
 
@@ -607,24 +876,9 @@ contract TestForkCommons is Test {
 
     function _setAmmPoolsParams() private {
         vm.startPrank(owner);
-        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(
-            DAI,
-            type(uint32).max,
-            0,
-            5000
-        );
-        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(
-            USDC,
-            type(uint32).max,
-            0,
-            5000
-        );
-        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(
-            USDT,
-            type(uint32).max,
-            0,
-            5000
-        );
+        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, 0, 5000);
+        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(USDC, type(uint32).max, 0, 5000);
+        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(USDT, type(uint32).max, 0, 5000);
         vm.stopPrank();
     }
 

@@ -27,14 +27,29 @@ contract AmmTreasuryTest is TestCommons {
     function testShouldPauseSCWhenSenderIsPauseGuardian() public {
         // given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-        _iporProtocol.ammTreasury.addPauseGuardian(_admin);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
+        _iporProtocol.ammTreasury.addPauseGuardians(pauseGuardians);
         bool pausedBefore = _iporProtocol.ammTreasury.paused();
+
+        uint256 allowanceBefore = IERC20Upgradeable(address(_iporProtocol.asset)).allowance(
+            address(_iporProtocol.ammTreasury),
+            address(_iporProtocol.router)
+        );
 
         // when
         _iporProtocol.ammTreasury.pause();
 
         // then
         bool pausedAfter = _iporProtocol.ammTreasury.paused();
+
+        uint256 allowanceAfter = IERC20Upgradeable(address(_iporProtocol.asset)).allowance(
+            address(_iporProtocol.ammTreasury),
+            address(_iporProtocol.router)
+        );
+
+        assertGt(allowanceBefore, 0);
+        assertEq(allowanceAfter, 0);
 
         assertEq(pausedBefore, false);
         assertEq(pausedAfter, true);
@@ -43,7 +58,9 @@ contract AmmTreasuryTest is TestCommons {
     function testShouldNotPauseSCSpecificMethods() public {
         // given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-        _iporProtocol.ammTreasury.addPauseGuardian(_admin);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
+        _iporProtocol.ammTreasury.addPauseGuardians(pauseGuardians);
         _iporProtocol.ammTreasury.pause();
 
         bool pausedBefore = _iporProtocol.ammTreasury.paused();
@@ -56,9 +73,10 @@ contract AmmTreasuryTest is TestCommons {
         vm.stopPrank();
 
         // admin
-        _iporProtocol.ammTreasury.addPauseGuardian(_getUserAddress(1));
-        _iporProtocol.ammTreasury.removePauseGuardian(_getUserAddress(1));
-        _iporProtocol.ammTreasury.grandMaxAllowanceForSpender(_getUserAddress(1));
+        pauseGuardians[0] = _getUserAddress(1);
+        _iporProtocol.ammTreasury.addPauseGuardians(pauseGuardians);
+        _iporProtocol.ammTreasury.removePauseGuardians(pauseGuardians);
+        _iporProtocol.ammTreasury.grantMaxAllowanceForSpender(_getUserAddress(1));
         _iporProtocol.ammTreasury.revokeAllowanceForSpender(_getUserAddress(1));
 
         // then
@@ -87,17 +105,32 @@ contract AmmTreasuryTest is TestCommons {
     function testShouldUnpauseSmartContractWhenSenderIsAnAdmin() public {
         // given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-        _iporProtocol.ammTreasury.addPauseGuardian(_admin);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
+        _iporProtocol.ammTreasury.addPauseGuardians(pauseGuardians);
         _iporProtocol.ammTreasury.pause();
-        _iporProtocol.ammTreasury.removePauseGuardian(_admin);
+        _iporProtocol.ammTreasury.removePauseGuardians(pauseGuardians);
 
         bool pausedBefore = _iporProtocol.ammTreasury.paused();
+
+        uint256 allowanceBefore = IERC20Upgradeable(address(_iporProtocol.asset)).allowance(
+            address(_iporProtocol.ammTreasury),
+            address(_iporProtocol.router)
+        );
 
         // when
         _iporProtocol.ammTreasury.unpause();
 
         // then
         bool pausedAfter = _iporProtocol.ammTreasury.paused();
+
+        uint256 allowanceAfter = IERC20Upgradeable(address(_iporProtocol.asset)).allowance(
+            address(_iporProtocol.ammTreasury),
+            address(_iporProtocol.router)
+        );
+
+        assertEq(allowanceBefore, 0);
+        assertEq(allowanceAfter, Constants.MAX_VALUE);
 
         assertEq(pausedBefore, true);
         assertEq(pausedAfter, false);
@@ -106,9 +139,11 @@ contract AmmTreasuryTest is TestCommons {
     function testShouldNotUnpauseSmartContractWhenSenderIsNotAnAdmin() public {
         // given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-        _iporProtocol.ammTreasury.addPauseGuardian(_admin);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
+        _iporProtocol.ammTreasury.addPauseGuardians(pauseGuardians);
         _iporProtocol.ammTreasury.pause();
-        _iporProtocol.ammTreasury.removePauseGuardian(_admin);
+        _iporProtocol.ammTreasury.removePauseGuardians(pauseGuardians);
 
         bool pausedBefore = _iporProtocol.ammTreasury.paused();
 

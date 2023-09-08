@@ -20,6 +20,7 @@ contract OraclePublisherTest is TestCommons {
     IporRiskManagementOracle private _iporRiskManagementOracle;
 
     OraclePublisher private _oraclePublisher;
+    address[] private pauseGuardians;
 
     function setUp() public {
         _admin = address(this);
@@ -144,6 +145,9 @@ contract OraclePublisherTest is TestCommons {
         _oraclePublisher.addUpdater(address(this));
         _iporOracle.addUpdater(address(_oraclePublisher));
         _iporRiskManagementOracle.addUpdater(address(_oraclePublisher));
+
+        pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
     }
 
     function testShouldReturnContractVersion() public {
@@ -155,7 +159,7 @@ contract OraclePublisherTest is TestCommons {
 
     function testShouldPauseSCWhenSenderIsPauseGuardian() public {
         // given
-        _oraclePublisher.addPauseGuardian(_admin);
+        _oraclePublisher.addPauseGuardians(pauseGuardians);
         bool pausedBefore = _oraclePublisher.paused();
 
         // when
@@ -170,7 +174,7 @@ contract OraclePublisherTest is TestCommons {
 
     function testShouldPauseSCSpecificMethods() public {
         // given
-        _oraclePublisher.addPauseGuardian(_admin);
+        _oraclePublisher.addPauseGuardians(pauseGuardians);
         _oraclePublisher.pause();
 
         bool pausedBefore = _oraclePublisher.paused();
@@ -197,7 +201,7 @@ contract OraclePublisherTest is TestCommons {
 
     function testShouldNotPauseSCSpecificMethods() public {
         // given
-        _oraclePublisher.addPauseGuardian(_admin);
+        _oraclePublisher.addPauseGuardians(pauseGuardians);
         _oraclePublisher.pause();
 
         bool pausedBefore = _oraclePublisher.paused();
@@ -220,10 +224,11 @@ contract OraclePublisherTest is TestCommons {
         vm.stopPrank();
 
         // admin
+        pauseGuardians[0] = _getUserAddress(1);
         _oraclePublisher.addUpdater(_getUserAddress(1));
         _oraclePublisher.removeUpdater(_getUserAddress(1));
-        _oraclePublisher.addPauseGuardian(_getUserAddress(1));
-        _oraclePublisher.removePauseGuardian(_getUserAddress(1));
+        _oraclePublisher.addPauseGuardians(pauseGuardians);
+        _oraclePublisher.removePauseGuardians(pauseGuardians);
 
         // then
         bool pausedAfter = _oraclePublisher.paused();
@@ -249,9 +254,9 @@ contract OraclePublisherTest is TestCommons {
 
     function testShouldUnpauseSmartContractWhenSenderIsAnAdmin() public {
         // given
-        _oraclePublisher.addPauseGuardian(_admin);
+        _oraclePublisher.addPauseGuardians(pauseGuardians);
         _oraclePublisher.pause();
-        _oraclePublisher.removePauseGuardian(_admin);
+        _oraclePublisher.removePauseGuardians(pauseGuardians);
 
         bool pausedBefore = _oraclePublisher.paused();
 
@@ -267,9 +272,9 @@ contract OraclePublisherTest is TestCommons {
 
     function testShouldNotUnpauseSmartContractWhenSenderIsNotAnAdmin() public {
         // given
-        _oraclePublisher.addPauseGuardian(_admin);
+        _oraclePublisher.addPauseGuardians(pauseGuardians);
         _oraclePublisher.pause();
-        _oraclePublisher.removePauseGuardian(_admin);
+        _oraclePublisher.removePauseGuardians(pauseGuardians);
 
         bool pausedBefore = _oraclePublisher.paused();
 

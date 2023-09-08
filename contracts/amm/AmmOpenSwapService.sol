@@ -16,16 +16,15 @@ import "../libraries/math/IporMath.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/AmmErrors.sol";
 import "../libraries/errors/AmmErrors.sol";
-import "../libraries/AmmLib.sol";
+import "../libraries/IporContractValidator.sol";
+import "../libraries/RiskManagementLogic.sol";
 import "./libraries/types/AmmInternalTypes.sol";
 import "./libraries/IporSwapLogic.sol";
-import "../libraries/IporContractValidator.sol";
 
 contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
     using Address for address;
     using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
-    using AmmLib for AmmInternalTypes.RiskIndicatorsContext;
 
     address internal immutable _usdt;
     uint256 internal immutable _usdtDecimals;
@@ -464,7 +463,14 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 
-        AmmTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(ctx, balance.liquidityPool, 0);
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicators = RiskManagementLogic.getRiskIndicators(
+            ctx.poolCfg.asset,
+            0,
+            ctx.tenor,
+            balance.liquidityPool,
+            ctx.poolCfg.minLeverage,
+            iporRiskManagementOracle
+        );
 
         _validateLiquidityPoolCollateralRatioAndSwapLeverage(
             balance.liquidityPool,
@@ -564,7 +570,14 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralReceiveFixed = balance.totalCollateralReceiveFixed + bosStruct.collateral;
 
-        AmmTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(ctx, balance.liquidityPool, 1);
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicators = RiskManagementLogic.getRiskIndicators(
+            ctx.poolCfg.asset,
+            1,
+            ctx.tenor,
+            balance.liquidityPool,
+            ctx.poolCfg.minLeverage,
+            iporRiskManagementOracle
+        );
 
         _validateLiquidityPoolCollateralRatioAndSwapLeverage(
             balance.liquidityPool,
@@ -696,21 +709,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 poolCfg.liquidationDepositAmount,
                 accruedIndex
             );
-    }
-
-    function _getRiskIndicators(
-        Context memory ctx,
-        uint256 liquidityPoolBalance,
-        uint256 direction
-    ) internal view virtual returns (AmmTypes.OpenSwapRiskIndicators memory riskIndicators) {
-        AmmInternalTypes.RiskIndicatorsContext memory riskIndicatorsContext;
-        riskIndicatorsContext.asset = ctx.poolCfg.asset;
-        riskIndicatorsContext.iporRiskManagementOracle = iporRiskManagementOracle;
-        riskIndicatorsContext.tenor = ctx.tenor;
-        riskIndicatorsContext.liquidityPoolBalance = liquidityPoolBalance;
-        riskIndicatorsContext.minLeverage = ctx.poolCfg.minLeverage;
-
-        riskIndicators = riskIndicatorsContext.getRiskIndicators(direction);
     }
 
     function _emitOpenSwapEvent(

@@ -3,23 +3,20 @@ pragma solidity 0.8.20;
 
 import {TestCommons} from "../TestCommons.sol";
 
-import {IvToken} from "@ipor-protocol/contracts/tokens/IvToken.sol";
-
-
 import "../utils/builder/AssetManagementBuilder.sol";
 import "../mocks/assetManagement/MockStrategy.sol";
 import "../mocks/tokens/MockTestnetToken.sol";
-import "../utils/builder/IvTokenBuilder.sol";
 import "../utils/builder/AssetBuilder.sol";
+import "../../contracts/vault/AssetManagementDai.sol";
 
 contract AssetManagementMaxApyStrategyTest is TestCommons {
     AssetBuilder internal _assetBuilder = new AssetBuilder(address(this));
-    IvTokenBuilder internal _ivTokenBuilder = new IvTokenBuilder(address(this));
     AssetManagementBuilder internal _assetManagementBuilder = new AssetManagementBuilder(address(this));
 
     AssetManagement internal _assetManagementDai;
     MockStrategy internal _strategyAaveDai;
     MockStrategy internal _strategyCompoundDai;
+    MockStrategy internal _strategyDsrDai;
 
     function setUp() public {
         _admin = address(this);
@@ -32,22 +29,21 @@ contract AssetManagementMaxApyStrategyTest is TestCommons {
         _assetBuilder.withDAI();
         MockTestnetToken asset = _assetBuilder.build();
 
-        IvToken ivToken = _ivTokenBuilder.withName("IV DAI").withSymbol("ivDAI").withAsset(address(asset)).build();
+        _strategyAaveDai = new MockStrategy(address(asset), address(asset));
 
-        _strategyAaveDai = new MockStrategy();
-        _strategyAaveDai.setAsset(address(asset));
-        _strategyAaveDai.setShareToken(address(asset));
+        _strategyCompoundDai = new MockStrategy(address(asset), address(asset));
 
-        _strategyCompoundDai = new MockStrategy();
-        _strategyCompoundDai.setAsset(address(asset));
-        _strategyCompoundDai.setShareToken(address(asset));
+        _strategyDsrDai = new MockStrategy(address(asset), address(asset));
+
+        AmmTreasury ammTreasury = new AmmTreasury(address(asset), 18, address(asset), address(asset), address(asset));
 
         _assetManagementDai = _assetManagementBuilder
             .withAssetType(BuilderUtils.AssetType.DAI)
             .withAsset(address(asset))
-            .withIvToken(address(ivToken))
             .withStrategyAave(address(_strategyAaveDai))
             .withStrategyCompound(address(_strategyCompoundDai))
+            .withStrategyDsr(address(_strategyDsrDai))
+            .withAmmTreasury(address(ammTreasury))
             .build();
     }
 
@@ -56,9 +52,9 @@ contract AssetManagementMaxApyStrategyTest is TestCommons {
         _strategyAaveDai.setApy(100000);
         _strategyCompoundDai.setApy(99999);
         // when
-        (address strategyMaxApy, , ) = _assetManagementDai.getMaxApyStrategy();
+        AssetManagement.StrategyData[] memory sortedStrategies = _assetManagementDai.getSortedStrategiesWithApy();
         // then
-        assertEq(strategyMaxApy, address(_strategyAaveDai));
+        assertEq(sortedStrategies[2].strategy, address(_strategyAaveDai));
     }
 
     function testShouldSelectAaveStrategyWhenAaveApyEqualsCompoundApy() public {
@@ -66,9 +62,9 @@ contract AssetManagementMaxApyStrategyTest is TestCommons {
         _strategyAaveDai.setApy(10);
         _strategyCompoundDai.setApy(10);
         // when
-        (address strategyMaxApy, , ) = _assetManagementDai.getMaxApyStrategy();
+        AssetManagement.StrategyData[] memory sortedStrategies = _assetManagementDai.getSortedStrategiesWithApy();
         // then
-        assertEq(strategyMaxApy, address(_strategyAaveDai));
+        assertEq(sortedStrategies[2].strategy, address(_strategyAaveDai));
     }
 
     function testShouldSelectCompoundStrategy() public {
@@ -76,8 +72,8 @@ contract AssetManagementMaxApyStrategyTest is TestCommons {
         _strategyAaveDai.setApy(1000);
         _strategyCompoundDai.setApy(99999);
         // when
-        (address strategyMaxApy, , ) = _assetManagementDai.getMaxApyStrategy();
+        AssetManagement.StrategyData[] memory sortedStrategies = _assetManagementDai.getSortedStrategiesWithApy();
         // then
-        assertEq(strategyMaxApy, address(_strategyCompoundDai));
+        assertEq(sortedStrategies[2].strategy, address(_strategyCompoundDai));
     }
 }

@@ -53,15 +53,6 @@ interface IAmmSwapsLens {
         uint256 minLeverage;
     }
 
-    /// @notice Gets the IPOR Oracle address.
-    function iporOracle() external view returns (address);
-
-    /// @notice Gets the Risk Management Oracle address.
-    function riskManagementOracle() external view returns (address);
-
-    /// @notice Gets the Spread Router address.
-    function spreadRouter() external view returns (address);
-
     /// @notice Gets pool configuration for AmmSwapsLens
     /// @param asset asset address
     /// @return SwapLensPoolConfiguration pool configuration

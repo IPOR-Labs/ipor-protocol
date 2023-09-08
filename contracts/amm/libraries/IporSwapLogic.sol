@@ -136,6 +136,7 @@ library IporSwapLogic {
     ) internal pure returns (uint256 swapOpeningFeeAmount) {
         require(closingTimestamp >= swap.openTimestamp, AmmErrors.CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP);
 
+        /// @dev 1e36 = 1e18 * 1e18, To achieve result in 18 decimals when there is multiplication of 3 numbers in 18 decimals, we need to divide by 1e36.
         swapOpeningFeeAmount = IporMath.division(
             swap.notional *
                 openingFeeRateCfg *

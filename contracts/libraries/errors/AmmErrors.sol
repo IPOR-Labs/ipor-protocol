@@ -69,7 +69,7 @@ library AmmErrors {
     string public constant CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR = "IPOR_320";
 
     /// @notice Interest from Strategy is below zero.
-    string public constant INTEREST_FROM_STRATEGY_BELOW_ZERO = "IPOR_321";
+    string public constant INTEREST_FROM_STRATEGY_EXCEEDED_THRESHOLD = "IPOR_321";
 
     /// @notice IPOR publication fee balance is too low.
     string public constant PUBLICATION_FEE_BALANCE_IS_TOO_LOW = "IPOR_322";
@@ -122,5 +122,9 @@ library AmmErrors {
     /// @notice Submit ETH to stETH contract failed.
     string public constant STETH_SUBMIT_FAILED = "IPOR_338";
 
+    /// @notice Collateral is not sufficient to cover unwind swap
+    string public constant COLLATERAL_IS_NOT_SUFFICIENT_TO_COVER_UNWIND_SWAP = "IPOR_339";
 
+    /// @notice Error when withdraw from asset management is not enough to cover transfer amount to buyer and/or beneficiary
+    string public constant ASSET_MANAGEMENT_WITHDRAW_NOT_ENOUGH = "IPOR_340";
 }

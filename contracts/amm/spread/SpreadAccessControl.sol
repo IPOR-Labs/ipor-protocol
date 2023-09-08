@@ -3,9 +3,9 @@ pragma solidity 0.8.20;
 
 import "../../libraries/errors/AmmErrors.sol";
 import "../../libraries/errors/IporErrors.sol";
+import "../../libraries/IporContractValidator.sol";
 import "../../security/PauseManager.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
-import "../../libraries/IporContractValidator.sol";
 
 /// @title Contract responsible for managing access control for the Spread Router
 contract SpreadAccessControl {
@@ -99,17 +99,17 @@ contract SpreadAccessControl {
     }
 
     /// @notice Adds a new pause guardian to the contract.
-    /// @param guardian The address of the new pause guardian.
+    /// @param guardians The addresses of the new pause guardians.
     /// @dev Only the contract owner can call this function.
-    function addPauseGuardian(address guardian) external onlyOwner {
-        PauseManager.addPauseGuardian(guardian);
+    function addPauseGuardians(address[] calldata guardians) external onlyOwner {
+        PauseManager.addPauseGuardians(guardians);
     }
 
     /// @notice Removes a pause guardian from the contract.
-    /// @param guardian The address of the pause guardian to be removed.
+    /// @param guardians The list addresses of the pause guardians to be removed.
     /// @dev Only the contract owner can call this function.
-    function removePauseGuardian(address guardian) external onlyOwner {
-        PauseManager.removePauseGuardian(guardian);
+    function removePauseGuardians(address[] calldata guardians) external onlyOwner {
+        PauseManager.removePauseGuardians(guardians);
     }
 
     /// @dev Internal function to check if the sender is the AMM address.

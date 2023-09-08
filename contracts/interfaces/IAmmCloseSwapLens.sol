@@ -35,15 +35,6 @@ interface IAmmCloseSwapLens {
         uint256 minLeverage;
     }
 
-    /// @notice Returns Ipor Oracle address.
-    function iporOracle() external view returns (address);
-
-    /// @notice Returns Ipor Risk Management Oracle address.
-    function iporRiskManagementOracle() external view returns (address);
-
-    /// @notice Returns Spread Router address.
-    function spreadRouter() external view returns (address);
-
     /// @notice Returns the configuration of the AmmCloseSwapService for a given pool (asset).
     /// @param asset asset address
     /// @return AmmCloseSwapServicePoolConfiguration struct representing the configuration of the AmmCloseSwapService for a given pool (asset).
@@ -53,12 +44,14 @@ interface IAmmCloseSwapLens {
 
     /// @notice Returns the closing swap details for a given swap and closing timestamp.
     /// @param asset asset address
+    /// @param account account address for which are returned closing swap details, for example closableStatus depends on the account
     /// @param direction swap direction
     /// @param swapId swap id
     /// @param closeTimestamp closing timestamp
     /// @return closingSwapDetails struct representing the closing swap details for a given swap and closing timestamp.
     function getClosingSwapDetails(
         address asset,
+        address account,
         AmmTypes.SwapDirection direction,
         uint256 swapId,
         uint256 closeTimestamp

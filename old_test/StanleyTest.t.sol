@@ -105,7 +105,7 @@ contract AssetManagementTest is TestCommons, DataUtils {
         mockCase0JosephDai.depositToAssetManagement(TestConstants.USD_1_000_18DEC);
         //Force deposit to simulate that IporVault earn money for AmmTreasury $3
         vm.prank(_liquidityProvider);
-        assetManagementDai.forTestDeposit(address(mockCase0AmmTreasuryDai), TestConstants.USD_3_18DEC);
+        assetManagementDai.forTestDeposit(TestConstants.USD_3_18DEC);
         // when
         vm.prank(_admin);
         mockCase0JosephDai.rebalance();
@@ -171,7 +171,7 @@ contract AssetManagementTest is TestCommons, DataUtils {
         mockCase0JosephDai.depositToAssetManagement(TestConstants.USD_19_997_18DEC);
         //Force deposit to simulate that IporVault earn money for AmmTreasury $3
         vm.prank(_liquidityProvider);
-        assetManagementDai.forTestDeposit(address(mockCase0AmmTreasuryDai), TestConstants.USD_3_18DEC);
+        assetManagementDai.forTestDeposit(TestConstants.USD_3_18DEC);
         // when
         vm.prank(_admin);
         mockCase0JosephDai.rebalance();

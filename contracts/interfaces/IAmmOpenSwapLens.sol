@@ -28,15 +28,6 @@ interface IAmmOpenSwapLens {
         uint256 openingFeeTreasuryPortionRate;
     }
 
-    /// @notice Gets the IPOR Oracle address.
-    function iporOracle() external view returns (address);
-
-    /// @notice Gets the IPOR Risk Management Oracle address.
-    function iporRiskManagementOracle() external view returns (address);
-
-    /// @notice Gets the Spread Router address.
-    function spreadRouter() external view returns (address);
-
     /// @notice Returns configuration of the AmmOpenSwapServicePool for specific asset (pool).
     /// @param asset address of the asset
     /// @return AmmOpenSwapServicePoolConfiguration structure representing configuration of the AmmOpenSwapServicePool for specific asset (pool).

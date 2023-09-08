@@ -9,10 +9,10 @@ import "../interfaces/IIporOracle.sol";
 import "../interfaces/IAmmStorage.sol";
 import "../interfaces/IAssetManagement.sol";
 import "../interfaces/IIporRiskManagementOracle.sol";
-import "./Constants.sol";
-import "./math/IporMath.sol";
 import "./errors/IporErrors.sol";
 import "./errors/AmmErrors.sol";
+import "./Constants.sol";
+import "./math/IporMath.sol";
 import "../amm/libraries/SoapIndicatorLogic.sol";
 
 /// @title AMM basic logic library
@@ -94,7 +94,7 @@ library AmmLib {
         require(model.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " ammTreasury"));
         IporTypes.AmmBalancesMemory memory accruedBalance = IAmmStorage(model.ammStorage).getBalance();
 
-        uint256 actualVaultBalance = IAssetManagement(model.assetManagement).totalBalance(model.ammTreasury);
+        uint256 actualVaultBalance = IAssetManagement(model.assetManagement).totalBalance();
         int256 liquidityPool = accruedBalance.liquidityPool.toInt256() +
             actualVaultBalance.toInt256() -
             accruedBalance.vault.toInt256();
@@ -103,43 +103,6 @@ library AmmLib {
         accruedBalance.liquidityPool = liquidityPool.toUint256();
         accruedBalance.vault = actualVaultBalance;
         return accruedBalance;
-    }
-
-    /// @notice Gets risk indicators for open swap
-    /// @param context AMM model skeleton of the pool
-    /// @param direction direction of the swap
-    /// @return riskIndicators risk indicators for open swap
-    function getRiskIndicators(
-        AmmInternalTypes.RiskIndicatorsContext memory context,
-        uint256 direction
-    ) internal view returns (AmmTypes.OpenSwapRiskIndicators memory riskIndicators) {
-        uint256 maxNotionalPerLeg;
-
-        (
-            maxNotionalPerLeg,
-            riskIndicators.maxCollateralRatioPerLeg,
-            riskIndicators.maxCollateralRatio,
-            riskIndicators.baseSpreadPerLeg,
-            riskIndicators.fixedRateCapPerLeg
-        ) = IIporRiskManagementOracle(context.iporRiskManagementOracle).getOpenSwapParameters(
-            context.asset,
-            direction,
-            context.tenor
-        );
-
-        uint256 maxCollateralPerLeg = IporMath.division(
-            context.liquidityPoolBalance * riskIndicators.maxCollateralRatioPerLeg,
-            1e18
-        );
-
-        if (maxCollateralPerLeg > 0) {
-            riskIndicators.maxLeveragePerLeg = _leverageInRange(
-                IporMath.division(maxNotionalPerLeg * 1e18, maxCollateralPerLeg),
-                context.minLeverage
-            );
-        } else {
-            riskIndicators.maxLeveragePerLeg = context.minLeverage;
-        }
     }
 
     function _leverageInRange(uint256 leverage, uint256 cfgMinLeverage) internal pure returns (uint256) {

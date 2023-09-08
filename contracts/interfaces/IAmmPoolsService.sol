@@ -69,9 +69,6 @@ interface IAmmPoolsService {
         uint256 redeemAmount
     );
 
-    /// @notice Gets IPOR Oracle address.
-    function iporOracle() external view returns (address);
-
     /// @notice Gets the configuration of the pool for the given asset in AmmPoolsService.
     /// @param asset The address of the asset.
     /// @return The pool configuration.
@@ -129,7 +126,6 @@ interface IAmmPoolsService {
     /// @notice Rebalances given assets between the AmmTreasury and the AssetManagement, based on configuration stored
     /// in the `AmmPoolsParamsValue.ammTreasuryAndAssetManagementRatio` field .
     /// @dev Emits {Deposit} or {Withdraw} event from AssetManagement depends on current asset balance on AmmTreasury and AssetManagement.
-    /// @dev Emits {Mint} or {Burn} event from ivToken depends on current asset balance on AmmTreasury and AssetManagement.
     /// @dev Emits {Transfer} from ERC20 asset.
     /// @param asset Address of the asset.
     function rebalanceBetweenAmmTreasuryAndAssetManagement(address asset) external;

@@ -12,18 +12,10 @@ contract MockCaseBaseAssetManagement is IAssetManagement {
     using SafeERC20 for IERC20;
     IERC20 private _asset;
 
-    mapping(address => uint256) private _balance;
+    uint256 private _balance;
 
-    function initialize(
-        address asset,
-        address ivToken,
-        address strategyAave,
-        address strategyCompound
-    ) public {
-        require(
-            ivToken != address(0) || strategyAave != address(0) || strategyCompound != address(0),
-            IporErrors.WRONG_ADDRESS
-        );
+    function initialize(address asset, address strategyAave, address strategyCompound) public {
+        require(strategyAave != address(0) || strategyCompound != address(0), IporErrors.WRONG_ADDRESS);
         _asset = IERC20(asset);
     }
 
@@ -34,27 +26,23 @@ contract MockCaseBaseAssetManagement is IAssetManagement {
 
     function setAmmTreasury(address newAmmTreasury) external {}
 
-    function totalBalance(address who) external view override returns (uint256) {
+    function totalBalance() external view override returns (uint256) {
         //@dev for simplicity we assume that reading total balance not include interest
-        return _balance[who];
+        return _balance;
     }
 
-    function calculateExchangeRate() external pure override returns (uint256) {
-        return 0;
-    }
 
     //@dev for test purposes, simulation that IporVault earn some money for recipient
     function forTestDeposit(address recipient, uint256 assetAmount) external returns (uint256 balance) {
-        balance = _balance[recipient] + assetAmount;
-        _balance[recipient] = balance;
-
+        balance = _balance + assetAmount;
+        _balance = balance;
         _asset.safeTransferFrom(msg.sender, address(this), assetAmount);
     }
 
     function deposit(uint256 wadAssetAmount) external override returns (uint256 balance, uint256 depositedAmount) {
-        balance = _balance[msg.sender] + wadAssetAmount;
+        balance = _balance + wadAssetAmount;
 
-        _balance[msg.sender] = balance;
+        _balance = balance;
 
         uint256 decimals = IERC20Metadata(address(_asset)).decimals();
 
@@ -67,13 +55,13 @@ contract MockCaseBaseAssetManagement is IAssetManagement {
 
     function withdraw(uint256 wadAssetAmount) external override returns (uint256 withdrawnAmount, uint256 balance) {
         uint256 wadFinalAssetAmount = IporMath.division(wadAssetAmount * _withdrawRate(), 1e18);
-        if (wadFinalAssetAmount > _balance[msg.sender]) {
-            return (0, _balance[msg.sender]);
+        if (wadFinalAssetAmount > _balance) {
+            return (0, _balance);
         }
-        balance = _balance[msg.sender] - wadFinalAssetAmount;
+        balance = _balance - wadFinalAssetAmount;
         withdrawnAmount = wadFinalAssetAmount;
 
-        _balance[msg.sender] = balance;
+        _balance = balance;
 
         uint256 finalAssetAmount = IporMath.convertWadToAssetDecimals(
             wadFinalAssetAmount,
@@ -84,10 +72,10 @@ contract MockCaseBaseAssetManagement is IAssetManagement {
 
     //solhint-disable no-empty-blocks
     function withdrawAll() external override returns (uint256 withdrawnAmount, uint256 vaultBalance) {
-        uint256 toWithdraw = _balance[msg.sender];
+        uint256 toWithdraw = _balance;
         _asset.safeTransfer(msg.sender, toWithdraw);
-        withdrawnAmount = _balance[msg.sender];
-        _balance[msg.sender] = 0;
+        withdrawnAmount = _balance;
+        _balance = 0;
         vaultBalance = 0;
     }
 

@@ -9,6 +9,7 @@ import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../interfaces/types/AmmStorageTypes.sol";
 import "../interfaces/IAmmStorage.sol";
 import "../interfaces/IProxyImplementation.sol";
+import "../interfaces/IIporContractCommonGov.sol";
 import "../libraries/Constants.sol";
 import "../libraries/PaginationUtils.sol";
 import "../libraries/IporContractValidator.sol";
@@ -25,11 +26,16 @@ contract AmmStorage is
     UUPSUpgradeable,
     IporOwnableUpgradeable,
     IAmmStorage,
-    IProxyImplementation
+    IProxyImplementation,
+    IIporContractCommonGov
 {
     using IporContractValidator for address;
     using SafeCast for uint256;
+    using SafeCast for int256;
+
     using SoapIndicatorRebalanceLogic for AmmStorageTypes.SoapIndicators;
+
+    int256 private constant INTEREST_THRESHOLD = -1e18;
 
     address private immutable _iporProtocolRouter;
     address private immutable _ammTreasury;
@@ -82,6 +88,12 @@ contract AmmStorage is
         __UUPSUpgradeable_init();
     }
 
+    /// @dev In v1 name of field was quasiHypotheticalInterestCumulative in v2 in that slot is stored hypotheticalInterestCumulative calculated in different way.
+    /// In V1 quasiHypotheticalInterestCumulative is a sum of chunks: totalNotional * averageInterestRate * (calculateTimestamp - lastRebalanceTimestamp) * Constants.D18;
+    /// stored value is without division by 1e36 * Constants.YEAR_IN_SECONDS - that is why it is called quasi.
+    /// In V2 hypotheticalInterestCumulative store sum chunks v2 = value * e^(averageInterestRate * time). This value is not quasi, so we don't need to divide by 1e36 * Constants.YEAR_IN_SECONDS.
+    /// After upgrade V1 to V2 code operates on non-quasi value, so we need to divide by 1e36 * Constants.YEAR_IN_SECONDS to achieve current hypothetical interest cumulative from v1.
+    /// This value is base value for further calculation including continuous compounding formula in v2.
     function postUpgrade() public onlyOwner {
         _soapIndicatorsPayFixed.hypotheticalInterestCumulative = IporMath.division(
             _soapIndicatorsPayFixed.hypotheticalInterestCumulative,
@@ -162,6 +174,7 @@ contract AmmStorage is
         } else {
             revert(AmmErrors.UNSUPPORTED_DIRECTION);
         }
+
         return
             AmmTypes.Swap(
                 swap.id,
@@ -291,17 +304,12 @@ contract AmmStorage is
     function updateStorageWhenCloseSwapPayFixedInternal(
         AmmTypes.Swap memory swap,
         int256 pnlValue,
-        uint256 swapUnwindOpeningFeeLPAmount,
-        uint256 swapUnwindOpeningFeeTreasuryAmount,
+        uint256 swapUnwindFeeLPAmount,
+        uint256 swapUnwindFeeTreasuryAmount,
         uint256 closingTimestamp
     ) external override onlyRouter returns (AmmInternalTypes.OpenSwapItem memory closedSwap) {
         _updateSwapsWhenClosePayFixed(swap);
-        _updateBalancesWhenCloseSwapPayFixed(
-            swap,
-            pnlValue,
-            swapUnwindOpeningFeeLPAmount,
-            swapUnwindOpeningFeeTreasuryAmount
-        );
+        _updateBalancesWhenCloseSwapPayFixed(swap, pnlValue, swapUnwindFeeLPAmount, swapUnwindFeeTreasuryAmount);
         _updateSoapIndicatorsWhenCloseSwapPayFixed(swap, closingTimestamp);
         return _updateOpenedSwapWhenClosePayFixed(swap.tenor, swap.id);
     }
@@ -309,51 +317,42 @@ contract AmmStorage is
     function updateStorageWhenCloseSwapReceiveFixedInternal(
         AmmTypes.Swap memory swap,
         int256 pnlValue,
-        uint256 swapUnwindOpeningFeeLPAmount,
-        uint256 swapUnwindOpeningFeeTreasuryAmount,
+        uint256 swapUnwindFeeLPAmount,
+        uint256 swapUnwindFeeTreasuryAmount,
         uint256 closingTimestamp
     ) external override onlyRouter returns (AmmInternalTypes.OpenSwapItem memory closedSwap) {
         _updateSwapsWhenCloseReceiveFixed(swap);
-        _updateBalancesWhenCloseSwapReceiveFixed(
-            swap,
-            pnlValue,
-            swapUnwindOpeningFeeLPAmount,
-            swapUnwindOpeningFeeTreasuryAmount
-        );
+        _updateBalancesWhenCloseSwapReceiveFixed(swap, pnlValue, swapUnwindFeeLPAmount, swapUnwindFeeTreasuryAmount);
         _updateSoapIndicatorsWhenCloseSwapReceiveFixed(swap, closingTimestamp);
         return _updateOpenedSwapWhenCloseReceiveFixed(swap.tenor, swap.id);
     }
 
+    /// @dev vaultBalance is the balance of the vault after the withdraw
     function updateStorageWhenWithdrawFromAssetManagement(
         uint256 withdrawnAmount,
         uint256 vaultBalance
     ) external override onlyAmmTreasury {
         uint256 currentVaultBalance = _balances.vault;
-        // We nedd this because for compound if we deposit and withdraw we could get negative intrest based on rounds
-        require(vaultBalance + withdrawnAmount >= currentVaultBalance, AmmErrors.INTEREST_FROM_STRATEGY_BELOW_ZERO);
+        uint256 currentLiquidityPoolBalance = _balances.liquidityPool;
 
-        uint256 interest = vaultBalance + withdrawnAmount - currentVaultBalance;
+        int256 interest = (vaultBalance + withdrawnAmount).toInt256() - currentVaultBalance.toInt256();
 
-        uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
-
-        _balances.liquidityPool = liquidityPoolBalance.toUint128();
-        _balances.vault = vaultBalance.toUint128();
+        _updateStorageWhenInteractionWithAssetManagement(currentLiquidityPoolBalance, vaultBalance, interest);
     }
 
     function updateStorageWhenDepositToAssetManagement(
         uint256 depositAmount,
         uint256 vaultBalance
     ) external override onlyAmmTreasury {
+        /// @dev vaultBalance is the balance of the vault after the deposit depositAmount, so should always be vaultBalance >= depositAmount
         require(vaultBalance >= depositAmount, AmmErrors.VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE);
 
         uint256 currentVaultBalance = _balances.vault;
+        uint256 currentLiquidityPoolBalance = _balances.liquidityPool;
 
-        require(currentVaultBalance <= (vaultBalance - depositAmount), AmmErrors.INTEREST_FROM_STRATEGY_BELOW_ZERO);
+        int256 interest = (vaultBalance - depositAmount).toInt256() - currentVaultBalance.toInt256();
 
-        uint256 interest = currentVaultBalance > 0 ? (vaultBalance - currentVaultBalance - depositAmount) : 0;
-        _balances.vault = vaultBalance.toUint128();
-        uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
-        _balances.liquidityPool = liquidityPoolBalance.toUint128();
+        _updateStorageWhenInteractionWithAssetManagement(currentLiquidityPoolBalance, vaultBalance, interest);
     }
 
     function updateStorageWhenTransferToCharlieTreasuryInternal(
@@ -394,12 +393,12 @@ contract AmmStorage is
         return PauseManager.isPauseGuardian(account);
     }
 
-    function addPauseGuardian(address guardian) external override onlyOwner {
-        PauseManager.addPauseGuardian(guardian);
+    function addPauseGuardians(address[] calldata guardians) external override onlyOwner {
+        PauseManager.addPauseGuardians(guardians);
     }
 
-    function removePauseGuardian(address guardian) external override onlyOwner {
-        PauseManager.removePauseGuardian(guardian);
+    function removePauseGuardians(address[] calldata guardians) external override onlyOwner {
+        PauseManager.removePauseGuardians(guardians);
     }
 
     function getImplementation() external view override returns (address) {
@@ -432,6 +431,21 @@ contract AmmStorage is
             averageInterestRate: soapIndicatorsReceiveFixed.averageInterestRate,
             rebalanceTimestamp: soapIndicatorsReceiveFixed.rebalanceTimestamp
         });
+    }
+
+    function _updateStorageWhenInteractionWithAssetManagement(
+        uint256 ammLiquidityPoolBalance,
+        uint256 vaultBalance,
+        int256 interest
+    ) internal {
+        /// @dev allow to have negative interest but not lower than INTEREST_THRESHOLD
+        require(interest >= INTEREST_THRESHOLD, AmmErrors.INTEREST_FROM_STRATEGY_EXCEEDED_THRESHOLD);
+        require(ammLiquidityPoolBalance.toInt256() >= -interest, AmmErrors.LIQUIDITY_POOL_AMOUNT_TOO_LOW);
+
+        ammLiquidityPoolBalance = (ammLiquidityPoolBalance.toInt256() + interest).toUint256();
+
+        _balances.liquidityPool = ammLiquidityPoolBalance.toUint128();
+        _balances.vault = vaultBalance.toUint128();
     }
 
     function _getPositions(
@@ -502,27 +516,27 @@ contract AmmStorage is
     function _updateBalancesWhenCloseSwapPayFixed(
         AmmTypes.Swap memory swap,
         int256 pnlValue,
-        uint256 swapUnwindOpeningFeeLPAmount,
-        uint256 swapUnwindOpeningFeeTreasuryAmount
+        uint256 swapUnwindFeeLPAmount,
+        uint256 swapUnwindFeeTreasuryAmount
     ) internal {
-        _updateBalancesWhenCloseSwap(pnlValue, swapUnwindOpeningFeeLPAmount, swapUnwindOpeningFeeTreasuryAmount);
+        _updateBalancesWhenCloseSwap(pnlValue, swapUnwindFeeLPAmount, swapUnwindFeeTreasuryAmount);
         _balances.totalCollateralPayFixed = _balances.totalCollateralPayFixed - swap.collateral.toUint128();
     }
 
     function _updateBalancesWhenCloseSwapReceiveFixed(
         AmmTypes.Swap memory swap,
         int256 pnlValue,
-        uint256 swapUnwindOpeningFeeLPAmount,
-        uint256 swapUnwindOpeningFeeTreasuryAmount
+        uint256 swapUnwindFeeLPAmount,
+        uint256 swapUnwindFeeTreasuryAmount
     ) internal {
-        _updateBalancesWhenCloseSwap(pnlValue, swapUnwindOpeningFeeLPAmount, swapUnwindOpeningFeeTreasuryAmount);
+        _updateBalancesWhenCloseSwap(pnlValue, swapUnwindFeeLPAmount, swapUnwindFeeTreasuryAmount);
         _balances.totalCollateralReceiveFixed = _balances.totalCollateralReceiveFixed - swap.collateral.toUint128();
     }
 
     function _updateBalancesWhenCloseSwap(
         int256 pnlValue,
-        uint256 swapUnwindOpeningFeeLPAmount,
-        uint256 swapUnwindOpeningFeeTreasuryAmount
+        uint256 swapUnwindFeeLPAmount,
+        uint256 swapUnwindFeeTreasuryAmount
     ) internal {
         uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
@@ -533,15 +547,15 @@ contract AmmStorage is
             _balances.liquidityPool =
                 _balances.liquidityPool -
                 absPnlValue.toUint128() +
-                swapUnwindOpeningFeeLPAmount.toUint128();
+                swapUnwindFeeLPAmount.toUint128();
         } else {
             /// @dev AMM earns, Buyer looses,
             _balances.liquidityPool =
                 _balances.liquidityPool +
                 absPnlValue.toUint128() +
-                swapUnwindOpeningFeeLPAmount.toUint128();
+                swapUnwindFeeLPAmount.toUint128();
         }
-        _balances.treasury = _balances.treasury + swapUnwindOpeningFeeTreasuryAmount.toUint128();
+        _balances.treasury = _balances.treasury + swapUnwindFeeTreasuryAmount.toUint128();
     }
 
     function _updateSwapsWhenOpen(
