@@ -61,8 +61,6 @@ contract StrategyDsrDai is
         __Pausable_init();
         __Ownable_init();
         __UUPSUpgradeable_init();
-
-        IERC20Upgradeable(asset).safeApprove(shareToken, type(uint256).max);
     }
 
     function getApy() external view override returns (uint256 apy) {
@@ -77,6 +75,7 @@ contract StrategyDsrDai is
     function deposit(
         uint256 wadAmount
     ) external override whenNotPaused onlyAssetManagement returns (uint256 depositedAmount) {
+        IERC20Upgradeable(asset).forceApprove(shareToken, wadAmount);
         IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), wadAmount);
         ISavingsDai(shareToken).deposit(wadAmount, address(this));
         depositedAmount = wadAmount;

@@ -67,7 +67,6 @@ contract StrategyAave is StrategyCore, IStrategyAave {
 
         address lendingPoolAddress = provider.getLendingPool();
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
-        IERC20Upgradeable(asset).safeApprove(lendingPoolAddress, type(uint256).max);
 
         _treasuryManager = _msgSender();
     }
@@ -151,6 +150,8 @@ contract StrategyAave is StrategyCore, IStrategyAave {
 
         address lendingPoolAddress = provider.getLendingPool();
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
+
+        IERC20Upgradeable(asset).forceApprove(lendingPoolAddress, amount);
 
         AaveLendingPoolV2(lendingPoolAddress).deposit(asset, amount, address(this), 0);
         depositedAmount = IporMath.convertToWad(amount, assetDecimals);
