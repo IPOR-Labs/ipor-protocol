@@ -197,27 +197,24 @@ abstract contract AssetManagement is
                 ? sortedStrategies[i].balance
                 : amountToWithdraw;
 
-            if (strategyAmountToWithdraw > 0) {
-                try IStrategy(sortedStrategies[i].strategy).withdraw(strategyAmountToWithdraw) returns (
-                    uint256 tryWithdrawnAmount
-                ) {
-                    amountToWithdraw = tryWithdrawnAmount > amountToWithdraw
-                        ? 0
-                        : amountToWithdraw - tryWithdrawnAmount;
-
-                    sortedStrategies[i].balance = tryWithdrawnAmount > sortedStrategies[i].balance
-                        ? 0
-                        : sortedStrategies[i].balance - tryWithdrawnAmount;
-                } catch {
-                    /// @dev If strategy withdraw fails, try to withdraw from next strategy
-                    continue;
-                }
-            } else {
-                /// @div if strategy has no balance, try to withdraw from next strategy
+            if (strategyAmountToWithdraw == 0) {
+                /// @dev if strategy has no balance, try to withdraw from next strategy
                 continue;
             }
 
-            /// @dev For gas optimization - it is not worth to withdraw if remained amount to withdraw is less or equal than 1.
+            try IStrategy(sortedStrategies[i].strategy).withdraw(strategyAmountToWithdraw) returns (
+                uint256 tryWithdrawnAmount
+            ) {
+                amountToWithdraw = tryWithdrawnAmount > amountToWithdraw ? 0 : amountToWithdraw - tryWithdrawnAmount;
+
+                sortedStrategies[i].balance = tryWithdrawnAmount > sortedStrategies[i].balance
+                    ? 0
+                    : sortedStrategies[i].balance - tryWithdrawnAmount;
+            } catch {
+                /// @dev If strategy withdraw fails, try to withdraw from next strategy
+                continue;
+            }
+
             if (amountToWithdraw <= 1e18) {
                 break;
             }
