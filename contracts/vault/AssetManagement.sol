@@ -189,14 +189,22 @@ abstract contract AssetManagement is
 
         StrategyData[] memory sortedStrategies = _getSortedStrategiesWithApy(_getStrategiesData());
 
+        uint256 strategyAmountToWithdraw;
         uint256 amountToWithdraw = amount;
 
         for (uint256 i; i < supportedStrategiesVolume; ++i) {
-            try
-                IStrategy(sortedStrategies[i].strategy).withdraw(
-                    sortedStrategies[i].balance <= amountToWithdraw ? sortedStrategies[i].balance : amountToWithdraw
-                )
-            returns (uint256 tryWithdrawnAmount) {
+            strategyAmountToWithdraw = sortedStrategies[i].balance <= amountToWithdraw
+                ? sortedStrategies[i].balance
+                : amountToWithdraw;
+
+            if (strategyAmountToWithdraw == 0) {
+                /// @dev if strategy has no balance, try to withdraw from next strategy
+                continue;
+            }
+
+            try IStrategy(sortedStrategies[i].strategy).withdraw(strategyAmountToWithdraw) returns (
+                uint256 tryWithdrawnAmount
+            ) {
                 amountToWithdraw = tryWithdrawnAmount > amountToWithdraw ? 0 : amountToWithdraw - tryWithdrawnAmount;
 
                 sortedStrategies[i].balance = tryWithdrawnAmount > sortedStrategies[i].balance
