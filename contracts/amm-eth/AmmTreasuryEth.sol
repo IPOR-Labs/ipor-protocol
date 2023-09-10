@@ -31,12 +31,12 @@ contract AmmTreasuryEth is
     address public immutable router;
 
     modifier onlyPauseGuardian() {
-        require(PauseManager.isPauseGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
+        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
         _;
     }
 
     modifier onlyRouter() {
-        require(_msgSender() == router, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
+        require(msg.sender == router, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
         _;
     }
 

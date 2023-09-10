@@ -13,7 +13,7 @@ abstract contract IporOwnable is Ownable {
     event AppointedToTransferOwnership(address indexed appointedOwner);
 
     modifier onlyAppointedOwner() {
-        require(_appointedOwner == _msgSender(), IporErrors.SENDER_NOT_APPOINTED_OWNER);
+        require(_appointedOwner == msg.sender, IporErrors.SENDER_NOT_APPOINTED_OWNER);
         _;
     }
 
@@ -29,7 +29,7 @@ abstract contract IporOwnable is Ownable {
     /// @dev This is real transfer ownership in second step by appointed account
     function confirmTransferOwnership() external onlyAppointedOwner {
         _appointedOwner = address(0);
-        _transferOwnership(_msgSender());
+        _transferOwnership(msg.sender);
     }
 
     /// @notice Renounce ownership

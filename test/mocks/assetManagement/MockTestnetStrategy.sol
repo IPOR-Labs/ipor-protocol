@@ -34,7 +34,7 @@ contract MockTestnetStrategy is StrategyCore {
         __Ownable_init();
         __UUPSUpgradeable_init();
 
-        _treasuryManager = _msgSender();
+        _treasuryManager = msg.sender;
     }
 
     function getApy() external pure override returns (uint256) {
@@ -54,7 +54,7 @@ contract MockTestnetStrategy is StrategyCore {
             IporMath.convertToWad(amount, IERC20Metadata(asset).decimals());
         _depositsBalance = newDepositsBalance;
         _lastUpdateBalance = block.timestamp;
-        IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), amount);
+        IERC20Upgradeable(asset).safeTransferFrom(msg.sender, address(this), amount);
         return IporMath.convertToWad(amount, assetDecimals);
     }
 
@@ -64,7 +64,7 @@ contract MockTestnetStrategy is StrategyCore {
             IporMath.convertToWad(amount, IERC20Metadata(asset).decimals());
         _depositsBalance = newDepositsBalance;
         _lastUpdateBalance = block.timestamp;
-        IERC20Upgradeable(asset).safeTransfer(_msgSender(), amount);
+        IERC20Upgradeable(asset).safeTransfer(msg.sender, amount);
 
         return wadAmount;
     }
