@@ -56,7 +56,6 @@ interface IAmmPoolsServiceEth {
     error StEthSubmitFailed(uint256 amount, string errorCode);
 
     /// @notice Event emitted when liquidity is provided in the form of stEth.
-    /// @param timestamp Timestamp of the transaction.
     /// @param from Address of the sender.
     /// @param beneficiary Address that will receive the minted ipstEth tokens in exchange for the provided stEth.
     /// @param to Address of the AMM treasury.
@@ -64,7 +63,6 @@ interface IAmmPoolsServiceEth {
     /// @param assetAmount Amount of stEth tokens provided as liquidity.
     /// @param ipTokenAmount Amount of ipstEth tokens minted in exchange for the provided stEth.
     event ProvideLiquidityStEth(
-        uint256 timestamp,
         address indexed from,
         address indexed beneficiary,
         address indexed to,
@@ -74,7 +72,6 @@ interface IAmmPoolsServiceEth {
     );
 
     /// @notice Event emitted when liquidity is provided in the form of wEth.
-    /// @param timestamp Timestamp of the transaction.
     /// @param from Address of the sender.
     /// @param beneficiary Address that will benefit from the provided liquidity.
     /// @param to Address of the AMM treasury.
@@ -83,7 +80,6 @@ interface IAmmPoolsServiceEth {
     /// @param amountStEth Amount of stEth tokens submitted to StETH contract based on amountEth
     /// @param ipTokenAmount Amount of ipstEth tokens minted in exchange for the provided stEth.
     event ProvideLiquidityEth(
-        uint256 timestamp,
         address indexed from,
         address indexed beneficiary,
         address indexed to,
@@ -94,7 +90,6 @@ interface IAmmPoolsServiceEth {
     );
 
     /// @notice Event emitted when liquidity is redeemed from the AMM pool in exchange for stEth.
-    /// @param timestamp Timestamp of the transaction.
     /// @param ammTreasuryEth Address of the AMM Treasury contract.
     /// @param from Address of the sender. From who ipstEth tokens were burned.
     /// @param beneficiary Address that will receive the redeemed stEth tokens.
@@ -103,7 +98,6 @@ interface IAmmPoolsServiceEth {
     /// @param redeemedAmountStEth Amount of stEth tokens redeemed after accounting for the fee.
     /// @param ipTokenAmount Amount of ipstEth tokens redeemed.
     event RedeemStEth(
-        uint256 timestamp,
         address indexed ammTreasuryEth,
         address indexed from,
         address indexed beneficiary,
