@@ -29,7 +29,7 @@ contract SpreadAccessControl {
     /// @dev Throws an error if called by any account other than the appointed owner.
     modifier onlyAppointedOwner() {
         require(
-            address(SpreadStorageLibs.getAppointedOwner().appointedOwner) == msg.sender,
+            SpreadStorageLibs.getAppointedOwner().appointedOwner == msg.sender,
             IporErrors.SENDER_NOT_APPOINTED_OWNER
         );
         _;
@@ -123,7 +123,7 @@ contract SpreadAccessControl {
 
     /// @dev Internal function to check if the sender is the contract owner.
     function _onlyOwner() internal view {
-        require(address(SpreadStorageLibs.getOwner().owner) == msg.sender, IporErrors.CALLER_NOT_OWNER);
+        require(SpreadStorageLibs.getOwner().owner == msg.sender, IporErrors.CALLER_NOT_OWNER);
     }
 
     function _pause() internal {
@@ -136,7 +136,7 @@ contract SpreadAccessControl {
      */
     function _transferOwnership(address newOwner) internal virtual {
         SpreadStorageLibs.OwnerStorage storage ownerStorage = SpreadStorageLibs.getOwner();
-        address oldOwner = address(ownerStorage.owner);
+        address oldOwner = ownerStorage.owner;
         ownerStorage.owner = newOwner;
         emit OwnershipTransferred(oldOwner, newOwner);
     }

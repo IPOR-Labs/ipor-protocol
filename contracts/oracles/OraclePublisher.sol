@@ -68,7 +68,7 @@ contract OraclePublisher is
     }
 
     function getConfiguration() external view returns (address iporOracle, address iporRiskManagementOracle) {
-        return (address(_iporOracle), address(_iporRiskManagementOracle));
+        return (_iporOracle, _iporRiskManagementOracle);
     }
 
     function publish(address[] memory addresses, bytes[] calldata calls) external override onlyUpdater whenNotPaused {
