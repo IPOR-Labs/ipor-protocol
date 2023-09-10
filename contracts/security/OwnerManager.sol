@@ -47,7 +47,7 @@ library OwnerManager {
     /// @notice Immediately transfers ownership
     function transferOwnership(address newOwner) internal {
         StorageLib.OwnerStorage storage ownerStorage = StorageLib.getOwner();
-        address oldOwner = address(ownerStorage.owner);
+        address oldOwner = ownerStorage.owner;
         ownerStorage.owner = newOwner;
         emit OwnershipTransferred(oldOwner, newOwner);
     }
