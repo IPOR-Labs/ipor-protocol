@@ -10,9 +10,10 @@ import "../interfaces/IAmmGovernanceService.sol";
 import "../interfaces/IAmmGovernanceLens.sol";
 import "../libraries/math/IporMath.sol";
 import "../libraries/errors/AmmPoolsErrors.sol";
-import "../libraries/IporContractValidator.sol";
+import "../libraries/Ipo    rContractValidator.sol";
 import "../governance/AmmConfigurationManager.sol";
 
+/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;

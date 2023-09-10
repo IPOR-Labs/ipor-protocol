@@ -11,6 +11,7 @@ import "../../amm/spread/DemandSpreadLibs.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
 import "../../amm/spread/OfferedRateCalculationLibs.sol";
 
+/// @dev This contract cannot be used directly, should be used only through SpreadRouter.
 contract Spread28Days is ISpread28Days, ISpread28DaysLens {
     using IporContractValidator for address;
     using SafeCast for uint256;
@@ -96,9 +97,8 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         DemandSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
         spreadValue = DemandSpreadLibs.calculatePayFixedSpread(inputData);
 
-        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getTimeWeightedNotionalForAssetAndTenor(
-            inputData.timeWeightedNotionalStorageId
-        );
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs
+            .getTimeWeightedNotionalForAssetAndTenor(inputData.timeWeightedNotionalStorageId);
 
         CalculateTimeWeightedNotionalLibs.updateTimeWeightedNotionalPayFixed(
             weightedNotional,
@@ -121,9 +121,8 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         DemandSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
 
         spreadValue = DemandSpreadLibs.calculateReceiveFixedSpread(inputData);
-        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getTimeWeightedNotionalForAssetAndTenor(
-            inputData.timeWeightedNotionalStorageId
-        );
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs
+            .getTimeWeightedNotionalForAssetAndTenor(inputData.timeWeightedNotionalStorageId);
 
         CalculateTimeWeightedNotionalLibs.updateTimeWeightedNotionalReceiveFixed(
             weightedNotional,

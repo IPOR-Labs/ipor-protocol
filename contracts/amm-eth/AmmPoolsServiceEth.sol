@@ -13,6 +13,7 @@ import "./interfaces/IWETH9.sol";
 import "./interfaces/IAmmPoolsServiceEth.sol";
 import "./AmmLibEth.sol";
 
+/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
     using IporContractValidator for address;
     using SafeERC20 for IStETH;
