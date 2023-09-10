@@ -10,7 +10,7 @@ import "../interfaces/IAmmGovernanceService.sol";
 import "../interfaces/IAmmGovernanceLens.sol";
 import "../libraries/math/IporMath.sol";
 import "../libraries/errors/AmmPoolsErrors.sol";
-import "../libraries/Ipo    rContractValidator.sol";
+import "../libraries/IporContractValidator.sol";
 import "../governance/AmmConfigurationManager.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
