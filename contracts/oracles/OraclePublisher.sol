@@ -74,12 +74,16 @@ contract OraclePublisher is
     function publish(address[] memory addresses, bytes[] calldata calls) external override onlyUpdater whenNotPaused {
         uint256 addressesLength = addresses.length;
         require(addressesLength == calls.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
-        for (uint256 i = 0; i < addressesLength; i++) {
+        for (uint256 i; i < addressesLength; ) {
             require(
                 addresses[i] == _iporOracle || addresses[i] == _iporRiskManagementOracle,
                 IporOracleErrors.INVALID_ORACLE_ADDRESS
             );
             addresses[i].functionCall(calls[i]);
+
+            unchecked {
+                ++i;
+            }
         }
     }
 
