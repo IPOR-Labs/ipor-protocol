@@ -130,6 +130,8 @@ library AmmConfigurationManager {
     ) internal {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(newAmmTreasuryAndAssetManagementRatio > 0, AmmPoolsErrors.AMM_TREASURY_ASSET_MANAGEMENT_RATIO);
+        /// @dev newAmmTreasuryAndAssetManagementRatio is percentage with 2 decimals, example: 65% = 6500, (see description in StorageLib.AmmPoolsParamsValue)
+        /// value cannot be greater than 10000 which is 100%
         require(newAmmTreasuryAndAssetManagementRatio < 1e4, AmmPoolsErrors.AMM_TREASURY_ASSET_MANAGEMENT_RATIO);
 
         StorageLib.getAmmPoolsParamsStorage().value[asset] = StorageLib.AmmPoolsParamsValue({

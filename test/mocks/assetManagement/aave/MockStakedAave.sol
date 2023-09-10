@@ -16,7 +16,7 @@ contract MockStakedAave is ERC20 {
         require(aaveMock != address(0), string.concat(IporErrors.WRONG_ADDRESS, " AAVE asset address cannot be 0"));
 
         _aaveMock = aaveMock;
-        _mint(msg.sender, 10**24); // 1.000.000 aDAI
+        _mint(msg.sender, 1_000_000 * 1e18); // 1.000.000 aDAI
         _cooldownStartTimestamp = block.timestamp - (10 * 24 * 60 * 60);
     }
 

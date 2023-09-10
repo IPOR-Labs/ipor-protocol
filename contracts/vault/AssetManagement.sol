@@ -4,22 +4,22 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "../interfaces/IProxyImplementation.sol";
-import "../interfaces/IIvToken.sol";
-import "../interfaces/IStrategy.sol";
-import "../interfaces/IAssetManagementInternal.sol";
+import "../interfaces/IIporContractCommonGov.sol";
 import "../interfaces/IAssetManagement.sol";
-import "../libraries/math/IporMath.sol";
+import "../interfaces/IStrategy.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/AssetManagementErrors.sol";
+import "../libraries/Constants.sol";
+import "../libraries/math/IporMath.sol";
+import "../libraries/IporContractValidator.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "../security/PauseManager.sol";
 
-/// @title AssetManagement represents Asset Management module responsible for investing AmmTreasury's cash in external DeFi protocols.
 abstract contract AssetManagement is
     Initializable,
     PausableUpgradeable,
@@ -27,20 +27,39 @@ abstract contract AssetManagement is
     UUPSUpgradeable,
     IporOwnableUpgradeable,
     IAssetManagement,
-    IAssetManagementInternal,
+    IIporContractCommonGov,
     IProxyImplementation
 {
+    using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    address internal _asset;
-    IIvToken internal _ivToken;
+    uint256 private constant ROUNDING_ERROR_MARGIN = 1e18;
 
-    address internal _ammTreasury;
-    address internal _strategyAave;
-    address internal _strategyCompound;
+    struct StrategyData {
+        address strategy;
+        /// @dev balance in 18 decimals
+        uint256 balance;
+        uint256 apy;
+    }
+
+    /// @dev deprecated
+    address internal _assetDeprecated;
+    /// @dev deprecated
+    address internal _ivTokenDeprecated;
+    /// @dev deprecated
+    address internal _AmmTreasuryDeprecated;
+    /// @dev deprecated
+    address internal _strategyAaveDeprecated;
+    /// @dev deprecated
+    address internal _strategyCompoundDeprecated;
+
+    address public immutable asset;
+    address public immutable ammTreasury;
+    uint256 public immutable supportedStrategiesVolume;
+    uint256 public immutable highestApyStrategyArrayIndex;
 
     modifier onlyAmmTreasury() {
-        require(_msgSender() == _ammTreasury, IporErrors.CALLER_NOT_AMM_TREASURY);
+        require(_msgSender() == ammTreasury, IporErrors.CALLER_NOT_AMM_TREASURY);
         _;
     }
 
@@ -49,88 +68,34 @@ abstract contract AssetManagement is
         _;
     }
 
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
-        _disableInitializers();
+    constructor(
+        address assetInput,
+        address ammTreasuryInput,
+        uint256 supportedStrategiesVolumeInput,
+        uint256 highestApyStrategyArrayIndexInput
+    ) {
+        asset = assetInput.checkAddress();
+        ammTreasury = ammTreasuryInput.checkAddress();
+        supportedStrategiesVolume = supportedStrategiesVolumeInput;
+        highestApyStrategyArrayIndex = highestApyStrategyArrayIndexInput;
+
+        require(_getDecimals() == IERC20MetadataUpgradeable(assetInput).decimals(), IporErrors.WRONG_DECIMALS);
     }
 
-    /**
-     * @dev Deploy IPORVault.
-     * @notice Deploy IPORVault.
-     * @param asset underlying token like DAI, USDT etc.
-     */
-    function initialize(
-        address asset,
-        address ivToken,
-        address strategyAave,
-        address strategyCompound
-    ) public initializer {
+    function initialize() public initializer {
         __Pausable_init();
         __Ownable_init();
         __UUPSUpgradeable_init();
-
-        require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(ivToken != address(0), IporErrors.WRONG_ADDRESS);
-        require(_getDecimals() == IERC20MetadataUpgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
-
-        IIvToken iivToken = IIvToken(ivToken);
-        require(asset == iivToken.getAsset(), IporErrors.ADDRESSES_MISMATCH);
-
-        _asset = asset;
-        _ivToken = iivToken;
-
-        _strategyAave = _setStrategy(_strategyAave, strategyAave);
-        _strategyCompound = _setStrategy(_strategyCompound, strategyCompound);
     }
 
-    function getVersion() external pure override returns (uint256) {
-        return 2_000;
+    function getImplementation() external view override returns (address) {
+        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
 
-    function getAsset() external view override returns (address) {
-        return _asset;
+    function totalBalance() external view override returns (uint256) {
+        return _calculateTotalBalance(_getStrategiesData());
     }
 
-    function getIvToken() external view returns (address) {
-        return address(_ivToken);
-    }
-
-    function getAmmTreasury() external view override returns (address) {
-        return _ammTreasury;
-    }
-
-    function getStrategyAave() external view override returns (address) {
-        return _strategyAave;
-    }
-
-    function getStrategyCompound() external view override returns (address) {
-        return _strategyCompound;
-    }
-
-    function totalBalance(address who) external view override returns (uint256) {
-        return _totalBalance(who);
-    }
-
-    function calculateExchangeRate() external view override returns (uint256 exchangeRate) {
-        IStrategy strategyAave = IStrategy(_strategyAave);
-        IStrategy strategyCompound = IStrategy(_strategyCompound);
-        (, exchangeRate, , ) = _calcExchangeRate(strategyAave, strategyCompound);
-    }
-
-    function getMaxApyStrategy()
-        external
-        view
-        override
-        returns (address strategyMaxApy, address strategyAave, address strategyCompound)
-    {
-        return _getMaxApyStrategy();
-    }
-
-    /**
-     * @dev to deposit asset in higher apy strategy.
-     * @notice only AmmTreasury can deposit
-     * @param amount underlying token amount represented in 18 decimals
-     */
     function deposit(
         uint256 amount
     ) external override whenNotPaused onlyAmmTreasury returns (uint256 vaultBalance, uint256 depositedAmount) {
@@ -138,80 +103,41 @@ abstract contract AssetManagement is
         uint256 assetAmount = IporMath.convertWadToAssetDecimals(amount, _getDecimals());
         require(assetAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
-        (address strategyMaxApy, address strategyAaveAddr, address strategyCompoundAddr) = _getMaxApyStrategy();
+        StrategyData[] memory sortedStrategies = _getSortedStrategiesWithApy(_getStrategiesData());
 
-        (
-            ,
-            uint256 exchangeRate,
-            uint256 assetBalanceAaveStrategy,
-            uint256 assetBalanceCompoundStrategy
-        ) = _calcExchangeRate(IStrategy(strategyAaveAddr), IStrategy(strategyCompoundAddr));
+        IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), assetAmount);
 
-        uint256 ivTokenAmount = IporMath.division(amount * 1e18, exchangeRate);
+        address wasDepositedToStrategy = address(0x0);
 
-        IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(this), assetAmount);
+        for (uint256 i; i < supportedStrategiesVolume; ++i) {
+            try IStrategy(sortedStrategies[highestApyStrategyArrayIndex - i].strategy).deposit(amount) returns (
+                uint256 tryDepositedAmount
+            ) {
+                require(
+                    tryDepositedAmount > 0 && tryDepositedAmount <= amount,
+                    AssetManagementErrors.STRATEGY_INCORRECT_DEPOSITED_AMOUNT
+                );
 
-        depositedAmount = IStrategy(strategyMaxApy).deposit(amount);
+                depositedAmount = tryDepositedAmount;
+                wasDepositedToStrategy = sortedStrategies[highestApyStrategyArrayIndex - i].strategy;
 
-        _ivToken.mint(_msgSender(), ivTokenAmount);
+                break;
+            } catch {
+                continue;
+            }
+        }
 
-        emit Deposit(block.timestamp, _msgSender(), strategyMaxApy, exchangeRate, depositedAmount, ivTokenAmount);
+        require(wasDepositedToStrategy != address(0x0), AssetManagementErrors.DEPOSIT_TO_STRATEGY_FAILED);
 
-        vaultBalance = assetBalanceAaveStrategy + assetBalanceCompoundStrategy + depositedAmount;
+        emit Deposit(block.timestamp, _msgSender(), wasDepositedToStrategy, depositedAmount);
+
+        vaultBalance = _calculateTotalBalance(sortedStrategies) + depositedAmount;
     }
 
     function withdraw(
         uint256 amount
     ) external override whenNotPaused onlyAmmTreasury returns (uint256 withdrawnAmount, uint256 vaultBalance) {
-        require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-
-        IIvToken ivToken = _ivToken;
-        IERC20Upgradeable asset = IERC20Upgradeable(_asset);
-        IStrategy strategyAave = IStrategy(_strategyAave);
-        IStrategy strategyCompound = IStrategy(_strategyCompound);
-
-        (
-            uint256 ivTokenTotalSupply,
-            ,
-            uint256 assetBalanceAaveStrategy,
-            uint256 assetBalanceCompoundStrategy
-        ) = _calcExchangeRate(strategyAave, strategyCompound);
-
-        uint256 senderIvTokens = ivToken.balanceOf(_msgSender());
-
-        (address selectedStrategy, uint256 selectedWithdrawAmount, ) = _selectStrategyAndWithdrawAmount(
-            amount,
-            assetBalanceAaveStrategy,
-            assetBalanceCompoundStrategy
-        );
-
-        if (selectedWithdrawAmount > 0) {
-            //Transfer from Strategy to AssetManagement
-            uint256 ivTokenWithdrawnAmount;
-            (ivTokenWithdrawnAmount, vaultBalance) = _withdrawFromStrategy(
-                selectedStrategy,
-                selectedWithdrawAmount,
-                ivTokenTotalSupply,
-                strategyAave,
-                strategyCompound
-            );
-
-            if (ivTokenWithdrawnAmount > senderIvTokens) {
-                ivToken.burn(_msgSender(), senderIvTokens);
-            } else {
-                ivToken.burn(_msgSender(), ivTokenWithdrawnAmount);
-            }
-
-            uint256 assetBalanceAssetManagement = asset.balanceOf(address(this));
-
-            if (assetBalanceAssetManagement > 0) {
-                //Always transfer all assets from AssetManagement to AmmTreasury
-                asset.safeTransfer(_msgSender(), assetBalanceAssetManagement);
-                withdrawnAmount = IporMath.convertToWad(assetBalanceAssetManagement, _getDecimals());
-            }
-        }
-
-        return (withdrawnAmount, vaultBalance);
+        return _withdraw(amount);
     }
 
     function withdrawAll()
@@ -221,90 +147,19 @@ abstract contract AssetManagement is
         onlyAmmTreasury
         returns (uint256 withdrawnAmount, uint256 vaultBalance)
     {
-        address msgSender = _msgSender();
-        IIvToken ivToken = _ivToken;
-        IERC20Upgradeable asset = IERC20Upgradeable(_asset);
-        IStrategy strategyAave = IStrategy(_strategyAave);
-        IStrategy strategyCompound = IStrategy(_strategyCompound);
-
-        (
-            uint256 ivTokenTotalSupply,
-            ,
-            uint256 assetBalanceAaveStrategy,
-            uint256 assetBalanceCompoundStrategy
-        ) = _calcExchangeRate(strategyAave, strategyCompound);
-
-        uint256 assetBalanceStrategiesSum = assetBalanceAaveStrategy + assetBalanceCompoundStrategy;
-
-        if (assetBalanceStrategiesSum > 0) {
-            if (assetBalanceAaveStrategy > 0) {
-                (, vaultBalance) = _withdrawFromStrategy(
-                    _strategyAave,
-                    assetBalanceAaveStrategy,
-                    ivTokenTotalSupply,
-                    strategyAave,
-                    strategyCompound
-                );
-            }
-
-            if (assetBalanceCompoundStrategy > 0) {
-                (, vaultBalance) = _withdrawFromStrategy(
-                    _strategyCompound,
-                    assetBalanceCompoundStrategy,
-                    ivTokenTotalSupply,
-                    strategyAave,
-                    strategyCompound
-                );
-            }
-        }
-
-        ivToken.burn(msgSender, ivToken.balanceOf(msgSender));
-
-        uint256 assetBalanceAssetManagement = asset.balanceOf(address(this));
-
-        //Always transfer all assets from AssetManagement to AmmTreasury
-        asset.safeTransfer(msgSender, assetBalanceAssetManagement);
-
-        withdrawnAmount = IporMath.convertToWad(assetBalanceAssetManagement, _getDecimals());
+        return _withdraw(type(uint256).max - ROUNDING_ERROR_MARGIN);
     }
 
-    function migrateAssetToStrategyWithMaxApy() external whenNotPaused onlyOwner {
-        (address strategyMaxApy, address strategyAave, address strategyCompound) = _getMaxApyStrategy();
-
-        address from;
-
-        if (strategyMaxApy == strategyAave) {
-            from = strategyCompound;
-            uint256 assetAmount = IStrategy(strategyCompound).balanceOf();
-            require(assetAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-            IStrategy(strategyCompound).withdraw(assetAmount);
-        } else {
-            from = strategyAave;
-            uint256 assetAmount = IStrategy(strategyAave).balanceOf();
-            require(assetAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-            IStrategy(strategyAave).withdraw(assetAmount);
-        }
-
-        /// @dev Temporary on AssetManagement wallet.
-        uint256 assetManagementAssetAmount = IERC20Upgradeable(_asset).balanceOf(address(this));
-        uint256 wadAssetManagementAssetAmount = IporMath.convertToWad(assetManagementAssetAmount, _getDecimals());
-        IStrategy(strategyMaxApy).deposit(wadAssetManagementAssetAmount);
-
-        emit AssetMigrated(address(strategyMaxApy), wadAssetManagementAssetAmount);
+    function getSortedStrategiesWithApy() external view returns (StrategyData[] memory sortedStrategies) {
+        sortedStrategies = _getSortedStrategiesWithApy(_getStrategiesData());
     }
 
-    function setStrategyAave(address newStrategyAddr) external override whenNotPaused onlyOwner {
-        _strategyAave = _setStrategy(_strategyAave, newStrategyAddr);
+    function grantMaxAllowanceForSpender(address assetInput, address spender) external onlyOwner {
+        IERC20Upgradeable(assetInput).safeApprove(spender, Constants.MAX_VALUE);
     }
 
-    function setStrategyCompound(address newStrategyAddr) external override whenNotPaused onlyOwner {
-        _strategyCompound = _setStrategy(_strategyCompound, newStrategyAddr);
-    }
-
-    function setAmmTreasury(address newAmmTreasury) external override whenNotPaused onlyOwner {
-        require(newAmmTreasury != address(0), IporErrors.WRONG_ADDRESS);
-        _ammTreasury = newAmmTreasury;
-        emit AmmTreasuryChanged(newAmmTreasury);
+    function revokeAllowanceForSpender(address assetInput, address spender) external onlyOwner {
+        IERC20Upgradeable(assetInput).safeApprove(spender, 0);
     }
 
     function pause() external override onlyPauseGuardian {
@@ -315,191 +170,113 @@ abstract contract AssetManagement is
         _unpause();
     }
 
-    function getImplementation() external view override returns (address) {
-        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
-    }
-
-    function _getDecimals() internal pure virtual returns (uint256);
-
-    // Find highest apy strategy to deposit underlying asset
-    function _getMaxApyStrategy()
-        internal
-        view
-        returns (address strategyMaxApy, address strategyAave, address strategyCompound)
-    {
-        strategyAave = _strategyAave;
-        strategyCompound = _strategyCompound;
-        strategyMaxApy = strategyAave;
-
-        if (IStrategy(strategyAave).getApy() < IStrategy(strategyCompound).getApy()) {
-            strategyMaxApy = strategyCompound;
-        } else {
-            strategyMaxApy = strategyAave;
-        }
-    }
-
-    function _totalBalance(address who) internal view returns (uint256) {
-        IStrategy strategyAave = IStrategy(_strategyAave);
-        IStrategy strategyCompound = IStrategy(_strategyCompound);
-        (, uint256 exchangeRate, , ) = _calcExchangeRate(strategyAave, strategyCompound);
-        return IporMath.division(_ivToken.balanceOf(who) * exchangeRate, 1e18);
-    }
-
-    function _setStrategy(
-        address oldStrategyAddress,
-        address newStrategyAddress
-    ) internal nonReentrant returns (address) {
-        require(newStrategyAddress != address(0), IporErrors.WRONG_ADDRESS);
-
-        IERC20Upgradeable asset = IERC20Upgradeable(_asset);
-
-        IStrategy newStrategy = IStrategy(newStrategyAddress);
-
-        require(newStrategy.getAsset() == address(asset), AssetManagementErrors.ASSET_MISMATCH);
-
-        IERC20Upgradeable newShareToken = IERC20Upgradeable(newStrategy.getShareToken());
-
-        asset.safeApprove(newStrategyAddress, 0);
-        asset.safeApprove(newStrategyAddress, type(uint256).max);
-
-        newShareToken.safeApprove(newStrategyAddress, 0);
-        newShareToken.safeApprove(newStrategyAddress, type(uint256).max);
-
-        //when this is not initialize setup
-        if (oldStrategyAddress != address(0)) {
-            _transferFromOldToNewStrategy(oldStrategyAddress, newStrategyAddress);
-            _revokeStrategyAllowance(oldStrategyAddress);
-        }
-
-        emit StrategyChanged(newStrategyAddress, address(newShareToken));
-
-        return newStrategyAddress;
-    }
-
-    function _transferFromOldToNewStrategy(address oldStrategyAddress, address newStrategyAddress) internal {
-        uint256 assetAmount = IStrategy(oldStrategyAddress).balanceOf();
-
-        if (assetAmount > 0) {
-            IStrategy(oldStrategyAddress).withdraw(assetAmount);
-            uint256 assetManagementAssetAmount = IERC20Upgradeable(_asset).balanceOf(address(this));
-            IStrategy(newStrategyAddress).deposit(IporMath.convertToWad(assetManagementAssetAmount, _getDecimals()));
-        }
-    }
-
-    function _revokeStrategyAllowance(address strategyAddress) internal {
-        IERC20Upgradeable(_asset).safeApprove(strategyAddress, 0);
-        IERC20Upgradeable(IStrategy(strategyAddress).getShareToken()).safeApprove(strategyAddress, 0);
-    }
-
-    /**
-     * @notice Withdraws asset amount from given strategyAddress to AssetManagement
-     * @param selectedStrategyAddress strategy address
-     * @param amount asset amount which will be withdraw from Strategy, represented in 18 decimals
-     * @param ivTokenTotalSupply current IV Token total supply, represented in 18 decimals
-     * @param strategyAave AAVE Strategy address
-     * @param strategyCompound Compound Strategy address
-     * @return ivTokenWithdrawnAmount final withdrawn IV Token amount, represented in 18 decimals
-     */
-    function _withdrawFromStrategy(
-        address selectedStrategyAddress,
-        uint256 amount,
-        uint256 ivTokenTotalSupply,
-        IStrategy strategyAave,
-        IStrategy strategyCompound
-    ) internal nonReentrant returns (uint256 ivTokenWithdrawnAmount, uint256 totalBalanceAmount) {
-        if (amount > 0) {
-            //Withdraw from Strategy to AssetManagement
-            uint256 withdrawnAmount = IStrategy(selectedStrategyAddress).withdraw(amount);
-
-            /// @dev when in future more strategies then change this calculation
-            totalBalanceAmount = strategyAave.balanceOf() + strategyCompound.balanceOf();
-
-            uint256 totalBalanceWithWithdrawnAmount = totalBalanceAmount + withdrawnAmount;
-
-            uint256 exchangeRate;
-
-            /// @dev after withdraw balance could change which influence on exchange rate
-            /// so exchange rate have to be calculated again
-            if (totalBalanceWithWithdrawnAmount == 0 || ivTokenTotalSupply == 0) {
-                exchangeRate = 1e18;
-            } else {
-                exchangeRate = IporMath.division(totalBalanceWithWithdrawnAmount * 1e18, ivTokenTotalSupply);
-            }
-
-            ivTokenWithdrawnAmount = IporMath.division(withdrawnAmount * 1e18, exchangeRate);
-
-            emit Withdraw(
-                block.timestamp,
-                selectedStrategyAddress,
-                _msgSender(),
-                exchangeRate,
-                withdrawnAmount,
-                ivTokenWithdrawnAmount
-            );
-        }
-    }
-
-    function _calcExchangeRate(
-        IStrategy strategyAave,
-        IStrategy strategyCompound
-    )
-        internal
-        view
-        returns (
-            uint256 ivTokenTotalSupply,
-            uint256 exchangeRate,
-            uint256 assetBalanceAaveStrategy,
-            uint256 assetBalanceCompoundStrategy
-        )
-    {
-        assetBalanceAaveStrategy = strategyAave.balanceOf();
-        assetBalanceCompoundStrategy = strategyCompound.balanceOf();
-
-        uint256 totalAssetBalance = assetBalanceAaveStrategy + assetBalanceCompoundStrategy;
-
-        ivTokenTotalSupply = _ivToken.totalSupply();
-
-        if (totalAssetBalance == 0 || ivTokenTotalSupply == 0) {
-            exchangeRate = 1e18;
-        } else {
-            exchangeRate = IporMath.division(totalAssetBalance * 1e18, ivTokenTotalSupply);
-        }
-    }
-
-    function _selectStrategyAndWithdrawAmount(
-        uint256 amount,
-        uint256 assetBalanceAaveStrategy,
-        uint256 assetBalanceCompoundStrategy
-    ) internal view returns (address, uint256, uint256) {
-        (address strategyMaxApy, address strategyAave, address strategyCompound) = _getMaxApyStrategy();
-
-        if (strategyMaxApy == strategyCompound && amount <= assetBalanceAaveStrategy) {
-            return (strategyAave, amount, assetBalanceAaveStrategy);
-        } else if (amount <= assetBalanceCompoundStrategy) {
-            return (strategyCompound, amount, assetBalanceCompoundStrategy);
-        }
-
-        if (strategyMaxApy == strategyAave && amount <= assetBalanceAaveStrategy) {
-            return (strategyAave, amount, assetBalanceAaveStrategy);
-        }
-
-        if (assetBalanceAaveStrategy < assetBalanceCompoundStrategy) {
-            return (strategyCompound, assetBalanceCompoundStrategy, assetBalanceCompoundStrategy);
-        } else {
-            return (strategyAave, assetBalanceAaveStrategy, assetBalanceAaveStrategy);
-        }
-    }
-
     function isPauseGuardian(address account) external view override returns (bool) {
         return PauseManager.isPauseGuardian(account);
     }
 
-    function addPauseGuardian(address guardian) external override onlyOwner {
-        PauseManager.addPauseGuardian(guardian);
+    function addPauseGuardians(address[] calldata guardians) external override onlyOwner {
+        PauseManager.addPauseGuardians(guardians);
     }
 
-    function removePauseGuardian(address guardian) external override onlyOwner {
-        PauseManager.removePauseGuardian(guardian);
+    function removePauseGuardians(address[] calldata guardians) external override onlyOwner {
+        PauseManager.removePauseGuardians(guardians);
+    }
+
+    function _getDecimals() internal pure virtual returns (uint256);
+
+    function _getStrategiesData() internal view virtual returns (StrategyData[] memory strategies);
+
+    function _withdraw(uint256 amount) internal returns (uint256 withdrawnAmount, uint256 vaultBalance) {
+        require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
+
+        StrategyData[] memory sortedStrategies = _getSortedStrategiesWithApy(_getStrategiesData());
+
+        uint256 strategyAmountToWithdraw;
+        uint256 amountToWithdraw = amount;
+
+        /// @dev Withdraw a little bit more to get at least requested amount even if appears rounding error
+        /// in external DeFi protocol integrated with IPOR Asset Management
+        amountToWithdraw = amount + ROUNDING_ERROR_MARGIN;
+
+        for (uint256 i; i < supportedStrategiesVolume; ++i) {
+            strategyAmountToWithdraw = sortedStrategies[i].balance <= amountToWithdraw
+                ? sortedStrategies[i].balance
+                : amountToWithdraw;
+
+            if (strategyAmountToWithdraw == 0) {
+                /// @dev if strategy has no balance, try to withdraw from next strategy
+                continue;
+            }
+
+            try IStrategy(sortedStrategies[i].strategy).withdraw(strategyAmountToWithdraw) returns (
+                uint256 tryWithdrawnAmount
+            ) {
+                amountToWithdraw = tryWithdrawnAmount > amountToWithdraw ? 0 : amountToWithdraw - tryWithdrawnAmount;
+
+                sortedStrategies[i].balance = tryWithdrawnAmount > sortedStrategies[i].balance
+                    ? 0
+                    : sortedStrategies[i].balance - tryWithdrawnAmount;
+            } catch {
+                /// @dev If strategy withdraw fails, try to withdraw from next strategy
+                continue;
+            }
+        }
+
+        /// @dev Always all collected assets on AssetManagement are withdrawn to AmmTreasury
+        uint256 withdrawnAssetAmount = IERC20Upgradeable(asset).balanceOf(address(this));
+
+        if (withdrawnAssetAmount > 0) {
+            /// @dev Always transfer all assets from AssetManagement to AmmTreasury
+            IERC20Upgradeable(asset).safeTransfer(_msgSender(), withdrawnAssetAmount);
+
+            withdrawnAmount = IporMath.convertToWad(withdrawnAssetAmount, _getDecimals());
+
+            emit Withdraw(block.timestamp, _msgSender(), withdrawnAmount);
+        }
+
+        vaultBalance = _calculateTotalBalance(sortedStrategies);
+    }
+
+    function _calculateTotalBalance(
+        StrategyData[] memory sortedStrategies
+    ) internal view returns (uint256 totalBalance) {
+        for (uint256 i; i < supportedStrategiesVolume; ++i) {
+            totalBalance += sortedStrategies[i].balance;
+        }
+        totalBalance += IporMath.convertToWad(IERC20Upgradeable(asset).balanceOf(address(this)), _getDecimals());
+    }
+
+    function _getSortedStrategiesWithApy(
+        StrategyData[] memory strategies
+    ) internal view returns (StrategyData[] memory) {
+        uint256 length = strategies.length;
+        for (uint256 i; i < length; ++i) {
+            strategies[i].apy = IStrategy(strategies[i].strategy).getApy();
+        }
+        return _sortApy(strategies);
+    }
+
+    function _sortApy(StrategyData[] memory data) internal pure returns (StrategyData[] memory) {
+        _quickSortApy(data, int256(0), int256(data.length - 1));
+        return data;
+    }
+
+    function _quickSortApy(StrategyData[] memory arr, int256 left, int256 right) internal pure {
+        int256 i = left;
+        int256 j = right;
+        if (i == j) return;
+        StrategyData memory pivot = arr[uint256(left + (right - left) / 2)];
+        while (i <= j) {
+            while (arr[uint256(i)].apy < pivot.apy) i++;
+            while (pivot.apy < arr[uint256(j)].apy) j--;
+            if (i <= j) {
+                (arr[uint256(i)], arr[uint256(j)]) = (arr[uint256(j)], arr[uint256(i)]);
+                i++;
+                j--;
+            }
+        }
+        if (left < j) _quickSortApy(arr, left, j);
+        if (i < right) _quickSortApy(arr, i, right);
     }
 
     //solhint-disable no-empty-blocks

@@ -966,7 +966,9 @@ contract AmmStorageTest is TestCommons {
     function testShouldPauseSCWhenSenderIsPauseGuardian() public {
         // given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-        _iporProtocol.ammStorage.addPauseGuardian(_admin);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
+        _iporProtocol.ammStorage.addPauseGuardians(pauseGuardians);
         bool pausedBefore = _iporProtocol.ammStorage.paused();
 
         // when
@@ -982,7 +984,9 @@ contract AmmStorageTest is TestCommons {
     function testShouldNotPauseSCSpecificMethods() public {
         // given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-        _iporProtocol.ammStorage.addPauseGuardian(_admin);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
+        _iporProtocol.ammStorage.addPauseGuardians(pauseGuardians);
         _iporProtocol.ammStorage.pause();
 
         bool pausedBefore = _iporProtocol.ammStorage.paused();
@@ -1004,8 +1008,9 @@ contract AmmStorageTest is TestCommons {
         vm.stopPrank();
 
         // admin
-        _iporProtocol.ammStorage.addPauseGuardian(_getUserAddress(1));
-        _iporProtocol.ammStorage.removePauseGuardian(_getUserAddress(1));
+        pauseGuardians[0] = _getUserAddress(1);
+        _iporProtocol.ammStorage.addPauseGuardians(pauseGuardians);
+        _iporProtocol.ammStorage.removePauseGuardians(pauseGuardians);
 
         // then
         bool pausedAfter = _iporProtocol.ammStorage.paused();
@@ -1033,9 +1038,11 @@ contract AmmStorageTest is TestCommons {
     function testShouldUnpauseSmartContractWhenSenderIsAnAdmin() public {
         // given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-        _iporProtocol.ammStorage.addPauseGuardian(_admin);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
+        _iporProtocol.ammStorage.addPauseGuardians(pauseGuardians);
         _iporProtocol.ammStorage.pause();
-        _iporProtocol.ammStorage.removePauseGuardian(_admin);
+        _iporProtocol.ammStorage.removePauseGuardians(pauseGuardians);
 
         bool pausedBefore = _iporProtocol.ammStorage.paused();
 
@@ -1052,9 +1059,11 @@ contract AmmStorageTest is TestCommons {
     function testShouldNotUnpauseSmartContractWhenSenderIsNotAnAdmin() public {
         // given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-        _iporProtocol.ammStorage.addPauseGuardian(_admin);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
+        _iporProtocol.ammStorage.addPauseGuardians(pauseGuardians);
         _iporProtocol.ammStorage.pause();
-        _iporProtocol.ammStorage.removePauseGuardian(_admin);
+        _iporProtocol.ammStorage.removePauseGuardians(pauseGuardians);
 
         bool pausedBefore = _iporProtocol.ammStorage.paused();
 
@@ -1068,5 +1077,217 @@ contract AmmStorageTest is TestCommons {
 
         assertEq(pausedBefore, true);
         assertEq(pausedAfter, true);
+    }
+
+    function testShouldUpdateUnwindAmountWhenClosePayFixedDai() public {
+        //given
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
+        vm.prank(_userOne);
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
+
+        vm.prank(_userTwo);
+        _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
+            _userTwo,
+            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
+            9 * TestConstants.D17,
+            TestConstants.LEVERAGE_18DEC
+        );
+
+        AmmStorageTypes.ExtendedBalancesMemory memory balanceAfterOpenSwap = _iporProtocol
+            .ammStorage
+            .getExtendedBalance();
+
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            1
+        );
+
+        uint256 swapUnwindFeeLPAmount = 100e18;
+        uint256 swapUnwindFeeTreasuryAmount = 30e18;
+        int256 pnlValue = 10 * TestConstants.D18_INT;
+
+        // when
+        vm.prank(address(_iporProtocol.router));
+        _iporProtocol.ammStorage.updateStorageWhenCloseSwapPayFixedInternal(
+            swap,
+            pnlValue,
+            swapUnwindFeeLPAmount,
+            swapUnwindFeeTreasuryAmount,
+            block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
+        );
+
+        AmmStorageTypes.ExtendedBalancesMemory memory balanceAfterCloseSwap = _iporProtocol
+            .ammStorage
+            .getExtendedBalance();
+
+        //then
+        assertEq(
+            balanceAfterCloseSwap.liquidityPool,
+            balanceAfterOpenSwap.liquidityPool + swapUnwindFeeLPAmount - uint256(pnlValue)
+        );
+        assertEq(balanceAfterCloseSwap.treasury, balanceAfterOpenSwap.treasury + swapUnwindFeeTreasuryAmount);
+    }
+
+    function testShouldUpdateUnwindAmountWhenClosePayFixedUsdt() public {
+        //given
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+
+        vm.prank(_userOne);
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_28_000_6DEC);
+
+        vm.prank(_userTwo);
+        _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _userTwo,
+            TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
+            9 * TestConstants.D17,
+            TestConstants.LEVERAGE_18DEC
+        );
+
+        AmmStorageTypes.ExtendedBalancesMemory memory balanceAfterOpenSwap = _iporProtocol
+            .ammStorage
+            .getExtendedBalance();
+
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            1
+        );
+
+        uint256 swapUnwindFeeLPAmount = 100e18;
+        uint256 swapUnwindFeeTreasuryAmount = 30e18;
+        int256 pnlValue = 10 * TestConstants.D18_INT;
+
+        // when
+        vm.prank(address(_iporProtocol.router));
+        _iporProtocol.ammStorage.updateStorageWhenCloseSwapPayFixedInternal(
+            swap,
+            pnlValue,
+            swapUnwindFeeLPAmount,
+            swapUnwindFeeTreasuryAmount,
+            block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
+        );
+
+        AmmStorageTypes.ExtendedBalancesMemory memory balanceAfterCloseSwap = _iporProtocol
+            .ammStorage
+            .getExtendedBalance();
+
+        //then
+        assertEq(
+            balanceAfterCloseSwap.liquidityPool,
+            balanceAfterOpenSwap.liquidityPool + swapUnwindFeeLPAmount - uint256(pnlValue)
+        );
+        assertEq(balanceAfterCloseSwap.treasury, balanceAfterOpenSwap.treasury + swapUnwindFeeTreasuryAmount);
+    }
+
+    function testShouldUpdateUnwindAmountWhenCloseReceiveFixedDai() public {
+        //given
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
+        vm.prank(_userOne);
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
+
+        vm.prank(_userTwo);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
+            _userTwo,
+            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
+            0,
+            TestConstants.LEVERAGE_18DEC
+        );
+
+        AmmStorageTypes.ExtendedBalancesMemory memory balanceAfterOpenSwap = _iporProtocol
+            .ammStorage
+            .getExtendedBalance();
+
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            1
+        );
+
+        uint256 swapUnwindFeeLPAmount = 100e18;
+        uint256 swapUnwindFeeTreasuryAmount = 30e18;
+        int256 pnlValue = 10 * TestConstants.D18_INT;
+
+        // when
+        vm.prank(address(_iporProtocol.router));
+        _iporProtocol.ammStorage.updateStorageWhenCloseSwapReceiveFixedInternal(
+            swap,
+            pnlValue,
+            swapUnwindFeeLPAmount,
+            swapUnwindFeeTreasuryAmount,
+            block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
+        );
+
+        AmmStorageTypes.ExtendedBalancesMemory memory balanceAfterCloseSwap = _iporProtocol
+            .ammStorage
+            .getExtendedBalance();
+
+        //then
+        assertEq(
+            balanceAfterCloseSwap.liquidityPool,
+            balanceAfterOpenSwap.liquidityPool + swapUnwindFeeLPAmount - uint256(pnlValue)
+        );
+        assertEq(balanceAfterCloseSwap.treasury, balanceAfterOpenSwap.treasury + swapUnwindFeeTreasuryAmount);
+    }
+
+    function testShouldUpdateUnwindAmountWhenCloseReceiveFixedUsdt() public {
+        //given
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+
+        vm.prank(_userOne);
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_28_000_6DEC);
+
+        vm.prank(_userTwo);
+        _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _userTwo,
+            TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
+            0,
+            TestConstants.LEVERAGE_18DEC
+        );
+
+        AmmStorageTypes.ExtendedBalancesMemory memory balanceAfterOpenSwap = _iporProtocol
+            .ammStorage
+            .getExtendedBalance();
+
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            1
+        );
+
+        uint256 swapUnwindFeeLPAmount = 100e18;
+        uint256 swapUnwindFeeTreasuryAmount = 30e18;
+        int256 pnlValue = 10 * TestConstants.D18_INT;
+
+        // when
+        vm.prank(address(_iporProtocol.router));
+        _iporProtocol.ammStorage.updateStorageWhenCloseSwapReceiveFixedInternal(
+            swap,
+            pnlValue,
+            swapUnwindFeeLPAmount,
+            swapUnwindFeeTreasuryAmount,
+            block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
+        );
+
+        AmmStorageTypes.ExtendedBalancesMemory memory balanceAfterCloseSwap = _iporProtocol
+            .ammStorage
+            .getExtendedBalance();
+
+        //then
+        assertEq(
+            balanceAfterCloseSwap.liquidityPool,
+            balanceAfterOpenSwap.liquidityPool + swapUnwindFeeLPAmount - uint256(pnlValue)
+        );
+        assertEq(balanceAfterCloseSwap.treasury, balanceAfterOpenSwap.treasury + swapUnwindFeeTreasuryAmount);
     }
 }

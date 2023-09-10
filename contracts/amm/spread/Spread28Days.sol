@@ -6,10 +6,10 @@ import "../../amm/spread/ISpread28Days.sol";
 import "../../amm/spread/ISpread28DaysLens.sol";
 import "../../libraries/errors/IporOracleErrors.sol";
 import "../../libraries/errors/IporErrors.sol";
+import "../../libraries/IporContractValidator.sol";
 import "../../amm/spread/DemandSpreadLibs.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
 import "../../amm/spread/OfferedRateCalculationLibs.sol";
-import "../../libraries/IporContractValidator.sol";
 
 contract Spread28Days is ISpread28Days, ISpread28DaysLens {
     using IporContractValidator for address;
@@ -96,7 +96,7 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         DemandSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
         spreadValue = DemandSpreadLibs.calculatePayFixedSpread(inputData);
 
-        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getTimeWeightedNotionalForAssetAndTenor(
             inputData.timeWeightedNotionalStorageId
         );
 
@@ -121,7 +121,7 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         DemandSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
 
         spreadValue = DemandSpreadLibs.calculateReceiveFixedSpread(inputData);
-        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getTimeWeightedNotionalForAssetAndTenor(
             inputData.timeWeightedNotionalStorageId
         );
 
@@ -146,7 +146,8 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
             maxLpCollateralRatioPerLegRate: spreadInputs.maxLpCollateralRatioPerLegRate,
             tenorsInSeconds: new uint256[](3),
             timeWeightedNotionalStorageIds: new SpreadStorageLibs.StorageId[](3),
-            timeWeightedNotionalStorageId: SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai
+            timeWeightedNotionalStorageId: SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai,
+            selectedTenorInSeconds: 28 days
         });
 
         inputData.tenorsInSeconds[0] = 28 days;

@@ -196,7 +196,9 @@ contract IporOracleTest is TestCommons {
     function testShouldPauseSCWhenSenderIsPauseGuardian() public {
         // given
         bool pausedBefore = _iporOracle.paused();
-        _iporOracle.addPauseGuardian(_admin);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
+        _iporOracle.addPauseGuardians(pauseGuardians);
 
         // when
         _iporOracle.pause();
@@ -209,7 +211,9 @@ contract IporOracleTest is TestCommons {
 
     function testShouldPauseSCSpecificMethods() public {
         // given
-        _iporOracle.addPauseGuardian(_admin);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
+        _iporOracle.addPauseGuardians(pauseGuardians);
         _iporOracle.pause();
 
         bool pausedBefore = _iporOracle.paused();
@@ -261,7 +265,9 @@ contract IporOracleTest is TestCommons {
         _blockTimestamp += 60 * 60;
         vm.warp(_blockTimestamp);
 
-        _iporOracle.addPauseGuardian(_admin);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
+        _iporOracle.addPauseGuardians(pauseGuardians);
 
         _iporOracle.pause();
 
@@ -300,10 +306,12 @@ contract IporOracleTest is TestCommons {
 
     function testShouldUnpauseSmartContractWhenSenderIsAnAdmin() public {
         // given
-        _iporOracle.addPauseGuardian(_admin);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
+        _iporOracle.addPauseGuardians(pauseGuardians);
         _iporOracle.pause();
         bool pausedBefore = _iporOracle.paused();
-        _iporOracle.removePauseGuardian(_admin);
+        _iporOracle.removePauseGuardians(pauseGuardians);
 
         // when
         _iporOracle.unpause();
@@ -317,7 +325,9 @@ contract IporOracleTest is TestCommons {
 
     function testShouldNotUnpauseSmartContractWhenSenderIsNotAnAdmin() public {
         // given
-        _iporOracle.addPauseGuardian(_admin);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
+        _iporOracle.addPauseGuardians(pauseGuardians);
         _iporOracle.pause();
 
         bool pausedBefore = _iporOracle.paused();

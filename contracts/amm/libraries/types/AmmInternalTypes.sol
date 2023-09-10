@@ -7,6 +7,19 @@ import "../../../interfaces/types/AmmTypes.sol";
 /// @notice The types used in the AmmTreasury's interface.
 /// @dev All values, where applicable, are represented in 18 decimals.
 library AmmInternalTypes {
+    struct PnlValueStruct    {
+        /// @notice PnL Value of the swap.
+        int256 pnlValue;
+        /// @notice flag indicating if unwind is required when closing swap.
+        bool swapUnwindRequired;
+        /// @notice Unwind amount of the swap.
+        int256 swapUnwindAmount;
+        /// @notice Unwind fee of the swap that will be added to the AMM liquidity pool balance.
+        uint256 swapUnwindFeeLPAmount;
+        /// @notice Unwind fee of the swap that will be added to the AMM treasury balance.
+        uint256 swapUnwindFeeTreasuryAmount;
+    }
+
     struct BeforeOpenSwapStruct {
         /// @notice Sum of all asset transfered when opening swap. It includes the collateral, fees and desposits.
         /// @dev The amount is represented in 18 decimals regardless of the decimals of the asset.

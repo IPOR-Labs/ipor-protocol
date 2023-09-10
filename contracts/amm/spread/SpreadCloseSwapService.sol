@@ -5,11 +5,11 @@ import "../../interfaces/IAmmStorage.sol";
 import "../../amm/spread/ISpreadCloseSwapService.sol";
 import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/errors/AmmErrors.sol";
+import "../../libraries/IporContractValidator.sol";
 import "../../amm/libraries/types/AmmInternalTypes.sol";
 import "../../amm/libraries/IporSwapLogic.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
 import "../../amm/spread/CalculateTimeWeightedNotionalLibs.sol";
-import "../../libraries/IporContractValidator.sol";
 
 contract SpreadCloseSwapService is ISpreadCloseSwapService {
     using IporContractValidator for address;
@@ -39,7 +39,7 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
         }
         uint256 tenorInSeconds = IporSwapLogic.getTenorInSeconds(tenor);
         SpreadStorageLibs.StorageId storageId = _getStorageId(asset, tenor);
-        SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional = SpreadStorageLibs.getTimeWeightedNotionalForAssetAndTenor(
             storageId
         );
 
@@ -91,7 +91,7 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
             }
         }
 
-        SpreadStorageLibs.saveTimeWeightedNotional(storageId, timeWeightedNotional);
+        SpreadStorageLibs.saveTimeWeightedNotionalForAssetAndTenor(storageId, timeWeightedNotional);
     }
 
     function _getStorageId(

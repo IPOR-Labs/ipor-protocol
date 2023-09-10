@@ -35,4 +35,10 @@ library AmmPoolsErrors {
 
     /// @notice Caller is not appointed to rebalance
     string public constant CALLER_NOT_APPOINTED_TO_REBALANCE = "IPOR_410";
+
+    /// @notice Invalid redeem fee rate
+    string public constant CFG_INVALID_REDEEM_FEE_RATE = "IPOR_411";
+
+    /// @notice Invalid redeem lp max collateral ratio
+    string public constant CFG_INVALID_REDEEM_LP_MAX_COLLATERAL_RATIO = "IPOR_412";
 }

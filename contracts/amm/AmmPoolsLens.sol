@@ -4,8 +4,8 @@ pragma solidity 0.8.20;
 import "../interfaces/types/AmmTypes.sol";
 import "../interfaces/IAmmPoolsLens.sol";
 import "../libraries/errors/IporErrors.sol";
-import "../libraries/AmmLib.sol";
 import "../libraries/IporContractValidator.sol";
+import "../libraries/AmmLib.sol";
 
 contract AmmPoolsLens is IAmmPoolsLens {
     using IporContractValidator for address;

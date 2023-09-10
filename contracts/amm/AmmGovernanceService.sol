@@ -83,24 +83,24 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         return _getPoolConfiguration(asset);
     }
 
-    function depositToAssetManagement(address asset, uint256 assetAmount) external override {
-        IAmmTreasury(_getAmmTreasury(asset)).depositToAssetManagementInternal(assetAmount);
+    function depositToAssetManagement(address asset, uint256 wadAssetAmount) external override {
+        IAmmTreasury(_getAmmTreasury(asset)).depositToAssetManagementInternal(wadAssetAmount);
     }
 
-    function withdrawFromAssetManagement(address asset, uint256 assetAmount) external override {
-        IAmmTreasury(_getAmmTreasury(asset)).withdrawFromAssetManagementInternal(assetAmount);
+    function withdrawFromAssetManagement(address asset, uint256 wadAssetAmount) external override {
+        IAmmTreasury(_getAmmTreasury(asset)).withdrawFromAssetManagementInternal(wadAssetAmount);
     }
 
     function withdrawAllFromAssetManagement(address asset) external override {
         IAmmTreasury(_getAmmTreasury(asset)).withdrawAllFromAssetManagementInternal();
     }
 
-    function transferToTreasury(address asset, uint256 assetAmount) external override {
+    function transferToTreasury(address asset, uint256 wadAssetAmountInput) external override {
         AmmGovernancePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         require(msg.sender == poolCfg.ammPoolsTreasuryManager, AmmPoolsErrors.CALLER_NOT_TREASURY_MANAGER);
 
-        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(assetAmount, poolCfg.decimals);
+        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(wadAssetAmountInput, poolCfg.decimals);
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, poolCfg.decimals);
 
         IAmmStorage(poolCfg.ammStorage).updateStorageWhenTransferToTreasuryInternal(wadAssetAmount);
@@ -112,12 +112,12 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         );
     }
 
-    function transferToCharlieTreasury(address asset, uint256 assetAmount) external override {
+    function transferToCharlieTreasury(address asset, uint256 wadAssetAmountInput) external override {
         AmmGovernancePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         require(msg.sender == poolCfg.ammCharlieTreasuryManager, AmmPoolsErrors.CALLER_NOT_PUBLICATION_FEE_TRANSFERER);
 
-        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(assetAmount, poolCfg.decimals);
+        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(wadAssetAmountInput, poolCfg.decimals);
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, poolCfg.decimals);
 
         IAmmStorage(poolCfg.ammStorage).updateStorageWhenTransferToCharlieTreasuryInternal(wadAssetAmount);

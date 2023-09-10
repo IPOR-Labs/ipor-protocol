@@ -44,12 +44,14 @@ interface IAmmCloseSwapLens {
 
     /// @notice Returns the closing swap details for a given swap and closing timestamp.
     /// @param asset asset address
+    /// @param account account address for which are returned closing swap details, for example closableStatus depends on the account
     /// @param direction swap direction
     /// @param swapId swap id
     /// @param closeTimestamp closing timestamp
     /// @return closingSwapDetails struct representing the closing swap details for a given swap and closing timestamp.
     function getClosingSwapDetails(
         address asset,
+        address account,
         AmmTypes.SwapDirection direction,
         uint256 swapId,
         uint256 closeTimestamp

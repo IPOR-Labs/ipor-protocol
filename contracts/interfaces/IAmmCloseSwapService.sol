@@ -31,10 +31,10 @@ interface IAmmCloseSwapService {
         int256 swapPnlValueToDate,
         /// @notice swap unwind amount, represented in 18 decimals
         int256 swapUnwindAmount,
-        /// @notice opening fee amount, part earmarked for the liquidity pool, represented in 18 decimals
-        uint256 openingFeeLPAmount,
-        /// @notice opening fee amount, part earmarked for the treasury, represented in 18 decimals
-        uint256 openingFeeTreasuryAmount
+        /// @notice unwind fee amount, part earmarked for the liquidity pool, represented in 18 decimals
+        uint256 unwindFeeLPAmount,
+        /// @notice unwind fee amount, part earmarked for the treasury, represented in 18 decimals
+        uint256 unwindFeeTreasuryAmount
     );
 
     /// @notice Closes batch of USDT swaps on both legs.

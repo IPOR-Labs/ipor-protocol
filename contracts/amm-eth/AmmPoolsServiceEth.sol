@@ -10,8 +10,8 @@ import "../interfaces/IIpToken.sol";
 import "../governance/AmmConfigurationManager.sol";
 import "./interfaces/IStETH.sol";
 import "./interfaces/IWETH9.sol";
-import "./AmmLibEth.sol";
 import "./interfaces/IAmmPoolsServiceEth.sol";
+import "./AmmLibEth.sol";
 
 contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
     using IporContractValidator for address;
@@ -39,6 +39,8 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         ammTreasuryEth = ammTreasuryEthInput.checkAddress();
         iporProtocolRouter = iporProtocolRouterInput.checkAddress();
         redeemFeeRateEth = ethRedeemFeeRateInput;
+
+        require(ethRedeemFeeRateInput <= 1e18, AmmPoolsErrors.CFG_INVALID_REDEEM_FEE_RATE);
     }
 
     function provideLiquidityStEth(address beneficiary, uint256 stEthAmount) external payable override {

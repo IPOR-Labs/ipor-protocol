@@ -2,22 +2,20 @@
 pragma solidity 0.8.20;
 
 import {TestCommons} from "../TestCommons.sol";
-import {IvToken} from "@ipor-protocol/contracts/tokens/IvToken.sol";
 import "../../contracts/vault/AssetManagementDai.sol";
 import "../mocks/assetManagement/MockStrategy.sol";
 import "../mocks/tokens/MockTestnetToken.sol";
 import "../utils/builder/AssetManagementBuilder.sol";
-import "../utils/builder/IvTokenBuilder.sol";
 import "../utils/builder/AssetBuilder.sol";
 
 contract AssetManagementProxyImplementationTest is TestCommons {
     AssetBuilder internal _assetBuilder = new AssetBuilder(address(this));
-    IvTokenBuilder internal _ivTokenBuilder = new IvTokenBuilder(address(this));
     AssetManagementBuilder internal _assetManagementBuilder = new AssetManagementBuilder(address(this));
 
     AssetManagement internal _assetManagementDai;
     MockStrategy internal _strategyAaveDai;
     MockStrategy internal _strategyCompoundDai;
+    MockStrategy internal _strategyDsrDai;
 
     function setUp() public {
         _admin = address(this);
@@ -30,28 +28,27 @@ contract AssetManagementProxyImplementationTest is TestCommons {
         _assetBuilder.withDAI();
         MockTestnetToken asset = _assetBuilder.build();
 
-        IvToken ivToken = _ivTokenBuilder.withName("IV DAI").withSymbol("ivDAI").withAsset(address(asset)).build();
+        _strategyAaveDai = new MockStrategy(address(asset), address(asset));
 
-        _strategyAaveDai = new MockStrategy();
-        _strategyAaveDai.setAsset(address(asset));
-        _strategyAaveDai.setShareToken(address(asset));
+        _strategyCompoundDai = new MockStrategy(address(asset), address(asset));
 
-        _strategyCompoundDai = new MockStrategy();
-        _strategyCompoundDai.setAsset(address(asset));
-        _strategyCompoundDai.setShareToken(address(asset));
+        _strategyDsrDai = new MockStrategy(address(asset), address(asset));
+
+        AmmTreasury ammTreasury = new AmmTreasury(address(asset), 18, address(asset), address(asset), address(asset));
 
         _assetManagementDai = _assetManagementBuilder
             .withAssetType(BuilderUtils.AssetType.DAI)
             .withAsset(address(asset))
-            .withIvToken(address(ivToken))
             .withStrategyAave(address(_strategyAaveDai))
             .withStrategyCompound(address(_strategyCompoundDai))
+            .withStrategyDsr(address(_strategyDsrDai))
+            .withAmmTreasury(address(ammTreasury))
             .build();
     }
 
     function testShouldReturnNonZeroAddress() public {
         // given
-
+        console2.log("address(_assetManagementDai): ", address(_assetManagementDai));
         // when
         address proxyImpl = _assetManagementDai.getImplementation();
         // then
@@ -61,7 +58,29 @@ contract AssetManagementProxyImplementationTest is TestCommons {
     function testShouldUpdateImplementation() public {
         // given
         address oldProxyImpl = _assetManagementDai.getImplementation();
-        address newImplementation = address(new AssetManagementDai());
+
+        _assetBuilder.withDAI();
+        MockTestnetToken asset = _assetBuilder.build();
+
+        _strategyAaveDai = new MockStrategy(address(asset), address(asset));
+
+        _strategyCompoundDai = new MockStrategy(address(asset), address(asset));
+
+        _strategyDsrDai = new MockStrategy(address(asset), address(asset));
+
+        AmmTreasury ammTreasury = new AmmTreasury(address(asset), 18, address(asset), address(asset), address(asset));
+
+        address newImplementation = address(
+            new AssetManagementDai(
+                address(asset),
+                address(ammTreasury),
+                3,
+                2,
+                address(_strategyAaveDai),
+                address(_strategyCompoundDai),
+                address(_strategyDsrDai)
+            )
+        );
 
         // when
         _assetManagementDai.upgradeTo(newImplementation);

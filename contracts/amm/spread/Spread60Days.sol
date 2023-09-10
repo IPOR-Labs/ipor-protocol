@@ -6,10 +6,10 @@ import "../../amm/spread/ISpread60Days.sol";
 import "../../amm/spread/ISpread60DaysLens.sol";
 import "../../libraries/errors/IporOracleErrors.sol";
 import "../../libraries/errors/IporErrors.sol";
+import "../../libraries/IporContractValidator.sol";
 import "../../amm/spread/DemandSpreadLibs.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
 import "../../amm/spread/OfferedRateCalculationLibs.sol";
-import "../../libraries/IporContractValidator.sol";
 
 contract Spread60Days is ISpread60Days, ISpread60DaysLens {
     using IporContractValidator for address;
@@ -96,7 +96,7 @@ contract Spread60Days is ISpread60Days, ISpread60DaysLens {
 
         spreadValue = DemandSpreadLibs.calculatePayFixedSpread(inputData);
 
-        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getTimeWeightedNotionalForAssetAndTenor(
             inputData.timeWeightedNotionalStorageId
         );
 
@@ -122,7 +122,7 @@ contract Spread60Days is ISpread60Days, ISpread60DaysLens {
 
         spreadValue = DemandSpreadLibs.calculateReceiveFixedSpread(inputData);
 
-        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getTimeWeightedNotionalForAssetAndTenor(
             inputData.timeWeightedNotionalStorageId
         );
 
@@ -147,7 +147,8 @@ contract Spread60Days is ISpread60Days, ISpread60DaysLens {
             maxLpCollateralRatioPerLegRate: spreadInputs.maxLpCollateralRatioPerLegRate,
             tenorsInSeconds: new uint256[](3),
             timeWeightedNotionalStorageIds: new SpreadStorageLibs.StorageId[](3),
-            timeWeightedNotionalStorageId: SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysDai
+            timeWeightedNotionalStorageId: SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysDai,
+            selectedTenorInSeconds: 60 days
         });
 
         inputData.tenorsInSeconds[0] = 28 days;
