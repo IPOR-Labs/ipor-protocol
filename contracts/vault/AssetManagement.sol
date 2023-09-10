@@ -155,7 +155,7 @@ abstract contract AssetManagement is
     }
 
     function grantMaxAllowanceForSpender(address assetInput, address spender) external onlyOwner {
-        IERC20Upgradeable(assetInput).safeApprove(spender, Constants.MAX_VALUE);
+        IERC20Upgradeable(assetInput).forceApprove(spender, Constants.MAX_VALUE);
     }
 
     function revokeAllowanceForSpender(address assetInput, address spender) external onlyOwner {
