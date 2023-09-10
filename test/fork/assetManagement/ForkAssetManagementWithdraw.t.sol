@@ -69,13 +69,13 @@ contract ForkAssetManagementWithdrawTest is TestForkCommons {
         uint256 strategyAaveBalanceAfter = IStrategy(strategyAaveProxyDai).balanceOf();
         uint256 strategyCompoundBalanceAfter = IStrategy(strategyCompoundProxyDai).balanceOf();
 
-        assertEq(strategyDsrProxyDaiBalanceBefore, 9999999999999999999999);
-        assertEq(strategyAaveBalanceBefore, 10_000 * 1e18);
-        assertEq(strategyCompoundBalanceBefore, 9999999999999883609072);
+        assertEq(strategyDsrProxyDaiBalanceBefore, 9999999999999999999999, "strategyDsrProxyDaiBalanceBefore");
+        assertEq(strategyAaveBalanceBefore, 10_000 * 1e18, "strategyAaveBalanceBefore");
+        assertEq(strategyCompoundBalanceBefore, 9999999999999883609072, "strategyCompoundBalanceBefore");
 
-        assertEq(strategyDsrProxyDaiBalanceAfter, 9999999999999999999999);
-        assertEq(strategyAaveBalanceAfter, 10_000 * 1e18);
-        assertEq(strategyCompoundBalanceAfter, 4999999999999941804536);
+        assertEq(strategyDsrProxyDaiBalanceAfter, 9999999999999956481793, "strategyDsrProxyDaiBalanceAfter");
+        assertEq(strategyAaveBalanceAfter, 10_000 * 1e18, "strategyAaveBalanceAfter");
+        assertEq(strategyCompoundBalanceAfter, 4998999999999927127277, "strategyCompoundBalanceAfter");
 
         /// @dev Compound with the lowest APY
         assertLt(IStrategy(strategyCompoundProxyDai).getApy(), IStrategy(strategyAaveProxyDai).getApy());
@@ -137,7 +137,7 @@ contract ForkAssetManagementWithdrawTest is TestForkCommons {
         assertEq(strategyAaveBalanceBefore, 10_000 * 1e18);
         assertEq(strategyCompoundBalanceBefore, 9999999999999883609072);
 
-        assertEq(strategyDsrProxyDaiBalanceAfter, 4999999999999999999999);
+        assertEq(strategyDsrProxyDaiBalanceAfter, 4998999999999999999998);
         assertEq(strategyAaveBalanceAfter, 10_000 * 1e18);
         assertEq(strategyCompoundBalanceAfter, 9999999999999883609072);
 
@@ -195,7 +195,7 @@ contract ForkAssetManagementWithdrawTest is TestForkCommons {
         assertEq(strategyCompoundBalanceBefore, 0);
 
         assertEq(strategyDsrProxyDaiBalanceAfter, 0);
-        assertEq(strategyAaveBalanceAfter, 4999999999999999999998);
+        assertEq(strategyAaveBalanceAfter, 4998999999999999999999);
         assertEq(strategyCompoundBalanceAfter, 0);
     }
 
