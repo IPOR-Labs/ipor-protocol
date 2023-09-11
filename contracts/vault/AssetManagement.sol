@@ -129,7 +129,7 @@ abstract contract AssetManagement is
 
         require(wasDepositedToStrategy != address(0x0), AssetManagementErrors.DEPOSIT_TO_STRATEGY_FAILED);
 
-        emit Deposit(block.timestamp, _msgSender(), wasDepositedToStrategy, depositedAmount);
+        emit Deposit(_msgSender(), wasDepositedToStrategy, depositedAmount);
 
         vaultBalance = _calculateTotalBalance(sortedStrategies) + depositedAmount;
     }
@@ -231,7 +231,7 @@ abstract contract AssetManagement is
 
             withdrawnAmount = IporMath.convertToWad(withdrawnAssetAmount, _getDecimals());
 
-            emit Withdraw(block.timestamp, _msgSender(), withdrawnAmount);
+            emit Withdraw(_msgSender(), withdrawnAmount);
         }
 
         vaultBalance = _calculateTotalBalance(sortedStrategies);
