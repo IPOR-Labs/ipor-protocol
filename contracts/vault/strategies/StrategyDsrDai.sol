@@ -39,7 +39,7 @@ contract StrategyDsrDai is
     address public immutable pot;
 
     modifier onlyAssetManagement() {
-        require(_msgSender() == assetManagement, AssetManagementErrors.CALLER_NOT_ASSET_MANAGEMENT);
+        require(msg.sender == assetManagement, AssetManagementErrors.CALLER_NOT_ASSET_MANAGEMENT);
         _;
     }
 
@@ -76,7 +76,7 @@ contract StrategyDsrDai is
         uint256 wadAmount
     ) external override whenNotPaused onlyAssetManagement returns (uint256 depositedAmount) {
         IERC20Upgradeable(asset).forceApprove(shareToken, wadAmount);
-        IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), wadAmount);
+        IERC20Upgradeable(asset).safeTransferFrom(msg.sender, address(this), wadAmount);
         ISavingsDai(shareToken).deposit(wadAmount, address(this));
         depositedAmount = wadAmount;
     }
@@ -84,7 +84,7 @@ contract StrategyDsrDai is
     function withdraw(
         uint256 wadAmount
     ) external override whenNotPaused onlyAssetManagement returns (uint256 withdrawnAmount) {
-        ISavingsDai(shareToken).withdraw(wadAmount, _msgSender(), address(this));
+        ISavingsDai(shareToken).withdraw(wadAmount, msg.sender, address(this));
         withdrawnAmount = wadAmount;
     }
 

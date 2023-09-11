@@ -5,6 +5,7 @@ import "./AmmLibEth.sol";
 import "../libraries/IporContractValidator.sol";
 import "./interfaces/IAmmPoolsLensEth.sol";
 
+/// @dev It is not recommended to use lens contract directly, should be used only through IporProtocolRouter.
 contract AmmPoolsLensEth is IAmmPoolsLensEth {
     using IporContractValidator for address;
 

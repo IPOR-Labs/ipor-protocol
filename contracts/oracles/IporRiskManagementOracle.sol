@@ -51,12 +51,12 @@ contract IporRiskManagementOracle is
     mapping(address => bytes32) internal _baseSpreadsAndFixedRateCaps;
 
     modifier onlyPauseGuardian() {
-        require(PauseManager.isPauseGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
+        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
         _;
     }
 
     modifier onlyUpdater() {
-        require(_updaters[_msgSender()] == 1, IporRiskManagementOracleErrors.CALLER_NOT_UPDATER);
+        require(_updaters[msg.sender] == 1, IporRiskManagementOracleErrors.CALLER_NOT_UPDATER);
         _;
     }
 

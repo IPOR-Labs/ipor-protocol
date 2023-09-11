@@ -10,6 +10,15 @@ contract AmmPoolsServiceProvideLiquidity is TestCommons {
     IporProtocolFactory.IporProtocolConfig private _cfg;
     BuilderUtils.IporProtocol internal _iporProtocol;
 
+    event ProvideLiquidity(
+        address indexed from,
+        address indexed beneficiary,
+        address indexed to,
+        uint256 exchangeRate,
+        uint256 assetAmount,
+        uint256 ipTokenAmount
+    );
+
     function setUp() public {
         _admin = address(this);
         _userOne = _getUserAddress(1);
@@ -21,6 +30,24 @@ contract AmmPoolsServiceProvideLiquidity is TestCommons {
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
         _cfg.iporRiskManagementOracleUpdater = _userOne;
+    }
+
+    function testShouldEmitCorrectEventWhenProvideLiquidity() public {
+        // given
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
+        // when
+        vm.expectEmit(true, true, true, true);
+        emit ProvideLiquidity(
+            _liquidityProvider,
+            _userOne,
+            address(_iporProtocol.ammTreasury),
+            1000000000000000000,
+            TestConstants.USD_14_000_18DEC,
+            14000000000000000000000
+        );
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_userOne, TestConstants.USD_14_000_18DEC);
     }
 
     function testShouldProvideLiquidityAndTakeIpTokenWhenSimpleCase1And18Decimals() public {

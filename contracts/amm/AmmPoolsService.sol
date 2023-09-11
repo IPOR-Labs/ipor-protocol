@@ -18,6 +18,7 @@ import "../libraries/AssetManagementLogic.sol";
 import "../libraries/AmmLib.sol";
 import "../governance/AmmConfigurationManager.sol";
 
+/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmPoolsService is IAmmPoolsService {
     using IporContractValidator for address;
     using SafeCast for int256;
@@ -209,7 +210,7 @@ contract AmmPoolsService is IAmmPoolsService {
         _rebalanceIfNeededAfterProvideLiquidity(poolCfg, ammPoolsParamsCfg, balance.vault, wadAssetAmount);
 
         emit ProvideLiquidity(
-            block.timestamp,
+            msg.sender,
             beneficiary,
             poolCfg.ammTreasury,
             exchangeRate,
@@ -286,7 +287,6 @@ contract AmmPoolsService is IAmmPoolsService {
         IERC20Upgradeable(asset).safeTransferFrom(poolCfg.ammTreasury, beneficiary, redeemAmountStruct.redeemAmount);
 
         emit Redeem(
-            block.timestamp,
             poolCfg.ammTreasury,
             beneficiary,
             exchangeRate,

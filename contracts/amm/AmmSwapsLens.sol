@@ -11,6 +11,7 @@ import "../libraries/AmmLib.sol";
 import "../libraries/RiskManagementLogic.sol";
 import "./libraries/IporSwapLogic.sol";
 
+/// @dev It is not recommended to use lens contract directly, should be used only through IporProtocolRouter.
 contract AmmSwapsLens is IAmmSwapsLens {
     using Address for address;
     using IporContractValidator for address;

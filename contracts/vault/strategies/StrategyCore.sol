@@ -58,17 +58,17 @@ abstract contract StrategyCore is
     event TreasuryManagerChanged(address newTreasuryManager);
 
     modifier onlyAssetManagement() {
-        require(_msgSender() == assetManagement, AssetManagementErrors.CALLER_NOT_ASSET_MANAGEMENT);
+        require(msg.sender == assetManagement, AssetManagementErrors.CALLER_NOT_ASSET_MANAGEMENT);
         _;
     }
 
     modifier onlyPauseGuardian() {
-        require(PauseManager.isPauseGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
+        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
         _;
     }
 
     modifier onlyTreasuryManager() {
-        require(_msgSender() == _treasuryManager, AssetManagementErrors.CALLER_NOT_TREASURY_MANAGER);
+        require(msg.sender == _treasuryManager, AssetManagementErrors.CALLER_NOT_TREASURY_MANAGER);
         _;
     }
 

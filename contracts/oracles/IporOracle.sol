@@ -47,12 +47,12 @@ contract IporOracle is
     mapping(address => IporOracleTypes.IPOR) internal _indexes;
 
     modifier onlyPauseGuardian() {
-        require(PauseManager.isPauseGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
+        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
         _;
     }
 
     modifier onlyUpdater() {
-        require(_updaters[_msgSender()] == 1, IporOracleErrors.CALLER_NOT_UPDATER);
+        require(_updaters[msg.sender] == 1, IporOracleErrors.CALLER_NOT_UPDATER);
         _;
     }
 

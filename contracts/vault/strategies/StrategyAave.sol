@@ -68,7 +68,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         address lendingPoolAddress = provider.getLendingPool();
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
 
-        _treasuryManager = _msgSender();
+        _treasuryManager = msg.sender;
     }
 
     /**
@@ -146,7 +146,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         uint256 wadAmount
     ) external override whenNotPaused onlyAssetManagement returns (uint256 depositedAmount) {
         uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
-        IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), amount);
+        IERC20Upgradeable(asset).safeTransferFrom(msg.sender, address(this), amount);
 
         address lendingPoolAddress = provider.getLendingPool();
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
@@ -172,7 +172,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
 
         /// @dev Transfer assets from Aave directly to msgSender which is AssetManagement
-        uint256 withdrawnAmountAave = AaveLendingPoolV2(lendingPoolAddress).withdraw(asset, amount, _msgSender());
+        uint256 withdrawnAmountAave = AaveLendingPoolV2(lendingPoolAddress).withdraw(asset, amount, msg.sender);
 
         withdrawnAmount = IporMath.convertToWad(withdrawnAmountAave, assetDecimals);
     }
@@ -188,7 +188,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         shareTokens[0] = shareToken;
         aaveIncentive.claimRewards(shareTokens, type(uint256).max, address(this));
         stakedAaveInterface.cooldown();
-        emit DoBeforeClaim(_msgSender(), shareTokens);
+        emit DoBeforeClaim(msg.sender, shareTokens);
     }
 
     /**
@@ -217,7 +217,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
 
             IERC20Upgradeable(aave).safeTransfer(treasuryAddress, balance);
 
-            emit DoClaim(_msgSender(), shareToken, treasuryAddress, balance);
+            emit DoClaim(msg.sender, shareToken, treasuryAddress, balance);
         }
     }
 }
