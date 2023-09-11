@@ -212,8 +212,8 @@ contract AmmPoolsService is IAmmPoolsService {
 
         emit ProvideLiquidity(
             msg.sender,
-            poolCfg.ammTreasury,
             beneficiary,
+            poolCfg.ammTreasury,
             exchangeRate,
             wadAssetAmount,
             ipTokenAmount
