@@ -32,15 +32,13 @@ interface IAssetManagement {
     function withdrawAll() external returns (uint256 withdrawnAmount, uint256 vaultBalance);
 
     /// @notice Emitted after AmmTreasury has executed deposit function.
-    /// @param timestamp moment when deposit function was executed
     /// @param from account address from which assets are transferred
     /// @param to account address where assets are transferred to
     /// @param amount of asset transferred from AmmTreasury to AssetManagement, represented in 18 decimals
-    event Deposit(uint256 timestamp, address from, address to, uint256 amount);
+    event Deposit(address from, address to, uint256 amount);
 
     /// @notice Emitted when AmmTreasury executes withdraw function.
-    /// @param timestamp moment when deposit was executed
     /// @param to account address where assets are transferred to
     /// @param amount of asset transferred from AmmTreasury to AssetManagement, represented in 18 decimals
-    event Withdraw(uint256 timestamp, address to, uint256 amount);
+    event Withdraw(address to, uint256 amount);
 }
