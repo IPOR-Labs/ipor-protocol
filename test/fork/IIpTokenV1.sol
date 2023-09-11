@@ -3,4 +3,5 @@ pragma solidity 0.8.20;
 
 interface IIpTokenV1 {
     function setJoseph(address newRouter) external;
+    function getJoseph() external view returns (address);
 }

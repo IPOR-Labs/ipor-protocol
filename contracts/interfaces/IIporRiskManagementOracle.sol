@@ -228,25 +228,4 @@ interface IIporRiskManagementOracle {
     /// @notice Removes Updater. Function available only for Owner.
     /// @param updater updater address
     function removeUpdater(address updater) external;
-
-    /// @notice Pauses current smart contract, it can be executed only by the Pause Guardian
-    /// @dev Emits {Paused} event from IporOracle.
-    function pause() external;
-
-    /// @notice Unpauses current smart contract, it can be executed only by the Owner
-    /// @dev Emits {Unpaused} event from IporOracle.
-    function unpause() external;
-
-    /// @notice Checks if given account is a pause guardian.
-    /// @param account The address of the account to be checked.
-    /// @return true if account is a pause guardian.
-    function isPauseGuardian(address account) external view returns (bool);
-
-    /// @notice Adds a pause guardian to the list of guardians. Function available only for the Owner.
-    /// @param guardians The list addresses of the pause guardians to be added.
-    function addPauseGuardians(address[] calldata guardians) external;
-
-    /// @notice Removes a pause guardian from the list of guardians. Function available only for the Owner.
-    /// @param guardians The list addresses of the pause guardians to be removed.
-    function removePauseGuardians(address[] calldata guardians) external;
 }
