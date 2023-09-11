@@ -28,10 +28,7 @@ contract AccessControl {
 
     /// @notice Checks if sender is appointed owner
     modifier onlyAppointedOwner() {
-        require(
-            address(StorageLib.getAppointedOwner().appointedOwner) == msg.sender,
-            IporErrors.SENDER_NOT_APPOINTED_OWNER
-        );
+        require(StorageLib.getAppointedOwner().appointedOwner == msg.sender, IporErrors.SENDER_NOT_APPOINTED_OWNER);
         _;
     }
 
@@ -129,7 +126,7 @@ contract AccessControl {
     }
 
     function _onlyOwner() internal view {
-        require(address(StorageLib.getOwner().owner) == msg.sender, IporErrors.CALLER_NOT_OWNER);
+        require(StorageLib.getOwner().owner == msg.sender, IporErrors.CALLER_NOT_OWNER);
     }
 
     function _nonReentrantBefore() internal {

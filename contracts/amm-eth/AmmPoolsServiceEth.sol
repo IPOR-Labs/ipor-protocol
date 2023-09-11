@@ -61,7 +61,6 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         IIpToken(ipstEth).mint(beneficiary, ipTokenAmount);
 
         emit IAmmPoolsServiceEth.ProvideLiquidityStEth(
-            block.timestamp,
             msg.sender,
             beneficiary,
             ammTreasuryEth,
@@ -121,7 +120,6 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         IStETH(stEth).safeTransferFrom(ammTreasuryEth, beneficiary, amountToRedeem);
 
         emit RedeemStEth(
-            block.timestamp,
             ammTreasuryEth,
             msg.sender,
             beneficiary,
@@ -145,7 +143,6 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
                 IIpToken(ipstEth).mint(beneficiary, ipTokenAmount);
 
                 emit IAmmPoolsServiceEth.ProvideLiquidityEth(
-                    block.timestamp,
                     msg.sender,
                     beneficiary,
                     ammTreasuryEth,

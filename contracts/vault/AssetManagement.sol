@@ -129,7 +129,7 @@ abstract contract AssetManagement is
 
         require(wasDepositedToStrategy != address(0x0), AssetManagementErrors.DEPOSIT_TO_STRATEGY_FAILED);
 
-        emit Deposit(block.timestamp, _msgSender(), wasDepositedToStrategy, depositedAmount);
+        emit Deposit(_msgSender(), wasDepositedToStrategy, depositedAmount);
 
         vaultBalance = _calculateTotalBalance(sortedStrategies) + depositedAmount;
     }
@@ -155,7 +155,7 @@ abstract contract AssetManagement is
     }
 
     function grantMaxAllowanceForSpender(address assetInput, address spender) external onlyOwner {
-        IERC20Upgradeable(assetInput).safeApprove(spender, Constants.MAX_VALUE);
+        IERC20Upgradeable(assetInput).forceApprove(spender, Constants.MAX_VALUE);
     }
 
     function revokeAllowanceForSpender(address assetInput, address spender) external onlyOwner {
@@ -231,7 +231,7 @@ abstract contract AssetManagement is
 
             withdrawnAmount = IporMath.convertToWad(withdrawnAssetAmount, _getDecimals());
 
-            emit Withdraw(block.timestamp, _msgSender(), withdrawnAmount);
+            emit Withdraw(_msgSender(), withdrawnAmount);
         }
 
         vaultBalance = _calculateTotalBalance(sortedStrategies);

@@ -210,7 +210,6 @@ contract AmmPoolsService is IAmmPoolsService {
         _rebalanceIfNeededAfterProvideLiquidity(poolCfg, ammPoolsParamsCfg, balance.vault, wadAssetAmount);
 
         emit ProvideLiquidity(
-            block.timestamp,
             msg.sender,
             poolCfg.ammTreasury,
             beneficiary,
@@ -288,7 +287,6 @@ contract AmmPoolsService is IAmmPoolsService {
         IERC20Upgradeable(asset).safeTransferFrom(poolCfg.ammTreasury, beneficiary, redeemAmountStruct.redeemAmount);
 
         emit Redeem(
-            block.timestamp,
             poolCfg.ammTreasury,
             beneficiary,
             exchangeRate,
