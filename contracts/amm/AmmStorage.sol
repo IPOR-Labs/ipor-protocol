@@ -61,17 +61,17 @@ contract AmmStorage is
     mapping(IporTypes.SwapTenor => AmmInternalTypes.OpenSwapList) private _openedSwapsReceiveFixed;
 
     modifier onlyPauseGuardian() {
-        require(PauseManager.isPauseGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
+        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
         _;
     }
 
     modifier onlyRouter() {
-        require(_msgSender() == _iporProtocolRouter, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
+        require(msg.sender == _iporProtocolRouter, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
         _;
     }
 
     modifier onlyAmmTreasury() {
-        require(_msgSender() == _ammTreasury, IporErrors.CALLER_NOT_AMM_TREASURY);
+        require(msg.sender == _ammTreasury, IporErrors.CALLER_NOT_AMM_TREASURY);
         _;
     }
 

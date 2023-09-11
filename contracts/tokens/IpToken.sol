@@ -19,7 +19,7 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
     address private _router;
 
     modifier onlyRouter() {
-        require(_msgSender() == _router, AmmErrors.CALLER_NOT_ROUTER);
+        require(msg.sender == _router, AmmErrors.CALLER_NOT_ROUTER);
         _;
     }
 

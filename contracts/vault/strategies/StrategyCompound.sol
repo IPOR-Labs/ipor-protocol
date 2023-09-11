@@ -51,7 +51,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         __Ownable_init();
         __UUPSUpgradeable_init();
 
-        _treasuryManager = _msgSender();
+        _treasuryManager = msg.sender;
     }
 
     ///  @notice gets current APY in Compound Protocol.
@@ -103,7 +103,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
     ) external override whenNotPaused onlyAssetManagement returns (uint256 depositedAmount) {
         uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
         IERC20Upgradeable(asset).forceApprove(shareToken, amount);
-        IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), amount);
+        IERC20Upgradeable(asset).safeTransferFrom(msg.sender, address(this), amount);
         CErc20(shareToken).mint(amount);
         depositedAmount = IporMath.convertToWad(amount, assetDecimals);
     }
@@ -130,7 +130,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         uint256 withdrawnAmountCompound = IERC20Upgradeable(asset).balanceOf(address(this));
 
         // Transfer all assets from Strategy to AssetManagement
-        IERC20Upgradeable(asset).safeTransfer(_msgSender(), withdrawnAmountCompound);
+        IERC20Upgradeable(asset).safeTransfer(msg.sender, withdrawnAmountCompound);
 
         withdrawnAmount = IporMath.convertToWad(withdrawnAmountCompound, assetDecimals);
     }
@@ -152,6 +152,6 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
 
         compToken.safeTransfer(treasuryAddress, balance);
 
-        emit DoClaim(_msgSender(), assets[0], treasuryAddress, balance);
+        emit DoClaim(msg.sender, assets[0], treasuryAddress, balance);
     }
 }

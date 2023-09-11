@@ -92,7 +92,7 @@ contract TestnetFaucet is
                 ++i;
             }
         }
-        _lastClaim[_msgSender()] = block.timestamp;
+        _lastClaim[msg.sender] = block.timestamp;
     }
 
     function transfer(address asset, uint256 amount) external onlyOwner {
@@ -102,8 +102,8 @@ contract TestnetFaucet is
         IERC20Upgradeable token = IERC20Upgradeable(asset);
         uint256 maxValue = token.balanceOf(address(this));
         require(amount <= maxValue, IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER);
-        IERC20Upgradeable(asset).safeTransfer(_msgSender(), amount);
-        emit Claim(_msgSender(), asset, amount);
+        IERC20Upgradeable(asset).safeTransfer(msg.sender, amount);
+        emit Claim(msg.sender, asset, amount);
     }
 
     function transferEth(address payable recipient, uint256 value) external payable onlyOwner {
@@ -119,7 +119,7 @@ contract TestnetFaucet is
     }
 
     function hasClaimBefore() external view override returns (bool) {
-        return _lastClaim[_msgSender()] != 0;
+        return _lastClaim[msg.sender] != 0;
     }
 
     function balanceOf(address asset) external view override returns (uint256) {
@@ -157,15 +157,15 @@ contract TestnetFaucet is
             return;
         }
         if (balanceOfFaucet < amountToTransfer) {
-            emit TransferFailed(_msgSender(), address(asset), amountToTransfer);
+            emit TransferFailed(msg.sender, address(asset), amountToTransfer);
             return;
         }
-        IERC20Upgradeable(asset).safeTransfer(_msgSender(), amountToTransfer);
-        emit Claim(_msgSender(), asset, amountToTransfer);
+        IERC20Upgradeable(asset).safeTransfer(msg.sender, amountToTransfer);
+        emit Claim(msg.sender, asset, amountToTransfer);
     }
 
     function _couldClaimInSeconds() internal view returns (uint256) {
-        uint256 lastDraw = _lastClaim[_msgSender()];
+        uint256 lastDraw = _lastClaim[msg.sender];
         uint256 blockTimestamp = block.timestamp;
         if (blockTimestamp - lastDraw > _SECONDS_IN_DAY) {
             return 0;

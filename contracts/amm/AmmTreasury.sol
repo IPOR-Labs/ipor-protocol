@@ -38,12 +38,12 @@ contract AmmTreasury is
     address internal immutable _router;
 
     modifier onlyPauseGuardian() {
-        require(PauseManager.isPauseGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
+        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
         _;
     }
 
     modifier onlyRouter() {
-        require(_msgSender() == _router, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
+        require(msg.sender == _router, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
         _;
     }
 

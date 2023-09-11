@@ -59,12 +59,12 @@ abstract contract AssetManagement is
     uint256 public immutable highestApyStrategyArrayIndex;
 
     modifier onlyAmmTreasury() {
-        require(_msgSender() == ammTreasury, IporErrors.CALLER_NOT_AMM_TREASURY);
+        require(msg.sender == ammTreasury, IporErrors.CALLER_NOT_AMM_TREASURY);
         _;
     }
 
     modifier onlyPauseGuardian() {
-        require(PauseManager.isPauseGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
+        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
         _;
     }
 
@@ -105,7 +105,7 @@ abstract contract AssetManagement is
 
         StrategyData[] memory sortedStrategies = _getSortedStrategiesWithApy(_getStrategiesData());
 
-        IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), assetAmount);
+        IERC20Upgradeable(asset).safeTransferFrom(msg.sender, address(this), assetAmount);
 
         address wasDepositedToStrategy = address(0x0);
 
@@ -129,7 +129,7 @@ abstract contract AssetManagement is
 
         require(wasDepositedToStrategy != address(0x0), AssetManagementErrors.DEPOSIT_TO_STRATEGY_FAILED);
 
-        emit Deposit(_msgSender(), wasDepositedToStrategy, depositedAmount);
+        emit Deposit(msg.sender, wasDepositedToStrategy, depositedAmount);
 
         vaultBalance = _calculateTotalBalance(sortedStrategies) + depositedAmount;
     }
@@ -227,11 +227,11 @@ abstract contract AssetManagement is
 
         if (withdrawnAssetAmount > 0) {
             /// @dev Always transfer all assets from AssetManagement to AmmTreasury
-            IERC20Upgradeable(asset).safeTransfer(_msgSender(), withdrawnAssetAmount);
+            IERC20Upgradeable(asset).safeTransfer(msg.sender, withdrawnAssetAmount);
 
             withdrawnAmount = IporMath.convertToWad(withdrawnAssetAmount, _getDecimals());
 
-            emit Withdraw(_msgSender(), withdrawnAmount);
+            emit Withdraw(msg.sender, withdrawnAmount);
         }
 
         vaultBalance = _calculateTotalBalance(sortedStrategies);
