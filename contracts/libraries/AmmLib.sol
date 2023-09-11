@@ -57,6 +57,7 @@ library AmmLib {
         require(balance >= 0, AmmErrors.SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW);
 
         uint256 ipTokenTotalSupply = IIpToken(model.ipToken).totalSupply();
+
         if (ipTokenTotalSupply > 0) {
             return IporMath.division(balance.toUint256() * 1e18, ipTokenTotalSupply);
         } else {

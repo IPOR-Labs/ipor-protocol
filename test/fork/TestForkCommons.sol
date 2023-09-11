@@ -32,6 +32,7 @@ import "../../contracts/vault/AssetManagementUsdt.sol";
 import "../../contracts/vault/AssetManagementUsdc.sol";
 import "../../contracts/vault/strategies/StrategyAave.sol";
 import "../../contracts/vault/strategies/StrategyCompound.sol";
+import "../../contracts/interfaces/IIpTokenV1.sol";
 
 
 contract TestForkCommons is Test {
@@ -867,9 +868,9 @@ contract TestForkCommons is Test {
 
     function _setUpIpTokens() private {
         vm.startPrank(owner);
-        IIpToken(ipDAI).setJoseph(iporProtocolRouterProxy);
-        IIpToken(ipUSDC).setJoseph(iporProtocolRouterProxy);
-        IIpToken(ipUSDT).setJoseph(iporProtocolRouterProxy);
+        IIpTokenV1(ipDAI).setJoseph(iporProtocolRouterProxy);
+        IIpTokenV1(ipUSDC).setJoseph(iporProtocolRouterProxy);
+        IIpTokenV1(ipUSDT).setJoseph(iporProtocolRouterProxy);
         vm.stopPrank();
     }
 

@@ -16,18 +16,14 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
 
     uint8 private immutable _decimals;
 
-    address private _router;
+    address private _tokenManager;
 
-    modifier onlyRouter() {
-        require(msg.sender == _router, AmmErrors.CALLER_NOT_ROUTER);
+    modifier onlyTokenManager() {
+        require(msg.sender == _tokenManager, AmmErrors.CALLER_NOT_TOKEN_MANAGER);
         _;
     }
 
-    constructor(
-        string memory name,
-        string memory symbol,
-        address asset
-    ) ERC20(name, symbol) {
+    constructor(string memory name, string memory symbol, address asset) ERC20(name, symbol) {
         require(address(0) != asset, IporErrors.WRONG_ADDRESS);
         _asset = asset;
         _decimals = 18;
@@ -41,19 +37,23 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
         return _asset;
     }
 
-    function setJoseph(address newRouter) external override onlyOwner {
-        require(newRouter != address(0), IporErrors.WRONG_ADDRESS);
-        _router = newRouter;
-        emit RouterChanged(newRouter);
+    function getTokenManager() external view override returns (address) {
+        return _tokenManager;
     }
 
-    function mint(address account, uint256 amount) external override onlyRouter {
+    function setTokenManager(address newTokenManager) external override onlyOwner {
+        require(newTokenManager != address(0), IporErrors.WRONG_ADDRESS);
+        _tokenManager = newTokenManager;
+        emit TokenManagerChanged(newTokenManager);
+    }
+
+    function mint(address account, uint256 amount) external override onlyTokenManager {
         require(amount > 0, AmmPoolsErrors.IP_TOKEN_MINT_AMOUNT_TOO_LOW);
         _mint(account, amount);
         emit Mint(account, amount);
     }
 
-    function burn(address account, uint256 amount) external override onlyRouter {
+    function burn(address account, uint256 amount) external override onlyTokenManager {
         require(amount > 0, AmmPoolsErrors.IP_TOKEN_BURN_AMOUNT_TOO_LOW);
         _burn(account, amount);
         emit Burn(account, amount);

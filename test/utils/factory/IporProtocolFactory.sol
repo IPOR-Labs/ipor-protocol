@@ -280,9 +280,9 @@ contract IporProtocolFactory is Test {
 
         vm.startPrank(address(_owner));
 
-        amm.usdt.ipToken.setJoseph(address(amm.router));
-        amm.usdc.ipToken.setJoseph(address(amm.router));
-        amm.dai.ipToken.setJoseph(address(amm.router));
+        amm.usdt.ipToken.setTokenManager(address(amm.router));
+        amm.usdc.ipToken.setTokenManager(address(amm.router));
+        amm.dai.ipToken.setTokenManager(address(amm.router));
 
         amm.usdt.ammTreasury.grantMaxAllowanceForSpender(address(amm.usdt.assetManagement));
         amm.usdc.ammTreasury.grantMaxAllowanceForSpender(address(amm.usdc.assetManagement));
@@ -390,7 +390,7 @@ contract IporProtocolFactory is Test {
 
         iporProtocol.ammTreasury.grantMaxAllowanceForSpender(address(iporProtocol.assetManagement));
 
-        iporProtocol.ipToken.setJoseph(address(iporProtocol.router));
+        iporProtocol.ipToken.setTokenManager(address(iporProtocol.router));
         iporProtocol.ammTreasury.grantMaxAllowanceForSpender(address(iporProtocol.router));
 
         IAmmGovernanceService(address(iporProtocol.router)).setAmmPoolsParams(
@@ -498,7 +498,7 @@ contract IporProtocolFactory is Test {
         //        iporProtocol.assetManagement.setAmmTreasury((address(iporProtocol.ammTreasury)));
         iporProtocol.ammTreasury.grantMaxAllowanceForSpender(address(iporProtocol.assetManagement));
 
-        iporProtocol.ipToken.setJoseph(address(iporProtocol.router));
+        iporProtocol.ipToken.setTokenManager(address(iporProtocol.router));
         iporProtocol.ammTreasury.grantMaxAllowanceForSpender(address(iporProtocol.router));
 
         IAmmGovernanceService(address(iporProtocol.router)).setAmmPoolsParams(
@@ -604,7 +604,7 @@ contract IporProtocolFactory is Test {
 
         iporProtocol.ammTreasury.grantMaxAllowanceForSpender(address(iporProtocol.assetManagement));
 
-        iporProtocol.ipToken.setJoseph(address(iporProtocol.router));
+        iporProtocol.ipToken.setTokenManager(address(iporProtocol.router));
         iporProtocol.ammTreasury.grantMaxAllowanceForSpender(address(iporProtocol.router));
 
         IAmmGovernanceService(address(iporProtocol.router)).setAmmPoolsParams(
@@ -729,9 +729,9 @@ contract IporProtocolFactory is Test {
                     address(amm.dai.ammTreasury),
                     address(amm.dai.ammStorage)
                 ),
-                iporOracle: address(amm.iporOracle),
-                iporRiskManagementOracle: address(amm.iporRiskManagementOracle),
-                spreadRouter: address(amm.spreadRouter)
+                iporOracleInput: address(amm.iporOracle),
+                iporRiskManagementOracleInput: address(amm.iporRiskManagementOracle),
+                spreadRouterInput: address(amm.spreadRouter)
             })
         );
 
@@ -758,9 +758,9 @@ contract IporProtocolFactory is Test {
                     address(amm.dai.ammStorage),
                     address(amm.dai.assetManagement)
                 ),
-                iporOracle: address(amm.iporOracle),
-                iporRiskManagementOracle: address(amm.iporRiskManagementOracle),
-                spreadRouter: address(amm.spreadRouter)
+                iporOracleInput: address(amm.iporOracle),
+                iporRiskManagementOracleInput: address(amm.iporRiskManagementOracle),
+                spreadRouterInput: address(amm.spreadRouter)
             })
         );
 
@@ -790,7 +790,7 @@ contract IporProtocolFactory is Test {
                     address(amm.dai.ammStorage),
                     address(amm.dai.assetManagement)
                 ),
-                iporOracle: address(amm.iporOracle)
+                iporOracleInput: address(amm.iporOracle)
             })
         );
 
@@ -982,9 +982,9 @@ contract IporProtocolFactory is Test {
                 ),
                 usdcPoolCfg: _prepareFakePoolCfgForOpenSwapService(),
                 daiPoolCfg: _prepareFakePoolCfgForOpenSwapService(),
-                iporOracle: address(iporProtocol.iporOracle),
-                iporRiskManagementOracle: address(iporProtocol.iporRiskManagementOracle),
-                spreadRouter: address(iporProtocol.spreadRouter)
+                iporOracleInput: address(iporProtocol.iporOracle),
+                iporRiskManagementOracleInput: address(iporProtocol.iporRiskManagementOracle),
+                spreadRouterInput: address(iporProtocol.spreadRouter)
             })
         );
 
@@ -999,9 +999,9 @@ contract IporProtocolFactory is Test {
                 ),
                 usdcPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
                 daiPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
-                iporOracle: address(iporProtocol.iporOracle),
-                iporRiskManagementOracle: address(iporProtocol.iporRiskManagementOracle),
-                spreadRouter: address(iporProtocol.spreadRouter)
+                iporOracleInput: address(iporProtocol.iporOracle),
+                iporRiskManagementOracleInput: address(iporProtocol.iporRiskManagementOracle),
+                spreadRouterInput: address(iporProtocol.spreadRouter)
             })
         );
 
@@ -1017,7 +1017,7 @@ contract IporProtocolFactory is Test {
                 ),
                 usdcPoolCfg: _prepareFakePoolCfgForPoolsService(),
                 daiPoolCfg: _prepareFakePoolCfgForPoolsService(),
-                iporOracle: address(iporProtocol.iporOracle)
+                iporOracleInput: address(iporProtocol.iporOracle)
             })
         );
 
@@ -1165,9 +1165,9 @@ contract IporProtocolFactory is Test {
                     address(iporProtocol.ammStorage)
                 ),
                 daiPoolCfg: _prepareFakePoolCfgForOpenSwapService(),
-                iporOracle: address(iporProtocol.iporOracle),
-                iporRiskManagementOracle: address(iporProtocol.iporRiskManagementOracle),
-                spreadRouter: address(iporProtocol.spreadRouter)
+                iporOracleInput: address(iporProtocol.iporOracle),
+                iporRiskManagementOracleInput: address(iporProtocol.iporRiskManagementOracle),
+                spreadRouterInput: address(iporProtocol.spreadRouter)
             })
         );
 
@@ -1182,9 +1182,9 @@ contract IporProtocolFactory is Test {
                     address(iporProtocol.assetManagement)
                 ),
                 daiPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
-                iporOracle: address(iporProtocol.iporOracle),
-                iporRiskManagementOracle: address(iporProtocol.iporRiskManagementOracle),
-                spreadRouter: address(iporProtocol.spreadRouter)
+                iporOracleInput: address(iporProtocol.iporOracle),
+                iporRiskManagementOracleInput: address(iporProtocol.iporRiskManagementOracle),
+                spreadRouterInput: address(iporProtocol.spreadRouter)
             })
         );
 
@@ -1200,7 +1200,7 @@ contract IporProtocolFactory is Test {
                     address(iporProtocol.assetManagement)
                 ),
                 daiPoolCfg: _prepareFakePoolCfgForPoolsService(),
-                iporOracle: address(iporProtocol.iporOracle)
+                iporOracleInput: address(iporProtocol.iporOracle)
             })
         );
 
@@ -1352,9 +1352,9 @@ contract IporProtocolFactory is Test {
                     address(iporProtocol.ammTreasury),
                     address(iporProtocol.ammStorage)
                 ),
-                iporOracle: address(iporProtocol.iporOracle),
-                iporRiskManagementOracle: address(iporProtocol.iporRiskManagementOracle),
-                spreadRouter: address(iporProtocol.spreadRouter)
+                iporOracleInput: address(iporProtocol.iporOracle),
+                iporRiskManagementOracleInput: address(iporProtocol.iporRiskManagementOracle),
+                spreadRouterInput: address(iporProtocol.spreadRouter)
             })
         );
 
@@ -1369,9 +1369,9 @@ contract IporProtocolFactory is Test {
                     address(iporProtocol.ammStorage),
                     address(iporProtocol.assetManagement)
                 ),
-                iporOracle: address(iporProtocol.iporOracle),
-                iporRiskManagementOracle: address(iporProtocol.iporRiskManagementOracle),
-                spreadRouter: address(iporProtocol.spreadRouter)
+                iporOracleInput: address(iporProtocol.iporOracle),
+                iporRiskManagementOracleInput: address(iporProtocol.iporRiskManagementOracle),
+                spreadRouterInput: address(iporProtocol.spreadRouter)
             })
         );
 
@@ -1387,7 +1387,7 @@ contract IporProtocolFactory is Test {
                     address(iporProtocol.ammStorage),
                     address(iporProtocol.assetManagement)
                 ),
-                iporOracle: address(iporProtocol.iporOracle)
+                iporOracleInput: address(iporProtocol.iporOracle)
             })
         );
 

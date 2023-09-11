@@ -10,10 +10,13 @@ interface IIpToken is IERC20 {
     /// @return asset / stablecoin address
     function getAsset() external view returns (address);
 
-    /// @notice Sets Router's address. IpToken contract Owner only
-    /// @dev only Router can mint or burn ipTokens. Function emits `RouterChanged` event.
-    /// @param newRouter Router's address
-    function setJoseph(address newRouter) external;
+    /// @notice Gets the Token Manager's address.
+    function getTokenManager() external view returns (address);
+
+    /// @notice Sets token manager's address. IpToken contract Owner only
+    /// @dev only Token Manager can mint or burn ipTokens. Function emits `TokenManagerChanged` event.
+    /// @param newTokenManager Token Managers's address
+    function setTokenManager(address newTokenManager) external;
 
     /// @notice Creates the ipTokens in the `amount` given and assigns them to the `account`
     /// @dev Emits {Transfer} from ERC20 asset and {Mint} event from ipToken
@@ -37,7 +40,7 @@ interface IIpToken is IERC20 {
     /// @param amount volume of ipTokens burned
     event Burn(address indexed account, uint256 amount);
 
-    /// @notice Emitted when Router address is changed by its owner.
-    /// @param newRouter new address of Router
-    event RouterChanged(address indexed newRouter);
+    /// @notice Emitted when Token Manager address is changed by its owner.
+    /// @param newTokenManager new address of Token Manager
+    event TokenManagerChanged(address indexed newTokenManager);
 }

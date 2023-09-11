@@ -26,6 +26,14 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
         _usdt = usdt.checkAddress();
     }
 
+    function getSupportedAssets() external view returns (address[] memory) {
+        address[] memory assets = new address[](3);
+        assets[0] = _dai;
+        assets[1] = _usdc;
+        assets[2] = _usdt;
+        return assets;
+    }
+
     function updateTimeWeightedNotionalOnClose(
         address asset,
         uint256 direction,
@@ -33,7 +41,7 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
         uint256 swapNotional,
         AmmInternalTypes.OpenSwapItem memory closedSwap,
         address ammStorageAddress
-    ) external {
+    ) external override {
         // @dev when timestamp is 0, it means that the swap was open in ipor-protocol v1 .
         if (closedSwap.openSwapTimestamp == 0) {
             return;

@@ -10,6 +10,7 @@ import "../libraries/errors/IporRiskManagementOracleErrors.sol";
 import "../security/PauseManager.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/IporRiskManagementOracleStorageTypes.sol";
+import "../interfaces/IIporContractCommonGov.sol";
 
 /**
  * @title Ipor Risk Management Oracle contract
@@ -22,6 +23,7 @@ contract IporRiskManagementOracle is
     UUPSUpgradeable,
     IporOwnableUpgradeable,
     IIporRiskManagementOracle,
+    IIporContractCommonGov,
     IProxyImplementation
 {
     using SafeCast for uint256;

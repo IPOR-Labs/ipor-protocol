@@ -47,6 +47,12 @@ contract AssetManagementLens is IAssetManagementLens {
         _daiAmmTreasury = daiAssetManagementCfg.ammTreasury.checkAddress();
     }
 
+    function getAssetManagementConfiguration(
+        address asset
+    ) external view override returns (AssetManagementConfiguration memory) {
+        return _getAssetManagementConfiguration(asset);
+    }
+
     function balanceOfAmmTreasuryInAssetManagement(address asset) external view returns (uint256) {
         AssetManagementConfiguration memory assetManagementConfiguration = _getAssetManagementConfiguration(asset);
         return IAssetManagement(assetManagementConfiguration.assetManagement).totalBalance();

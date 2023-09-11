@@ -33,18 +33,17 @@ contract AmmSwapsLens is IAmmSwapsLens {
     address internal immutable _daiAmmTreasury;
     uint256 internal immutable _daiMinLeverage;
 
-    address internal immutable _iporOracle;
-    address internal immutable _riskManagementOracle;
-
-    address internal immutable _spreadRouter;
+    address public immutable iporOracle;
+    address public immutable iporRiskManagementOracle;
+    address public immutable spreadRouter;
 
     constructor(
         SwapLensPoolConfiguration memory usdtCfg,
         SwapLensPoolConfiguration memory usdcCfg,
         SwapLensPoolConfiguration memory daiCfg,
-        address iporOracle,
-        address riskManagementOracle,
-        address spreadRouter
+        address iporOracleInput,
+        address iporRiskManagementOracleInput,
+        address spreadRouterInput
     ) {
         _usdtAsset = usdtCfg.asset.checkAddress();
         _usdtAmmStorage = usdtCfg.ammStorage.checkAddress();
@@ -61,9 +60,9 @@ contract AmmSwapsLens is IAmmSwapsLens {
         _daiAmmTreasury = daiCfg.ammTreasury.checkAddress();
         _daiMinLeverage = daiCfg.minLeverage;
 
-        _iporOracle = iporOracle.checkAddress();
-        _riskManagementOracle = riskManagementOracle.checkAddress();
-        _spreadRouter = spreadRouter.checkAddress();
+        iporOracle = iporOracleInput.checkAddress();
+        iporRiskManagementOracle = iporRiskManagementOracleInput.checkAddress();
+        spreadRouter = spreadRouterInput.checkAddress();
     }
 
     function getSwapLensPoolConfiguration(
@@ -93,7 +92,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
 
         require(swap.id > 0, AmmErrors.INCORRECT_SWAP_ID);
 
-        uint256 accruedIbtPrice = IIporOracle(_iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
+        uint256 accruedIbtPrice = IIporOracle(iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
         return swap.calculatePnlPayFixed(block.timestamp, accruedIbtPrice);
     }
 
@@ -103,7 +102,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
 
         require(swap.id > 0, AmmErrors.INCORRECT_SWAP_ID);
 
-        uint256 accruedIbtPrice = IIporOracle(_iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
+        uint256 accruedIbtPrice = IIporOracle(iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
         return swap.calculatePnlReceiveFixed(block.timestamp, accruedIbtPrice);
     }
 
@@ -114,7 +113,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         AmmTypes.AmmPoolCoreModel memory ammCoreModel;
         ammCoreModel.asset = asset;
         ammCoreModel.ammStorage = address(ammStorage);
-        ammCoreModel.iporOracle = _iporOracle;
+        ammCoreModel.iporOracle = iporOracle;
         (soapPayFixed, soapReceiveFixed, soap) = ammCoreModel.getSoap();
     }
 
@@ -128,7 +127,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         SwapLensPoolConfiguration memory poolCfg = _getSwapLensPoolConfiguration(asset);
 
         (bytes4 payFixedSig, bytes4 receiveFixedSig) = _getSpreadRouterSignatures(tenor);
-        (uint256 indexValue, , ) = IIporOracle(_iporOracle).getIndex(asset);
+        (uint256 indexValue, , ) = IIporOracle(iporOracle).getIndex(asset);
 
         IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(poolCfg.ammStorage)
             .getBalancesForOpenSwap();
@@ -146,7 +145,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
             tenor,
             balance.liquidityPool,
             poolCfg.minLeverage,
-            _riskManagementOracle
+            iporRiskManagementOracle
         );
         spreadContextPayFixed.balance = balance;
         offeredRatePayFixed = _getOfferedRatePerLeg(spreadContextPayFixed);
@@ -164,7 +163,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
             tenor,
             balance.liquidityPool,
             poolCfg.minLeverage,
-            _riskManagementOracle
+            iporRiskManagementOracle
         );
         spreadContextReceiveFixed.balance = balance;
         offeredRateReceiveFixed = _getOfferedRatePerLeg(spreadContextReceiveFixed);
@@ -174,7 +173,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         AmmInternalTypes.SpreadContext memory spreadContext
     ) internal view returns (uint256 offeredRate) {
         offeredRate = abi.decode(
-            _spreadRouter.functionStaticCall(
+            spreadRouter.functionStaticCall(
                 abi.encodeWithSelector(
                     spreadContext.spreadFunctionSig,
                     spreadContext.asset,
@@ -218,7 +217,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
             tenor,
             balances.liquidityPool,
             swapLensPoolCfg.minLeverage,
-            _riskManagementOracle
+            iporRiskManagementOracle
         );
     }
 
@@ -227,7 +226,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         IAmmStorage ammStorage,
         AmmStorageTypes.IporSwapId[] memory swapIds
     ) internal view returns (IAmmSwapsLens.IporSwap[] memory swaps) {
-        uint256 accruedIbtPrice = IIporOracle(_iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
+        uint256 accruedIbtPrice = IIporOracle(iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
         uint256 swapCount = swapIds.length;
 
         IAmmSwapsLens.IporSwap[] memory mappedSwaps = new IAmmSwapsLens.IporSwap[](swapCount);

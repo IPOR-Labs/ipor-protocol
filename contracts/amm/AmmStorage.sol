@@ -109,6 +109,10 @@ contract AmmStorage is
         return 2_000;
     }
 
+    function getConfiguration() external view override returns (address, address) {
+        return (_ammTreasury, _iporProtocolRouter);
+    }
+
     function getLastSwapId() external view override returns (uint256) {
         return _lastSwapId;
     }

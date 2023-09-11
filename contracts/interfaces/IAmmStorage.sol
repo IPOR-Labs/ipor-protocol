@@ -13,6 +13,11 @@ interface IAmmStorage {
     /// @return current AmmTreasury Storage version, integer
     function getVersion() external pure returns (uint256);
 
+    /// @notice Gets the configuration of the IPOR AMM Storage.
+    /// @return ammTreasury address of the AmmTreasury contract
+    /// @return router address of the IPOR Protocol Router contract
+    function getConfiguration() external view returns (address ammTreasury, address router);
+
     /// @notice Gets last swap ID.
     /// @dev swap ID is incremented when new position is opened, last swap ID is used in Pay Fixed and Receive Fixed swaps.
     /// @dev ID is global for all swaps, regardless if they are Pay Fixed or Receive Fixed in tenor 28, 60 or 90 days.

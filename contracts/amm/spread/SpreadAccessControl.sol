@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.20;
 
+import "../../interfaces/IIporContractCommonGov.sol";
 import "../../libraries/errors/AmmErrors.sol";
 import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/IporContractValidator.sol";
@@ -8,7 +9,7 @@ import "../../security/PauseManager.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
 
 /// @title Contract responsible for managing access control for the Spread Router
-contract SpreadAccessControl {
+contract SpreadAccessControl is IIporContractCommonGov {
     using IporContractValidator for address;
 
     event AppointedToTransferOwnership(address indexed appointedOwner);
@@ -75,13 +76,13 @@ contract SpreadAccessControl {
 
     /// @notice Pauses the contract.
     /// @dev Only the pause guardian can call this function.
-    function pause() external onlyPauseGuardian {
+    function pause() external override onlyPauseGuardian {
         _pause();
     }
 
     /// @notice Unpauses the contract.
     /// @dev Only the contract owner can call this function.
-    function unpause() external onlyOwner {
+    function unpause() external override onlyOwner {
         SpreadStorageLibs.getPaused().value = 0;
     }
 
@@ -94,21 +95,21 @@ contract SpreadAccessControl {
     /// @notice Checks if an address is a pause guardian.
     /// @param account The address to be checked.
     /// @return A boolean indicating whether the address is a pause guardian (true) or not (false).
-    function isPauseGuardian(address account) external view returns (bool) {
+    function isPauseGuardian(address account) external view override returns (bool) {
         return PauseManager.isPauseGuardian(account);
     }
 
     /// @notice Adds a new pause guardian to the contract.
     /// @param guardians The addresses of the new pause guardians.
     /// @dev Only the contract owner can call this function.
-    function addPauseGuardians(address[] calldata guardians) external onlyOwner {
+    function addPauseGuardians(address[] calldata guardians) external override onlyOwner {
         PauseManager.addPauseGuardians(guardians);
     }
 
     /// @notice Removes a pause guardian from the contract.
     /// @param guardians The list addresses of the pause guardians to be removed.
     /// @dev Only the contract owner can call this function.
-    function removePauseGuardians(address[] calldata guardians) external onlyOwner {
+    function removePauseGuardians(address[] calldata guardians) external override onlyOwner {
         PauseManager.removePauseGuardians(guardians);
     }
 
