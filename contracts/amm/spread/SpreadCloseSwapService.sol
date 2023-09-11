@@ -5,12 +5,13 @@ import "../../interfaces/IAmmStorage.sol";
 import "../../amm/spread/ISpreadCloseSwapService.sol";
 import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/errors/AmmErrors.sol";
+import "../../libraries/IporContractValidator.sol";
 import "../../amm/libraries/types/AmmInternalTypes.sol";
 import "../../amm/libraries/IporSwapLogic.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
 import "../../amm/spread/CalculateTimeWeightedNotionalLibs.sol";
-import "../../libraries/IporContractValidator.sol";
 
+/// @dev It is not recommended to use service contract directly, should be used only through SpreadRouter.
 contract SpreadCloseSwapService is ISpreadCloseSwapService {
     using IporContractValidator for address;
     using SafeCast for uint256;
@@ -25,6 +26,14 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
         _usdt = usdt.checkAddress();
     }
 
+    function getSupportedAssets() external view returns (address[] memory) {
+        address[] memory assets = new address[](3);
+        assets[0] = _dai;
+        assets[1] = _usdc;
+        assets[2] = _usdt;
+        return assets;
+    }
+
     function updateTimeWeightedNotionalOnClose(
         address asset,
         uint256 direction,
@@ -32,16 +41,15 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
         uint256 swapNotional,
         AmmInternalTypes.OpenSwapItem memory closedSwap,
         address ammStorageAddress
-    ) external {
+    ) external override {
         // @dev when timestamp is 0, it means that the swap was open in ipor-protocol v1 .
         if (closedSwap.openSwapTimestamp == 0) {
             return;
         }
         uint256 tenorInSeconds = IporSwapLogic.getTenorInSeconds(tenor);
         SpreadStorageLibs.StorageId storageId = _getStorageId(asset, tenor);
-        SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
-            storageId
-        );
+        SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional = SpreadStorageLibs
+            .getTimeWeightedNotionalForAssetAndTenor(storageId);
 
         uint256 timeWeightedNotionalAmount = direction == 0
             ? timeWeightedNotional.timeWeightedNotionalPayFixed
@@ -91,7 +99,7 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
             }
         }
 
-        SpreadStorageLibs.saveTimeWeightedNotional(storageId, timeWeightedNotional);
+        SpreadStorageLibs.saveTimeWeightedNotionalForAssetAndTenor(storageId, timeWeightedNotional);
     }
 
     function _getStorageId(

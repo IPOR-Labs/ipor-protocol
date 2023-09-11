@@ -16,16 +16,16 @@ import "../libraries/math/IporMath.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/AmmErrors.sol";
 import "../libraries/errors/AmmErrors.sol";
-import "../libraries/AmmLib.sol";
+import "../libraries/IporContractValidator.sol";
+import "../libraries/RiskManagementLogic.sol";
 import "./libraries/types/AmmInternalTypes.sol";
 import "./libraries/IporSwapLogic.sol";
-import "../libraries/IporContractValidator.sol";
 
+/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
     using Address for address;
     using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
-    using AmmLib for AmmInternalTypes.RiskIndicatorsContext;
 
     address internal immutable _usdt;
     uint256 internal immutable _usdtDecimals;
@@ -60,9 +60,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
     uint256 internal immutable _daiOpeningFeeRate;
     uint256 internal immutable _daiOpeningFeeTreasuryPortionRate;
 
-    address internal immutable _iporOracle;
-    address internal immutable _iporRiskManagementOracle;
-    address internal immutable _spreadRouter;
+    address public immutable iporOracle;
+    address public immutable iporRiskManagementOracle;
+    address public immutable spreadRouter;
 
     struct Context {
         address beneficiary;
@@ -76,9 +76,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         AmmOpenSwapServicePoolConfiguration memory usdtPoolCfg,
         AmmOpenSwapServicePoolConfiguration memory usdcPoolCfg,
         AmmOpenSwapServicePoolConfiguration memory daiPoolCfg,
-        address iporOracle,
-        address iporRiskManagementOracle,
-        address spreadRouter
+        address iporOracleInput,
+        address iporRiskManagementOracleInput,
+        address spreadRouterInput
     ) {
         _usdt = usdtPoolCfg.asset.checkAddress();
         _usdtDecimals = usdtPoolCfg.decimals;
@@ -113,9 +113,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         _daiOpeningFeeRate = daiPoolCfg.openingFeeRate;
         _daiOpeningFeeTreasuryPortionRate = daiPoolCfg.openingFeeTreasuryPortionRate;
 
-        _iporOracle = iporOracle.checkAddress();
-        _iporRiskManagementOracle = iporRiskManagementOracle.checkAddress();
-        _spreadRouter = spreadRouter.checkAddress();
+        iporOracle = iporOracleInput.checkAddress();
+        iporRiskManagementOracle = iporRiskManagementOracleInput.checkAddress();
+        spreadRouter = spreadRouterInput.checkAddress();
     }
 
     function getAmmOpenSwapServicePoolConfiguration(
@@ -464,7 +464,14 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 
-        AmmTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(ctx, balance.liquidityPool, 0);
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicators = RiskManagementLogic.getRiskIndicators(
+            ctx.poolCfg.asset,
+            0,
+            ctx.tenor,
+            balance.liquidityPool,
+            ctx.poolCfg.minLeverage,
+            iporRiskManagementOracle
+        );
 
         _validateLiquidityPoolCollateralRatioAndSwapLeverage(
             balance.liquidityPool,
@@ -478,7 +485,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         );
 
         uint256 offeredRateValue = abi.decode(
-            _spreadRouter.functionCall(
+            spreadRouter.functionCall(
                 abi.encodeWithSelector(
                     ctx.spreadMethodSig,
                     ctx.poolCfg.asset,
@@ -564,7 +571,14 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralReceiveFixed = balance.totalCollateralReceiveFixed + bosStruct.collateral;
 
-        AmmTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(ctx, balance.liquidityPool, 1);
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicators = RiskManagementLogic.getRiskIndicators(
+            ctx.poolCfg.asset,
+            1,
+            ctx.tenor,
+            balance.liquidityPool,
+            ctx.poolCfg.minLeverage,
+            iporRiskManagementOracle
+        );
 
         _validateLiquidityPoolCollateralRatioAndSwapLeverage(
             balance.liquidityPool,
@@ -578,7 +592,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         );
 
         uint256 offeredRateValue = abi.decode(
-            _spreadRouter.functionCall(
+            spreadRouter.functionCall(
                 abi.encodeWithSelector(
                     ctx.spreadMethodSig,
                     ctx.poolCfg.asset,
@@ -680,7 +694,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
             wadTotalAmount > wadLiquidationDepositAmount + poolCfg.iporPublicationFee + openingFeeAmount,
             AmmErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
-        IporTypes.AccruedIpor memory accruedIndex = IIporOracle(_iporOracle).getAccruedIndex(
+        IporTypes.AccruedIpor memory accruedIndex = IIporOracle(iporOracle).getAccruedIndex(
             openTimestamp,
             poolCfg.asset
         );
@@ -696,21 +710,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 poolCfg.liquidationDepositAmount,
                 accruedIndex
             );
-    }
-
-    function _getRiskIndicators(
-        Context memory ctx,
-        uint256 liquidityPoolBalance,
-        uint256 direction
-    ) internal view virtual returns (AmmTypes.OpenSwapRiskIndicators memory riskIndicators) {
-        AmmInternalTypes.RiskIndicatorsContext memory riskIndicatorsContext;
-        riskIndicatorsContext.asset = ctx.poolCfg.asset;
-        riskIndicatorsContext.iporRiskManagementOracle = _iporRiskManagementOracle;
-        riskIndicatorsContext.tenor = ctx.tenor;
-        riskIndicatorsContext.liquidityPoolBalance = liquidityPoolBalance;
-        riskIndicatorsContext.minLeverage = ctx.poolCfg.minLeverage;
-
-        riskIndicators = riskIndicatorsContext.getRiskIndicators(direction);
     }
 
     function _emitOpenSwapEvent(

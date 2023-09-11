@@ -44,11 +44,13 @@ contract SpreadAccessControlTest is TestCommons {
     function testShouldBeAbleToAddPauseGuardian() external {
         // given
         address newPauseGuardian = _getUserAddress(11);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = newPauseGuardian;
         bool isPauseGuardianBefore = SpreadAccessControl(_routerAddress).isPauseGuardian(newPauseGuardian);
 
         // when
         vm.prank(_owner);
-        SpreadAccessControl(_routerAddress).addPauseGuardian(newPauseGuardian);
+        SpreadAccessControl(_routerAddress).addPauseGuardians(pauseGuardians);
 
 
         // then
@@ -58,20 +60,21 @@ contract SpreadAccessControlTest is TestCommons {
 
     function testShouldNotBeAbleToPauseWhenNotPauseGuardian() external {
         // given
-        address pauseGuardian = _getUserAddress(11);
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _getUserAddress(11);
         address notPauseGuardian = _getUserAddress(12);
         uint256 isPausedBefore = SpreadAccessControl(_routerAddress).paused();
 
         // when
         vm.prank(_owner);
-        SpreadAccessControl(_routerAddress).addPauseGuardian(pauseGuardian);
+        SpreadAccessControl(_routerAddress).addPauseGuardians(pauseGuardians);
 
         vm.prank(notPauseGuardian);
         vm.expectRevert(bytes(IporErrors.CALLER_NOT_GUARDIAN));
         SpreadAccessControl(_routerAddress).pause();
 
         // then
-        assertTrue(SpreadAccessControl(_routerAddress).isPauseGuardian(pauseGuardian), "pause guardian should be added");
+        assertTrue(SpreadAccessControl(_routerAddress).isPauseGuardian(pauseGuardians[0]), "pause guardian should be added");
         assertFalse(SpreadAccessControl(_routerAddress).isPauseGuardian(notPauseGuardian), "pause guardian should not be added");
         assertTrue(isPausedBefore == 0, "router should not be paused");
         assertTrue(SpreadAccessControl(_routerAddress).paused() == 0, "router should not be paused");

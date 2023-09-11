@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "../interfaces/types/IporTypes.sol";
 import "../interfaces/types/AmmTypes.sol";
 import "../interfaces/IIpToken.sol";
@@ -12,11 +13,12 @@ import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/AmmErrors.sol";
 import "../libraries/errors/AmmPoolsErrors.sol";
 import "../libraries/math/IporMath.sol";
+import "../libraries/IporContractValidator.sol";
 import "../libraries/AssetManagementLogic.sol";
 import "../libraries/AmmLib.sol";
 import "../governance/AmmConfigurationManager.sol";
-import "../libraries/IporContractValidator.sol";
 
+/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmPoolsService is IAmmPoolsService {
     using IporContractValidator for address;
     using SafeCast for int256;
@@ -52,13 +54,13 @@ contract AmmPoolsService is IAmmPoolsService {
     uint256 internal immutable _daiRedeemFeeRate;
     uint256 internal immutable _daiRedeemLpMaxCollateralRatio;
 
-    address internal immutable _iporOracle;
+    address public immutable iporOracle;
 
     constructor(
         AmmPoolsServicePoolConfiguration memory usdtPoolCfg,
         AmmPoolsServicePoolConfiguration memory usdcPoolCfg,
         AmmPoolsServicePoolConfiguration memory daiPoolCfg,
-        address iporOracle
+        address iporOracleInput
     ) {
         _usdt = usdtPoolCfg.asset.checkAddress();
         _usdtDecimals = usdtPoolCfg.decimals;
@@ -87,7 +89,18 @@ contract AmmPoolsService is IAmmPoolsService {
         _daiRedeemFeeRate = daiPoolCfg.redeemFeeRate;
         _daiRedeemLpMaxCollateralRatio = daiPoolCfg.redeemLpMaxCollateralRatio;
 
-        _iporOracle = iporOracle.checkAddress();
+        iporOracle = iporOracleInput.checkAddress();
+
+        require(
+            _usdtRedeemFeeRate <= 1e18 && _usdcRedeemFeeRate <= 1e18 && _daiRedeemFeeRate <= 1e18,
+            AmmPoolsErrors.CFG_INVALID_REDEEM_FEE_RATE
+        );
+        require(
+            _usdtRedeemLpMaxCollateralRatio <= 1e18 &&
+                _usdcRedeemLpMaxCollateralRatio <= 1e18 &&
+                _daiRedeemLpMaxCollateralRatio <= 1e18,
+            AmmPoolsErrors.CFG_INVALID_REDEEM_LP_MAX_COLLATERAL_RATIO
+        );
     }
 
     function getAmmPoolServiceConfiguration(
@@ -137,27 +150,27 @@ contract AmmPoolsService is IAmmPoolsService {
             poolCfg.decimals
         );
 
-        uint256 totalBalance = wadAmmTreasuryAssetBalance +
-            IAssetManagement(poolCfg.assetManagement).totalBalance(poolCfg.ammTreasury);
+        uint256 totalBalance = wadAmmTreasuryAssetBalance + IAssetManagement(poolCfg.assetManagement).totalBalance();
 
         require(totalBalance > 0, AmmPoolsErrors.ASSET_MANAGEMENT_BALANCE_IS_EMPTY);
 
         uint256 ratio = IporMath.division(wadAmmTreasuryAssetBalance * 1e18, totalBalance);
 
+        /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals, example 45% = 4500, so to achieve number in 18 decimals we need to multiply by 1e14
         uint256 ammTreasuryAssetManagementBalanceRatio = uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) *
             1e14;
 
         if (ratio > ammTreasuryAssetManagementBalanceRatio) {
-            uint256 assetAmount = wadAmmTreasuryAssetBalance -
+            uint256 wadAssetAmount = wadAmmTreasuryAssetBalance -
                 IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18);
-            if (assetAmount > 0) {
-                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagementInternal(assetAmount);
+            if (wadAssetAmount > 0) {
+                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagementInternal(wadAssetAmount);
             }
         } else {
-            uint256 assetAmount = IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18) -
+            uint256 wadAssetAmount = IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18) -
                 wadAmmTreasuryAssetBalance;
-            if (assetAmount > 0) {
-                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagementInternal(assetAmount);
+            if (wadAssetAmount > 0) {
+                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagementInternal(wadAssetAmount);
             }
         }
     }
@@ -174,7 +187,7 @@ contract AmmPoolsService is IAmmPoolsService {
         model.ammStorage = poolCfg.ammStorage;
         model.ammTreasury = poolCfg.ammTreasury;
         model.assetManagement = poolCfg.assetManagement;
-        model.iporOracle = _iporOracle;
+        model.iporOracle = iporOracle;
         IporTypes.AmmBalancesMemory memory balance = model.getAccruedBalance();
         uint256 exchangeRate = model.getExchangeRate(balance.liquidityPool);
         require(exchangeRate > 0, AmmErrors.LIQUIDITY_POOL_IS_EMPTY);
@@ -197,7 +210,7 @@ contract AmmPoolsService is IAmmPoolsService {
         _rebalanceIfNeededAfterProvideLiquidity(poolCfg, ammPoolsParamsCfg, balance.vault, wadAssetAmount);
 
         emit ProvideLiquidity(
-            block.timestamp,
+            msg.sender,
             beneficiary,
             poolCfg.ammTreasury,
             exchangeRate,
@@ -221,7 +234,7 @@ contract AmmPoolsService is IAmmPoolsService {
         model.ammStorage = poolCfg.ammStorage;
         model.ammTreasury = poolCfg.ammTreasury;
         model.assetManagement = poolCfg.assetManagement;
-        model.iporOracle = _iporOracle;
+        model.iporOracle = iporOracle;
 
         IporTypes.AmmBalancesMemory memory balance = model.getAccruedBalance();
 
@@ -274,7 +287,6 @@ contract AmmPoolsService is IAmmPoolsService {
         IERC20Upgradeable(asset).safeTransferFrom(poolCfg.ammTreasury, beneficiary, redeemAmountStruct.redeemAmount);
 
         emit Redeem(
-            block.timestamp,
             poolCfg.ammTreasury,
             beneficiary,
             exchangeRate,
@@ -356,6 +368,7 @@ contract AmmPoolsService is IAmmPoolsService {
         uint256 vaultBalance,
         uint256 wadOperationAmount
     ) internal {
+        /// @dev 1e21 explanation: autoRebalanceThresholdInThousands represents value in thousands without decimals, example threshold=10 it is 10_000*1e18, so to achieve number in 18 decimals we need to multiply by 1e21
         uint256 autoRebalanceThreshold = uint256(ammPoolsParamsCfg.autoRebalanceThresholdInThousands) * 1e21;
 
         if (autoRebalanceThreshold > 0 && wadOperationAmount >= autoRebalanceThreshold) {
@@ -366,6 +379,7 @@ contract AmmPoolsService is IAmmPoolsService {
                     poolCfg.decimals
                 ),
                 vaultBalance,
+                /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals, example 45% = 4500, so to achieve number in 18 decimals we need to multiply by 1e14
                 uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) * 1e14
             );
 
@@ -403,6 +417,7 @@ contract AmmPoolsService is IAmmPoolsService {
             poolCfg.asset
         );
 
+        /// @dev 1e21 explanation: autoRebalanceThresholdInThousands represents value in thousands without decimals, example threshold=10 it is 10_000*1e18, so to achieve number in 18 decimals we need to multiply by 1e21
         uint256 autoRebalanceThreshold = uint256(ammPoolsParamsCfg.autoRebalanceThresholdInThousands) * 1e21;
 
         if (
@@ -413,6 +428,7 @@ contract AmmPoolsService is IAmmPoolsService {
                 wadAmmTreasuryErc20Balance,
                 vaultBalance,
                 wadOperationAmount,
+                /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals, example 45% = 4500, so to achieve number in 18 decimals we need to multiply by 1e14
                 uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) * 1e14
             );
 

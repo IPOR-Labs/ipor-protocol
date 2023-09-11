@@ -19,10 +19,10 @@ import "../interfaces/IAmmPoolsService.sol";
 import "../interfaces/IPowerTokenFlowsService.sol";
 import "../interfaces/IPowerTokenStakeService.sol";
 import "../interfaces/IProxyImplementation.sol";
+import "../amm-eth/interfaces/IAmmPoolsServiceEth.sol";
+import "../amm-eth/interfaces/IAmmPoolsLensEth.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/IporContractValidator.sol";
-import "../amm-eth/interfaces/IAmmPoolsLensEth.sol";
-import "../amm-eth/interfaces/IAmmPoolsServiceEth.sol";
 import "./AccessControl.sol";
 
 /// @title Entry point for IPOR protocol
@@ -35,7 +35,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
 
     address public immutable _ammSwapsLens;
     address public immutable _ammPoolsLens;
-    address public immutable _ammManagementLens;
+    address public immutable _assetManagementLens;
     address public immutable _ammOpenSwapService;
     address public immutable _ammCloseSwapService;
     address public immutable _ammPoolsService;
@@ -66,7 +66,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
     constructor(DeployedContracts memory deployedContracts) {
         _ammSwapsLens = deployedContracts.ammSwapsLens.checkAddress();
         _ammPoolsLens = deployedContracts.ammPoolsLens.checkAddress();
-        _ammManagementLens = deployedContracts.assetManagementLens.checkAddress();
+        _assetManagementLens = deployedContracts.assetManagementLens.checkAddress();
         _ammOpenSwapService = deployedContracts.ammOpenSwapService.checkAddress();
         _ammCloseSwapService = deployedContracts.ammCloseSwapService.checkAddress();
         _ammPoolsService = deployedContracts.ammPoolsService.checkAddress();
@@ -103,7 +103,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             DeployedContracts({
                 ammSwapsLens: _ammSwapsLens,
                 ammPoolsLens: _ammPoolsLens,
-                assetManagementLens: _ammManagementLens,
+                assetManagementLens: _assetManagementLens,
                 ammOpenSwapService: _ammOpenSwapService,
                 ammCloseSwapService: _ammCloseSwapService,
                 ammPoolsService: _ammPoolsService,
@@ -266,7 +266,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             sig == IAmmSwapsLens.getBalancesForOpenSwap.selector ||
             sig == IAmmSwapsLens.getSoap.selector ||
             sig == IAmmSwapsLens.getOpenSwapRiskIndicators.selector ||
-            sig == IAmmSwapsLens.getOfferedRate.selector
+            sig == IAmmSwapsLens.getOfferedRate.selector ||
+            sig == IAmmSwapsLens.getSwapLensPoolConfiguration.selector
         ) {
             return _ammSwapsLens;
         } else if (
@@ -277,11 +278,9 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             return _ammPoolsLens;
         } else if (
             sig == IAssetManagementLens.balanceOfAmmTreasuryInAssetManagement.selector ||
-            sig == IAssetManagementLens.balanceOfStrategyAave.selector ||
-            sig == IAssetManagementLens.balanceOfStrategyCompound.selector ||
-            sig == IAssetManagementLens.getIvTokenExchangeRate.selector
+            sig == IAssetManagementLens.getAssetManagementConfiguration.selector
         ) {
-            return _ammManagementLens;
+            return _assetManagementLens;
         } else if (
             sig == ILiquidityMiningLens.balanceOfLpTokensStakedInLiquidityMining.selector ||
             sig == ILiquidityMiningLens.balanceOfPowerTokensDelegatedToLiquidityMining.selector ||
@@ -309,6 +308,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             return _ammCloseSwapService;
         } else if (sig == IAmmPoolsLensEth.getIpstEthExchangeRate.selector) {
             return _ammPoolsLensEth;
+        } else if (sig == IAmmPoolsService.getAmmPoolServiceConfiguration.selector) {
+            return _ammPoolsService;
         }
 
         revert(IporErrors.ROUTER_INVALID_SIGNATURE);

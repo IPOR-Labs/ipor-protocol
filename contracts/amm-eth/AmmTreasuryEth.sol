@@ -31,12 +31,12 @@ contract AmmTreasuryEth is
     address public immutable router;
 
     modifier onlyPauseGuardian() {
-        require(PauseManager.isPauseGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
+        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
         _;
     }
 
     modifier onlyRouter() {
-        require(_msgSender() == router, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
+        require(msg.sender == router, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
         _;
     }
 
@@ -81,12 +81,12 @@ contract AmmTreasuryEth is
         return PauseManager.isPauseGuardian(account);
     }
 
-    function addPauseGuardian(address guardian) external override onlyOwner {
-        PauseManager.addPauseGuardian(guardian);
+    function addPauseGuardians(address[] calldata guardians) external override onlyOwner {
+        PauseManager.addPauseGuardians(guardians);
     }
 
-    function removePauseGuardian(address guardian) external override onlyOwner {
-        PauseManager.removePauseGuardian(guardian);
+    function removePauseGuardians(address[] calldata guardians) external override onlyOwner {
+        PauseManager.removePauseGuardians(guardians);
     }
 
     function getImplementation() external view override returns (address) {

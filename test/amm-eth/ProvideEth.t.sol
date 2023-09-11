@@ -7,7 +7,6 @@ import "../../contracts/libraries/errors/AmmErrors.sol";
 
 contract ProvideEth is TestEthMarketCommons {
     event ProvideLiquidityEth(
-        uint256 timestamp,
         address indexed from,
         address indexed beneficiary,
         address indexed to,
@@ -18,7 +17,6 @@ contract ProvideEth is TestEthMarketCommons {
     );
 
     event RedeemStEth(
-        uint256 timestamp,
         address indexed ammTreasuryEth,
         address indexed from,
         address indexed beneficiary,
@@ -289,7 +287,6 @@ contract ProvideEth is TestEthMarketCommons {
         vm.expectEmit(true, true, true, true);
         //then
         emit ProvideLiquidityEth(
-            block.timestamp,
             userOne,
             userTwo,
             ammTreasuryEth,
@@ -318,7 +315,6 @@ contract ProvideEth is TestEthMarketCommons {
         vm.expectEmit(true, true, true, true);
         //then
         emit RedeemStEth(
-            block.timestamp,
             ammTreasuryEth,
             userTwo,
             userOne,

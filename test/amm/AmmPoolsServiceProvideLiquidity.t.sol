@@ -10,6 +10,15 @@ contract AmmPoolsServiceProvideLiquidity is TestCommons {
     IporProtocolFactory.IporProtocolConfig private _cfg;
     BuilderUtils.IporProtocol internal _iporProtocol;
 
+    event ProvideLiquidity(
+        address indexed from,
+        address indexed beneficiary,
+        address indexed to,
+        uint256 exchangeRate,
+        uint256 assetAmount,
+        uint256 ipTokenAmount
+    );
+
     function setUp() public {
         _admin = address(this);
         _userOne = _getUserAddress(1);
@@ -21,6 +30,24 @@ contract AmmPoolsServiceProvideLiquidity is TestCommons {
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
         _cfg.iporRiskManagementOracleUpdater = _userOne;
+    }
+
+    function testShouldEmitCorrectEventWhenProvideLiquidity() public {
+        // given
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
+        // when
+        vm.expectEmit(true, true, true, true);
+        emit ProvideLiquidity(
+            _liquidityProvider,
+            _userOne,
+            address(_iporProtocol.ammTreasury),
+            1000000000000000000,
+            TestConstants.USD_14_000_18DEC,
+            14000000000000000000000
+        );
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_userOne, TestConstants.USD_14_000_18DEC);
     }
 
     function testShouldProvideLiquidityAndTakeIpTokenWhenSimpleCase1And18Decimals() public {
@@ -48,8 +75,11 @@ contract AmmPoolsServiceProvideLiquidity is TestCommons {
 
         bytes4[] memory methods = new bytes4[](1);
         methods[0] = _iporProtocol.ammPoolsService.provideLiquidityDai.selector;
+
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
         vm.prank(_admin);
-        AccessControl(router).addPauseGuardian(_admin);
+        AccessControl(router).addPauseGuardians(pauseGuardians);
         vm.prank(_admin);
         AccessControl(router).pause(methods);
         uint256 isPausedBefore = AccessControl(address(_iporProtocol.router)).paused(
@@ -83,8 +113,10 @@ contract AmmPoolsServiceProvideLiquidity is TestCommons {
         address router = address(_iporProtocol.router);
         bytes4[] memory methods = new bytes4[](1);
         methods[0] = _iporProtocol.ammPoolsService.provideLiquidityDai.selector;
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = _admin;
         vm.prank(_admin);
-        AccessControl(router).addPauseGuardian(_admin);
+        AccessControl(router).addPauseGuardians(pauseGuardians);
         vm.prank(_admin);
         AccessControl(router).pause(methods);
         uint256 isPausedBefore = AccessControl(address(_iporProtocol.router)).paused(

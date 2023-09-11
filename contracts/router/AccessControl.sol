@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.20;
-
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/StorageLib.sol";
 import "../security/PauseManager.sol";
@@ -28,10 +27,7 @@ contract AccessControl {
 
     /// @notice Checks if sender is appointed owner
     modifier onlyAppointedOwner() {
-        require(
-            address(StorageLib.getAppointedOwner().appointedOwner) == msg.sender,
-            IporErrors.SENDER_NOT_APPOINTED_OWNER
-        );
+        require(StorageLib.getAppointedOwner().appointedOwner == msg.sender, IporErrors.SENDER_NOT_APPOINTED_OWNER);
         _;
     }
 
@@ -108,16 +104,16 @@ contract AccessControl {
         return PauseManager.isPauseGuardian(account);
     }
 
-    /// @notice Adds new pause guardian
-    /// @param guardian New pause guardian address
-    function addPauseGuardian(address guardian) external onlyOwner {
-        PauseManager.addPauseGuardian(guardian);
+    /// @notice Adds new pause guardians
+    /// @param guardians List of new pause guardians addresses
+    function addPauseGuardians(address[] calldata guardians) external onlyOwner {
+        PauseManager.addPauseGuardians(guardians);
     }
 
     /// @notice Removes pause guardian
-    /// @param guardian Pause guardian address
-    function removePauseGuardian(address guardian) external onlyOwner {
-        PauseManager.removePauseGuardian(guardian);
+    /// @param guardians List of pause guardians addresses
+    function removePauseGuardians(address[] calldata guardians) external onlyOwner {
+        PauseManager.removePauseGuardians(guardians);
     }
 
     function _checkFunctionSigAndIsNotPause(bytes4 functionSig, bytes4 expectedSig) internal view returns (bool) {
@@ -129,7 +125,7 @@ contract AccessControl {
     }
 
     function _onlyOwner() internal view {
-        require(address(StorageLib.getOwner().owner) == msg.sender, IporErrors.CALLER_NOT_OWNER);
+        require(StorageLib.getOwner().owner == msg.sender, IporErrors.CALLER_NOT_OWNER);
     }
 
     function _nonReentrantBefore() internal {

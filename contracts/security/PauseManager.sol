@@ -6,12 +6,12 @@ import "../libraries/StorageLib.sol";
 /// @title Ipor Protocol Router Pause Manager library
 library PauseManager {
     /// @notice Emitted when new pause guardian is added
-    /// @param guardian Address of guardian
-    event PauseGuardianAdded(address indexed guardian);
+    /// @param guardians List of addresses of guardian
+    event PauseGuardiansAdded(address[] indexed guardians);
 
     /// @notice Emitted when pause guardian is removed
-    /// @param guardian Address of guardian
-    event PauseGuardianRemoved(address indexed guardian);
+    /// @param guardians List of addresses of guardian
+    event PauseGuardiansRemoved(address[] indexed guardians);
 
     /// @notice Checks if account is Ipor Protocol Router pause guardian
     /// @param account Address of guardian
@@ -22,18 +22,41 @@ library PauseManager {
     }
 
     /// @notice Adds Ipor Protocol Router pause guardian
-    /// @param newGuardian Address of guardian
-    function addPauseGuardian(address newGuardian) internal {
+    /// @param newGuardians Addresses of guardians
+    function addPauseGuardians(address[] calldata newGuardians) internal {
+        uint256 length = newGuardians.length;
+        if (length == 0) {
+            return;
+        }
+
         mapping(address => bool) storage pauseGuardians = StorageLib.getPauseGuardianStorage();
-        pauseGuardians[newGuardian] = true;
-        emit PauseGuardianAdded(newGuardian);
+
+        for (uint256 i; i < length; ) {
+            pauseGuardians[newGuardians[i]] = true;
+            unchecked {
+                i++;
+            }
+        }
+        emit PauseGuardiansAdded(newGuardians);
     }
 
     /// @notice Removes Ipor Protocol Router pause guardian
-    /// @param guardian Address of guardian
-    function removePauseGuardian(address guardian) internal {
+    /// @param guardians Addresses of guardians
+    function removePauseGuardians(address[] calldata guardians) internal {
+        uint256 length = guardians.length;
+
+        if (length == 0) {
+            return;
+        }
+
         mapping(address => bool) storage pauseGuardians = StorageLib.getPauseGuardianStorage();
-        pauseGuardians[guardian] = false;
-        emit PauseGuardianRemoved(guardian);
+
+        for (uint256 i; i < length; ) {
+            pauseGuardians[guardians[i]] = false;
+            unchecked {
+                i++;
+            }
+        }
+        emit PauseGuardiansRemoved(guardians);
     }
 }

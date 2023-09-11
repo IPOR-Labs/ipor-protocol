@@ -75,7 +75,7 @@ contract VaultUsdtCompoundTest is Test {
         uint256 ammTreasuryTotalBalanceOnAssetManagementBefore = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
 
         // when
-        vm.expectRevert(abi.encodePacked(AmmErrors.INTEREST_FROM_STRATEGY_BELOW_ZERO));
+        vm.expectRevert(abi.encodePacked(AmmErrors.INTEREST_FROM_STRATEGY_EXCEEDED_THRESHOLD));
         joseph.withdrawFromAssetManagement(10_000 * 1e18);
 
         // then

@@ -21,6 +21,9 @@ interface IAmmPoolsLens {
         address assetManagement;
     }
 
+    /// @notice Gets Ipor Orale address
+    function iporOracle() external view returns (address);
+
     /// @notice Retrieves the configuration of a specific asset's pool.
     /// @param asset The address of the asset.
     /// @return PoolConfiguration The pool's configuration.
@@ -36,5 +39,4 @@ interface IAmmPoolsLens {
     /// @param asset The address of the asset.
     /// @return IporTypes.AmmBalancesMemory The balance of the AMM Treasury.
     function getAmmBalance(address asset) external view returns (IporTypes.AmmBalancesMemory memory);
-
 }

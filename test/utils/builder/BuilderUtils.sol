@@ -2,7 +2,6 @@
 pragma solidity 0.8.20;
 
 import "../../../contracts/tokens/IpToken.sol";
-import "../../../contracts/tokens/IvToken.sol";
 import "../../../contracts/oracles/IporOracle.sol";
 import "../../../contracts/oracles/IporRiskManagementOracle.sol";
 import "../../mocks/MockIporWeighted.sol";
@@ -30,7 +29,6 @@ contract BuilderUtils {
         IAmmGovernanceLens ammGovernanceLens;
         MockTestnetToken asset;
         IpToken ipToken;
-        IvToken ivToken;
         IporOracle iporOracle;
         IporRiskManagementOracle iporRiskManagementOracle;
         MockIporWeighted iporWeighted;
@@ -111,7 +109,10 @@ contract BuilderUtils {
 
     enum AmmCloseSwapServiceTestCase {
         DEFAULT,
-        CASE1
+        /// @dev unwindFee = 99%
+        CASE1,
+        /// @dev unwindFee = 15%
+        CASE2
     }
 
     enum AmmPoolsServiceTestCase {

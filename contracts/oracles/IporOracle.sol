@@ -9,6 +9,7 @@ import "../interfaces/types/IporTypes.sol";
 import "../interfaces/types/IporOracleTypes.sol";
 import "../interfaces/IIporOracle.sol";
 import "../interfaces/IProxyImplementation.sol";
+import "../interfaces/IIporContractCommonGov.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/IporOracleErrors.sol";
 import "../libraries/Constants.sol";
@@ -29,7 +30,8 @@ contract IporOracle is
     UUPSUpgradeable,
     IporOwnableUpgradeable,
     IIporOracle,
-    IProxyImplementation
+    IProxyImplementation,
+    IIporContractCommonGov
 {
     using SafeCast for uint256;
     using IporLogic for IporOracleTypes.IPOR;
@@ -45,12 +47,12 @@ contract IporOracle is
     mapping(address => IporOracleTypes.IPOR) internal _indexes;
 
     modifier onlyPauseGuardian() {
-        require(PauseManager.isPauseGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
+        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
         _;
     }
 
     modifier onlyUpdater() {
-        require(_updaters[_msgSender()] == 1, IporOracleErrors.CALLER_NOT_UPDATER);
+        require(_updaters[msg.sender] == 1, IporOracleErrors.CALLER_NOT_UPDATER);
         _;
     }
 
@@ -221,12 +223,12 @@ contract IporOracle is
         return PauseManager.isPauseGuardian(account);
     }
 
-    function addPauseGuardian(address guardian) external override onlyOwner {
-        PauseManager.addPauseGuardian(guardian);
+    function addPauseGuardians(address[] calldata guardians) external override onlyOwner {
+        PauseManager.addPauseGuardians(guardians);
     }
 
-    function removePauseGuardian(address guardian) external override onlyOwner {
-        PauseManager.removePauseGuardian(guardian);
+    function removePauseGuardians(address[] calldata guardians) external override onlyOwner {
+        PauseManager.removePauseGuardians(guardians);
     }
 
     function getImplementation() external view override returns (address) {

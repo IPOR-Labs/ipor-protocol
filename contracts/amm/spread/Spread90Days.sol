@@ -6,11 +6,12 @@ import "../../amm/spread/ISpread90Days.sol";
 import "../../amm/spread/ISpread90DaysLens.sol";
 import "../../libraries/errors/IporOracleErrors.sol";
 import "../../libraries/errors/IporErrors.sol";
+import "../../libraries/IporContractValidator.sol";
 import "../../amm/spread/DemandSpreadLibs.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
 import "../../amm/spread/OfferedRateCalculationLibs.sol";
-import "../../libraries/IporContractValidator.sol";
 
+/// @dev This contract cannot be used directly, should be used only through SpreadRouter.
 contract Spread90Days is ISpread90Days, ISpread90DaysLens {
     using IporContractValidator for address;
     using SafeCast for uint256;
@@ -97,9 +98,8 @@ contract Spread90Days is ISpread90Days, ISpread90DaysLens {
 
         spreadValue = DemandSpreadLibs.calculatePayFixedSpread(inputData);
 
-        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
-            inputData.timeWeightedNotionalStorageId
-        );
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs
+            .getTimeWeightedNotionalForAssetAndTenor(inputData.timeWeightedNotionalStorageId);
 
         CalculateTimeWeightedNotionalLibs.updateTimeWeightedNotionalPayFixed(
             weightedNotional,
@@ -123,9 +123,8 @@ contract Spread90Days is ISpread90Days, ISpread90DaysLens {
 
         spreadValue = DemandSpreadLibs.calculateReceiveFixedSpread(inputData);
 
-        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getTimeWeightedNotional(
-            inputData.timeWeightedNotionalStorageId
-        );
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs
+            .getTimeWeightedNotionalForAssetAndTenor(inputData.timeWeightedNotionalStorageId);
 
         CalculateTimeWeightedNotionalLibs.updateTimeWeightedNotionalReceiveFixed(
             weightedNotional,
@@ -148,7 +147,8 @@ contract Spread90Days is ISpread90Days, ISpread90DaysLens {
             maxLpCollateralRatioPerLegRate: spreadInputs.maxLpCollateralRatioPerLegRate,
             tenorsInSeconds: new uint256[](3),
             timeWeightedNotionalStorageIds: new SpreadStorageLibs.StorageId[](3),
-            timeWeightedNotionalStorageId: SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysDai
+            timeWeightedNotionalStorageId: SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysDai,
+            selectedTenorInSeconds: 90 days
         });
 
         inputData.tenorsInSeconds[0] = 28 days;

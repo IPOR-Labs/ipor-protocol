@@ -89,7 +89,7 @@ contract AmmTreasuryBuilder is Test {
         }
 
         ammTreasury.upgradeTo(implementation);
-
+        delete builderData;
         vm.stopPrank();
     }
 

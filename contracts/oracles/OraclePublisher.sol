@@ -7,6 +7,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../interfaces/IOraclePublisher.sol";
 import "../interfaces/IProxyImplementation.sol";
+import "../interfaces/IIporContractCommonGov.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/IporOracleErrors.sol";
 import "../security/PauseManager.sol";
@@ -23,7 +24,8 @@ contract OraclePublisher is
     UUPSUpgradeable,
     IporOwnableUpgradeable,
     IOraclePublisher,
-    IProxyImplementation
+    IProxyImplementation,
+    IIporContractCommonGov
 {
     using Address for address;
 
@@ -33,12 +35,12 @@ contract OraclePublisher is
     mapping(address => uint256) internal _updaters;
 
     modifier onlyPauseGuardian() {
-        require(PauseManager.isPauseGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
+        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
         _;
     }
 
     modifier onlyUpdater() {
-        require(_updaters[_msgSender()] == 1, IporOracleErrors.CALLER_NOT_UPDATER);
+        require(_updaters[msg.sender] == 1, IporOracleErrors.CALLER_NOT_UPDATER);
         _;
     }
 
@@ -66,18 +68,22 @@ contract OraclePublisher is
     }
 
     function getConfiguration() external view returns (address iporOracle, address iporRiskManagementOracle) {
-        return (address(_iporOracle), address(_iporRiskManagementOracle));
+        return (_iporOracle, _iporRiskManagementOracle);
     }
 
     function publish(address[] memory addresses, bytes[] calldata calls) external override onlyUpdater whenNotPaused {
         uint256 addressesLength = addresses.length;
         require(addressesLength == calls.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
-        for (uint256 i = 0; i < addressesLength; i++) {
+        for (uint256 i; i < addressesLength; ) {
             require(
                 addresses[i] == _iporOracle || addresses[i] == _iporRiskManagementOracle,
                 IporOracleErrors.INVALID_ORACLE_ADDRESS
             );
             addresses[i].functionCall(calls[i]);
+
+            unchecked {
+                ++i;
+            }
         }
     }
 
@@ -107,12 +113,12 @@ contract OraclePublisher is
         return PauseManager.isPauseGuardian(account);
     }
 
-    function addPauseGuardian(address guardian) external override onlyOwner {
-        PauseManager.addPauseGuardian(guardian);
+    function addPauseGuardians(address[] calldata guardians) external override onlyOwner {
+        PauseManager.addPauseGuardians(guardians);
     }
 
-    function removePauseGuardian(address guardian) external override onlyOwner {
-        PauseManager.removePauseGuardian(guardian);
+    function removePauseGuardians(address[] calldata guardians) external override onlyOwner {
+        PauseManager.removePauseGuardians(guardians);
     }
 
     function getImplementation() external view override returns (address) {

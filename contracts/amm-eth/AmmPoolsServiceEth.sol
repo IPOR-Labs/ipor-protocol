@@ -10,9 +10,10 @@ import "../interfaces/IIpToken.sol";
 import "../governance/AmmConfigurationManager.sol";
 import "./interfaces/IStETH.sol";
 import "./interfaces/IWETH9.sol";
-import "./AmmLibEth.sol";
 import "./interfaces/IAmmPoolsServiceEth.sol";
+import "./AmmLibEth.sol";
 
+/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
     using IporContractValidator for address;
     using SafeERC20 for IStETH;
@@ -22,7 +23,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
     address public immutable wEth;
     address public immutable ipstEth;
     address public immutable ammTreasuryEth;
-    uint256 public immutable redeemFeeRateEth;
+    uint256 public immutable redeemFeeRateStEth;
     address public immutable iporProtocolRouter;
 
     constructor(
@@ -38,7 +39,9 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         ipstEth = ipstEthInput.checkAddress();
         ammTreasuryEth = ammTreasuryEthInput.checkAddress();
         iporProtocolRouter = iporProtocolRouterInput.checkAddress();
-        redeemFeeRateEth = ethRedeemFeeRateInput;
+        redeemFeeRateStEth = ethRedeemFeeRateInput;
+
+        require(ethRedeemFeeRateInput <= 1e18, AmmPoolsErrors.CFG_INVALID_REDEEM_FEE_RATE);
     }
 
     function provideLiquidityStEth(address beneficiary, uint256 stEthAmount) external payable override {
@@ -56,10 +59,10 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         IStETH(stEth).safeTransferFrom(msg.sender, ammTreasuryEth, stEthAmount);
 
         uint256 ipTokenAmount = IporMath.division(stEthAmount * 1e18, exchangeRate);
+
         IIpToken(ipstEth).mint(beneficiary, ipTokenAmount);
 
         emit IAmmPoolsServiceEth.ProvideLiquidityStEth(
-            block.timestamp,
             msg.sender,
             beneficiary,
             ammTreasuryEth,
@@ -110,7 +113,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ipstEth, ammTreasuryEth);
 
         uint256 stEthAmount = IporMath.division(ipTokenAmount * exchangeRate, 1e18);
-        uint256 amountToRedeem = IporMath.division(stEthAmount * (1e18 - redeemFeeRateEth), 1e18);
+        uint256 amountToRedeem = IporMath.division(stEthAmount * (1e18 - redeemFeeRateStEth), 1e18);
 
         require(amountToRedeem > 0, AmmPoolsErrors.CANNOT_REDEEM_ASSET_AMOUNT_TOO_LOW);
 
@@ -119,7 +122,6 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         IStETH(stEth).safeTransferFrom(ammTreasuryEth, beneficiary, amountToRedeem);
 
         emit RedeemStEth(
-            block.timestamp,
             ammTreasuryEth,
             msg.sender,
             beneficiary,
@@ -132,7 +134,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
 
     function _depositEth(uint256 ethAmount, address beneficiary) private {
         try IStETH(stEth).submit{value: ethAmount}(address(0)) {
-            uint256 stEthAmount = IStETH(stEth).balanceOf(iporProtocolRouter);
+            uint256 stEthAmount = IStETH(stEth).balanceOf(address(this));
 
             if (stEthAmount > 0) {
                 uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ipstEth, ammTreasuryEth);
@@ -140,10 +142,10 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
                 IStETH(stEth).safeTransfer(ammTreasuryEth, stEthAmount);
 
                 uint256 ipTokenAmount = IporMath.division(stEthAmount * 1e18, exchangeRate);
+
                 IIpToken(ipstEth).mint(beneficiary, ipTokenAmount);
 
                 emit IAmmPoolsServiceEth.ProvideLiquidityEth(
-                    block.timestamp,
                     msg.sender,
                     beneficiary,
                     ammTreasuryEth,

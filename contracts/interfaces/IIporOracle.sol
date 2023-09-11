@@ -16,7 +16,9 @@ interface IIporOracle {
     /// @return indexValue IPOR Index value for a given asset calculated for time lastUpdateTimestamp
     /// @return ibtPrice Interest Bearing Token Price for a given IPOR Index calculated for time lastUpdateTimestamp
     /// @return lastUpdateTimestamp Last IPOR Index update done by off-chain service
-    /// @dev For calculation accrued IPOR Index indicators (indexValue and ibtPrice) for a specified timestamp use {getAccruedIndex} function
+    /// @dev For calculation accrued IPOR Index indicators (indexValue and ibtPrice) for a specified timestamp use {getAccruedIndex} function.
+    /// Method {getIndex} calculates IPOR Index indicators for a moment when last update was done by off-chain service,
+    /// this timestamp is stored in lastUpdateTimestamp variable.
     function getIndex(
         address asset
     ) external view returns (uint256 indexValue, uint256 ibtPrice, uint256 lastUpdateTimestamp);
@@ -74,27 +76,6 @@ interface IIporOracle {
     /// @notice Checks if given asset is supported by IPOR Protocol.
     /// @param asset underlying / stablecoin address
     function isAssetSupported(address asset) external view returns (bool);
-
-    /// @notice Pauses current smart contract, it can be executed only by the Pause Guardian
-    /// @dev Emits {Paused} event from IporOracle.
-    function pause() external;
-
-    /// @notice Unpauses current smart contract, it can be executed only by the Owner
-    /// @dev Emits {Unpaused} event from IporOracle.
-    function unpause() external;
-
-    /// @notice Checks if given account is a pause guardian.
-    /// @param account The address of the account to be checked.
-    /// @return true if account is a pause guardian.
-    function isPauseGuardian(address account) external view returns (bool);
-
-    /// @notice Adds a pause guardian to the list of guardians. Function available only for the Owner.
-    /// @param guardian The address of the pause guardian to be added.
-    function addPauseGuardian(address guardian) external;
-
-    /// @notice Removes a pause guardian from the list of guardians. Function available only for the Owner.
-    /// @param guardian The address of the pause guardian to be removed.
-    function removePauseGuardian(address guardian) external;
 
     /// @notice Emmited when Charlie update IPOR Index.
     /// @param asset underlying / stablecoin address

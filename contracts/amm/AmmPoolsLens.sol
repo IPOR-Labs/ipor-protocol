@@ -4,9 +4,10 @@ pragma solidity 0.8.20;
 import "../interfaces/types/AmmTypes.sol";
 import "../interfaces/IAmmPoolsLens.sol";
 import "../libraries/errors/IporErrors.sol";
-import "../libraries/AmmLib.sol";
 import "../libraries/IporContractValidator.sol";
+import "../libraries/AmmLib.sol";
 
+/// @dev It is not recommended to use lens contract directly, should be used only through IporProtocolRouter.
 contract AmmPoolsLens is IAmmPoolsLens {
     using IporContractValidator for address;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
@@ -32,13 +33,13 @@ contract AmmPoolsLens is IAmmPoolsLens {
     address internal immutable _daiAmmTreasury;
     address internal immutable _daiAssetManagement;
 
-    address internal immutable _iporOracle;
+    address public immutable iporOracle;
 
     constructor(
         AmmPoolsLensPoolConfiguration memory usdtPoolCfg,
         AmmPoolsLensPoolConfiguration memory usdcPoolCfg,
         AmmPoolsLensPoolConfiguration memory daiPoolCfg,
-        address iporOracle
+        address iporOracleInput
     ) {
         _usdt = usdtPoolCfg.asset.checkAddress();
         _usdtDecimals = usdtPoolCfg.decimals;
@@ -61,7 +62,7 @@ contract AmmPoolsLens is IAmmPoolsLens {
         _daiAmmTreasury = daiPoolCfg.ammTreasury.checkAddress();
         _daiAssetManagement = daiPoolCfg.assetManagement.checkAddress();
 
-        _iporOracle = iporOracle.checkAddress();
+        iporOracle = iporOracleInput.checkAddress();
     }
 
     function getAmmPoolsLensConfiguration(
@@ -89,7 +90,7 @@ contract AmmPoolsLens is IAmmPoolsLens {
         model.ammStorage = poolCfg.ammStorage;
         model.ammTreasury = poolCfg.ammTreasury;
         model.assetManagement = poolCfg.assetManagement;
-        model.iporOracle = _iporOracle;
+        model.iporOracle = iporOracle;
 
         return model;
     }

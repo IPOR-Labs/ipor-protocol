@@ -11,6 +11,7 @@ import "../interfaces/IAmmTreasury.sol";
 import "../interfaces/IAmmStorage.sol";
 import "../interfaces/IAssetManagement.sol";
 import "../interfaces/IProxyImplementation.sol";
+import "../interfaces/IIporContractCommonGov.sol";
 import "../libraries/Constants.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/IporContractValidator.sol";
@@ -24,7 +25,8 @@ contract AmmTreasury is
     UUPSUpgradeable,
     IporOwnableUpgradeable,
     IAmmTreasury,
-    IProxyImplementation
+    IProxyImplementation,
+    IIporContractCommonGov
 {
     using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -36,12 +38,12 @@ contract AmmTreasury is
     address internal immutable _router;
 
     modifier onlyPauseGuardian() {
-        require(PauseManager.isPauseGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
+        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
         _;
     }
 
     modifier onlyRouter() {
-        require(_msgSender() == _router, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
+        require(msg.sender == _router, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
         _;
     }
 
@@ -92,15 +94,17 @@ contract AmmTreasury is
     }
 
     /// @notice Joseph deposits to AssetManagement asset amount from AmmTreasury.
-    /// @param assetAmount underlying token amount represented in 18 decimals
-    function depositToAssetManagementInternal(uint256 assetAmount) external onlyRouter nonReentrant whenNotPaused {
-        (uint256 vaultBalance, uint256 depositedAmount) = IAssetManagement(_assetManagement).deposit(assetAmount);
+    /// @param wadAssetAmount underlying token amount represented in 18 decimals
+    function depositToAssetManagementInternal(uint256 wadAssetAmount) external onlyRouter nonReentrant whenNotPaused {
+        (uint256 vaultBalance, uint256 depositedAmount) = IAssetManagement(_assetManagement).deposit(wadAssetAmount);
         IAmmStorage(_ammStorage).updateStorageWhenDepositToAssetManagement(depositedAmount, vaultBalance);
     }
 
-    //@param assetAmount underlying token amount represented in 18 decimals
-    function withdrawFromAssetManagementInternal(uint256 assetAmount) external nonReentrant onlyRouter whenNotPaused {
-        (uint256 withdrawnAmount, uint256 vaultBalance) = IAssetManagement(_assetManagement).withdraw(assetAmount);
+    //@param wadAssetAmount underlying token amount represented in 18 decimals
+    function withdrawFromAssetManagementInternal(
+        uint256 wadAssetAmount
+    ) external nonReentrant onlyRouter whenNotPaused {
+        (uint256 withdrawnAmount, uint256 vaultBalance) = IAssetManagement(_assetManagement).withdraw(wadAssetAmount);
         IAmmStorage(_ammStorage).updateStorageWhenWithdrawFromAssetManagement(withdrawnAmount, vaultBalance);
     }
 
@@ -109,7 +113,7 @@ contract AmmTreasury is
         IAmmStorage(_ammStorage).updateStorageWhenWithdrawFromAssetManagement(withdrawnAmount, vaultBalance);
     }
 
-    function grandMaxAllowanceForSpender(address spender) external override onlyOwner {
+    function grantMaxAllowanceForSpender(address spender) external override onlyOwner {
         IERC20Upgradeable(_asset).forceApprove(spender, Constants.MAX_VALUE);
     }
 
@@ -118,23 +122,25 @@ contract AmmTreasury is
     }
 
     function pause() external override onlyPauseGuardian {
+        IERC20Upgradeable(_asset).safeApprove(_router, 0);
         _pause();
     }
 
     function unpause() external override onlyOwner {
         _unpause();
+        IERC20Upgradeable(_asset).forceApprove(_router, Constants.MAX_VALUE);
     }
 
     function isPauseGuardian(address account) external view override returns (bool) {
         return PauseManager.isPauseGuardian(account);
     }
 
-    function addPauseGuardian(address guardian) external override onlyOwner {
-        PauseManager.addPauseGuardian(guardian);
+    function addPauseGuardians(address[] calldata guardians) external override onlyOwner {
+        PauseManager.addPauseGuardians(guardians);
     }
 
-    function removePauseGuardian(address guardian) external override onlyOwner {
-        PauseManager.removePauseGuardian(guardian);
+    function removePauseGuardians(address[] calldata guardians) external override onlyOwner {
+        PauseManager.removePauseGuardians(guardians);
     }
 
     function getImplementation() external view override returns (address) {
