@@ -134,7 +134,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
 
     function _depositEth(uint256 ethAmount, address beneficiary) private {
         try IStETH(stEth).submit{value: ethAmount}(address(0)) {
-            uint256 stEthAmount = IStETH(stEth).balanceOf(iporProtocolRouter);
+            uint256 stEthAmount = IStETH(stEth).balanceOf(address(this));
 
             if (stEthAmount > 0) {
                 uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ipstEth, ammTreasuryEth);
