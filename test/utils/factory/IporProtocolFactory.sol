@@ -280,9 +280,9 @@ contract IporProtocolFactory is Test {
 
         vm.startPrank(address(_owner));
 
-        amm.usdt.ipToken.setRouter(address(amm.router));
-        amm.usdc.ipToken.setRouter(address(amm.router));
-        amm.dai.ipToken.setRouter(address(amm.router));
+        amm.usdt.ipToken.setTokenManager(address(amm.router));
+        amm.usdc.ipToken.setTokenManager(address(amm.router));
+        amm.dai.ipToken.setTokenManager(address(amm.router));
 
         amm.usdt.ammTreasury.grantMaxAllowanceForSpender(address(amm.usdt.assetManagement));
         amm.usdc.ammTreasury.grantMaxAllowanceForSpender(address(amm.usdc.assetManagement));
@@ -390,7 +390,7 @@ contract IporProtocolFactory is Test {
 
         iporProtocol.ammTreasury.grantMaxAllowanceForSpender(address(iporProtocol.assetManagement));
 
-        iporProtocol.ipToken.setRouter(address(iporProtocol.router));
+        iporProtocol.ipToken.setTokenManager(address(iporProtocol.router));
         iporProtocol.ammTreasury.grantMaxAllowanceForSpender(address(iporProtocol.router));
 
         IAmmGovernanceService(address(iporProtocol.router)).setAmmPoolsParams(
@@ -498,7 +498,7 @@ contract IporProtocolFactory is Test {
         //        iporProtocol.assetManagement.setAmmTreasury((address(iporProtocol.ammTreasury)));
         iporProtocol.ammTreasury.grantMaxAllowanceForSpender(address(iporProtocol.assetManagement));
 
-        iporProtocol.ipToken.setRouter(address(iporProtocol.router));
+        iporProtocol.ipToken.setTokenManager(address(iporProtocol.router));
         iporProtocol.ammTreasury.grantMaxAllowanceForSpender(address(iporProtocol.router));
 
         IAmmGovernanceService(address(iporProtocol.router)).setAmmPoolsParams(
@@ -604,7 +604,7 @@ contract IporProtocolFactory is Test {
 
         iporProtocol.ammTreasury.grantMaxAllowanceForSpender(address(iporProtocol.assetManagement));
 
-        iporProtocol.ipToken.setRouter(address(iporProtocol.router));
+        iporProtocol.ipToken.setTokenManager(address(iporProtocol.router));
         iporProtocol.ammTreasury.grantMaxAllowanceForSpender(address(iporProtocol.router));
 
         IAmmGovernanceService(address(iporProtocol.router)).setAmmPoolsParams(

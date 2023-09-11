@@ -32,7 +32,7 @@ import "../../contracts/vault/AssetManagementUsdt.sol";
 import "../../contracts/vault/AssetManagementUsdc.sol";
 import "../../contracts/vault/strategies/StrategyAave.sol";
 import "../../contracts/vault/strategies/StrategyCompound.sol";
-import "./IIpTokenV1.sol";
+import "../../contracts/interfaces/IIpTokenV1.sol";
 
 
 contract TestForkCommons is Test {

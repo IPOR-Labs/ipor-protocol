@@ -110,7 +110,7 @@ contract IpTokenTest is TestCommons {
 
         // when & then
         vm.prank(_user1);
-        vm.expectRevert(abi.encodePacked(AmmErrors.CALLER_NOT_ROUTER));
+        vm.expectRevert(abi.encodePacked(AmmErrors.CALLER_NOT_TOKEN_MANAGER));
         ipToken.mint(_user2, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
     }
 
@@ -140,7 +140,7 @@ contract IpTokenTest is TestCommons {
 
         // when & then
         vm.prank(_user1);
-        vm.expectRevert(abi.encodePacked(AmmErrors.CALLER_NOT_ROUTER));
+        vm.expectRevert(abi.encodePacked(AmmErrors.CALLER_NOT_TOKEN_MANAGER));
         ipToken.burn(_user2, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
     }
 
@@ -190,7 +190,7 @@ contract IpTokenTest is TestCommons {
     function prepareIpToken() private returns (IpToken) {
         vm.startPrank(_admin);
         IpToken ipToken = new IpToken("IpToken", "IPT", DAI);
-        ipToken.setRouter(_router);
+        ipToken.setTokenManager(_router);
         vm.stopPrank();
         return ipToken;
     }

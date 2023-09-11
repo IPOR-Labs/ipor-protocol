@@ -59,6 +59,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         IStETH(stEth).safeTransferFrom(msg.sender, ammTreasuryEth, stEthAmount);
 
         uint256 ipTokenAmount = IporMath.division(stEthAmount * 1e18, exchangeRate);
+
         IIpToken(ipstEth).mint(beneficiary, ipTokenAmount);
 
         emit IAmmPoolsServiceEth.ProvideLiquidityStEth(
@@ -141,6 +142,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
                 IStETH(stEth).safeTransfer(ammTreasuryEth, stEthAmount);
 
                 uint256 ipTokenAmount = IporMath.division(stEthAmount * 1e18, exchangeRate);
+
                 IIpToken(ipstEth).mint(beneficiary, ipTokenAmount);
 
                 emit IAmmPoolsServiceEth.ProvideLiquidityEth(
