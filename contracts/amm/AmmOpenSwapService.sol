@@ -21,6 +21,7 @@ import "../libraries/RiskManagementLogic.sol";
 import "./libraries/types/AmmInternalTypes.sol";
 import "./libraries/IporSwapLogic.sol";
 
+/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
     using Address for address;
     using IporContractValidator for address;

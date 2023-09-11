@@ -7,6 +7,7 @@ import "../interfaces/IStrategy.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/IporContractValidator.sol";
 
+/// @dev It is not recommended to use lens contract directly, should be used only through IporProtocolRouter.
 contract AssetManagementLens is IAssetManagementLens {
     using IporContractValidator for address;
 

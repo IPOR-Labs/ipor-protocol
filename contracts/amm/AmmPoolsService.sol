@@ -18,6 +18,7 @@ import "../libraries/AssetManagementLogic.sol";
 import "../libraries/AmmLib.sol";
 import "../governance/AmmConfigurationManager.sol";
 
+/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmPoolsService is IAmmPoolsService {
     using IporContractValidator for address;
     using SafeCast for int256;

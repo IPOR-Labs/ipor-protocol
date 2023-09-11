@@ -22,6 +22,7 @@ import "./libraries/IporSwapLogic.sol";
 import "./libraries/types/AmmInternalTypes.sol";
 import "./spread/ISpreadCloseSwapService.sol";
 
+/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
     using Address for address;
     using IporContractValidator for address;

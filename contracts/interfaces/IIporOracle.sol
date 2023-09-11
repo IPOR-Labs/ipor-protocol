@@ -16,7 +16,9 @@ interface IIporOracle {
     /// @return indexValue IPOR Index value for a given asset calculated for time lastUpdateTimestamp
     /// @return ibtPrice Interest Bearing Token Price for a given IPOR Index calculated for time lastUpdateTimestamp
     /// @return lastUpdateTimestamp Last IPOR Index update done by off-chain service
-    /// @dev For calculation accrued IPOR Index indicators (indexValue and ibtPrice) for a specified timestamp use {getAccruedIndex} function
+    /// @dev For calculation accrued IPOR Index indicators (indexValue and ibtPrice) for a specified timestamp use {getAccruedIndex} function.
+    /// Method {getIndex} calculates IPOR Index indicators for a moment when last update was done by off-chain service,
+    /// this timestamp is stored in lastUpdateTimestamp variable.
     function getIndex(
         address asset
     ) external view returns (uint256 indexValue, uint256 ibtPrice, uint256 lastUpdateTimestamp);
