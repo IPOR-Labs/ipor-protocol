@@ -211,8 +211,9 @@ contract AmmPoolsService is IAmmPoolsService {
         _rebalanceIfNeededAfterProvideLiquidity(poolCfg, ammPoolsParamsCfg, balance.vault, wadAssetAmount);
 
         emit ProvideLiquidity(
-            beneficiary,
+            msg.sender,
             poolCfg.ammTreasury,
+            beneficiary,
             exchangeRate,
             wadAssetAmount,
             ipTokenAmount

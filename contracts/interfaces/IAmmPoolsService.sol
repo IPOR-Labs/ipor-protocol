@@ -28,9 +28,11 @@ interface IAmmPoolsService {
     /// @notice Emitted when `from` account provides liquidity (ERC20 token supported by IPOR Protocol) to AmmTreasury Liquidity Pool
     event ProvideLiquidity(
         /// @notice address that provides liquidity
-        address from,
+        address indexed from,
         /// @notice AmmTreasury's address where liquidity is received
-        address to,
+        address indexed to,
+        /// @notice Address that will receive ipTokens representing the provided liquidity.
+        address indexed beneficiary,
         /// @notice current ipToken exchange rate
         /// @dev value represented in 18 decimals
         uint256 exchangeRate,
@@ -45,9 +47,9 @@ interface IAmmPoolsService {
     /// @notice Emitted when `to` account executes redeem ipTokens
     event Redeem(
         /// @notice AmmTreasury's address from which underlying asset - ERC20 Tokens, are transferred to `to` account
-        address from,
+        address indexed from,
         /// @notice account where underlying asset tokens are transferred after redeem
-        address to,
+        address indexed to,
         /// @notice ipToken exchange rate used for calculating `assetAmount`
         /// @dev value represented in 18 decimals
         uint256 exchangeRate,
