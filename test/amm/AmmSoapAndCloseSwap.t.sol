@@ -44,6 +44,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
             0,
             TestConstants.LEVERAGE_18DEC
         );
+        console2.log("openSwapReceiveFixed28daysUsdt");
         uint256[] memory pfSwapIds = new uint256[](0);
         uint256[] memory swapIds = new uint256[](1);
         swapIds[0] = swap1;

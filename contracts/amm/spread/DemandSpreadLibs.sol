@@ -41,16 +41,10 @@ library DemandSpreadLibs {
         uint256 totalCollateralReceiveFixed;
         /// @notice Liquidity Pool's Balance
         uint256 liquidityPoolBalance;
-        /// @notice Swap's notional balance for Pay Fixed leg
-        uint256 totalNotionalPayFixed;
-        /// @notice Swap's notional balance for Receive Fixed leg
-        uint256 totalNotionalReceiveFixed;
         /// @notice Swap's notional
         uint256 swapNotional;
-        /// @notice Max leverage for a leg in the swap
-        uint256 maxLeveragePerLeg;
-        /// @notice Max liquidity pool collateral ratio per leg rate
-        uint256 maxLpCollateralRatioPerLegRate;
+        /// @notice demand spread factor used in demand spread calculation
+        uint256 demandSpreadFactor;
         /// @notice List of supported tenors in seconds
         uint256[] tenorsInSeconds;
         /// @notice List of storage ids for a TimeWeightedNotional for all tenors for a given asset
@@ -98,11 +92,8 @@ library DemandSpreadLibs {
             inputData.totalCollateralReceiveFixed
         );
 
-        /// @dev 1e36 = 1e18 * 1e18, To achieve result in 18 decimals when there is multiplication of 3 numbers in 18 decimals, we need to divide by 1e36.
-        uint256 notionalDepth = IporMath.division(
-            lpDepth * inputData.maxLeveragePerLeg * inputData.maxLpCollateralRatioPerLegRate,
-            1e36
-        );
+        /// @dev demandSpreadFactor is without decimals.
+        uint256 notionalDepth = lpDepth * inputData.demandSpreadFactor;
 
         (
             uint256 oldWeightedNotionalPayFixed,
@@ -146,11 +137,8 @@ library DemandSpreadLibs {
             inputData.totalCollateralReceiveFixed
         );
 
-        /// @dev 1e36 = 1e18 * 1e18, To achieve result in 18 decimals when there is multiplication of 3 numbers in 18 decimals, we need to divide by 1e36.
-        uint256 notionalDepth = IporMath.division(
-            lpDepth * inputData.maxLeveragePerLeg * inputData.maxLpCollateralRatioPerLegRate,
-            1e36
-        );
+        /// @dev demandSpreadFactor is without decimals.
+        uint256 notionalDepth = lpDepth * inputData.demandSpreadFactor;
 
         (
             uint256 timeWeightedNotionalPayFixed,

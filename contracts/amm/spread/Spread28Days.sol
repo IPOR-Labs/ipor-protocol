@@ -10,6 +10,7 @@ import "../../libraries/IporContractValidator.sol";
 import "../../amm/spread/DemandSpreadLibs.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
 import "../../amm/spread/OfferedRateCalculationLibs.sol";
+import "forge-std/Test.sol";
 
 /// @dev This contract cannot be used directly, should be used only through SpreadRouter.
 contract Spread28Days is ISpread28Days, ISpread28DaysLens {
@@ -138,11 +139,8 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
             totalCollateralPayFixed: spreadInputs.totalCollateralPayFixed,
             totalCollateralReceiveFixed: spreadInputs.totalCollateralReceiveFixed,
             liquidityPoolBalance: spreadInputs.liquidityPoolBalance,
-            totalNotionalPayFixed: spreadInputs.totalNotionalPayFixed,
-            totalNotionalReceiveFixed: spreadInputs.totalNotionalReceiveFixed,
             swapNotional: spreadInputs.swapNotional,
-            maxLeveragePerLeg: spreadInputs.maxLeveragePerLeg,
-            maxLpCollateralRatioPerLegRate: spreadInputs.maxLpCollateralRatioPerLegRate,
+            demandSpreadFactor: spreadInputs.demandSpreadFactor,
             tenorsInSeconds: new uint256[](3),
             timeWeightedNotionalStorageIds: new SpreadStorageLibs.StorageId[](3),
             timeWeightedNotionalStorageId: SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai,

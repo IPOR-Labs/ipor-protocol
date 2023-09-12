@@ -51,7 +51,7 @@ contract SpreadRouterTest is TestCommons {
         SpreadAccessControl(_router).addPauseGuardians(_pauseGuardians);
         vm.stopPrank();
 
-        _spreadInputs = IporTypes.SpreadInputs(address(0x00), 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100);
+        _spreadInputs = IporTypes.SpreadInputs(address(0x00), 100, 100, 100, 100, 100, 100, 100, 100);
 
     }
 

@@ -91,7 +91,10 @@ contract IporRiskManagementOracle is
                 riskIndicators[i].maxCollateralRatioPayFixed.toUint16(),
                 riskIndicators[i].maxCollateralRatioReceiveFixed.toUint16(),
                 riskIndicators[i].maxCollateralRatio.toUint16(),
-                block.timestamp.toUint32()
+                block.timestamp.toUint32(),
+                riskIndicators[i].demandSpreadFactor28.toUint16(),
+                riskIndicators[i].demandSpreadFactor60.toUint16(),
+                riskIndicators[i].demandSpreadFactor90.toUint16()
             );
 
             emit RiskIndicatorsUpdated(
@@ -100,7 +103,10 @@ contract IporRiskManagementOracle is
                 riskIndicators[i].maxNotionalReceiveFixed,
                 riskIndicators[i].maxCollateralRatioPayFixed,
                 riskIndicators[i].maxCollateralRatioReceiveFixed,
-                riskIndicators[i].maxCollateralRatio
+                riskIndicators[i].maxCollateralRatio,
+                riskIndicators[i].demandSpreadFactor28,
+                riskIndicators[i].demandSpreadFactor60,
+                riskIndicators[i].demandSpreadFactor90
             );
 
             _baseSpreadsAndFixedRateCaps[assets[i]] = _baseSpreadsAndFixedRateCapsStorageToBytes32(
@@ -163,10 +169,16 @@ contract IporRiskManagementOracle is
             uint256 maxCollateralRatioPerLeg,
             uint256 maxCollateralRatio,
             int256 baseSpreadPerLeg,
-            uint256 fixedRateCapPerLeg
+            uint256 fixedRateCapPerLeg,
+            uint256 demandSpreadFactor
         )
     {
-        (maxNotionalPerLeg, maxCollateralRatioPerLeg, maxCollateralRatio) = _getRiskIndicatorsPerLeg(asset, direction);
+        (
+            maxNotionalPerLeg,
+            maxCollateralRatioPerLeg,
+            maxCollateralRatio,
+            demandSpreadFactor
+        ) = _getRiskIndicatorsPerLeg(asset, direction, tenor);
         (baseSpreadPerLeg, fixedRateCapPerLeg) = _getSpread(asset, direction, tenor);
         /// @dev baseSpreadPerLeg is a value in percentage with 4 decimals (example: 1 = 0.0001%), so we need to multiply by 1e12 to achieve value in 18 decimals.
         /// @dev fixedRateCapPerLeg is a value in percentage with 2 decimals (example: 100 = 1%, 1 = 0.01%), so we need to multiply by 1e14 to achieve value in 18 decimals.
@@ -175,12 +187,14 @@ contract IporRiskManagementOracle is
             maxCollateralRatioPerLeg,
             maxCollateralRatio,
             baseSpreadPerLeg * 1e12,
-            fixedRateCapPerLeg * 1e14
+            fixedRateCapPerLeg * 1e14,
+            demandSpreadFactor
         );
     }
 
     function getRiskIndicators(
-        address asset
+        address asset,
+        IporTypes.SwapTenor tenor
     )
         external
         view
@@ -191,10 +205,11 @@ contract IporRiskManagementOracle is
             uint256 maxCollateralRatioPayFixed,
             uint256 maxCollateralRatioReceiveFixed,
             uint256 maxCollateralRatio,
-            uint256 lastUpdateTimestamp
+            uint256 lastUpdateTimestamp,
+            uint256 demandSpreadFactor
         )
     {
-        return _getRiskIndicators(asset);
+        return _getRiskIndicators(asset, tenor);
     }
 
     function getBaseSpreads(
@@ -267,7 +282,10 @@ contract IporRiskManagementOracle is
         uint256 maxNotionalReceiveFixed,
         uint256 maxCollateralRatioPayFixed,
         uint256 maxCollateralRatioReceiveFixed,
-        uint256 maxCollateralRatio
+        uint256 maxCollateralRatio,
+        uint256 demandSpreadFactor28,
+        uint256 demandSpreadFactor60,
+        uint256 demandSpreadFactor90
     ) external override onlyUpdater whenNotPaused {
         _updateRiskIndicators(
             asset,
@@ -275,7 +293,10 @@ contract IporRiskManagementOracle is
             maxNotionalReceiveFixed,
             maxCollateralRatioPayFixed,
             maxCollateralRatioReceiveFixed,
-            maxCollateralRatio
+            maxCollateralRatio,
+            demandSpreadFactor28,
+            demandSpreadFactor60,
+            demandSpreadFactor90
         );
     }
 
@@ -303,7 +324,10 @@ contract IporRiskManagementOracle is
             riskIndicators.maxCollateralRatioPayFixed.toUint16(),
             riskIndicators.maxCollateralRatioReceiveFixed.toUint16(),
             riskIndicators.maxCollateralRatio.toUint16(),
-            block.timestamp.toUint32()
+            block.timestamp.toUint32(),
+            riskIndicators.demandSpreadFactor28.toUint16(),
+            riskIndicators.demandSpreadFactor60.toUint16(),
+            riskIndicators.demandSpreadFactor90.toUint16()
         );
 
         _baseSpreadsAndFixedRateCaps[asset] = _baseSpreadsAndFixedRateCapsStorageToBytes32(
@@ -374,7 +398,8 @@ contract IporRiskManagementOracle is
     }
 
     function _getRiskIndicators(
-        address asset
+        address asset,
+        IporTypes.SwapTenor tenor
     )
         internal
         view
@@ -384,11 +409,19 @@ contract IporRiskManagementOracle is
             uint256 maxCollateralRatioPayFixed,
             uint256 maxCollateralRatioReceiveFixed,
             uint256 maxCollateralRatio,
-            uint256 lastUpdateTimestamp
+            uint256 lastUpdateTimestamp,
+            uint256 demandSpreadFactor
         )
     {
         IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage memory indicators = _indicators[asset];
         require(indicators.lastUpdateTimestamp > 0, IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED);
+        if (tenor == IporTypes.SwapTenor.DAYS_28) {
+            demandSpreadFactor = uint256(indicators.demandSpreadFactor28);
+        } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
+            demandSpreadFactor = uint256(indicators.demandSpreadFactor60);
+        } else {
+            demandSpreadFactor = uint256(indicators.demandSpreadFactor90);
+        }
 
         /// @dev Multiplication by 1e22 or by 1e14 is needed to achieve WAD number used internally in calculations (value represented in 18 decimals)
         /// For more information check description for `IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage`
@@ -398,27 +431,49 @@ contract IporRiskManagementOracle is
             uint256(indicators.maxCollateralRatioPayFixed) * 1e14, /// @dev Value represents percentage with 2 decimals, example: 100 = 1%, 1 = 0.01%, 10000 = 100%
             uint256(indicators.maxCollateralRatioReceiveFixed) * 1e14, /// @dev Value represents percentage with 2 decimals, example: 100 = 1%, 1 = 0.01%, 10000 = 100%
             uint256(indicators.maxCollateralRatio) * 1e14, /// @dev Value represents percentage with 2 decimals, example: 100 = 1%, 1 = 0.01%, 10000 = 100%
-            uint256(indicators.lastUpdateTimestamp)
+            uint256(indicators.lastUpdateTimestamp),
+            demandSpreadFactor
         );
     }
 
     function _getRiskIndicatorsPerLeg(
         address asset,
-        uint256 direction
-    ) internal view returns (uint256 maxNotionalPerLeg, uint256 maxCollateralRatioPerLeg, uint256 maxCollateralRatio) {
+        uint256 direction,
+        IporTypes.SwapTenor tenor
+    )
+        internal
+        view
+        returns (
+            uint256 maxNotionalPerLeg,
+            uint256 maxCollateralRatioPerLeg,
+            uint256 maxCollateralRatio,
+            uint256 demandSpreadFactor
+        )
+    {
         (
             uint256 maxNotionalPayFixed,
             uint256 maxNotionalReceiveFixed,
             uint256 maxCollateralRatioPayFixed,
             uint256 maxCollateralRatioReceiveFixed,
             uint256 maxCollateralRatioBothLegs,
-
-        ) = _getRiskIndicators(asset);
+            ,
+            uint256 demandSpreadFactorStorage
+        ) = _getRiskIndicators(asset, tenor);
 
         if (direction == 0) {
-            return (maxNotionalPayFixed, maxCollateralRatioPayFixed, maxCollateralRatioBothLegs);
+            return (
+                maxNotionalPayFixed,
+                maxCollateralRatioPayFixed,
+                maxCollateralRatioBothLegs,
+                demandSpreadFactorStorage
+            );
         } else {
-            return (maxNotionalReceiveFixed, maxCollateralRatioReceiveFixed, maxCollateralRatioBothLegs);
+            return (
+                maxNotionalReceiveFixed,
+                maxCollateralRatioReceiveFixed,
+                maxCollateralRatioBothLegs,
+                demandSpreadFactorStorage
+            );
         }
     }
 
@@ -520,7 +575,10 @@ contract IporRiskManagementOracle is
         uint256 maxNotionalReceiveFixed,
         uint256 maxCollateralRatioPayFixed,
         uint256 maxCollateralRatioReceiveFixed,
-        uint256 maxCollateralRatio
+        uint256 maxCollateralRatio,
+        uint256 demandSpreadFactor28,
+        uint256 demandSpreadFactor60,
+        uint256 demandSpreadFactor90
     ) internal {
         IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage memory indicators = _indicators[asset];
 
@@ -532,7 +590,10 @@ contract IporRiskManagementOracle is
             maxCollateralRatioPayFixed.toUint16(),
             maxCollateralRatioReceiveFixed.toUint16(),
             maxCollateralRatio.toUint16(),
-            block.timestamp.toUint32()
+            block.timestamp.toUint32(),
+            demandSpreadFactor28.toUint16(),
+            demandSpreadFactor60.toUint16(),
+            demandSpreadFactor90.toUint16()
         );
 
         emit RiskIndicatorsUpdated(
@@ -541,7 +602,10 @@ contract IporRiskManagementOracle is
             maxNotionalReceiveFixed,
             maxCollateralRatioPayFixed,
             maxCollateralRatioReceiveFixed,
-            maxCollateralRatio
+            maxCollateralRatio,
+            demandSpreadFactor28,
+            demandSpreadFactor60,
+            demandSpreadFactor90
         );
     }
 

@@ -22,19 +22,15 @@ contract IporRiskManagementOracleFactory is Test {
     ) public returns (IporRiskManagementOracle) {
         IporRiskManagementOracleTypes.RiskIndicators
             memory riskIndicators = _constructIndicatorsBasedOnInitialParamTestCase(initialParams);
-
         IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps
             memory baseSpreadsAndFixedRateCaps = _constructSpreadsBasedOnInitialParamTestCase(initialParams);
         uint256 assetLength = assets.length;
         for (uint256 i; i < assetLength; ++i) {
             _iporRiskManagementOracleBuilder.withAsset(assets[i], riskIndicators, baseSpreadsAndFixedRateCaps);
         }
-
         IporRiskManagementOracle oracle = _iporRiskManagementOracleBuilder.build();
-
         vm.prank(_owner);
         oracle.addUpdater(updater);
-
         return oracle;
     }
 
@@ -81,14 +77,16 @@ contract IporRiskManagementOracleFactory is Test {
             maxCollateralRatioReceiveFixed = TestConstants.RMO_COLLATERAL_RATIO_48_PER;
             maxCollateralRatio = TestConstants.RMO_COLLATERAL_RATIO_80_PER;
         }
-
         return
             IporRiskManagementOracleTypes.RiskIndicators({
                 maxNotionalPayFixed: maxNotionalPayFixed,
                 maxNotionalReceiveFixed: maxNotionalReceiveFixed,
                 maxCollateralRatioPayFixed: maxCollateralRatioPayFixed,
                 maxCollateralRatioReceiveFixed: maxCollateralRatioReceiveFixed,
-                maxCollateralRatio: maxCollateralRatio
+                maxCollateralRatio: maxCollateralRatio,
+                demandSpreadFactor28: TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                demandSpreadFactor60: TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                demandSpreadFactor90: TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             });
     }
 

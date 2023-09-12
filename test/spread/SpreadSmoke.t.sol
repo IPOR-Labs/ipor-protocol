@@ -22,30 +22,24 @@ contract SpreadSmokeTest is TestCommons {
         spreadInputsPayFixed = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 0,
-            maxLeveragePerLeg: 1_000e18,
-            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
             liquidityPoolBalance: 1_000_000e18,
-            totalNotionalPayFixed: 100_000e18,
-            totalNotionalReceiveFixed: 100_000e18,
             iporIndexValue: 1e16,
-            fixedRateCapPerLeg: 1e15
+            fixedRateCapPerLeg: 1e15,
+            demandSpreadFactor: 1000
         });
         spreadInputsReceiveFixed = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 0,
-            maxLeveragePerLeg: 1_000e18,
-            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
             liquidityPoolBalance: 1_000_000e18,
-            totalNotionalPayFixed: 100_000e18,
-            totalNotionalReceiveFixed: 100_000e18,
             iporIndexValue: 1e16,
-            fixedRateCapPerLeg: 5e16
+            fixedRateCapPerLeg: 5e16,
+            demandSpreadFactor: 1000
         });
     }
 
@@ -83,16 +77,13 @@ contract SpreadSmokeTest is TestCommons {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeveragePerLeg: 1_000e18,
-            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
             liquidityPoolBalance: 1_000_000e18,
-            totalNotionalPayFixed: 100_000e18,
-            totalNotionalReceiveFixed: 100_000e18,
             iporIndexValue: 1e16,
-            fixedRateCapPerLeg: 1e15
+            fixedRateCapPerLeg: 1e15,
+            demandSpreadFactor: 1000
         });
 
         uint256 payFixed28Before = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(
@@ -169,16 +160,13 @@ contract SpreadSmokeTest is TestCommons {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeveragePerLeg: 1_000e18,
-            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
             liquidityPoolBalance: 1_000_000e18,
-            totalNotionalPayFixed: 100_000e18,
-            totalNotionalReceiveFixed: 100_000e18,
             iporIndexValue: 1e16,
-            fixedRateCapPerLeg: 2e16
+            fixedRateCapPerLeg: 2e16,
+            demandSpreadFactor: 1000
         });
 
         // when
@@ -196,16 +184,13 @@ contract SpreadSmokeTest is TestCommons {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeveragePerLeg: 1_000e18,
-            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
             liquidityPoolBalance: 1_000_000e18,
-            totalNotionalPayFixed: 100_000e18,
-            totalNotionalReceiveFixed: 100_000e18,
             iporIndexValue: 1e16,
-            fixedRateCapPerLeg: 1e15
+            fixedRateCapPerLeg: 1e15,
+            demandSpreadFactor: 1000
         });
 
         uint256 payFixed28Before = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(
@@ -282,16 +267,13 @@ contract SpreadSmokeTest is TestCommons {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeveragePerLeg: 1_000e18,
-            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
             liquidityPoolBalance: 1_000_000e18,
-            totalNotionalPayFixed: 100_000e18,
-            totalNotionalReceiveFixed: 100_000e18,
             iporIndexValue: 1e16,
-            fixedRateCapPerLeg: 2e16
+            fixedRateCapPerLeg: 2e16,
+            demandSpreadFactor: 1000
         });
 
         // when
@@ -309,16 +291,13 @@ contract SpreadSmokeTest is TestCommons {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeveragePerLeg: 1_000e18,
-            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
             liquidityPoolBalance: 1_000_000e18,
-            totalNotionalPayFixed: 100_000e18,
-            totalNotionalReceiveFixed: 100_000e18,
             iporIndexValue: 1e16,
-            fixedRateCapPerLeg: 1e15
+            fixedRateCapPerLeg: 1e15,
+            demandSpreadFactor: 1000
         });
 
         uint256 payFixed28Before = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(
@@ -395,16 +374,13 @@ contract SpreadSmokeTest is TestCommons {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeveragePerLeg: 1_000e18,
-            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
             liquidityPoolBalance: 1_000_000e18,
-            totalNotionalPayFixed: 100_000e18,
-            totalNotionalReceiveFixed: 100_000e18,
             iporIndexValue: 1e16,
-            fixedRateCapPerLeg: 2e16
+            fixedRateCapPerLeg: 2e16,
+            demandSpreadFactor: 1000
         });
 
         // when
@@ -422,16 +398,13 @@ contract SpreadSmokeTest is TestCommons {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeveragePerLeg: 1_000e18,
-            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
             liquidityPoolBalance: 1_000_000e18,
-            totalNotionalPayFixed: 100_000e18,
-            totalNotionalReceiveFixed: 100_000e18,
             iporIndexValue: 1e16,
-            fixedRateCapPerLeg: 1e15
+            fixedRateCapPerLeg: 1e15,
+            demandSpreadFactor: 1000
         });
 
         uint256 payFixed28Before = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(
@@ -510,16 +483,13 @@ contract SpreadSmokeTest is TestCommons {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeveragePerLeg: 1_000e18,
-            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
             liquidityPoolBalance: 1_000_000e18,
-            totalNotionalPayFixed: 100_000e18,
-            totalNotionalReceiveFixed: 100_000e18,
             iporIndexValue: 1e16,
-            fixedRateCapPerLeg: 5e16
+            fixedRateCapPerLeg: 5e16,
+            demandSpreadFactor: 1000
         });
 
         uint256 payFixed28Before = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(
@@ -598,16 +568,13 @@ contract SpreadSmokeTest is TestCommons {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeveragePerLeg: 1_000e18,
-            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
             liquidityPoolBalance: 1_000_000e18,
-            totalNotionalPayFixed: 100_000e18,
-            totalNotionalReceiveFixed: 100_000e18,
             iporIndexValue: 1e16,
-            fixedRateCapPerLeg: 1e15
+            fixedRateCapPerLeg: 1e15,
+            demandSpreadFactor: 1000
         });
         // when
         vm.prank(_ammAddress);
@@ -623,17 +590,13 @@ contract SpreadSmokeTest is TestCommons {
         // given
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
-            swapNotional: 10_000e18,
-            maxLeveragePerLeg: 1_000e18,
-            maxLpCollateralRatioPerLegRate: 1e18,
-            baseSpreadPerLeg: 0,
+            swapNotional: 10_000e18,            baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
             liquidityPoolBalance: 1_000_000e18,
-            totalNotionalPayFixed: 100_000e18,
-            totalNotionalReceiveFixed: 100_000e18,
             iporIndexValue: 1e16,
-            fixedRateCapPerLeg: 5e16 //todo
+            fixedRateCapPerLeg: 5e16, //todo
+            demandSpreadFactor: 1000
         });
 
         uint256 payFixed28Before = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(
@@ -710,16 +673,13 @@ contract SpreadSmokeTest is TestCommons {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeveragePerLeg: 1_000e18,
-            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
             liquidityPoolBalance: 1_000_000e18,
-            totalNotionalPayFixed: 100_000e18,
-            totalNotionalReceiveFixed: 100_000e18,
             iporIndexValue: 1e16,
-            fixedRateCapPerLeg: 1e15 //todo
+            fixedRateCapPerLeg: 1e15, //todo
+            demandSpreadFactor: 1000
         });
 
         // when
@@ -738,16 +698,13 @@ contract SpreadSmokeTest is TestCommons {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeveragePerLeg: 1_000e18,
-            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
             liquidityPoolBalance: 1_000_000e18,
-            totalNotionalPayFixed: 100_000e18,
-            totalNotionalReceiveFixed: 100_000e18,
             iporIndexValue: 1e16,
-            fixedRateCapPerLeg: 5e16
+            fixedRateCapPerLeg: 5e16,
+            demandSpreadFactor: 1000
         });
 
         uint256 payFixed28Before = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(
@@ -825,16 +782,13 @@ contract SpreadSmokeTest is TestCommons {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeveragePerLeg: 1_000e18,
-            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
             liquidityPoolBalance: 1_000_000e18,
-            totalNotionalPayFixed: 100_000e18,
-            totalNotionalReceiveFixed: 100_000e18,
             iporIndexValue: 1e16,
-            fixedRateCapPerLeg: 1e15
+            fixedRateCapPerLeg: 1e15,
+            demandSpreadFactor: 1000
         });
 
         // when
