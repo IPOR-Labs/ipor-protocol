@@ -104,11 +104,11 @@ interface IIporRiskManagementOracle {
 
     /// @notice Gets risk indicators for a given asset. Amounts and rates represented in 18 decimals.
     /// @param asset underlying / stablecoin address supported in Ipor Protocol
-    /// @return maxNotionalPayFixed maximum notional value for pay fixed leg
-    /// @return maxNotionalReceiveFixed maximum notional value for receive fixed leg
-    /// @return maxCollateralRatioPayFixed maximum collateral ratio for pay fixed leg
-    /// @return maxCollateralRatioReceiveFixed maximum collateral ratio for receive fixed leg
-    /// @return maxCollateralRatio maximum collateral ratio for both legs
+    /// @return maxNotionalPayFixed maximum notional value for pay fixed leg, value represented in 18 decimals
+    /// @return maxNotionalReceiveFixed maximum notional value for receive fixed leg, value represented in 18 decimals
+    /// @return maxCollateralRatioPayFixed maximum collateral ratio for pay fixed leg, value represents percentage with 18 decimals, example: 100% = 1e18, 50% = 5e17
+    /// @return maxCollateralRatioReceiveFixed maximum collateral ratio for receive fixed leg, value represents percentage with 18 decimals, example: 100% = 1e18, 50% = 5e17
+    /// @return maxCollateralRatio maximum collateral ratio for both legs, value represents percentage with 18 decimals, example: 100% = 1e18, 50% = 5e17
     /// @return lastUpdateTimestamp Last risk indicators update done by off-chain service
     function getRiskIndicators(
         address asset
@@ -127,12 +127,12 @@ interface IIporRiskManagementOracle {
     /// @notice Gets base spreads for a given asset. Rates represented in 18 decimals.
     /// @param asset underlying / stablecoin address supported in Ipor Protocol
     /// @return lastUpdateTimestamp Last base spreads update done by off-chain service
-    /// @return spread28dPayFixed spread for 28 days pay fixed swap
-    /// @return spread28dReceiveFixed spread for 28 days receive fixed swap
-    /// @return spread60dPayFixed spread for 60 days pay fixed swap
-    /// @return spread60dReceiveFixed spread for 60 days receive fixed swap
-    /// @return spread90dPayFixed spread for 90 days pay fixed swap
-    /// @return spread90dReceiveFixed spread for 90 days receive fixed swap
+    /// @return spread28dPayFixed spread for 28 days pay fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
+    /// @return spread28dReceiveFixed spread for 28 days receive fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
+    /// @return spread60dPayFixed spread for 60 days pay fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
+    /// @return spread60dReceiveFixed spread for 60 days receive fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
+    /// @return spread90dPayFixed spread for 90 days pay fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
+    /// @return spread90dReceiveFixed spread for 90 days receive fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
     function getBaseSpreads(
         address asset
     )
@@ -151,12 +151,12 @@ interface IIporRiskManagementOracle {
     /// @notice Gets fixed rate cap for a given asset. Rates represented in 18 decimals.
     /// @param asset underlying / stablecoin address supported in Ipor Protocol
     /// @return lastUpdateTimestamp Last base spreads update done by off-chain service
-    /// @return fixedRateCap28dPayFixed fixed rate cap for 28 days pay fixed swap
-    /// @return fixedRateCap28dReceiveFixed fixed rate cap for 28 days receive fixed swap
-    /// @return fixedRateCap60dPayFixed fixed rate cap for 60 days pay fixed swap
-    /// @return fixedRateCap60dReceiveFixed fixed rate cap for 60 days receive fixed swap
-    /// @return fixedRateCap90dPayFixed fixed rate cap for 90 days pay fixed swap
-    /// @return fixedRateCap90dReceiveFixed fixed rate cap for 90 days receive fixed swap
+    /// @return fixedRateCap28dPayFixed fixed rate cap for 28 days pay fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
+    /// @return fixedRateCap28dReceiveFixed fixed rate cap for 28 days receive fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
+    /// @return fixedRateCap60dPayFixed fixed rate cap for 60 days pay fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
+    /// @return fixedRateCap60dReceiveFixed fixed rate cap for 60 days receive fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
+    /// @return fixedRateCap90dPayFixed fixed rate cap for 90 days pay fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
+    /// @return fixedRateCap90dReceiveFixed fixed rate cap for 90 days receive fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
     function getFixedRateCaps(
         address asset
     )
