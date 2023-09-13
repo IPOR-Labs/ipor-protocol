@@ -85,6 +85,12 @@ contract IporRiskManagementOracle is
 
         for (uint256 i; i != assetsLength; ) {
             require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
+            require(
+                riskIndicators[i].demandSpreadFactor28 != 0 &&
+                    riskIndicators[i].demandSpreadFactor60 != 0 &&
+                    riskIndicators[i].demandSpreadFactor90 != 0,
+                IporErrors.VALUE_NOT_GREATER_THAN_ZERO
+            );
             _indicators[assets[i]] = IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage(
                 riskIndicators[i].maxNotionalPayFixed.toUint64(),
                 riskIndicators[i].maxNotionalReceiveFixed.toUint64(),
@@ -287,6 +293,12 @@ contract IporRiskManagementOracle is
         uint256 demandSpreadFactor60,
         uint256 demandSpreadFactor90
     ) external override onlyUpdater whenNotPaused {
+        require(
+            demandSpreadFactor28 != 0 &&
+            demandSpreadFactor60 != 0 &&
+            demandSpreadFactor90 != 0,
+            IporErrors.VALUE_NOT_GREATER_THAN_ZERO
+        );
         _updateRiskIndicators(
             asset,
             maxNotionalPayFixed,
