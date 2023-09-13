@@ -72,6 +72,38 @@ contract SpreadSmokeTest is TestCommons {
         assertEq(receiveFixed90, 1e16, "receiveFixed90 should be 1e16");
     }
 
+    function testShouldChangeOfferRateWhenDemandSpreadFactorChanged() external {
+        // given
+        spreadInputsPayFixed.swapNotional = 1_000e18;
+        spreadInputsReceiveFixed.swapNotional = 1_000e18;
+
+        uint256 payFixed28Before = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(
+            spreadInputsPayFixed
+        );
+        uint256 receiveFixed28Before = ISpread28DaysLens(_routerAddress).calculateOfferedRateReceiveFixed28Days(
+            spreadInputsReceiveFixed
+        );
+
+        spreadInputsPayFixed.demandSpreadFactor = 500;
+        spreadInputsReceiveFixed.demandSpreadFactor = 500;
+
+        // then
+        uint256 payFixed28After = ISpread28DaysLens(_routerAddress).calculateOfferedRatePayFixed28Days(
+            spreadInputsPayFixed
+        );
+        uint256 receiveFixed28After = ISpread28DaysLens(_routerAddress).calculateOfferedRateReceiveFixed28Days(
+            spreadInputsReceiveFixed
+        );
+
+        // then
+        assertTrue(payFixed28Before < payFixed28After, "payFixed28Before should be smaller than payFixed28After");
+        assertTrue(
+            receiveFixed28Before > receiveFixed28After,
+            "receiveFixed28Before should be getter than receiveFixed28After"
+        );
+
+    }
+
     function testShouldSpreadPayFixedIncreaseWhenOneSwapOpenOn28PayFixed() external {
         // given
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
@@ -590,7 +622,8 @@ contract SpreadSmokeTest is TestCommons {
         // given
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
-            swapNotional: 10_000e18,            baseSpreadPerLeg: 0,
+            swapNotional: 10_000e18,
+            baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
             liquidityPoolBalance: 1_000_000e18,

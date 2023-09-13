@@ -1495,7 +1495,29 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
             uint256 maxCollateralRatioReceiveFixed,
             uint256 maxCollateralRatio,
             uint256 lastUpdateTimestamp,
+            uint256 demandSpreadFactor28d
         ) = _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken), IporTypes.SwapTenor.DAYS_28);
+
+        (
+            ,
+            ,
+            ,
+            ,
+            ,
+            ,
+            uint256 demandSpreadFactor60d
+        ) = _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken), IporTypes.SwapTenor.DAYS_60);
+
+
+        (
+            ,
+            ,
+            ,
+            ,
+            ,
+            ,
+            uint256 demandSpreadFactor90d
+        ) = _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken), IporTypes.SwapTenor.DAYS_90);
 
         assertEq(maxNotionalPayFixed, uint256(TestConstants.RMO_NOTIONAL_1B) * 1e22);
         assertEq(maxNotionalReceiveFixed, uint256(TestConstants.RMO_NOTIONAL_1B) * 1e22);
@@ -1503,6 +1525,9 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
         assertEq(maxCollateralRatioReceiveFixed, uint256(TestConstants.RMO_COLLATERAL_RATIO_48_PER) * 1e14);
         assertEq(maxCollateralRatio, uint256(TestConstants.RMO_COLLATERAL_RATIO_90_PER) * 1e14);
         assertEq(lastUpdateTimestamp, _blockTimestamp);
+        assertEq(demandSpreadFactor28d, uint256(TestConstants.RMO_DEMAND_SPREAD_FACTOR_28), "demandSpreadFactor28d");
+        assertEq(demandSpreadFactor60d, uint256(TestConstants.RMO_DEMAND_SPREAD_FACTOR_60), "demandSpreadFactor60d");
+        assertEq(demandSpreadFactor90d, uint256(TestConstants.RMO_DEMAND_SPREAD_FACTOR_90), "demandSpreadFactor90d");
     }
 
     function testShouldNotUpdateBaseSpreadsWhenUpdaterIsNotAnUpdater() public {
