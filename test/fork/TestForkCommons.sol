@@ -34,7 +34,6 @@ import "../../contracts/vault/strategies/StrategyAave.sol";
 import "../../contracts/vault/strategies/StrategyCompound.sol";
 import "../../contracts/interfaces/IIpTokenV1.sol";
 
-
 contract TestForkCommons is Test {
     address public constant owner = 0xD92E9F039E4189c342b4067CC61f5d063960D248;
     address public constant IPOR = 0x1e4746dC744503b53b4A082cB3607B169a289090;
@@ -216,7 +215,7 @@ contract TestForkCommons is Test {
         newStrategyAaveDaiProxy = address(proxy);
     }
 
-    function _createNewStrategyAaveUsdt () internal {
+    function _createNewStrategyAaveUsdt() internal {
         StrategyAave strategyAaveImpl = new StrategyAave(
             USDT,
             6,
@@ -319,7 +318,10 @@ contract TestForkCommons is Test {
                 maxNotionalReceiveFixed: 100, // 1_000_000
                 maxCollateralRatioPayFixed: 500, // 5%
                 maxCollateralRatioReceiveFixed: 500, // 5%
-                maxCollateralRatio: 500 // 5%
+                maxCollateralRatio: 500, // 5%
+                demandSpreadFactor28: 280,
+                demandSpreadFactor60: 600,
+                demandSpreadFactor90: 900
             });
 
         IporRiskManagementOracleTypes.RiskIndicators[]
@@ -353,7 +355,7 @@ contract TestForkCommons is Test {
         ERC1967Proxy proxy = new ERC1967Proxy(
             address(iporRiskManagementOracleImplementation),
             abi.encodeWithSignature(
-                "initialize(address[],(uint256,uint256,uint256,uint256,uint256)[],(int256,int256,int256,int256,int256,int256,uint256,uint256,uint256,uint256,uint256,uint256)[])",
+                "initialize(address[],(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)[],(int256,int256,int256,int256,int256,int256,uint256,uint256,uint256,uint256,uint256,uint256)[])",
                 _getAssets(),
                 riskIndicators,
                 baseSpreadsAndFixedRateCaps

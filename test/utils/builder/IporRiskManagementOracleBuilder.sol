@@ -26,7 +26,10 @@ contract IporRiskManagementOracleBuilder is Test {
                     maxNotionalReceiveFixed: TestConstants.RMO_NOTIONAL_1B,
                     maxCollateralRatioPayFixed: TestConstants.RMO_COLLATERAL_RATIO_48_PER,
                     maxCollateralRatioReceiveFixed: TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-                    maxCollateralRatio: TestConstants.RMO_COLLATERAL_RATIO_90_PER
+                    maxCollateralRatio: TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+                    demandSpreadFactor28: TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                    demandSpreadFactor60: TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                    demandSpreadFactor90: TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
                 }),
                 IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps({
                     spread28dPayFixed: TestConstants.RMO_SPREAD_0_1_PER,
@@ -84,7 +87,10 @@ contract IporRiskManagementOracleBuilder is Test {
                 maxNotionalReceiveFixed: _riskIndicators[_assets[i]].maxNotionalReceiveFixed,
                 maxCollateralRatioPayFixed: _riskIndicators[_assets[i]].maxCollateralRatioPayFixed,
                 maxCollateralRatioReceiveFixed: _riskIndicators[_assets[i]].maxCollateralRatioReceiveFixed,
-                maxCollateralRatio: _riskIndicators[_assets[i]].maxCollateralRatio
+                maxCollateralRatio: _riskIndicators[_assets[i]].maxCollateralRatio,
+                demandSpreadFactor28: TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                demandSpreadFactor60: TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                demandSpreadFactor90: TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             });
             baseSpreadsAndFixedRateCaps[i] = IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps({
                 spread28dPayFixed: _baseSpreads[_assets[i]].spread28dPayFixed,
@@ -105,7 +111,7 @@ contract IporRiskManagementOracleBuilder is Test {
         proxy = new ERC1967Proxy(
             address(impl),
             abi.encodeWithSignature(
-                "initialize(address[],(uint256,uint256,uint256,uint256,uint256)[],(int256,int256,int256,int256,int256,int256,uint256,uint256,uint256,uint256,uint256,uint256)[])",
+                "initialize(address[],(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)[],(int256,int256,int256,int256,int256,int256,uint256,uint256,uint256,uint256,uint256,uint256)[])",
                 _assets,
                 riskIndicators,
                 baseSpreadsAndFixedRateCaps

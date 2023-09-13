@@ -178,14 +178,11 @@ contract AmmSwapsLens is IAmmSwapsLens {
                     spreadContext.spreadFunctionSig,
                     spreadContext.asset,
                     spreadContext.notional,
-                    spreadContext.riskIndicators.maxLeveragePerLeg,
-                    spreadContext.riskIndicators.maxCollateralRatioPerLeg,
+                    spreadContext.riskIndicators.demandSpreadFactor,
                     spreadContext.riskIndicators.baseSpreadPerLeg,
                     spreadContext.balance.totalCollateralPayFixed,
                     spreadContext.balance.totalCollateralReceiveFixed,
                     spreadContext.balance.liquidityPool,
-                    spreadContext.balance.totalNotionalPayFixed,
-                    spreadContext.balance.totalNotionalReceiveFixed,
                     spreadContext.indexValue,
                     spreadContext.riskIndicators.fixedRateCapPerLeg
                 )

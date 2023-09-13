@@ -51,21 +51,30 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
             TestConstants.RMO_NOTIONAL_1B,
             TestConstants.RMO_COLLATERAL_RATIO_48_PER,
             TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-            TestConstants.RMO_COLLATERAL_RATIO_90_PER
+            TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
         );
         riskIndicators[1] = IporRiskManagementOracleTypes.RiskIndicators(
             TestConstants.RMO_NOTIONAL_1B,
             TestConstants.RMO_NOTIONAL_1B,
             TestConstants.RMO_COLLATERAL_RATIO_48_PER,
             TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-            TestConstants.RMO_COLLATERAL_RATIO_90_PER
+            TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
         );
         riskIndicators[2] = IporRiskManagementOracleTypes.RiskIndicators(
             TestConstants.RMO_NOTIONAL_1B,
             TestConstants.RMO_NOTIONAL_1B,
             TestConstants.RMO_COLLATERAL_RATIO_48_PER,
             TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-            TestConstants.RMO_COLLATERAL_RATIO_90_PER
+            TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
         );
 
         IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[]
@@ -116,7 +125,7 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
         ERC1967Proxy iporRiskManagementOracleProxy = new ERC1967Proxy(
             address(iporRiskManagementOracleImplementation),
             abi.encodeWithSignature(
-                "initialize(address[],(uint256,uint256,uint256,uint256,uint256)[],(int256,int256,int256,int256,int256,int256,uint256,uint256,uint256,uint256,uint256,uint256)[])",
+                "initialize(address[],(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)[],(int256,int256,int256,int256,int256,int256,uint256,uint256,uint256,uint256,uint256,uint256)[])",
                 assets,
                 riskIndicators,
                 baseSpreadsAndFixedRateCaps
@@ -170,7 +179,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
             TestConstants.RMO_NOTIONAL_2B,
             TestConstants.RMO_COLLATERAL_RATIO_30_PER,
             TestConstants.RMO_COLLATERAL_RATIO_30_PER,
-            TestConstants.RMO_COLLATERAL_RATIO_48_PER
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
         );
 
         IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps memory baseSpreads1 = IporRiskManagementOracleTypes
@@ -210,7 +222,7 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
         vm.startPrank(_getUserAddress(1));
         _iporRiskManagementOracle.getVersion();
         _iporRiskManagementOracle.getOpenSwapParameters(address(_daiTestnetToken), 1, IporTypes.SwapTenor.DAYS_28);
-        _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken));
+        _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken), IporTypes.SwapTenor.DAYS_28);
         _iporRiskManagementOracle.getBaseSpreads(address(_daiTestnetToken));
         _iporRiskManagementOracle.getFixedRateCaps(address(_daiTestnetToken));
         _iporRiskManagementOracle.isAssetSupported(address(_daiTestnetToken));
@@ -434,7 +446,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-                TestConstants.RMO_COLLATERAL_RATIO_90_PER
+                TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             ),
             IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
                 TestConstants.RMO_SPREAD_0_1_PER,
@@ -542,7 +557,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-                TestConstants.RMO_COLLATERAL_RATIO_90_PER
+                TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             ),
             IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
                 type(int24).max - 1,
@@ -618,7 +636,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-                TestConstants.RMO_COLLATERAL_RATIO_90_PER
+                TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             ),
             IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
                 -type(int24).max + 1,
@@ -695,7 +716,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-                TestConstants.RMO_COLLATERAL_RATIO_90_PER
+                TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             ),
             IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
                 type(int24).max,
@@ -735,7 +759,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-                TestConstants.RMO_COLLATERAL_RATIO_90_PER
+                TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             ),
             IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
                 -type(int24).max + 1,
@@ -775,7 +802,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-                TestConstants.RMO_COLLATERAL_RATIO_90_PER
+                TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             ),
             IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
                 -type(int24).max + 1,
@@ -815,7 +845,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-                TestConstants.RMO_COLLATERAL_RATIO_90_PER
+                TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             ),
             IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
                 -type(int24).max + 1,
@@ -855,7 +888,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-                TestConstants.RMO_COLLATERAL_RATIO_90_PER
+                TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             ),
             IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
                 -type(int24).max + 1,
@@ -895,7 +931,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-                TestConstants.RMO_COLLATERAL_RATIO_90_PER
+                TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             ),
             IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
                 -type(int24).max + 1,
@@ -935,7 +974,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-                TestConstants.RMO_COLLATERAL_RATIO_90_PER
+                TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             ),
             IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
                 -type(int24).max,
@@ -975,7 +1017,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-                TestConstants.RMO_COLLATERAL_RATIO_90_PER
+                TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             ),
             IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
                 -type(int24).max + 1,
@@ -1015,7 +1060,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-                TestConstants.RMO_COLLATERAL_RATIO_90_PER
+                TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             ),
             IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
                 -type(int24).max + 1,
@@ -1055,7 +1103,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-                TestConstants.RMO_COLLATERAL_RATIO_90_PER
+                TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             ),
             IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
                 -type(int24).max + 1,
@@ -1095,7 +1146,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-                TestConstants.RMO_COLLATERAL_RATIO_90_PER
+                TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             ),
             IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
                 -type(int24).max + 1,
@@ -1135,7 +1189,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-                TestConstants.RMO_COLLATERAL_RATIO_90_PER
+                TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             ),
             IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
                 -type(int24).max + 1,
@@ -1175,7 +1232,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-                TestConstants.RMO_COLLATERAL_RATIO_90_PER
+                TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             ),
             IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
                 -type(int24).max + 1,
@@ -1215,7 +1275,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-                TestConstants.RMO_COLLATERAL_RATIO_90_PER
+                TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             ),
             IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
                 -type(int24).max + 1,
@@ -1255,7 +1318,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-                TestConstants.RMO_COLLATERAL_RATIO_90_PER
+                TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             ),
             IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
                 -type(int24).max + 1,
@@ -1295,7 +1361,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-                TestConstants.RMO_COLLATERAL_RATIO_90_PER
+                TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             ),
             IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
                 -type(int24).max + 1,
@@ -1335,7 +1404,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-                TestConstants.RMO_COLLATERAL_RATIO_90_PER
+                TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             ),
             IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
                 -type(int24).max + 1,
@@ -1375,7 +1447,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
                 TestConstants.RMO_NOTIONAL_1B,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
                 TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-                TestConstants.RMO_COLLATERAL_RATIO_90_PER
+                TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+                TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
             ),
             IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
                 -type(int24).max + 1,
@@ -1406,7 +1481,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
             TestConstants.RMO_NOTIONAL_2B,
             TestConstants.RMO_COLLATERAL_RATIO_30_PER,
             TestConstants.RMO_COLLATERAL_RATIO_30_PER,
-            TestConstants.RMO_COLLATERAL_RATIO_48_PER
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
         );
 
         // then
@@ -1416,8 +1494,30 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
             uint256 maxCollateralRatioPayFixed,
             uint256 maxCollateralRatioReceiveFixed,
             uint256 maxCollateralRatio,
-            uint256 lastUpdateTimestamp
-        ) = _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken));
+            uint256 lastUpdateTimestamp,
+            uint256 demandSpreadFactor28d
+        ) = _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken), IporTypes.SwapTenor.DAYS_28);
+
+        (
+            ,
+            ,
+            ,
+            ,
+            ,
+            ,
+            uint256 demandSpreadFactor60d
+        ) = _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken), IporTypes.SwapTenor.DAYS_60);
+
+
+        (
+            ,
+            ,
+            ,
+            ,
+            ,
+            ,
+            uint256 demandSpreadFactor90d
+        ) = _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken), IporTypes.SwapTenor.DAYS_90);
 
         assertEq(maxNotionalPayFixed, uint256(TestConstants.RMO_NOTIONAL_1B) * 1e22);
         assertEq(maxNotionalReceiveFixed, uint256(TestConstants.RMO_NOTIONAL_1B) * 1e22);
@@ -1425,6 +1525,9 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
         assertEq(maxCollateralRatioReceiveFixed, uint256(TestConstants.RMO_COLLATERAL_RATIO_48_PER) * 1e14);
         assertEq(maxCollateralRatio, uint256(TestConstants.RMO_COLLATERAL_RATIO_90_PER) * 1e14);
         assertEq(lastUpdateTimestamp, _blockTimestamp);
+        assertEq(demandSpreadFactor28d, uint256(TestConstants.RMO_DEMAND_SPREAD_FACTOR_28), "demandSpreadFactor28d");
+        assertEq(demandSpreadFactor60d, uint256(TestConstants.RMO_DEMAND_SPREAD_FACTOR_60), "demandSpreadFactor60d");
+        assertEq(demandSpreadFactor90d, uint256(TestConstants.RMO_DEMAND_SPREAD_FACTOR_90), "demandSpreadFactor90d");
     }
 
     function testShouldNotUpdateBaseSpreadsWhenUpdaterIsNotAnUpdater() public {
@@ -1499,7 +1602,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
             TestConstants.RMO_NOTIONAL_2B,
             TestConstants.RMO_COLLATERAL_RATIO_30_PER,
             TestConstants.RMO_COLLATERAL_RATIO_30_PER,
-            TestConstants.RMO_COLLATERAL_RATIO_48_PER
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
         );
 
         // then
@@ -1509,8 +1615,8 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
             uint256 maxCollateralRatioPayFixed,
             uint256 maxCollateralRatioReceiveFixed,
             uint256 maxCollateralRatio,
-            uint256 lastUpdateTimestamp
-        ) = _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken));
+            uint256 lastUpdateTimestamp,
+        ) = _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken), IporTypes.SwapTenor.DAYS_28);
         assertEq(isUpdaterBeforeRemove, 1);
         assertEq(isUpdaterAfterRemove, 0);
         assertEq(maxNotionalPayFixed, uint256(TestConstants.RMO_NOTIONAL_1B) * 1e22);
@@ -1594,7 +1700,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
             TestConstants.RMO_NOTIONAL_2B,
             TestConstants.RMO_COLLATERAL_RATIO_30_PER,
             TestConstants.RMO_COLLATERAL_RATIO_30_PER,
-            TestConstants.RMO_COLLATERAL_RATIO_48_PER
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
         );
 
         // then
@@ -1604,8 +1713,8 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
             uint256 maxCollateralRatioPayFixed,
             uint256 maxCollateralRatioReceiveFixed,
             uint256 maxCollateralRatio,
-            uint256 lastUpdateTimestamp
-        ) = _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken));
+            uint256 lastUpdateTimestamp,
+        ) = _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken), IporTypes.SwapTenor.DAYS_28);
         assertEq(maxNotionalPayFixed, uint256(TestConstants.RMO_NOTIONAL_2B) * 1e22);
         assertEq(maxNotionalReceiveFixed, uint256(TestConstants.RMO_NOTIONAL_2B) * 1e22);
         assertEq(maxCollateralRatioPayFixed, uint256(TestConstants.RMO_COLLATERAL_RATIO_30_PER) * 1e14);
@@ -1680,7 +1789,10 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
             TestConstants.RMO_NOTIONAL_2B,
             TestConstants.RMO_COLLATERAL_RATIO_30_PER,
             TestConstants.RMO_COLLATERAL_RATIO_20_PER,
-            TestConstants.RMO_COLLATERAL_RATIO_48_PER
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
         );
         IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps memory input = IporRiskManagementOracleTypes
             .BaseSpreadsAndFixedRateCaps(
@@ -1705,7 +1817,8 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
             uint256 daiPayFixed60DMaxCollateralRatioPerLeg,
             uint256 daiPayFixed60DMaxCollateralRatio,
             int256 daiPayFixed60DSpread,
-            uint256 daiFixedRateCap60D
+            uint256 daiFixedRateCap60D,
+
         ) = _iporRiskManagementOracle.getOpenSwapParameters(
                 address(_daiTestnetToken),
                 TestConstants.LEG_PAY_FIXED,
@@ -1716,7 +1829,8 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
             uint256 daiReceiveFixed90DMaxCollateralRatioPerLeg,
             uint256 daiReceiveFixed90DMaxCollateralRatio,
             int256 daiReceiveFixed90DSpread,
-            uint256 daiFixedRateCap90D
+            uint256 daiFixedRateCap90D,
+
         ) = _iporRiskManagementOracle.getOpenSwapParameters(
                 address(_daiTestnetToken),
                 TestConstants.LEG_RECEIVE_FIXED,

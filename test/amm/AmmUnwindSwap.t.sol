@@ -40,8 +40,8 @@ contract AmmUnwindSwap is TestCommons {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        int256 expectedSwapPnlValueToDate = -254213052927823196669;
-        int256 expectedSwapUnwindAmount = -1169961640683441257416;
+        int256 expectedSwapPnlValueToDate = -254653454130672346935;
+        int256 expectedSwapUnwindAmount = -1171989497612087069637;
         uint256 expectedOpeningFeeLpAmount = 29145104043000041192;
         uint256 expectedOpeningFeeTreasuryAmount = 14579841942471256;
 
@@ -98,13 +98,13 @@ contract AmmUnwindSwap is TestCommons {
         uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
         uint256 leverage = 100 * 10 ** 18;
 
-        int256 expectedSwapPnlValueToDateOne = -13299129121611997911;
-        int256 expectedSwapUnwindAmountOne = -119662692291211422847;
+        int256 expectedSwapPnlValueToDateOne = -13739566523224092853;
+        int256 expectedSwapUnwindAmountOne = -121691316061789903590;
         uint256 expectedOpeningFeeLpAmountOne = 29145104043000041192;
         uint256 expectedOpeningFeeTreasuryAmountOne = 14579841942471256;
 
-        int256 expectedSwapPnlValueToDateTwo = -43675964363614309616;
-        int256 expectedSwapUnwindAmountTwo = -70953641475019627183;
+        int256 expectedSwapPnlValueToDateTwo = -47677244969467080928;
+        int256 expectedSwapUnwindAmountTwo = -74502689729439282708;
         uint256 expectedUnwindFeeLpAmountTwo = 16473326053178158123;
         uint256 expectedUnwindFeeTreasuryAmountTwo = 8240783418298228;
 
@@ -182,8 +182,8 @@ contract AmmUnwindSwap is TestCommons {
         //given
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        int256 expectedSwapPnlValueToDateTwo = -43673905437684851567;
-        int256 expectedSwapUnwindAmountTwo = -70953278444402619173;
+        int256 expectedSwapPnlValueToDateTwo = -47674791525493728262;
+        int256 expectedSwapUnwindAmountTwo = -74502036263550658044;
         uint256 expectedUnwindFeeLpAmountTwo = 16473326053178158123;
         uint256 expectedUnwindFeeTreasuryAmountTwo = 8240783418298228;
 
@@ -235,8 +235,8 @@ contract AmmUnwindSwap is TestCommons {
         emit SwapUnwind(
             address(_iporProtocol.asset),
             1,
-            -13298938086225219915,
-            -119662325687633544168,
+            -13739362625080234294,
+            -121690676944970284581,
             29145104043000041192,
             14579841942471256
         );
@@ -296,7 +296,7 @@ contract AmmUnwindSwap is TestCommons {
         uint256[] memory swapRfIds = new uint256[](0);
 
         /// @dev value include subtracted unwind fee
-        uint256 expectedAmountToTransfer = 7826691067796413895781;
+        uint256 expectedAmountToTransfer = 7824222809664918933294;
 
         vm.prank(_buyer);
         vm.expectEmit(true, true, true, true);
@@ -342,7 +342,7 @@ contract AmmUnwindSwap is TestCommons {
         swapRfIds[0] = 1;
 
         /// @dev value include subtracted unwind fee
-        uint256 expectedAmountToTransfer = 8083236150507657411401;
+        uint256 expectedAmountToTransfer = 8082874034293901023151;
 
         vm.prank(_buyer);
         vm.expectEmit(true, true, true, true);

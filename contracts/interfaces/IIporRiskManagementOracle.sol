@@ -12,13 +12,19 @@ interface IIporRiskManagementOracle {
     /// @param maxCollateralRatioPayFixed maximum collateral ratio for pay fixed leg, 1 = 0.01%
     /// @param maxCollateralRatioReceiveFixed maximum collateral ratio for receive fixed leg, 1 = 0.01%
     /// @param maxCollateralRatio maximum collateral ratio for both legs, 1 = 0.01%
+    /// @param demandSpreadFactor28 demand spread factor, value represents without decimals, used to calculate demand spread
+    /// @param demandSpreadFactor60 demand spread factor, value represents without decimals, used to calculate demand spread
+    /// @param demandSpreadFactor90 demand spread factor, value represents without decimals, used to calculate demand spread
     event RiskIndicatorsUpdated(
         address indexed asset,
         uint256 maxNotionalPayFixed,
         uint256 maxNotionalReceiveFixed,
         uint256 maxCollateralRatioPayFixed,
         uint256 maxCollateralRatioReceiveFixed,
-        uint256 maxCollateralRatio
+        uint256 maxCollateralRatio,
+        uint256 demandSpreadFactor28,
+        uint256 demandSpreadFactor60,
+        uint256 demandSpreadFactor90
     );
 
     /// @notice event emitted when base spreads are updated. Rates are represented in 18 decimals.
@@ -87,6 +93,7 @@ interface IIporRiskManagementOracle {
     /// @return maxCollateralRatio maximum collateral ratio for both legs
     /// @return baseSpreadPerLeg spread for given direction and tenor
     /// @return fixedRateCapPerLeg fixed rate cap for given direction and tenor
+    /// @return demandSpreadFactor demand spread factor, value represents without decimals, used to calculate demand spread
     function getOpenSwapParameters(
         address asset,
         uint256 direction,
@@ -99,19 +106,22 @@ interface IIporRiskManagementOracle {
             uint256 maxCollateralRatioPerLeg,
             uint256 maxCollateralRatio,
             int256 baseSpreadPerLeg,
-            uint256 fixedRateCapPerLeg
+            uint256 fixedRateCapPerLeg,
+            uint256 demandSpreadFactor
         );
 
     /// @notice Gets risk indicators for a given asset. Amounts and rates represented in 18 decimals.
     /// @param asset underlying / stablecoin address supported in Ipor Protocol
-    /// @return maxNotionalPayFixed maximum notional value for pay fixed leg, value represented in 18 decimals
-    /// @return maxNotionalReceiveFixed maximum notional value for receive fixed leg, value represented in 18 decimals
-    /// @return maxCollateralRatioPayFixed maximum collateral ratio for pay fixed leg, value represents percentage with 18 decimals, example: 100% = 1e18, 50% = 5e17
-    /// @return maxCollateralRatioReceiveFixed maximum collateral ratio for receive fixed leg, value represents percentage with 18 decimals, example: 100% = 1e18, 50% = 5e17
-    /// @return maxCollateralRatio maximum collateral ratio for both legs, value represents percentage with 18 decimals, example: 100% = 1e18, 50% = 5e17
+    /// @return maxNotionalPayFixed maximum notional value for pay fixed leg
+    /// @return maxNotionalReceiveFixed maximum notional value for receive fixed leg
+    /// @return maxCollateralRatioPayFixed maximum collateral ratio for pay fixed leg
+    /// @return maxCollateralRatioReceiveFixed maximum collateral ratio for receive fixed leg
+    /// @return maxCollateralRatio maximum collateral ratio for both legs
     /// @return lastUpdateTimestamp Last risk indicators update done by off-chain service
+    /// @return demandSpreadFactor demand spread factor, value represents without decimals, used to calculate demand spread
     function getRiskIndicators(
-        address asset
+        address asset,
+        IporTypes.SwapTenor tenor
     )
         external
         view
@@ -121,7 +131,8 @@ interface IIporRiskManagementOracle {
             uint256 maxCollateralRatioPayFixed,
             uint256 maxCollateralRatioReceiveFixed,
             uint256 maxCollateralRatio,
-            uint256 lastUpdateTimestamp
+            uint256 lastUpdateTimestamp,
+            uint256 demandSpreadFactor
         );
 
     /// @notice Gets base spreads for a given asset. Rates represented in 18 decimals.
@@ -189,13 +200,19 @@ interface IIporRiskManagementOracle {
     /// @param maxCollateralRatioPayFixed maximum collateral ratio for pay fixed leg, 1 = 0.01%
     /// @param maxCollateralRatioReceiveFixed maximum collateral ratio for receive fixed leg, 1 = 0.01%
     /// @param maxCollateralRatio maximum collateral ratio for both legs, 1 = 0.01%
+    /// @param demandSpreadFactor28 demand spread factor, value represents without decimals, used to calculate demand spread
+    /// @param demandSpreadFactor60 demand spread factor, value represents without decimals, used to calculate demand spread
+    /// @param demandSpreadFactor90 demand spread factor, value represents without decimals, used to calculate demand spread
     function updateRiskIndicators(
         address asset,
         uint256 maxNotionalPayFixed,
         uint256 maxNotionalReceiveFixed,
         uint256 maxCollateralRatioPayFixed,
         uint256 maxCollateralRatioReceiveFixed,
-        uint256 maxCollateralRatio
+        uint256 maxCollateralRatio,
+        uint256 demandSpreadFactor28,
+        uint256 demandSpreadFactor60,
+        uint256 demandSpreadFactor90
     ) external;
 
     /// @notice Updates base spreads and fixed rate caps for a given asset. Rates are not represented in 18 decimals

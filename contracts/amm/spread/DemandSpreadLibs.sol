@@ -41,16 +41,10 @@ library DemandSpreadLibs {
         uint256 totalCollateralReceiveFixed;
         /// @notice Liquidity Pool's Balance
         uint256 liquidityPoolBalance;
-        /// @notice Swap's notional balance for Pay Fixed leg
-        uint256 totalNotionalPayFixed;
-        /// @notice Swap's notional balance for Receive Fixed leg
-        uint256 totalNotionalReceiveFixed;
         /// @notice Swap's notional
         uint256 swapNotional;
-        /// @notice Max leverage for a leg in the swap
-        uint256 maxLeveragePerLeg;
-        /// @notice Max liquidity pool collateral ratio per leg rate
-        uint256 maxLpCollateralRatioPerLegRate;
+        /// @notice demand spread factor used in demand spread calculation, value without decimals
+        uint256 demandSpreadFactor;
         /// @notice List of supported tenors in seconds
         uint256[] tenorsInSeconds;
         /// @notice List of storage ids for a TimeWeightedNotional for all tenors for a given asset
@@ -98,11 +92,8 @@ library DemandSpreadLibs {
             inputData.totalCollateralReceiveFixed
         );
 
-        /// @dev 1e36 = 1e18 * 1e18, To achieve result in 18 decimals when there is multiplication of 3 numbers in 18 decimals, we need to divide by 1e36.
-        uint256 notionalDepth = IporMath.division(
-            lpDepth * inputData.maxLeveragePerLeg * inputData.maxLpCollateralRatioPerLegRate,
-            1e36
-        );
+        /// @dev demandSpreadFactor is without decimals.
+        uint256 notionalDepth = lpDepth * inputData.demandSpreadFactor;
 
         (
             uint256 oldWeightedNotionalPayFixed,
@@ -146,11 +137,8 @@ library DemandSpreadLibs {
             inputData.totalCollateralReceiveFixed
         );
 
-        /// @dev 1e36 = 1e18 * 1e18, To achieve result in 18 decimals when there is multiplication of 3 numbers in 18 decimals, we need to divide by 1e36.
-        uint256 notionalDepth = IporMath.division(
-            lpDepth * inputData.maxLeveragePerLeg * inputData.maxLpCollateralRatioPerLegRate,
-            1e36
-        );
+        /// @dev demandSpreadFactor is without decimals.
+        uint256 notionalDepth = lpDepth * inputData.demandSpreadFactor;
 
         (
             uint256 timeWeightedNotionalPayFixed,
@@ -185,38 +173,39 @@ library DemandSpreadLibs {
     }
 
     /// @notice Calculates the spread value based on the given maximum notional and weighted notional.
-    /// @param maxNotional The maximum notional value determined by lpDepth, leverage, and maxCollateralRatio.
+    /// @param maxNotional The maximum notional value determined by lpDepth and demandSpreadFactor from Risk Oracle
     /// @param weightedNotional The weighted notional value used in the spread calculation.
     /// @return spreadValue The calculated spread value based on the given inputs.
+    /// @dev maxNotional = lpDepth * demandSpreadFactor
     function calculateSpreadFunction(
-        uint256 maxNotional, // lpDepth * leverage * maxCollateralRatio
+        uint256 maxNotional,
         uint256 weightedNotional
     ) public pure returns (uint256 spreadValue) {
         uint256 ratio = IporMath.division(weightedNotional * 1e18, maxNotional);
         if (ratio < 1e17) {
             spreadValue = IporMath.division(SLOPE_ONE * ratio, BASE_ONE);
-            // 0% -> 0.5%
+            /// @dev spreadValue in range < 0%, 0.5% )
         } else if (ratio < 2e17) {
             spreadValue = IporMath.division(SLOPE_TWO * ratio, 1e18) - BASE_TWO;
-            // 0.5% -> 1.5%
+            /// @dev spreadValue in range < 0.5%, 1.5% )
         } else if (ratio < 3e17) {
             spreadValue = IporMath.division(SLOPE_THREE * ratio, 1e18) - BASE_THREE;
-            // 1.5% -> 3%
+            /// @dev spreadValue in range < 1.5%, 3% )
         } else if (ratio < 4e17) {
             spreadValue = IporMath.division(SLOPE_FOUR * ratio, 1e18) - BASE_FOUR;
-            // 3% -> 5%
+            /// @dev spreadValue in range < 3%, 5% )
         } else if (ratio < 5e17) {
             spreadValue = IporMath.division(SLOPE_FIVE * ratio, 1e18) - BASE_FIVE;
-            // 5% -> 10%
+            /// @dev spreadValue in range < 5%, 10% )
         } else if (ratio < 8e17) {
             spreadValue = IporMath.division(SLOPE_SIX * ratio, 1e18) - BASE_SIX;
-            // 10% -> 20%
+            /// @dev spreadValue in range < 10%, 20% )
         } else if (ratio < 1e18) {
             spreadValue = IporMath.division(SLOPE_SEVEN * ratio, 1e18) - BASE_SEVEN;
-            // 20% -> 30%
+            /// @dev spreadValue in range < 20%, 30% )
         } else {
             spreadValue = 3 * 1e17;
-            // 30%
+            /// @dev spreadValue in range < 30%, 100% >
         }
     }
 }

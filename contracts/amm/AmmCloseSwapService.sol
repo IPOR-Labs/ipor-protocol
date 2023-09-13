@@ -695,7 +695,6 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         } else {
             revert(AmmErrors.UNSUPPORTED_DIRECTION);
         }
-
         uint256 oppositeLegFixedRate = RiskManagementLogic.calculateOfferedRate(
             oppositeDirection,
             swap.tenor,
