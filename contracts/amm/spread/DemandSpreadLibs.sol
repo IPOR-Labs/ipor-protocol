@@ -43,7 +43,7 @@ library DemandSpreadLibs {
         uint256 liquidityPoolBalance;
         /// @notice Swap's notional
         uint256 swapNotional;
-        /// @notice demand spread factor used in demand spread calculation
+        /// @notice demand spread factor used in demand spread calculation, value without decimals
         uint256 demandSpreadFactor;
         /// @notice List of supported tenors in seconds
         uint256[] tenorsInSeconds;
