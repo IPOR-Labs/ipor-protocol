@@ -63,14 +63,11 @@ library RiskManagementLogic {
                         determineSpreadMethodSig(direction, tenor),
                         spreadOfferedRateCtx.asset,
                         swapNotional,
-                        riskIndicators.maxLeveragePerLeg,
-                        riskIndicators.maxCollateralRatioPerLeg,
+                        riskIndicators.demandSpreadFactor,
                         riskIndicators.baseSpreadPerLeg,
                         balance.totalCollateralPayFixed,
                         balance.totalCollateralReceiveFixed,
                         balance.liquidityPool,
-                        balance.totalNotionalPayFixed,
-                        balance.totalNotionalReceiveFixed,
                         spreadOfferedRateCtx.indexValue,
                         riskIndicators.fixedRateCapPerLeg
                     )
@@ -102,7 +99,8 @@ library RiskManagementLogic {
             riskIndicators.maxCollateralRatioPerLeg,
             riskIndicators.maxCollateralRatio,
             riskIndicators.baseSpreadPerLeg,
-            riskIndicators.fixedRateCapPerLeg
+            riskIndicators.fixedRateCapPerLeg,
+            riskIndicators.demandSpreadFactor
         ) = IIporRiskManagementOracle(cfgIporRiskManagementOracle).getOpenSwapParameters(asset, direction, tenor);
 
         uint256 maxCollateralPerLeg = IporMath.division(

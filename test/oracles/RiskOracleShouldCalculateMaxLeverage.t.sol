@@ -202,7 +202,10 @@ contract RiskOracleShouldCalculateMaxLeverageTest is TestCommons {
             maxNotionalReceiveFixed,
             maxCollateralRatioPayFixed,
             maxCollateralRatioReceiveFixed,
-            maxCollateralRatio
+            maxCollateralRatio,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
         );
 
         //when

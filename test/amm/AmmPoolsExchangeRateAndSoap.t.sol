@@ -62,7 +62,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         // then
         assertLt(soap, TestConstants.ZERO_INT);
         assertLt(soap * -1, int256(balance.liquidityPool));
-        assertEq(actualExchangeRate, 1003704116338992634);
+        assertEq(actualExchangeRate, 1003786189694418343);
     }
 
     function testShouldCalculateExchangeRateReceiveFixedWhenSOAPChangedAndSOAPIsLowerThanZeroAndSOAPAbsoluteValueIsLowerThanLiquidityPoolBalance()

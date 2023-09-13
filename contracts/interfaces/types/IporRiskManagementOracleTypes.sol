@@ -15,6 +15,10 @@ library IporRiskManagementOracleTypes {
         uint256 maxCollateralRatioReceiveFixed;
         /// @notice maximum collateral ratio for both legs, 1 = 0.01%
         uint256 maxCollateralRatio;
+        // @notice demand spread factor, value represents without decimals, used to calculate demand spread, max number 2^16-1
+        uint256 demandSpreadFactor28;
+        uint256 demandSpreadFactor60;
+        uint256 demandSpreadFactor90;
     }
 
     //@notice Base Spreads And Fixed Rate Caps Structure for a given asset, both legs and all maturities

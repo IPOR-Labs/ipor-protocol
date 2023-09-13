@@ -12,13 +12,19 @@ interface IIporRiskManagementOracle {
     /// @param maxCollateralRatioPayFixed maximum collateral ratio for pay fixed leg, 1 = 0.01%
     /// @param maxCollateralRatioReceiveFixed maximum collateral ratio for receive fixed leg, 1 = 0.01%
     /// @param maxCollateralRatio maximum collateral ratio for both legs, 1 = 0.01%
+    /// @param demandSpreadFactor28 demand spread factor, value represents without decimals, used to calculate demand spread
+    /// @param demandSpreadFactor60 demand spread factor, value represents without decimals, used to calculate demand spread
+    /// @param demandSpreadFactor90 demand spread factor, value represents without decimals, used to calculate demand spread
     event RiskIndicatorsUpdated(
         address indexed asset,
         uint256 maxNotionalPayFixed,
         uint256 maxNotionalReceiveFixed,
         uint256 maxCollateralRatioPayFixed,
         uint256 maxCollateralRatioReceiveFixed,
-        uint256 maxCollateralRatio
+        uint256 maxCollateralRatio,
+        uint256 demandSpreadFactor28,
+        uint256 demandSpreadFactor60,
+        uint256 demandSpreadFactor90
     );
 
     /// @notice event emitted when base spreads are updated. Rates are represented in 18 decimals.
@@ -87,6 +93,7 @@ interface IIporRiskManagementOracle {
     /// @return maxCollateralRatio maximum collateral ratio for both legs
     /// @return baseSpreadPerLeg spread for given direction and tenor
     /// @return fixedRateCapPerLeg fixed rate cap for given direction and tenor
+    /// @return demandSpreadFactor demand spread factor, value represents without decimals, used to calculate demand spread
     function getOpenSwapParameters(
         address asset,
         uint256 direction,
@@ -99,7 +106,8 @@ interface IIporRiskManagementOracle {
             uint256 maxCollateralRatioPerLeg,
             uint256 maxCollateralRatio,
             int256 baseSpreadPerLeg,
-            uint256 fixedRateCapPerLeg
+            uint256 fixedRateCapPerLeg,
+            uint256 demandSpreadFactor
         );
 
     /// @notice Gets risk indicators for a given asset. Amounts and rates represented in 18 decimals.
@@ -110,8 +118,10 @@ interface IIporRiskManagementOracle {
     /// @return maxCollateralRatioReceiveFixed maximum collateral ratio for receive fixed leg
     /// @return maxCollateralRatio maximum collateral ratio for both legs
     /// @return lastUpdateTimestamp Last risk indicators update done by off-chain service
+    /// @return demandSpreadFactor demand spread factor, value represents without decimals, used to calculate demand spread
     function getRiskIndicators(
-        address asset
+        address asset,
+        IporTypes.SwapTenor tenor
     )
         external
         view
@@ -121,18 +131,19 @@ interface IIporRiskManagementOracle {
             uint256 maxCollateralRatioPayFixed,
             uint256 maxCollateralRatioReceiveFixed,
             uint256 maxCollateralRatio,
-            uint256 lastUpdateTimestamp
+            uint256 lastUpdateTimestamp,
+            uint256 demandSpreadFactor
         );
 
     /// @notice Gets base spreads for a given asset. Rates represented in 18 decimals.
     /// @param asset underlying / stablecoin address supported in Ipor Protocol
     /// @return lastUpdateTimestamp Last base spreads update done by off-chain service
-    /// @return spread28dPayFixed spread for 28 days pay fixed swap
-    /// @return spread28dReceiveFixed spread for 28 days receive fixed swap
-    /// @return spread60dPayFixed spread for 60 days pay fixed swap
-    /// @return spread60dReceiveFixed spread for 60 days receive fixed swap
-    /// @return spread90dPayFixed spread for 90 days pay fixed swap
-    /// @return spread90dReceiveFixed spread for 90 days receive fixed swap
+    /// @return spread28dPayFixed spread for 28 days pay fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
+    /// @return spread28dReceiveFixed spread for 28 days receive fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
+    /// @return spread60dPayFixed spread for 60 days pay fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
+    /// @return spread60dReceiveFixed spread for 60 days receive fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
+    /// @return spread90dPayFixed spread for 90 days pay fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
+    /// @return spread90dReceiveFixed spread for 90 days receive fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
     function getBaseSpreads(
         address asset
     )
@@ -151,12 +162,12 @@ interface IIporRiskManagementOracle {
     /// @notice Gets fixed rate cap for a given asset. Rates represented in 18 decimals.
     /// @param asset underlying / stablecoin address supported in Ipor Protocol
     /// @return lastUpdateTimestamp Last base spreads update done by off-chain service
-    /// @return fixedRateCap28dPayFixed fixed rate cap for 28 days pay fixed swap
-    /// @return fixedRateCap28dReceiveFixed fixed rate cap for 28 days receive fixed swap
-    /// @return fixedRateCap60dPayFixed fixed rate cap for 60 days pay fixed swap
-    /// @return fixedRateCap60dReceiveFixed fixed rate cap for 60 days receive fixed swap
-    /// @return fixedRateCap90dPayFixed fixed rate cap for 90 days pay fixed swap
-    /// @return fixedRateCap90dReceiveFixed fixed rate cap for 90 days receive fixed swap
+    /// @return fixedRateCap28dPayFixed fixed rate cap for 28 days pay fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
+    /// @return fixedRateCap28dReceiveFixed fixed rate cap for 28 days receive fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
+    /// @return fixedRateCap60dPayFixed fixed rate cap for 60 days pay fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
+    /// @return fixedRateCap60dReceiveFixed fixed rate cap for 60 days receive fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
+    /// @return fixedRateCap90dPayFixed fixed rate cap for 90 days pay fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
+    /// @return fixedRateCap90dReceiveFixed fixed rate cap for 90 days receive fixed swap, value represented percentage in 18 decimals, example: 100% = 1e18, 50% = 5e17, 35% = 35e16, 0,1% = 1e15 = 1000 * 1e12
     function getFixedRateCaps(
         address asset
     )
@@ -189,13 +200,19 @@ interface IIporRiskManagementOracle {
     /// @param maxCollateralRatioPayFixed maximum collateral ratio for pay fixed leg, 1 = 0.01%
     /// @param maxCollateralRatioReceiveFixed maximum collateral ratio for receive fixed leg, 1 = 0.01%
     /// @param maxCollateralRatio maximum collateral ratio for both legs, 1 = 0.01%
+    /// @param demandSpreadFactor28 demand spread factor, value represents without decimals, used to calculate demand spread
+    /// @param demandSpreadFactor60 demand spread factor, value represents without decimals, used to calculate demand spread
+    /// @param demandSpreadFactor90 demand spread factor, value represents without decimals, used to calculate demand spread
     function updateRiskIndicators(
         address asset,
         uint256 maxNotionalPayFixed,
         uint256 maxNotionalReceiveFixed,
         uint256 maxCollateralRatioPayFixed,
         uint256 maxCollateralRatioReceiveFixed,
-        uint256 maxCollateralRatio
+        uint256 maxCollateralRatio,
+        uint256 demandSpreadFactor28,
+        uint256 demandSpreadFactor60,
+        uint256 demandSpreadFactor90
     ) external;
 
     /// @notice Updates base spreads and fixed rate caps for a given asset. Rates are not represented in 18 decimals

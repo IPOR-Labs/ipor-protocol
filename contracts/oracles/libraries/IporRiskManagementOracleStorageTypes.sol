@@ -16,7 +16,12 @@ library IporRiskManagementOracleStorageTypes {
         uint16 maxCollateralRatio;
         /// @notice Timestamp of most recent indicators update
         uint32 lastUpdateTimestamp;
+        // @notice demand spread factor, value represents without decimals, used to calculate demand spread
+        uint16 demandSpreadFactor28;
+        uint16 demandSpreadFactor60;
+        uint16 demandSpreadFactor90;
     }
+
 
     struct BaseSpreadsAndFixedRateCapsStorage {
         /// @notice Timestamp of most recent indicators update

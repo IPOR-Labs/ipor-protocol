@@ -27,16 +27,13 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeveragePerLeg: 1_000e18,
-            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
             liquidityPoolBalance: 1_000_000e18,
-            totalNotionalPayFixed: 100_000e18,
-            totalNotionalReceiveFixed: 100_000e18,
             iporIndexValue: 1e16,
-            fixedRateCapPerLeg: 0 //todo
+            fixedRateCapPerLeg: 0, //todo
+            demandSpreadFactor: 1000
         });
         uint256 openSwapTimeStamp = block.timestamp + 100 days;
         AmmInternalTypes.OpenSwapItem memory closedSwap = AmmInternalTypes.OpenSwapItem(
@@ -93,16 +90,13 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeveragePerLeg: 1_000e18,
-            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
             liquidityPoolBalance: 1_000_000e18,
-            totalNotionalPayFixed: 100_000e18,
-            totalNotionalReceiveFixed: 100_000e18,
             iporIndexValue: 1e16,
-            fixedRateCapPerLeg: 0 //todo
+            fixedRateCapPerLeg: 0, //todo
+            demandSpreadFactor: 1000
         });
         uint256 openSwapTimeStamp = block.timestamp + 100 days;
         AmmInternalTypes.OpenSwapItem memory closedSwap = AmmInternalTypes.OpenSwapItem(
@@ -160,16 +154,13 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeveragePerLeg: 1_000e18,
-            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
             liquidityPoolBalance: 1_000_000e18,
-            totalNotionalPayFixed: 100_000e18,
-            totalNotionalReceiveFixed: 100_000e18,
             iporIndexValue: 1e16,
-            fixedRateCapPerLeg: 0 //todo
+            fixedRateCapPerLeg: 0, //todo
+            demandSpreadFactor: 1000
         });
         AmmInternalTypes.OpenSwapItem memory closedSwap = AmmInternalTypes.OpenSwapItem(
             10,
@@ -227,16 +218,13 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeveragePerLeg: 1_000e18,
-            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
             liquidityPoolBalance: 1_000_000e18,
-            totalNotionalPayFixed: 100_000e18,
-            totalNotionalReceiveFixed: 100_000e18,
             iporIndexValue: 1e16,
-            fixedRateCapPerLeg: 0 //todo
+            fixedRateCapPerLeg: 0, //todo
+            demandSpreadFactor: 1000
         });
         AmmInternalTypes.OpenSwapItem memory closedSwap = AmmInternalTypes.OpenSwapItem(
             10,
@@ -295,16 +283,13 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeveragePerLeg: 1_000e18,
-            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
             liquidityPoolBalance: 1_000_000e18,
-            totalNotionalPayFixed: 100_000e18,
-            totalNotionalReceiveFixed: 100_000e18,
             iporIndexValue: 1e16,
-            fixedRateCapPerLeg: 0 //todo
+            fixedRateCapPerLeg: 0, //todo
+            demandSpreadFactor: 1000
         });
 
         vm.warp(1000 days);
@@ -432,16 +417,13 @@ contract SpreadCloseSwapServiceTest is SpreadBaseTestUtils {
         IporTypes.SpreadInputs memory spreadInputsOpen = IporTypes.SpreadInputs({
             asset: dai,
             swapNotional: 10_000e18,
-            maxLeveragePerLeg: 1_000e18,
-            maxLpCollateralRatioPerLegRate: 1e18,
             baseSpreadPerLeg: 0,
             totalCollateralPayFixed: 10_000e18,
             totalCollateralReceiveFixed: 10_000e18,
             liquidityPoolBalance: 1_000_000e18,
-            totalNotionalPayFixed: 100_000e18,
-            totalNotionalReceiveFixed: 100_000e18,
             iporIndexValue: 1e16,
-            fixedRateCapPerLeg: 0 //todo
+            fixedRateCapPerLeg: 0, //todo
+            demandSpreadFactor: 1000
         });
 
         vm.warp(1000 days);

@@ -180,6 +180,8 @@ library AmmTypes {
         int256 baseSpreadPerLeg;
         /// @notice Fixed rate cap
         uint256 fixedRateCapPerLeg;
+        /// @notice Demand spread factor used to calculate demand spread
+        uint256 demandSpreadFactor;
     }
 
     /// @notice Structure containing information about swap's closing status, unwind values and PnL for a given swap and time.
