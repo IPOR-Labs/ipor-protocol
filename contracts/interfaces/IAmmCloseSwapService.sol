@@ -2,7 +2,6 @@
 pragma solidity 0.8.20;
 
 import "./types/AmmTypes.sol";
-import "forge-std/Test.sol";
 
 /// @title Interface of the service allowing to close swaps.
 interface IAmmCloseSwapService {
