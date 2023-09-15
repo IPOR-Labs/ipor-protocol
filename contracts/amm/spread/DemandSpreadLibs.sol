@@ -205,7 +205,7 @@ library DemandSpreadLibs {
             /// @dev spreadValue in range < 20%, 30% )
         } else {
             spreadValue = 3 * 1e17;
-            /// @dev spreadValue in range < 30%, 100% >
+            /// @dev spreadValue is equal to 30%
         }
     }
 }

@@ -54,6 +54,9 @@ contract MockTestnetStrategy is StrategyCore {
             IporMath.convertToWad(amount, IERC20Metadata(asset).decimals());
         _depositsBalance = newDepositsBalance;
         _lastUpdateBalance = block.timestamp;
+
+        IERC20Upgradeable(asset).forceApprove(address(this), amount);
+
         IERC20Upgradeable(asset).safeTransferFrom(msg.sender, address(this), amount);
         return IporMath.convertToWad(amount, assetDecimals);
     }
