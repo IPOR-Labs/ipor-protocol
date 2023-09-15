@@ -12,7 +12,7 @@ contract MockPowerTokenFlowsService is IPowerTokenFlowsService {
         external
     {}
 
-    function undelegatePwTokensToLiquidityMining(address[] calldata lpTokens, uint256[] calldata lpTokenAmounts)
+    function undelegatePwTokensFromLiquidityMining(address[] calldata lpTokens, uint256[] calldata lpTokenAmounts)
         external
     {}
 }
