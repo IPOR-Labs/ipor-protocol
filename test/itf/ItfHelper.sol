@@ -81,8 +81,8 @@ contract ItfHelper {
             AmmTypes.ClosingSwapDetails memory swapDetails;
             for (uint i; i < openSwaps.length; ++i) {
                 swapDetails = IAmmCloseSwapLens(_router).getClosingSwapDetails(
-                    account,
                     asset,
+                    account,
                     AmmTypes.SwapDirection(openSwaps[i].direction),
                     openSwaps[i].id,
                     block.timestamp
