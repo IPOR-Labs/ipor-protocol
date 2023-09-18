@@ -288,6 +288,7 @@ contract AmmPoolsService is IAmmPoolsService {
 
         emit Redeem(
             poolCfg.ammTreasury,
+            msg.sender,
             beneficiary,
             exchangeRate,
             redeemAmountStruct.wadAssetAmount,
