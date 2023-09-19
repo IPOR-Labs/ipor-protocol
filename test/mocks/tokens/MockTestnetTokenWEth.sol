@@ -14,6 +14,11 @@ contract MockTestnetTokenWEth {
     mapping(address => uint256) public balanceOf;
     mapping(address => mapping(address => uint256)) public allowance;
 
+    constructor(uint256 initialSupply) {
+        balanceOf[msg.sender] += initialSupply;
+        emit Deposit(msg.sender, initialSupply);
+    }
+
     receive() external payable {
         deposit();
     }

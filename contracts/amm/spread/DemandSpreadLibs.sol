@@ -56,7 +56,7 @@ library DemandSpreadLibs {
     }
 
     /// @notice Gets the spread function configuration.
-    function spreadFunctionConfig() public pure returns (uint256[] memory) {
+    function spreadFunctionConfig() internal pure returns (uint256[] memory) {
         uint256[] memory config = new uint256[](21);
         config[0] = INTERVAL_ONE;
         config[1] = INTERVAL_TWO;
@@ -180,7 +180,7 @@ library DemandSpreadLibs {
     function calculateSpreadFunction(
         uint256 maxNotional,
         uint256 weightedNotional
-    ) public pure returns (uint256 spreadValue) {
+    ) internal pure returns (uint256 spreadValue) {
         uint256 ratio = IporMath.division(weightedNotional * 1e18, maxNotional);
         if (ratio < 1e17) {
             spreadValue = IporMath.division(SLOPE_ONE * ratio, BASE_ONE);
