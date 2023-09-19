@@ -46,6 +46,8 @@ interface IAmmPoolsService {
 
     /// @notice Emitted when `to` account executes redeem ipTokens
     event Redeem(
+        /// @notice Address of the AMM Treasury contract
+        address indexed ammTreasury,
         /// @notice AmmTreasury's address from which underlying asset - ERC20 Tokens, are transferred to `to` account
         address indexed from,
         /// @notice account where underlying asset tokens are transferred after redeem
