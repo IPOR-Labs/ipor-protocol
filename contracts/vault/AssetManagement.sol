@@ -106,7 +106,6 @@ abstract contract AssetManagement is
             try IStrategy(sortedStrategies[highestApyStrategyArrayIndex - i].strategy).deposit(amount) returns (
                 uint256 tryDepositedAmount
             ) {
-                ///IporMath.convertToWad(IporMath.convertWadToAssetDecimals(amount, _getDecimals()), _getDecimals())
                 require(
                     tryDepositedAmount > 0 && tryDepositedAmount <= amount,
                     AssetManagementErrors.STRATEGY_INCORRECT_DEPOSITED_AMOUNT
