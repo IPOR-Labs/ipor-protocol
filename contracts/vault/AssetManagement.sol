@@ -103,16 +103,17 @@ abstract contract AssetManagement is
         uint256 highestApyStrategyArrayIndex = _getNumberOfSupportedStrategies() - 1;
 
         for (uint256 i; i < _getNumberOfSupportedStrategies(); ++i) {
-            try IStrategy(sortedStrategies[highestApyStrategyArrayIndex].strategy).deposit(amount) returns (
+            try IStrategy(sortedStrategies[highestApyStrategyArrayIndex - i].strategy).deposit(amount) returns (
                 uint256 tryDepositedAmount
             ) {
+                ///IporMath.convertToWad(IporMath.convertWadToAssetDecimals(amount, _getDecimals()), _getDecimals())
                 require(
                     tryDepositedAmount > 0 && tryDepositedAmount <= amount,
                     AssetManagementErrors.STRATEGY_INCORRECT_DEPOSITED_AMOUNT
                 );
 
                 depositedAmount = tryDepositedAmount;
-                wasDepositedToStrategy = sortedStrategies[highestApyStrategyArrayIndex].strategy;
+                wasDepositedToStrategy = sortedStrategies[highestApyStrategyArrayIndex - i].strategy;
 
                 break;
             } catch {
