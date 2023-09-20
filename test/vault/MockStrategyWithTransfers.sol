@@ -2,9 +2,12 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.20;
 
+import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+//IERC20Upgradeable
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "../../contracts/interfaces/IStrategy.sol";
 import "../../contracts/interfaces/IIporContractCommonGov.sol";
+import "../../contracts/libraries/math/IporMath.sol";
 
 // simple mock for total _balance tests
 contract MockStrategyWithTransfers is IStrategy, IIporContractCommonGov {
@@ -26,16 +29,20 @@ contract MockStrategyWithTransfers is IStrategy, IIporContractCommonGov {
         return 1;
     }
 
-    function deposit(uint256 amount) external override notPaused returns (uint256 depositedAmount) {
-        _balance = _balance + amount;
-        depositedAmount = amount;
+    function deposit(uint256 wadAmount) external override notPaused returns (uint256 depositedAmount) {
+        _balance = _balance + wadAmount;
+
+        uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, IERC20Metadata(_asset).decimals());
         IERC20Upgradeable(_asset).transferFrom(msg.sender, address(this), amount);
+
+        depositedAmount = IporMath.convertToWad(amount, IERC20Metadata(_asset).decimals());
     }
 
-    function withdraw(uint256 amount) external override notPaused returns (uint256 withdrawnAmount) {
-        _balance = _balance - amount;
-        withdrawnAmount = amount;
+    function withdraw(uint256 wadAmount) external override notPaused returns (uint256 withdrawnAmount) {
+        _balance = _balance - wadAmount;
+        uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, IERC20Metadata(_asset).decimals());
         IERC20Upgradeable(_asset).transfer(msg.sender, amount);
+        withdrawnAmount = IporMath.convertToWad(amount, IERC20Metadata(_asset).decimals());
     }
 
     function asset() external view returns (address) {
@@ -50,10 +57,9 @@ contract MockStrategyWithTransfers is IStrategy, IIporContractCommonGov {
         return true;
     }
 
-    function addPauseGuardians(address[] calldata guardians) external override  {}
+    function addPauseGuardians(address[] calldata guardians) external override {}
 
-    function removePauseGuardians(address[] calldata guardians) external override  {}
-
+    function removePauseGuardians(address[] calldata guardians) external override {}
 
     function pause() external override {
         _paused = true;
@@ -86,5 +92,4 @@ contract MockStrategyWithTransfers is IStrategy, IIporContractCommonGov {
     function transferOwnership(address newOwner) external {
         _owner = newOwner;
     }
-
 }
