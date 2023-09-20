@@ -8,6 +8,8 @@ contract AssetManagementDai is AssetManagement {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     uint256 public constant getVersion = 2_000;
+    uint256 private constant _SUPPORTED_NUMBER_OF_STRATEGIES = 3;
+    uint256 private constant _HIGHEST_APY_STRATEGY_ARRAY_INDEX = 2;
 
     address public immutable strategyAave;
     address public immutable strategyCompound;
@@ -17,12 +19,10 @@ contract AssetManagementDai is AssetManagement {
     constructor(
         address assetInput,
         address ammTreasuryInput,
-        uint256 supportedStrategiesVolumeInput,
-        uint256 highestApyStrategyArrayIndexInput,
         address strategyAaveInput,
         address strategyCompoundInput,
         address strategyDsrInput
-    ) AssetManagement(assetInput, ammTreasuryInput, supportedStrategiesVolumeInput, highestApyStrategyArrayIndexInput) {
+    ) AssetManagement(assetInput, ammTreasuryInput) {
         strategyAave = strategyAaveInput.checkAddress();
         strategyCompound = strategyCompoundInput.checkAddress();
         strategyDsr = strategyDsrInput.checkAddress();
@@ -34,8 +34,12 @@ contract AssetManagementDai is AssetManagement {
         return 18;
     }
 
+    function _getNumberOfSupportedStrategies() internal view virtual override returns (uint256) {
+        return 3;
+    }
+
     function _getStrategiesData() internal view override returns (StrategyData[] memory strategies) {
-        strategies = new StrategyData[](supportedStrategiesVolume);
+        strategies = new StrategyData[](_getNumberOfSupportedStrategies());
         strategies[0].strategy = strategyAave;
         strategies[0].balance = IStrategy(strategyAave).balanceOf();
         strategies[1].strategy = strategyCompound;

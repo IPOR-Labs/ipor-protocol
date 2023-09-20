@@ -55,8 +55,6 @@ abstract contract AssetManagement is
 
     address public immutable asset;
     address public immutable ammTreasury;
-    uint256 public immutable supportedStrategiesVolume;
-    uint256 public immutable highestApyStrategyArrayIndex;
 
     modifier onlyAmmTreasury() {
         require(msg.sender == ammTreasury, IporErrors.CALLER_NOT_AMM_TREASURY);
@@ -68,16 +66,9 @@ abstract contract AssetManagement is
         _;
     }
 
-    constructor(
-        address assetInput,
-        address ammTreasuryInput,
-        uint256 supportedStrategiesVolumeInput,
-        uint256 highestApyStrategyArrayIndexInput
-    ) {
+    constructor(address assetInput, address ammTreasuryInput) {
         asset = assetInput.checkAddress();
         ammTreasury = ammTreasuryInput.checkAddress();
-        supportedStrategiesVolume = supportedStrategiesVolumeInput;
-        highestApyStrategyArrayIndex = highestApyStrategyArrayIndexInput;
 
         require(_getDecimals() == IERC20MetadataUpgradeable(assetInput).decimals(), IporErrors.WRONG_DECIMALS);
     }
@@ -109,8 +100,10 @@ abstract contract AssetManagement is
 
         address wasDepositedToStrategy = address(0x0);
 
-        for (uint256 i; i < supportedStrategiesVolume; ++i) {
-            try IStrategy(sortedStrategies[highestApyStrategyArrayIndex - i].strategy).deposit(amount) returns (
+        uint256 highestApyStrategyArrayIndex = _getNumberOfSupportedStrategies() - 1;
+
+        for (uint256 i; i < _getNumberOfSupportedStrategies(); ++i) {
+            try IStrategy(sortedStrategies[highestApyStrategyArrayIndex].strategy).deposit(amount) returns (
                 uint256 tryDepositedAmount
             ) {
                 require(
@@ -119,7 +112,7 @@ abstract contract AssetManagement is
                 );
 
                 depositedAmount = tryDepositedAmount;
-                wasDepositedToStrategy = sortedStrategies[highestApyStrategyArrayIndex - i].strategy;
+                wasDepositedToStrategy = sortedStrategies[highestApyStrategyArrayIndex].strategy;
 
                 break;
             } catch {
@@ -184,6 +177,8 @@ abstract contract AssetManagement is
 
     function _getDecimals() internal pure virtual returns (uint256);
 
+    function _getNumberOfSupportedStrategies() internal view virtual returns (uint256);
+
     function _getStrategiesData() internal view virtual returns (StrategyData[] memory strategies);
 
     function _withdraw(uint256 amount) internal returns (uint256 withdrawnAmount, uint256 vaultBalance) {
@@ -198,7 +193,7 @@ abstract contract AssetManagement is
         /// in external DeFi protocol integrated with IPOR Asset Management
         amountToWithdraw = amount + ROUNDING_ERROR_MARGIN;
 
-        for (uint256 i; i < supportedStrategiesVolume; ++i) {
+        for (uint256 i; i < _getNumberOfSupportedStrategies(); ++i) {
             strategyAmountToWithdraw = sortedStrategies[i].balance <= amountToWithdraw
                 ? sortedStrategies[i].balance
                 : amountToWithdraw;
@@ -240,7 +235,7 @@ abstract contract AssetManagement is
     function _calculateTotalBalance(
         StrategyData[] memory sortedStrategies
     ) internal view returns (uint256 totalBalance) {
-        for (uint256 i; i < supportedStrategiesVolume; ++i) {
+        for (uint256 i; i < _getNumberOfSupportedStrategies(); ++i) {
             totalBalance += sortedStrategies[i].balance;
         }
         totalBalance += IporMath.convertToWad(IERC20Upgradeable(asset).balanceOf(address(this)), _getDecimals());
