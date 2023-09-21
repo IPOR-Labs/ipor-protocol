@@ -18,8 +18,8 @@ interface IAssetManagement {
 
     /// @notice Withdraws declared amount of asset from AssetManagement to AmmTreasury. Function available only for AmmTreasury.
     /// @dev Emits {Withdraw} event from AssetManagement, emits {Transfer} event from ERC20 asset.
-    /// Input and output values are represented in 18 decimals.
-    /// @param amount deposited amount of underlying asset
+    /// All input and output values are represented in 18 decimals.
+    /// @param amount deposited amount of underlying asset represented in 18 decimals.
     /// @return withdrawnAmount final withdrawn amount of asset from AssetManagement, can be different than input amount due to passing time.
     /// @return vaultBalance current asset balance on AssetManagement
     function withdraw(uint256 amount) external returns (uint256 withdrawnAmount, uint256 vaultBalance);
