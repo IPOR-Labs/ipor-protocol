@@ -8,8 +8,6 @@ contract AssetManagementDai is AssetManagement {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     uint256 public constant getVersion = 2_000;
-    uint256 private constant _SUPPORTED_NUMBER_OF_STRATEGIES = 3;
-    uint256 private constant _HIGHEST_APY_STRATEGY_ARRAY_INDEX = 2;
 
     address public immutable strategyAave;
     address public immutable strategyCompound;
