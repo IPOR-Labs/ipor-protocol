@@ -30,8 +30,6 @@ contract UnitAssetManagementUsdcTest is TestCommons {
         AssetManagementUsdc assetManagementUsdcImpl = new AssetManagementUsdc(
             address(_usdc),
             _ammTreasury,
-            2,
-            1,
             address(_strategyAave),
             address(_strategyCompound)
         );

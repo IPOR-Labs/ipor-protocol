@@ -33,8 +33,6 @@ contract UnitAssetManagementDaiTest is TestCommons {
         AssetManagementDai assetManagementDaiImpl = new AssetManagementDai(
             address(_dai),
             _ammTreasury,
-            3,
-            2,
             address(_strategyAave),
             address(_strategyCompound),
             address(_strategyDsr)
