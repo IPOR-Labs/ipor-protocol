@@ -3,35 +3,22 @@ pragma solidity 0.8.20;
 
 import "../../amm/spread/CalculateTimeWeightedNotionalLibs.sol";
 
+
 library DemandSpreadLibs {
-    uint256 internal constant INTERVAL_ONE = 1e17;
-    uint256 internal constant INTERVAL_TWO = 2e17;
-    uint256 internal constant INTERVAL_THREE = 3e17;
-    uint256 internal constant INTERVAL_FOUR = 4e17;
-    uint256 internal constant INTERVAL_FIVE = 5e17;
-    uint256 internal constant INTERVAL_SIX = 8e17;
-    uint256 internal constant INTERVAL_SEVEN = 1e18;
+    uint256 internal constant INTERVAL_ONE = 2e17;
+    uint256 internal constant INTERVAL_TWO = 5e17;
+    uint256 internal constant INTERVAL_THREE = 1e18;
+
 
     uint256 internal constant SLOPE_ONE = 5e16;
-    uint256 internal constant BASE_ONE = 1e18;
+    uint256 internal constant BASE_ONE = 0;
 
-    uint256 internal constant SLOPE_TWO = 1e17;
-    uint256 internal constant BASE_TWO = 5e15;
+    uint256 internal constant SLOPE_TWO = 133333333333333333;
+    uint256 internal constant BASE_TWO = 16666666666666667;
 
-    uint256 internal constant SLOPE_THREE = 15e16;
-    uint256 internal constant BASE_THREE = 15e15;
+    uint256 internal constant SLOPE_THREE = 5e17;
+    uint256 internal constant BASE_THREE = 2e17;
 
-    uint256 internal constant SLOPE_FOUR = 2e17;
-    uint256 internal constant BASE_FOUR = 3e16;
-
-    uint256 internal constant SLOPE_FIVE = 5e17;
-    uint256 internal constant BASE_FIVE = 15e16;
-
-    uint256 internal constant SLOPE_SIX = 333333333333333333;
-    uint256 internal constant BASE_SIX = 66666666666666666;
-
-    uint256 internal constant SLOPE_SEVEN = 5e17;
-    uint256 internal constant BASE_SEVEN = 2e17;
 
     /// @notice DTO for the Weighted Notional
     struct SpreadInputData {
@@ -61,24 +48,12 @@ library DemandSpreadLibs {
         config[0] = INTERVAL_ONE;
         config[1] = INTERVAL_TWO;
         config[2] = INTERVAL_THREE;
-        config[3] = INTERVAL_FOUR;
-        config[4] = INTERVAL_FIVE;
-        config[5] = INTERVAL_SIX;
-        config[6] = INTERVAL_SEVEN;
-        config[7] = SLOPE_ONE;
-        config[8] = BASE_ONE;
-        config[9] = SLOPE_TWO;
-        config[10] = BASE_TWO;
-        config[11] = SLOPE_THREE;
-        config[12] = BASE_THREE;
-        config[13] = SLOPE_FOUR;
-        config[14] = BASE_FOUR;
-        config[15] = SLOPE_FIVE;
-        config[16] = BASE_FIVE;
-        config[17] = SLOPE_SIX;
-        config[18] = BASE_SIX;
-        config[19] = SLOPE_SEVEN;
-        config[20] = BASE_SEVEN;
+        config[3] = SLOPE_ONE;
+        config[4] = BASE_ONE;
+        config[5] = SLOPE_TWO;
+        config[6] = BASE_TWO;
+        config[7] = SLOPE_THREE;
+        config[8] = BASE_THREE;
         return config;
     }
 
@@ -182,27 +157,15 @@ library DemandSpreadLibs {
         uint256 weightedNotional
     ) internal pure returns (uint256 spreadValue) {
         uint256 ratio = IporMath.division(weightedNotional * 1e18, maxNotional);
-        if (ratio < 1e17) {
-            spreadValue = IporMath.division(SLOPE_ONE * ratio, BASE_ONE);
-            /// @dev spreadValue in range < 0%, 0.5% )
-        } else if (ratio < 2e17) {
+        if (ratio < INTERVAL_ONE) {
+            spreadValue = IporMath.division(SLOPE_ONE * ratio, 1e18) - BASE_ONE;
+            /// @dev spreadValue in range < 0%, 1% )
+        } else if (ratio < INTERVAL_TWO) {
             spreadValue = IporMath.division(SLOPE_TWO * ratio, 1e18) - BASE_TWO;
-            /// @dev spreadValue in range < 0.5%, 1.5% )
-        } else if (ratio < 3e17) {
+            /// @dev spreadValue in range < 1%, 5% )
+        } else if (ratio < INTERVAL_THREE) {
             spreadValue = IporMath.division(SLOPE_THREE * ratio, 1e18) - BASE_THREE;
-            /// @dev spreadValue in range < 1.5%, 3% )
-        } else if (ratio < 4e17) {
-            spreadValue = IporMath.division(SLOPE_FOUR * ratio, 1e18) - BASE_FOUR;
-            /// @dev spreadValue in range < 3%, 5% )
-        } else if (ratio < 5e17) {
-            spreadValue = IporMath.division(SLOPE_FIVE * ratio, 1e18) - BASE_FIVE;
-            /// @dev spreadValue in range < 5%, 10% )
-        } else if (ratio < 8e17) {
-            spreadValue = IporMath.division(SLOPE_SIX * ratio, 1e18) - BASE_SIX;
-            /// @dev spreadValue in range < 10%, 20% )
-        } else if (ratio < 1e18) {
-            spreadValue = IporMath.division(SLOPE_SEVEN * ratio, 1e18) - BASE_SEVEN;
-            /// @dev spreadValue in range < 20%, 30% )
+            /// @dev spreadValue in range < 5%, 30% )
         } else {
             spreadValue = 3 * 1e17;
             /// @dev spreadValue is equal to 30%
