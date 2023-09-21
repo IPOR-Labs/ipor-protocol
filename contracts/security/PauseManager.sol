@@ -1,28 +1,62 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "../libraries/StorageLib.sol";
 
+/// @title Ipor Protocol Router Pause Manager library
 library PauseManager {
+    /// @notice Emitted when new pause guardian is added
+    /// @param guardians List of addresses of guardian
+    event PauseGuardiansAdded(address[] indexed guardians);
 
-    function addPauseGuardian(address _guardian) internal {
+    /// @notice Emitted when pause guardian is removed
+    /// @param guardians List of addresses of guardian
+    event PauseGuardiansRemoved(address[] indexed guardians);
+
+    /// @notice Checks if account is Ipor Protocol Router pause guardian
+    /// @param account Address of guardian
+    /// @return true if account is Ipor Protocol Router pause guardian
+    function isPauseGuardian(address account) internal view returns (bool) {
         mapping(address => bool) storage pauseGuardians = StorageLib.getPauseGuardianStorage();
-        pauseGuardians[_guardian] = true;
-        emit PauseGuardianAdded(_guardian);
+        return pauseGuardians[account];
     }
 
-    function removePauseGuardian(address _guardian) internal {
+    /// @notice Adds Ipor Protocol Router pause guardian
+    /// @param newGuardians Addresses of guardians
+    function addPauseGuardians(address[] calldata newGuardians) internal {
+        uint256 length = newGuardians.length;
+        if (length == 0) {
+            return;
+        }
+
         mapping(address => bool) storage pauseGuardians = StorageLib.getPauseGuardianStorage();
-        pauseGuardians[_guardian] = false;
-        emit PauseGuardianRemoved(_guardian);
+
+        for (uint256 i; i < length; ) {
+            pauseGuardians[newGuardians[i]] = true;
+            unchecked {
+                i++;
+            }
+        }
+        emit PauseGuardiansAdded(newGuardians);
     }
 
-    function isPauseGuardian(address _guardian) internal view returns (bool) {
+    /// @notice Removes Ipor Protocol Router pause guardian
+    /// @param guardians Addresses of guardians
+    function removePauseGuardians(address[] calldata guardians) internal {
+        uint256 length = guardians.length;
+
+        if (length == 0) {
+            return;
+        }
+
         mapping(address => bool) storage pauseGuardians = StorageLib.getPauseGuardianStorage();
-        return pauseGuardians[_guardian];
+
+        for (uint256 i; i < length; ) {
+            pauseGuardians[guardians[i]] = false;
+            unchecked {
+                i++;
+            }
+        }
+        emit PauseGuardiansRemoved(guardians);
     }
-
-    event PauseGuardianAdded(address indexed guardian);
-
-    event PauseGuardianRemoved(address indexed guardian);
 }

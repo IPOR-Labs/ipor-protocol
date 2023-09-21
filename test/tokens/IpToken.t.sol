@@ -1,16 +1,14 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
-import "forge-std/Test.sol";
 import "../TestCommons.sol";
-import "contracts/tokens/IpToken.sol";
+import "../../contracts/tokens/IpToken.sol";
 import "../utils/TestConstants.sol";
 
-contract IpTokenTest is Test, TestCommons {
-    address internal _admin;
+contract IpTokenTest is TestCommons {
     address internal _user1;
     address internal _user2;
-    address internal _joseph;
+    address internal _router;
     address internal DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
 
     event Mint(address indexed account, uint256 amount);
@@ -19,7 +17,7 @@ contract IpTokenTest is Test, TestCommons {
         _admin = vm.rememberKey(1);
         _user1 = vm.rememberKey(2);
         _user2 = vm.rememberKey(3);
-        _joseph = vm.rememberKey(4);
+        _router = vm.rememberKey(4);
     }
 
     function testShouldTransferOwnershipSimpleCase1() public {
@@ -112,7 +110,7 @@ contract IpTokenTest is Test, TestCommons {
 
         // when & then
         vm.prank(_user1);
-        vm.expectRevert(abi.encodePacked(MiltonErrors.CALLER_NOT_JOSEPH));
+        vm.expectRevert(abi.encodePacked(AmmErrors.CALLER_NOT_TOKEN_MANAGER));
         ipToken.mint(_user2, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
     }
 
@@ -121,8 +119,8 @@ contract IpTokenTest is Test, TestCommons {
         IpToken ipToken = prepareIpToken();
 
         // when & then
-        vm.prank(_joseph);
-        vm.expectRevert(abi.encodePacked(JosephErrors.IP_TOKEN_MINT_AMOUNT_TOO_LOW));
+        vm.prank(_router);
+        vm.expectRevert(abi.encodePacked(AmmPoolsErrors.IP_TOKEN_MINT_AMOUNT_TOO_LOW));
         ipToken.mint(_user1, TestConstants.ZERO);
     }
 
@@ -131,8 +129,8 @@ contract IpTokenTest is Test, TestCommons {
         IpToken ipToken = prepareIpToken();
 
         // when & then
-        vm.prank(_joseph);
-        vm.expectRevert(abi.encodePacked(JosephErrors.IP_TOKEN_BURN_AMOUNT_TOO_LOW));
+        vm.prank(_router);
+        vm.expectRevert(abi.encodePacked(AmmPoolsErrors.IP_TOKEN_BURN_AMOUNT_TOO_LOW));
         ipToken.burn(_user1, TestConstants.ZERO);
     }
 
@@ -142,7 +140,7 @@ contract IpTokenTest is Test, TestCommons {
 
         // when & then
         vm.prank(_user1);
-        vm.expectRevert(abi.encodePacked(MiltonErrors.CALLER_NOT_JOSEPH));
+        vm.expectRevert(abi.encodePacked(AmmErrors.CALLER_NOT_TOKEN_MANAGER));
         ipToken.burn(_user2, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
     }
 
@@ -152,7 +150,7 @@ contract IpTokenTest is Test, TestCommons {
         IpToken ipToken = prepareIpToken();
 
         // when & then
-        vm.prank(_joseph);
+        vm.prank(_router);
         vm.expectEmit(true, true, true, true);
         emit Mint(_user1, amount);
 
@@ -192,7 +190,7 @@ contract IpTokenTest is Test, TestCommons {
     function prepareIpToken() private returns (IpToken) {
         vm.startPrank(_admin);
         IpToken ipToken = new IpToken("IpToken", "IPT", DAI);
-        ipToken.setJoseph(_joseph);
+        ipToken.setTokenManager(_router);
         vm.stopPrank();
         return ipToken;
     }

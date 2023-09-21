@@ -1,19 +1,22 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-/// @title Interface of ipToken - Liquidity Pool Token managed by Joseph in IPOR Protocol for a given asset.
+/// @title Interface of ipToken - Liquidity Pool Token managed by Router in IPOR Protocol for a given asset.
 /// For more information refer to the documentation https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/liquidity-provisioning#liquidity-tokens
 interface IIpToken is IERC20 {
-    /// @notice Gets the asset / stablecoin address which is assocciated with particular ipToken smart contract instance
+    /// @notice Gets the asset / stablecoin address which is associated with particular ipToken smart contract instance
     /// @return asset / stablecoin address
     function getAsset() external view returns (address);
 
-    /// @notice Sets Joseph's address. Owner only
-    /// @dev only Joseph can mint or burn ipTokens. Function emits `JosephChanged` event.
-    /// @param newJoseph Joseph's address
-    function setJoseph(address newJoseph) external;
+    /// @notice Gets the Token Manager's address.
+    function getTokenManager() external view returns (address);
+
+    /// @notice Sets token manager's address. IpToken contract Owner only
+    /// @dev only Token Manager can mint or burn ipTokens. Function emits `TokenManagerChanged` event.
+    /// @param newTokenManager Token Managers's address
+    function setTokenManager(address newTokenManager) external;
 
     /// @notice Creates the ipTokens in the `amount` given and assigns them to the `account`
     /// @dev Emits {Transfer} from ERC20 asset and {Mint} event from ipToken
@@ -27,23 +30,17 @@ interface IIpToken is IERC20 {
     /// @param amount volume of ipTokens that will be burned, represented in 18 decimals
     function burn(address account, uint256 amount) external;
 
-    /// @notice Emmited after the `amount` ipTokens were mint and transferred to `account`.
+    /// @notice Emitted after the `amount` ipTokens were mint and transferred to `account`.
     /// @param account address where ipTokens are transferred after minting
     /// @param amount of ipTokens minted, represented in 18 decimals
     event Mint(address indexed account, uint256 amount);
 
-    /// @notice Emmited after `amount` ipTokens were transferred from `account` and burnt.
+    /// @notice Emitted after `amount` ipTokens were transferred from `account` and burnt.
     /// @param account address from which ipTokens are transferred to be burned
     /// @param amount volume of ipTokens burned
     event Burn(address indexed account, uint256 amount);
 
-    /// @notice Emmited when Joseph address is changed by its owner.
-    /// @param changedBy account address that changed Joseph's address
-    /// @param oldJoseph old address of Joseph
-    /// @param newJoseph new address of Joseph
-    event JosephChanged(
-        address indexed changedBy,
-        address indexed oldJoseph,
-        address indexed newJoseph
-    );
+    /// @notice Emitted when Token Manager address is changed by its owner.
+    /// @param newTokenManager new address of Token Manager
+    event TokenManagerChanged(address indexed newTokenManager);
 }

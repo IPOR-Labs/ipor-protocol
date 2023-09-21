@@ -1,14 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
-import "../TestCommons.sol";
-import {DataUtils} from "../utils/DataUtils.sol";
-import {StanleyUtils} from "../utils/StanleyUtils.sol";
+import "test/TestCommons.sol";
 import {TestConstants} from "../utils/TestConstants.sol";
-import {MockTestnetStrategy} from "contracts/mocks/stanley/MockTestnetStrategy.sol";
-import {MockTestnetToken} from "contracts/mocks/tokens/MockTestnetToken.sol";
+import {MockTestnetStrategy} from "@ipor-protocol/test/mocks/assetManagement/MockTestnetStrategy.sol";
+import {MockTestnetToken} from "@ipor-protocol/test/mocks/tokens/MockTestnetToken.sol";
 
-contract MockStrategyTestnetTest is TestCommons, DataUtils {
+contract MockStrategyTestnetTest is TestCommons {
     MockTestnetStrategy internal _mockStrategyDai;
     MockTestnetStrategy internal _mockStrategyUsdt;
     MockTestnetStrategy internal _mockStrategyUsdc;
@@ -18,11 +16,7 @@ contract MockStrategyTestnetTest is TestCommons, DataUtils {
     MockTestnetToken internal _shareToken18Decimals;
     MockTestnetToken internal _shareToken6Decimals;
 
-    function setStrategiesStanley(address stanley) public {
-        _mockStrategyDai.setStanley(stanley);
-        _mockStrategyUsdt.setStanley(stanley);
-        _mockStrategyUsdc.setStanley(stanley);
-    }
+    AssetBuilder internal _assetBuilder = new AssetBuilder(address(this));
 
     function approveStrategies() public {
         _daiMockedToken.approve(address(_mockStrategyDai), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
@@ -40,34 +34,46 @@ contract MockStrategyTestnetTest is TestCommons, DataUtils {
     }
 
     function setUp() public {
-        _daiMockedToken = getTokenDai();
-        _usdtMockedToken = getTokenUsdt();
-        _usdcMockedToken = getTokenUsdc();
-        _shareToken18Decimals = getTokenDai();
-        _shareToken6Decimals = getTokenUsdt();
-        _mockStrategyDai = getMockTestnetStrategy(address(_daiMockedToken), address(_shareToken18Decimals));
-        _mockStrategyUsdt = getMockTestnetStrategy(address(_usdtMockedToken), address(_shareToken6Decimals));
-        _mockStrategyUsdc = getMockTestnetStrategy(address(_usdcMockedToken), address(_shareToken6Decimals));
+        _assetBuilder.withDAI();
+        _daiMockedToken = _assetBuilder.build();
+
+        _assetBuilder.withUSDT();
+        _usdtMockedToken = _assetBuilder.build();
+
+        _assetBuilder.withUSDC();
+        _usdcMockedToken = _assetBuilder.build();
+
+        _assetBuilder.withDAI();
+        _shareToken18Decimals = _assetBuilder.build();
+
+        _assetBuilder.withUSDT();
+        _shareToken6Decimals = _assetBuilder.build();
+
         _admin = address(this);
+
+        _mockStrategyDai = getMockTestnetStrategy(address(_daiMockedToken), 18, address(_shareToken18Decimals), _admin);
+        _mockStrategyUsdt = getMockTestnetStrategy(address(_usdtMockedToken), 6, address(_shareToken6Decimals), _admin);
+        _mockStrategyUsdc = getMockTestnetStrategy(address(_usdcMockedToken), 6, address(_shareToken6Decimals), _admin);
+
         _userOne = _getUserAddress(1);
         _userTwo = _getUserAddress(2);
         _userThree = _getUserAddress(3);
         _liquidityProvider = _getUserAddress(4);
         _users = usersToArray(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
-        setStrategiesStanley(_admin);
+
         approveStrategies();
         setInitialAmounts();
     }
 
     function testShouldReturnThreePointFiveAPR() public {
         // when
-        uint256 aprDai = _mockStrategyDai.getApr();
-        uint256 aprUsdt = _mockStrategyUsdt.getApr();
-        uint256 aprUsdc = _mockStrategyUsdc.getApr();
+        uint256 apyDai = _mockStrategyDai.getApy();
+        uint256 apyUsdt = _mockStrategyUsdt.getApy();
+        uint256 apyUsdc = _mockStrategyUsdc.getApy();
         // then
-        assertEq(aprDai, TestConstants.PERCENTAGE_3_5_18DEC);
-        assertEq(aprUsdt, TestConstants.PERCENTAGE_3_5_18DEC);
-        assertEq(aprUsdc, TestConstants.PERCENTAGE_3_5_18DEC);
+        assertEq(apyDai, TestConstants.PERCENTAGE_3_5_18DEC);
+        assertEq(apyUsdt, TestConstants.PERCENTAGE_3_5_18DEC);
+        assertEq(apyUsdc, TestConstants.PERCENTAGE_3_5_18DEC);
     }
 
     function testShouldDepositIntoStrategyWhen18Decimals() public {
@@ -176,7 +182,7 @@ contract MockStrategyTestnetTest is TestCommons, DataUtils {
         assertGt(strategyBalanceBefore, strategyBalanceAfter);
     }
 
-    function testShouldNotWithdraw6DecimalsWhenNotStanley() public {
+    function testShouldNotWithdraw6DecimalsWhenNotAssetManagement() public {
         // given
         uint256 depositAmount = TestConstants.USD_10_000_18DEC;
         _mockStrategyUsdc.deposit(depositAmount);
@@ -186,7 +192,7 @@ contract MockStrategyTestnetTest is TestCommons, DataUtils {
         _mockStrategyUsdc.withdraw(depositAmount);
     }
 
-    function testShouldNotWithdraw18DecimalsWhenNotStanley() public {
+    function testShouldNotWithdraw18DecimalsWhenNotAssetManagement() public {
         // given
         uint256 depositAmount = TestConstants.USD_10_000_18DEC;
         _mockStrategyDai.deposit(depositAmount);
@@ -196,7 +202,7 @@ contract MockStrategyTestnetTest is TestCommons, DataUtils {
         _mockStrategyDai.withdraw(depositAmount);
     }
 
-    function testShouldNotDeposit18DecimalsWhenNotStanley() public {
+    function testShouldNotDeposit18DecimalsWhenNotAssetManagement() public {
         // given
         uint256 depositAmount = TestConstants.USD_10_000_18DEC;
         // when
@@ -205,12 +211,28 @@ contract MockStrategyTestnetTest is TestCommons, DataUtils {
         _mockStrategyDai.deposit(depositAmount);
     }
 
-    function testShouldNotDeposit6DecimalsWhenNotStanley() public {
+    function testShouldNotDeposit6DecimalsWhenNotAssetManagement() public {
         // given
         uint256 depositAmount = TestConstants.USD_10_000_18DEC;
         // when
         vm.expectRevert("IPOR_501");
         vm.prank(_userOne);
         _mockStrategyUsdc.deposit(depositAmount);
+    }
+
+    function getMockTestnetStrategy(
+        address asset,
+        uint256 assetDecimals,
+        address shareToken,
+        address assetManagementProxy
+    ) public returns (MockTestnetStrategy) {
+        MockTestnetStrategy strategyImpl = new MockTestnetStrategy(
+            asset,
+            assetDecimals,
+            shareToken,
+            assetManagementProxy
+        );
+        ERC1967Proxy strategyProxy = new ERC1967Proxy(address(strategyImpl), abi.encodeWithSignature("initialize()"));
+        return MockTestnetStrategy(address(strategyProxy));
     }
 }

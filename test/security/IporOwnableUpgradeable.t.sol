@@ -1,19 +1,15 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
-import "forge-std/Test.sol";
 import "../TestCommons.sol";
-import "contracts/mocks/stanley/MockIporOwnableUpgradeable.sol";
-import "contracts/libraries/errors/IporErrors.sol";
+import "../security/IporOwnableUpgradeableInstance.sol";
+import "../../contracts/libraries/errors/IporErrors.sol";
 
-contract IporOwnableUpgradeableTest is Test, TestCommons {
-    MockIporOwnableUpgradeable internal _iporOwnableUpgradeable;
-    address internal _admin;
-    address internal _userOne;
-    address internal _userTwo;
+contract IporOwnableUpgradeableTest is TestCommons {
+    IporOwnableUpgradeableInstance internal _iporOwnableUpgradeable;
 
     function setUp() public {
-        _iporOwnableUpgradeable = new MockIporOwnableUpgradeable();
+        _iporOwnableUpgradeable = new IporOwnableUpgradeableInstance();
         _admin = address(this);
         _userOne = _getUserAddress(1);
         _userTwo = _getUserAddress(2);

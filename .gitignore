@@ -57,3 +57,4 @@ iporErrorList.json
 /contracts/**/artifacts/
 
 *_flattened.sol
+/.VSCodeCounter/
