@@ -109,12 +109,17 @@ abstract contract AssetManagement is
 
         address wasDepositedToStrategy = address(0x0);
 
+        uint256 amountNormalized = IporMath.convertToWad(
+            IporMath.convertWadToAssetDecimals(amount, _getDecimals()),
+            _getDecimals()
+        );
+
         for (uint256 i; i < supportedStrategiesVolume; ++i) {
             try IStrategy(sortedStrategies[highestApyStrategyArrayIndex - i].strategy).deposit(amount) returns (
                 uint256 tryDepositedAmount
             ) {
                 require(
-                    tryDepositedAmount > 0 && tryDepositedAmount <= amount,
+                    tryDepositedAmount > 0 && tryDepositedAmount <= amountNormalized,
                     AssetManagementErrors.STRATEGY_INCORRECT_DEPOSITED_AMOUNT
                 );
 
