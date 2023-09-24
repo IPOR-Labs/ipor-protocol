@@ -19,7 +19,6 @@ contract StrategyAaveForkTest is TestForkCommons {
             AAVE,
             stakedAAVE,
             aaveLendingPoolAddressProvider,
-            stakedAAVE,
             aaveIncentivesController
         );
 

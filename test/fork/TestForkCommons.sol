@@ -204,7 +204,6 @@ contract TestForkCommons is Test {
             AAVE,
             stakedAAVE,
             aaveLendingPoolAddressProvider,
-            stakedAAVE,
             aaveIncentivesController
         );
 
@@ -224,7 +223,6 @@ contract TestForkCommons is Test {
             AAVE,
             stakedAAVE,
             aaveLendingPoolAddressProvider,
-            stakedAAVE,
             aaveIncentivesController
         );
 
@@ -691,7 +689,6 @@ contract TestForkCommons is Test {
             AAVE,
             stakedAAVE,
             aaveLendingPoolAddressProvider,
-            stakedAAVE,
             aaveIncentivesController
         );
         vm.startPrank(owner);
@@ -708,7 +705,6 @@ contract TestForkCommons is Test {
             AAVE,
             stakedAAVE,
             aaveLendingPoolAddressProvider,
-            stakedAAVE,
             aaveIncentivesController
         );
         vm.startPrank(owner);
@@ -725,7 +721,6 @@ contract TestForkCommons is Test {
             AAVE,
             stakedAAVE,
             aaveLendingPoolAddressProvider,
-            stakedAAVE,
             aaveIncentivesController
         );
         vm.startPrank(owner);

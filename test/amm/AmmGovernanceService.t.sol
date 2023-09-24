@@ -69,34 +69,29 @@ contract AmmGovernanceServiceTest is TestCommons {
 
         // when
         vm.startPrank(_admin);
-        _iporProtocol.ammGovernanceService.setAmmPoolsParams(
-            address(_iporProtocol.asset),
-            1000000000,
-            50,
-            5000
-        );
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(address(_iporProtocol.asset), 1000000000, 50, 5000);
+        vm.stopPrank();
 
         // then
-        vm.stopPrank();
         IAmmGovernanceLens.AmmPoolsParamsConfiguration memory ammParams = _iporProtocol
             .ammGovernanceLens
             .getAmmPoolsParams(address(_iporProtocol.asset));
         assertEq(ammParams.ammTreasuryAndAssetManagementRatio, 5000);
     }
 
-    function testShouldNotChangeAmmTreasuryAssetManagementBalanceRatioWhenNewRatioIsZero() public {
+    function testShouldChangeAmmTreasuryAssetManagementBalanceRatioWhenNewRatioIsZero() public {
         // given
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
         vm.prank(_admin);
-        vm.expectRevert("IPOR_408");
-        _iporProtocol.ammGovernanceService.setAmmPoolsParams(
-            address(_iporProtocol.asset),
-            1000000000,
-            50,
-            0
-        );
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(address(_iporProtocol.asset), 1000000000, 50, 0);
+
+        // then
+        IAmmGovernanceLens.AmmPoolsParamsConfiguration memory ammParams = _iporProtocol
+            .ammGovernanceLens
+            .getAmmPoolsParams(address(_iporProtocol.asset));
+        assertEq(ammParams.ammTreasuryAndAssetManagementRatio, 0);
     }
 
     function testShouldNotChangeAmmTreasuryAssetManagementBalanceRatioWhenNewRatioIsGreaterThanOne() public {
@@ -106,12 +101,7 @@ contract AmmGovernanceServiceTest is TestCommons {
         // when
         vm.prank(_admin);
         vm.expectRevert("IPOR_408");
-        _iporProtocol.ammGovernanceService.setAmmPoolsParams(
-            address(_iporProtocol.asset),
-            1000000000,
-            50,
-            10000
-        );
+        _iporProtocol.ammGovernanceService.setAmmPoolsParams(address(_iporProtocol.asset), 1000000000, 50, 10000);
     }
 
     function testShouldNotTransferPublicationFeToCharlieTreasuryWhenCallerIsNotPublicationFeeTransferer() public {
