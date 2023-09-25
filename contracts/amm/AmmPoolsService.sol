@@ -373,8 +373,7 @@ contract AmmPoolsService is IAmmPoolsService {
         uint256 autoRebalanceThreshold = uint256(ammPoolsParamsCfg.autoRebalanceThresholdInThousands) * 1e21;
 
         if (autoRebalanceThreshold > 0 && wadOperationAmount >= autoRebalanceThreshold) {
-            int256 rebalanceAmount = _calculateRebalanceAmountAfterProvideLiquidity(
-                poolCfg.asset,
+            int256 rebalanceAmount = AssetManagementLogic.calculateRebalanceAmountAfterProvideLiquidity(
                 IporMath.convertToWad(
                     IERC20Upgradeable(poolCfg.asset).balanceOf(poolCfg.ammTreasury),
                     poolCfg.decimals
@@ -388,24 +387,6 @@ contract AmmPoolsService is IAmmPoolsService {
                 IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagementInternal(rebalanceAmount.toUint256());
             }
         }
-    }
-
-    /// @notice Calculate rebalance amount for liquidity provisioning
-    /// @param asset Asset address (pool context)
-    /// @param wadAmmTreasuryErc20BalanceAfterDeposit AmmTreasury erc20 balance in wad, Notice: this balance is after providing liquidity operation!
-    /// @param vaultBalance Vault balance in wad, AssetManagement's accrued balance.
-    function _calculateRebalanceAmountAfterProvideLiquidity(
-        address asset,
-        uint256 wadAmmTreasuryErc20BalanceAfterDeposit,
-        uint256 vaultBalance,
-        uint256 wadAmmTreasuryAndAssetManagementRatio
-    ) internal pure returns (int256) {
-        return
-            IporMath.divisionInt(
-                (wadAmmTreasuryErc20BalanceAfterDeposit + vaultBalance).toInt256() *
-                    (1e18 - wadAmmTreasuryAndAssetManagementRatio.toInt256()),
-                1e18
-            ) - vaultBalance.toInt256();
     }
 
     function _rebalanceIfNeededBeforeRedeem(

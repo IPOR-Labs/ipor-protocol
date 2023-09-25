@@ -133,4 +133,55 @@ contract AmmShouldClosePositionTest is TestCommons {
         assertEq(userERC20BalanceAfter, 10009778276237, "userERC20BalanceAfter");
         assertEq(assetManagementBalanceAfter, 3022239900090834400000, "assetManagementBalanceAfter");
     }
+
+    function testShouldClosePositionUsdtAndRebalanceWhen100PercentageLossBeneficiaryDiffThanBuyer() public {
+        // given
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_28_000_6DEC);
+
+        vm.prank(_userTwo);
+        uint256 swap1 = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
+            _userTwo,
+            TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
+            0,
+            TestConstants.LEVERAGE_18DEC
+        );
+
+        vm.prank(_userOne);
+        /// @dev force 100% loss for Buyer
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_160_18DEC);
+
+        uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
+
+        vm.prank(address(_iporProtocol.router));
+        /// @dev transfer all AmmTreausry balance to Asset Management
+        _iporProtocol.ammTreasury.depositToAssetManagementInternal(38_000 * 1e18);
+
+        uint256 ammERC20BalanceBefore = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
+        uint256 userERC20BalanceBefore = _iporProtocol.asset.balanceOf(_userTwo);
+        uint256 assetManagementBalanceBefore = _iporProtocol.assetManagement.totalBalance();
+
+        uint256[] memory pfSwapIds = new uint256[](0);
+        uint256[] memory rfSwapIds = new uint256[](1);
+        rfSwapIds[0] = swap1;
+
+        // when
+        vm.warp(endTimestamp);
+        vm.prank(_userTwo);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userThree, pfSwapIds, rfSwapIds);
+
+        // then
+        uint256 ammERC20BalanceAfter = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
+        uint256 userERC20BalanceAfter = _iporProtocol.asset.balanceOf(_userTwo);
+        uint256 assetManagementBalanceAfter = _iporProtocol.assetManagement.totalBalance();
+
+        assertEq(ammERC20BalanceBefore, 0, "ammERC20BalanceBefore");
+        assertEq(userERC20BalanceBefore, 9_990_000e6, "userERC20BalanceBefore");
+        assertEq(assetManagementBalanceBefore, 38_000 * 1e18, "assetManagementBalanceBefore");
+        assertEq(ammERC20BalanceAfter, 32357181507, "ammERC20BalanceAfter");
+        assertEq(userERC20BalanceAfter, 9990000000000, "userERC20BalanceAfter");
+        assertEq(assetManagementBalanceAfter, 5708914383375520000000, "assetManagementBalanceAfter");
+    }
 }

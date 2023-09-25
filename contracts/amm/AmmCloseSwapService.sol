@@ -887,7 +887,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             wadPayoutForLiquidator = wadLiquidationDepositAmount;
         }
 
-        if (wadTransferAmount > 0) {
+        if (wadTransferAmount + wadPayoutForLiquidator > 0) {
             uint256 transferAmountAssetDecimals = IporMath.convertWadToAssetDecimals(
                 wadTransferAmount,
                 poolCfg.decimals

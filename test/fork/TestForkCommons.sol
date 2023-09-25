@@ -204,7 +204,6 @@ contract TestForkCommons is Test {
             AAVE,
             stakedAAVE,
             aaveLendingPoolAddressProvider,
-            stakedAAVE,
             aaveIncentivesController
         );
 
@@ -224,7 +223,6 @@ contract TestForkCommons is Test {
             AAVE,
             stakedAAVE,
             aaveLendingPoolAddressProvider,
-            stakedAAVE,
             aaveIncentivesController
         );
 
@@ -691,7 +689,6 @@ contract TestForkCommons is Test {
             AAVE,
             stakedAAVE,
             aaveLendingPoolAddressProvider,
-            stakedAAVE,
             aaveIncentivesController
         );
         vm.startPrank(owner);
@@ -708,7 +705,6 @@ contract TestForkCommons is Test {
             AAVE,
             stakedAAVE,
             aaveLendingPoolAddressProvider,
-            stakedAAVE,
             aaveIncentivesController
         );
         vm.startPrank(owner);
@@ -725,7 +721,6 @@ contract TestForkCommons is Test {
             AAVE,
             stakedAAVE,
             aaveLendingPoolAddressProvider,
-            stakedAAVE,
             aaveIncentivesController
         );
         vm.startPrank(owner);
@@ -781,8 +776,6 @@ contract TestForkCommons is Test {
         AssetManagementDai assetManagementDai = new AssetManagementDai(
             DAI,
             miltonProxyDai,
-            3,
-            2,
             strategyAaveProxyDai,
             strategyCompoundProxyDai,
             strategyDsrProxyDai
@@ -795,8 +788,6 @@ contract TestForkCommons is Test {
         AssetManagementUsdt assetManagementUsdt = new AssetManagementUsdt(
             USDT,
             miltonProxyUsdt,
-            2,
-            1,
             strategyAaveProxyUsdt,
             strategyCompoundProxyUsdt
         );
@@ -808,8 +799,6 @@ contract TestForkCommons is Test {
         AssetManagementUsdc assetManagementUsdc = new AssetManagementUsdc(
             USDC,
             miltonProxyUsdc,
-            2,
-            1,
             strategyAaveProxyUsdc,
             strategyCompoundProxyUsdc
         );
