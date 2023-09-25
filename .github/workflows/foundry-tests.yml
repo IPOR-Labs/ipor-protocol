@@ -94,6 +94,4 @@ jobs:
           PROVIDER_URL: ${{ secrets.FORK_URL }}
         run: |
           forge test ${{ inputs.fork-test-options }} --fork-url ${{ secrets.PROVIDER_URL }} -vvv
-        env:
-          PROVIDER_URL: ${{ secrets.PROVIDER_URL }}
         id: fork-test
