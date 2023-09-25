@@ -48,13 +48,12 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         address aaveInput,
         address stkAaveInput,
         address providerInput,
-        address stakedAaveInterfaceInput,
         address aaaveIncentiveInput
     ) StrategyCore(assetInput, assetDecimalsInput, shareTokenInput, assetManagementInput) {
         aave = aaveInput.checkAddress();
         stkAave = stkAaveInput.checkAddress();
         provider = AaveLendingPoolProviderV2(providerInput.checkAddress());
-        stakedAaveInterface = StakedAaveInterface(stakedAaveInterfaceInput.checkAddress());
+        stakedAaveInterface = StakedAaveInterface(stkAaveInput);
         aaveIncentive = AaveIncentivesInterface(aaaveIncentiveInput.checkAddress());
 
         _disableInitializers();
