@@ -3,7 +3,7 @@ name: Tests in foundry
 on:
   workflow_call:
     secrets:
-      FORK_URL:
+      PROVIDER_URL:
         required: false
 
     inputs:
@@ -93,5 +93,7 @@ jobs:
           FORK_URL: ${{ secrets.FORK_URL }}
           PROVIDER_URL: ${{ secrets.FORK_URL }}
         run: |
-          forge test ${{ inputs.fork-test-options }} --fork-url ${{ secrets.FORK_URL }} -vvv
+          forge test ${{ inputs.fork-test-options }} --fork-url ${{ secrets.PROVIDER_URL }} -vvv
+        env:
+          PROVIDER_URL: ${{ secrets.PROVIDER_URL }}
         id: fork-test
