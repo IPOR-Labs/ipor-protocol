@@ -94,7 +94,9 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         require(msg.value > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
+
         uint256 newPoolBalance = ethAmount + IStETH(stEth).balanceOf(ammTreasuryEth);
+
         require(
             newPoolBalance <= uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
             AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH
