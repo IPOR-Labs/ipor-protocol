@@ -1,19 +1,15 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
-import "forge-std/Test.sol";
 import "../TestCommons.sol";
-import "../../contracts/security/IporOwnable.sol";
+import "../security/IporOwnableInstance.sol";
 import "../../contracts/libraries/errors/IporErrors.sol";
 
-contract IporOwnableTest is Test, TestCommons {
-    IporOwnable internal _iporOwnable;
-    address internal _admin;
-    address internal _userOne;
-    address internal _userTwo;
+contract IporOwnableTest is TestCommons {
+    IporOwnableInstance internal _iporOwnable;
 
     function setUp() public {
-        _iporOwnable = new IporOwnable();
+        _iporOwnable = new IporOwnableInstance();
         _admin = address(this);
         _userOne = _getUserAddress(1);
         _userTwo = _getUserAddress(2);
@@ -42,18 +38,14 @@ contract IporOwnableTest is Test, TestCommons {
         assertEq(ownerAfter, _admin);
     }
 
-    function testShouldNotBePossibleToConfirmTheTransferOwnershipFromDifferentAddress()
-        public
-    {
+    function testShouldNotBePossibleToConfirmTheTransferOwnershipFromDifferentAddress() public {
         // given
         address ownerBefore = _iporOwnable.owner();
         _iporOwnable.transferOwnership(_userOne);
 
         // when
         vm.prank(_userTwo);
-        vm.expectRevert(
-            abi.encodePacked(IporErrors.SENDER_NOT_APPOINTED_OWNER)
-        );
+        vm.expectRevert(abi.encodePacked(IporErrors.SENDER_NOT_APPOINTED_OWNER));
         _iporOwnable.confirmTransferOwnership();
 
         // then
@@ -106,19 +98,15 @@ contract IporOwnableTest is Test, TestCommons {
         assertEq(ownerAfter, _admin);
     }
 
-    function testShouldNotBeAbleToConfirmTransferOwnershipWhenRenounceOwnership()
-        public
-    {
+    function testShouldNotBeAbleToConfirmTransferOwnershipWhenRenounceOwnership() public {
         //given
         address ownerBefore = _iporOwnable.owner();
-        _iporOwnable.transferOwnership(_userOne);
+
+        _iporOwnable.transferOwnership(ownerBefore);
         _iporOwnable.renounceOwnership();
 
         //when
-        vm.prank(_userOne);
-        vm.expectRevert(
-            abi.encodePacked(IporErrors.SENDER_NOT_APPOINTED_OWNER)
-        );
+        vm.expectRevert(abi.encodePacked(IporErrors.SENDER_NOT_APPOINTED_OWNER));
         _iporOwnable.confirmTransferOwnership();
 
         //then

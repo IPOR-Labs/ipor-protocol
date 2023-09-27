@@ -1,32 +1,40 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "forge-std/console2.sol";
-import "../../../TestCommons.sol";
-import "../../DaiAmm.sol";
+
+import "../../TestForkCommons.sol";
 import "../../../../contracts/vault/interfaces/dsr/ISavingsDai.sol";
 import "../../../../contracts/vault/interfaces/dsr/IDsrManager.sol";
 
-contract StanleyDsrDaiTest is Test, TestCommons {
+contract StrategyDsrDaiTest is TestForkCommons {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     address internal _admin;
     address internal _user;
 
     function setUp() public {
+        uint256 forkId = vm.createSelectFork(vm.envString("PROVIDER_URL"), 18040000);
         _admin = vm.rememberKey(1);
         _user = vm.rememberKey(2);
+        _init();
+    }
+
+    function testShouldReturnVersion2_000() public {
+        //given
+
+        // when
+        uint256 version = StrategyDsrDai(strategyDsrProxyDai).getVersion();
+
+        //then
+        assertEq(version, 2_000);
     }
 
     function testShouldGetApr() public {
-        // given
-        DaiAmm amm = new DaiAmm(_admin);
-        StrategyDsrDai strategy = amm.strategyDsr();
+        //given
 
         // when
-        uint256 apr = strategy.getApr();
-
-        console2.log("apr", apr);
+        uint256 apr = StrategyDsrDai(strategyDsrProxyDai).getApy();
 
         //then
         assertLe(apr, 1e18);
@@ -36,28 +44,28 @@ contract StanleyDsrDaiTest is Test, TestCommons {
     function testShouldDepositSimpleCase() public {
         // given
         uint256 amount = 1000 * 1e18;
-        DaiAmm amm = new DaiAmm(_admin);
-        StrategyDsrDai strategy = amm.strategyDsr();
+        StrategyDsrDai strategy = StrategyDsrDai(strategyDsrProxyDai);
 
-        deal(amm.dai(), address(amm.stanley()), 1000_000 * 1e18);
+        deal(DAI, address(stanleyProxyDai), 1000_000 * 1e18);
 
-        IERC20Upgradeable asset = IERC20Upgradeable(amm.dai());
+        IERC20Upgradeable asset = IERC20Upgradeable(DAI);
 
-        vm.startPrank(address(amm.stanley()));
+        vm.startPrank(address(stanleyProxyDai));
         asset.safeApprove(address(strategy), type(uint256).max);
         vm.stopPrank();
 
-        uint256 stanleyErc20BalanceBefore = asset.balanceOf(address(amm.stanley()));
+        uint256 stanleyErc20BalanceBefore = asset.balanceOf(address(stanleyProxyDai));
         uint256 strategyBalanceBeforeDeposit = strategy.balanceOf();
+
         //when
-        vm.prank(address(amm.stanley()));
+        vm.prank(address(stanleyProxyDai));
         strategy.deposit(amount);
 
         vm.warp(block.timestamp + 1 days);
         uint256 strategyBalanceAfterDeposit = strategy.balanceOf();
 
         // then
-        uint256 stanleyErc20BalanceAfter = asset.balanceOf(address(amm.stanley()));
+        uint256 stanleyErc20BalanceAfter = asset.balanceOf(address(stanleyProxyDai));
         assertEq(stanleyErc20BalanceAfter, stanleyErc20BalanceBefore - amount);
         assertGt(strategyBalanceAfterDeposit - amount, strategyBalanceBeforeDeposit);
     }
@@ -65,19 +73,19 @@ contract StanleyDsrDaiTest is Test, TestCommons {
     function testShouldDepositOneDay() public {
         // given
         uint256 amount = 1000 * 1e18;
-        DaiAmm amm = new DaiAmm(_admin);
-        StrategyDsrDai strategy = amm.strategyDsr();
 
-        deal(amm.dai(), address(amm.stanley()), 1000_000 * 1e18);
+        StrategyDsrDai strategy = StrategyDsrDai(strategyDsrProxyDai);
 
-        IERC20Upgradeable asset = IERC20Upgradeable(amm.dai());
+        deal(DAI, address(stanleyProxyDai), 1000_000 * 1e18);
 
-        vm.startPrank(address(amm.stanley()));
+        IERC20Upgradeable asset = IERC20Upgradeable(DAI);
+
+        vm.startPrank(address(stanleyProxyDai));
         asset.safeApprove(address(strategy), type(uint256).max);
         vm.stopPrank();
 
         //when
-        vm.prank(address(amm.stanley()));
+        vm.prank(address(stanleyProxyDai));
         strategy.deposit(amount);
         uint256 strategyBalanceAfterDeposit = strategy.balanceOf();
 
@@ -92,20 +100,21 @@ contract StanleyDsrDaiTest is Test, TestCommons {
     function testShouldDepositOneYearCheckApr2DecimalPlaces() public {
         // given
         uint256 amount = 1000 * 1e18;
-        DaiAmm amm = new DaiAmm(_admin);
-        StrategyDsrDai strategy = amm.strategyDsr();
+        StrategyDsrDai strategy = StrategyDsrDai(strategyDsrProxyDai);
 
-        deal(amm.dai(), address(amm.stanley()), 1000_000 * 1e18);
+        deal(DAI, address(stanleyProxyDai), 1000_000 * 1e18);
 
-        IERC20Upgradeable asset = IERC20Upgradeable(amm.dai());
+        IERC20Upgradeable asset = IERC20Upgradeable(DAI);
 
-        vm.startPrank(address(amm.stanley()));
+        vm.startPrank(address(stanleyProxyDai));
         asset.safeApprove(address(strategy), type(uint256).max);
         vm.stopPrank();
 
-        uint256 apy = strategy.getApr();
+        uint256 apy = strategy.getApy();
 
-        vm.prank(address(amm.stanley()));
+        uint256 balanceBefore = strategy.balanceOf();
+
+        vm.prank(address(stanleyProxyDai));
         strategy.deposit(amount);
 
         // when
@@ -114,7 +123,7 @@ contract StanleyDsrDaiTest is Test, TestCommons {
 
         //then
         uint256 amountAccrued2DecimalPlaces = IporMath.division(
-            amount + IporMath.division(amount * apy, 1e18),
+            balanceBefore + amount + IporMath.division((balanceBefore + amount) * apy, 1e18),
             1e16
         );
         assertEq(
@@ -129,55 +138,57 @@ contract StanleyDsrDaiTest is Test, TestCommons {
         address sDai = 0x83F20F44975D03b1b09e64809B757c47f942BEeA;
         address dsrManager = 0x373238337Bfe1146fb49989fc222523f83081dDb;
         uint256 amount = 1000 * 1e18;
-        DaiAmm amm = new DaiAmm(_admin);
-        StrategyDsrDai strategy = amm.strategyDsr();
 
-        deal(amm.dai(), address(amm.stanley()), 1000_000 * 1e18);
+        deal(DAI, address(_user), 1000_000 * 1e18);
 
-        IERC20Upgradeable asset = IERC20Upgradeable(amm.dai());
+        IERC20Upgradeable asset = IERC20Upgradeable(DAI);
 
-        vm.startPrank(address(amm.stanley()));
+        vm.startPrank(address(_user));
         asset.safeApprove(dsrManager, type(uint256).max);
         asset.safeApprove(sDai, type(uint256).max);
         vm.stopPrank();
 
         //when
         /// @dev deposit amount using dsrManager
-        vm.startPrank(address(amm.stanley()));
-        IDsrManager(dsrManager).join(address(strategy), amount);
+        vm.startPrank(address(_user));
+        IDsrManager(dsrManager).join(address(_user), amount);
         vm.stopPrank();
 
         /// @dev deposit amount using Savings DAI
-        vm.prank(address(amm.stanley()));
-        ISavingsDai(sDai).deposit(amount, address(strategy));
+        vm.prank(address(_user));
+        ISavingsDai(sDai).deposit(amount, address(_user));
 
         //then
         vm.warp(block.timestamp + 365 days);
 
-        uint256 sDaiShares = ISavingsDai(sDai).balanceOf(address(strategy));
+        uint256 sDaiShares = ISavingsDai(sDai).balanceOf(address(_user));
         uint256 accruedAmountSDai = ISavingsDai(sDai).convertToAssets(sDaiShares);
-        uint256 accruedAmountDsrManager = IDsrManager(dsrManager).daiBalance(address(strategy));
+        uint256 accruedAmountDsrManager = IDsrManager(dsrManager).daiBalance(address(_user));
 
-        assertEq(accruedAmountSDai, accruedAmountDsrManager);
+        assertEq(
+            accruedAmountSDai,
+            accruedAmountDsrManager,
+            "accruedAmountSDai is different than accruedAmountDsrManager"
+        );
     }
 
     function testShouldWithdrawSimpleCase() public {
         // given
         uint256 amount = 1000 * 1e18;
-        DaiAmm amm = new DaiAmm(_admin);
-        StrategyDsrDai strategy = amm.strategyDsr();
 
-        deal(amm.dai(), address(amm.stanley()), 1000_000 * 1e18);
+        StrategyDsrDai strategy = StrategyDsrDai(strategyDsrProxyDai);
 
-        IERC20Upgradeable asset = IERC20Upgradeable(amm.dai());
+        deal(DAI, address(stanleyProxyDai), 1000_000 * 1e18);
 
-        vm.startPrank(address(amm.stanley()));
+        IERC20Upgradeable asset = IERC20Upgradeable(DAI);
+
+        vm.startPrank(address(stanleyProxyDai));
         asset.safeApprove(address(strategy), type(uint256).max);
         vm.stopPrank();
 
-        uint256 stanleyErc20BalanceBefore = asset.balanceOf(address(amm.stanley()));
+        uint256 stanleyErc20BalanceBefore = asset.balanceOf(address(stanleyProxyDai));
 
-        vm.prank(address(amm.stanley()));
+        vm.prank(address(stanleyProxyDai));
         strategy.deposit(amount);
 
         vm.warp(block.timestamp + 365 days);
@@ -185,12 +196,12 @@ contract StanleyDsrDaiTest is Test, TestCommons {
         uint256 strategyBalanceBeforeDepositAfter365days = strategy.balanceOf();
 
         //when
-        vm.prank(address(amm.stanley()));
+        vm.prank(address(stanleyProxyDai));
         strategy.withdraw(strategyBalanceBeforeDepositAfter365days);
 
         // then
         uint256 strategyBalanceAfterDeposit = strategy.balanceOf();
-        uint256 stanleyErc20BalanceAfter = asset.balanceOf(address(amm.stanley()));
+        uint256 stanleyErc20BalanceAfter = asset.balanceOf(address(stanleyProxyDai));
 
         assertEq(strategyBalanceAfterDeposit, 0);
         assertEq(
@@ -202,20 +213,20 @@ contract StanleyDsrDaiTest is Test, TestCommons {
     function testShouldWihtdrawOneDay() public {
         // given
         uint256 amount = 1000 * 1e18;
-        DaiAmm amm = new DaiAmm(_admin);
-        StrategyDsrDai strategy = amm.strategyDsr();
 
-        deal(amm.dai(), address(amm.stanley()), 1000_000 * 1e18);
+        StrategyDsrDai strategy = StrategyDsrDai(strategyDsrProxyDai);
 
-        IERC20Upgradeable asset = IERC20Upgradeable(amm.dai());
+        deal(DAI, address(stanleyProxyDai), 1000_000 * 1e18);
 
-        vm.startPrank(address(amm.stanley()));
+        IERC20Upgradeable asset = IERC20Upgradeable(DAI);
+
+        vm.startPrank(address(stanleyProxyDai));
         asset.safeApprove(address(strategy), type(uint256).max);
         vm.stopPrank();
 
-        uint256 stanleyErc20BalanceBefore = asset.balanceOf(address(amm.stanley()));
+        uint256 stanleyErc20BalanceBefore = asset.balanceOf(address(stanleyProxyDai));
 
-        vm.prank(address(amm.stanley()));
+        vm.prank(address(stanleyProxyDai));
         strategy.deposit(amount);
 
         vm.warp(block.timestamp + 1 days);
@@ -223,12 +234,12 @@ contract StanleyDsrDaiTest is Test, TestCommons {
         uint256 strategyBalanceBeforeDepositAfter365days = strategy.balanceOf();
 
         //when
-        vm.prank(address(amm.stanley()));
+        vm.prank(address(stanleyProxyDai));
         strategy.withdraw(strategyBalanceBeforeDepositAfter365days);
 
         // then
         uint256 strategyBalanceAfterDeposit = strategy.balanceOf();
-        uint256 stanleyErc20BalanceAfter = asset.balanceOf(address(amm.stanley()));
+        uint256 stanleyErc20BalanceAfter = asset.balanceOf(address(stanleyProxyDai));
 
         assertEq(strategyBalanceAfterDeposit, 0);
         assertEq(
@@ -241,20 +252,19 @@ contract StanleyDsrDaiTest is Test, TestCommons {
     function testShouldWithdrawOneYear() public {
         // given
         uint256 amount = 1000 * 1e18;
-        DaiAmm amm = new DaiAmm(_admin);
-        StrategyDsrDai strategy = amm.strategyDsr();
+        StrategyDsrDai strategy = StrategyDsrDai(strategyDsrProxyDai);
 
-        deal(amm.dai(), address(amm.stanley()), 1000_000 * 1e18);
+        deal(DAI, address(stanleyProxyDai), 1000_000 * 1e18);
 
-        IERC20Upgradeable asset = IERC20Upgradeable(amm.dai());
+        IERC20Upgradeable asset = IERC20Upgradeable(DAI);
 
-        vm.startPrank(address(amm.stanley()));
+        vm.startPrank(address(stanleyProxyDai));
         asset.safeApprove(address(strategy), type(uint256).max);
         vm.stopPrank();
 
-        uint256 stanleyErc20BalanceBefore = asset.balanceOf(address(amm.stanley()));
+        uint256 stanleyErc20BalanceBefore = asset.balanceOf(address(stanleyProxyDai));
 
-        vm.prank(address(amm.stanley()));
+        vm.prank(address(stanleyProxyDai));
         strategy.deposit(amount);
 
         vm.warp(block.timestamp + 365 days);
@@ -262,12 +272,12 @@ contract StanleyDsrDaiTest is Test, TestCommons {
         uint256 strategyBalanceBeforeDepositAfter365days = strategy.balanceOf();
 
         //when
-        vm.prank(address(amm.stanley()));
+        vm.prank(address(stanleyProxyDai));
         strategy.withdraw(strategyBalanceBeforeDepositAfter365days);
 
         // then
         uint256 strategyBalanceAfterDeposit = strategy.balanceOf();
-        uint256 stanleyErc20BalanceAfter = asset.balanceOf(address(amm.stanley()));
+        uint256 stanleyErc20BalanceAfter = asset.balanceOf(address(stanleyProxyDai));
 
         assertEq(strategyBalanceAfterDeposit, 0);
         assertEq(
@@ -280,25 +290,24 @@ contract StanleyDsrDaiTest is Test, TestCommons {
     function testShouldNotWithdrawMoreThanBalance() public {
         // given
         uint256 amount = 1000 * 1e18;
-        DaiAmm amm = new DaiAmm(_admin);
-        StrategyDsrDai strategy = amm.strategyDsr();
+        StrategyDsrDai strategy = StrategyDsrDai(strategyDsrProxyDai);
 
-        deal(amm.dai(), address(amm.stanley()), 1000_000 * 1e18);
+        deal(DAI, address(stanleyProxyDai), 1000_000 * 1e18);
 
-        IERC20Upgradeable asset = IERC20Upgradeable(amm.dai());
+        IERC20Upgradeable asset = IERC20Upgradeable(DAI);
 
-        vm.startPrank(address(amm.stanley()));
+        vm.startPrank(address(stanleyProxyDai));
         asset.safeApprove(address(strategy), type(uint256).max);
         vm.stopPrank();
 
-        vm.prank(address(amm.stanley()));
+        vm.prank(address(stanleyProxyDai));
         strategy.deposit(amount);
 
         vm.warp(block.timestamp + 365 days);
 
         uint256 strategyBalanceBeforeDepositAfter365days = strategy.balanceOf();
 
-        vm.prank(address(amm.stanley()));
+        vm.prank(address(stanleyProxyDai));
         //then
         vm.expectRevert("SavingsDai/insufficient-balance");
         //when
@@ -310,14 +319,14 @@ contract StanleyDsrDaiTest is Test, TestCommons {
         address sDai = 0x83F20F44975D03b1b09e64809B757c47f942BEeA;
 
         uint256 amount = 1000 * 1e18;
-        DaiAmm amm = new DaiAmm(_admin);
-        StrategyDsrDai strategy = amm.strategyDsr();
 
-        deal(amm.dai(), address(amm.stanley()), 1000_000 * 1e18);
+        StrategyDsrDai strategy = StrategyDsrDai(strategyDsrProxyDai);
 
-        IERC20Upgradeable asset = IERC20Upgradeable(amm.dai());
+        deal(DAI, address(stanleyProxyDai), 1000_000 * 1e18);
 
-        vm.startPrank(address(amm.stanley()));
+        IERC20Upgradeable asset = IERC20Upgradeable(DAI);
+
+        vm.startPrank(address(stanleyProxyDai));
         asset.safeApprove(address(strategy), type(uint256).max);
         asset.safeApprove(sDai, type(uint256).max);
         vm.stopPrank();
@@ -327,7 +336,7 @@ contract StanleyDsrDaiTest is Test, TestCommons {
         vm.stopPrank();
 
         /// @dev deposit amount using Savings DAI
-        vm.prank(address(amm.stanley()));
+        vm.prank(address(stanleyProxyDai));
         ISavingsDai(sDai).deposit(amount, address(strategy));
 
         vm.warp(block.timestamp + 365 days);
@@ -349,14 +358,13 @@ contract StanleyDsrDaiTest is Test, TestCommons {
         address sDai = 0x83F20F44975D03b1b09e64809B757c47f942BEeA;
 
         uint256 amount = 1000 * 1e18;
-        DaiAmm amm = new DaiAmm(_admin);
-        StrategyDsrDai strategy = amm.strategyDsr();
+        StrategyDsrDai strategy = StrategyDsrDai(strategyDsrProxyDai);
 
-        deal(amm.dai(), address(amm.stanley()), 1000_000 * 1e18);
+        deal(DAI, address(stanleyProxyDai), 1000_000 * 1e18);
 
-        IERC20Upgradeable asset = IERC20Upgradeable(amm.dai());
+        IERC20Upgradeable asset = IERC20Upgradeable(DAI);
 
-        vm.startPrank(address(amm.stanley()));
+        vm.startPrank(address(stanleyProxyDai));
         asset.safeApprove(address(strategy), type(uint256).max);
         asset.safeApprove(sDai, type(uint256).max);
         vm.stopPrank();
@@ -366,7 +374,7 @@ contract StanleyDsrDaiTest is Test, TestCommons {
         vm.stopPrank();
 
         /// @dev deposit amount using Savings DAI
-        vm.prank(address(amm.stanley()));
+        vm.prank(address(stanleyProxyDai));
         ISavingsDai(sDai).deposit(amount, address(strategy));
 
         vm.warp(block.timestamp + 365 days);
@@ -377,14 +385,43 @@ contract StanleyDsrDaiTest is Test, TestCommons {
         //then
         //when
         vm.startPrank(address(strategy));
-        uint256 withdrawnShares = ISavingsDai(sDai).withdraw(
-            accruedAmountSDai,
-            _user,
-            address(strategy)
-        );
+        uint256 withdrawnShares = ISavingsDai(sDai).withdraw(accruedAmountSDai, _user, address(strategy));
         vm.stopPrank();
 
         //then
         assertEq(withdrawnShares, sDaiShares);
     }
+
+    function testShouldDepositWhenNoInitialAllowanceToShareTokenDAI() public {
+        // given
+        _init();
+        _createNewStrategyDsrDai();
+
+        deal(DAI, address(stanleyProxyDai), 1000_000 * 1e18);
+
+        StrategyDsrDai strategy = StrategyDsrDai(newStrategyDsrDaiProxy);
+
+        IERC20Upgradeable asset = IERC20Upgradeable(DAI);
+
+        vm.startPrank(address(stanleyProxyDai));
+        asset.safeApprove(address(strategy), type(uint256).max);
+        vm.stopPrank();
+
+        uint256 strategyBalanceBefore = strategy.balanceOf();
+
+        //when
+        vm.prank(address(stanleyProxyDai));
+        strategy.deposit(10_000 * 1e18);
+
+        //then
+        uint256 newStrategyAllowanceToShareToken = IERC20Upgradeable(asset).allowance(
+            address(newStrategyDsrDaiProxy),
+            sDai
+        );
+        uint256 strategyBalanceAfter = strategy.balanceOf();
+
+        assertEq(strategyBalanceAfter, strategyBalanceBefore + 9999999999999999999999, "strategyBalanceAfter");
+        assertEq(newStrategyAllowanceToShareToken, 0, "newStrategyAllowanceToShareToken");
+    }
+
 }

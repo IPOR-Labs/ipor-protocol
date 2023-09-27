@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
@@ -8,9 +8,9 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "../../contracts/security/IporOwnableUpgradeable.sol";
-import "../../contracts/libraries/errors/MocksErrors.sol";
-import "../../contracts/interfaces/ITestnetFaucet.sol";
+import "contracts/security/IporOwnableUpgradeable.sol";
+import "./MocksErrors.sol";
+import "contracts/interfaces/ITestnetFaucet.sol";
 
 contract MockOldTestnetFaucet is
     Initializable,
@@ -62,18 +62,12 @@ contract MockOldTestnetFaucet is
         uint256 secondsToNextClaim = _couldClaimInSeconds();
         require(
             secondsToNextClaim == 0,
-            string(
-                abi.encodePacked(
-                    MocksErrors.CAN_CLAIM_ONCE_EVERY_24H,
-                    ": ",
-                    Strings.toString(secondsToNextClaim)
-                )
-            )
+            string(abi.encodePacked(MocksErrors.CAN_CLAIM_ONCE_EVERY_24H, ": ", Strings.toString(secondsToNextClaim)))
         );
         _transfer(_dai);
         _transfer(_usdc);
         _transfer(_usdt);
-        _lastClaim[_msgSender()] = block.timestamp;
+        _lastClaim[msg.sender] = block.timestamp;
     }
 
     function transfer(address asset, uint256 amount) external onlyOwner {
@@ -83,8 +77,8 @@ contract MockOldTestnetFaucet is
         IERC20Upgradeable token = IERC20Upgradeable(asset);
         uint256 maxValue = token.balanceOf(address(this));
         require(amount <= maxValue, IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER);
-        IERC20Upgradeable(asset).safeTransfer(_msgSender(), amount);
-        emit Claim(_msgSender(), asset, amount);
+        IERC20Upgradeable(asset).safeTransfer(msg.sender, amount);
+        emit Claim(msg.sender, asset, amount);
     }
 
     function transferEth(address payable recipient, uint256 value) external payable onlyOwner {
@@ -100,7 +94,7 @@ contract MockOldTestnetFaucet is
     }
 
     function hasClaimBefore() external view override returns (bool) {
-        return _lastClaim[_msgSender()] != 0;
+        return _lastClaim[msg.sender] != 0;
     }
 
     function balanceOf(address asset) external view override returns (uint256) {
@@ -110,13 +104,13 @@ contract MockOldTestnetFaucet is
     function _transfer(address asset) internal {
         IERC20MetadataUpgradeable token = IERC20MetadataUpgradeable(asset);
         uint256 value;
-        value = 10_000 * 10 ** token.decimals();
+        value = 10_000 * 10**token.decimals();
         IERC20Upgradeable(asset).safeTransfer(msg.sender, value);
-        emit Claim(_msgSender(), address(asset), value);
+        emit Claim(msg.sender, address(asset), value);
     }
 
     function _couldClaimInSeconds() internal view returns (uint256) {
-        uint256 lastDraw = _lastClaim[_msgSender()];
+        uint256 lastDraw = _lastClaim[msg.sender];
         uint256 blockTimestamp = block.timestamp;
         if (blockTimestamp - lastDraw > _SECONDS_IN_DAY) {
             return 0;
@@ -132,7 +126,8 @@ contract MockOldTestnetFaucet is
 
     function updateAmountToTransfer(address asset, uint256 amount) external override {}
 
-    function getAmountToTransfer(address asset) external view override returns (uint256) {
-    return 0;
+    function getAmountToTransfer(address asset) external pure override returns (uint256) {
+        // only for warning in tests
+        return asset != address(0) ? 0 : 0;
     }
 }

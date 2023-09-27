@@ -12,6 +12,7 @@
 /contracts/libraries/types/artifacts/
 /test-eth-gas-report.log
 /docs
+/broadcast
 
 ### IntelliJ IDEA ###
 .idea
@@ -56,4 +57,4 @@ iporErrorList.json
 /contracts/**/artifacts/
 
 *_flattened.sol
-/broadcast/
+/.VSCodeCounter/

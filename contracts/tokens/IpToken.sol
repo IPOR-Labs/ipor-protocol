@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.16;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "../libraries/errors/IporErrors.sol";
-import "../libraries/errors/MiltonErrors.sol";
-import "../libraries/errors/JosephErrors.sol";
 import "../interfaces/IIpToken.sol";
+import "../libraries/errors/IporErrors.sol";
+import "../libraries/errors/AmmErrors.sol";
+import "../libraries/errors/AmmPoolsErrors.sol";
 import "../security/IporOwnable.sol";
 
 contract IpToken is IporOwnable, IIpToken, ERC20 {
@@ -16,18 +16,14 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
 
     uint8 private immutable _decimals;
 
-    address private _joseph;
+    address private _tokenManager;
 
-    modifier onlyJoseph() {
-        require(_msgSender() == _joseph, MiltonErrors.CALLER_NOT_JOSEPH);
+    modifier onlyTokenManager() {
+        require(msg.sender == _tokenManager, AmmErrors.CALLER_NOT_TOKEN_MANAGER);
         _;
     }
 
-    constructor(
-        string memory name,
-        string memory symbol,
-        address asset
-    ) ERC20(name, symbol) {
+    constructor(string memory name, string memory symbol, address asset) ERC20(name, symbol) {
         require(address(0) != asset, IporErrors.WRONG_ADDRESS);
         _asset = asset;
         _decimals = 18;
@@ -41,46 +37,25 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
         return _asset;
     }
 
-    function setJoseph(address newJoseph) external override onlyOwner {
-        require(newJoseph != address(0), IporErrors.WRONG_ADDRESS);
-        address oldJoseph = _joseph;
-        _joseph = newJoseph;
-        emit JosephChanged(_msgSender(), oldJoseph, newJoseph);
+    function getTokenManager() external view override returns (address) {
+        return _tokenManager;
     }
 
-    function mint(address account, uint256 amount) external override onlyJoseph {
-        require(amount > 0, JosephErrors.IP_TOKEN_MINT_AMOUNT_TOO_LOW);
+    function setTokenManager(address newTokenManager) external override onlyOwner {
+        require(newTokenManager != address(0), IporErrors.WRONG_ADDRESS);
+        _tokenManager = newTokenManager;
+        emit TokenManagerChanged(newTokenManager);
+    }
+
+    function mint(address account, uint256 amount) external override onlyTokenManager {
+        require(amount > 0, AmmPoolsErrors.IP_TOKEN_MINT_AMOUNT_TOO_LOW);
         _mint(account, amount);
         emit Mint(account, amount);
     }
 
-    function burn(address account, uint256 amount) external override onlyJoseph {
-        require(amount > 0, JosephErrors.IP_TOKEN_BURN_AMOUNT_TOO_LOW);
+    function burn(address account, uint256 amount) external override onlyTokenManager {
+        require(amount > 0, AmmPoolsErrors.IP_TOKEN_BURN_AMOUNT_TOO_LOW);
         _burn(account, amount);
         emit Burn(account, amount);
     }
-}
-
-contract IpTokenUsdt is IpToken {
-    constructor(
-        string memory name,
-        string memory symbol,
-        address asset
-    ) IpToken(name, symbol, asset) {}
-}
-
-contract IpTokenUsdc is IpToken {
-    constructor(
-        string memory name,
-        string memory symbol,
-        address asset
-    ) IpToken(name, symbol, asset) {}
-}
-
-contract IpTokenDai is IpToken {
-    constructor(
-        string memory name,
-        string memory symbol,
-        address asset
-    ) IpToken(name, symbol, asset) {}
 }
