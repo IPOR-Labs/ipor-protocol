@@ -247,4 +247,69 @@ contract ForkAssetManagementWithdrawTest is TestForkCommons {
         assertLt(IStrategy(strategyDsrProxyDai).getApy(), IStrategy(strategyAaveProxyDai).getApy());
         assertLt(IStrategy(strategyDsrProxyDai).getApy(), IStrategy(strategyAaveProxyDai).getApy());
     }
+
+    function testShouldWithdrawAllDAI() public {
+        //when
+        vm.startPrank(owner);
+        IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(DAI);
+        vm.stopPrank();
+
+        //then
+        uint256 strategyDsrProxyDaiBalanceAfter = IStrategy(strategyDsrProxyDai).balanceOf();
+        uint256 strategyAaveBalanceAfter = IStrategy(strategyAaveProxyDai).balanceOf();
+        uint256 strategyCompoundBalanceAfter = IStrategy(strategyCompoundProxyDai).balanceOf();
+
+        assertEq(strategyDsrProxyDaiBalanceAfter, 0);
+        assertEq(strategyAaveBalanceAfter, 0);
+        assertEq(strategyCompoundBalanceAfter, 0);
+    }
+
+    function testShouldWithdrawAllUsdt() public {
+
+        //when
+        vm.startPrank(owner);
+        IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(USDT);
+        vm.stopPrank();
+
+        //then
+        uint256 strategyAaveBalanceAfter = IStrategy(strategyAaveProxyUsdt).balanceOf();
+        uint256 strategyCompoundBalanceAfter = IStrategy(strategyCompoundProxyUsdt).balanceOf();
+
+        assertEq(strategyAaveBalanceAfter, 0, "strategyAaveBalanceAfter");
+        assertLt(strategyCompoundBalanceAfter, 1e12, "strategyCompoundBalanceAfter");
+    }
+
+    function testShouldWithdrawAllUsdc() public {
+        //when
+        vm.startPrank(owner);
+        IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(USDC);
+        vm.stopPrank();
+
+        //then
+        uint256 strategyAaveBalanceAfter = IStrategy(strategyAaveProxyUsdc).balanceOf();
+        uint256 strategyCompoundBalanceAfter = IStrategy(strategyCompoundProxyUsdc).balanceOf();
+
+        assertEq(strategyAaveBalanceAfter, 0, "strategyAaveBalanceAfter");
+        assertLt(strategyCompoundBalanceAfter, 1e12, "strategyCompoundBalanceAfter");
+    }
+//
+//    function testShouldReturnRewardsAave() public {
+////        uint256 rewards = AaveIncentivesInterface(StrategyAave(strategyAaveProxyUsdc).aaveIncentive()).getUserUnclaimedRewards(strategyAaveProxyUsdc);
+////
+////        console2.log("rewards=", rewards);
+//        vm.startPrank(owner);
+//        StrategyAave(strategyAaveProxyDai).setTreasuryManager(owner);
+//        StrategyAave(strategyAaveProxyDai).setTreasury(owner);
+//        StrategyAave(strategyAaveProxyDai).beforeClaim();
+//        vm.stopPrank();
+//    }
+
+    function testShouldReturnRewardsCompound() public {
+        vm.startPrank(owner);
+        StrategyCompound(strategyCompoundProxyDai).setTreasuryManager(owner);
+        StrategyCompound(strategyCompoundProxyDai).setTreasury(owner);
+        StrategyCompound(strategyCompoundProxyDai).doClaim();
+        vm.stopPrank();
+
+    }
 }
