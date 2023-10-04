@@ -253,63 +253,6 @@ contract AssetManagementTest is TestCommons, DataUtils {
         assertEq(actualBalances.actualAmmTreasuryAccruedBalance, expectedBalances.expectedAmmTreasuryLiquidityPoolBalance);
     }
 
-    function testShouldWithdrawAllFromAssetManagement() public {
-        // given
-        ItfIporOracle iporOracle = getIporOracleAsset(
-            _userOne,
-            address(_daiMockedToken)
-        );
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(_daiMockedToken),
-            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
-            TestConstants.RMO_COLLATERAL_RATIO_90_PER,
-            TestConstants.RMO_NOTIONAL_1B,
-            TestConstants.RMO_SPREAD_0_1_PER
-        );
-        MockCase2AssetManagement assetManagementDai = getMockCase2AssetManagement(address(_daiMockedToken));
-        AmmStorage ammStorageDai = getAmmStorage();
-        MockAmmTreasury mockCase0AmmTreasuryDai = getMockCase0AmmTreasuryDai(
-            address(_daiMockedToken),
-            address(iporOracle),
-            address(ammStorageDai),
-            address(_ammTreasurySpreadModel),
-            address(assetManagementDai),
-            address(iporRiskManagementOracle)
-        );
-        ItfJoseph mockCase0JosephDai = getMockCase0JosephDai(
-            address(_daiMockedToken),
-            address(_ipTokenDai),
-            address(mockCase0AmmTreasuryDai),
-            address(ammStorageDai),
-            address(assetManagementDai)
-        );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0AmmTreasuryDai));
-        prepareAmmTreasury(mockCase0AmmTreasuryDai, address(mockCase0JosephDai), address(assetManagementDai));
-        prepareJoseph(mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
-        vm.startPrank(_liquidityProvider);
-        _daiMockedToken.approve(address(assetManagementDai), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
-        mockCase0JosephDai.provideLiquidity(TestConstants.USD_1_000_18DEC);
-        vm.stopPrank();
-        _daiMockedToken.transfer(address(mockCase0AmmTreasuryDai), TestConstants.USD_19_997_18DEC);
-        vm.prank(_admin);
-        mockCase0JosephDai.depositToAssetManagement(TestConstants.USD_19_997_18DEC);
-        //Force deposit to simulate that IporVault earn money for AmmTreasury $3
-        vm.prank(_liquidityProvider);
-        assetManagementDai.forTestDeposit(address(mockCase0AmmTreasuryDai), TestConstants.USD_3_18DEC);
-        uint256 assetManagementBalanceBefore = assetManagementDai.totalBalance(address(mockCase0AmmTreasuryDai));
-        // when
-        vm.prank(_admin);
-        mockCase0JosephDai.withdrawAllFromAssetManagement();
-        // then
-        uint256 assetManagementBalanceAfter = assetManagementDai.totalBalance(address(mockCase0AmmTreasuryDai));
-        uint256 ammTreasuryLiquidityPoolBalanceAfter = mockCase0AmmTreasuryDai.getAccruedBalance().liquidityPool;
-        uint256 exchangeRateAfter = mockCase0JosephDai.itfCalculateExchangeRate(block.timestamp);
-        assertGt(assetManagementBalanceBefore, assetManagementBalanceAfter);
-        assertEq(ammTreasuryLiquidityPoolBalanceAfter, 1003000000000000000000);
-        assertEq(exchangeRateAfter, 1003000000000000000);
-    }
 
     function testShouldNotSendETHToAssetManagementDaiUsdtUsdc() public payable {
         // given

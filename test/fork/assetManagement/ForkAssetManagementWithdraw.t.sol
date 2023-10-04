@@ -247,4 +247,138 @@ contract ForkAssetManagementWithdrawTest is TestForkCommons {
         assertLt(IStrategy(strategyDsrProxyDai).getApy(), IStrategy(strategyAaveProxyDai).getApy());
         assertLt(IStrategy(strategyDsrProxyDai).getApy(), IStrategy(strategyAaveProxyDai).getApy());
     }
+
+    function testShouldWithdrawAllDAI() public {
+        //when
+        vm.startPrank(owner);
+        IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(DAI);
+        vm.stopPrank();
+
+        //then
+        uint256 strategyDsrProxyDaiBalanceAfter = IStrategy(strategyDsrProxyDai).balanceOf();
+        uint256 strategyAaveBalanceAfter = IStrategy(strategyAaveProxyDai).balanceOf();
+        uint256 strategyCompoundBalanceAfter = IStrategy(strategyCompoundProxyDai).balanceOf();
+
+        assertEq(strategyDsrProxyDaiBalanceAfter, 0);
+        assertEq(strategyAaveBalanceAfter, 0);
+        assertEq(strategyCompoundBalanceAfter, 0);
+    }
+
+    function testShouldWithdrawAllUsdt() public {
+        //when
+        vm.startPrank(owner);
+        IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(USDT);
+        vm.stopPrank();
+
+        //then
+        uint256 strategyAaveBalanceAfter = IStrategy(strategyAaveProxyUsdt).balanceOf();
+        uint256 strategyCompoundBalanceAfter = IStrategy(strategyCompoundProxyUsdt).balanceOf();
+
+        assertEq(strategyAaveBalanceAfter, 0, "strategyAaveBalanceAfter");
+        assertLt(strategyCompoundBalanceAfter, 1e12, "strategyCompoundBalanceAfter");
+    }
+
+    function testShouldWithdrawAllUsdc() public {
+        //when
+        vm.startPrank(owner);
+        IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(USDC);
+        vm.stopPrank();
+
+        //then
+        uint256 strategyAaveBalanceAfter = IStrategy(strategyAaveProxyUsdc).balanceOf();
+        uint256 strategyCompoundBalanceAfter = IStrategy(strategyCompoundProxyUsdc).balanceOf();
+
+        assertEq(strategyAaveBalanceAfter, 0, "strategyAaveBalanceAfter");
+        assertLt(strategyCompoundBalanceAfter, 1e12, "strategyCompoundBalanceAfter");
+    }
+
+    function testShouldReturnRewardsStrategyAaveUsdc() public {
+        //when
+        uint256 rewards = AaveIncentivesInterface(StrategyAave(strategyAaveProxyUsdc).aaveIncentive())
+            .getUserUnclaimedRewards(strategyAaveProxyUsdc);
+        //then
+        assertEq(rewards, 0, "rewards");
+    }
+
+    function testShouldReturnRewardsStrategyAaveUsdt() public {
+        //when
+        uint256 rewards = AaveIncentivesInterface(StrategyAave(strategyAaveProxyUsdt).aaveIncentive())
+            .getUserUnclaimedRewards(strategyAaveProxyUsdt);
+        //then
+        assertEq(rewards, 0, "rewards");
+    }
+
+    function testShouldReturnRewardsStrategyAaveDai() public {
+        //when
+        uint256 rewards = AaveIncentivesInterface(StrategyAave(strategyAaveProxyDai).aaveIncentive())
+            .getUserUnclaimedRewards(strategyAaveProxyDai);
+        //then
+        assertEq(rewards, 0, "rewards");
+    }
+
+    function testShouldReturnRewardsCompoundDai() public {
+        //given
+        IERC20Upgradeable compToken = StrategyCompound(strategyCompoundProxyDai).compToken();
+
+        vm.startPrank(owner);
+        StrategyCompound(strategyCompoundProxyDai).setTreasuryManager(owner);
+        StrategyCompound(strategyCompoundProxyDai).setTreasury(owner);
+        vm.stopPrank();
+
+        uint256 compTokenBalanceBefore = compToken.balanceOf(owner);
+
+        //when
+        vm.prank(owner);
+        StrategyCompound(strategyCompoundProxyDai).doClaim();
+
+        //then
+        uint256 compTokenBalanceAfter = compToken.balanceOf(owner);
+
+        assertGt(compTokenBalanceAfter, compTokenBalanceBefore, "compTokenBalanceAfter");
+        assertEq(compTokenBalanceAfter, 47440093174178130640, "compTokenBalanceAfter");
+    }
+
+    function testShouldReturnRewardsCompoundUsdt() public {
+        //given
+        IERC20Upgradeable compToken = StrategyCompound(strategyCompoundProxyUsdt).compToken();
+
+        vm.startPrank(owner);
+        StrategyCompound(strategyCompoundProxyUsdt).setTreasuryManager(owner);
+        StrategyCompound(strategyCompoundProxyUsdt).setTreasury(owner);
+        vm.stopPrank();
+
+        uint256 compTokenBalanceBefore = compToken.balanceOf(owner);
+
+        //when
+        vm.prank(owner);
+        StrategyCompound(strategyCompoundProxyUsdt).doClaim();
+
+        //then
+        uint256 compTokenBalanceAfter = compToken.balanceOf(owner);
+
+        assertEq(compTokenBalanceAfter, compTokenBalanceBefore, "compTokenBalanceAfter");
+        assertEq(compTokenBalanceAfter, 0, "compTokenBalanceAfter");
+    }
+
+    function testShouldReturnRewardsCompoundUsdc() public {
+        //given
+        IERC20Upgradeable compToken = StrategyCompound(strategyCompoundProxyUsdc).compToken();
+
+        vm.startPrank(owner);
+        StrategyCompound(strategyCompoundProxyUsdc).setTreasuryManager(owner);
+        StrategyCompound(strategyCompoundProxyUsdc).setTreasury(owner);
+        vm.stopPrank();
+
+        uint256 compTokenBalanceBefore = compToken.balanceOf(owner);
+
+        //when
+        vm.prank(owner);
+        StrategyCompound(strategyCompoundProxyUsdc).doClaim();
+
+        //then
+        uint256 compTokenBalanceAfter = compToken.balanceOf(owner);
+
+        assertGt(compTokenBalanceAfter, compTokenBalanceBefore, "compTokenBalanceAfter");
+        assertEq(compTokenBalanceAfter, 32127108064486783990, "compTokenBalanceAfter");
+    }
 }
