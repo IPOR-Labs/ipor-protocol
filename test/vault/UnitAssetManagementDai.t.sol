@@ -566,4 +566,30 @@ contract UnitAssetManagementDaiTest is TestCommons {
         assertEq(1_000_000e18, ammTreasuryBalanceAfter);
         assertEq(0, assetManagementBalanceAfter);
     }
+
+    function testShouldNotDepositWhenDepositZero() public {
+        // given
+        _strategyAave.setApy(10e15);
+        _strategyCompound.setApy(9e15);
+        _strategyDsr.setApy(8e15);
+
+        // when
+        vm.startPrank(_ammTreasury);
+        vm.expectRevert("IPOR_004");
+        (uint256 vaultBalance, uint256 depositedAmount) = _assetManagementDai.deposit(0);
+        vm.stopPrank();
+    }
+
+    function testShouldNotDepositWhenAccountIsNotAmmTreasury() public {
+        // given
+        _strategyAave.setApy(10e15);
+        _strategyCompound.setApy(9e15);
+        _strategyDsr.setApy(8e15);
+
+        // when
+        vm.startPrank(_userOne);
+        vm.expectRevert("IPOR_013");
+        (uint256 vaultBalance, uint256 depositedAmount) = _assetManagementDai.deposit(100);
+        vm.stopPrank();
+    }
 }

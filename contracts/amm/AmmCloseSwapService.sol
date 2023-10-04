@@ -664,7 +664,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
     /// @param swap swap struct
     /// @param poolCfg pool configuration
     /// @return swapUnwindPnlValue swap unwind PnL value
-    /// @return swapUnwindFeeAmount swap unwind opening fee amount
+    /// @return swapUnwindFeeAmount swap unwind opening fee amount, sum of swapUnwindFeeLPAmount and swapUnwindFeeTreasuryAmount
     /// @return swapUnwindFeeLPAmount swap unwind opening fee LP amount
     /// @return swapUnwindFeeTreasuryAmount swap unwind opening fee treasury amount
     /// @return swapPnlValue swap PnL value includes swap PnL to date, swap unwind PnL value, this value NOT INCLUDE swap unwind fee amount.
