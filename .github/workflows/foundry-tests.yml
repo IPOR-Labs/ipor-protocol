@@ -45,20 +45,20 @@ jobs:
 
     steps:
       - name: Checkout
-        # from tag: v3.5.0
-        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
+        # from tag: v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
         with:
           submodules: recursive
 
       - name: Setup node
-        # from tag: v3.6.0
-        uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c
+        # from tag: v4.0.0
+        uses: actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65
         with:
           node-version: ${{ inputs.node-version }}
 
       - name: Set up node_modules cache
-        # from tag: v3.3.1
-        uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8
+        # from tag: v3.3.2
+        uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
@@ -67,10 +67,10 @@ jobs:
         run: npm install
 
       - name: Install Foundry
-        # from tag: v1.0.9-ipor-v1
-        uses: IPOR-Labs/foundry-toolchain@f3a099a91dbfb2e14eeb082c7e2f12df0a18bfe0
+        # from tag: v1.0.10-ipor-v1
+        uses: IPOR-Labs/foundry-toolchain@d9760eeeaf64fdac14339e530358e15925d2997c
         with:
-          version: nightly-cae66aa8dd246b6707f682a1481ea494b8240526
+          version: nightly-ba6c85112f4c34fc8eb081645bad278f48343ec4
 
       - name: Run Forge build
         run: |
