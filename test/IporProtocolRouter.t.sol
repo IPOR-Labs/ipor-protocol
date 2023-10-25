@@ -112,11 +112,31 @@ contract IporProtocolRouterTest is TestCommons {
         amm.usdt.ammPoolsService.provideLiquidityUsdt(_userOne, 10000e6);
         amm.usdc.ammPoolsService.provideLiquidityUsdc(_userOne, 10000e6);
 
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 500,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(amm.usdt.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            _iporProtocolFactory.riskParamSignerPrivateKey()
+        );
+
         amm.usdt.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _userOne,
             TestConstants.USD_1_000_6DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            riskIndicatorsInputs
         );
 
         amm.usdc.ammOpenSwapService.openSwapPayFixed28daysUsdc(

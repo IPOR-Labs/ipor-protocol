@@ -30,13 +30,15 @@ interface IAmmOpenSwapService {
     /// @param totalAmount total amount used by sender to open the swap, represented in decimals specific to the asset.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
+    /// @param riskIndicatorsInputs technical structure with risk indicators inputs
     /// @return swapId ID of the opened swap.
     /// @dev The address `beneficiary` is the swap's owner. Sender pays for the swap.
     function openSwapPayFixed28daysUsdt(
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
-        uint256 leverage
+        uint256 leverage,
+        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external returns (uint256);
 
     /// @notice It opens a swap for USDT pay-fixed receive-floating with a tenor of 60 days.

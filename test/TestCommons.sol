@@ -57,4 +57,36 @@ contract TestCommons is Test {
         newSwap.openingFeeTreasuryAmount = TestConstants.USD_1_500_18DEC;
         return newSwap;
     }
+
+    function signRiskParams(
+        AmmTypes.RiskIndicatorsInputs memory riskParamsInput,
+        address asset,
+        uint256 tenor,
+        uint256 direction,
+        uint256 privateKey
+    ) internal view returns (bytes memory) {
+        // create digest: keccak256 gives us the first 32bytes after doing the hash
+        // so this is always 32 bytes.
+        bytes32 digest = keccak256(
+            abi.encodePacked(
+                riskParamsInput.maxCollateralRatio,
+                riskParamsInput.maxCollateralRatioPerLeg,
+                riskParamsInput.maxLeveragePerLeg,
+                riskParamsInput.baseSpreadPerLeg,
+                riskParamsInput.fixedRateCapPerLeg,
+                riskParamsInput.demandSpreadFactor,
+                riskParamsInput.expiration,
+                asset,
+                tenor,
+                direction
+            )
+        );
+        // r and s are the outputs of the ECDSA signature
+        // r,s and v are packed into the signature. It should be 65 bytes: 32 + 32 + 1
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(privateKey, digest);
+
+        // pack v, r, s into 65bytes signature
+        // bytes memory signature = abi.encodePacked(r, s, v);
+        return abi.encodePacked(r, s, v);
+    }
 }

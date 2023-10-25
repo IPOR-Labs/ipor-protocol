@@ -503,13 +503,15 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             10 * 10 ** 16,
-            100 * 10 ** 18
+            100 * 10 ** 18,
+            getRiskIndicatorsInputs()
         );
+        vm.stopPrank();
 
         vm.warp(5 days);
 
@@ -537,13 +539,15 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             10 * 10 ** 16,
-            100 * 10 ** 18
+            100 * 10 ** 18,
+            getRiskIndicatorsInputs()
         );
+        vm.stopPrank();
 
         vm.warp(5 days);
 
@@ -622,5 +626,27 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         vm.expectRevert(abi.encodePacked(AmmErrors.COLLATERAL_IS_NOT_SUFFICIENT_TO_COVER_UNWIND_SWAP));
         _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
+    }
+
+    function getRiskIndicatorsInputs() private returns (AmmTypes.RiskIndicatorsInputs memory) {
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 500,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            _iporProtocolFactory.riskParamSignerPrivateKey()
+        );
+        return riskIndicatorsInputs;
     }
 }

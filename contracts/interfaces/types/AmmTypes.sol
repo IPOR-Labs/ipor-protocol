@@ -184,6 +184,29 @@ library AmmTypes {
         uint256 demandSpreadFactor;
     }
 
+    /// @notice Risk indicators calculated for swap opening
+    struct RiskIndicatorsInputs {
+        /// @notice Maximum collateral ratio in general
+                uint256 maxCollateralRatio;
+        /// @notice Maximum collateral ratio for a given leg
+        uint256 maxCollateralRatioPerLeg;
+        /// @notice Maximum leverage for a given leg
+        uint256 maxLeveragePerLeg;
+        /// @notice Base Spread for a given leg (without demand part)
+        int256 baseSpreadPerLeg;
+        /// @notice Fixed rate cap
+        uint256 fixedRateCapPerLeg;
+        /// @notice Demand spread factor used to calculate demand spread
+        uint256 demandSpreadFactor;
+        /// @notice expiration date in seconds
+        uint256 expiration;
+        /// @notice signature of data (maxCollateralRatio, maxCollateralRatioPerLeg,maxLeveragePerLeg,baseSpreadPerLeg,fixedRateCapPerLeg,demandSpreadFactor,expiration,asset,tenor,direction)
+        /// asset - address
+        /// tenor - uint256
+        /// direction - uint256
+        bytes  signature;
+    }
+
     /// @notice Structure containing information about swap's closing status, unwind values and PnL for a given swap and time.
     struct ClosingSwapDetails {
         /// @notice Swap's closing status
