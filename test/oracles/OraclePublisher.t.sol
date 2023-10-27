@@ -15,6 +15,7 @@ contract OraclePublisherTest is TestCommons {
     MockTestnetToken private _daiTestnetToken;
     MockTestnetToken private _usdcTestnetToken;
     MockTestnetToken private _usdtTestnetToken;
+    MockStETH private _stEthTestnetToken;
 
     IporOracle private _iporOracle;
     IporRiskManagementOracle private _iporRiskManagementOracle;
@@ -26,16 +27,19 @@ contract OraclePublisherTest is TestCommons {
         _admin = address(this);
         vm.warp(_blockTimestamp);
         (_daiTestnetToken, _usdcTestnetToken, _usdtTestnetToken) = _getStables();
+        _stEthTestnetToken = new MockStETH("Mocked stETH", "stETH", 100_000_000 * 1e18, uint8(18));
 
-        address[] memory assets = new address[](3);
+        address[] memory assets = new address[](4);
         assets[0] = address(_daiTestnetToken);
         assets[1] = address(_usdcTestnetToken);
         assets[2] = address(_usdtTestnetToken);
+        assets[3] = address(_stEthTestnetToken);
 
-        uint32[] memory updateTimestamps = new uint32[](3);
+        uint32[] memory updateTimestamps = new uint32[](4);
         updateTimestamps[0] = uint32(_blockTimestamp);
         updateTimestamps[1] = uint32(_blockTimestamp);
         updateTimestamps[2] = uint32(_blockTimestamp);
+        updateTimestamps[3] = uint32(_blockTimestamp);
 
         IporOracle iporOracleImplementation = new IporOracle(
             address(_usdtTestnetToken),
@@ -52,7 +56,7 @@ contract OraclePublisherTest is TestCommons {
         _iporOracle = IporOracle(address(iporOracleProxy));
 
         IporRiskManagementOracleTypes.RiskIndicators[]
-            memory riskIndicators = new IporRiskManagementOracleTypes.RiskIndicators[](3);
+            memory riskIndicators = new IporRiskManagementOracleTypes.RiskIndicators[](4);
         riskIndicators[0] = IporRiskManagementOracleTypes.RiskIndicators(
             TestConstants.RMO_NOTIONAL_1B,
             TestConstants.RMO_NOTIONAL_1B,
@@ -84,8 +88,20 @@ contract OraclePublisherTest is TestCommons {
             TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
         );
 
+        riskIndicators[3] = IporRiskManagementOracleTypes.RiskIndicators(
+            TestConstants.RMO_NOTIONAL_1B,
+            TestConstants.RMO_NOTIONAL_1B,
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_48_PER,
+            TestConstants.RMO_COLLATERAL_RATIO_90_PER,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_28,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_60,
+            TestConstants.RMO_DEMAND_SPREAD_FACTOR_90
+        );
+
         IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[]
-            memory baseSpreadsAndFixedRateCaps = new IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[](3);
+            memory baseSpreadsAndFixedRateCaps = new IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[](4);
+
         baseSpreadsAndFixedRateCaps[0] = IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
             TestConstants.RMO_SPREAD_0_1_PER,
             TestConstants.RMO_SPREAD_0_1_PER,
@@ -129,7 +145,23 @@ contract OraclePublisherTest is TestCommons {
             TestConstants.RMO_FIXED_RATE_CAP_3_5_PER
         );
 
+        baseSpreadsAndFixedRateCaps[3] = IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
+            TestConstants.RMO_SPREAD_0_1_PER,
+            TestConstants.RMO_SPREAD_0_1_PER,
+            TestConstants.RMO_SPREAD_0_1_PER,
+            TestConstants.RMO_SPREAD_0_1_PER,
+            TestConstants.RMO_SPREAD_0_1_PER,
+            TestConstants.RMO_SPREAD_0_1_PER,
+            TestConstants.RMO_FIXED_RATE_CAP_2_0_PER,
+            TestConstants.RMO_FIXED_RATE_CAP_3_5_PER,
+            TestConstants.RMO_FIXED_RATE_CAP_2_0_PER,
+            TestConstants.RMO_FIXED_RATE_CAP_3_5_PER,
+            TestConstants.RMO_FIXED_RATE_CAP_2_0_PER,
+            TestConstants.RMO_FIXED_RATE_CAP_3_5_PER
+        );
+
         IporRiskManagementOracle iporRiskManagementOracleImplementation = new IporRiskManagementOracle();
+
         ERC1967Proxy iporRiskManagementOracleProxy = new ERC1967Proxy(
             address(iporRiskManagementOracleImplementation),
             abi.encodeWithSignature(
@@ -139,6 +171,7 @@ contract OraclePublisherTest is TestCommons {
                 baseSpreadsAndFixedRateCaps
             )
         );
+
         _iporRiskManagementOracle = IporRiskManagementOracle(address(iporRiskManagementOracleProxy));
 
         OraclePublisher oraclePublisherImplementation = new OraclePublisher(

@@ -12,15 +12,20 @@ contract IporOracleTest is TestCommons {
     event IporIndexRemoveAsset(address asset);
 
     uint32 private _blockTimestamp = 1641701;
+
     MockTestnetToken private _daiTestnetToken;
     MockTestnetToken private _usdcTestnetToken;
     MockTestnetToken private _usdtTestnetToken;
+    MockStETH private _stEthTestnetToken;
+
     IporOracle private _iporOracle;
 
     function setUp() public {
         _admin = address(this);
         vm.warp(_blockTimestamp);
         (_daiTestnetToken, _usdcTestnetToken, _usdtTestnetToken) = _getStables();
+
+        _stEthTestnetToken = new MockStETH("Mocked stETH", "stETH", 100_000_000 * 1e18, uint8(18));
 
         IporOracle iporOracleImplementation = new IporOracle(
             address(_usdcTestnetToken),
@@ -30,15 +35,18 @@ contract IporOracleTest is TestCommons {
             address(_daiTestnetToken),
             1e18
         );
-        address[] memory assets = new address[](3);
+
+        address[] memory assets = new address[](4);
         assets[0] = address(_daiTestnetToken);
         assets[1] = address(_usdcTestnetToken);
         assets[2] = address(_usdtTestnetToken);
+        assets[3] = address(_stEthTestnetToken);
 
-        uint32[] memory updateTimestamps = new uint32[](3);
+        uint32[] memory updateTimestamps = new uint32[](4);
         updateTimestamps[0] = uint32(_blockTimestamp);
         updateTimestamps[1] = uint32(_blockTimestamp);
         updateTimestamps[2] = uint32(_blockTimestamp);
+        updateTimestamps[3] = uint32(_blockTimestamp);
 
         ERC1967Proxy iporOracleProxy = new ERC1967Proxy(
             address(iporOracleImplementation),

@@ -56,6 +56,8 @@ contract TestForkCommons is Test {
     address public constant ipUSDC = 0x7c0e72f431FD69560D951e4C04A4de3657621a88;
     address public constant ipUSDT = 0x9Bd2177027edEE300DC9F1fb88F24DB6e5e1edC6;
 
+    address public constant stETH = 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
+
     address public constant iporOracleProxy = 0x421C69EAa54646294Db30026aeE80D01988a6876;
 
     address public constant miltonStorageProxyDai = 0xb99f2a02c0851efdD417bd6935d2eFcd23c56e61;
@@ -452,10 +454,10 @@ contract TestForkCommons is Test {
     }
 
     function _creatSpreadModule() private {
-        spread28Days = address(new Spread28Days(DAI, USDC, USDT));
-        spread60Days = address(new Spread60Days(DAI, USDC, USDT));
-        spread90Days = address(new Spread90Days(DAI, USDC, USDT));
-        spreadCloseSwapService = address(new SpreadCloseSwapService(DAI, USDC, USDT));
+        spread28Days = address(new Spread28Days(DAI, USDC, USDT, stETH));
+        spread60Days = address(new Spread60Days(DAI, USDC, USDT, stETH));
+        spread90Days = address(new Spread90Days(DAI, USDC, USDT, stETH));
+        spreadCloseSwapService = address(new SpreadCloseSwapService(DAI, USDC, USDT, stETH));
         spreadStorageLens = address(new SpreadStorageLens());
 
         SpreadRouter routerImplementation = new SpreadRouter(

@@ -94,6 +94,8 @@ contract IporProtocolRouterTest is TestCommons {
         _iporProtocolFactory.setupUsers(_cfg, amm.usdt);
         _iporProtocolFactory.setupUsers(_cfg, amm.usdc);
         _iporProtocolFactory.setupUsers(_cfg, amm.dai);
+        _iporProtocolFactory.setupUsers(_cfg, amm.stEth);
+
 
         amm.dai.ammPoolsService.provideLiquidityDai(_admin, 1000e18);
 

@@ -15,6 +15,7 @@ contract SpreadTestSystem is TestCommons {
     MockTestnetToken public dai;
     MockTestnetToken public usdc;
     MockTestnetToken public usdt;
+    MockStETH public stEth;
     Spread28Days public spread28Days;
     Spread60Days public spread60Days;
     Spread90Days public spread90Days;
@@ -25,12 +26,13 @@ contract SpreadTestSystem is TestCommons {
 
     constructor(address ammAddress) {
         (dai, usdc, usdt) = _getStables();
+        stEth = new MockStETH("Mocked stETH", "stETH", 100_000_000 * 1e18, uint8(18));
         owner = _getUserAddress(100);
         vm.startPrank(owner);
-        spread28Days = new Spread28Days(address(dai), address(usdc), address(usdt));
-        spread60Days = new Spread60Days(address(dai), address(usdc), address(usdt));
-        spread90Days = new Spread90Days(address(dai), address(usdc), address(usdt));
-        spreadCloseSwapService = new SpreadCloseSwapService(address(dai), address(usdc), address(usdt));
+        spread28Days = new Spread28Days(address(dai), address(usdc), address(usdt), address(stEth));
+        spread60Days = new Spread60Days(address(dai), address(usdc), address(usdt), address(stEth));
+        spread90Days = new Spread90Days(address(dai), address(usdc), address(usdt), address(stEth));
+        spreadCloseSwapService = new SpreadCloseSwapService(address(dai), address(usdc), address(usdt), address(stEth));
         spreadStorageLens = new SpreadStorageLens();
         SpreadRouter routerImplementation = new SpreadRouter(
             SpreadRouter.DeployedContracts(

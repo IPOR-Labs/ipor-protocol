@@ -2,6 +2,9 @@
 pragma solidity 0.8.20;
 
 library IporErrors {
+
+    error WrongAddress(string  code);
+
     // 000-199 - general codes
 
     /// @notice General problem, address is wrong

@@ -20,6 +20,7 @@ contract SpreadRouterBuilder is Test {
         address dai;
         address usdc;
         address usdt;
+        address stEth;
         BuilderUtils.Spread28DaysTestCase spread28DaysTestCase;
         BuilderUtils.Spread60DaysTestCase spread60DaysTestCase;
         BuilderUtils.Spread90DaysTestCase spread90DaysTestCase;
@@ -50,6 +51,11 @@ contract SpreadRouterBuilder is Test {
 
     function withUsdt(address usdt) public returns (SpreadRouterBuilder) {
         builderData.usdt = usdt;
+        return this;
+    }
+
+    function withStEth(address stEth) public returns (SpreadRouterBuilder) {
+        builderData.stEth = stEth;
         return this;
     }
 
@@ -100,7 +106,7 @@ contract SpreadRouterBuilder is Test {
 
     function _buildSpread28Days() internal returns (address spread) {
         if (builderData.spread28DaysTestCase == BuilderUtils.Spread28DaysTestCase.DEFAULT) {
-            return address(new Spread28Days(builderData.dai, builderData.usdc, builderData.usdt));
+            return address(new Spread28Days(builderData.dai, builderData.usdc, builderData.usdt, builderData.stEth));
         } else if (builderData.spread28DaysTestCase == BuilderUtils.Spread28DaysTestCase.CASE0) {
             return address(new MockSpreadXDays(TestConstants.ZERO, TestConstants.ZERO));
         } else if (builderData.spread28DaysTestCase == BuilderUtils.Spread28DaysTestCase.CASE1) {
@@ -127,27 +133,27 @@ contract SpreadRouterBuilder is Test {
             return address(new MockSpreadXDays(TestConstants.PERCENTAGE_1_18DEC, TestConstants.ZERO));
         }
 
-        return address(new Spread28Days(builderData.dai, builderData.usdc, builderData.usdt));
+        return address(new Spread28Days(builderData.dai, builderData.usdc, builderData.usdt, builderData.stEth));
     }
 
     function _buildSpread60Days() internal returns (address spread) {
         if (builderData.spread60DaysTestCase == BuilderUtils.Spread60DaysTestCase.DEFAULT) {
-            return address(new Spread60Days(builderData.dai, builderData.usdc, builderData.usdt));
+            return address(new Spread60Days(builderData.dai, builderData.usdc, builderData.usdt, builderData.stEth));
         } else if (builderData.spread60DaysTestCase == BuilderUtils.Spread60DaysTestCase.CASE1) {
             return address(new MockSpreadXDays(TestConstants.PERCENTAGE_6_18DEC, TestConstants.PERCENTAGE_4_18DEC));
         }
 
-        return address(new Spread60Days(builderData.dai, builderData.usdc, builderData.usdt));
+        return address(new Spread60Days(builderData.dai, builderData.usdc, builderData.usdt, builderData.stEth));
     }
 
     function _buildSpread90Days() internal returns (address spread) {
         if (builderData.spread90DaysTestCase == BuilderUtils.Spread90DaysTestCase.DEFAULT) {
-            return address(new Spread90Days(builderData.dai, builderData.usdc, builderData.usdt));
+            return address(new Spread90Days(builderData.dai, builderData.usdc, builderData.usdt, builderData.stEth));
         } else if (builderData.spread90DaysTestCase == BuilderUtils.Spread90DaysTestCase.CASE1) {
             return address(new MockSpreadXDays(TestConstants.PERCENTAGE_6_18DEC, TestConstants.PERCENTAGE_4_18DEC));
         }
 
-        return address(new Spread90Days(builderData.dai, builderData.usdc, builderData.usdt));
+        return address(new Spread90Days(builderData.dai, builderData.usdc, builderData.usdt, builderData.stEth));
     }
 
     function _buildCloseSwapService() internal returns (address spread) {
@@ -156,7 +162,7 @@ contract SpreadRouterBuilder is Test {
         ///return address(new SpreadCloseSwapService(builderData.dai, builderData.usdc, builderData.usdt));
     }
 
-    function _constructProxy(address impl) internal returns (ERC1967Proxy proxy) {
+    function    _constructProxy(address impl) internal returns (ERC1967Proxy proxy) {
         proxy = new ERC1967Proxy(address(impl), abi.encodeWithSignature("initialize(bool)", false));
     }
 }

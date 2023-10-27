@@ -27,7 +27,10 @@ library SpreadStorageLibs {
         TimeWeightedNotional60DaysUsdt,
         TimeWeightedNotional90DaysDai,
         TimeWeightedNotional90DaysUsdc,
-        TimeWeightedNotional90DaysUsdt
+        TimeWeightedNotional90DaysUsdt,
+        TimeWeightedNotional28DaysStEth,
+        TimeWeightedNotional60DaysStEth,
+        TimeWeightedNotional90DaysStEth
     }
 
     /// @notice Struct which contains owner address of Spread Router
@@ -53,8 +56,10 @@ library SpreadStorageLibs {
         SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional
     ) internal {
         _checkTimeWeightedNotional(timeWeightedNotionalStorageId);
+
         uint256 timeWeightedNotionalPayFixedTemp;
         uint256 timeWeightedNotionalReceiveFixedTemp;
+
         unchecked {
             timeWeightedNotionalPayFixedTemp = timeWeightedNotional.timeWeightedNotionalPayFixed / 1e18;
 
@@ -66,6 +71,7 @@ library SpreadStorageLibs {
         uint96 timeWeightedNotionalReceiveFixed = timeWeightedNotionalReceiveFixedTemp.toUint96();
         uint32 lastUpdateTimeReceiveFixed = timeWeightedNotional.lastUpdateTimeReceiveFixed.toUint32();
         uint256 slotAddress = _getStorageSlot(timeWeightedNotionalStorageId);
+
         assembly {
             let value := add(
                 timeWeightedNotionalPayFixed,
@@ -84,11 +90,13 @@ library SpreadStorageLibs {
         StorageId timeWeightedNotionalStorageId
     ) internal view returns (SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional28Days) {
         _checkTimeWeightedNotional(timeWeightedNotionalStorageId);
+
         uint256 timeWeightedNotionalPayFixed;
         uint256 lastUpdateTimePayFixed;
         uint256 timeWeightedNotionalReceiveFixed;
         uint256 lastUpdateTimeReceiveFixed;
         uint256 slotAddress = _getStorageSlot(timeWeightedNotionalStorageId);
+
         assembly {
             let slotValue := sload(slotAddress)
             timeWeightedNotionalPayFixed := mul(and(slotValue, 0xFFFFFFFFFFFFFFFFFFFFFFFF), 1000000000000000000)
@@ -112,8 +120,8 @@ library SpreadStorageLibs {
 
     /// @notice Gets all time weighted notional storage IDs
     function getAllStorageId() internal pure returns (StorageId[] memory storageIds, string[] memory keys) {
-        storageIds = new StorageId[](9);
-        keys = new string[](9);
+        storageIds = new StorageId[](12);
+        keys = new string[](12);
         storageIds[0] = StorageId.TimeWeightedNotional28DaysDai;
         keys[0] = "TimeWeightedNotional28DaysDai";
         storageIds[1] = StorageId.TimeWeightedNotional28DaysUsdc;
@@ -132,6 +140,12 @@ library SpreadStorageLibs {
         keys[7] = "TimeWeightedNotional90DaysUsdc";
         storageIds[8] = StorageId.TimeWeightedNotional90DaysUsdt;
         keys[8] = "TimeWeightedNotional90DaysUsdt";
+        storageIds[9] = StorageId.TimeWeightedNotional28DaysStEth;
+        keys[9] = "TimeWeightedNotional28DaysStEth";
+        storageIds[10] = StorageId.TimeWeightedNotional60DaysStEth;
+        keys[10] = "TimeWeightedNotional60DaysStEth";
+        storageIds[11] = StorageId.TimeWeightedNotional90DaysStEth;
+        keys[11] = "TimeWeightedNotional90DaysStEth";
     }
 
     /// @notice Gets the owner of the Spread Router
@@ -175,7 +189,10 @@ library SpreadStorageLibs {
                 storageId == StorageId.TimeWeightedNotional60DaysUsdt ||
                 storageId == StorageId.TimeWeightedNotional90DaysDai ||
                 storageId == StorageId.TimeWeightedNotional90DaysUsdc ||
-                storageId == StorageId.TimeWeightedNotional90DaysUsdt,
+                storageId == StorageId.TimeWeightedNotional90DaysUsdt ||
+                storageId == StorageId.TimeWeightedNotional28DaysStEth ||
+                storageId == StorageId.TimeWeightedNotional60DaysStEth ||
+                storageId == StorageId.TimeWeightedNotional90DaysStEth,
             AmmErrors.STORAGE_ID_IS_NOT_TIME_WEIGHTED_NOTIONAL
         );
     }

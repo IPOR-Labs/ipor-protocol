@@ -47,6 +47,7 @@ contract IporProtocolFactory is Test {
         BuilderUtils.IporProtocol usdt;
         BuilderUtils.IporProtocol usdc;
         BuilderUtils.IporProtocol dai;
+        BuilderUtils.IporProtocol stEth;
     }
 
     struct AmmConfig {
@@ -139,10 +140,12 @@ contract IporProtocolFactory is Test {
         amm.usdt.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
         amm.usdc.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
         amm.dai.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
+        amm.stEth.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
 
         amm.usdt.router = amm.router;
         amm.usdc.router = amm.router;
         amm.dai.router = amm.router;
+        amm.stEth.router = amm.router;
 
         _assetBuilder.withUSDT();
         amm.usdt.asset = _assetBuilder.build();
@@ -153,21 +156,27 @@ contract IporProtocolFactory is Test {
         _assetBuilder.withDAI();
         amm.dai.asset = _assetBuilder.build();
 
-        address[] memory assets = new address[](3);
+        _assetBuilder.withStEth();
+        amm.stEth.asset = _assetBuilder.build();
+
+        address[] memory assets = new address[](4);
         assets[0] = address(amm.dai.asset);
         assets[1] = address(amm.usdt.asset);
         assets[2] = address(amm.usdc.asset);
+        assets[3] = address(amm.stEth.asset);
 
         amm.iporOracle = _iporOracleFactory.getEmptyInstance(assets, cfg.iporOracleInitialParamsTestCase);
 
         amm.usdt.iporOracle = amm.iporOracle;
         amm.usdc.iporOracle = amm.iporOracle;
         amm.dai.iporOracle = amm.iporOracle;
+        amm.stEth.iporOracle = amm.iporOracle;
 
         amm.iporWeighted = _iporWeightedBuilder.withIporOracle(address(amm.iporOracle)).build();
         amm.usdt.iporWeighted = amm.iporWeighted;
         amm.usdc.iporWeighted = amm.iporWeighted;
         amm.dai.iporWeighted = amm.iporWeighted;
+        amm.stEth.iporWeighted = amm.iporWeighted;
 
         _iporOracleFactory.upgrade(
             address(amm.iporOracle),
@@ -178,7 +187,8 @@ contract IporProtocolFactory is Test {
                 usdc: address(amm.usdc.asset),
                 usdcInitialIbtPrice: 1e18,
                 dai: address(amm.dai.asset),
-                daiInitialIbtPrice: 1e18
+                daiInitialIbtPrice: 1e18,
+                stEth: address(amm.stEth.asset)
             })
         );
 
@@ -206,6 +216,12 @@ contract IporProtocolFactory is Test {
             .withAsset(address(amm.dai.asset))
             .build();
 
+        amm.stEth.ipToken = _ipTokenBuilder
+            .withName("IP stETH")
+            .withSymbol("ipstETH")
+            .withAsset(address(amm.stEth.asset))
+            .build();
+
         _ammStorageBuilder.withIporProtocolRouter(address(amm.router));
         _ammStorageBuilder.withAmmTreasury(address(amm.usdt.ammTreasury));
         amm.usdt.ammStorage = _ammStorageBuilder.build();
@@ -216,11 +232,16 @@ contract IporProtocolFactory is Test {
         _ammStorageBuilder.withAmmTreasury(address(amm.dai.ammTreasury));
         amm.dai.ammStorage = _ammStorageBuilder.build();
 
+        _ammStorageBuilder.withAmmTreasury(address(amm.stEth.ammTreasury));
+        amm.stEth.ammStorage = _ammStorageBuilder.build();
+
         _spreadRouterBuilder.withIporRouter(address(amm.router));
         _spreadRouterBuilder.withUsdt(address(amm.usdt.asset));
 
         _spreadRouterBuilder.withUsdc(address(amm.usdc.asset));
         _spreadRouterBuilder.withDai(address(amm.dai.asset));
+
+        _spreadRouterBuilder.withStEth(address(amm.stEth.asset));
 
         _spreadRouterBuilder.withSpread28DaysTestCase(cfg.spread28DaysTestCase);
         _spreadRouterBuilder.withSpread60DaysTestCase(cfg.spread60DaysTestCase);
@@ -230,6 +251,7 @@ contract IporProtocolFactory is Test {
         amm.usdt.spreadRouter = amm.spreadRouter;
         amm.usdc.spreadRouter = amm.spreadRouter;
         amm.dai.spreadRouter = amm.spreadRouter;
+        amm.stEth.spreadRouter = amm.spreadRouter;
 
         _assetManagementBuilder
             .withAssetType(BuilderUtils.AssetType.USDT)
@@ -283,6 +305,7 @@ contract IporProtocolFactory is Test {
         amm.usdt.ipToken.setTokenManager(address(amm.router));
         amm.usdc.ipToken.setTokenManager(address(amm.router));
         amm.dai.ipToken.setTokenManager(address(amm.router));
+        amm.stEth.ipToken.setTokenManager(address(amm.router));
 
         amm.usdt.ammTreasury.grantMaxAllowanceForSpender(address(amm.usdt.assetManagement));
         amm.usdc.ammTreasury.grantMaxAllowanceForSpender(address(amm.usdc.assetManagement));
@@ -291,12 +314,15 @@ contract IporProtocolFactory is Test {
         amm.usdt.ammTreasury.grantMaxAllowanceForSpender(address(amm.router));
         amm.usdc.ammTreasury.grantMaxAllowanceForSpender(address(amm.router));
         amm.dai.ammTreasury.grantMaxAllowanceForSpender(address(amm.router));
+//        amm.stEth.ammTreasury.grantMaxAllowanceForSpender(address(amm.router));
 
         IAmmGovernanceService(address(amm.router)).setAmmPoolsParams(address(amm.usdt.asset), 1000000000, 50, 8500);
 
         IAmmGovernanceService(address(amm.router)).setAmmPoolsParams(address(amm.usdc.asset), 1000000000, 50, 8500);
 
         IAmmGovernanceService(address(amm.router)).setAmmPoolsParams(address(amm.dai.asset), 1000000000, 50, 8500);
+
+        IAmmGovernanceService(address(amm.router)).setAmmPoolsParams(address(amm.stEth.asset), 1000000000, 50, 8500);
 
         vm.stopPrank();
     }
@@ -327,7 +353,8 @@ contract IporProtocolFactory is Test {
                 usdt: address(iporProtocol.asset),
                 usdtInitialIbtPrice: 1e18,
                 dai: _fakeContract,
-                daiInitialIbtPrice: 0
+                daiInitialIbtPrice: 0,
+            stEth: _fakeContract
             })
         );
 
@@ -352,6 +379,7 @@ contract IporProtocolFactory is Test {
         _spreadRouterBuilder.withUsdt(address(iporProtocol.asset));
         _spreadRouterBuilder.withUsdc(address(_fakeContract));
         _spreadRouterBuilder.withDai(address(_fakeContract));
+        _spreadRouterBuilder.withStEth(address(_fakeContract));
 
         _spreadRouterBuilder.withSpread28DaysTestCase(cfg.spread28DaysTestCase);
         _spreadRouterBuilder.withSpread60DaysTestCase(cfg.spread60DaysTestCase);
@@ -432,7 +460,8 @@ contract IporProtocolFactory is Test {
                 usdt: _fakeContract,
                 usdtInitialIbtPrice: 0,
                 dai: _fakeContract,
-                daiInitialIbtPrice: 0
+                daiInitialIbtPrice: 0,
+            stEth: _fakeContract
             })
         );
 
@@ -459,6 +488,7 @@ contract IporProtocolFactory is Test {
         _spreadRouterBuilder.withUsdt(address(_fakeContract));
         _spreadRouterBuilder.withUsdc(address(iporProtocol.asset));
         _spreadRouterBuilder.withDai(address(_fakeContract));
+        _spreadRouterBuilder.withStEth(address(_fakeContract));
 
         _spreadRouterBuilder.withSpread28DaysTestCase(cfg.spread28DaysTestCase);
         _spreadRouterBuilder.withSpread60DaysTestCase(cfg.spread60DaysTestCase);
@@ -540,7 +570,8 @@ contract IporProtocolFactory is Test {
                 usdt: _fakeContract,
                 usdtInitialIbtPrice: 0,
                 dai: address(iporProtocol.asset),
-                daiInitialIbtPrice: 1e18
+                daiInitialIbtPrice: 1e18,
+            stEth: _fakeContract
             })
         );
 
@@ -563,9 +594,12 @@ contract IporProtocolFactory is Test {
         iporProtocol.ammStorage = _ammStorageBuilder.build();
 
         _spreadRouterBuilder.withIporRouter(address(iporProtocol.router));
+
         _spreadRouterBuilder.withUsdt(address(_fakeContract));
         _spreadRouterBuilder.withUsdc(address(_fakeContract));
         _spreadRouterBuilder.withDai(address(iporProtocol.asset));
+        _spreadRouterBuilder.withStEth(address(_fakeContract));
+
         _spreadRouterBuilder.withSpread28DaysTestCase(cfg.spread28DaysTestCase);
         _spreadRouterBuilder.withSpread60DaysTestCase(cfg.spread60DaysTestCase);
         _spreadRouterBuilder.withSpread90DaysTestCase(cfg.spread90DaysTestCase);

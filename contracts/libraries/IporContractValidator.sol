@@ -8,4 +8,11 @@ library IporContractValidator {
         require(addr != address(0), IporErrors.WRONG_ADDRESS);
         return addr;
     }
+
+    function checkAddress(address addr, string memory code) internal pure returns (address) {
+        if (addr == address(0)) {
+            revert IporErrors.WrongAddress(code);
+        }
+        return addr;
+    }
 }
