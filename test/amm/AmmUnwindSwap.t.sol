@@ -52,13 +52,34 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
 
-        vm.prank(_buyer);
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 280,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            _iporProtocolFactory.riskParamSignerPrivateKey()
+        );
+
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            riskIndicatorsInputs
         );
+        vm.stopPrank();
 
         vm.warp(5 days);
 
@@ -94,14 +115,7 @@ contract AmmUnwindSwap is TestCommons {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 liquidityAmount = 1_000_000 * 1e18;
-        uint256 totalAmount = 10_000 * 1e18;
-        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
-        uint256 leverage = 100 * 10 ** 18;
 
-        int256 expectedSwapPnlValueToDateOne = -13739566523224092853;
-        int256 expectedSwapUnwindAmountOne = -121691316061789903590;
-        uint256 expectedOpeningFeeLpAmountOne = 29145104043000041192;
-        uint256 expectedOpeningFeeTreasuryAmountOne = 14579841942471256;
 
         int256 expectedSwapPnlValueToDateTwo = -47677244969467080928;
         int256 expectedSwapUnwindAmountTwo = -74502689729439282708;
@@ -110,29 +124,52 @@ contract AmmUnwindSwap is TestCommons {
 
         _iporProtocol.asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_admin, liquidityAmount);
-        _iporProtocol.asset.transfer(_buyer, 2 * totalAmount);
+        _iporProtocol.asset.transfer(_buyer, 2 * 10_000 * 1e18);
 
         vm.prank(_buyer);
-        _iporProtocol.asset.approve(address(_iporProtocol.router), 2 * totalAmount);
+        _iporProtocol.asset.approve(address(_iporProtocol.router), 2 * 10_000 * 1e18);
 
         vm.prank(_admin);
         _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_2_5_18DEC);
 
-        vm.prank(_buyer);
-        uint256 swapIdOne = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
-            _buyer,
-            totalAmount,
-            acceptableFixedInterestRate,
-            leverage
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 280,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            _iporProtocolFactory.riskParamSignerPrivateKey()
         );
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
+        uint256 swapIdOne = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
+            _buyer,
+            10_000 * 1e18,
+            10 * 10 ** 16,
+            100 * 10 ** 18,
+            riskIndicatorsInputs
+        );
+        vm.stopPrank();
+
+        vm.startPrank(_buyer);
         uint256 swapIdTwo = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _buyer,
-            totalAmount,
-            acceptableFixedInterestRate,
-            leverage
+            10_000 * 1e18,
+            10 * 10 ** 16,
+            100 * 10 ** 18,
+            riskIndicatorsInputs
         );
+        vm.stopPrank();
 
         AmmTypes.Swap memory swapOne = _iporProtocol.ammStorage.getSwap(
             AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
@@ -154,10 +191,10 @@ contract AmmUnwindSwap is TestCommons {
         emit SwapUnwind(
             address(_iporProtocol.asset),
             swapOne.id,
-            expectedSwapPnlValueToDateOne,
-            expectedSwapUnwindAmountOne,
-            expectedOpeningFeeLpAmountOne,
-            expectedOpeningFeeTreasuryAmountOne
+            -13739566523224092853,
+            -121691316061789903590,
+            29145104043000041192,
+            14579841942471256
         );
         _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, new uint256[](0));
 
@@ -197,21 +234,45 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_admin);
         _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_2_5_18DEC);
 
-        vm.prank(_buyer);
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: -1000000000000000,
+            fixedRateCapPerLeg: 35000000000000000,
+            demandSpreadFactor: 280,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            1,
+            _iporProtocolFactory.riskParamSignerPrivateKey()
+        );
+
+        vm.startPrank(_buyer);
         uint256 swapIdOne = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
             _buyer,
             10_000 * 1e18,
             0,
-            100 * 10 ** 18
+            100 * 10 ** 18,
+            riskIndicatorsInputs
         );
+        vm.stopPrank();
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapIdTwo = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
             _buyer,
             10_000 * 1e18,
             0,
-            100 * 10 ** 18
+            100 * 10 ** 18,
+            riskIndicatorsInputs
         );
+        vm.stopPrank();
 
         AmmTypes.Swap memory swapOne = _iporProtocol.ammStorage.getSwap(
             AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
@@ -276,13 +337,35 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
 
-        vm.prank(_buyer);
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 280,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            _iporProtocolFactory.riskParamSignerPrivateKey()
+        );
+
+
+    vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            riskIndicatorsInputs
         );
+        vm.stopPrank();
 
         vm.warp(5 days);
 
@@ -322,13 +405,35 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
 
-        vm.prank(_buyer);
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: -1000000000000000,
+            fixedRateCapPerLeg: 35000000000000000,
+            demandSpreadFactor: 280,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+
+    riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            1,
+            _iporProtocolFactory.riskParamSignerPrivateKey()
+        );
+
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            riskIndicatorsInputs
         );
+        vm.stopPrank();
 
         vm.warp(5 days);
 
@@ -367,13 +472,15 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _buyer,
             totalAmount,
             10 * 10 ** 16,
-            100 * 10 ** 18
+            100 * 10 ** 18,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), PAY_FIXED)
         );
+        vm.stopPrank();
 
         vm.warp(5 days);
 
@@ -401,13 +508,15 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _buyer,
             totalAmount,
             10 * 10 ** 16,
-            100 * 10 ** 18
+            100 * 10 ** 18,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), PAY_FIXED)
         );
+        vm.stopPrank();
 
         vm.warp(5 days);
 
@@ -435,13 +544,15 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
             _buyer,
             totalAmount,
             0,
-            100 * 10 ** 18
+            100 * 10 ** 18,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), RECEIVE_FIXED)
         );
+        vm.stopPrank();
 
         vm.warp(5 days);
 
@@ -469,13 +580,15 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
             _buyer,
             totalAmount,
             0,
-            100 * 10 ** 18
+            100 * 10 ** 18,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), RECEIVE_FIXED)
         );
+        vm.stopPrank();
 
         vm.warp(5 days);
 
@@ -509,7 +622,7 @@ contract AmmUnwindSwap is TestCommons {
             totalAmount,
             10 * 10 ** 16,
             100 * 10 ** 18,
-            getRiskIndicatorsInputs()
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), PAY_FIXED)
         );
         vm.stopPrank();
 
@@ -545,7 +658,7 @@ contract AmmUnwindSwap is TestCommons {
             totalAmount,
             10 * 10 ** 16,
             100 * 10 ** 18,
-            getRiskIndicatorsInputs()
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), PAY_FIXED)
         );
         vm.stopPrank();
 
@@ -575,13 +688,15 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             0,
-            100 * 10 ** 18
+            100 * 10 ** 18,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset),RECEIVE_FIXED)
         );
+        vm.stopPrank();
 
         vm.warp(5 days);
 
@@ -609,13 +724,15 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             0,
-            100 * 10 ** 18
+            100 * 10 ** 18,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset),RECEIVE_FIXED)
         );
+        vm.stopPrank();
 
         vm.warp(5 days);
 
@@ -626,27 +743,5 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         vm.expectRevert(abi.encodePacked(AmmErrors.COLLATERAL_IS_NOT_SUFFICIENT_TO_COVER_UNWIND_SWAP));
         _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
-    }
-
-    function getRiskIndicatorsInputs() private returns (AmmTypes.RiskIndicatorsInputs memory) {
-        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
-            maxCollateralRatio: 900000000000000000,
-            maxCollateralRatioPerLeg: 480000000000000000,
-            maxLeveragePerLeg: 1000000000000000000000,
-            baseSpreadPerLeg: 1000000000000000,
-            fixedRateCapPerLeg: 20000000000000000,
-            demandSpreadFactor: 500,
-            expiration: block.timestamp + 1000,
-            signature: bytes("0x00")
-        });
-
-        riskIndicatorsInputs.signature = signRiskParams(
-            riskIndicatorsInputs,
-            address(_iporProtocol.asset),
-            uint256(IporTypes.SwapTenor.DAYS_28),
-            0,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
-        );
-        return riskIndicatorsInputs;
     }
 }

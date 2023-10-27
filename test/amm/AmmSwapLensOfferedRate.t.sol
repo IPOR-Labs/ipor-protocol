@@ -56,13 +56,15 @@ contract AmmSwapLensOfferedRateTest is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
 
-        vm.prank(_userTwo);
+        vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _userTwo,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), uint256(IporTypes.SwapTenor.DAYS_28))
         );
+        vm.stopPrank();
 
         // when
         (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed) = _iporProtocol.ammSwapsLens.getOfferedRate(

@@ -154,7 +154,8 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
-        uint256 leverage
+        uint256 leverage,
+        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external override returns (uint256) {
         Context memory context = Context({
             beneficiary: beneficiary,
@@ -168,7 +169,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                AmmTypes.OpenSwapRiskIndicators(0, 0, 0, 0, 0, 0)
+                riskIndicatorsInputs.verify(_usdt, uint256(context.tenor), uint256(0), riskParamsSigner)
             );
     }
 
@@ -176,7 +177,8 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
-        uint256 leverage
+        uint256 leverage,
+        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external override returns (uint256) {
         Context memory context = Context({
             beneficiary: beneficiary,
@@ -190,7 +192,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                AmmTypes.OpenSwapRiskIndicators(0, 0, 0, 0, 0, 0)
+                riskIndicatorsInputs.verify(_usdt, uint256(context.tenor), uint256(0), riskParamsSigner)
             );
     }
 
@@ -198,7 +200,8 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
-        uint256 leverage
+        uint256 leverage,
+        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external override returns (uint256) {
         Context memory context = Context({
             beneficiary: beneficiary,
@@ -207,14 +210,22 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
             poolCfg: _getPoolConfiguration(_usdt)
         });
 
-        return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
+        return
+            _openSwapReceiveFixed(
+                context,
+                totalAmount,
+                acceptableFixedInterestRate,
+                leverage,
+                riskIndicatorsInputs.verify(_usdt, uint256(context.tenor), uint256(1), riskParamsSigner)
+            );
     }
 
     function openSwapReceiveFixed60daysUsdt(
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
-        uint256 leverage
+        uint256 leverage,
+        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external override returns (uint256) {
         Context memory context = Context({
             beneficiary: beneficiary,
@@ -222,14 +233,22 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
             spreadMethodSig: ISpread60Days.calculateAndUpdateOfferedRateReceiveFixed60Days.selector,
             poolCfg: _getPoolConfiguration(_usdt)
         });
-        return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
+        return
+            _openSwapReceiveFixed(
+                context,
+                totalAmount,
+                acceptableFixedInterestRate,
+                leverage,
+                riskIndicatorsInputs.verify(_usdt, uint256(context.tenor), uint256(1), riskParamsSigner)
+            );
     }
 
     function openSwapReceiveFixed90daysUsdt(
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
-        uint256 leverage
+        uint256 leverage,
+        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external override returns (uint256) {
         Context memory context = Context({
             beneficiary: beneficiary,
@@ -237,14 +256,22 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
             spreadMethodSig: ISpread90Days.calculateAndUpdateOfferedRateReceiveFixed90Days.selector,
             poolCfg: _getPoolConfiguration(_usdt)
         });
-        return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
+        return
+            _openSwapReceiveFixed(
+                context,
+                totalAmount,
+                acceptableFixedInterestRate,
+                leverage,
+                riskIndicatorsInputs.verify(_usdt, uint256(context.tenor), uint256(1), riskParamsSigner)
+            );
     }
 
     function openSwapPayFixed28daysUsdc(
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
-        uint256 leverage
+        uint256 leverage,
+        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external override returns (uint256) {
         Context memory context = Context({
             beneficiary: beneficiary,
@@ -259,7 +286,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                AmmTypes.OpenSwapRiskIndicators(0, 0, 0, 0, 0, 0)
+                    riskIndicatorsInputs.verify(_usdc, uint256(context.tenor), uint256(0), riskParamsSigner)
             );
     }
 
@@ -267,7 +294,8 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
-        uint256 leverage
+        uint256 leverage,
+        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external override returns (uint256) {
         Context memory context = Context({
             beneficiary: beneficiary,
@@ -281,7 +309,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                AmmTypes.OpenSwapRiskIndicators(0, 0, 0, 0, 0, 0)
+                riskIndicatorsInputs.verify(_usdc, uint256(context.tenor), uint256(0), riskParamsSigner)
             );
     }
 
@@ -289,7 +317,8 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
-        uint256 leverage
+        uint256 leverage,
+        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external override returns (uint256) {
         Context memory context = Context({
             beneficiary: beneficiary,
@@ -303,7 +332,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                AmmTypes.OpenSwapRiskIndicators(0, 0, 0, 0, 0, 0)
+                riskIndicatorsInputs.verify(_usdc, uint256(context.tenor), uint256(0), riskParamsSigner)
             );
     }
 
@@ -311,7 +340,8 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
-        uint256 leverage
+        uint256 leverage,
+        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external override returns (uint256) {
         Context memory context = Context({
             beneficiary: beneficiary,
@@ -319,14 +349,22 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
             spreadMethodSig: ISpread28Days.calculateAndUpdateOfferedRateReceiveFixed28Days.selector,
             poolCfg: _getPoolConfiguration(_usdc)
         });
-        return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
+        return
+            _openSwapReceiveFixed(
+                context,
+                totalAmount,
+                acceptableFixedInterestRate,
+                leverage,
+                riskIndicatorsInputs.verify(_usdc, uint256(context.tenor), uint256(1), riskParamsSigner)
+            );
     }
 
     function openSwapReceiveFixed60daysUsdc(
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
-        uint256 leverage
+        uint256 leverage,
+        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external override returns (uint256) {
         Context memory context = Context({
             beneficiary: beneficiary,
@@ -334,14 +372,22 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
             spreadMethodSig: ISpread60Days.calculateAndUpdateOfferedRateReceiveFixed60Days.selector,
             poolCfg: _getPoolConfiguration(_usdc)
         });
-        return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
+        return
+            _openSwapReceiveFixed(
+                context,
+                totalAmount,
+                acceptableFixedInterestRate,
+                leverage,
+                riskIndicatorsInputs.verify(_usdc, uint256(context.tenor), uint256(1), riskParamsSigner)
+            );
     }
 
     function openSwapReceiveFixed90daysUsdc(
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
-        uint256 leverage
+        uint256 leverage,
+        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external override returns (uint256) {
         Context memory context = Context({
             beneficiary: beneficiary,
@@ -349,15 +395,24 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
             spreadMethodSig: ISpread90Days.calculateAndUpdateOfferedRateReceiveFixed90Days.selector,
             poolCfg: _getPoolConfiguration(_usdc)
         });
-        return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
+        return
+            _openSwapReceiveFixed(
+                context,
+                totalAmount,
+                acceptableFixedInterestRate,
+                leverage,
+                riskIndicatorsInputs.verify(_usdc, uint256(context.tenor), uint256(1), riskParamsSigner)
+            );
     }
 
     function openSwapPayFixed28daysDai(
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
-        uint256 leverage
-    ) external override returns (uint256) {
+        uint256 leverage,
+        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
+
+) external override returns (uint256) {
         Context memory context = Context({
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_28,
@@ -370,7 +425,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                AmmTypes.OpenSwapRiskIndicators(0, 0, 0, 0, 0, 0)
+                riskIndicatorsInputs.verify(_dai, uint256(context.tenor), uint256(0), riskParamsSigner)
             );
     }
 
@@ -378,7 +433,8 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
-        uint256 leverage
+        uint256 leverage,
+        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external override returns (uint256) {
         Context memory context = Context({
             beneficiary: beneficiary,
@@ -392,7 +448,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                AmmTypes.OpenSwapRiskIndicators(0, 0, 0, 0, 0, 0)
+                riskIndicatorsInputs.verify(_dai, uint256(context.tenor), uint256(0), riskParamsSigner)
             );
     }
 
@@ -400,7 +456,8 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
-        uint256 leverage
+        uint256 leverage,
+        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external override returns (uint256) {
         Context memory context = Context({
             beneficiary: beneficiary,
@@ -414,7 +471,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                AmmTypes.OpenSwapRiskIndicators(0, 0, 0, 0, 0, 0)
+                riskIndicatorsInputs.verify(_dai, uint256(context.tenor), uint256(0), riskParamsSigner)
             );
     }
 
@@ -422,7 +479,8 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
-        uint256 leverage
+        uint256 leverage,
+        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external override returns (uint256) {
         Context memory context = Context({
             beneficiary: beneficiary,
@@ -430,14 +488,22 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
             spreadMethodSig: ISpread28Days.calculateAndUpdateOfferedRateReceiveFixed28Days.selector,
             poolCfg: _getPoolConfiguration(_dai)
         });
-        return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
+        return
+            _openSwapReceiveFixed(
+                context,
+                totalAmount,
+                acceptableFixedInterestRate,
+                leverage,
+                riskIndicatorsInputs.verify(_dai, uint256(context.tenor), uint256(1), riskParamsSigner)
+            );
     }
 
     function openSwapReceiveFixed60daysDai(
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
-        uint256 leverage
+        uint256 leverage,
+        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external override returns (uint256) {
         Context memory context = Context({
             beneficiary: beneficiary,
@@ -445,14 +511,22 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
             spreadMethodSig: ISpread60Days.calculateAndUpdateOfferedRateReceiveFixed60Days.selector,
             poolCfg: _getPoolConfiguration(_dai)
         });
-        return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
+        return
+            _openSwapReceiveFixed(
+                context,
+                totalAmount,
+                acceptableFixedInterestRate,
+                leverage,
+                riskIndicatorsInputs.verify(_dai, uint256(context.tenor), uint256(1), riskParamsSigner)
+            );
     }
 
     function openSwapReceiveFixed90daysDai(
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
-        uint256 leverage
+        uint256 leverage,
+        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external override returns (uint256) {
         Context memory context = Context({
             beneficiary: beneficiary,
@@ -460,7 +534,14 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
             spreadMethodSig: ISpread90Days.calculateAndUpdateOfferedRateReceiveFixed90Days.selector,
             poolCfg: _getPoolConfiguration(_dai)
         });
-        return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
+        return
+            _openSwapReceiveFixed(
+                context,
+                totalAmount,
+                acceptableFixedInterestRate,
+                leverage,
+                riskIndicatorsInputs.verify(_dai, uint256(context.tenor), uint256(1), riskParamsSigner)
+            );
     }
 
     function _getPoolConfiguration(address asset) internal view returns (AmmOpenSwapServicePoolConfiguration memory) {
@@ -638,7 +719,8 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         Context memory ctx,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
-        uint256 leverage
+        uint256 leverage,
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicators
     ) internal returns (uint256) {
         AmmInternalTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
             ctx.beneficiary,
@@ -655,14 +737,33 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralReceiveFixed = balance.totalCollateralReceiveFixed + bosStruct.collateral;
 
-        AmmTypes.OpenSwapRiskIndicators memory riskIndicators = RiskManagementLogic.getRiskIndicators(
-            ctx.poolCfg.asset,
-            1,
-            ctx.tenor,
-            balance.liquidityPool,
-            ctx.poolCfg.minLeverage,
-            riskParamsSigner
-        );
+        if (
+            riskIndicators.maxCollateralRatio == 0 &&
+            riskIndicators.demandSpreadFactor == 0 &&
+            riskIndicators.baseSpreadPerLeg == 0 &&
+            riskIndicators.fixedRateCapPerLeg == 0
+        ) {
+            console2.log("_openSwapPayFixed Override riskIndicators YYYYYYYYYYYYYYYYYY");
+            riskIndicators = RiskManagementLogic.getRiskIndicators(
+                ctx.poolCfg.asset,
+                1,
+                ctx.tenor,
+                balance.liquidityPool,
+                ctx.poolCfg.minLeverage,
+                riskParamsSigner
+            );
+        }
+
+        console2.log("maxCollateralRatio: ", riskIndicators.maxCollateralRatio);
+        console2.log("maxCollateralRatioPerLeg: ", riskIndicators.maxCollateralRatioPerLeg);
+        console2.log("maxLeveragePerLeg: ", riskIndicators.maxLeveragePerLeg);
+        if (riskIndicators.baseSpreadPerLeg >= 0) {
+            console2.log("baseSpreadPerLeg: ", uint(riskIndicators.baseSpreadPerLeg));
+        } else {
+            console2.log("baseSpreadPerLeg: -", uint(-riskIndicators.baseSpreadPerLeg));
+        }
+        console2.log("fixedRateCapPerLeg: ", riskIndicators.fixedRateCapPerLeg);
+        console2.log("demandSpreadFactor: ", riskIndicators.demandSpreadFactor);
 
         _validateLiquidityPoolCollateralRatioAndSwapLeverage(
             balance.liquidityPool,
@@ -843,7 +944,8 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
             collateralRatio = Constants.MAX_VALUE;
             collateralRatioPerLeg = Constants.MAX_VALUE;
         }
-
+        console2.log("collateralRatioPerLeg: ", collateralRatioPerLeg);
+        console2.log("maxCollateralRatioPerLeg: ", maxCollateralRatioPerLeg);
         require(collateralRatio <= maxCollateralRatio, AmmErrors.LP_COLLATERAL_RATIO_EXCEEDED);
 
         require(collateralRatioPerLeg <= maxCollateralRatioPerLeg, AmmErrors.LP_COLLATERAL_RATIO_PER_LEG_EXCEEDED);

@@ -212,13 +212,15 @@ contract AmmStorageTest is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
 
-        vm.prank(_userTwo);
+        vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _userTwo,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset),PAY_FIXED)
         );
+        vm.stopPrank();
 
         AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
             AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
@@ -252,7 +254,7 @@ contract AmmStorageTest is TestCommons {
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC,
-            getRiskIndicatorsInputs()
+            getRiskIndicatorsInputs(address(_iporProtocol.asset),PAY_FIXED)
         );
         vm.stopPrank();
 
@@ -282,13 +284,15 @@ contract AmmStorageTest is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
 
-        vm.prank(_userTwo);
+        vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _userTwo,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset),PAY_FIXED)
         );
+        vm.stopPrank();
 
         AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
             AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
@@ -392,7 +396,7 @@ contract AmmStorageTest is TestCommons {
                 TestConstants.USD_100_6DEC,
                 9 * TestConstants.D16,
                 TestConstants.LEVERAGE_18DEC,
-                getRiskIndicatorsInputs()
+                getRiskIndicatorsInputs(address(_iporProtocol.asset),PAY_FIXED)
             );
             vm.stopPrank();
         }
@@ -426,7 +430,7 @@ contract AmmStorageTest is TestCommons {
                 TestConstants.USD_100_6DEC,
                 9 * TestConstants.D16,
                 TestConstants.LEVERAGE_18DEC,
-                getRiskIndicatorsInputs()
+                getRiskIndicatorsInputs(address(_iporProtocol.asset),PAY_FIXED)
             );
             vm.stopPrank();
         }
@@ -460,7 +464,7 @@ contract AmmStorageTest is TestCommons {
                 TestConstants.USD_100_6DEC,
                 9 * TestConstants.D16,
                 TestConstants.LEVERAGE_18DEC,
-                getRiskIndicatorsInputs()
+                getRiskIndicatorsInputs(address(_iporProtocol.asset),PAY_FIXED)
             );
             vm.stopPrank();
         }
@@ -494,7 +498,7 @@ contract AmmStorageTest is TestCommons {
                 TestConstants.USD_100_6DEC,
                 9 * TestConstants.D16,
                 TestConstants.LEVERAGE_18DEC,
-                getRiskIndicatorsInputs()
+                getRiskIndicatorsInputs(address(_iporProtocol.asset),PAY_FIXED)
             );
             vm.stopPrank();
         }
@@ -593,13 +597,15 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
 
         for (uint256 i; i < 11; ++i) {
-            vm.prank(_userTwo);
+            vm.startPrank(_userTwo);
             _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
                 _userTwo,
                 TestConstants.USD_100_6DEC,
                 1 * TestConstants.D16,
-                TestConstants.LEVERAGE_18DEC
+                TestConstants.LEVERAGE_18DEC,
+                getRiskIndicatorsInputs(address(_iporProtocol.asset),RECEIVE_FIXED)
             );
+            vm.stopPrank();
         }
 
         // when
@@ -625,13 +631,15 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
 
         for (uint256 i; i < 22; ++i) {
-            vm.prank(_userTwo);
+            vm.startPrank(_userTwo);
             _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
                 _userTwo,
                 TestConstants.USD_100_6DEC,
                 1 * TestConstants.D16,
-                TestConstants.LEVERAGE_18DEC
+                TestConstants.LEVERAGE_18DEC,
+                getRiskIndicatorsInputs(address(_iporProtocol.asset),RECEIVE_FIXED)
             );
+            vm.stopPrank();
         }
 
         // when
@@ -657,13 +665,15 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
 
         for (uint256 i; i < 22; ++i) {
-            vm.prank(_userTwo);
+            vm.startPrank(_userTwo);
             _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
                 _userTwo,
                 TestConstants.USD_100_6DEC,
                 1 * TestConstants.D16,
-                TestConstants.LEVERAGE_18DEC
+                TestConstants.LEVERAGE_18DEC,
+                getRiskIndicatorsInputs(address(_iporProtocol.asset),RECEIVE_FIXED)
             );
+            vm.stopPrank();
         }
 
         // when
@@ -689,13 +699,15 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
 
         for (uint256 i; i < 20; ++i) {
-            vm.prank(_userTwo);
+            vm.startPrank(_userTwo);
             _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
                 _userTwo,
                 TestConstants.USD_100_6DEC,
                 1 * TestConstants.D16,
-                TestConstants.LEVERAGE_18DEC
+                TestConstants.LEVERAGE_18DEC,
+                getRiskIndicatorsInputs(address(_iporProtocol.asset),RECEIVE_FIXED)
             );
+            vm.stopPrank();
         }
 
         // when
@@ -797,7 +809,7 @@ contract AmmStorageTest is TestCommons {
                 TestConstants.USD_100_6DEC,
                 9 * TestConstants.D16,
                 TestConstants.LEVERAGE_18DEC,
-                getRiskIndicatorsInputs()
+                getRiskIndicatorsInputs(address(_iporProtocol.asset),PAY_FIXED)
             );
             vm.stopPrank();
         }
@@ -827,13 +839,15 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
 
         for (uint256 i; i < 5; ++i) {
-            vm.prank(_userTwo);
+            vm.startPrank(_userTwo);
             _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
                 _userTwo,
                 TestConstants.USD_100_6DEC,
                 1 * TestConstants.D16,
-                TestConstants.LEVERAGE_18DEC
+                TestConstants.LEVERAGE_18DEC,
+                getRiskIndicatorsInputs(address(_iporProtocol.asset),RECEIVE_FIXED)
             );
+            vm.stopPrank();
         }
 
         // when
@@ -867,7 +881,7 @@ contract AmmStorageTest is TestCommons {
                 TestConstants.USD_100_6DEC,
                 9 * TestConstants.D16,
                 TestConstants.LEVERAGE_18DEC,
-                getRiskIndicatorsInputs()
+                getRiskIndicatorsInputs(address(_iporProtocol.asset),PAY_FIXED)
             );
             vm.stopPrank();
         }
@@ -877,7 +891,8 @@ contract AmmStorageTest is TestCommons {
                 _userTwo,
                 TestConstants.USD_100_6DEC,
                 1 * TestConstants.D16,
-                TestConstants.LEVERAGE_18DEC
+                TestConstants.LEVERAGE_18DEC,
+                getRiskIndicatorsInputs(address(_iporProtocol.asset),RECEIVE_FIXED)
             );
             vm.stopPrank();
         }
@@ -913,7 +928,7 @@ contract AmmStorageTest is TestCommons {
                 TestConstants.USD_100_6DEC,
                 9 * TestConstants.D16,
                 TestConstants.LEVERAGE_18DEC,
-                getRiskIndicatorsInputs()
+                getRiskIndicatorsInputs(address(_iporProtocol.asset),PAY_FIXED)
             );
             vm.stopPrank();
         }
@@ -923,7 +938,8 @@ contract AmmStorageTest is TestCommons {
                 _userTwo,
                 TestConstants.USD_100_6DEC,
                 1 * TestConstants.D16,
-                TestConstants.LEVERAGE_18DEC
+                TestConstants.LEVERAGE_18DEC,
+                getRiskIndicatorsInputs(address(_iporProtocol.asset),RECEIVE_FIXED)
             );
             vm.stopPrank();
         }
@@ -957,18 +973,20 @@ contract AmmStorageTest is TestCommons {
                 TestConstants.USD_100_6DEC,
                 9 * TestConstants.D16,
                 TestConstants.LEVERAGE_18DEC,
-                getRiskIndicatorsInputs()
+                getRiskIndicatorsInputs(address(_iporProtocol.asset),PAY_FIXED)
             );
             vm.stopPrank();
         }
         for (uint256 i; i < 12; ++i) {
-            vm.prank(_userTwo);
+            vm.startPrank(_userTwo);
             _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
                 _userTwo,
                 TestConstants.USD_100_6DEC,
                 1 * TestConstants.D16,
-                TestConstants.LEVERAGE_18DEC
+                TestConstants.LEVERAGE_18DEC,
+                getRiskIndicatorsInputs(address(_iporProtocol.asset),RECEIVE_FIXED)
             );
+            vm.stopPrank();
         }
 
         // when
@@ -1109,12 +1127,12 @@ contract AmmStorageTest is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
 
-        vm.prank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _userTwo,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset),PAY_FIXED)
         );
 
         AmmStorageTypes.ExtendedBalancesMemory memory balanceAfterOpenSwap = _iporProtocol
@@ -1152,61 +1170,60 @@ contract AmmStorageTest is TestCommons {
         assertEq(balanceAfterCloseSwap.treasury, balanceAfterOpenSwap.treasury + swapUnwindFeeTreasuryAmount);
     }
 
+    function testShouldUpdateUnwindAmountWhenClosePayFixedUsdt() public {
+        //given
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
-        function testShouldUpdateUnwindAmountWhenClosePayFixedUsdt() public {
-            //given
-            _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+        vm.prank(_userOne);
+        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
 
-            vm.prank(_userOne);
-            _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        vm.prank(_liquidityProvider);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_28_000_6DEC);
 
-            vm.prank(_liquidityProvider);
-            _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_28_000_6DEC);
+        vm.startPrank(_userTwo);
+        _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            _userTwo,
+            TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
+            9 * TestConstants.D17,
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset),PAY_FIXED)
+        );
+        vm.stopPrank();
 
-            vm.startPrank(_userTwo);
-            _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
-                _userTwo,
-                TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
-                9 * TestConstants.D17,
-                TestConstants.LEVERAGE_18DEC,
-                getRiskIndicatorsInputs()
-            );
-            vm.stopPrank();
+        AmmStorageTypes.ExtendedBalancesMemory memory balanceAfterOpenSwap = _iporProtocol
+            .ammStorage
+            .getExtendedBalance();
 
-            AmmStorageTypes.ExtendedBalancesMemory memory balanceAfterOpenSwap = _iporProtocol
-                .ammStorage
-                .getExtendedBalance();
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            1
+        );
 
-            AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
-                AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-                1
-            );
+        uint256 swapUnwindFeeLPAmount = 100e18;
+        uint256 swapUnwindFeeTreasuryAmount = 30e18;
+        int256 pnlValue = 10 * TestConstants.D18_INT;
 
-            uint256 swapUnwindFeeLPAmount = 100e18;
-            uint256 swapUnwindFeeTreasuryAmount = 30e18;
-            int256 pnlValue = 10 * TestConstants.D18_INT;
+        // when
+        vm.prank(address(_iporProtocol.router));
+        _iporProtocol.ammStorage.updateStorageWhenCloseSwapPayFixedInternal(
+            swap,
+            pnlValue,
+            swapUnwindFeeLPAmount,
+            swapUnwindFeeTreasuryAmount,
+            block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
+        );
 
-            // when
-            vm.prank(address(_iporProtocol.router));
-            _iporProtocol.ammStorage.updateStorageWhenCloseSwapPayFixedInternal(
-                swap,
-                pnlValue,
-                swapUnwindFeeLPAmount,
-                swapUnwindFeeTreasuryAmount,
-                block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
-            );
+        AmmStorageTypes.ExtendedBalancesMemory memory balanceAfterCloseSwap = _iporProtocol
+            .ammStorage
+            .getExtendedBalance();
 
-            AmmStorageTypes.ExtendedBalancesMemory memory balanceAfterCloseSwap = _iporProtocol
-                .ammStorage
-                .getExtendedBalance();
-
-            //then
-            assertEq(
-                balanceAfterCloseSwap.liquidityPool,
-                balanceAfterOpenSwap.liquidityPool + swapUnwindFeeLPAmount - uint256(pnlValue)
-            );
-            assertEq(balanceAfterCloseSwap.treasury, balanceAfterOpenSwap.treasury + swapUnwindFeeTreasuryAmount);
-        }
+        //then
+        assertEq(
+            balanceAfterCloseSwap.liquidityPool,
+            balanceAfterOpenSwap.liquidityPool + swapUnwindFeeLPAmount - uint256(pnlValue)
+        );
+        assertEq(balanceAfterCloseSwap.treasury, balanceAfterOpenSwap.treasury + swapUnwindFeeTreasuryAmount);
+    }
 
     function testShouldUpdateUnwindAmountWhenCloseReceiveFixedDai() public {
         //given
@@ -1218,13 +1235,15 @@ contract AmmStorageTest is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
 
-        vm.prank(_userTwo);
+        vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
             _userTwo,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             0,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset),RECEIVE_FIXED)
         );
+        vm.stopPrank();
 
         AmmStorageTypes.ExtendedBalancesMemory memory balanceAfterOpenSwap = _iporProtocol
             .ammStorage
@@ -1271,13 +1290,15 @@ contract AmmStorageTest is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_28_000_6DEC);
 
-        vm.prank(_userTwo);
+        vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _userTwo,
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             0,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset),RECEIVE_FIXED)
         );
+        vm.stopPrank();
 
         AmmStorageTypes.ExtendedBalancesMemory memory balanceAfterOpenSwap = _iporProtocol
             .ammStorage
@@ -1312,27 +1333,5 @@ contract AmmStorageTest is TestCommons {
             balanceAfterOpenSwap.liquidityPool + swapUnwindFeeLPAmount - uint256(pnlValue)
         );
         assertEq(balanceAfterCloseSwap.treasury, balanceAfterOpenSwap.treasury + swapUnwindFeeTreasuryAmount);
-    }
-
-    function getRiskIndicatorsInputs() private returns (AmmTypes.RiskIndicatorsInputs memory) {
-        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
-            maxCollateralRatio: 900000000000000000,
-            maxCollateralRatioPerLeg: 480000000000000000,
-            maxLeveragePerLeg: 1000000000000000000000,
-            baseSpreadPerLeg: 1000000000000000,
-            fixedRateCapPerLeg: 20000000000000000,
-            demandSpreadFactor: 500,
-            expiration: block.timestamp + 1000,
-            signature: bytes("0x00")
-        });
-
-        riskIndicatorsInputs.signature = signRiskParams(
-            riskIndicatorsInputs,
-            address(_iporProtocol.asset),
-            uint256(IporTypes.SwapTenor.DAYS_28),
-            0,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
-        );
-        return riskIndicatorsInputs;
     }
 }

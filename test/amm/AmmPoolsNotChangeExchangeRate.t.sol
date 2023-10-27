@@ -37,13 +37,34 @@ contract AmmPoolsNotExchangeRate is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, 180 * TestConstants.D18);
 
-        vm.prank(_userTwo);
+                AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 6553500000000000000,
+            maxCollateralRatioPerLeg: 6553500000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 280,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            _iporProtocolFactory.riskParamSignerPrivateKey()
+        );
+
+        vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _userTwo,
             180 * TestConstants.D18,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            riskIndicatorsInputs
         );
+        vm.stopPrank();
 
         uint256 exchangeRateBeforeProvideLiquidity = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(
             address(_iporProtocol.asset)
@@ -73,13 +94,35 @@ contract AmmPoolsNotExchangeRate is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, 180 * TestConstants.D18);
 
-        vm.prank(_userTwo);
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 6553500000000000000,
+            maxCollateralRatioPerLeg: 6553500000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 280,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            _iporProtocolFactory.riskParamSignerPrivateKey()
+        );
+
+
+    vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _userTwo,
             180 * TestConstants.D18,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            riskIndicatorsInputs
         );
+        vm.stopPrank();
 
         uint256 exchangeRateBeforeProvideLiquidity = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(
             address(_iporProtocol.asset)
@@ -119,7 +162,7 @@ contract AmmPoolsNotExchangeRate is TestCommons {
             180 * TestConstants.N1__0_6DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC,
-            getRiskIndicatorsInputs()
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), 0)
         );
         vm.stopPrank();
 
@@ -161,7 +204,7 @@ contract AmmPoolsNotExchangeRate is TestCommons {
             180 * TestConstants.N1__0_6DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC,
-            getRiskIndicatorsInputs()
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), 0)
         );
         vm.stopPrank();
 
@@ -207,7 +250,7 @@ contract AmmPoolsNotExchangeRate is TestCommons {
             180 * TestConstants.N1__0_6DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC,
-            getRiskIndicatorsInputs()
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), 0)
         );
         vm.stopPrank();
 
@@ -236,28 +279,5 @@ contract AmmPoolsNotExchangeRate is TestCommons {
             "incorrect exchange rate before provide liquidity"
         );
         assertEq(actualExchangeRate, 1262664164102524851, "incorrect exchange rate");
-    }
-
-
-    function getRiskIndicatorsInputs() private returns (AmmTypes.RiskIndicatorsInputs memory) {
-        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
-            maxCollateralRatio: 900000000000000000,
-            maxCollateralRatioPerLeg: 480000000000000000,
-            maxLeveragePerLeg: 1000000000000000000000,
-            baseSpreadPerLeg: 1000000000000000,
-            fixedRateCapPerLeg: 20000000000000000,
-            demandSpreadFactor: 500,
-            expiration: block.timestamp + 1000,
-            signature: bytes("0x00")
-        });
-
-        riskIndicatorsInputs.signature = signRiskParams(
-            riskIndicatorsInputs,
-            address(_iporProtocol.asset),
-            uint256(IporTypes.SwapTenor.DAYS_28),
-            0,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
-        );
-        return riskIndicatorsInputs;
     }
 }

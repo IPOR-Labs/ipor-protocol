@@ -46,7 +46,8 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
             _userTwo,
             26000 * TestConstants.D18,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), 0)
         );
 
         vm.warp(block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
@@ -88,7 +89,8 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
             _userTwo,
             27000 * TestConstants.D18,
             1 * TestConstants.D16,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), 1)
         );
 
         vm.prank(_userOne);
@@ -133,7 +135,8 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
             _userTwo,
             27000 * TestConstants.D18,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), 0)
         );
 
         vm.prank(_userOne);
@@ -178,7 +181,8 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
             _userTwo,
             27000 * TestConstants.D18,
             1 * TestConstants.D16,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), 1)
         );
 
         vm.prank(_userOne);
@@ -224,7 +228,8 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
             _userTwo,
             27000 * TestConstants.D18,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), 0)
         );
         vm.stopPrank();
 
@@ -275,13 +280,15 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_60_000_18DEC);
 
-        vm.prank(_userTwo);
+        vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
             _userTwo,
             27000 * TestConstants.D18,
             1 * TestConstants.D16,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), 1)
         );
+        vm.stopPrank();
 
         // BEGIN HACK - subtract liquidity without  burn ipToken
         vm.startPrank(address(_iporProtocol.router));
@@ -335,7 +342,8 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
             _userTwo,
             27000 * TestConstants.D18,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), 0)
         );
 
         //BEGIN HACK - subtract liquidity without  burn ipToken. Notice! This affect ipToken price!
@@ -382,13 +390,15 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_60_000_18DEC);
 
-        vm.prank(_userTwo);
+        vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
             _userTwo,
             27000 * TestConstants.D18,
             0,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), 1)
         );
+        vm.stopPrank();
 
         //BEGIN HACK - subtract liquidity without  burn ipToken. Notice! This affect ipToken price!
         vm.startPrank(address(_iporProtocol.router));
@@ -437,13 +447,15 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
             _userTwo,
             TestConstants.USD_100_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_1000_18DEC
+            TestConstants.LEVERAGE_1000_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), 0)
         );
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _userTwo,
             TestConstants.USD_100_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_1000_18DEC
+            TestConstants.LEVERAGE_1000_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), 0)
         );
         vm.stopPrank();
 

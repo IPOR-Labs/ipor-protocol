@@ -13,6 +13,8 @@ contract TestCommons is Test {
     address internal _userThree;
     address internal _liquidityProvider;
     address[] internal _users;
+    uint constant PAY_FIXED = 0;
+    uint constant RECEIVE_FIXED = 1;
 
     IporProtocolFactory internal _iporProtocolFactory = new IporProtocolFactory(address(this));
     IporRiskManagementOracleFactory internal _iporRiskManagementOracleFactory =
@@ -88,5 +90,27 @@ contract TestCommons is Test {
         // pack v, r, s into 65bytes signature
         // bytes memory signature = abi.encodePacked(r, s, v);
         return abi.encodePacked(r, s, v);
+    }
+
+    function getRiskIndicatorsInputs(address asset, uint direction) internal returns (AmmTypes.RiskIndicatorsInputs memory) {
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 280,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            direction,
+            _iporProtocolFactory.riskParamSignerPrivateKey()
+        );
+        return riskIndicatorsInputs;
     }
 }
