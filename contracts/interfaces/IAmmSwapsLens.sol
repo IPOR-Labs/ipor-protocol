@@ -101,12 +101,16 @@ interface IAmmSwapsLens {
     /// @param asset The address of the asset.
     /// @param tenor The duration of the swap.
     /// @param notional The notional amount of the swap, represented in 18 decimals.
+    /// @param payFixedRiskIndicatorsInputs The risk indicators inputs for pay fixed swaps.
+    /// @param receiveFixedRiskIndicatorsInputs The risk indicators inputs for receive fixed swaps.
     /// @return offeredRatePayFixed The offered rate for pay fixed swaps.
     /// @return offeredRateReceiveFixed The offered rate for receive fixed swaps.
     function getOfferedRate(
         address asset,
         IporTypes.SwapTenor tenor,
-        uint256 notional
+        uint256 notional,
+        AmmTypes.RiskIndicatorsInputs calldata payFixedRiskIndicatorsInputs,
+        AmmTypes.RiskIndicatorsInputs calldata receiveFixedRiskIndicatorsInputs
     ) external view returns (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed);
 
     /**

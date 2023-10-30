@@ -93,59 +93,59 @@ contract ItfHelper {
 //        return pnl;
 //    }
 
-    function getAmmData(address asset) external view returns (AmmData memory) {
-        AmmData memory ammData;
-        OfferedRate memory offeredRate;
-        Soap memory soap;
-        Index memory index;
-        ammData.asset = asset;
-        ammData.ammPoolsParamsConfiguration = IAmmGovernanceLens(_router).getAmmPoolsParams(asset);
-        ammData.riskIndicatorsPayFixed28 = IAmmSwapsLens(_router).getOpenSwapRiskIndicators(
-            asset,
-            0,
-            IporTypes.SwapTenor.DAYS_28
-        );
-        ammData.riskIndicatorsPayFixed60 = IAmmSwapsLens(_router).getOpenSwapRiskIndicators(
-            asset,
-            0,
-            IporTypes.SwapTenor.DAYS_60
-        );
-        ammData.riskIndicatorsPayFixed90 = IAmmSwapsLens(_router).getOpenSwapRiskIndicators(
-            asset,
-            0,
-            IporTypes.SwapTenor.DAYS_90
-        );
-        ammData.riskIndicatorsReceiveFixed28 = IAmmSwapsLens(_router).getOpenSwapRiskIndicators(
-            asset,
-            1,
-            IporTypes.SwapTenor.DAYS_28
-        );
-        ammData.riskIndicatorsReceiveFixed60 = IAmmSwapsLens(_router).getOpenSwapRiskIndicators(
-            asset,
-            1,
-            IporTypes.SwapTenor.DAYS_60
-        );
-        ammData.riskIndicatorsReceiveFixed90 = IAmmSwapsLens(_router).getOpenSwapRiskIndicators(
-            asset,
-            1,
-            IporTypes.SwapTenor.DAYS_90
-        );
-        ammData.ammOpenSwapServicePoolConfiguration = IAmmOpenSwapLens(_router).getAmmOpenSwapServicePoolConfiguration(
-            asset
-        );
-        (offeredRate.offeredRatePayFixed28, offeredRate.offeredRateReceiveFixed28) = IAmmSwapsLens(_router)
-            .getOfferedRate(asset, IporTypes.SwapTenor.DAYS_28, 100_000e18);
-        (offeredRate.offeredRatePayFixed60, offeredRate.offeredRateReceiveFixed60) = IAmmSwapsLens(_router)
-            .getOfferedRate(asset, IporTypes.SwapTenor.DAYS_60, 100_000e18);
-        (offeredRate.offeredRatePayFixed90, offeredRate.offeredRateReceiveFixed90) = IAmmSwapsLens(_router)
-            .getOfferedRate(asset, IporTypes.SwapTenor.DAYS_90, 100_000e18);
-        (soap.soapPayFixed, soap.soapReceiveFixed, soap.soap) = IAmmSwapsLens(_router).getSoap(asset);
-        (index.value, index.ibtPrice, index.lastUpdateTimestamp) = IIporOracle(_iporOracle).getIndex(asset);
-        ammData.soap = soap;
-        ammData.index = index;
-        ammData.offeredRate = offeredRate;
-        return ammData;
-    }
+//    function getAmmData(address asset) external view returns (AmmData memory) {
+//        AmmData memory ammData;
+//        OfferedRate memory offeredRate;
+//        Soap memory soap;
+//        Index memory index;
+//        ammData.asset = asset;
+//        ammData.ammPoolsParamsConfiguration = IAmmGovernanceLens(_router).getAmmPoolsParams(asset);
+//        ammData.riskIndicatorsPayFixed28 = IAmmSwapsLens(_router).getOpenSwapRiskIndicators(
+//            asset,
+//            0,
+//            IporTypes.SwapTenor.DAYS_28
+//        );
+//        ammData.riskIndicatorsPayFixed60 = IAmmSwapsLens(_router).getOpenSwapRiskIndicators(
+//            asset,
+//            0,
+//            IporTypes.SwapTenor.DAYS_60
+//        );
+//        ammData.riskIndicatorsPayFixed90 = IAmmSwapsLens(_router).getOpenSwapRiskIndicators(
+//            asset,
+//            0,
+//            IporTypes.SwapTenor.DAYS_90
+//        );
+//        ammData.riskIndicatorsReceiveFixed28 = IAmmSwapsLens(_router).getOpenSwapRiskIndicators(
+//            asset,
+//            1,
+//            IporTypes.SwapTenor.DAYS_28
+//        );
+//        ammData.riskIndicatorsReceiveFixed60 = IAmmSwapsLens(_router).getOpenSwapRiskIndicators(
+//            asset,
+//            1,
+//            IporTypes.SwapTenor.DAYS_60
+//        );
+//        ammData.riskIndicatorsReceiveFixed90 = IAmmSwapsLens(_router).getOpenSwapRiskIndicators(
+//            asset,
+//            1,
+//            IporTypes.SwapTenor.DAYS_90
+//        );
+//        ammData.ammOpenSwapServicePoolConfiguration = IAmmOpenSwapLens(_router).getAmmOpenSwapServicePoolConfiguration(
+//            asset
+//        );
+//        (offeredRate.offeredRatePayFixed28, offeredRate.offeredRateReceiveFixed28) = IAmmSwapsLens(_router)
+//            .getOfferedRate(asset, IporTypes.SwapTenor.DAYS_28, 100_000e18);
+//        (offeredRate.offeredRatePayFixed60, offeredRate.offeredRateReceiveFixed60) = IAmmSwapsLens(_router)
+//            .getOfferedRate(asset, IporTypes.SwapTenor.DAYS_60, 100_000e18);
+//        (offeredRate.offeredRatePayFixed90, offeredRate.offeredRateReceiveFixed90) = IAmmSwapsLens(_router)
+//            .getOfferedRate(asset, IporTypes.SwapTenor.DAYS_90, 100_000e18);
+//        (soap.soapPayFixed, soap.soapReceiveFixed, soap.soap) = IAmmSwapsLens(_router).getSoap(asset);
+//        (index.value, index.ibtPrice, index.lastUpdateTimestamp) = IIporOracle(_iporOracle).getIndex(asset);
+//        ammData.soap = soap;
+//        ammData.index = index;
+//        ammData.offeredRate = offeredRate;
+//        return ammData;
+//    }
 
 //    function liquidate(
 //        address asset,

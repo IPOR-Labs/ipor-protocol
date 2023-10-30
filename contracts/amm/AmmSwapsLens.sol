@@ -17,6 +17,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
     using IporContractValidator for address;
     using IporSwapLogic for AmmTypes.Swap;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
+    using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
 
     address internal immutable _usdtAsset;
     address internal immutable _usdtAmmStorage;
@@ -120,7 +121,9 @@ contract AmmSwapsLens is IAmmSwapsLens {
     function getOfferedRate(
         address asset,
         IporTypes.SwapTenor tenor,
-        uint256 notional
+        uint256 notional,
+        AmmTypes.RiskIndicatorsInputs calldata payFixedRiskIndicatorsInputs,
+        AmmTypes.RiskIndicatorsInputs calldata receiveFixedRiskIndicatorsInputs
     ) external view override returns (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed) {
         require(notional > 0, AmmErrors.INVALID_NOTIONAL);
 
@@ -139,14 +142,8 @@ contract AmmSwapsLens is IAmmSwapsLens {
         spreadContextPayFixed.notional = notional;
         spreadContextPayFixed.minLeverage = poolCfg.minLeverage;
         spreadContextPayFixed.indexValue = indexValue;
-        spreadContextPayFixed.riskIndicators = RiskManagementLogic.getRiskIndicators(
-            asset,
-            0,
-            tenor,
-            balance.liquidityPool,
-            poolCfg.minLeverage,
-            iporRiskManagementOracle
-        );
+        spreadContextPayFixed.riskIndicators = payFixedRiskIndicatorsInputs.verify(asset, uint256(tenor), uint256(0), iporRiskManagementOracle);
+
         spreadContextPayFixed.balance = balance;
         offeredRatePayFixed = _getOfferedRatePerLeg(spreadContextPayFixed);
 
@@ -157,14 +154,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         spreadContextReceiveFixed.notional = notional;
         spreadContextReceiveFixed.minLeverage = poolCfg.minLeverage;
         spreadContextReceiveFixed.indexValue = indexValue;
-        spreadContextReceiveFixed.riskIndicators = RiskManagementLogic.getRiskIndicators(
-            asset,
-            1,
-            tenor,
-            balance.liquidityPool,
-            poolCfg.minLeverage,
-            iporRiskManagementOracle
-        );
+        spreadContextReceiveFixed.riskIndicators = receiveFixedRiskIndicatorsInputs.verify(asset, uint256(tenor), uint256(1), iporRiskManagementOracle);
         spreadContextReceiveFixed.balance = balance;
         offeredRateReceiveFixed = _getOfferedRatePerLeg(spreadContextReceiveFixed);
     }
