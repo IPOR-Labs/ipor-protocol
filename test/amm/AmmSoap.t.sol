@@ -199,7 +199,7 @@ contract AmmSoapTest is TestCommons {
         uint256[] memory swapRfIds = new uint256[](0);
 
         // when
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
@@ -246,7 +246,7 @@ contract AmmSoapTest is TestCommons {
         swapRfIds[0] = 1;
 
         // when
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
@@ -436,7 +436,7 @@ contract AmmSoapTest is TestCommons {
         uint256[] memory swapRfIds = new uint256[](0);
 
         // when
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
         (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         // then
@@ -487,7 +487,7 @@ contract AmmSoapTest is TestCommons {
         swapRfIds[0] = 2;
 
         // when
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         // then
         (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
@@ -551,7 +551,7 @@ contract AmmSoapTest is TestCommons {
         swapRfIds[0] = 1;
 
         // when
-        ammUsdt.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds);
+        ammUsdt.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         // then
         (, , int256 soapUsdt) = ammUsdt.ammSwapsLens.getSoap(address(ammUsdt.asset));
@@ -997,7 +997,7 @@ contract AmmSoapTest is TestCommons {
         swapPfIds[1] = 2;
         uint256[] memory swapRfIds = new uint256[](0);
 
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
@@ -1061,7 +1061,7 @@ contract AmmSoapTest is TestCommons {
         swapPfIds[1] = 2;
         uint256[] memory swapRfIds = new uint256[](0);
 
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
@@ -1127,7 +1127,7 @@ contract AmmSoapTest is TestCommons {
         swapPfIds[1] = 2;
         uint256[] memory swapRfIds = new uint256[](0);
 
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
@@ -1191,7 +1191,7 @@ contract AmmSoapTest is TestCommons {
         swapRfIds[0] = 1;
         swapRfIds[1] = 2;
 
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
@@ -1256,7 +1256,7 @@ contract AmmSoapTest is TestCommons {
         swapRfIds[0] = 1;
         swapRfIds[1] = 2;
 
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
@@ -1322,7 +1322,7 @@ contract AmmSoapTest is TestCommons {
         swapPfIds[1] = 2;
         uint256[] memory swapRfIds = new uint256[](0);
 
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
@@ -1387,7 +1387,7 @@ contract AmmSoapTest is TestCommons {
         swapPfIds[1] = 2;
         uint256[] memory swapRfIds = new uint256[](0);
 
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
@@ -1454,7 +1454,7 @@ contract AmmSoapTest is TestCommons {
         swapRfIds[0] = 1;
         swapRfIds[1] = 2;
 
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));

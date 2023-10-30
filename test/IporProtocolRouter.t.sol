@@ -75,14 +75,27 @@ contract IporProtocolRouterTest is TestCommons {
         uint256[] memory swapIds = new uint256[](1);
         swapIds[0] = 1;
 
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInputs = getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28);
         vm.expectRevert("IPOR_014");
-        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsUsdt(swapIds, swapIds);
+        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsUsdt(
+            swapIds,
+            swapIds,
+            riskIndicatorsInputs
+        );
 
         vm.expectRevert("IPOR_014");
-        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsUsdc(swapIds, swapIds);
+        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsUsdc(
+            swapIds,
+            swapIds,
+            riskIndicatorsInputs
+        );
 
         vm.expectRevert("IPOR_014");
-        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsDai(swapIds, swapIds);
+        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsDai(
+            swapIds,
+            swapIds,
+            riskIndicatorsInputs
+        );
 
         vm.stopPrank();
     }
@@ -215,9 +228,21 @@ contract IporProtocolRouterTest is TestCommons {
         swapPfIds[0] = 1;
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = 2;
-        amm.usdt.ammCloseSwapService.emergencyCloseSwapsUsdt(swapPfIds, swapRfIds);
-        amm.usdc.ammCloseSwapService.emergencyCloseSwapsUsdc(swapPfIds, swapRfIds);
-        amm.dai.ammCloseSwapService.emergencyCloseSwapsDai(swapPfIds, swapRfIds);
+        amm.usdt.ammCloseSwapService.emergencyCloseSwapsUsdt(
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        amm.usdc.ammCloseSwapService.emergencyCloseSwapsUsdc(
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        amm.dai.ammCloseSwapService.emergencyCloseSwapsDai(
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
 
         vm.stopPrank();
     }
@@ -470,42 +495,42 @@ contract IporProtocolRouterTest is TestCommons {
         );
     }
 
-//    function testShouldProvideLiquidityAndOpenSwapInBatch() public {
-//        //given
-//        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-//
-//        bytes memory calldataProvideLiquidity = abi.encodeWithSignature(
-//            "provideLiquidityDai(address,uint256)",
-//            _userOne,
-//            TestConstants.USD_28_000_18DEC
-//        );
-//        bytes memory calldataOpenSwap = abi.encodeWithSignature(
-//            "openSwapPayFixed28daysDai(address,uint256,uint256,uint256)",
-//            _userOne,
-//            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
-//            9 * TestConstants.D17,
-//            TestConstants.LEVERAGE_18DEC
-//        );
-//
-//        bytes[] memory requestData = new bytes[](2);
-//        requestData[0] = calldataProvideLiquidity;
-//        requestData[1] = calldataOpenSwap;
-//
-//        // when
-//        vm.prank(_userOne);
-//        _iporProtocol.router.batchExecutor(requestData);
-//
-//        //then
-//        (uint256 totalCount, IAmmSwapsLens.IporSwap[] memory swaps) = _iporProtocol.ammSwapsLens.getSwaps(
-//            address(_iporProtocol.asset),
-//            _userOne,
-//            0,
-//            10
-//        );
-//        assertEq(totalCount, 1, "totalCount");
-//        assertEq(swaps[0].state, 1, "state");
-//        assertEq(swaps[0].buyer, _userOne, "buyer");
-//    }
+    //    function testShouldProvideLiquidityAndOpenSwapInBatch() public {
+    //        //given
+    //        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+    //
+    //        bytes memory calldataProvideLiquidity = abi.encodeWithSignature(
+    //            "provideLiquidityDai(address,uint256)",
+    //            _userOne,
+    //            TestConstants.USD_28_000_18DEC
+    //        );
+    //        bytes memory calldataOpenSwap = abi.encodeWithSignature(
+    //            "openSwapPayFixed28daysDai(address,uint256,uint256,uint256)",
+    //            _userOne,
+    //            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
+    //            9 * TestConstants.D17,
+    //            TestConstants.LEVERAGE_18DEC
+    //        );
+    //
+    //        bytes[] memory requestData = new bytes[](2);
+    //        requestData[0] = calldataProvideLiquidity;
+    //        requestData[1] = calldataOpenSwap;
+    //
+    //        // when
+    //        vm.prank(_userOne);
+    //        _iporProtocol.router.batchExecutor(requestData);
+    //
+    //        //then
+    //        (uint256 totalCount, IAmmSwapsLens.IporSwap[] memory swaps) = _iporProtocol.ammSwapsLens.getSwaps(
+    //            address(_iporProtocol.asset),
+    //            _userOne,
+    //            0,
+    //            10
+    //        );
+    //        assertEq(totalCount, 1, "totalCount");
+    //        assertEq(swaps[0].state, 1, "state");
+    //        assertEq(swaps[0].buyer, _userOne, "buyer");
+    //    }
 
     function testReentranceInBatchSimpleCase() public {
         //given

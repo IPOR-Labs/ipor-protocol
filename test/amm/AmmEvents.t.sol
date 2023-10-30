@@ -365,7 +365,7 @@ contract AmmEventsTest is TestCommons {
         uint256[] memory swapRfIds = new uint256[](0);
 
         vm.warp(block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS);
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
     }
 
     function testShouldEmitEventWhenClosePayFixedSwap6DecimalsAndTakerClosedSwap() public {
@@ -427,7 +427,7 @@ contract AmmEventsTest is TestCommons {
         uint256[] memory swapRfIds = new uint256[](0);
 
         vm.warp(block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
     }
 
     function testShouldEmitEventWhenClosePayFixedSwap6DecimalsAndNotTakerClosedSwap() public {
@@ -492,6 +492,6 @@ contract AmmEventsTest is TestCommons {
         uint256[] memory swapRfIds = new uint256[](0);
 
         vm.warp(block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userThree, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userThree, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
     }
 }

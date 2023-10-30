@@ -81,9 +81,10 @@ contract AmmShouldClosePositionTest is TestCommons {
         pfSwapIds[0] = swap1;
 
         // when
-        vm.prank(_userTwo);
+        vm.startPrank(_userTwo);
         vm.warp(endTimestamp);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, pfSwapIds, rfSwapIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, pfSwapIds, rfSwapIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        vm.stopPrank();
 
         // then
         uint256 ammERC20BalanceAfter = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
@@ -158,8 +159,9 @@ contract AmmShouldClosePositionTest is TestCommons {
 
         // when
         vm.warp(endTimestamp);
-        vm.prank(_userTwo);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userThree, pfSwapIds, rfSwapIds);
+        vm.startPrank(_userTwo);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userThree, pfSwapIds, rfSwapIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        vm.stopPrank();
 
         // then
         uint256 ammERC20BalanceAfter = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
@@ -229,8 +231,9 @@ contract AmmShouldClosePositionTest is TestCommons {
 
         // when
         vm.warp(endTimestamp);
-        vm.prank(_userTwo);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userThree, pfSwapIds, rfSwapIds);
+        vm.startPrank(_userTwo);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userThree, pfSwapIds, rfSwapIds,getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        vm.stopPrank();
 
         // then
         uint256 ammERC20BalanceAfter = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));

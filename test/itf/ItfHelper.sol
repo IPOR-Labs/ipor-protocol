@@ -65,33 +65,33 @@ contract ItfHelper {
         return _router;
     }
 
-    function getPnl(address account, address asset) external view returns (int256) {
-        uint256 totalCount = 1;
-        int256 pnl;
-        uint256 offset;
-        IAmmSwapsLens.IporSwap[] memory openSwaps;
-
-        while (offset < totalCount) {
-            (totalCount, openSwaps) = IAmmSwapsLens(_router).getSwaps(asset, account, offset, 50);
-            if (totalCount == 0) {
-                break;
-            }
-            offset += openSwaps.length;
-
-            AmmTypes.ClosingSwapDetails memory swapDetails;
-            for (uint i; i < openSwaps.length; ++i) {
-                swapDetails = IAmmCloseSwapLens(_router).getClosingSwapDetails(
-                    asset,
-                    account,
-                    AmmTypes.SwapDirection(openSwaps[i].direction),
-                    openSwaps[i].id,
-                    block.timestamp
-                );
-                pnl += swapDetails.pnlValue;
-            }
-        }
-        return pnl;
-    }
+//    function getPnl(address account, address asset) external view returns (int256) {
+//        uint256 totalCount = 1;
+//        int256 pnl;
+//        uint256 offset;
+//        IAmmSwapsLens.IporSwap[] memory openSwaps;
+//
+//        while (offset < totalCount) {
+//            (totalCount, openSwaps) = IAmmSwapsLens(_router).getSwaps(asset, account, offset, 50);
+//            if (totalCount == 0) {
+//                break;
+//            }
+//            offset += openSwaps.length;
+//
+//            AmmTypes.ClosingSwapDetails memory swapDetails;
+//            for (uint i; i < openSwaps.length; ++i) {
+//                swapDetails = IAmmCloseSwapLens(_router).getClosingSwapDetails(
+//                    asset,
+//                    account,
+//                    AmmTypes.SwapDirection(openSwaps[i].direction),
+//                    openSwaps[i].id,
+//                    block.timestamp
+//                );
+//                pnl += swapDetails.pnlValue;
+//            }
+//        }
+//        return pnl;
+//    }
 
     function getAmmData(address asset) external view returns (AmmData memory) {
         AmmData memory ammData;
@@ -147,98 +147,98 @@ contract ItfHelper {
         return ammData;
     }
 
-    function liquidate(
-        address asset,
-        uint256[] memory payFixedSwapIds,
-        uint256[] memory receiveFixedSwapIds
-    ) external returns (uint256[] memory) {
-        uint256 payFixedSwapIdsLength = payFixedSwapIds.length;
-        uint256 receiveFixedSwapIdsLength = receiveFixedSwapIds.length;
-        uint256[] memory closed = new uint256[](payFixedSwapIdsLength + receiveFixedSwapIdsLength);
-        uint256[] memory toClose = new uint256[](1);
-        uint256[] memory empty = new uint256[](0);
-        uint256 closeIndex = 0;
-
-        if (asset == _dai) {
-            for (uint256 i; i < payFixedSwapIdsLength; ++i) {
-                toClose[0] = payFixedSwapIds[i];
-                try IAmmCloseSwapService(_router).closeSwapsDai(address(this), toClose, empty) {
-                    console2.log("closeSwapsDai success, id: ", payFixedSwapIds[i]);
-                    closed[closeIndex] = payFixedSwapIds[i];
-                    ++closeIndex;
-                } catch Error(string memory reason) {
-                    console2.log("closeSwapsDai failed, id: ", payFixedSwapIds[i]);
-                } catch (bytes memory reason) {
-                    console2.log("closeSwapsDai failed, id: ", payFixedSwapIds[i]);
-                }
-            }
-            for (uint256 i; i < receiveFixedSwapIdsLength; ++i) {
-                toClose[0] = receiveFixedSwapIds[i];
-                try IAmmCloseSwapService(_router).closeSwapsDai(address(this), empty, toClose) {
-                    console2.log("closeSwapsDai success, id: ", receiveFixedSwapIds[i]);
-                    closed[closeIndex] = receiveFixedSwapIds[i];
-                    ++closeIndex;
-                } catch Error(string memory reason) {
-                    console2.log("closeSwapsDai failed, id: ", receiveFixedSwapIds[i]);
-                } catch (bytes memory reason) {
-                    console2.log("closeSwapsDai failed, id: ", receiveFixedSwapIds[i]);
-                }
-            }
-            return closed;
-        } else if (asset == _usdc) {
-            for (uint256 i; i < payFixedSwapIdsLength; ++i) {
-                toClose[0] = payFixedSwapIds[i];
-                try IAmmCloseSwapService(_router).closeSwapsUsdc(address(this), toClose, empty) {
-                    console2.log("closeSwapsUsdc success, id: ", payFixedSwapIds[i]);
-                    closed[closeIndex] = payFixedSwapIds[i];
-                    ++closeIndex;
-                } catch Error(string memory reason) {
-                    console2.log("closeSwapsUsdc failed, id: ", payFixedSwapIds[i]);
-                } catch (bytes memory reason) {
-                    console2.log("closeSwapsUsdc failed, id: ", payFixedSwapIds[i]);
-                }
-            }
-            for (uint256 i; i < receiveFixedSwapIdsLength; ++i) {
-                toClose[0] = receiveFixedSwapIds[i];
-                try IAmmCloseSwapService(_router).closeSwapsUsdc(address(this), empty, toClose) {
-                    console2.log("closeSwapsUsdc success, id: ", receiveFixedSwapIds[i]);
-                    closed[closeIndex] = receiveFixedSwapIds[i];
-                    ++closeIndex;
-                } catch Error(string memory reason) {
-                    console2.log("closeSwapsUsdc failed, id: ", receiveFixedSwapIds[i]);
-                } catch (bytes memory reason) {
-                    console2.log("closeSwapsUsdc failed, id: ", receiveFixedSwapIds[i]);
-                }
-            }
-            return closed;
-        } else if (asset == _usdt) {
-            for (uint256 i; i < payFixedSwapIdsLength; ++i) {
-                toClose[0] = payFixedSwapIds[i];
-                try IAmmCloseSwapService(_router).closeSwapsUsdt(address(this), toClose, empty) {
-                    console2.log("closeSwapsUsdt success, id: ", payFixedSwapIds[i]);
-                    closed[closeIndex] = payFixedSwapIds[i];
-                    ++closeIndex;
-                } catch Error(string memory reason) {
-                    console2.log("closeSwapsUsdt failed, id: ", payFixedSwapIds[i]);
-                } catch (bytes memory reason) {
-                    console2.log("closeSwapsUsdt failed, id: ", payFixedSwapIds[i]);
-                }
-            }
-            for (uint256 i; i < receiveFixedSwapIdsLength; ++i) {
-                toClose[0] = receiveFixedSwapIds[i];
-                try IAmmCloseSwapService(_router).closeSwapsUsdt(address(this), empty, toClose) {
-                    console2.log("closeSwapsUsdt success, id: ", receiveFixedSwapIds[i]);
-                    closed[closeIndex] = receiveFixedSwapIds[i];
-                    ++closeIndex;
-                } catch Error(string memory reason) {
-                    console2.log("closeSwapsUsdt failed, id: ", receiveFixedSwapIds[i]);
-                } catch (bytes memory reason) {
-                    console2.log("closeSwapsUsdt failed, id: ", receiveFixedSwapIds[i]);
-                }
-            }
-            return closed;
-        }
-    }
+//    function liquidate(
+//        address asset,
+//        uint256[] memory payFixedSwapIds,
+//        uint256[] memory receiveFixedSwapIds
+//    ) external returns (uint256[] memory) {
+//        uint256 payFixedSwapIdsLength = payFixedSwapIds.length;
+//        uint256 receiveFixedSwapIdsLength = receiveFixedSwapIds.length;
+//        uint256[] memory closed = new uint256[](payFixedSwapIdsLength + receiveFixedSwapIdsLength);
+//        uint256[] memory toClose = new uint256[](1);
+//        uint256[] memory empty = new uint256[](0);
+//        uint256 closeIndex = 0;
+//
+//        if (asset == _dai) {
+//            for (uint256 i; i < payFixedSwapIdsLength; ++i) {
+//                toClose[0] = payFixedSwapIds[i];
+//                try IAmmCloseSwapService(_router).closeSwapsDai(address(this), toClose, empty) {
+//                    console2.log("closeSwapsDai success, id: ", payFixedSwapIds[i]);
+//                    closed[closeIndex] = payFixedSwapIds[i];
+//                    ++closeIndex;
+//                } catch Error(string memory reason) {
+//                    console2.log("closeSwapsDai failed, id: ", payFixedSwapIds[i]);
+//                } catch (bytes memory reason) {
+//                    console2.log("closeSwapsDai failed, id: ", payFixedSwapIds[i]);
+//                }
+//            }
+//            for (uint256 i; i < receiveFixedSwapIdsLength; ++i) {
+//                toClose[0] = receiveFixedSwapIds[i];
+//                try IAmmCloseSwapService(_router).closeSwapsDai(address(this), empty, toClose) {
+//                    console2.log("closeSwapsDai success, id: ", receiveFixedSwapIds[i]);
+//                    closed[closeIndex] = receiveFixedSwapIds[i];
+//                    ++closeIndex;
+//                } catch Error(string memory reason) {
+//                    console2.log("closeSwapsDai failed, id: ", receiveFixedSwapIds[i]);
+//                } catch (bytes memory reason) {
+//                    console2.log("closeSwapsDai failed, id: ", receiveFixedSwapIds[i]);
+//                }
+//            }
+//            return closed;
+//        } else if (asset == _usdc) {
+//            for (uint256 i; i < payFixedSwapIdsLength; ++i) {
+//                toClose[0] = payFixedSwapIds[i];
+//                try IAmmCloseSwapService(_router).closeSwapsUsdc(address(this), toClose, empty) {
+//                    console2.log("closeSwapsUsdc success, id: ", payFixedSwapIds[i]);
+//                    closed[closeIndex] = payFixedSwapIds[i];
+//                    ++closeIndex;
+//                } catch Error(string memory reason) {
+//                    console2.log("closeSwapsUsdc failed, id: ", payFixedSwapIds[i]);
+//                } catch (bytes memory reason) {
+//                    console2.log("closeSwapsUsdc failed, id: ", payFixedSwapIds[i]);
+//                }
+//            }
+//            for (uint256 i; i < receiveFixedSwapIdsLength; ++i) {
+//                toClose[0] = receiveFixedSwapIds[i];
+//                try IAmmCloseSwapService(_router).closeSwapsUsdc(address(this), empty, toClose) {
+//                    console2.log("closeSwapsUsdc success, id: ", receiveFixedSwapIds[i]);
+//                    closed[closeIndex] = receiveFixedSwapIds[i];
+//                    ++closeIndex;
+//                } catch Error(string memory reason) {
+//                    console2.log("closeSwapsUsdc failed, id: ", receiveFixedSwapIds[i]);
+//                } catch (bytes memory reason) {
+//                    console2.log("closeSwapsUsdc failed, id: ", receiveFixedSwapIds[i]);
+//                }
+//            }
+//            return closed;
+//        } else if (asset == _usdt) {
+//            for (uint256 i; i < payFixedSwapIdsLength; ++i) {
+//                toClose[0] = payFixedSwapIds[i];
+//                try IAmmCloseSwapService(_router).closeSwapsUsdt(address(this), toClose, empty) {
+//                    console2.log("closeSwapsUsdt success, id: ", payFixedSwapIds[i]);
+//                    closed[closeIndex] = payFixedSwapIds[i];
+//                    ++closeIndex;
+//                } catch Error(string memory reason) {
+//                    console2.log("closeSwapsUsdt failed, id: ", payFixedSwapIds[i]);
+//                } catch (bytes memory reason) {
+//                    console2.log("closeSwapsUsdt failed, id: ", payFixedSwapIds[i]);
+//                }
+//            }
+//            for (uint256 i; i < receiveFixedSwapIdsLength; ++i) {
+//                toClose[0] = receiveFixedSwapIds[i];
+//                try IAmmCloseSwapService(_router).closeSwapsUsdt(address(this), empty, toClose) {
+//                    console2.log("closeSwapsUsdt success, id: ", receiveFixedSwapIds[i]);
+//                    closed[closeIndex] = receiveFixedSwapIds[i];
+//                    ++closeIndex;
+//                } catch Error(string memory reason) {
+//                    console2.log("closeSwapsUsdt failed, id: ", receiveFixedSwapIds[i]);
+//                } catch (bytes memory reason) {
+//                    console2.log("closeSwapsUsdt failed, id: ", receiveFixedSwapIds[i]);
+//                }
+//            }
+//            return closed;
+//        }
+//    }
 
     function _closeDai(uint256[] memory payFixedSwapIds, uint256[] memory receiveFixedSwapIds) internal {}
 }

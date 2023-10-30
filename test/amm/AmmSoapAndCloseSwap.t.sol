@@ -51,7 +51,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         uint256[] memory swapIds = new uint256[](1);
         swapIds[0] = swap1;
         vm.prank(_userTwo);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfSwapIds, swapIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfSwapIds, swapIds,getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
     }
 
     function testShouldCloseSwapEvenIfAverageInterestRateIsEqualZero() public {
@@ -97,7 +97,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         (
             AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
-        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfSwapIds, swapIds);
+        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfSwapIds, swapIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         //then
         assertEq(closedReceiveFixedSwaps.length, 1, "closedPayFixedSwaps.length");
@@ -146,7 +146,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         (
             AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
-        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfSwapIds, swapIds);
+        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfSwapIds, swapIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         //then
         assertEq(closedReceiveFixedSwaps.length, 1, "closedPayFixedSwaps.length");
@@ -195,7 +195,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         (
             AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
-        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfSwapIds, swapIds);
+        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfSwapIds, swapIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         //then
         assertEq(closedReceiveFixedSwaps.length, 1, "closedPayFixedSwaps.length");
@@ -244,7 +244,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         (
             AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
-        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfSwapIds, swapIds);
+        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfSwapIds, swapIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         //then
         assertEq(closedReceiveFixedSwaps.length, 1, "closedPayFixedSwaps.length");
@@ -293,7 +293,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         (
             AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
-        ) = _iporProtocol.ammCloseSwapService.closeSwapsDai(_userOne, pfSwapIds, swapIds);
+        ) = _iporProtocol.ammCloseSwapService.closeSwapsDai(_userOne, pfSwapIds, swapIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         //then
         assertEq(closedReceiveFixedSwaps.length, 1, "closedPayFixedSwaps.length");
@@ -342,7 +342,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         (
             AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
-        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfSwapIds, swapIds);
+        ) = _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userOne, pfSwapIds, swapIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         //then
         assertEq(closedPayFixedSwaps.length, 0, "closedPayFixedSwaps.length");

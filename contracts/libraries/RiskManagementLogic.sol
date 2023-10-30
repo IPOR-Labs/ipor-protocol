@@ -12,6 +12,8 @@ import "../amm/spread/ISpread90DaysLens.sol";
 import "./Constants.sol";
 import "./errors/AmmErrors.sol";
 import "./math/IporMath.sol";
+import {console2} from "forge-std/console2.sol";
+import "../libraries/RiskIndicatorsValidatorLib.sol";
 
 library RiskManagementLogic {
     using Address for address;
@@ -42,20 +44,29 @@ library RiskManagementLogic {
         uint256 direction,
         IporTypes.SwapTenor tenor,
         uint256 swapNotional,
-        SpreadOfferedRateContext memory spreadOfferedRateCtx
+        SpreadOfferedRateContext memory spreadOfferedRateCtx,
+        AmmTypes.OpenSwapRiskIndicators memory riskIndicators
     ) internal view returns (uint256) {
         IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(spreadOfferedRateCtx.ammStorage)
             .getBalancesForOpenSwap();
 
-        AmmTypes.OpenSwapRiskIndicators memory riskIndicators = getRiskIndicators(
-            spreadOfferedRateCtx.asset,
-            direction,
-            tenor,
-            balance.liquidityPool,
-            spreadOfferedRateCtx.minLeverage,
-            spreadOfferedRateCtx.iporRiskManagementOracle
-        );
 
+        if (
+            riskIndicators.maxCollateralRatio == 0 &&
+            riskIndicators.demandSpreadFactor == 0 &&
+            riskIndicators.baseSpreadPerLeg == 0 &&
+            riskIndicators.fixedRateCapPerLeg == 0
+        ) {
+            console2.log("_openSwapPayFixed Override riskIndicators YYYYYYYYYYYYYYYYYY");
+            riskIndicators = getRiskIndicators(
+                spreadOfferedRateCtx.asset,
+                direction,
+                tenor,
+                balance.liquidityPool,
+                spreadOfferedRateCtx.minLeverage,
+                spreadOfferedRateCtx.iporRiskManagementOracle
+            );
+        }
         return
             abi.decode(
                 spreadOfferedRateCtx.spreadRouter.functionStaticCall(
