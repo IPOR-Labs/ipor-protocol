@@ -17,7 +17,6 @@ import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/AmmErrors.sol";
 import "../libraries/errors/AmmErrors.sol";
 import "../libraries/IporContractValidator.sol";
-import "../libraries/RiskManagementLogic.sol";
 import "./libraries/types/AmmInternalTypes.sol";
 import "./libraries/IporSwapLogic.sol";
 import {console2} from "forge-std/console2.sol";
@@ -613,34 +612,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 
-        if (
-            riskIndicators.maxCollateralRatio == 0 &&
-            riskIndicators.demandSpreadFactor == 0 &&
-            riskIndicators.baseSpreadPerLeg == 0 &&
-            riskIndicators.fixedRateCapPerLeg == 0
-        ) {
-            console2.log("_openSwapPayFixed Override riskIndicators YYYYYYYYYYYYYYYYYY");
-            riskIndicators = RiskManagementLogic.getRiskIndicators(
-                ctx.poolCfg.asset,
-                0,
-                ctx.tenor,
-                balance.liquidityPool,
-                ctx.poolCfg.minLeverage,
-                riskParamsSigner
-            );
-        }
-
-        console2.log("maxCollateralRatio: ", riskIndicators.maxCollateralRatio);
-        console2.log("maxCollateralRatioPerLeg: ", riskIndicators.maxCollateralRatioPerLeg);
-        console2.log("maxLeveragePerLeg: ", riskIndicators.maxLeveragePerLeg);
-        if (riskIndicators.baseSpreadPerLeg >= 0) {
-            console2.log("baseSpreadPerLeg: ", uint(riskIndicators.baseSpreadPerLeg));
-        } else {
-            console2.log("baseSpreadPerLeg: ", uint(-riskIndicators.baseSpreadPerLeg));
-        }
-        console2.log("fixedRateCapPerLeg: ", riskIndicators.fixedRateCapPerLeg);
-        console2.log("demandSpreadFactor: ", riskIndicators.demandSpreadFactor);
-
         _validateLiquidityPoolCollateralRatioAndSwapLeverage(
             balance.liquidityPool,
             balance.totalCollateralPayFixed,
@@ -736,34 +707,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
 
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralReceiveFixed = balance.totalCollateralReceiveFixed + bosStruct.collateral;
-
-        if (
-            riskIndicators.maxCollateralRatio == 0 &&
-            riskIndicators.demandSpreadFactor == 0 &&
-            riskIndicators.baseSpreadPerLeg == 0 &&
-            riskIndicators.fixedRateCapPerLeg == 0
-        ) {
-            console2.log("_openSwapPayFixed Override riskIndicators YYYYYYYYYYYYYYYYYY");
-            riskIndicators = RiskManagementLogic.getRiskIndicators(
-                ctx.poolCfg.asset,
-                1,
-                ctx.tenor,
-                balance.liquidityPool,
-                ctx.poolCfg.minLeverage,
-                riskParamsSigner
-            );
-        }
-
-        console2.log("maxCollateralRatio: ", riskIndicators.maxCollateralRatio);
-        console2.log("maxCollateralRatioPerLeg: ", riskIndicators.maxCollateralRatioPerLeg);
-        console2.log("maxLeveragePerLeg: ", riskIndicators.maxLeveragePerLeg);
-        if (riskIndicators.baseSpreadPerLeg >= 0) {
-            console2.log("baseSpreadPerLeg: ", uint(riskIndicators.baseSpreadPerLeg));
-        } else {
-            console2.log("baseSpreadPerLeg: -", uint(-riskIndicators.baseSpreadPerLeg));
-        }
-        console2.log("fixedRateCapPerLeg: ", riskIndicators.fixedRateCapPerLeg);
-        console2.log("demandSpreadFactor: ", riskIndicators.demandSpreadFactor);
 
         _validateLiquidityPoolCollateralRatioAndSwapLeverage(
             balance.liquidityPool,

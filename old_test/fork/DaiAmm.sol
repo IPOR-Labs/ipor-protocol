@@ -39,7 +39,6 @@ contract DaiAmm is Test, TestCommons, IporRiskManagementOracleUtils {
     address public ipDai;
 
     IporOracle public iporOracle;
-    IIporRiskManagementOracle public iporRiskManagementOracle;
 
     AssetManagement public assetManagement;
     StrategyCompound public strategyCompound;

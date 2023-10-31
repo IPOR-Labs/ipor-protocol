@@ -17,8 +17,7 @@ contract TestCommons is Test {
     uint constant RECEIVE_FIXED = 1;
 
     IporProtocolFactory internal _iporProtocolFactory = new IporProtocolFactory(address(this));
-    IporRiskManagementOracleFactory internal _iporRiskManagementOracleFactory =
-        new IporRiskManagementOracleFactory(address(this));
+
 
     function _getUserAddress(uint256 number) internal returns (address) {
         return vm.rememberKey(number);

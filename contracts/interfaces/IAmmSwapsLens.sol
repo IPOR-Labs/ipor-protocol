@@ -112,17 +112,4 @@ interface IAmmSwapsLens {
         AmmTypes.RiskIndicatorsInputs calldata payFixedRiskIndicatorsInputs,
         AmmTypes.RiskIndicatorsInputs calldata receiveFixedRiskIndicatorsInputs
     ) external view returns (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed);
-
-    /**
-     * @dev Returns the Risk indicators when open swap for a given asse, direction and tenor.
-     * @param asset The address of the asset.
-     * @param direction The direction of the swap
-     * @param tenor The duration of the swap
-     * @return riskIndicators The open swap configuration details.
-     */
-    function getOpenSwapRiskIndicators(
-        address asset,
-        uint256 direction,
-        IporTypes.SwapTenor tenor
-    ) external view returns (AmmTypes.OpenSwapRiskIndicators memory riskIndicators);
 }

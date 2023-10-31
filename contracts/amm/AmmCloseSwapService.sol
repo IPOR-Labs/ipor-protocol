@@ -16,6 +16,7 @@ import "../libraries/IporContractValidator.sol";
 import "../libraries/AmmLib.sol";
 import "../libraries/AssetManagementLogic.sol";
 import "../libraries/RiskManagementLogic.sol";
+import "../libraries/RiskIndicatorsValidatorLib.sol";
 import "../governance/AmmConfigurationManager.sol";
 import "../security/OwnerManager.sol";
 import "./libraries/IporSwapLogic.sol";

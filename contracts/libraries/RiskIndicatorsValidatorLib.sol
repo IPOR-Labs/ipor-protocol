@@ -27,7 +27,6 @@ library RiskIndicatorsValidatorLib {
             IporErrors.RISK_INDICATORS_SIGNATURE_INVALID
         );
         require(inputs.expiration > block.timestamp, IporErrors.RISK_INDICATORS_EXPIRED);
-        console2.log("RiskIndicatorsValidatorLib XXXXXXXXXXXXXXXXXXXXXXXX");
         return AmmTypes.OpenSwapRiskIndicators(
             inputs.maxCollateralRatio,
             inputs.maxCollateralRatioPerLeg,

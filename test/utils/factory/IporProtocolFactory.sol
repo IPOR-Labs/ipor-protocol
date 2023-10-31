@@ -14,7 +14,6 @@ import "../builder/SpreadRouterBuilder.sol";
 import "../builder/AmmTreasuryBuilder.sol";
 import "../builder/IporProtocolRouterBuilder.sol";
 import "../../utils/factory/IporOracleFactory.sol";
-import "../../utils/factory/IporRiskManagementOracleFactory.sol";
 import "../../../contracts/interfaces/IAmmSwapsLens.sol";
 import "../../../contracts/interfaces/IAmmPoolsLens.sol";
 import "../../../contracts/interfaces/IAmmCloseSwapLens.sol";
@@ -43,7 +42,6 @@ contract IporProtocolFactory is Test {
         SpreadRouter spreadRouter;
         IporOracle iporOracle;
         MockIporWeighted iporWeighted;
-        IporRiskManagementOracle iporRiskManagementOracle;
         BuilderUtils.IporProtocol usdt;
         BuilderUtils.IporProtocol usdc;
         BuilderUtils.IporProtocol dai;
@@ -90,7 +88,6 @@ contract IporProtocolFactory is Test {
     }
 
     IporOracleFactory internal _iporOracleFactory;
-    IporRiskManagementOracleFactory internal _iporRiskManagementOracleFactory;
 
     AssetBuilder internal _assetBuilder;
     IpTokenBuilder internal _ipTokenBuilder;
@@ -114,7 +111,6 @@ contract IporProtocolFactory is Test {
 
     constructor(address owner) {
         _iporOracleFactory = new IporOracleFactory(owner);
-        _iporRiskManagementOracleFactory = new IporRiskManagementOracleFactory(owner);
         _assetBuilder = new AssetBuilder(owner);
         _ipTokenBuilder = new IpTokenBuilder(owner);
         _iporWeightedBuilder = new IporWeightedBuilder(owner);
@@ -184,12 +180,6 @@ contract IporProtocolFactory is Test {
                 dai: address(amm.dai.asset),
                 daiInitialIbtPrice: 1e18
             })
-        );
-
-        amm.iporRiskManagementOracle = _iporRiskManagementOracleFactory.getInstance(
-            assets,
-            cfg.iporRiskManagementOracleUpdater,
-            cfg.iporRiskManagementOracleInitialParamsTestCase
         );
 
         amm.usdt.ipToken = _ipTokenBuilder
@@ -335,12 +325,6 @@ contract IporProtocolFactory is Test {
             })
         );
 
-        iporProtocol.iporRiskManagementOracle = _iporRiskManagementOracleFactory.getInstance(
-            assets,
-            cfg.iporRiskManagementOracleUpdater,
-            cfg.iporRiskManagementOracleInitialParamsTestCase
-        );
-
         iporProtocol.ipToken = _ipTokenBuilder
             .withName("IP USDT")
             .withSymbol("ipUSDT")
@@ -438,12 +422,6 @@ contract IporProtocolFactory is Test {
                 dai: _fakeContract,
                 daiInitialIbtPrice: 0
             })
-        );
-
-        iporProtocol.iporRiskManagementOracle = _iporRiskManagementOracleFactory.getInstance(
-            assets,
-            cfg.iporRiskManagementOracleUpdater,
-            cfg.iporRiskManagementOracleInitialParamsTestCase
         );
 
         iporProtocol.ipToken = _ipTokenBuilder
@@ -548,12 +526,6 @@ contract IporProtocolFactory is Test {
             })
         );
 
-        iporProtocol.iporRiskManagementOracle = _iporRiskManagementOracleFactory.getInstance(
-            assets,
-            cfg.iporRiskManagementOracleUpdater,
-            cfg.iporRiskManagementOracleInitialParamsTestCase
-        );
-
         iporProtocol.ipToken = _ipTokenBuilder
             .withName("IP DAI")
             .withSymbol("ipDAI")
@@ -654,7 +626,7 @@ contract IporProtocolFactory is Test {
                     minLeverage: 10 * 1e18
                 }),
                 address(amm.iporOracle),
-                address(amm.iporRiskManagementOracle),
+                address(amm.iporOracle), // todo change to riskParamsSigner
                 address(amm.spreadRouter)
             )
         );
@@ -733,7 +705,7 @@ contract IporProtocolFactory is Test {
                     address(amm.dai.ammStorage)
                 ),
                 iporOracleInput: address(amm.iporOracle),
-                riskParamsSignerInput: address(amm.iporRiskManagementOracle),
+                riskParamsSignerInput: address(amm.iporOracle), // todo change to riskParamsSigner
                 spreadRouterInput: address(amm.spreadRouter)
             })
         );
@@ -762,7 +734,7 @@ contract IporProtocolFactory is Test {
                     address(amm.dai.assetManagement)
                 ),
                 iporOracleInput: address(amm.iporOracle),
-                iporRiskManagementOracleInput: address(amm.iporRiskManagementOracle),
+                iporRiskManagementOracleInput: address(amm.iporOracle), // todo change to riskParamsSigner
                 spreadRouterInput: address(amm.spreadRouter)
             })
         );
@@ -917,7 +889,7 @@ contract IporProtocolFactory is Test {
                     minLeverage: 0
                 }),
                 address(iporProtocol.iporOracle),
-                address(iporProtocol.iporRiskManagementOracle),
+                address(iporProtocol.iporOracle), // todo change to riskParamsSigner
                 address(iporProtocol.spreadRouter)
             )
         );
@@ -986,7 +958,7 @@ contract IporProtocolFactory is Test {
                 usdcPoolCfg: _prepareFakePoolCfgForOpenSwapService(),
                 daiPoolCfg: _prepareFakePoolCfgForOpenSwapService(),
                 iporOracleInput: address(iporProtocol.iporOracle),
-                riskParamsSignerInput: address(iporProtocol.iporRiskManagementOracle),
+                riskParamsSignerInput: address(iporProtocol.iporOracle), // todo change to riskParamsSigner
                 spreadRouterInput: address(iporProtocol.spreadRouter)
             })
         );
@@ -1003,7 +975,7 @@ contract IporProtocolFactory is Test {
                 usdcPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
                 daiPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
                 iporOracleInput: address(iporProtocol.iporOracle),
-                iporRiskManagementOracleInput: address(iporProtocol.iporRiskManagementOracle),
+                iporRiskManagementOracleInput: address(iporProtocol.iporOracle), // todo change to riskParamsSigner
                 spreadRouterInput: address(iporProtocol.spreadRouter)
             })
         );
@@ -1100,7 +1072,7 @@ contract IporProtocolFactory is Test {
                     minLeverage: 0
                 }),
                 address(iporProtocol.iporOracle),
-                address(iporProtocol.iporRiskManagementOracle),
+                address(iporProtocol.iporOracle), // todo change to riskParamsSigner
                 address(iporProtocol.spreadRouter)
             )
         );
@@ -1169,7 +1141,7 @@ contract IporProtocolFactory is Test {
                 ),
                 daiPoolCfg: _prepareFakePoolCfgForOpenSwapService(),
                 iporOracleInput: address(iporProtocol.iporOracle),
-                riskParamsSignerInput: address(iporProtocol.iporRiskManagementOracle),
+                riskParamsSignerInput: address(iporProtocol.iporOracle), // todo change to riskParamsSigner
                 spreadRouterInput: address(iporProtocol.spreadRouter)
             })
         );
@@ -1186,7 +1158,7 @@ contract IporProtocolFactory is Test {
                 ),
                 daiPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
                 iporOracleInput: address(iporProtocol.iporOracle),
-                iporRiskManagementOracleInput: address(iporProtocol.iporRiskManagementOracle),
+                iporRiskManagementOracleInput: address(iporProtocol.iporOracle), // todo change to riskParamsSigner
                 spreadRouterInput: address(iporProtocol.spreadRouter)
             })
         );
@@ -1287,7 +1259,7 @@ contract IporProtocolFactory is Test {
                     minLeverage: 10 * 1e18
                 }),
                 address(iporProtocol.iporOracle),
-                address(iporProtocol.iporRiskManagementOracle),
+                address(iporProtocol.iporOracle), // todo change to riskParamsSigner
                 address(iporProtocol.spreadRouter)
             )
         );
@@ -1356,7 +1328,7 @@ contract IporProtocolFactory is Test {
                     address(iporProtocol.ammStorage)
                 ),
                 iporOracleInput: address(iporProtocol.iporOracle),
-                riskParamsSignerInput: address(iporProtocol.iporRiskManagementOracle),
+                riskParamsSignerInput: address(iporProtocol.iporOracle), // todo change to riskParamsSigner
                 spreadRouterInput: address(iporProtocol.spreadRouter)
             })
         );
@@ -1373,7 +1345,7 @@ contract IporProtocolFactory is Test {
                     address(iporProtocol.assetManagement)
                 ),
                 iporOracleInput: address(iporProtocol.iporOracle),
-                iporRiskManagementOracleInput: address(iporProtocol.iporRiskManagementOracle),
+                iporRiskManagementOracleInput: address(iporProtocol.iporOracle),// todo change to riskParamsSigner
                 spreadRouterInput: address(iporProtocol.spreadRouter)
             })
         );

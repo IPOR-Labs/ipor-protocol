@@ -4,11 +4,11 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts/utils/Address.sol";
 import "../interfaces/IAmmSwapsLens.sol";
 import "../libraries/IporContractValidator.sol";
+import "../libraries/RiskIndicatorsValidatorLib.sol";
 import "./spread/ISpread28DaysLens.sol";
 import "./spread/ISpread60DaysLens.sol";
 import "./spread/ISpread90DaysLens.sol";
 import "../libraries/AmmLib.sol";
-import "../libraries/RiskManagementLogic.sol";
 import "./libraries/IporSwapLogic.sol";
 
 /// @dev It is not recommended to use lens contract directly, should be used only through IporProtocolRouter.
@@ -186,26 +186,6 @@ contract AmmSwapsLens is IAmmSwapsLens {
     ) external view returns (IporTypes.AmmBalancesForOpenSwapMemory memory) {
         IAmmStorage ammStorage = _getAmmStorage(asset);
         return ammStorage.getBalancesForOpenSwap();
-    }
-
-    function getOpenSwapRiskIndicators(
-        address asset,
-        uint256 direction,
-        IporTypes.SwapTenor tenor
-    ) external view override returns (AmmTypes.OpenSwapRiskIndicators memory riskIndicators) {
-        SwapLensPoolConfiguration memory swapLensPoolCfg = _getSwapLensPoolConfiguration(asset);
-
-        IporTypes.AmmBalancesForOpenSwapMemory memory balances = IAmmStorage(swapLensPoolCfg.ammStorage)
-            .getBalancesForOpenSwap();
-
-        riskIndicators = RiskManagementLogic.getRiskIndicators(
-            asset,
-            direction,
-            tenor,
-            balances.liquidityPool,
-            swapLensPoolCfg.minLeverage,
-            iporRiskManagementOracle
-        );
     }
 
     function _mapSwaps(

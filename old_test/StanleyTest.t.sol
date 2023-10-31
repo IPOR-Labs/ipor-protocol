@@ -10,7 +10,6 @@ import {ItfIporOracle} from "@ipor-protocol/contracts/itf/ItfIporOracle.sol";
 import {MockSpreadModel} from "@ipor-protocol/test/mocks/spread/MockSpreadModel.sol";
 import {MockCaseBaseAssetManagement} from "@ipor-protocol/test/mocks/assetManagement/MockCaseBaseAssetManagement.sol";
 import {MockCase2AssetManagement} from "@ipor-protocol/test/mocks/assetManagement/MockCase2AssetManagement.sol";
-import {IIporRiskManagementOracle} from "@ipor-protocol/contracts/interfaces/IIporRiskManagementOracle.sol";
 import {IporTypes} from "@ipor-protocol/contracts/interfaces/types/IporTypes.sol";
 
 contract AssetManagementTest is TestCommons, DataUtils {
