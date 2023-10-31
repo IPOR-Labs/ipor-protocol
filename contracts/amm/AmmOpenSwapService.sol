@@ -63,7 +63,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
     uint256 internal immutable _daiOpeningFeeTreasuryPortionRate;
 
     address public immutable iporOracle;
-    address public immutable riskParamsSigner;
+    address public immutable messageSigner;
     address public immutable spreadRouter;
 
     struct Context {
@@ -79,7 +79,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         AmmOpenSwapServicePoolConfiguration memory usdcPoolCfg,
         AmmOpenSwapServicePoolConfiguration memory daiPoolCfg,
         address iporOracleInput,
-        address riskParamsSignerInput,
+        address messageSignerInput,
         address spreadRouterInput
     ) {
         _usdt = usdtPoolCfg.asset.checkAddress();
@@ -116,7 +116,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         _daiOpeningFeeTreasuryPortionRate = daiPoolCfg.openingFeeTreasuryPortionRate;
 
         iporOracle = iporOracleInput.checkAddress();
-        riskParamsSigner = riskParamsSignerInput.checkAddress();
+        messageSigner = messageSignerInput.checkAddress();
         spreadRouter = spreadRouterInput.checkAddress();
     }
 
@@ -145,7 +145,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                riskIndicatorsInputs.verify(_usdt, uint256(context.tenor), uint256(0), riskParamsSigner)
+                riskIndicatorsInputs.verify(_usdt, uint256(context.tenor), uint256(0), messageSigner)
             );
     }
 
@@ -168,7 +168,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                riskIndicatorsInputs.verify(_usdt, uint256(context.tenor), uint256(0), riskParamsSigner)
+                riskIndicatorsInputs.verify(_usdt, uint256(context.tenor), uint256(0), messageSigner)
             );
     }
 
@@ -191,7 +191,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                riskIndicatorsInputs.verify(_usdt, uint256(context.tenor), uint256(0), riskParamsSigner)
+                riskIndicatorsInputs.verify(_usdt, uint256(context.tenor), uint256(0), messageSigner)
             );
     }
 
@@ -215,7 +215,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                riskIndicatorsInputs.verify(_usdt, uint256(context.tenor), uint256(1), riskParamsSigner)
+                riskIndicatorsInputs.verify(_usdt, uint256(context.tenor), uint256(1), messageSigner)
             );
     }
 
@@ -238,7 +238,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                riskIndicatorsInputs.verify(_usdt, uint256(context.tenor), uint256(1), riskParamsSigner)
+                riskIndicatorsInputs.verify(_usdt, uint256(context.tenor), uint256(1), messageSigner)
             );
     }
 
@@ -261,7 +261,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                riskIndicatorsInputs.verify(_usdt, uint256(context.tenor), uint256(1), riskParamsSigner)
+                riskIndicatorsInputs.verify(_usdt, uint256(context.tenor), uint256(1), messageSigner)
             );
     }
 
@@ -285,7 +285,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                    riskIndicatorsInputs.verify(_usdc, uint256(context.tenor), uint256(0), riskParamsSigner)
+                    riskIndicatorsInputs.verify(_usdc, uint256(context.tenor), uint256(0), messageSigner)
             );
     }
 
@@ -308,7 +308,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                riskIndicatorsInputs.verify(_usdc, uint256(context.tenor), uint256(0), riskParamsSigner)
+                riskIndicatorsInputs.verify(_usdc, uint256(context.tenor), uint256(0), messageSigner)
             );
     }
 
@@ -331,7 +331,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                riskIndicatorsInputs.verify(_usdc, uint256(context.tenor), uint256(0), riskParamsSigner)
+                riskIndicatorsInputs.verify(_usdc, uint256(context.tenor), uint256(0), messageSigner)
             );
     }
 
@@ -354,7 +354,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                riskIndicatorsInputs.verify(_usdc, uint256(context.tenor), uint256(1), riskParamsSigner)
+                riskIndicatorsInputs.verify(_usdc, uint256(context.tenor), uint256(1), messageSigner)
             );
     }
 
@@ -377,7 +377,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                riskIndicatorsInputs.verify(_usdc, uint256(context.tenor), uint256(1), riskParamsSigner)
+                riskIndicatorsInputs.verify(_usdc, uint256(context.tenor), uint256(1), messageSigner)
             );
     }
 
@@ -400,7 +400,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                riskIndicatorsInputs.verify(_usdc, uint256(context.tenor), uint256(1), riskParamsSigner)
+                riskIndicatorsInputs.verify(_usdc, uint256(context.tenor), uint256(1), messageSigner)
             );
     }
 
@@ -424,7 +424,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                riskIndicatorsInputs.verify(_dai, uint256(context.tenor), uint256(0), riskParamsSigner)
+                riskIndicatorsInputs.verify(_dai, uint256(context.tenor), uint256(0), messageSigner)
             );
     }
 
@@ -447,7 +447,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                riskIndicatorsInputs.verify(_dai, uint256(context.tenor), uint256(0), riskParamsSigner)
+                riskIndicatorsInputs.verify(_dai, uint256(context.tenor), uint256(0), messageSigner)
             );
     }
 
@@ -470,7 +470,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                riskIndicatorsInputs.verify(_dai, uint256(context.tenor), uint256(0), riskParamsSigner)
+                riskIndicatorsInputs.verify(_dai, uint256(context.tenor), uint256(0), messageSigner)
             );
     }
 
@@ -493,7 +493,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                riskIndicatorsInputs.verify(_dai, uint256(context.tenor), uint256(1), riskParamsSigner)
+                riskIndicatorsInputs.verify(_dai, uint256(context.tenor), uint256(1), messageSigner)
             );
     }
 
@@ -516,7 +516,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                riskIndicatorsInputs.verify(_dai, uint256(context.tenor), uint256(1), riskParamsSigner)
+                riskIndicatorsInputs.verify(_dai, uint256(context.tenor), uint256(1), messageSigner)
             );
     }
 
@@ -539,7 +539,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
-                riskIndicatorsInputs.verify(_dai, uint256(context.tenor), uint256(1), riskParamsSigner)
+                riskIndicatorsInputs.verify(_dai, uint256(context.tenor), uint256(1), messageSigner)
             );
     }
 

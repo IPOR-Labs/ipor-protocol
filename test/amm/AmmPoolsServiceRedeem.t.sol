@@ -418,7 +418,7 @@ contract AmmPoolsServiceRedeemTest is TestCommons {
             address(_iporProtocol.asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             0,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
         //show that currently liquidity pool collateral ratio for opening position is achieved
@@ -487,7 +487,7 @@ contract AmmPoolsServiceRedeemTest is TestCommons {
             address(_iporProtocol.asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             1,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
 

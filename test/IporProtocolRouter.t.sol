@@ -141,7 +141,7 @@ contract IporProtocolRouterTest is TestCommons {
             address(amm.usdt.asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             0,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
         amm.usdt.ammOpenSwapService.openSwapPayFixed28daysUsdt(
@@ -157,7 +157,7 @@ contract IporProtocolRouterTest is TestCommons {
             address(amm.usdc.asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             0,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
         amm.usdc.ammOpenSwapService.openSwapPayFixed28daysUsdc(
@@ -173,7 +173,7 @@ contract IporProtocolRouterTest is TestCommons {
             address(amm.dai.asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             0,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
         amm.dai.ammOpenSwapService.openSwapPayFixed28daysDai(
@@ -189,7 +189,7 @@ contract IporProtocolRouterTest is TestCommons {
             address(amm.usdt.asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             1,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
         amm.usdt.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
@@ -205,7 +205,7 @@ contract IporProtocolRouterTest is TestCommons {
             address(amm.usdc.asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             1,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
         amm.usdc.ammOpenSwapService.openSwapReceiveFixed28daysUsdc(

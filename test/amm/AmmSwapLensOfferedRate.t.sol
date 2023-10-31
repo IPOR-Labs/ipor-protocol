@@ -173,7 +173,7 @@ contract AmmSwapLensOfferedRateTest is TestCommons {
             address(asset),
             uint256(tenor),
             direction,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
         return riskIndicatorsInputs;
     }

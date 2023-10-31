@@ -4576,7 +4576,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             address(asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             1,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
         vm.startPrank(_buyer);
@@ -4746,7 +4746,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
             address(_iporProtocol.asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             direction,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
         return riskIndicatorsInputs;
     }

@@ -53,7 +53,7 @@ contract AmmPoolsNotExchangeRate is TestCommons {
             address(_iporProtocol.asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             0,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
         vm.startPrank(_userTwo);
@@ -110,7 +110,7 @@ contract AmmPoolsNotExchangeRate is TestCommons {
             address(_iporProtocol.asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             0,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
 

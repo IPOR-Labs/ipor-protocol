@@ -19,11 +19,8 @@ library RiskIndicatorsValidatorLib {
     ) internal view returns (AmmTypes.OpenSwapRiskIndicators memory riskIndicators) {
         bytes32 hash = hashRiskIndicatorsInputs(inputs, asset, tenor, direction);
 
-        //TODO: only for testing reason - remove in production
-        console2.log("signerAddress: ", signerAddress);
         require(
-//            hash.recover(inputs.signature) == signerAddress,
-            hash.recover(inputs.signature) == 0xA229781d40864011729C753EAc24a772890fF527,
+            hash.recover(inputs.signature) == signerAddress,
             IporErrors.RISK_INDICATORS_SIGNATURE_INVALID
         );
         require(inputs.expiration > block.timestamp, IporErrors.RISK_INDICATORS_EXPIRED);

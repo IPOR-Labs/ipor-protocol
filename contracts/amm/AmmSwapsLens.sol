@@ -35,7 +35,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
     uint256 internal immutable _daiMinLeverage;
 
     address public immutable iporOracle;
-    address public immutable iporRiskManagementOracle;
+    address public immutable messageSigner;
     address public immutable spreadRouter;
 
     constructor(
@@ -43,7 +43,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         SwapLensPoolConfiguration memory usdcCfg,
         SwapLensPoolConfiguration memory daiCfg,
         address iporOracleInput,
-        address iporRiskManagementOracleInput,
+        address messageSignerInput,
         address spreadRouterInput
     ) {
         _usdtAsset = usdtCfg.asset.checkAddress();
@@ -62,7 +62,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         _daiMinLeverage = daiCfg.minLeverage;
 
         iporOracle = iporOracleInput.checkAddress();
-        iporRiskManagementOracle = iporRiskManagementOracleInput.checkAddress();
+        messageSigner = messageSignerInput.checkAddress();
         spreadRouter = spreadRouterInput.checkAddress();
     }
 
@@ -142,7 +142,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         spreadContextPayFixed.notional = notional;
         spreadContextPayFixed.minLeverage = poolCfg.minLeverage;
         spreadContextPayFixed.indexValue = indexValue;
-        spreadContextPayFixed.riskIndicators = payFixedRiskIndicatorsInputs.verify(asset, uint256(tenor), uint256(0), iporRiskManagementOracle);
+        spreadContextPayFixed.riskIndicators = payFixedRiskIndicatorsInputs.verify(asset, uint256(tenor), uint256(0), messageSigner);
 
         spreadContextPayFixed.balance = balance;
         offeredRatePayFixed = _getOfferedRatePerLeg(spreadContextPayFixed);
@@ -154,7 +154,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         spreadContextReceiveFixed.notional = notional;
         spreadContextReceiveFixed.minLeverage = poolCfg.minLeverage;
         spreadContextReceiveFixed.indexValue = indexValue;
-        spreadContextReceiveFixed.riskIndicators = receiveFixedRiskIndicatorsInputs.verify(asset, uint256(tenor), uint256(1), iporRiskManagementOracle);
+        spreadContextReceiveFixed.riskIndicators = receiveFixedRiskIndicatorsInputs.verify(asset, uint256(tenor), uint256(1), messageSigner);
         spreadContextReceiveFixed.balance = balance;
         offeredRateReceiveFixed = _getOfferedRatePerLeg(spreadContextReceiveFixed);
     }

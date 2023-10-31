@@ -185,7 +185,7 @@ contract AmmPoolsExchangeRateLiquidityTest is TestCommons {
             address(_iporProtocol.asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             0,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
         // open position to have something in the pool

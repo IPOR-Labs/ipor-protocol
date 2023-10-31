@@ -108,7 +108,7 @@ contract TestCommons is Test {
             address(asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             direction,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
         return riskIndicatorsInputs;
     }
@@ -141,14 +141,14 @@ contract TestCommons is Test {
             address(asset),
             uint256(tenor),
             0,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
         riskIndicatorsInputs.receiveFixed.signature = signRiskParams(
             riskIndicatorsInputs.receiveFixed,
             address(asset),
             uint256(tenor),
             1,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
     }

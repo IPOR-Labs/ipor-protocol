@@ -114,7 +114,7 @@ contract AmmEventsTest is TestCommons {
             address(_iporProtocol.asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             0,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
@@ -227,7 +227,7 @@ contract AmmEventsTest is TestCommons {
             address(_iporProtocol.asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             0,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
@@ -293,7 +293,7 @@ contract AmmEventsTest is TestCommons {
             address(_iporProtocol.asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             1,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
@@ -334,7 +334,7 @@ contract AmmEventsTest is TestCommons {
             address(_iporProtocol.asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             0,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
         vm.prank(_userTwo);
@@ -396,7 +396,7 @@ contract AmmEventsTest is TestCommons {
             address(_iporProtocol.asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             0,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
         vm.prank(_userTwo);
@@ -460,7 +460,7 @@ contract AmmEventsTest is TestCommons {
             address(_iporProtocol.asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             0,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
         vm.prank(_userTwo);

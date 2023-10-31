@@ -68,7 +68,7 @@ contract AmmUnwindSwap is TestCommons {
             address(_iporProtocol.asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             0,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
         vm.startPrank(_buyer);
@@ -151,7 +151,7 @@ contract AmmUnwindSwap is TestCommons {
             address(_iporProtocol.asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             0,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
         vm.startPrank(_buyer);
@@ -273,7 +273,7 @@ contract AmmUnwindSwap is TestCommons {
             address(_iporProtocol.asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             1,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
         vm.startPrank(_buyer);
@@ -384,7 +384,7 @@ contract AmmUnwindSwap is TestCommons {
             address(_iporProtocol.asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             0,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
         vm.startPrank(_buyer);
@@ -455,7 +455,7 @@ contract AmmUnwindSwap is TestCommons {
             address(_iporProtocol.asset),
             uint256(IporTypes.SwapTenor.DAYS_28),
             1,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
         vm.startPrank(_buyer);
@@ -850,14 +850,14 @@ contract AmmUnwindSwap is TestCommons {
             address(asset),
             uint256(tenor),
             0,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
         riskIndicatorsInputs.receiveFixed.signature = signRiskParams(
             riskIndicatorsInputs.receiveFixed,
             address(asset),
             uint256(tenor),
             1,
-            _iporProtocolFactory.riskParamSignerPrivateKey()
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
     }

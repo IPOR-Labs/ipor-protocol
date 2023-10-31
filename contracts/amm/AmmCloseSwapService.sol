@@ -81,7 +81,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
     uint256 internal immutable _daiMinLeverage;
 
     address public immutable iporOracle;
-    address public immutable iporRiskManagementOracle;
+    address public immutable messageSigner;
     address public immutable spreadRouter;
 
     constructor(
@@ -89,7 +89,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         AmmCloseSwapServicePoolConfiguration memory usdcPoolCfg,
         AmmCloseSwapServicePoolConfiguration memory daiPoolCfg,
         address iporOracleInput,
-        address iporRiskManagementOracleInput,
+        address messageSignerInput,
         address spreadRouterInput
     ) {
         _usdt = usdtPoolCfg.asset.checkAddress();
@@ -144,7 +144,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         _daiMinLeverage = daiPoolCfg.minLeverage;
 
         iporOracle = iporOracleInput.checkAddress();
-        iporRiskManagementOracle = iporRiskManagementOracleInput.checkAddress();
+        messageSigner = messageSignerInput.checkAddress();
         spreadRouter = spreadRouterInput.checkAddress();
     }
 
@@ -716,7 +716,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                 unwindParams.poolCfg.asset,
                 uint256(unwindParams.swap.tenor),
                 1,
-                iporRiskManagementOracle
+                messageSigner
             );
             /// @dev Not allow to have swap unwind pnl absolute value larger than swap collateral.
             swapUnwindPnlValue = calculateSwapUnwindPnlValue(unwindParams, 1,oppositeRiskIndicators);
@@ -725,7 +725,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                 unwindParams.poolCfg.asset,
                 uint256(unwindParams.swap.tenor),
                 0,
-                iporRiskManagementOracle
+                messageSigner
             );
             /// @dev Not allow to have swap unwind pnl absolute value larger than swap collateral.
             swapUnwindPnlValue = calculateSwapUnwindPnlValue(unwindParams, 0, oppositeRiskIndicators);
@@ -775,7 +775,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                         RiskManagementLogic.SpreadOfferedRateContext({
                             asset: unwindParams.poolCfg.asset,
                             ammStorage: unwindParams.poolCfg.ammStorage,
-                            iporRiskManagementOracle: iporRiskManagementOracle,
+                            iporRiskManagementOracle: messageSigner,
                             spreadRouter: spreadRouter,
                             minLeverage: unwindParams.poolCfg.minLeverage,
                             indexValue: unwindParams.indexValue
