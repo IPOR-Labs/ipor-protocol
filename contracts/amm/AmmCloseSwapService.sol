@@ -715,7 +715,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             oppositeRiskIndicators = unwindParams.riskIndicatorsInputs.receiveFixed.verify(
                 unwindParams.poolCfg.asset,
                 uint256(unwindParams.swap.tenor),
-                1,
+                uint256(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED),
                 messageSigner
             );
             /// @dev Not allow to have swap unwind pnl absolute value larger than swap collateral.
@@ -724,7 +724,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             oppositeRiskIndicators = unwindParams.riskIndicatorsInputs.payFixed.verify(
                 unwindParams.poolCfg.asset,
                 uint256(unwindParams.swap.tenor),
-                0,
+                uint256(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING),
                 messageSigner
             );
             /// @dev Not allow to have swap unwind pnl absolute value larger than swap collateral.
