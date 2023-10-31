@@ -4,9 +4,7 @@ pragma solidity 0.8.20;
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "../interfaces/types/AmmTypes.sol";
 import {IporErrors} from "./errors/IporErrors.sol";
-import {console2} from "forge-std/console2.sol";
 
-// https://medium.com/@pbharrin/how-to-sign-messages-in-solidity-71ad98f5aad0
 library RiskIndicatorsValidatorLib {
     using ECDSA for bytes32;
     

@@ -5,10 +5,10 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "../interfaces/IAmmSwapsLens.sol";
 import "../libraries/IporContractValidator.sol";
 import "../libraries/RiskIndicatorsValidatorLib.sol";
+import "../libraries/AmmLib.sol";
 import "./spread/ISpread28DaysLens.sol";
 import "./spread/ISpread60DaysLens.sol";
 import "./spread/ISpread90DaysLens.sol";
-import "../libraries/AmmLib.sol";
 import "./libraries/IporSwapLogic.sol";
 
 /// @dev It is not recommended to use lens contract directly, should be used only through IporProtocolRouter.
@@ -142,7 +142,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         spreadContextPayFixed.notional = notional;
         spreadContextPayFixed.minLeverage = poolCfg.minLeverage;
         spreadContextPayFixed.indexValue = indexValue;
-        spreadContextPayFixed.riskIndicators = payFixedRiskIndicatorsInputs.verify(asset, uint256(tenor), uint256(0), messageSigner);
+        spreadContextPayFixed.riskIndicators = payFixedRiskIndicatorsInputs.verify(asset, uint256(tenor), uint256(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING), messageSigner);
 
         spreadContextPayFixed.balance = balance;
         offeredRatePayFixed = _getOfferedRatePerLeg(spreadContextPayFixed);
@@ -154,7 +154,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         spreadContextReceiveFixed.notional = notional;
         spreadContextReceiveFixed.minLeverage = poolCfg.minLeverage;
         spreadContextReceiveFixed.indexValue = indexValue;
-        spreadContextReceiveFixed.riskIndicators = receiveFixedRiskIndicatorsInputs.verify(asset, uint256(tenor), uint256(1), messageSigner);
+        spreadContextReceiveFixed.riskIndicators = receiveFixedRiskIndicatorsInputs.verify(asset, uint256(tenor), uint256(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED), messageSigner);
         spreadContextReceiveFixed.balance = balance;
         offeredRateReceiveFixed = _getOfferedRatePerLeg(spreadContextReceiveFixed);
     }

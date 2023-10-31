@@ -192,23 +192,23 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         );
 
         if (closingSwapDetails.swapUnwindRequired == true) {
-            AmmTypes.UnwindParams memory unwindParams = AmmTypes.UnwindParams({
-                direction: direction,
-                closeTimestamp: closeTimestamp,
-                swapPnlValueToDate: swapPnlValueToDate,
-                indexValue: accruedIpor.indexValue,
-                swap: swap,
-                poolCfg: poolCfg,
-                riskIndicatorsInputs: riskIndicatorsInput
-            });
-
             (
                 closingSwapDetails.swapUnwindPnlValue,
                 closingSwapDetails.swapUnwindOpeningFeeAmount,
                 closingSwapDetails.swapUnwindFeeLPAmount,
                 closingSwapDetails.swapUnwindFeeTreasuryAmount,
                 closingSwapDetails.pnlValue
-            ) = _calculateSwapUnwindWhenUnwindRequired(unwindParams);
+            ) = _calculateSwapUnwindWhenUnwindRequired(
+                AmmTypes.UnwindParams({
+                    direction: direction,
+                    closeTimestamp: closeTimestamp,
+                    swapPnlValueToDate: swapPnlValueToDate,
+                    indexValue: accruedIpor.indexValue,
+                    swap: swap,
+                    poolCfg: poolCfg,
+                    riskIndicatorsInputs: riskIndicatorsInput
+                })
+            );
         } else {
             closingSwapDetails.pnlValue = swapPnlValueToDate;
         }
@@ -690,7 +690,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
     }
 
     /// @notice Calculate swap unwind when unwind is required.
-    /// @param unwindParams todo
+    /// @param unwindParams unwind parameters required to calculate swap unwind pnl value.
     /// @return swapUnwindPnlValue swap unwind PnL value
     /// @return swapUnwindFeeAmount swap unwind opening fee amount, sum of swapUnwindFeeLPAmount and swapUnwindFeeTreasuryAmount
     /// @return swapUnwindFeeLPAmount swap unwind opening fee LP amount
@@ -719,7 +719,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                 messageSigner
             );
             /// @dev Not allow to have swap unwind pnl absolute value larger than swap collateral.
-            swapUnwindPnlValue = calculateSwapUnwindPnlValue(unwindParams, 1,oppositeRiskIndicators);
+            swapUnwindPnlValue = calculateSwapUnwindPnlValue(unwindParams, 1, oppositeRiskIndicators);
         } else if (unwindParams.direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
             oppositeRiskIndicators = unwindParams.riskIndicatorsInputs.payFixed.verify(
                 unwindParams.poolCfg.asset,

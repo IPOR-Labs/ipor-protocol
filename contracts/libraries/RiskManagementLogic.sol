@@ -11,7 +11,6 @@ import "../amm/spread/ISpread90DaysLens.sol";
 import "./Constants.sol";
 import "./errors/AmmErrors.sol";
 import "./math/IporMath.sol";
-import {console2} from "forge-std/console2.sol";
 import "../libraries/RiskIndicatorsValidatorLib.sol";
 
 library RiskManagementLogic {
