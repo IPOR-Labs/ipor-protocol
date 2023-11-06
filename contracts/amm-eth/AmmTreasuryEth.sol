@@ -31,12 +31,16 @@ contract AmmTreasuryEth is
     address public immutable router;
 
     modifier onlyPauseGuardian() {
-        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
+        if (!PauseManager.isPauseGuardian(msg.sender)) {
+            revert IporErrors.CallerNotPauseGuardian(msg.sender);
+        }
         _;
     }
 
     modifier onlyRouter() {
-        require(msg.sender == router, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
+        if (msg.sender != router) {
+            revert IporErrors.CallerNotIporProtocolRouter(msg.sender);
+        }
         _;
     }
 
@@ -64,7 +68,7 @@ contract AmmTreasuryEth is
     }
 
     function getVersion() external pure returns (uint256) {
-        return 2_000;
+        return 2_001;
     }
 
     function pause() external override onlyPauseGuardian {

@@ -187,8 +187,7 @@ contract IporProtocolFactory is Test {
                 usdc: address(amm.usdc.asset),
                 usdcInitialIbtPrice: 1e18,
                 dai: address(amm.dai.asset),
-                daiInitialIbtPrice: 1e18,
-                stEth: address(amm.stEth.asset)
+                daiInitialIbtPrice: 1e18
             })
         );
 
@@ -314,7 +313,7 @@ contract IporProtocolFactory is Test {
         amm.usdt.ammTreasury.grantMaxAllowanceForSpender(address(amm.router));
         amm.usdc.ammTreasury.grantMaxAllowanceForSpender(address(amm.router));
         amm.dai.ammTreasury.grantMaxAllowanceForSpender(address(amm.router));
-//        amm.stEth.ammTreasury.grantMaxAllowanceForSpender(address(amm.router));
+        //        amm.stEth.ammTreasury.grantMaxAllowanceForSpender(address(amm.router));
 
         IAmmGovernanceService(address(amm.router)).setAmmPoolsParams(address(amm.usdt.asset), 1000000000, 50, 8500);
 
@@ -353,8 +352,7 @@ contract IporProtocolFactory is Test {
                 usdt: address(iporProtocol.asset),
                 usdtInitialIbtPrice: 1e18,
                 dai: _fakeContract,
-                daiInitialIbtPrice: 0,
-            stEth: _fakeContract
+                daiInitialIbtPrice: 0
             })
         );
 
@@ -460,8 +458,7 @@ contract IporProtocolFactory is Test {
                 usdt: _fakeContract,
                 usdtInitialIbtPrice: 0,
                 dai: _fakeContract,
-                daiInitialIbtPrice: 0,
-            stEth: _fakeContract
+                daiInitialIbtPrice: 0
             })
         );
 
@@ -570,8 +567,7 @@ contract IporProtocolFactory is Test {
                 usdt: _fakeContract,
                 usdtInitialIbtPrice: 0,
                 dai: address(iporProtocol.asset),
-                daiInitialIbtPrice: 1e18,
-            stEth: _fakeContract
+                daiInitialIbtPrice: 1e18
             })
         );
 
@@ -775,21 +771,27 @@ contract IporProtocolFactory is Test {
                     address(amm.usdt.asset),
                     address(amm.usdt.ammTreasury),
                     address(amm.usdt.ammStorage),
-                    address(amm.usdt.assetManagement)
+                    address(amm.usdt.assetManagement),
+                    address(amm.usdt.spreadRouter),
+                    address(amm.usdt.iporRiskManagementOracle)
                 ),
                 usdcPoolCfg: _preparePoolCfgForCloseSwapService(
                     cfg.closeSwapServiceTestCase,
                     address(amm.usdc.asset),
                     address(amm.usdc.ammTreasury),
                     address(amm.usdc.ammStorage),
-                    address(amm.usdc.assetManagement)
+                    address(amm.usdc.assetManagement),
+                    address(amm.usdc.spreadRouter),
+                    address(amm.usdc.iporRiskManagementOracle)
                 ),
                 daiPoolCfg: _preparePoolCfgForCloseSwapService(
                     cfg.closeSwapServiceTestCase,
                     address(amm.dai.asset),
                     address(amm.dai.ammTreasury),
                     address(amm.dai.ammStorage),
-                    address(amm.dai.assetManagement)
+                    address(amm.dai.assetManagement),
+                    address(amm.dai.spreadRouter),
+                    address(amm.dai.iporRiskManagementOracle)
                 ),
                 iporOracleInput: address(amm.iporOracle),
                 iporRiskManagementOracleInput: address(amm.iporRiskManagementOracle),
@@ -1028,7 +1030,9 @@ contract IporProtocolFactory is Test {
                     address(iporProtocol.asset),
                     address(iporProtocol.ammTreasury),
                     address(iporProtocol.ammStorage),
-                    address(iporProtocol.assetManagement)
+                    address(iporProtocol.assetManagement),
+                    address(iporProtocol.spreadRouter),
+                    address(iporProtocol.iporRiskManagementOracle)
                 ),
                 usdcPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
                 daiPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
@@ -1212,7 +1216,9 @@ contract IporProtocolFactory is Test {
                     address(iporProtocol.asset),
                     address(iporProtocol.ammTreasury),
                     address(iporProtocol.ammStorage),
-                    address(iporProtocol.assetManagement)
+                    address(iporProtocol.assetManagement),
+                    address(iporProtocol.spreadRouter),
+                    address(iporProtocol.iporRiskManagementOracle)
                 ),
                 daiPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
                 iporOracleInput: address(iporProtocol.iporOracle),
@@ -1400,7 +1406,9 @@ contract IporProtocolFactory is Test {
                     address(iporProtocol.asset),
                     address(iporProtocol.ammTreasury),
                     address(iporProtocol.ammStorage),
-                    address(iporProtocol.assetManagement)
+                    address(iporProtocol.assetManagement),
+                    address(iporProtocol.spreadRouter),
+                    address(iporProtocol.iporRiskManagementOracle)
                 ),
                 iporOracleInput: address(iporProtocol.iporOracle),
                 iporRiskManagementOracleInput: address(iporProtocol.iporRiskManagementOracle),
@@ -1596,7 +1604,9 @@ contract IporProtocolFactory is Test {
         address asset,
         address ammTreasury,
         address ammStorage,
-        address assetManagement
+        address assetManagement,
+        address spreadRouter,
+        address iporRiskManagementOracle
     ) internal returns (IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg) {
         if (closeSwapServiceTestCase == BuilderUtils.AmmCloseSwapServiceTestCase.DEFAULT) {
             poolCfg = IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration({

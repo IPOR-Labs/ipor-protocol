@@ -15,12 +15,12 @@ import "../libraries/PaginationUtils.sol";
 import "../libraries/IporContractValidator.sol";
 import "../security/PauseManager.sol";
 import "../security/IporOwnableUpgradeable.sol";
-import "./libraries/types/AmmInternalTypes.sol";
-import "./libraries/types/StorageInternalTypes.sol";
-import "./libraries/SoapIndicatorRebalanceLogic.sol";
+import "../amm/libraries/types/AmmInternalTypes.sol";
+import "../amm/libraries/types/StorageInternalTypes.sol";
+import "../amm/libraries/SoapIndicatorRebalanceLogic.sol";
 
 /// @dev all stored values related to tokens are in 18 decimals.
-contract AmmStorage is
+contract AmmStorageStEth is
     Initializable,
     PausableUpgradeable,
     UUPSUpgradeable,
@@ -42,36 +42,33 @@ contract AmmStorage is
 
     uint32 private _lastSwapId;
 
-    /// @dev DEPRECATED in V2
-    address public miltonDeprecated;
-
-    /// @dev DEPRECATED in V2
-    address public josephDeprecated;
-
     StorageInternalTypes.Balances internal _balances;
     StorageInternalTypes.SoapIndicatorsStorage internal _soapIndicatorsPayFixed;
     StorageInternalTypes.SoapIndicatorsStorage internal _soapIndicatorsReceiveFixed;
     StorageInternalTypes.SwapContainer internal _swapsPayFixed;
     StorageInternalTypes.SwapContainer internal _swapsReceiveFixed;
 
-    /// @dev DEPRECATED in V2
-    mapping(address => uint128) private _liquidityPoolAccountContributionDeprecated;
-
     mapping(IporTypes.SwapTenor => AmmInternalTypes.OpenSwapList) private _openedSwapsPayFixed;
     mapping(IporTypes.SwapTenor => AmmInternalTypes.OpenSwapList) private _openedSwapsReceiveFixed;
 
     modifier onlyPauseGuardian() {
-        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
+        if (!PauseManager.isPauseGuardian(msg.sender)) {
+            revert IporErrors.CallerNotPauseGuardian(msg.sender);
+        }
         _;
     }
 
     modifier onlyRouter() {
-        require(msg.sender == _iporProtocolRouter, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
+        if (msg.sender != _iporProtocolRouter) {
+            revert IporErrors.CallerNotIporProtocolRouter(msg.sender);
+        }
         _;
     }
 
     modifier onlyAmmTreasury() {
-        require(msg.sender == _ammTreasury, IporErrors.CALLER_NOT_AMM_TREASURY);
+        if (msg.sender != _ammTreasury) {
+            revert IporErrors.CallerNotAmmTreasury(msg.sender);
+        }
         _;
     }
 
@@ -88,25 +85,8 @@ contract AmmStorage is
         __UUPSUpgradeable_init();
     }
 
-    /// @dev In v1 name of field was quasiHypotheticalInterestCumulative in v2 in that slot is stored hypotheticalInterestCumulative calculated in different way.
-    /// In V1 quasiHypotheticalInterestCumulative is a sum of chunks: totalNotional * averageInterestRate * (calculateTimestamp - lastRebalanceTimestamp) * Constants.D18;
-    /// stored value is without division by 1e36 * Constants.YEAR_IN_SECONDS - that is why it is called quasi.
-    /// In V2 hypotheticalInterestCumulative store sum chunks v2 = value * e^(averageInterestRate * time). This value is not quasi, so we don't need to divide by 1e36 * Constants.YEAR_IN_SECONDS.
-    /// After upgrade V1 to V2 code operates on non-quasi value, so we need to divide by 1e36 * Constants.YEAR_IN_SECONDS to achieve current hypothetical interest cumulative from v1.
-    /// This value is base value for further calculation including continuous compounding formula in v2.
-    function postUpgrade() public onlyOwner {
-        _soapIndicatorsPayFixed.hypotheticalInterestCumulative = IporMath.division(
-            _soapIndicatorsPayFixed.hypotheticalInterestCumulative,
-            1e36 * Constants.YEAR_IN_SECONDS
-        );
-        _soapIndicatorsReceiveFixed.hypotheticalInterestCumulative = IporMath.division(
-            _soapIndicatorsReceiveFixed.hypotheticalInterestCumulative,
-            1e36 * Constants.YEAR_IN_SECONDS
-        );
-    }
-
     function getVersion() external pure virtual override returns (uint256) {
-        return 2_000;
+        return 2_001;
     }
 
     function getConfiguration() external view override returns (address, address) {
@@ -198,7 +178,14 @@ contract AmmStorage is
     ) external view override returns (uint256 totalCount, AmmTypes.Swap[] memory swaps) {
         uint32[] storage ids = _swapsPayFixed.ids[account];
         return (
-            ids.length, _getPositions(_swapsPayFixed.swaps, ids, offset, chunkSize)
+            ids.length,
+            _getPositions(
+                AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+                _swapsPayFixed.swaps,
+                ids,
+                offset,
+                chunkSize
+            )
         );
     }
 
@@ -209,7 +196,14 @@ contract AmmStorage is
     ) external view override returns (uint256 totalCount, AmmTypes.Swap[] memory swaps) {
         uint32[] storage ids = _swapsReceiveFixed.ids[account];
         return (
-            ids.length, _getPositions(_swapsReceiveFixed.swaps, ids, offset, chunkSize)
+            ids.length,
+            _getPositions(
+                AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+                _swapsReceiveFixed.swaps,
+                ids,
+                offset,
+                chunkSize
+            )
         );
     }
 
@@ -453,6 +447,7 @@ contract AmmStorage is
     }
 
     function _getPositions(
+        AmmTypes.SwapDirection direction,
         mapping(uint32 => StorageInternalTypes.Swap) storage swaps,
         uint32[] storage ids,
         uint256 offset,

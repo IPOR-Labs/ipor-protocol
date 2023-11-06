@@ -5,6 +5,12 @@ library IporErrors {
 
     error WrongAddress(string  code);
 
+    error CallerNotIporProtocolRouter(address caller);
+    error CallerNotPauseGuardian(address caller);
+    error CallerNotAmmTreasury(address caller);
+
+    error UnsupportedDirection(uint256 direction);
+
     // 000-199 - general codes
 
     /// @notice General problem, address is wrong

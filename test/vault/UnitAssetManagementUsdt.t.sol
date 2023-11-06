@@ -185,4 +185,19 @@ contract UnitAssetManagementUsdtTest is TestCommons {
         assertEq(998934658624, ammTreasuryBalanceAfter, "ammTreasuryBalanceAfter");
         assertEq(0, assetManagementBalanceAfter, "assetManagementBalanceAfter");
     }
+
+    function testShouldNotSendETH() public {
+        //given
+
+        //when
+        vm.expectRevert(
+            abi.encodePacked(
+                "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
+            )
+        );
+        (bool status, ) = address(_assetManagementUsdt).call{value: 1e18}("");
+
+        //then
+        assertTrue(!status);
+    }
 }

@@ -68,7 +68,7 @@ contract MockIporSwapLogic {
     ) public pure returns (int256 swapUnwindAmount) {
         swapUnwindAmount = IporSwapLogic.calculateSwapUnwindPnlValue(
             swap,
-            direction,
+        direction,
             closingTimestamp,
             oppositeLegFixedRate
         );

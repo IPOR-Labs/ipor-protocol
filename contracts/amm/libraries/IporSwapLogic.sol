@@ -5,7 +5,12 @@ import "../../interfaces/types/IporTypes.sol";
 import "../../interfaces/types/AmmTypes.sol";
 import "../../libraries/math/IporMath.sol";
 import "../../libraries/math/InterestRates.sol";
+import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/errors/AmmErrors.sol";
+import "../../interfaces/IAmmCloseSwapLens.sol";
+import "../../libraries/RiskManagementLogic.sol";
+import "../../governance/AmmConfigurationManager.sol";
+import "../../security/OwnerManager.sol";
 
 /// @title Core logic for IPOR Swap
 library IporSwapLogic {
@@ -122,6 +127,161 @@ library IporSwapLogic {
         } else {
             revert(AmmErrors.UNSUPPORTED_DIRECTION);
         }
+    }
+
+    /// @notice Check closable status for Swap given as a parameter.
+    /// @param account The account which is closing the swap
+    /// @param swapPnlValueToDate The pnl of the swap on a given date
+    /// @param closeTimestamp The timestamp of closing
+    /// @param swap The swap to be checked
+    /// @param poolCfg Pool configuration
+    /// @return closableStatus Closable status for Swap.
+    /// @return swapUnwindRequired True if swap unwind is required.
+    function getClosableStatusForSwap(
+        AmmTypes.Swap memory swap,
+        address account,
+        int256 swapPnlValueToDate,
+        uint256 closeTimestamp,
+        AmmTypes.CloseSwapAmmPoolConfiguration memory poolCfg
+    ) internal view returns (AmmTypes.SwapClosableStatus, bool) {
+        if (swap.state != IporTypes.SwapState.ACTIVE) {
+            return (AmmTypes.SwapClosableStatus.SWAP_ALREADY_CLOSED, false);
+        }
+
+        if (account != OwnerManager.getOwner()) {
+            uint256 absPnlValue = IporMath.absoluteValue(swapPnlValueToDate);
+
+            uint256 minPnlValueToCloseBeforeMaturityByCommunity = IporMath.percentOf(
+                swap.collateral,
+                poolCfg.minLiquidationThresholdToCloseBeforeMaturityByCommunity
+            );
+
+            uint256 swapEndTimestamp = getSwapEndTimestamp(swap);
+
+            if (closeTimestamp >= swapEndTimestamp) {
+                if (absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity || absPnlValue == swap.collateral) {
+                    if (
+                        AmmConfigurationManager.isSwapLiquidator(poolCfg.asset, account) != true &&
+                        account != swap.buyer
+                    ) {
+                        return (AmmTypes.SwapClosableStatus.SWAP_REQUIRED_BUYER_OR_LIQUIDATOR_TO_CLOSE, false);
+                    }
+                }
+            } else {
+                uint256 minPnlValueToCloseBeforeMaturityByBuyer = IporMath.percentOf(
+                    swap.collateral,
+                    poolCfg.minLiquidationThresholdToCloseBeforeMaturityByBuyer
+                );
+
+                if (
+                    (absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer &&
+                        absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity) || absPnlValue == swap.collateral
+                ) {
+                    if (
+                        AmmConfigurationManager.isSwapLiquidator(poolCfg.asset, account) != true &&
+                        account != swap.buyer
+                    ) {
+                        return (AmmTypes.SwapClosableStatus.SWAP_REQUIRED_BUYER_OR_LIQUIDATOR_TO_CLOSE, false);
+                    }
+                }
+
+                if (absPnlValue < minPnlValueToCloseBeforeMaturityByBuyer) {
+                    if (account == swap.buyer) {
+                        if (swapEndTimestamp - poolCfg.timeBeforeMaturityAllowedToCloseSwapByBuyer > closeTimestamp) {
+                            return (AmmTypes.SwapClosableStatus.SWAP_IS_CLOSABLE, true);
+                        }
+                    } else {
+                        if (
+                            swapEndTimestamp - poolCfg.timeBeforeMaturityAllowedToCloseSwapByCommunity > closeTimestamp
+                        ) {
+                            return (
+                                AmmTypes.SwapClosableStatus.SWAP_CANNOT_CLOSE_CLOSING_TOO_EARLY_FOR_COMMUNITY,
+                                false
+                            );
+                        }
+                    }
+                }
+            }
+        }
+
+        return (AmmTypes.SwapClosableStatus.SWAP_IS_CLOSABLE, false);
+    }
+
+    /// @notice Calculate swap unwind when unwind is required.
+    /// @param swap swap struct
+    /// @param closeTimestamp close timestamp
+    /// @param swapPnlValueToDate swap PnL to a specific date (in particular case to current date)
+    /// @param indexValue index value
+    /// @param poolCfg pool configuration
+    /// @return swapUnwindPnlValue swap unwind PnL value
+    /// @return swapUnwindFeeAmount swap unwind opening fee amount, sum of swapUnwindFeeLPAmount and swapUnwindFeeTreasuryAmount
+    /// @return swapUnwindFeeLPAmount swap unwind opening fee LP amount
+    /// @return swapUnwindFeeTreasuryAmount swap unwind opening fee treasury amount
+    /// @return swapPnlValue swap PnL value includes swap PnL to date, swap unwind PnL value, this value NOT INCLUDE swap unwind fee amount.
+    function calculateSwapUnwindWhenUnwindRequired(
+        AmmTypes.Swap memory swap,
+        AmmTypes.SwapDirection direction,
+        uint256 closeTimestamp,
+        int256 swapPnlValueToDate,
+        uint256 indexValue,
+        AmmTypes.CloseSwapAmmPoolConfiguration memory poolCfg
+    )
+        internal
+        view
+        returns (
+            int256 swapUnwindPnlValue,
+            uint256 swapUnwindFeeAmount,
+            uint256 swapUnwindFeeLPAmount,
+            uint256 swapUnwindFeeTreasuryAmount,
+            int256 swapPnlValue
+        )
+    {
+        uint256 oppositeDirection;
+
+        if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
+            oppositeDirection = 1;
+        } else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
+            oppositeDirection = 0;
+        } else {
+            revert IporErrors.UnsupportedDirection(uint256(direction));
+        }
+
+        uint256 oppositeLegFixedRate = RiskManagementLogic.calculateOfferedRate(
+            oppositeDirection,
+            swap.tenor,
+            swap.notional,
+            RiskManagementLogic.SpreadOfferedRateContext({
+                asset: poolCfg.asset,
+                ammStorage: poolCfg.ammStorage,
+                iporRiskManagementOracle: poolCfg.iporRiskManagementOracle,
+                spreadRouter: poolCfg.spreadRouter,
+                minLeverage: poolCfg.minLeverage,
+                indexValue: indexValue
+            })
+        );
+
+        /// @dev Not allow to have swap unwind pnl absolute value larger than swap collateral.
+        swapUnwindPnlValue = IporSwapLogic.normalizePnlValue(
+            swap.collateral,
+            calculateSwapUnwindPnlValue(swap, direction, closeTimestamp, oppositeLegFixedRate)
+        );
+
+        swapPnlValue = IporSwapLogic.normalizePnlValue(swap.collateral, swapPnlValueToDate + swapUnwindPnlValue);
+
+        /// @dev swap unwind fee amount is independent of the swap unwind pnl value, takes into consideration notional.
+        swapUnwindFeeAmount = calculateSwapUnwindOpeningFeeAmount(swap, closeTimestamp, poolCfg.unwindingFeeRate);
+
+        require(
+            swap.collateral.toInt256() + swapPnlValue > swapUnwindFeeAmount.toInt256(),
+            AmmErrors.COLLATERAL_IS_NOT_SUFFICIENT_TO_COVER_UNWIND_SWAP
+        );
+
+        (swapUnwindFeeLPAmount, swapUnwindFeeTreasuryAmount) = IporSwapLogic.splitOpeningFeeAmount(
+            swapUnwindFeeAmount,
+            poolCfg.unwindingFeeTreasuryPortionRate
+        );
+
+        swapPnlValue = swapPnlValueToDate + swapUnwindPnlValue;
     }
 
     /// @notice Calculates the swap unwind opening fee amount for a given swap, closing timestamp and IBT price from IporOracle.
