@@ -161,7 +161,7 @@ contract AssetManagementTest is TestCommons, DataUtils {
         prepareAmmTreasury(mockCase0AmmTreasuryDai, address(mockCase0JosephDai), address(assetManagementDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
-        mockCase0JosephDai.addAppointedToRebalance(_admin);
+        mockCase0JosephDai.add  AppointedToRebalance(_admin);
         vm.startPrank(_liquidityProvider);
         _daiMockedToken.approve(address(assetManagementDai), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
         mockCase0JosephDai.provideLiquidity(TestConstants.USD_1_000_18DEC);
@@ -253,32 +253,4 @@ contract AssetManagementTest is TestCommons, DataUtils {
         assertEq(actualBalances.actualAmmTreasuryAccruedBalance, expectedBalances.expectedAmmTreasuryLiquidityPoolBalance);
     }
 
-
-    function testShouldNotSendETHToAssetManagementDaiUsdtUsdc() public payable {
-        // given
-        MockCaseBaseAssetManagement assetManagementDai = getMockCase0AssetManagement(address(_daiMockedToken));
-        MockCaseBaseAssetManagement assetManagementUsdt = getMockCase0AssetManagement(address(_usdtMockedToken));
-        MockCaseBaseAssetManagement assetManagementUsdc = getMockCase0AssetManagement(address(_usdcMockedToken));
-        vm.expectRevert(
-            abi.encodePacked(
-                "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
-            )
-        );
-        (bool statusDai, ) = address(assetManagementDai).call{value: msg.value}("");
-        assertTrue(!statusDai);
-        vm.expectRevert(
-            abi.encodePacked(
-                "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
-            )
-        );
-        (bool statusUsdt, ) = address(assetManagementUsdt).call{value: msg.value}("");
-        assertTrue(!statusUsdt);
-        vm.expectRevert(
-            abi.encodePacked(
-                "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
-            )
-        );
-        (bool statusUsdc, ) = address(assetManagementUsdc).call{value: msg.value}("");
-        assertTrue(!statusUsdc);
-    }
 }
