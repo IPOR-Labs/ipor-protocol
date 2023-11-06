@@ -40,7 +40,6 @@ contract UsdtAmm is Test, TestCommons, IporRiskManagementOracleUtils {
     address public ipUsdt;
 
     IporOracle public iporOracle;
-    IIporRiskManagementOracle public iporRiskManagementOracle;
 
     AssetManagement public assetManagement;
     StrategyCompound public strategyCompound;

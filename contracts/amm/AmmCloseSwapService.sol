@@ -16,11 +16,13 @@ import "../libraries/IporContractValidator.sol";
 import "../libraries/AmmLib.sol";
 import "../libraries/AssetManagementLogic.sol";
 import "../libraries/RiskManagementLogic.sol";
+import "../libraries/RiskIndicatorsValidatorLib.sol";
 import "../governance/AmmConfigurationManager.sol";
 import "../security/OwnerManager.sol";
 import "./libraries/IporSwapLogic.sol";
 import "./libraries/types/AmmInternalTypes.sol";
 import "./spread/ISpreadCloseSwapService.sol";
+import "../interfaces/types/AmmTypes.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
@@ -31,6 +33,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using IporSwapLogic for AmmTypes.Swap;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
+    using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
 
     address internal immutable _usdt;
     uint256 internal immutable _usdtDecimals;
@@ -78,7 +81,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
     uint256 internal immutable _daiMinLeverage;
 
     address public immutable iporOracle;
-    address public immutable iporRiskManagementOracle;
+    address public immutable messageSigner;
     address public immutable spreadRouter;
 
     constructor(
@@ -86,7 +89,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         AmmCloseSwapServicePoolConfiguration memory usdcPoolCfg,
         AmmCloseSwapServicePoolConfiguration memory daiPoolCfg,
         address iporOracleInput,
-        address iporRiskManagementOracleInput,
+        address messageSignerInput,
         address spreadRouterInput
     ) {
         _usdt = usdtPoolCfg.asset.checkAddress();
@@ -141,7 +144,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         _daiMinLeverage = daiPoolCfg.minLeverage;
 
         iporOracle = iporOracleInput.checkAddress();
-        iporRiskManagementOracle = iporRiskManagementOracleInput.checkAddress();
+        messageSigner = messageSignerInput.checkAddress();
         spreadRouter = spreadRouterInput.checkAddress();
     }
 
@@ -156,7 +159,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         address account,
         AmmTypes.SwapDirection direction,
         uint256 swapId,
-        uint256 closeTimestamp
+        uint256 closeTimestamp,
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     ) external view override returns (AmmTypes.ClosingSwapDetails memory closingSwapDetails) {
         AmmCloseSwapServicePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
@@ -195,12 +199,15 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                 closingSwapDetails.swapUnwindFeeTreasuryAmount,
                 closingSwapDetails.pnlValue
             ) = _calculateSwapUnwindWhenUnwindRequired(
-                direction,
-                closeTimestamp,
-                swapPnlValueToDate,
-                accruedIpor.indexValue,
-                swap,
-                poolCfg
+                AmmTypes.UnwindParams({
+                    direction: direction,
+                    closeTimestamp: closeTimestamp,
+                    swapPnlValueToDate: swapPnlValueToDate,
+                    indexValue: accruedIpor.indexValue,
+                    swap: swap,
+                    poolCfg: poolCfg,
+                    riskIndicatorsInputs: riskIndicatorsInput
+                })
             );
         } else {
             closingSwapDetails.pnlValue = swapPnlValueToDate;
@@ -210,7 +217,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
     function closeSwapsUsdt(
         address beneficiary,
         uint256[] memory payFixedSwapIds,
-        uint256[] memory receiveFixedSwapIds
+        uint256[] memory receiveFixedSwapIds,
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     )
         external
         override
@@ -223,14 +231,16 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             beneficiary,
             payFixedSwapIds,
             receiveFixedSwapIds,
-            _getPoolConfiguration(_usdt)
+            _getPoolConfiguration(_usdt),
+            riskIndicatorsInput
         );
     }
 
     function closeSwapsUsdc(
         address beneficiary,
         uint256[] memory payFixedSwapIds,
-        uint256[] memory receiveFixedSwapIds
+        uint256[] memory receiveFixedSwapIds,
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     )
         external
         override
@@ -243,14 +253,16 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             beneficiary,
             payFixedSwapIds,
             receiveFixedSwapIds,
-            _getPoolConfiguration(_usdc)
+            _getPoolConfiguration(_usdc),
+            riskIndicatorsInput
         );
     }
 
     function closeSwapsDai(
         address beneficiary,
         uint256[] memory payFixedSwapIds,
-        uint256[] memory receiveFixedSwapIds
+        uint256[] memory receiveFixedSwapIds,
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     )
         external
         override
@@ -263,13 +275,15 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             beneficiary,
             payFixedSwapIds,
             receiveFixedSwapIds,
-            _getPoolConfiguration(_dai)
+            _getPoolConfiguration(_dai),
+            riskIndicatorsInput
         );
     }
 
     function emergencyCloseSwapsUsdt(
         uint256[] memory payFixedSwapIds,
-        uint256[] memory receiveFixedSwapIds
+        uint256[] memory receiveFixedSwapIds,
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     )
         external
         override
@@ -282,13 +296,15 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             msg.sender,
             payFixedSwapIds,
             receiveFixedSwapIds,
-            _getPoolConfiguration(_usdt)
+            _getPoolConfiguration(_usdt),
+            riskIndicatorsInput
         );
     }
 
     function emergencyCloseSwapsUsdc(
         uint256[] memory payFixedSwapIds,
-        uint256[] memory receiveFixedSwapIds
+        uint256[] memory receiveFixedSwapIds,
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     )
         external
         override
@@ -301,13 +317,15 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             msg.sender,
             payFixedSwapIds,
             receiveFixedSwapIds,
-            _getPoolConfiguration(_usdc)
+            _getPoolConfiguration(_usdc),
+            riskIndicatorsInput
         );
     }
 
     function emergencyCloseSwapsDai(
         uint256[] memory payFixedSwapIds,
-        uint256[] memory receiveFixedSwapIds
+        uint256[] memory receiveFixedSwapIds,
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     )
         external
         override
@@ -320,7 +338,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             msg.sender,
             payFixedSwapIds,
             receiveFixedSwapIds,
-            _getPoolConfiguration(_dai)
+            _getPoolConfiguration(_dai),
+            riskIndicatorsInput
         );
     }
 
@@ -385,7 +404,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         address beneficiary,
         uint256[] memory payFixedSwapIds,
         uint256[] memory receiveFixedSwapIds,
-        AmmCloseSwapServicePoolConfiguration memory poolCfg
+        AmmCloseSwapServicePoolConfiguration memory poolCfg,
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     )
         internal
         returns (
@@ -406,14 +426,16 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             beneficiary,
             AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             payFixedSwapIds,
-            poolCfg
+            poolCfg,
+            riskIndicatorsInput
         );
 
         (payoutForLiquidatorReceiveFixed, closedReceiveFixedSwaps) = _closeSwapsPerLeg(
             beneficiary,
             AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             receiveFixedSwapIds,
-            poolCfg
+            poolCfg,
+            riskIndicatorsInput
         );
 
         _transferLiquidationDepositAmount(
@@ -428,7 +450,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         uint256 indexValue,
         uint256 ibtPrice,
         AmmTypes.Swap memory swap,
-        AmmCloseSwapServicePoolConfiguration memory poolCfg
+        AmmCloseSwapServicePoolConfiguration memory poolCfg,
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     ) internal returns (uint256 payoutForLiquidator) {
         uint256 timestamp = block.timestamp;
         int256 swapPnlValueToDate = swap.calculatePnlPayFixed(timestamp, ibtPrice);
@@ -439,7 +462,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             swapPnlValueToDate,
             indexValue,
             swap,
-            poolCfg
+            poolCfg,
+            riskIndicatorsInput
         );
 
         ISpreadCloseSwapService(spreadRouter).updateTimeWeightedNotionalOnClose(
@@ -487,7 +511,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         uint256 indexValue,
         uint256 ibtPrice,
         AmmTypes.Swap memory swap,
-        AmmCloseSwapServicePoolConfiguration memory poolCfg
+        AmmCloseSwapServicePoolConfiguration memory poolCfg,
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     ) internal returns (uint256 payoutForLiquidator) {
         uint256 timestamp = block.timestamp;
         int256 swapPnlValueToDate = swap.calculatePnlReceiveFixed(timestamp, ibtPrice);
@@ -498,7 +523,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             swapPnlValueToDate,
             indexValue,
             swap,
-            poolCfg
+            poolCfg,
+            riskIndicatorsInput
         );
 
         ISpreadCloseSwapService(spreadRouter).updateTimeWeightedNotionalOnClose(
@@ -545,7 +571,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         address beneficiary,
         AmmTypes.SwapDirection direction,
         uint256[] memory swapIds,
-        AmmCloseSwapServicePoolConfiguration memory poolCfg
+        AmmCloseSwapServicePoolConfiguration memory poolCfg,
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     ) internal returns (uint256 payoutForLiquidator, AmmTypes.IporSwapClosingResult[] memory closedSwaps) {
         uint256 swapIdsLength = swapIds.length;
         require(
@@ -575,7 +602,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                         accruedIpor.indexValue,
                         accruedIpor.ibtPrice,
                         swap,
-                        poolCfg
+                        poolCfg,
+                        riskIndicatorsInput
                     );
                 } else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
                     payoutForLiquidator += _closeSwapReceiveFixed(
@@ -583,7 +611,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                         accruedIpor.indexValue,
                         accruedIpor.ibtPrice,
                         swap,
-                        poolCfg
+                        poolCfg,
+                        riskIndicatorsInput
                     );
                 } else {
                     revert(AmmErrors.UNSUPPORTED_DIRECTION);
@@ -622,7 +651,8 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
         int256 swapPnlValueToDate,
         uint256 indexValue,
         AmmTypes.Swap memory swap,
-        AmmCloseSwapServicePoolConfiguration memory poolCfg
+        AmmCloseSwapServicePoolConfiguration memory poolCfg,
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     ) internal view returns (AmmInternalTypes.PnlValueStruct memory pnlValueStruct) {
         AmmTypes.SwapClosableStatus closableStatus;
 
@@ -644,12 +674,15 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                 pnlValueStruct.swapUnwindFeeTreasuryAmount,
                 pnlValueStruct.pnlValue
             ) = _calculateSwapUnwindWhenUnwindRequired(
-                direction,
-                closeTimestamp,
-                swapPnlValueToDate,
-                indexValue,
-                swap,
-                poolCfg
+                AmmTypes.UnwindParams({
+                    direction: direction,
+                    closeTimestamp: closeTimestamp,
+                    swapPnlValueToDate: swapPnlValueToDate,
+                    indexValue: indexValue,
+                    swap: swap,
+                    poolCfg: poolCfg,
+                    riskIndicatorsInputs: riskIndicatorsInput
+                })
             );
         } else {
             pnlValueStruct.pnlValue = swapPnlValueToDate;
@@ -657,24 +690,14 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
     }
 
     /// @notice Calculate swap unwind when unwind is required.
-    /// @param direction swap direction
-    /// @param closeTimestamp close timestamp
-    /// @param swapPnlValueToDate swap PnL to a specific date (in particular case to current date)
-    /// @param indexValue index value
-    /// @param swap swap struct
-    /// @param poolCfg pool configuration
+    /// @param unwindParams unwind parameters required to calculate swap unwind pnl value.
     /// @return swapUnwindPnlValue swap unwind PnL value
     /// @return swapUnwindFeeAmount swap unwind opening fee amount, sum of swapUnwindFeeLPAmount and swapUnwindFeeTreasuryAmount
     /// @return swapUnwindFeeLPAmount swap unwind opening fee LP amount
     /// @return swapUnwindFeeTreasuryAmount swap unwind opening fee treasury amount
     /// @return swapPnlValue swap PnL value includes swap PnL to date, swap unwind PnL value, this value NOT INCLUDE swap unwind fee amount.
     function _calculateSwapUnwindWhenUnwindRequired(
-        AmmTypes.SwapDirection direction,
-        uint256 closeTimestamp,
-        int256 swapPnlValueToDate,
-        uint256 indexValue,
-        AmmTypes.Swap memory swap,
-        AmmCloseSwapServicePoolConfiguration memory poolCfg
+        AmmTypes.UnwindParams memory unwindParams
     )
         internal
         view
@@ -686,51 +709,81 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
             int256 swapPnlValue
         )
     {
-        uint256 oppositeDirection;
+        AmmTypes.OpenSwapRiskIndicators memory oppositeRiskIndicators;
 
-        if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
-            oppositeDirection = 1;
-        } else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
-            oppositeDirection = 0;
+        if (unwindParams.direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
+            oppositeRiskIndicators = unwindParams.riskIndicatorsInputs.receiveFixed.verify(
+                unwindParams.poolCfg.asset,
+                uint256(unwindParams.swap.tenor),
+                uint256(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED),
+                messageSigner
+            );
+            /// @dev Not allow to have swap unwind pnl absolute value larger than swap collateral.
+            swapUnwindPnlValue = calculateSwapUnwindPnlValue(unwindParams, 1, oppositeRiskIndicators);
+        } else if (unwindParams.direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
+            oppositeRiskIndicators = unwindParams.riskIndicatorsInputs.payFixed.verify(
+                unwindParams.poolCfg.asset,
+                uint256(unwindParams.swap.tenor),
+                uint256(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING),
+                messageSigner
+            );
+            /// @dev Not allow to have swap unwind pnl absolute value larger than swap collateral.
+            swapUnwindPnlValue = calculateSwapUnwindPnlValue(unwindParams, 0, oppositeRiskIndicators);
         } else {
             revert(AmmErrors.UNSUPPORTED_DIRECTION);
         }
-        uint256 oppositeLegFixedRate = RiskManagementLogic.calculateOfferedRate(
-            oppositeDirection,
-            swap.tenor,
-            swap.notional,
-            RiskManagementLogic.SpreadOfferedRateContext({
-                asset: poolCfg.asset,
-                ammStorage: poolCfg.ammStorage,
-                iporRiskManagementOracle: iporRiskManagementOracle,
-                spreadRouter: spreadRouter,
-                minLeverage: poolCfg.minLeverage,
-                indexValue: indexValue
-            })
-        );
 
-        /// @dev Not allow to have swap unwind pnl absolute value larger than swap collateral.
-        swapUnwindPnlValue = IporSwapLogic.normalizePnlValue(
-            swap.collateral,
-            swap.calculateSwapUnwindPnlValue(direction, closeTimestamp, oppositeLegFixedRate)
+        swapPnlValue = IporSwapLogic.normalizePnlValue(
+            unwindParams.swap.collateral,
+            unwindParams.swapPnlValueToDate + swapUnwindPnlValue
         );
-
-        swapPnlValue = IporSwapLogic.normalizePnlValue(swap.collateral, swapPnlValueToDate + swapUnwindPnlValue);
 
         /// @dev swap unwind fee amount is independent of the swap unwind pnl value, takes into consideration notional.
-        swapUnwindFeeAmount = swap.calculateSwapUnwindOpeningFeeAmount(closeTimestamp, poolCfg.unwindingFeeRate);
+        swapUnwindFeeAmount = unwindParams.swap.calculateSwapUnwindOpeningFeeAmount(
+            unwindParams.closeTimestamp,
+            unwindParams.poolCfg.unwindingFeeRate
+        );
 
         require(
-            swap.collateral.toInt256() + swapPnlValue > swapUnwindFeeAmount.toInt256(),
+            unwindParams.swap.collateral.toInt256() + swapPnlValue > swapUnwindFeeAmount.toInt256(),
             AmmErrors.COLLATERAL_IS_NOT_SUFFICIENT_TO_COVER_UNWIND_SWAP
         );
 
         (swapUnwindFeeLPAmount, swapUnwindFeeTreasuryAmount) = IporSwapLogic.splitOpeningFeeAmount(
             swapUnwindFeeAmount,
-            poolCfg.unwindingFeeTreasuryPortionRate
+            unwindParams.poolCfg.unwindingFeeTreasuryPortionRate
         );
 
-        swapPnlValue = swapPnlValueToDate + swapUnwindPnlValue;
+        swapPnlValue = unwindParams.swapPnlValueToDate + swapUnwindPnlValue;
+    }
+
+    function calculateSwapUnwindPnlValue(
+        AmmTypes.UnwindParams memory unwindParams,
+        uint256 direction,
+        AmmTypes.OpenSwapRiskIndicators memory oppositeRiskIndicators
+    ) internal view returns (int256) {
+        return
+            IporSwapLogic.normalizePnlValue(
+                unwindParams.swap.collateral,
+                unwindParams.swap.calculateSwapUnwindPnlValue(
+                    unwindParams.direction,
+                    unwindParams.closeTimestamp,
+                    RiskManagementLogic.calculateOfferedRate(
+                        direction,
+                        unwindParams.swap.tenor,
+                        unwindParams.swap.notional,
+                        RiskManagementLogic.SpreadOfferedRateContext({
+                            asset: unwindParams.poolCfg.asset,
+                            ammStorage: unwindParams.poolCfg.ammStorage,
+                            iporRiskManagementOracle: messageSigner,
+                            spreadRouter: spreadRouter,
+                            minLeverage: unwindParams.poolCfg.minLeverage,
+                            indexValue: unwindParams.indexValue
+                        }),
+                        oppositeRiskIndicators
+                    )
+                )
+            );
     }
 
     /**

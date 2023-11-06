@@ -3,7 +3,6 @@ pragma solidity 0.8.20;
 
 import "../../../contracts/tokens/IpToken.sol";
 import "../../../contracts/oracles/IporOracle.sol";
-import "../../../contracts/oracles/IporRiskManagementOracle.sol";
 import "../../mocks/MockIporWeighted.sol";
 import "../../../contracts/amm/AmmStorage.sol";
 import "../../../contracts/amm/AmmTreasury.sol";
@@ -30,7 +29,6 @@ contract BuilderUtils {
         MockTestnetToken asset;
         IpToken ipToken;
         IporOracle iporOracle;
-        IporRiskManagementOracle iporRiskManagementOracle;
         MockIporWeighted iporWeighted;
         AmmStorage ammStorage;
         SpreadRouter spreadRouter;

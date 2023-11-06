@@ -60,4 +60,10 @@ library IporErrors {
 
     /// @notice Return back ETH failed in Ipor Protocol Router
     string public constant ROUTER_RETURN_BACK_ETH_FAILED = "IPOR_018";
+
+    /// @notice
+    string public constant RISK_INDICATORS_EXPIRED = "IPOR_019";
+
+    /// @notice
+    string public constant RISK_INDICATORS_SIGNATURE_INVALID = "IPOR_020";
 }
