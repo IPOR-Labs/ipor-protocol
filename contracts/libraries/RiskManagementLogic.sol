@@ -19,14 +19,12 @@ library RiskManagementLogic {
     /// @notice Stuct describing the context for calculating the offered rate
     /// @param asset Asset address
     /// @param ammStorage AMM storage address
-    /// @param iporRiskManagementOracle IPOR risk management oracle address
     /// @param spreadRouter Spread router address
     /// @param minLeverage Minimum leverage
     /// @param indexValue IPOR Index value
     struct SpreadOfferedRateContext {
         address asset;
         address ammStorage;
-        address iporRiskManagementOracle;
         address spreadRouter;
         uint256 minLeverage;
         uint256 indexValue;
