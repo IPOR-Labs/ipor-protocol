@@ -5,7 +5,6 @@ import "forge-std/Test.sol";
 import "forge-std/console2.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../../contracts/oracles/IporOracle.sol";
-import "../../contracts/oracles/IporRiskManagementOracle.sol";
 import "../mocks/EmptyRouterImplementation.sol";
 import "../../contracts/router/IporProtocolRouter.sol";
 import "../../contracts/interfaces/IAmmSwapsLens.sol";
@@ -97,7 +96,6 @@ contract TestForkCommons is Test {
     address public constant comptroller = 0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B;
 
     // new contracts for v2
-    address public iporRiskManagementOracleProxy;
     address payable public iporProtocolRouterProxy;
     address public ammSwapsLens;
     address public ammPoolsLens;
@@ -123,7 +121,6 @@ contract TestForkCommons is Test {
 
     function _init() internal {
         (uint IporOracleVersionBefore, uint IporOracleVersionAfter) = _switchImplementationOfIporOracle();
-        uint iporRiskManagementOracleVersion = _createIporRiskManagementOracle();
         _createEmptyRouterImplementation();
 
         _createAmmPoolsLens();
@@ -309,62 +306,6 @@ contract TestForkCommons is Test {
         versionAfter = IporOracle(iporOracleProxy).getVersion();
     }
 
-    function _createIporRiskManagementOracle() private returns (uint256 version) {
-        IporRiskManagementOracle iporRiskManagementOracleImplementation = new IporRiskManagementOracle();
-
-        IporRiskManagementOracleTypes.RiskIndicators memory riskIndicator = IporRiskManagementOracleTypes
-            .RiskIndicators({
-                maxNotionalPayFixed: 100, // 1_000_000
-                maxNotionalReceiveFixed: 100, // 1_000_000
-                maxCollateralRatioPayFixed: 500, // 5%
-                maxCollateralRatioReceiveFixed: 500, // 5%
-                maxCollateralRatio: 500, // 5%
-                demandSpreadFactor28: 280,
-                demandSpreadFactor60: 600,
-                demandSpreadFactor90: 900
-            });
-
-        IporRiskManagementOracleTypes.RiskIndicators[]
-            memory riskIndicators = new IporRiskManagementOracleTypes.RiskIndicators[](3);
-        riskIndicators[0] = riskIndicator;
-        riskIndicators[1] = riskIndicator;
-        riskIndicators[2] = riskIndicator;
-
-        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps
-            memory baseSpreadsAndFixedRateCap = IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
-                1000, // 0.1%
-                -1000, // -0.1%
-                1000, // 0.1%
-                -1000, // -0.1%
-                1000, // 0.1%
-                -1000, // -0.1%
-                200, // 2%
-                350, // 3.5%
-                200, // 2%
-                350, // 3.5%
-                200, // 2%
-                350 // 3.5%
-            );
-
-        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[]
-            memory baseSpreadsAndFixedRateCaps = new IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[](3);
-        baseSpreadsAndFixedRateCaps[0] = baseSpreadsAndFixedRateCap;
-        baseSpreadsAndFixedRateCaps[1] = baseSpreadsAndFixedRateCap;
-        baseSpreadsAndFixedRateCaps[2] = baseSpreadsAndFixedRateCap;
-
-        ERC1967Proxy proxy = new ERC1967Proxy(
-            address(iporRiskManagementOracleImplementation),
-            abi.encodeWithSignature(
-                "initialize(address[],(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)[],(int256,int256,int256,int256,int256,int256,uint256,uint256,uint256,uint256,uint256,uint256)[])",
-                _getAssets(),
-                riskIndicators,
-                baseSpreadsAndFixedRateCaps
-            )
-        );
-
-        iporRiskManagementOracleProxy = address(proxy);
-        version = IporRiskManagementOracle(iporRiskManagementOracleProxy).getVersion();
-    }
 
     function _createEmptyRouterImplementation() private {
         vm.prank(owner);
@@ -399,7 +340,7 @@ contract TestForkCommons is Test {
                 usdcConfig,
                 daiConfig,
                 iporOracleProxy,
-                iporRiskManagementOracleProxy,
+                iporOracleProxy, // todo signer address
                 spreadRouter
             )
         );
@@ -527,7 +468,7 @@ contract TestForkCommons is Test {
                 usdcConfig,
                 daiConfig,
                 iporOracleProxy,
-                iporRiskManagementOracleProxy,
+                iporOracleProxy, // todo signer address
                 spreadRouter
             )
         );
@@ -592,7 +533,7 @@ contract TestForkCommons is Test {
                 usdcConfig,
                 daiConfig,
                 iporOracleProxy,
-                iporRiskManagementOracleProxy,
+                iporOracleProxy, // todo: fix signerAddress
                 spreadRouter
             )
         );
@@ -886,5 +827,37 @@ contract TestForkCommons is Test {
     function _constructProxy(address impl) private returns (ERC1967Proxy proxy) {
         vm.prank(owner);
         proxy = new ERC1967Proxy(address(impl), abi.encodeWithSignature("initialize(bool)", false));
+    }
+
+    function signRiskParams(
+        AmmTypes.RiskIndicatorsInputs memory riskParamsInput,
+        address asset,
+        uint256 tenor,
+        uint256 direction,
+        uint256 privateKey
+    ) internal view returns (bytes memory) {
+        // create digest: keccak256 gives us the first 32bytes after doing the hash
+        // so this is always 32 bytes.
+        bytes32 digest = keccak256(
+            abi.encodePacked(
+                riskParamsInput.maxCollateralRatio,
+                riskParamsInput.maxCollateralRatioPerLeg,
+                riskParamsInput.maxLeveragePerLeg,
+                riskParamsInput.baseSpreadPerLeg,
+                riskParamsInput.fixedRateCapPerLeg,
+                riskParamsInput.demandSpreadFactor,
+                riskParamsInput.expiration,
+                asset,
+                tenor,
+                direction
+            )
+        );
+        // r and s are the outputs of the ECDSA signature
+        // r,s and v are packed into the signature. It should be 65 bytes: 32 + 32 + 1
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(privateKey, digest);
+
+        // pack v, r, s into 65bytes signature
+        // bytes memory signature = abi.encodePacked(r, s, v);
+        return abi.encodePacked(r, s, v);
     }
 }

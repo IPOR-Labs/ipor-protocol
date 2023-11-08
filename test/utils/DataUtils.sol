@@ -5,9 +5,9 @@ import "forge-std/Test.sol";
 import "../utils/TestConstants.sol";
 import "../mocks/tokens/MockTestnetToken.sol";
 import "../../contracts/tokens/IpToken.sol";
+import "../../contracts/interfaces/types/AmmTypes.sol";
 
 contract DataUtils is Test {
-
     function getTokenUsdt() public returns (MockTestnetToken) {
         return new MockTestnetToken("Mocked USDT", "USDT", TestConstants.TOTAL_SUPPLY_6_DECIMALS, 6);
     }

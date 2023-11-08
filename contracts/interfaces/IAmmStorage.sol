@@ -70,7 +70,7 @@ interface IAmmStorage {
     /// @notice Gets swap based on the direction and swap ID.
     /// @param direction direction of the swap: 0 for Pay Fixed, 1 for Receive Fixed
     /// @param swapId swap ID
-    /// @return swap structure {AmmTypes.Swap}
+    /// @return swap structure {AmmTypesGenOne.sol.Swap}
     function getSwap(AmmTypes.SwapDirection direction, uint256 swapId) external view returns (AmmTypes.Swap memory);
 
     /// @notice Gets the active Pay-Fixed swaps for a given account address.
@@ -78,7 +78,7 @@ interface IAmmStorage {
     /// @param offset offset for paging
     /// @param chunkSize page size for paging
     /// @return totalCount total number of active Pay-Fixed swaps
-    /// @return swaps array where each element has structure {AmmTypes.Swap}
+    /// @return swaps array where each element has structure {AmmTypesGenOne.sol.Swap}
     function getSwapsPayFixed(
         address account,
         uint256 offset,
@@ -90,7 +90,7 @@ interface IAmmStorage {
     /// @param offset offset for paging
     /// @param chunkSize page size for paging
     /// @return totalCount total number of active Receive Fixed swaps
-    /// @return swaps array where each element has structure {AmmTypes.Swap}
+    /// @return swaps array where each element has structure {AmmTypesGenOne.sol.Swap}
     function getSwapsReceiveFixed(
         address account,
         uint256 offset,
@@ -123,7 +123,7 @@ interface IAmmStorage {
 
     /// @notice Updates structures in storage: balance, swaps, SOAP indicators when new Pay-Fixed swap is opened.
     /// @dev Function is only available to AmmOpenSwapService, it can be executed only by IPOR Protocol Router as internal interaction.
-    /// @param newSwap new swap structure {AmmTypes.NewSwap}
+    /// @param newSwap new swap structure {AmmTypesGenOne.sol.NewSwap}
     /// @param cfgIporPublicationFee publication fee amount taken from AmmTreasury configuration, represented in 18 decimals.
     /// @return new swap ID
     function updateStorageWhenOpenSwapPayFixedInternal(
@@ -133,7 +133,7 @@ interface IAmmStorage {
 
     /// @notice Updates structures in the storage: balance, swaps, SOAP indicators when new Receive-Fixed swap is opened.
     /// @dev Function is only available to AmmOpenSwapService, it can be executed only by IPOR Protocol Router as internal interaction.
-    /// @param newSwap new swap structure {AmmTypes.NewSwap}
+    /// @param newSwap new swap structure {AmmTypesGenOne.sol.NewSwap}
     /// @param cfgIporPublicationFee publication fee amount taken from AmmTreasury configuration, represented in 18 decimals.
     /// @return new swap ID
     function updateStorageWhenOpenSwapReceiveFixedInternal(

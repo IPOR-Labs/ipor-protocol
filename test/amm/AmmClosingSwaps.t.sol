@@ -103,13 +103,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.warp(200);
 
@@ -118,8 +120,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_admin);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_admin, swapPfIds, swapRfIds);
+        vm.startPrank(_admin);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _admin,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
@@ -157,13 +165,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.warp(100 + 28 days - 24 hours);
 
@@ -172,8 +182,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
+        vm.startPrank(_buyer);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _buyer,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -210,14 +226,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
-
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.warp(100 + 28 days - 20 hours);
 
@@ -226,8 +243,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
+        vm.startPrank(_buyer);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _buyer,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -259,13 +282,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
         uint256 anyoneBalanceBefore = _iporProtocol.asset.balanceOf(_community);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.warp(100 + 28 days - 1 hours);
 
@@ -274,8 +299,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
+        vm.startPrank(_community);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _community,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -309,13 +340,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
         uint256 anyoneBalanceBefore = _iporProtocol.asset.balanceOf(_community);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.warp(100 + 28 days - 30 minutes);
 
@@ -324,8 +357,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
+        vm.startPrank(_community);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _community,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -359,13 +398,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.warp(100 + 28 days + 1 seconds);
 
@@ -376,8 +417,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
+        vm.startPrank(_liquidator);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _liquidator,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -410,13 +457,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.warp(100 + 28 days - 4 hours - 1 seconds);
 
@@ -425,11 +474,21 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
         uint256[] memory swapRfIds = new uint256[](0);
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeSwapRiskIndicatorsInput = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
-        vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
+        vm.startPrank(_liquidator);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _liquidator,
+            swapPfIds,
+            swapRfIds,
+            closeSwapRiskIndicatorsInput
+        );
+        vm.stopPrank();
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -460,13 +519,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.warp(100 + 28 days + 1 seconds);
 
@@ -475,8 +536,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
+        vm.startPrank(_buyer);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _buyer,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -507,24 +574,36 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
         uint256[] memory swapRfIds = new uint256[](0);
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeSwapRiskIndicatorsInput = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
-        vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community,swapPfIds, swapRfIds);
+        vm.startPrank(_community);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _community,
+            swapPfIds,
+            swapRfIds,
+            closeSwapRiskIndicatorsInput
+        );
+        vm.stopPrank();
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -555,13 +634,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.warp(100 + 28 days + 1 seconds);
 
@@ -569,10 +650,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapPfIds[0] = 1;
         uint256[] memory swapRfIds = new uint256[](0);
 
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInputs = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
+
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
-        vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
+        vm.startPrank(_community);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds, riskIndicatorsInputs);
+        vm.stopPrank();
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -603,24 +690,36 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
         uint256[] memory swapRfIds = new uint256[](0);
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeSwapRiskIndicatorsInput = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
-        vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
+        vm.startPrank(_liquidator);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _liquidator,
+            swapPfIds,
+            swapRfIds,
+            closeSwapRiskIndicatorsInput
+        );
+        vm.stopPrank();
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -651,13 +750,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.warp(200);
 
@@ -666,8 +767,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_admin);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_admin, swapPfIds, swapRfIds);
+        vm.startPrank(_admin);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _admin,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -698,13 +805,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.warp(100 + 28 days - 24 hours);
 
@@ -713,8 +822,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
+        vm.startPrank(_buyer);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _buyer,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -745,13 +860,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.warp(100 + 28 days - 20 hours);
 
@@ -760,8 +877,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
+        vm.startPrank(_buyer);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _buyer,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -793,13 +916,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
         uint256 anyoneBalanceBefore = _iporProtocol.asset.balanceOf(_community);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.warp(100 + 28 days - 1 hours);
 
@@ -808,8 +933,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
+        vm.startPrank(_community);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _community,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -843,13 +974,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
         uint256 anyoneBalanceBefore = _iporProtocol.asset.balanceOf(_community);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.warp(100 + 28 days - 30 minutes);
 
@@ -858,8 +991,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
+        vm.startPrank(_community);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _community,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -893,13 +1032,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.warp(100 + 28 days + 1 seconds);
 
@@ -910,8 +1051,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
+        vm.startPrank(_liquidator);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _liquidator,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -944,13 +1091,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.warp(100 + 28 days - 4 hours - 1 seconds);
 
@@ -959,11 +1108,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = 1;
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInputs = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
-        vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
+        vm.startPrank(_liquidator);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds, riskIndicatorsInputs);
+        vm.stopPrank();
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -994,13 +1148,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.warp(100 + 28 days + 1 seconds);
 
@@ -1009,8 +1165,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
+        vm.startPrank(_buyer);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _buyer,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -1041,24 +1203,31 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = 1;
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInputs = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
-        vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
+        vm.startPrank(_community);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds, riskIndicatorsInputs);
+        vm.stopPrank();
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -1089,24 +1258,31 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.warp(100 + 28 days + 1 seconds);
 
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = 1;
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInputs = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
-        vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
+        vm.startPrank(_community);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds, riskIndicatorsInputs);
+        vm.stopPrank();
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -1137,24 +1313,31 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.warp(100 + 28 days - 1 hours - 1);
 
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = 1;
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInputs = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
-        vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
+        vm.startPrank(_liquidator);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds, riskIndicatorsInputs);
+        vm.stopPrank();
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -1186,13 +1369,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
@@ -1201,8 +1386,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator,swapPfIds, swapRfIds);
+        vm.startPrank(_liquidator);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _liquidator,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -1244,13 +1435,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1290e14);
@@ -1271,8 +1464,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator,swapPfIds, swapRfIds);
+        vm.startPrank(_liquidator);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _liquidator,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -1325,13 +1524,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1290e14);
@@ -1352,8 +1553,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
+        vm.startPrank(_liquidator);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _liquidator,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -1404,13 +1611,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1335e14);
@@ -1430,8 +1639,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
+        vm.startPrank(_buyer);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _buyer,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -1482,13 +1697,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1333e14);
@@ -1508,8 +1725,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
+        vm.startPrank(_buyer);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _buyer,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -1560,13 +1783,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1285e14);
@@ -1587,8 +1812,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
+        vm.startPrank(_liquidator);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _liquidator,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -1639,13 +1870,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1285e14);
@@ -1665,8 +1898,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
+        vm.startPrank(_buyer);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _buyer,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -1720,13 +1959,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1293e14);
@@ -1746,8 +1987,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
+        vm.startPrank(_community);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _community,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -1803,13 +2050,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1295e14);
@@ -1829,8 +2078,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
+        vm.startPrank(_community);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _community,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -1884,13 +2139,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
@@ -1912,8 +2169,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
+        vm.startPrank(_liquidator);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _liquidator,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -1967,13 +2230,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
@@ -1995,8 +2260,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
+        vm.startPrank(_liquidator);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _liquidator,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -2050,13 +2321,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
@@ -2076,8 +2349,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
+        vm.startPrank(_buyer);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _buyer,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -2131,13 +2410,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
@@ -2157,8 +2438,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
+        vm.startPrank(_buyer);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _buyer,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -2212,13 +2499,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
@@ -2240,8 +2529,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
+        vm.startPrank(_liquidator);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _liquidator,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -2295,13 +2590,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
@@ -2321,8 +2618,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
+        vm.startPrank(_buyer);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _buyer,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -2376,13 +2679,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
@@ -2400,11 +2705,21 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
         uint256[] memory swapRfIds = new uint256[](0);
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeSwapRiskIndicatorsInput = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
-        vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
+        vm.startPrank(_community);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _community,
+            swapPfIds,
+            swapRfIds,
+            closeSwapRiskIndicatorsInput
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -2458,13 +2773,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
@@ -2482,11 +2799,21 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
         uint256[] memory swapRfIds = new uint256[](0);
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeSwapRiskIndicatorsInput = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
-        vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
+        vm.startPrank(_community);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _community,
+            swapPfIds,
+            swapRfIds,
+            closeSwapRiskIndicatorsInput
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -2540,13 +2867,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
@@ -2564,11 +2893,21 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
         uint256[] memory swapRfIds = new uint256[](0);
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeSwapRiskIndicatorsInput = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
-        vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
+        vm.startPrank(_community);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _community,
+            swapPfIds,
+            swapRfIds,
+            closeSwapRiskIndicatorsInput
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -2622,13 +2961,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(0)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1290e14);
@@ -2648,8 +2989,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](0);
 
         //when
-        vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
+        vm.startPrank(_community);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _community,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -2704,13 +3051,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1290e14);
@@ -2726,8 +3075,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
+        vm.startPrank(_liquidator);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _liquidator,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -2783,13 +3138,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1288e14);
@@ -2810,8 +3167,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
+        vm.startPrank(_liquidator);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _liquidator,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -2861,13 +3224,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1335e14);
@@ -2887,8 +3252,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
+        vm.startPrank(_buyer);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _buyer,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -2939,13 +3310,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1335e14);
@@ -2965,8 +3338,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
+        vm.startPrank(_buyer);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _buyer,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -3017,13 +3396,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1285e14);
@@ -3044,8 +3425,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
+        vm.startPrank(_liquidator);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _liquidator,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -3096,13 +3483,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1285e14);
@@ -3122,8 +3511,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
+        vm.startPrank(_buyer);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _buyer,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -3175,13 +3570,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1290e14);
@@ -3201,8 +3598,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
+        vm.startPrank(_community);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _community,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -3258,13 +3661,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1295e14);
@@ -3284,8 +3689,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
+        vm.startPrank(_community);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _community,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -3343,13 +3754,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1295e14);
@@ -3369,8 +3782,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
+        vm.startPrank(_community);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _community,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -3424,13 +3843,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
@@ -3452,8 +3873,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
+        vm.startPrank(_liquidator);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _liquidator,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -3507,13 +3934,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1380e14);
@@ -3534,8 +3963,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
+        vm.startPrank(_liquidator);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _liquidator,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -3589,13 +4024,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
@@ -3615,8 +4052,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer,swapPfIds, swapRfIds);
+        vm.startPrank(_buyer);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _buyer,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -3670,13 +4113,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
@@ -3696,8 +4141,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
+        vm.startPrank(_buyer);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _buyer,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -3751,13 +4202,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
@@ -3779,8 +4232,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
+        vm.startPrank(_liquidator);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _liquidator,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -3834,13 +4293,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
@@ -3860,8 +4321,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer,swapPfIds, swapRfIds);
+        vm.startPrank(_buyer);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _buyer,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -3915,13 +4382,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
@@ -3939,11 +4408,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = 1;
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInputs = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
-        vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
+        vm.startPrank(_community);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds, riskIndicatorsInputs);
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -3997,13 +4471,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
@@ -4021,11 +4497,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = 1;
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInputs = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
-        vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
+        vm.startPrank(_community);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds, riskIndicatorsInputs);
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -4079,13 +4560,34 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 500,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            1,
+            _iporProtocolFactory.messageSignerPrivateKey()
+        );
+
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            riskIndicatorsInputs
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
@@ -4104,10 +4606,16 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = 1;
 
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeSwapRiskIndicatorsInput = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
+
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
-        vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds);
+        vm.startPrank(_community);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds, closeSwapRiskIndicatorsInput);
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -4161,13 +4669,15 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            getRiskIndicatorsInputs(1)
         );
+        vm.stopPrank();
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1290e14);
@@ -4187,8 +4697,14 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         swapRfIds[0] = 1;
 
         //when
-        vm.prank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds);
+        vm.startPrank(_community);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+            _community,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
 
         //then
         assertEq(
@@ -4211,5 +4727,27 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         assertEq(buyerBalanceAfter, 39817650);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
+    }
+
+    function getRiskIndicatorsInputs(uint direction) private returns (AmmTypes.RiskIndicatorsInputs memory) {
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 500,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            direction,
+            _iporProtocolFactory.messageSignerPrivateKey()
+        );
+        return riskIndicatorsInputs;
     }
 }

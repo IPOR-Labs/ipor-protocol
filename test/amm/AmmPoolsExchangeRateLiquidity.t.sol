@@ -3,6 +3,7 @@ pragma solidity 0.8.20;
 
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
+import "../utils/DataUtils.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
 
@@ -101,12 +102,13 @@ contract AmmPoolsExchangeRateLiquidityTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, 40 * TestConstants.D18);
 
         // open position to have something in the pool
-        vm.prank(_userTwo);
+        vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _userTwo,
             40 * TestConstants.D18,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), 0)
         );
 
         // when
@@ -167,13 +169,33 @@ contract AmmPoolsExchangeRateLiquidityTest is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, 40 * TestConstants.N1__0_6DEC);
 
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+        maxCollateralRatio: 900000000000000000,
+        maxCollateralRatioPerLeg: 480000000000000000,
+        maxLeveragePerLeg: 1000000000000000000000,
+        baseSpreadPerLeg: 1000000000000000,
+        fixedRateCapPerLeg: 20000000000000000,
+        demandSpreadFactor: 280,
+        expiration: block.timestamp + 1000,
+        signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            _iporProtocolFactory.messageSignerPrivateKey()
+        );
+
         // open position to have something in the pool
         vm.prank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _userTwo,
             40 * TestConstants.N1__0_6DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            riskIndicatorsInputs
         );
 
         // when

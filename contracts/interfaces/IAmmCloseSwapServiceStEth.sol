@@ -15,7 +15,8 @@ interface IAmmCloseSwapServiceStEth {
     function closeSwapsStEth(
         address beneficiary,
         uint256[] memory payFixedSwapIds,
-        uint256[] memory receiveFixedSwapIds
+        uint256[] memory receiveFixedSwapIds,
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     )
         external
         returns (
@@ -30,7 +31,8 @@ interface IAmmCloseSwapServiceStEth {
     /// @return closedReceiveFixedSwaps array of closed receive-fixed swaps.
     function emergencyCloseSwapsStEth(
         uint256[] memory payFixedSwapIds,
-        uint256[] memory receiveFixedSwapIds
+        uint256[] memory receiveFixedSwapIds,
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     )
         external
         returns (

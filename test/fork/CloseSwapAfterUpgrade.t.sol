@@ -49,862 +49,862 @@ contract CloseSwapAfterUpgradeTest is TestForkCommons {
         vm.createSelectFork(vm.envString("PROVIDER_URL"), 18070000);
     }
 
-    function testShouldCloseSwapTenor28DaiPayFixed() public {
-        //given
-        address user = _getUserAddress(22);
-
-        vm.prank(user);
-        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
-
-        deal(DAI, user, 500_000e18);
-
-        vm.prank(user);
-        uint256 swapId = IMilton(miltonProxyDai).openSwapPayFixed(2_000 * 1e18, 9e18, 10e18);
-
-        IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyDai).getSwapPayFixed(
-            swapId
-        );
-
-        vm.warp(block.timestamp + 5 days);
-
-        //when
-        _init();
-
-        //then
-        IAmmSwapsLens.IporSwap[] memory swaps;
-        (, swaps) = IAmmSwapsLens(iporProtocolRouterProxy).getSwaps(DAI, user, 0, 10);
-        IAmmSwapsLens.IporSwap memory swapAfterUpgradeBeforeClose = swaps[0];
-
-        AmmTypes.Swap memory swapAfterUpgradeBeforeCloseStorage = IAmmStorage(miltonStorageProxyDai).getSwap(
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-            swapId
-        );
-
-        /// @dev checking swap via Router
-        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeBeforeClose.id, "swapId");
-        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeBeforeClose.buyer, "swap.buyer");
-        assertEq(swapBeforeUpgrade.openTimestamp, swapAfterUpgradeBeforeClose.openTimestamp, "swap.openTimestamp");
-        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeBeforeClose.collateral, "swap.collateral");
-        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeBeforeClose.notional, "swap.notional");
-        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeBeforeClose.ibtQuantity, "swap.ibtQuantity");
-        assertEq(
-            swapBeforeUpgrade.fixedInterestRate,
-            swapAfterUpgradeBeforeClose.fixedInterestRate,
-            "swap.fixedInterestRate"
-        );
-        assertEq(
-            swapBeforeUpgrade.liquidationDepositAmount,
-            swapAfterUpgradeBeforeClose.liquidationDepositAmount,
-            "swap.liquidationDepositAmount"
-        );
-        assertEq(swapBeforeUpgrade.state, swapAfterUpgradeBeforeClose.state, "swap.state");
-
-        /// @dev checking swap via AmmStorage
-        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeBeforeCloseStorage.id, "swapId");
-        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeBeforeCloseStorage.buyer, "swap.buyer");
-        assertEq(
-            swapBeforeUpgrade.openTimestamp,
-            swapAfterUpgradeBeforeCloseStorage.openTimestamp,
-            "swap.openTimestamp"
-        );
-
-        assertEq(uint256(swapAfterUpgradeBeforeCloseStorage.tenor), uint256(IporTypes.SwapTenor.DAYS_28), "swap.tenor");
-        assertEq(swapBeforeUpgrade.idsIndex, swapAfterUpgradeBeforeCloseStorage.idsIndex, "swap.idsIndex");
-
-        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeBeforeCloseStorage.collateral, "swap.collateral");
-        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeBeforeCloseStorage.notional, "swap.notional");
-        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeBeforeCloseStorage.ibtQuantity, "swap.ibtQuantity");
-        assertEq(
-            swapBeforeUpgrade.fixedInterestRate,
-            swapAfterUpgradeBeforeCloseStorage.fixedInterestRate,
-            "swap.fixedInterestRate"
-        );
-        assertEq(
-            swapBeforeUpgrade.liquidationDepositAmount,
-            swapAfterUpgradeBeforeCloseStorage.liquidationDepositAmount,
-            "swap.liquidationDepositAmount"
-        );
-        assertEq(swapBeforeUpgrade.state, uint256(swapAfterUpgradeBeforeCloseStorage.state), "swap.state");
-
-        uint256[] memory swapPfIds = new uint256[](1);
-        swapPfIds[0] = swapId;
-        uint256[] memory swapRfIds = new uint256[](0);
-
-        vm.prank(user);
-        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
-
-        AmmTypes.Swap memory swapAfterUpgradeAfterCloseStorage = AmmStorage(miltonStorageProxyDai).getSwap(
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-            swapId
-        );
-
-        /// @dev checking swap via AmmStorage
-        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeAfterCloseStorage.id, "swapId");
-        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeAfterCloseStorage.buyer, "swap.buyer");
-        assertEq(
-            swapBeforeUpgrade.openTimestamp,
-            swapAfterUpgradeBeforeCloseStorage.openTimestamp,
-            "swap.openTimestamp"
-        );
-
-        assertEq(uint256(swapAfterUpgradeAfterCloseStorage.tenor), uint256(IporTypes.SwapTenor.DAYS_28), "swap.tenor");
-        assertEq(swapBeforeUpgrade.idsIndex, swapAfterUpgradeAfterCloseStorage.idsIndex, "swap.idsIndex");
-
-        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeAfterCloseStorage.collateral, "swap.collateral");
-        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeAfterCloseStorage.notional, "swap.notional");
-        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeAfterCloseStorage.ibtQuantity, "swap.ibtQuantity");
-        assertEq(
-            swapBeforeUpgrade.fixedInterestRate,
-            swapAfterUpgradeAfterCloseStorage.fixedInterestRate,
-            "swap.fixedInterestRate"
-        );
-        assertEq(
-            swapBeforeUpgrade.liquidationDepositAmount,
-            swapAfterUpgradeAfterCloseStorage.liquidationDepositAmount,
-            "swap.liquidationDepositAmount"
-        );
-        assertEq(0, uint256(swapAfterUpgradeAfterCloseStorage.state), "swap.state");
-    }
-
-    function testShouldCloseSwapTenor28DaiReceiveFixed() public {
-        //given
-        address user = _getUserAddress(22);
-
-        vm.prank(user);
-        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
-
-        deal(DAI, user, 500_000e18);
-
-        vm.prank(user);
-        uint256 swapId = IMilton(miltonProxyDai).openSwapReceiveFixed(1000e18, 0, 100e18);
-
-        IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyDai)
-            .getSwapReceiveFixed(swapId);
-
-        vm.warp(block.timestamp + 5 days);
-
-        //when
-        _init();
-
-        //then
-        //then
-        IAmmSwapsLens.IporSwap[] memory swaps;
-        (, swaps) = IAmmSwapsLens(iporProtocolRouterProxy).getSwaps(DAI, user, 0, 10);
-        IAmmSwapsLens.IporSwap memory swapAfterUpgradeBeforeClose = swaps[0];
-
-        AmmTypes.Swap memory swapAfterUpgradeBeforeCloseStorage = IAmmStorage(miltonStorageProxyDai).getSwap(
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-            swapId
-        );
-
-        /// @dev checking swap via Router
-        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeBeforeClose.id, "swapId");
-        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeBeforeClose.buyer, "swap.buyer");
-        assertEq(swapBeforeUpgrade.openTimestamp, swapAfterUpgradeBeforeClose.openTimestamp, "swap.openTimestamp");
-        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeBeforeClose.collateral, "swap.collateral");
-        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeBeforeClose.notional, "swap.notional");
-        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeBeforeClose.ibtQuantity, "swap.ibtQuantity");
-        assertEq(
-            swapBeforeUpgrade.fixedInterestRate,
-            swapAfterUpgradeBeforeClose.fixedInterestRate,
-            "swap.fixedInterestRate"
-        );
-        assertEq(
-            swapBeforeUpgrade.liquidationDepositAmount,
-            swapAfterUpgradeBeforeClose.liquidationDepositAmount,
-            "swap.liquidationDepositAmount"
-        );
-        assertEq(swapBeforeUpgrade.state, swapAfterUpgradeBeforeClose.state, "swap.state");
-
-        /// @dev checking swap via AmmStorage
-        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeBeforeCloseStorage.id, "swapId");
-        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeBeforeCloseStorage.buyer, "swap.buyer");
-        assertEq(
-            swapBeforeUpgrade.openTimestamp,
-            swapAfterUpgradeBeforeCloseStorage.openTimestamp,
-            "swap.openTimestamp"
-        );
-
-        assertEq(uint256(swapAfterUpgradeBeforeCloseStorage.tenor), uint256(IporTypes.SwapTenor.DAYS_28), "swap.tenor");
-        assertEq(swapBeforeUpgrade.idsIndex, swapAfterUpgradeBeforeCloseStorage.idsIndex, "swap.idsIndex");
-
-        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeBeforeCloseStorage.collateral, "swap.collateral");
-        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeBeforeCloseStorage.notional, "swap.notional");
-        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeBeforeCloseStorage.ibtQuantity, "swap.ibtQuantity");
-        assertEq(
-            swapBeforeUpgrade.fixedInterestRate,
-            swapAfterUpgradeBeforeCloseStorage.fixedInterestRate,
-            "swap.fixedInterestRate"
-        );
-        assertEq(
-            swapBeforeUpgrade.liquidationDepositAmount,
-            swapAfterUpgradeBeforeCloseStorage.liquidationDepositAmount,
-            "swap.liquidationDepositAmount"
-        );
-        assertEq(swapBeforeUpgrade.state, uint256(swapAfterUpgradeBeforeCloseStorage.state), "swap.state");
-
-        uint256[] memory swapPfIds = new uint256[](0);
-        uint256[] memory swapRfIds = new uint256[](1);
-        swapRfIds[0] = swapId;
-
-        vm.prank(user);
-        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
-
-        AmmTypes.Swap memory swapAfterUpgradeAfterCloseStorage = AmmStorage(miltonStorageProxyDai).getSwap(
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-            swapId
-        );
-
-        /// @dev checking swap via AmmStorage
-        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeAfterCloseStorage.id, "swapId");
-        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeAfterCloseStorage.buyer, "swap.buyer");
-        assertEq(
-            swapBeforeUpgrade.openTimestamp,
-            swapAfterUpgradeBeforeCloseStorage.openTimestamp,
-            "swap.openTimestamp"
-        );
-
-        assertEq(uint256(swapAfterUpgradeAfterCloseStorage.tenor), uint256(IporTypes.SwapTenor.DAYS_28), "swap.tenor");
-        assertEq(swapBeforeUpgrade.idsIndex, swapAfterUpgradeAfterCloseStorage.idsIndex, "swap.idsIndex");
-
-        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeAfterCloseStorage.collateral, "swap.collateral");
-        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeAfterCloseStorage.notional, "swap.notional");
-        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeAfterCloseStorage.ibtQuantity, "swap.ibtQuantity");
-        assertEq(
-            swapBeforeUpgrade.fixedInterestRate,
-            swapAfterUpgradeAfterCloseStorage.fixedInterestRate,
-            "swap.fixedInterestRate"
-        );
-        assertEq(
-            swapBeforeUpgrade.liquidationDepositAmount,
-            swapAfterUpgradeAfterCloseStorage.liquidationDepositAmount,
-            "swap.liquidationDepositAmount"
-        );
-        assertEq(0, uint256(swapAfterUpgradeAfterCloseStorage.state), "swap.state");
-    }
-
-    function testShouldCloseSwapTenor28UsdcPayFixed() public {
-        //given
-        address user = _getUserAddress(22);
-
-        vm.startPrank(user);
-        ERC20(USDC).safeApprove(miltonProxyUsdc, 500_000e6);
-        vm.stopPrank();
-
-        deal(USDC, user, 500_000e6);
-
-        vm.prank(user);
-        uint256 swapId = IMilton(miltonProxyUsdc).openSwapPayFixed(2_000 * 1e6, 9e18, 10e18);
-
-        IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyUsdc).getSwapPayFixed(
-            swapId
-        );
-
-        vm.warp(block.timestamp + 5 days);
-
-        //when
-        _init();
-
-        //then
-        IAmmSwapsLens.IporSwap[] memory swaps;
-        (, swaps) = IAmmSwapsLens(iporProtocolRouterProxy).getSwaps(USDC, user, 0, 10);
-        IAmmSwapsLens.IporSwap memory swapAfterUpgradeBeforeClose = swaps[0];
-
-        AmmTypes.Swap memory swapAfterUpgradeBeforeCloseStorage = IAmmStorage(miltonStorageProxyUsdc).getSwap(
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-            swapId
-        );
-
-        /// @dev checking swap via Router
-        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeBeforeClose.id, "swapId");
-        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeBeforeClose.buyer, "swap.buyer");
-        assertEq(swapBeforeUpgrade.openTimestamp, swapAfterUpgradeBeforeClose.openTimestamp, "swap.openTimestamp");
-        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeBeforeClose.collateral, "swap.collateral");
-        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeBeforeClose.notional, "swap.notional");
-        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeBeforeClose.ibtQuantity, "swap.ibtQuantity");
-        assertEq(
-            swapBeforeUpgrade.fixedInterestRate,
-            swapAfterUpgradeBeforeClose.fixedInterestRate,
-            "swap.fixedInterestRate"
-        );
-        assertEq(
-            swapBeforeUpgrade.liquidationDepositAmount,
-            swapAfterUpgradeBeforeClose.liquidationDepositAmount,
-            "swap.liquidationDepositAmount"
-        );
-        assertEq(swapBeforeUpgrade.state, swapAfterUpgradeBeforeClose.state, "swap.state");
-
-        /// @dev checking swap via AmmStorage
-        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeBeforeCloseStorage.id, "swapId");
-        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeBeforeCloseStorage.buyer, "swap.buyer");
-        assertEq(
-            swapBeforeUpgrade.openTimestamp,
-            swapAfterUpgradeBeforeCloseStorage.openTimestamp,
-            "swap.openTimestamp"
-        );
-
-        assertEq(uint256(swapAfterUpgradeBeforeCloseStorage.tenor), uint256(IporTypes.SwapTenor.DAYS_28), "swap.tenor");
-        assertEq(swapBeforeUpgrade.idsIndex, swapAfterUpgradeBeforeCloseStorage.idsIndex, "swap.idsIndex");
-
-        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeBeforeCloseStorage.collateral, "swap.collateral");
-        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeBeforeCloseStorage.notional, "swap.notional");
-        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeBeforeCloseStorage.ibtQuantity, "swap.ibtQuantity");
-        assertEq(
-            swapBeforeUpgrade.fixedInterestRate,
-            swapAfterUpgradeBeforeCloseStorage.fixedInterestRate,
-            "swap.fixedInterestRate"
-        );
-        assertEq(
-            swapBeforeUpgrade.liquidationDepositAmount,
-            swapAfterUpgradeBeforeCloseStorage.liquidationDepositAmount,
-            "swap.liquidationDepositAmount"
-        );
-        assertEq(swapBeforeUpgrade.state, uint256(swapAfterUpgradeBeforeCloseStorage.state), "swap.state");
-
-        uint256[] memory swapPfIds = new uint256[](1);
-        swapPfIds[0] = swapId;
-        uint256[] memory swapRfIds = new uint256[](0);
-
-        vm.prank(user);
-        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsUsdc(user, swapPfIds, swapRfIds);
-
-        AmmTypes.Swap memory swapAfterUpgradeAfterCloseStorage = AmmStorage(miltonStorageProxyUsdc).getSwap(
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-            swapId
-        );
-
-        /// @dev checking swap via AmmStorage
-        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeAfterCloseStorage.id, "swapId");
-        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeAfterCloseStorage.buyer, "swap.buyer");
-        assertEq(
-            swapBeforeUpgrade.openTimestamp,
-            swapAfterUpgradeBeforeCloseStorage.openTimestamp,
-            "swap.openTimestamp"
-        );
-
-        assertEq(uint256(swapAfterUpgradeAfterCloseStorage.tenor), uint256(IporTypes.SwapTenor.DAYS_28), "swap.tenor");
-        assertEq(swapBeforeUpgrade.idsIndex, swapAfterUpgradeAfterCloseStorage.idsIndex, "swap.idsIndex");
-
-        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeAfterCloseStorage.collateral, "swap.collateral");
-        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeAfterCloseStorage.notional, "swap.notional");
-        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeAfterCloseStorage.ibtQuantity, "swap.ibtQuantity");
-        assertEq(
-            swapBeforeUpgrade.fixedInterestRate,
-            swapAfterUpgradeAfterCloseStorage.fixedInterestRate,
-            "swap.fixedInterestRate"
-        );
-        assertEq(
-            swapBeforeUpgrade.liquidationDepositAmount,
-            swapAfterUpgradeAfterCloseStorage.liquidationDepositAmount,
-            "swap.liquidationDepositAmount"
-        );
-        assertEq(0, uint256(swapAfterUpgradeAfterCloseStorage.state), "swap.state");
-    }
-
-    function testShouldCloseSwapTenor28UsdtReceiveFixed() public {
-        //given
-        address user = _getUserAddress(22);
-
-        vm.startPrank(user);
-        ERC20(USDT).safeApprove(miltonProxyUsdt, 500_000e6);
-        vm.stopPrank();
-
-        deal(USDT, user, 500_000e6);
-
-        vm.prank(user);
-        uint256 swapId = IMilton(miltonProxyUsdt).openSwapReceiveFixed(1000e6, 0, 100e18);
-
-        IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyUsdt)
-            .getSwapReceiveFixed(swapId);
-
-        vm.warp(block.timestamp + 5 days);
-
-        //when
-        _init();
-
-        //then
-        //then
-        IAmmSwapsLens.IporSwap[] memory swaps;
-        (, swaps) = IAmmSwapsLens(iporProtocolRouterProxy).getSwaps(USDT, user, 0, 10);
-        IAmmSwapsLens.IporSwap memory swapAfterUpgradeBeforeClose = swaps[0];
-
-        AmmTypes.Swap memory swapAfterUpgradeBeforeCloseStorage = IAmmStorage(miltonStorageProxyUsdt).getSwap(
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-            swapId
-        );
-
-        /// @dev checking swap via Router
-        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeBeforeClose.id, "swapId");
-        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeBeforeClose.buyer, "swap.buyer");
-        assertEq(swapBeforeUpgrade.openTimestamp, swapAfterUpgradeBeforeClose.openTimestamp, "swap.openTimestamp");
-        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeBeforeClose.collateral, "swap.collateral");
-        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeBeforeClose.notional, "swap.notional");
-        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeBeforeClose.ibtQuantity, "swap.ibtQuantity");
-        assertEq(
-            swapBeforeUpgrade.fixedInterestRate,
-            swapAfterUpgradeBeforeClose.fixedInterestRate,
-            "swap.fixedInterestRate"
-        );
-        assertEq(
-            swapBeforeUpgrade.liquidationDepositAmount,
-            swapAfterUpgradeBeforeClose.liquidationDepositAmount,
-            "swap.liquidationDepositAmount"
-        );
-        assertEq(swapBeforeUpgrade.state, swapAfterUpgradeBeforeClose.state, "swap.state");
-
-        /// @dev checking swap via AmmStorage
-        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeBeforeCloseStorage.id, "swapId");
-        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeBeforeCloseStorage.buyer, "swap.buyer");
-        assertEq(
-            swapBeforeUpgrade.openTimestamp,
-            swapAfterUpgradeBeforeCloseStorage.openTimestamp,
-            "swap.openTimestamp"
-        );
-
-        assertEq(uint256(swapAfterUpgradeBeforeCloseStorage.tenor), uint256(IporTypes.SwapTenor.DAYS_28), "swap.tenor");
-        assertEq(swapBeforeUpgrade.idsIndex, swapAfterUpgradeBeforeCloseStorage.idsIndex, "swap.idsIndex");
-
-        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeBeforeCloseStorage.collateral, "swap.collateral");
-        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeBeforeCloseStorage.notional, "swap.notional");
-        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeBeforeCloseStorage.ibtQuantity, "swap.ibtQuantity");
-        assertEq(
-            swapBeforeUpgrade.fixedInterestRate,
-            swapAfterUpgradeBeforeCloseStorage.fixedInterestRate,
-            "swap.fixedInterestRate"
-        );
-        assertEq(
-            swapBeforeUpgrade.liquidationDepositAmount,
-            swapAfterUpgradeBeforeCloseStorage.liquidationDepositAmount,
-            "swap.liquidationDepositAmount"
-        );
-        assertEq(swapBeforeUpgrade.state, uint256(swapAfterUpgradeBeforeCloseStorage.state), "swap.state");
-
-        uint256[] memory swapPfIds = new uint256[](0);
-        uint256[] memory swapRfIds = new uint256[](1);
-        swapRfIds[0] = swapId;
-
-        vm.prank(user);
-        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsUsdt(user, swapPfIds, swapRfIds);
-
-        AmmTypes.Swap memory swapAfterUpgradeAfterCloseStorage = AmmStorage(miltonStorageProxyUsdt).getSwap(
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-            swapId
-        );
-
-        /// @dev checking swap via AmmStorage
-        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeAfterCloseStorage.id, "swapId");
-        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeAfterCloseStorage.buyer, "swap.buyer");
-        assertEq(
-            swapBeforeUpgrade.openTimestamp,
-            swapAfterUpgradeBeforeCloseStorage.openTimestamp,
-            "swap.openTimestamp"
-        );
-
-        assertEq(uint256(swapAfterUpgradeAfterCloseStorage.tenor), uint256(IporTypes.SwapTenor.DAYS_28), "swap.tenor");
-        assertEq(swapBeforeUpgrade.idsIndex, swapAfterUpgradeAfterCloseStorage.idsIndex, "swap.idsIndex");
-
-        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeAfterCloseStorage.collateral, "swap.collateral");
-        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeAfterCloseStorage.notional, "swap.notional");
-        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeAfterCloseStorage.ibtQuantity, "swap.ibtQuantity");
-        assertEq(
-            swapBeforeUpgrade.fixedInterestRate,
-            swapAfterUpgradeAfterCloseStorage.fixedInterestRate,
-            "swap.fixedInterestRate"
-        );
-        assertEq(
-            swapBeforeUpgrade.liquidationDepositAmount,
-            swapAfterUpgradeAfterCloseStorage.liquidationDepositAmount,
-            "swap.liquidationDepositAmount"
-        );
-        assertEq(0, uint256(swapAfterUpgradeAfterCloseStorage.state), "swap.state");
-    }
-
-    function testShouldCloseInV2SwapFromV1AndNotUpdateTimeWeightedTenor28DaiPayFixed() public {
-        //given
-        address user = _getUserAddress(22);
-
-        vm.prank(user);
-        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
-
-        deal(DAI, user, 500_000e18);
-
-        vm.prank(user);
-        uint256 swapIdOneV1 = IMilton(miltonProxyDai).openSwapPayFixed(2_000 * 1e18, 9e18, 10e18);
-
-        vm.prank(user);
-        uint256 swapIdTwoV1 = IMilton(miltonProxyDai).openSwapPayFixed(2_000 * 1e18, 9e18, 10e18);
-
-        IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyDai).getSwapPayFixed(
-            swapIdOneV1
-        );
-
-        vm.warp(block.timestamp + 5 days);
-
-        //when
-        _init();
-
-        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalBeforeClose = SpreadStorageLens(
-            spreadRouter
-        ).getTimeWeightedNotional();
-
-        uint256[] memory swapPfIds = new uint256[](1);
-        swapPfIds[0] = swapIdOneV1;
-        uint256[] memory swapRfIds = new uint256[](0);
-
-        vm.prank(user);
-        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
-
-        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalAfterClose = SpreadStorageLens(
-            spreadRouter
-        ).getTimeWeightedNotional();
-
-        assertEq(timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed, 0);
-        assertEq(timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed, 0);
-    }
-
-    function testShouldCloseInV2SwapFromV1AndNotUpdateTimeWeightedTenor28DaiPayFixedTwoNewSwapInV2() public {
-        //given
-        address user = _getUserAddress(22);
-
-        vm.prank(user);
-        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
-
-        deal(DAI, user, 500_000e18);
-
-        vm.prank(user);
-        uint256 swapIdOneV1 = IMilton(miltonProxyDai).openSwapPayFixed(1_000 * 1e18, 9e18, 10e18);
-
-        vm.prank(user);
-        uint256 swapIdTwoV1 = IMilton(miltonProxyDai).openSwapPayFixed(1_000 * 1e18, 9e18, 10e18);
-
-        IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyDai).getSwapPayFixed(
-            swapIdOneV1
-        );
-
-        vm.warp(block.timestamp + 5 days);
-
-        //when
-        _init();
-
-        //then
-        vm.prank(user);
-        ERC20(DAI).approve(iporProtocolRouterProxy, type(uint256).max);
-
-        vm.prank(user);
-        uint256 swapIdThreeV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapPayFixed28daysDai(
-            user,
-            500 * 1e18,
-            9e18,
-            10e18
-        );
-
-        vm.prank(user);
-        uint256 swapIdFourV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapPayFixed28daysDai(
-            user,
-            1_000 * 1e18,
-            9e18,
-            10e18
-        );
-
-        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalBeforeClose = SpreadStorageLens(
-            spreadRouter
-        ).getTimeWeightedNotional();
-
-        uint256[] memory swapPfIds = new uint256[](1);
-        swapPfIds[0] = swapIdOneV1;
-        uint256[] memory swapRfIds = new uint256[](0);
-
-        vm.prank(user);
-        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
-
-        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalAfterClose = SpreadStorageLens(
-            spreadRouter
-        ).getTimeWeightedNotional();
-
-        assertEq(
-            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
-            14294000000000000000000,
-            "timeWeightedNotionalPayFixed before"
-        );
-        assertEq(
-            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
-            14294000000000000000000,
-            "timeWeightedNotionalPayFixed after"
-        );
-
-        assertEq(
-            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
-            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
-            "timeWeightedNotionalPayFixed"
-        );
-    }
-
-    function testShouldCloseInV2SwapFromV1AndNotUpdateTimeWeightedTenor28DaiPayFixedNewSwapInV2AndOneClosed() public {
-        //given
-        address user = _getUserAddress(22);
-
-        vm.prank(user);
-        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
-
-        deal(DAI, user, 500_000e18);
-
-        vm.prank(user);
-        uint256 swapIdOneV1 = IMilton(miltonProxyDai).openSwapPayFixed(1_000 * 1e18, 9e18, 10e18);
-
-        vm.prank(user);
-        uint256 swapIdTwoV1 = IMilton(miltonProxyDai).openSwapPayFixed(1_000 * 1e18, 9e18, 10e18);
-
-        IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyDai).getSwapPayFixed(
-            swapIdOneV1
-        );
-
-        vm.warp(block.timestamp + 5 days);
-
-        //when
-        _init();
-
-        //then
-        vm.prank(user);
-        ERC20(DAI).approve(iporProtocolRouterProxy, type(uint256).max);
-
-        vm.prank(user);
-        uint256 swapIdThreeV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapPayFixed28daysDai(
-            user,
-            500 * 1e18,
-            9e18,
-            10e18
-        );
-
-        vm.prank(user);
-        uint256 swapIdFourV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapPayFixed28daysDai(
-            user,
-            1_000 * 1e18,
-            9e18,
-            10e18
-        );
-
-        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalBeforeClose = SpreadStorageLens(
-            spreadRouter
-        ).getTimeWeightedNotional();
-
-        uint256[] memory swapPfIds = new uint256[](2);
-        swapPfIds[0] = swapIdOneV1;
-        swapPfIds[1] = swapIdFourV2;
-        uint256[] memory swapRfIds = new uint256[](0);
-
-        vm.prank(user);
-        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
-
-        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalAfterClose = SpreadStorageLens(
-            spreadRouter
-        ).getTimeWeightedNotional();
-
-        assertEq(
-            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
-            14294000000000000000000,
-            "timeWeightedNotionalPayFixed before"
-        );
-        assertEq(
-            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
-            4647000000000000000000,
-            "timeWeightedNotionalPayFixed after"
-        );
-
-        assertNotEq(
-            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
-            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
-            "timeWeightedNotionalPayFixed"
-        );
-    }
-
-    function testShouldCloseInV2SwapFromV1AndNotUpdateTimeWeightedTenor28DaiReceiveFixed() public {
-        //given
-        address user = _getUserAddress(22);
-
-        vm.prank(user);
-        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
-
-        deal(DAI, user, 500_000e18);
-
-        vm.prank(user);
-        uint256 swapIdOneV1 = IMilton(miltonProxyDai).openSwapReceiveFixed(2_000 * 1e18, 0, 10e18);
-
-        vm.prank(user);
-        uint256 swapIdTwoV1 = IMilton(miltonProxyDai).openSwapReceiveFixed(2_000 * 1e18, 0, 10e18);
-
-        vm.warp(block.timestamp + 5 days);
-
-        //when
-        _init();
-
-        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalBeforeClose = SpreadStorageLens(
-            spreadRouter
-        ).getTimeWeightedNotional();
-
-        uint256[] memory swapPfIds = new uint256[](0);
-        uint256[] memory swapRfIds = new uint256[](1);
-        swapRfIds[0] = swapIdOneV1;
-
-        vm.prank(user);
-        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
-
-        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalAfterClose = SpreadStorageLens(
-            spreadRouter
-        ).getTimeWeightedNotional();
-
-        assertEq(timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed, 0);
-        assertEq(timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed, 0);
-    }
-
-    function testShouldCloseInV2SwapFromV1AndNotUpdateTimeWeightedTenor28DaiReceiveFixedTwoNewSwapInV2() public {
-        //given
-        address user = _getUserAddress(22);
-
-        vm.prank(user);
-        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
-
-        deal(DAI, user, 500_000e18);
-
-        vm.prank(user);
-        uint256 swapIdOneV1 = IMilton(miltonProxyDai).openSwapReceiveFixed(1_000 * 1e18, 0, 10e18);
-
-        vm.prank(user);
-        uint256 swapIdTwoV1 = IMilton(miltonProxyDai).openSwapReceiveFixed(1_000 * 1e18, 0, 10e18);
-
-        vm.warp(block.timestamp + 5 days);
-
-        //when
-        _init();
-
-        //then
-        vm.prank(user);
-        ERC20(DAI).approve(iporProtocolRouterProxy, type(uint256).max);
-
-        vm.prank(user);
-        uint256 swapIdThreeV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapReceiveFixed28daysDai(
-            user,
-            500 * 1e18,
-            0,
-            10e18
-        );
-
-        vm.prank(user);
-        uint256 swapIdFourV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapReceiveFixed28daysDai(
-            user,
-            1_000 * 1e18,
-            0,
-            10e18
-        );
-
-        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalBeforeClose = SpreadStorageLens(
-            spreadRouter
-        ).getTimeWeightedNotional();
-
-        uint256[] memory swapPfIds = new uint256[](0);
-        uint256[] memory swapRfIds = new uint256[](1);
-        swapRfIds[0] = swapIdOneV1;
-
-        vm.prank(user);
-        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
-
-        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalAfterClose = SpreadStorageLens(
-            spreadRouter
-        ).getTimeWeightedNotional();
-
-        assertEq(
-            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
-            14294000000000000000000,
-            "timeWeightedNotionalReceiveFixed before"
-        );
-        assertEq(
-            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
-            14294000000000000000000,
-            "timeWeightedNotionalReceiveFixed after"
-        );
-
-        assertEq(
-            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
-            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
-            "timeWeightedNotionalReceiveFixed"
-        );
-    }
-
-    function testShouldCloseInV2SwapFromV1AndNotUpdateTimeWeightedTenor28DaiReceiveFixedNewSwapInV2AndOneClosed()
-        public
-    {
-        //given
-        address user = _getUserAddress(22);
-
-        vm.prank(user);
-        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
-
-        deal(DAI, user, 500_000e18);
-
-        vm.prank(user);
-        uint256 swapIdOneV1 = IMilton(miltonProxyDai).openSwapReceiveFixed(1_000 * 1e18, 0, 10e18);
-
-        vm.prank(user);
-        uint256 swapIdTwoV1 = IMilton(miltonProxyDai).openSwapReceiveFixed(1_000 * 1e18, 0, 10e18);
-
-        IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyDai)
-            .getSwapReceiveFixed(swapIdOneV1);
-
-        vm.warp(block.timestamp + 5 days);
-
-        //when
-        _init();
-
-        //then
-        vm.prank(user);
-        ERC20(DAI).approve(iporProtocolRouterProxy, type(uint256).max);
-
-        vm.prank(user);
-        uint256 swapIdThreeV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapReceiveFixed28daysDai(
-            user,
-            500 * 1e18,
-            0,
-            10e18
-        );
-
-        vm.prank(user);
-        uint256 swapIdFourV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapReceiveFixed28daysDai(
-            user,
-            1_000 * 1e18,
-            0,
-            10e18
-        );
-
-        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalBeforeClose = SpreadStorageLens(
-            spreadRouter
-        ).getTimeWeightedNotional();
-
-        uint256[] memory swapPfIds = new uint256[](0);
-        uint256[] memory swapRfIds = new uint256[](2);
-        swapRfIds[0] = swapIdOneV1;
-        swapRfIds[1] = swapIdFourV2;
-
-        vm.prank(user);
-        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
-
-        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalAfterClose = SpreadStorageLens(
-            spreadRouter
-        ).getTimeWeightedNotional();
-
-        assertEq(
-            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
-            14294000000000000000000,
-            "timeWeightedNotionalReceiveFixed before"
-        );
-        assertEq(
-            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
-            4647000000000000000000,
-            "timeWeightedNotionalReceiveFixed after"
-        );
-
-        assertNotEq(
-            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
-            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
-            "timeWeightedNotionalReceiveFixed"
-        );
-    }
+//    function testShouldCloseSwapTenor28DaiPayFixed() public {
+//        //given
+//        address user = _getUserAddress(22);
+//
+//        vm.prank(user);
+//        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
+//
+//        deal(DAI, user, 500_000e18);
+//
+//        vm.prank(user);
+//        uint256 swapId = IMilton(miltonProxyDai).openSwapPayFixed(2_000 * 1e18, 9e18, 10e18);
+//
+//        IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyDai).getSwapPayFixed(
+//            swapId
+//        );
+//
+//        vm.warp(block.timestamp + 5 days);
+//
+//        //when
+//        _init();
+//
+//        //then
+//        IAmmSwapsLens.IporSwap[] memory swaps;
+//        (, swaps) = IAmmSwapsLens(iporProtocolRouterProxy).getSwaps(DAI, user, 0, 10);
+//        IAmmSwapsLens.IporSwap memory swapAfterUpgradeBeforeClose = swaps[0];
+//
+//        AmmTypesGenOne.sol.Swap memory swapAfterUpgradeBeforeCloseStorage = IAmmStorage(miltonStorageProxyDai).getSwap(
+//            AmmTypesGenOne.sol.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+//            swapId
+//        );
+//
+//        /// @dev checking swap via Router
+//        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeBeforeClose.id, "swapId");
+//        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeBeforeClose.buyer, "swap.buyer");
+//        assertEq(swapBeforeUpgrade.openTimestamp, swapAfterUpgradeBeforeClose.openTimestamp, "swap.openTimestamp");
+//        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeBeforeClose.collateral, "swap.collateral");
+//        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeBeforeClose.notional, "swap.notional");
+//        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeBeforeClose.ibtQuantity, "swap.ibtQuantity");
+//        assertEq(
+//            swapBeforeUpgrade.fixedInterestRate,
+//            swapAfterUpgradeBeforeClose.fixedInterestRate,
+//            "swap.fixedInterestRate"
+//        );
+//        assertEq(
+//            swapBeforeUpgrade.liquidationDepositAmount,
+//            swapAfterUpgradeBeforeClose.liquidationDepositAmount,
+//            "swap.liquidationDepositAmount"
+//        );
+//        assertEq(swapBeforeUpgrade.state, swapAfterUpgradeBeforeClose.state, "swap.state");
+//
+//        /// @dev checking swap via AmmStorage
+//        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeBeforeCloseStorage.id, "swapId");
+//        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeBeforeCloseStorage.buyer, "swap.buyer");
+//        assertEq(
+//            swapBeforeUpgrade.openTimestamp,
+//            swapAfterUpgradeBeforeCloseStorage.openTimestamp,
+//            "swap.openTimestamp"
+//        );
+//
+//        assertEq(uint256(swapAfterUpgradeBeforeCloseStorage.tenor), uint256(IporTypes.SwapTenor.DAYS_28), "swap.tenor");
+//        assertEq(swapBeforeUpgrade.idsIndex, swapAfterUpgradeBeforeCloseStorage.idsIndex, "swap.idsIndex");
+//
+//        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeBeforeCloseStorage.collateral, "swap.collateral");
+//        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeBeforeCloseStorage.notional, "swap.notional");
+//        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeBeforeCloseStorage.ibtQuantity, "swap.ibtQuantity");
+//        assertEq(
+//            swapBeforeUpgrade.fixedInterestRate,
+//            swapAfterUpgradeBeforeCloseStorage.fixedInterestRate,
+//            "swap.fixedInterestRate"
+//        );
+//        assertEq(
+//            swapBeforeUpgrade.liquidationDepositAmount,
+//            swapAfterUpgradeBeforeCloseStorage.liquidationDepositAmount,
+//            "swap.liquidationDepositAmount"
+//        );
+//        assertEq(swapBeforeUpgrade.state, uint256(swapAfterUpgradeBeforeCloseStorage.state), "swap.state");
+//
+//        uint256[] memory swapPfIds = new uint256[](1);
+//        swapPfIds[0] = swapId;
+//        uint256[] memory swapRfIds = new uint256[](0);
+//
+//        vm.prank(user);
+//        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
+//
+//        AmmTypesGenOne.sol.Swap memory swapAfterUpgradeAfterCloseStorage = AmmStorage(miltonStorageProxyDai).getSwap(
+//            AmmTypesGenOne.sol.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+//            swapId
+//        );
+//
+//        /// @dev checking swap via AmmStorage
+//        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeAfterCloseStorage.id, "swapId");
+//        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeAfterCloseStorage.buyer, "swap.buyer");
+//        assertEq(
+//            swapBeforeUpgrade.openTimestamp,
+//            swapAfterUpgradeBeforeCloseStorage.openTimestamp,
+//            "swap.openTimestamp"
+//        );
+//
+//        assertEq(uint256(swapAfterUpgradeAfterCloseStorage.tenor), uint256(IporTypes.SwapTenor.DAYS_28), "swap.tenor");
+//        assertEq(swapBeforeUpgrade.idsIndex, swapAfterUpgradeAfterCloseStorage.idsIndex, "swap.idsIndex");
+//
+//        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeAfterCloseStorage.collateral, "swap.collateral");
+//        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeAfterCloseStorage.notional, "swap.notional");
+//        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeAfterCloseStorage.ibtQuantity, "swap.ibtQuantity");
+//        assertEq(
+//            swapBeforeUpgrade.fixedInterestRate,
+//            swapAfterUpgradeAfterCloseStorage.fixedInterestRate,
+//            "swap.fixedInterestRate"
+//        );
+//        assertEq(
+//            swapBeforeUpgrade.liquidationDepositAmount,
+//            swapAfterUpgradeAfterCloseStorage.liquidationDepositAmount,
+//            "swap.liquidationDepositAmount"
+//        );
+//        assertEq(0, uint256(swapAfterUpgradeAfterCloseStorage.state), "swap.state");
+//    }
+
+//    function testShouldCloseSwapTenor28DaiReceiveFixed() public {
+//        //given
+//        address user = _getUserAddress(22);
+//
+//        vm.prank(user);
+//        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
+//
+//        deal(DAI, user, 500_000e18);
+//
+//        vm.prank(user);
+//        uint256 swapId = IMilton(miltonProxyDai).openSwapReceiveFixed(1000e18, 0, 100e18);
+//
+//        IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyDai)
+//            .getSwapReceiveFixed(swapId);
+//
+//        vm.warp(block.timestamp + 5 days);
+//
+//        //when
+//        _init();
+//
+//        //then
+//        //then
+//        IAmmSwapsLens.IporSwap[] memory swaps;
+//        (, swaps) = IAmmSwapsLens(iporProtocolRouterProxy).getSwaps(DAI, user, 0, 10);
+//        IAmmSwapsLens.IporSwap memory swapAfterUpgradeBeforeClose = swaps[0];
+//
+//        AmmTypesGenOne.sol.Swap memory swapAfterUpgradeBeforeCloseStorage = IAmmStorage(miltonStorageProxyDai).getSwap(
+//            AmmTypesGenOne.sol.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+//            swapId
+//        );
+//
+//        /// @dev checking swap via Router
+//        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeBeforeClose.id, "swapId");
+//        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeBeforeClose.buyer, "swap.buyer");
+//        assertEq(swapBeforeUpgrade.openTimestamp, swapAfterUpgradeBeforeClose.openTimestamp, "swap.openTimestamp");
+//        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeBeforeClose.collateral, "swap.collateral");
+//        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeBeforeClose.notional, "swap.notional");
+//        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeBeforeClose.ibtQuantity, "swap.ibtQuantity");
+//        assertEq(
+//            swapBeforeUpgrade.fixedInterestRate,
+//            swapAfterUpgradeBeforeClose.fixedInterestRate,
+//            "swap.fixedInterestRate"
+//        );
+//        assertEq(
+//            swapBeforeUpgrade.liquidationDepositAmount,
+//            swapAfterUpgradeBeforeClose.liquidationDepositAmount,
+//            "swap.liquidationDepositAmount"
+//        );
+//        assertEq(swapBeforeUpgrade.state, swapAfterUpgradeBeforeClose.state, "swap.state");
+//
+//        /// @dev checking swap via AmmStorage
+//        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeBeforeCloseStorage.id, "swapId");
+//        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeBeforeCloseStorage.buyer, "swap.buyer");
+//        assertEq(
+//            swapBeforeUpgrade.openTimestamp,
+//            swapAfterUpgradeBeforeCloseStorage.openTimestamp,
+//            "swap.openTimestamp"
+//        );
+//
+//        assertEq(uint256(swapAfterUpgradeBeforeCloseStorage.tenor), uint256(IporTypes.SwapTenor.DAYS_28), "swap.tenor");
+//        assertEq(swapBeforeUpgrade.idsIndex, swapAfterUpgradeBeforeCloseStorage.idsIndex, "swap.idsIndex");
+//
+//        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeBeforeCloseStorage.collateral, "swap.collateral");
+//        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeBeforeCloseStorage.notional, "swap.notional");
+//        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeBeforeCloseStorage.ibtQuantity, "swap.ibtQuantity");
+//        assertEq(
+//            swapBeforeUpgrade.fixedInterestRate,
+//            swapAfterUpgradeBeforeCloseStorage.fixedInterestRate,
+//            "swap.fixedInterestRate"
+//        );
+//        assertEq(
+//            swapBeforeUpgrade.liquidationDepositAmount,
+//            swapAfterUpgradeBeforeCloseStorage.liquidationDepositAmount,
+//            "swap.liquidationDepositAmount"
+//        );
+//        assertEq(swapBeforeUpgrade.state, uint256(swapAfterUpgradeBeforeCloseStorage.state), "swap.state");
+//
+//        uint256[] memory swapPfIds = new uint256[](0);
+//        uint256[] memory swapRfIds = new uint256[](1);
+//        swapRfIds[0] = swapId;
+//
+//        vm.prank(user);
+//        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
+//
+//        AmmTypesGenOne.sol.Swap memory swapAfterUpgradeAfterCloseStorage = AmmStorage(miltonStorageProxyDai).getSwap(
+//            AmmTypesGenOne.sol.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+//            swapId
+//        );
+//
+//        /// @dev checking swap via AmmStorage
+//        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeAfterCloseStorage.id, "swapId");
+//        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeAfterCloseStorage.buyer, "swap.buyer");
+//        assertEq(
+//            swapBeforeUpgrade.openTimestamp,
+//            swapAfterUpgradeBeforeCloseStorage.openTimestamp,
+//            "swap.openTimestamp"
+//        );
+//
+//        assertEq(uint256(swapAfterUpgradeAfterCloseStorage.tenor), uint256(IporTypes.SwapTenor.DAYS_28), "swap.tenor");
+//        assertEq(swapBeforeUpgrade.idsIndex, swapAfterUpgradeAfterCloseStorage.idsIndex, "swap.idsIndex");
+//
+//        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeAfterCloseStorage.collateral, "swap.collateral");
+//        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeAfterCloseStorage.notional, "swap.notional");
+//        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeAfterCloseStorage.ibtQuantity, "swap.ibtQuantity");
+//        assertEq(
+//            swapBeforeUpgrade.fixedInterestRate,
+//            swapAfterUpgradeAfterCloseStorage.fixedInterestRate,
+//            "swap.fixedInterestRate"
+//        );
+//        assertEq(
+//            swapBeforeUpgrade.liquidationDepositAmount,
+//            swapAfterUpgradeAfterCloseStorage.liquidationDepositAmount,
+//            "swap.liquidationDepositAmount"
+//        );
+//        assertEq(0, uint256(swapAfterUpgradeAfterCloseStorage.state), "swap.state");
+//    }
+
+//    function testShouldCloseSwapTenor28UsdcPayFixed() public {
+//        //given
+//        address user = _getUserAddress(22);
+//
+//        vm.startPrank(user);
+//        ERC20(USDC).safeApprove(miltonProxyUsdc, 500_000e6);
+//        vm.stopPrank();
+//
+//        deal(USDC, user, 500_000e6);
+//
+//        vm.prank(user);
+//        uint256 swapId = IMilton(miltonProxyUsdc).openSwapPayFixed(2_000 * 1e6, 9e18, 10e18);
+//
+//        IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyUsdc).getSwapPayFixed(
+//            swapId
+//        );
+//
+//        vm.warp(block.timestamp + 5 days);
+//
+//        //when
+//        _init();
+//
+//        //then
+//        IAmmSwapsLens.IporSwap[] memory swaps;
+//        (, swaps) = IAmmSwapsLens(iporProtocolRouterProxy).getSwaps(USDC, user, 0, 10);
+//        IAmmSwapsLens.IporSwap memory swapAfterUpgradeBeforeClose = swaps[0];
+//
+//        AmmTypesGenOne.sol.Swap memory swapAfterUpgradeBeforeCloseStorage = IAmmStorage(miltonStorageProxyUsdc).getSwap(
+//            AmmTypesGenOne.sol.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+//            swapId
+//        );
+//
+//        /// @dev checking swap via Router
+//        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeBeforeClose.id, "swapId");
+//        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeBeforeClose.buyer, "swap.buyer");
+//        assertEq(swapBeforeUpgrade.openTimestamp, swapAfterUpgradeBeforeClose.openTimestamp, "swap.openTimestamp");
+//        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeBeforeClose.collateral, "swap.collateral");
+//        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeBeforeClose.notional, "swap.notional");
+//        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeBeforeClose.ibtQuantity, "swap.ibtQuantity");
+//        assertEq(
+//            swapBeforeUpgrade.fixedInterestRate,
+//            swapAfterUpgradeBeforeClose.fixedInterestRate,
+//            "swap.fixedInterestRate"
+//        );
+//        assertEq(
+//            swapBeforeUpgrade.liquidationDepositAmount,
+//            swapAfterUpgradeBeforeClose.liquidationDepositAmount,
+//            "swap.liquidationDepositAmount"
+//        );
+//        assertEq(swapBeforeUpgrade.state, swapAfterUpgradeBeforeClose.state, "swap.state");
+//
+//        /// @dev checking swap via AmmStorage
+//        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeBeforeCloseStorage.id, "swapId");
+//        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeBeforeCloseStorage.buyer, "swap.buyer");
+//        assertEq(
+//            swapBeforeUpgrade.openTimestamp,
+//            swapAfterUpgradeBeforeCloseStorage.openTimestamp,
+//            "swap.openTimestamp"
+//        );
+//
+//        assertEq(uint256(swapAfterUpgradeBeforeCloseStorage.tenor), uint256(IporTypes.SwapTenor.DAYS_28), "swap.tenor");
+//        assertEq(swapBeforeUpgrade.idsIndex, swapAfterUpgradeBeforeCloseStorage.idsIndex, "swap.idsIndex");
+//
+//        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeBeforeCloseStorage.collateral, "swap.collateral");
+//        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeBeforeCloseStorage.notional, "swap.notional");
+//        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeBeforeCloseStorage.ibtQuantity, "swap.ibtQuantity");
+//        assertEq(
+//            swapBeforeUpgrade.fixedInterestRate,
+//            swapAfterUpgradeBeforeCloseStorage.fixedInterestRate,
+//            "swap.fixedInterestRate"
+//        );
+//        assertEq(
+//            swapBeforeUpgrade.liquidationDepositAmount,
+//            swapAfterUpgradeBeforeCloseStorage.liquidationDepositAmount,
+//            "swap.liquidationDepositAmount"
+//        );
+//        assertEq(swapBeforeUpgrade.state, uint256(swapAfterUpgradeBeforeCloseStorage.state), "swap.state");
+//
+//        uint256[] memory swapPfIds = new uint256[](1);
+//        swapPfIds[0] = swapId;
+//        uint256[] memory swapRfIds = new uint256[](0);
+//
+//        vm.prank(user);
+//        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsUsdc(user, swapPfIds, swapRfIds);
+//
+//        AmmTypesGenOne.sol.Swap memory swapAfterUpgradeAfterCloseStorage = AmmStorage(miltonStorageProxyUsdc).getSwap(
+//            AmmTypesGenOne.sol.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+//            swapId
+//        );
+//
+//        /// @dev checking swap via AmmStorage
+//        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeAfterCloseStorage.id, "swapId");
+//        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeAfterCloseStorage.buyer, "swap.buyer");
+//        assertEq(
+//            swapBeforeUpgrade.openTimestamp,
+//            swapAfterUpgradeBeforeCloseStorage.openTimestamp,
+//            "swap.openTimestamp"
+//        );
+//
+//        assertEq(uint256(swapAfterUpgradeAfterCloseStorage.tenor), uint256(IporTypes.SwapTenor.DAYS_28), "swap.tenor");
+//        assertEq(swapBeforeUpgrade.idsIndex, swapAfterUpgradeAfterCloseStorage.idsIndex, "swap.idsIndex");
+//
+//        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeAfterCloseStorage.collateral, "swap.collateral");
+//        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeAfterCloseStorage.notional, "swap.notional");
+//        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeAfterCloseStorage.ibtQuantity, "swap.ibtQuantity");
+//        assertEq(
+//            swapBeforeUpgrade.fixedInterestRate,
+//            swapAfterUpgradeAfterCloseStorage.fixedInterestRate,
+//            "swap.fixedInterestRate"
+//        );
+//        assertEq(
+//            swapBeforeUpgrade.liquidationDepositAmount,
+//            swapAfterUpgradeAfterCloseStorage.liquidationDepositAmount,
+//            "swap.liquidationDepositAmount"
+//        );
+//        assertEq(0, uint256(swapAfterUpgradeAfterCloseStorage.state), "swap.state");
+//    }
+
+//    function testShouldCloseSwapTenor28UsdtReceiveFixed() public {
+//        //given
+//        address user = _getUserAddress(22);
+//
+//        vm.startPrank(user);
+//        ERC20(USDT).safeApprove(miltonProxyUsdt, 500_000e6);
+//        vm.stopPrank();
+//
+//        deal(USDT, user, 500_000e6);
+//
+//        vm.prank(user);
+//        uint256 swapId = IMilton(miltonProxyUsdt).openSwapReceiveFixed(1000e6, 0, 100e18);
+//
+//        IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyUsdt)
+//            .getSwapReceiveFixed(swapId);
+//
+//        vm.warp(block.timestamp + 5 days);
+//
+//        //when
+//        _init();
+//
+//        //then
+//        //then
+//        IAmmSwapsLens.IporSwap[] memory swaps;
+//        (, swaps) = IAmmSwapsLens(iporProtocolRouterProxy).getSwaps(USDT, user, 0, 10);
+//        IAmmSwapsLens.IporSwap memory swapAfterUpgradeBeforeClose = swaps[0];
+//
+//        AmmTypesGenOne.sol.Swap memory swapAfterUpgradeBeforeCloseStorage = IAmmStorage(miltonStorageProxyUsdt).getSwap(
+//            AmmTypesGenOne.sol.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+//            swapId
+//        );
+//
+//        /// @dev checking swap via Router
+//        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeBeforeClose.id, "swapId");
+//        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeBeforeClose.buyer, "swap.buyer");
+//        assertEq(swapBeforeUpgrade.openTimestamp, swapAfterUpgradeBeforeClose.openTimestamp, "swap.openTimestamp");
+//        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeBeforeClose.collateral, "swap.collateral");
+//        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeBeforeClose.notional, "swap.notional");
+//        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeBeforeClose.ibtQuantity, "swap.ibtQuantity");
+//        assertEq(
+//            swapBeforeUpgrade.fixedInterestRate,
+//            swapAfterUpgradeBeforeClose.fixedInterestRate,
+//            "swap.fixedInterestRate"
+//        );
+//        assertEq(
+//            swapBeforeUpgrade.liquidationDepositAmount,
+//            swapAfterUpgradeBeforeClose.liquidationDepositAmount,
+//            "swap.liquidationDepositAmount"
+//        );
+//        assertEq(swapBeforeUpgrade.state, swapAfterUpgradeBeforeClose.state, "swap.state");
+//
+//        /// @dev checking swap via AmmStorage
+//        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeBeforeCloseStorage.id, "swapId");
+//        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeBeforeCloseStorage.buyer, "swap.buyer");
+//        assertEq(
+//            swapBeforeUpgrade.openTimestamp,
+//            swapAfterUpgradeBeforeCloseStorage.openTimestamp,
+//            "swap.openTimestamp"
+//        );
+//
+//        assertEq(uint256(swapAfterUpgradeBeforeCloseStorage.tenor), uint256(IporTypes.SwapTenor.DAYS_28), "swap.tenor");
+//        assertEq(swapBeforeUpgrade.idsIndex, swapAfterUpgradeBeforeCloseStorage.idsIndex, "swap.idsIndex");
+//
+//        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeBeforeCloseStorage.collateral, "swap.collateral");
+//        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeBeforeCloseStorage.notional, "swap.notional");
+//        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeBeforeCloseStorage.ibtQuantity, "swap.ibtQuantity");
+//        assertEq(
+//            swapBeforeUpgrade.fixedInterestRate,
+//            swapAfterUpgradeBeforeCloseStorage.fixedInterestRate,
+//            "swap.fixedInterestRate"
+//        );
+//        assertEq(
+//            swapBeforeUpgrade.liquidationDepositAmount,
+//            swapAfterUpgradeBeforeCloseStorage.liquidationDepositAmount,
+//            "swap.liquidationDepositAmount"
+//        );
+//        assertEq(swapBeforeUpgrade.state, uint256(swapAfterUpgradeBeforeCloseStorage.state), "swap.state");
+//
+//        uint256[] memory swapPfIds = new uint256[](0);
+//        uint256[] memory swapRfIds = new uint256[](1);
+//        swapRfIds[0] = swapId;
+//
+//        vm.prank(user);
+//        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsUsdt(user, swapPfIds, swapRfIds);
+//
+//        AmmTypesGenOne.sol.Swap memory swapAfterUpgradeAfterCloseStorage = AmmStorage(miltonStorageProxyUsdt).getSwap(
+//            AmmTypesGenOne.sol.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+//            swapId
+//        );
+//
+//        /// @dev checking swap via AmmStorage
+//        assertEq(swapBeforeUpgrade.id, swapAfterUpgradeAfterCloseStorage.id, "swapId");
+//        assertEq(swapBeforeUpgrade.buyer, swapAfterUpgradeAfterCloseStorage.buyer, "swap.buyer");
+//        assertEq(
+//            swapBeforeUpgrade.openTimestamp,
+//            swapAfterUpgradeBeforeCloseStorage.openTimestamp,
+//            "swap.openTimestamp"
+//        );
+//
+//        assertEq(uint256(swapAfterUpgradeAfterCloseStorage.tenor), uint256(IporTypes.SwapTenor.DAYS_28), "swap.tenor");
+//        assertEq(swapBeforeUpgrade.idsIndex, swapAfterUpgradeAfterCloseStorage.idsIndex, "swap.idsIndex");
+//
+//        assertEq(swapBeforeUpgrade.collateral, swapAfterUpgradeAfterCloseStorage.collateral, "swap.collateral");
+//        assertEq(swapBeforeUpgrade.notional, swapAfterUpgradeAfterCloseStorage.notional, "swap.notional");
+//        assertEq(swapBeforeUpgrade.ibtQuantity, swapAfterUpgradeAfterCloseStorage.ibtQuantity, "swap.ibtQuantity");
+//        assertEq(
+//            swapBeforeUpgrade.fixedInterestRate,
+//            swapAfterUpgradeAfterCloseStorage.fixedInterestRate,
+//            "swap.fixedInterestRate"
+//        );
+//        assertEq(
+//            swapBeforeUpgrade.liquidationDepositAmount,
+//            swapAfterUpgradeAfterCloseStorage.liquidationDepositAmount,
+//            "swap.liquidationDepositAmount"
+//        );
+//        assertEq(0, uint256(swapAfterUpgradeAfterCloseStorage.state), "swap.state");
+//    }
+
+//    function testShouldCloseInV2SwapFromV1AndNotUpdateTimeWeightedTenor28DaiPayFixed() public {
+//        //given
+//        address user = _getUserAddress(22);
+//
+//        vm.prank(user);
+//        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
+//
+//        deal(DAI, user, 500_000e18);
+//
+//        vm.prank(user);
+//        uint256 swapIdOneV1 = IMilton(miltonProxyDai).openSwapPayFixed(2_000 * 1e18, 9e18, 10e18);
+//
+//        vm.prank(user);
+//        uint256 swapIdTwoV1 = IMilton(miltonProxyDai).openSwapPayFixed(2_000 * 1e18, 9e18, 10e18);
+//
+//        IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyDai).getSwapPayFixed(
+//            swapIdOneV1
+//        );
+//
+//        vm.warp(block.timestamp + 5 days);
+//
+//        //when
+//        _init();
+//
+//        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalBeforeClose = SpreadStorageLens(
+//            spreadRouter
+//        ).getTimeWeightedNotional();
+//
+//        uint256[] memory swapPfIds = new uint256[](1);
+//        swapPfIds[0] = swapIdOneV1;
+//        uint256[] memory swapRfIds = new uint256[](0);
+//
+//        vm.prank(user);
+//        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
+//
+//        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalAfterClose = SpreadStorageLens(
+//            spreadRouter
+//        ).getTimeWeightedNotional();
+//
+//        assertEq(timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed, 0);
+//        assertEq(timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed, 0);
+//    }
+
+//    function testShouldCloseInV2SwapFromV1AndNotUpdateTimeWeightedTenor28DaiPayFixedTwoNewSwapInV2() public {
+//        //given
+//        address user = _getUserAddress(22);
+//
+//        vm.prank(user);
+//        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
+//
+//        deal(DAI, user, 500_000e18);
+//
+//        vm.prank(user);
+//        uint256 swapIdOneV1 = IMilton(miltonProxyDai).openSwapPayFixed(1_000 * 1e18, 9e18, 10e18);
+//
+//        vm.prank(user);
+//        uint256 swapIdTwoV1 = IMilton(miltonProxyDai).openSwapPayFixed(1_000 * 1e18, 9e18, 10e18);
+//
+//        IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyDai).getSwapPayFixed(
+//            swapIdOneV1
+//        );
+//
+//        vm.warp(block.timestamp + 5 days);
+//
+//        //when
+//        _init();
+//
+//        //then
+//        vm.prank(user);
+//        ERC20(DAI).approve(iporProtocolRouterProxy, type(uint256).max);
+//
+//        vm.prank(user);
+//        uint256 swapIdThreeV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapPayFixed28daysDai(
+//            user,
+//            500 * 1e18,
+//            9e18,
+//            10e18
+//        );
+//
+//        vm.prank(user);
+//        uint256 swapIdFourV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapPayFixed28daysDai(
+//            user,
+//            1_000 * 1e18,
+//            9e18,
+//            10e18
+//        );
+//
+//        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalBeforeClose = SpreadStorageLens(
+//            spreadRouter
+//        ).getTimeWeightedNotional();
+//
+//        uint256[] memory swapPfIds = new uint256[](1);
+//        swapPfIds[0] = swapIdOneV1;
+//        uint256[] memory swapRfIds = new uint256[](0);
+//
+//        vm.prank(user);
+//        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
+//
+//        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalAfterClose = SpreadStorageLens(
+//            spreadRouter
+//        ).getTimeWeightedNotional();
+//
+//        assertEq(
+//            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
+//            14294000000000000000000,
+//            "timeWeightedNotionalPayFixed before"
+//        );
+//        assertEq(
+//            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
+//            14294000000000000000000,
+//            "timeWeightedNotionalPayFixed after"
+//        );
+//
+//        assertEq(
+//            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
+//            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
+//            "timeWeightedNotionalPayFixed"
+//        );
+//    }
+
+//    function testShouldCloseInV2SwapFromV1AndNotUpdateTimeWeightedTenor28DaiPayFixedNewSwapInV2AndOneClosed() public {
+//        //given
+//        address user = _getUserAddress(22);
+//
+//        vm.prank(user);
+//        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
+//
+//        deal(DAI, user, 500_000e18);
+//
+//        vm.prank(user);
+//        uint256 swapIdOneV1 = IMilton(miltonProxyDai).openSwapPayFixed(1_000 * 1e18, 9e18, 10e18);
+//
+//        vm.prank(user);
+//        uint256 swapIdTwoV1 = IMilton(miltonProxyDai).openSwapPayFixed(1_000 * 1e18, 9e18, 10e18);
+//
+//        IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyDai).getSwapPayFixed(
+//            swapIdOneV1
+//        );
+//
+//        vm.warp(block.timestamp + 5 days);
+//
+//        //when
+//        _init();
+//
+//        //then
+//        vm.prank(user);
+//        ERC20(DAI).approve(iporProtocolRouterProxy, type(uint256).max);
+//
+//        vm.prank(user);
+//        uint256 swapIdThreeV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapPayFixed28daysDai(
+//            user,
+//            500 * 1e18,
+//            9e18,
+//            10e18
+//        );
+//
+//        vm.prank(user);
+//        uint256 swapIdFourV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapPayFixed28daysDai(
+//            user,
+//            1_000 * 1e18,
+//            9e18,
+//            10e18
+//        );
+//
+//        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalBeforeClose = SpreadStorageLens(
+//            spreadRouter
+//        ).getTimeWeightedNotional();
+//
+//        uint256[] memory swapPfIds = new uint256[](2);
+//        swapPfIds[0] = swapIdOneV1;
+//        swapPfIds[1] = swapIdFourV2;
+//        uint256[] memory swapRfIds = new uint256[](0);
+//
+//        vm.prank(user);
+//        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
+//
+//        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalAfterClose = SpreadStorageLens(
+//            spreadRouter
+//        ).getTimeWeightedNotional();
+//
+//        assertEq(
+//            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
+//            14294000000000000000000,
+//            "timeWeightedNotionalPayFixed before"
+//        );
+//        assertEq(
+//            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
+//            4647000000000000000000,
+//            "timeWeightedNotionalPayFixed after"
+//        );
+//
+//        assertNotEq(
+//            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
+//            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalPayFixed,
+//            "timeWeightedNotionalPayFixed"
+//        );
+//    }
+//
+//    function testShouldCloseInV2SwapFromV1AndNotUpdateTimeWeightedTenor28DaiReceiveFixed() public {
+//        //given
+//        address user = _getUserAddress(22);
+//
+//        vm.prank(user);
+//        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
+//
+//        deal(DAI, user, 500_000e18);
+//
+//        vm.prank(user);
+//        uint256 swapIdOneV1 = IMilton(miltonProxyDai).openSwapReceiveFixed(2_000 * 1e18, 0, 10e18);
+//
+//        vm.prank(user);
+//        uint256 swapIdTwoV1 = IMilton(miltonProxyDai).openSwapReceiveFixed(2_000 * 1e18, 0, 10e18);
+//
+//        vm.warp(block.timestamp + 5 days);
+//
+//        //when
+//        _init();
+//
+//        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalBeforeClose = SpreadStorageLens(
+//            spreadRouter
+//        ).getTimeWeightedNotional();
+//
+//        uint256[] memory swapPfIds = new uint256[](0);
+//        uint256[] memory swapRfIds = new uint256[](1);
+//        swapRfIds[0] = swapIdOneV1;
+//
+//        vm.prank(user);
+//        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
+//
+//        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalAfterClose = SpreadStorageLens(
+//            spreadRouter
+//        ).getTimeWeightedNotional();
+//
+//        assertEq(timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed, 0);
+//        assertEq(timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed, 0);
+//    }
+
+//    function testShouldCloseInV2SwapFromV1AndNotUpdateTimeWeightedTenor28DaiReceiveFixedTwoNewSwapInV2() public {
+//        //given
+//        address user = _getUserAddress(22);
+//
+//        vm.prank(user);
+//        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
+//
+//        deal(DAI, user, 500_000e18);
+//
+//        vm.prank(user);
+//        uint256 swapIdOneV1 = IMilton(miltonProxyDai).openSwapReceiveFixed(1_000 * 1e18, 0, 10e18);
+//
+//        vm.prank(user);
+//        uint256 swapIdTwoV1 = IMilton(miltonProxyDai).openSwapReceiveFixed(1_000 * 1e18, 0, 10e18);
+//
+//        vm.warp(block.timestamp + 5 days);
+//
+//        //when
+//        _init();
+//
+//        //then
+//        vm.prank(user);
+//        ERC20(DAI).approve(iporProtocolRouterProxy, type(uint256).max);
+//
+//        vm.prank(user);
+//        uint256 swapIdThreeV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapReceiveFixed28daysDai(
+//            user,
+//            500 * 1e18,
+//            0,
+//            10e18
+//        );
+//
+//        vm.prank(user);
+//        uint256 swapIdFourV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapReceiveFixed28daysDai(
+//            user,
+//            1_000 * 1e18,
+//            0,
+//            10e18
+//        );
+//
+//        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalBeforeClose = SpreadStorageLens(
+//            spreadRouter
+//        ).getTimeWeightedNotional();
+//
+//        uint256[] memory swapPfIds = new uint256[](0);
+//        uint256[] memory swapRfIds = new uint256[](1);
+//        swapRfIds[0] = swapIdOneV1;
+//
+//        vm.prank(user);
+//        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
+//
+//        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalAfterClose = SpreadStorageLens(
+//            spreadRouter
+//        ).getTimeWeightedNotional();
+//
+//        assertEq(
+//            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
+//            14294000000000000000000,
+//            "timeWeightedNotionalReceiveFixed before"
+//        );
+//        assertEq(
+//            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
+//            14294000000000000000000,
+//            "timeWeightedNotionalReceiveFixed after"
+//        );
+//
+//        assertEq(
+//            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
+//            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
+//            "timeWeightedNotionalReceiveFixed"
+//        );
+//    }
+//
+//    function testShouldCloseInV2SwapFromV1AndNotUpdateTimeWeightedTenor28DaiReceiveFixedNewSwapInV2AndOneClosed()
+//        public
+//    {
+//        //given
+//        address user = _getUserAddress(22);
+//
+//        vm.prank(user);
+//        ERC20(DAI).approve(miltonProxyDai, type(uint256).max);
+//
+//        deal(DAI, user, 500_000e18);
+//
+//        vm.prank(user);
+//        uint256 swapIdOneV1 = IMilton(miltonProxyDai).openSwapReceiveFixed(1_000 * 1e18, 0, 10e18);
+//
+//        vm.prank(user);
+//        uint256 swapIdTwoV1 = IMilton(miltonProxyDai).openSwapReceiveFixed(1_000 * 1e18, 0, 10e18);
+//
+//        IMiltonStorage.IporSwapMemory memory swapBeforeUpgrade = IMiltonStorage(miltonStorageProxyDai)
+//            .getSwapReceiveFixed(swapIdOneV1);
+//
+//        vm.warp(block.timestamp + 5 days);
+//
+//        //when
+//        _init();
+//
+//        //then
+//        vm.prank(user);
+//        ERC20(DAI).approve(iporProtocolRouterProxy, type(uint256).max);
+//
+//        vm.prank(user);
+//        uint256 swapIdThreeV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapReceiveFixed28daysDai(
+//            user,
+//            500 * 1e18,
+//            0,
+//            10e18
+//        );
+//
+//        vm.prank(user);
+//        uint256 swapIdFourV2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapReceiveFixed28daysDai(
+//            user,
+//            1_000 * 1e18,
+//            0,
+//            10e18
+//        );
+//
+//        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalBeforeClose = SpreadStorageLens(
+//            spreadRouter
+//        ).getTimeWeightedNotional();
+//
+//        uint256[] memory swapPfIds = new uint256[](0);
+//        uint256[] memory swapRfIds = new uint256[](2);
+//        swapRfIds[0] = swapIdOneV1;
+//        swapRfIds[1] = swapIdFourV2;
+//
+//        vm.prank(user);
+//        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(user, swapPfIds, swapRfIds);
+//
+//        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalAfterClose = SpreadStorageLens(
+//            spreadRouter
+//        ).getTimeWeightedNotional();
+//
+//        assertEq(
+//            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
+//            14294000000000000000000,
+//            "timeWeightedNotionalReceiveFixed before"
+//        );
+//        assertEq(
+//            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
+//            4647000000000000000000,
+//            "timeWeightedNotionalReceiveFixed after"
+//        );
+//
+//        assertNotEq(
+//            timeWeightedNotionalBeforeClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
+//            timeWeightedNotionalAfterClose[0].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
+//            "timeWeightedNotionalReceiveFixed"
+//        );
+//    }
 }

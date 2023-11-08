@@ -34,13 +34,15 @@ contract AmmPoolsServiceNotRedeem is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, 60000 * TestConstants.D18);
 
-        vm.prank(_userTwo);
+        vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _userTwo,
             27000 * TestConstants.D18,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), 0)
         );
+        vm.stopPrank();
 
         //BEGIN HACK - subtract liquidity without  burn ipToken
         vm.startPrank(address(_iporProtocol.router));
@@ -72,13 +74,15 @@ contract AmmPoolsServiceNotRedeem is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, 60000 * TestConstants.D18);
 
-        vm.prank(_userTwo);
+        vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
             _userTwo,
             27000 * TestConstants.D18,
             TestConstants.D16,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), 1)
         );
+        vm.stopPrank();
 
         //BEGIN HACK - subtract liquidity without  burn ipToken
         vm.startPrank(address(_iporProtocol.router));
@@ -110,13 +114,15 @@ contract AmmPoolsServiceNotRedeem is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, 60000 * TestConstants.D18);
 
-        vm.prank(_userTwo);
+        vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _userTwo,
             27000 * TestConstants.D18,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), 0)
         );
+        vm.stopPrank();
 
         IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getAmmBalance(
             address(_iporProtocol.asset)
@@ -142,13 +148,15 @@ contract AmmPoolsServiceNotRedeem is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, 60000 * TestConstants.D18);
 
-        vm.prank(_userTwo);
+        vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
             _userTwo,
             27000 * TestConstants.D18,
             TestConstants.D16,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), 1)
         );
+        vm.stopPrank();
 
         IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getAmmBalance(
             address(_iporProtocol.asset)
