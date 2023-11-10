@@ -31,8 +31,14 @@ abstract contract AmmCloseSwapServiceGenOne {
     using SafeCast for uint256;
     using SafeCast for int256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
-    using SwapLogicGenOne for AmmTypes.Swap;
+    using SwapLogicGenOne for AmmTypesGenOne.Swap;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
+
+    uint256 public immutable version = 1;
+
+    address public immutable messageSigner;
+    address public immutable iporOracle;
+    address public immutable spreadRouter;
 
     address internal immutable _asset;
     uint256 internal immutable _decimals;
@@ -47,10 +53,6 @@ abstract contract AmmCloseSwapServiceGenOne {
     uint256 internal immutable _minLiquidationThresholdToCloseBeforeMaturityByCommunity;
     uint256 internal immutable _minLiquidationThresholdToCloseBeforeMaturityByBuyer;
     uint256 internal immutable _minLeverage;
-
-    address public immutable iporOracle;
-    address public immutable messageSigner;
-    address public immutable spreadRouter;
 
     constructor(
         AmmTypesGenOne.AmmCloseSwapPoolConfiguration memory poolCfg,
@@ -92,7 +94,7 @@ abstract contract AmmCloseSwapServiceGenOne {
             poolCfg.asset
         );
 
-        AmmTypes.Swap memory swap = IAmmStorage(poolCfg.ammStorage).getSwap(direction, swapId);
+        AmmTypesGenOne.Swap memory swap = IAmmStorageGenOne(poolCfg.ammStorage).getSwap(direction, swapId);
 
         require(swap.id > 0, AmmErrors.INCORRECT_SWAP_ID);
 
@@ -119,7 +121,6 @@ abstract contract AmmCloseSwapServiceGenOne {
             ) = SwapLogicGenOne.calculateSwapUnwindWhenUnwindRequired(
                 AmmTypesGenOne.UnwindParams({
                     messageSigner: messageSigner,
-                    direction: direction,
                     closeTimestamp: closeTimestamp,
                     swapPnlValueToDate: swapPnlValueToDate,
                     indexValue: accruedIpor.indexValue,
@@ -202,7 +203,7 @@ abstract contract AmmCloseSwapServiceGenOne {
         address beneficiary,
         uint256 indexValue,
         uint256 ibtPrice,
-        AmmTypes.Swap memory swap,
+        AmmTypesGenOne.Swap memory swap,
         AmmTypesGenOne.AmmCloseSwapPoolConfiguration memory poolCfg,
         AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     ) internal returns (uint256 payoutForLiquidator) {
@@ -210,7 +211,6 @@ abstract contract AmmCloseSwapServiceGenOne {
         int256 swapPnlValueToDate = swap.calculatePnlPayFixed(timestamp, ibtPrice);
 
         AmmInternalTypes.PnlValueStruct memory pnlValueStruct = _preparePnlValueStructForClose(
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             timestamp,
             swapPnlValueToDate,
             indexValue,
@@ -221,10 +221,10 @@ abstract contract AmmCloseSwapServiceGenOne {
 
         ISpreadCloseSwapService(spreadRouter).updateTimeWeightedNotionalOnClose(
             poolCfg.asset,
-            0,
+            uint256(swap.direction),
             swap.tenor,
             swap.notional,
-            IAmmStorage(poolCfg.ammStorage).updateStorageWhenCloseSwapPayFixedInternal(
+            IAmmStorageGenOne(poolCfg.ammStorage).updateStorageWhenCloseSwapPayFixedInternal(
                 swap,
                 pnlValueStruct.pnlValue,
                 pnlValueStruct.swapUnwindFeeLPAmount,
@@ -270,7 +270,7 @@ abstract contract AmmCloseSwapServiceGenOne {
         address beneficiary,
         uint256 indexValue,
         uint256 ibtPrice,
-        AmmTypes.Swap memory swap,
+        AmmTypesGenOne.Swap memory swap,
         AmmTypesGenOne.AmmCloseSwapPoolConfiguration memory poolCfg,
         AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     ) internal returns (uint256 payoutForLiquidator) {
@@ -278,7 +278,6 @@ abstract contract AmmCloseSwapServiceGenOne {
         int256 swapPnlValueToDate = swap.calculatePnlReceiveFixed(timestamp, ibtPrice);
 
         AmmInternalTypes.PnlValueStruct memory pnlValueStruct = _preparePnlValueStructForClose(
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             timestamp,
             swapPnlValueToDate,
             indexValue,
@@ -289,10 +288,10 @@ abstract contract AmmCloseSwapServiceGenOne {
 
         ISpreadCloseSwapService(spreadRouter).updateTimeWeightedNotionalOnClose(
             poolCfg.asset,
-            1,
+            uint256(swap.direction),
             swap.tenor,
             swap.notional,
-            IAmmStorage(poolCfg.ammStorage).updateStorageWhenCloseSwapReceiveFixedInternal(
+            IAmmStorageGenOne(poolCfg.ammStorage).updateStorageWhenCloseSwapReceiveFixedInternal(
                 swap,
                 pnlValueStruct.pnlValue,
                 pnlValueStruct.swapUnwindFeeLPAmount,
@@ -348,7 +347,7 @@ abstract contract AmmCloseSwapServiceGenOne {
         );
 
         closedSwaps = new AmmTypes.IporSwapClosingResult[](swapIdsLength);
-        AmmTypes.Swap memory swap;
+        AmmTypesGenOne.Swap memory swap;
 
         IporTypes.AccruedIpor memory accruedIpor = IIporOracle(iporOracle).getAccruedIndex(
             block.timestamp,
@@ -360,7 +359,7 @@ abstract contract AmmCloseSwapServiceGenOne {
             swapId = swapIds[i];
             require(swapId > 0, AmmErrors.INCORRECT_SWAP_ID);
 
-            swap = IAmmStorage(poolCfg.ammStorage).getSwap(direction, swapId);
+            swap = IAmmStorageGenOne(poolCfg.ammStorage).getSwap(direction, swapId);
 
             if (swap.state == IporTypes.SwapState.ACTIVE) {
                 if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
@@ -413,11 +412,10 @@ abstract contract AmmCloseSwapServiceGenOne {
     }
 
     function _preparePnlValueStructForClose(
-        AmmTypes.SwapDirection direction,
         uint256 closeTimestamp,
         int256 swapPnlValueToDate,
         uint256 indexValue,
-        AmmTypes.Swap memory swap,
+        AmmTypesGenOne.Swap memory swap,
         AmmTypesGenOne.AmmCloseSwapPoolConfiguration memory poolCfg,
         AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     ) internal view returns (AmmInternalTypes.PnlValueStruct memory pnlValueStruct) {
@@ -443,7 +441,6 @@ abstract contract AmmCloseSwapServiceGenOne {
             ) = SwapLogicGenOne.calculateSwapUnwindWhenUnwindRequired(
                 AmmTypesGenOne.UnwindParams({
                     messageSigner: messageSigner,
-                    direction: direction,
                     closeTimestamp: closeTimestamp,
                     swapPnlValueToDate: swapPnlValueToDate,
                     indexValue: indexValue,
@@ -470,7 +467,7 @@ abstract contract AmmCloseSwapServiceGenOne {
     function _transferTokensBasedOnPnlValue(
         address beneficiary,
         int256 pnlValue,
-        AmmTypes.Swap memory swap,
+        AmmTypesGenOne.Swap memory swap,
         AmmTypesGenOne.AmmCloseSwapPoolConfiguration memory poolCfg
     ) internal returns (uint256 transferredToBuyer, uint256 payoutForLiquidator) {
         uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
@@ -593,7 +590,6 @@ abstract contract AmmCloseSwapServiceGenOne {
         return
             AmmTypesGenOne.AmmCloseSwapPoolConfiguration({
                 spreadRouter: spreadRouter,
-                iporRiskManagementOracle: messageSigner,
                 asset: _asset,
                 decimals: _decimals,
                 ammStorage: _ammStorage,

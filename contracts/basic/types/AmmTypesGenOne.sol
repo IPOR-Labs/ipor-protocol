@@ -6,6 +6,42 @@ import "../../interfaces/types/AmmTypes.sol";
 /// @title Types used in interfaces strictly related to AMM (Automated Market Maker).
 /// @dev Used by IAmmTreasury and IAmmStorage interfaces.
 library AmmTypesGenOne {
+    /// @notice Struct representing swap item, used for listing and in internal calculations
+    struct Swap {
+        /// @notice Swap's unique ID
+        uint256 id;
+        /// @notice Swap's buyer
+        address buyer;
+        /// @notice Swap opening epoch timestamp
+        uint256 openTimestamp;
+        /// @notice Swap's tenor
+        IporTypes.SwapTenor tenor;
+        /// @notice Swap's direction
+        AmmTypes.SwapDirection direction;
+        /// @notice Index position of this Swap in an array of swaps' identification associated to swap buyer
+        /// @dev Field used for gas optimization purposes, it allows for quick removal by id in the array.
+        /// During removal the last item in the array is switched with the one that just has been removed.
+        uint256 idsIndex;
+        /// @notice Swap's collateral
+        /// @dev value represented in 18 decimals
+        uint256 collateral;
+        /// @notice Swap's notional amount
+        /// @dev value represented in 18 decimals
+        uint256 notional;
+        /// @notice Swap's notional amount denominated in the Interest Bearing Token (IBT)
+        /// @dev value represented in 18 decimals
+        uint256 ibtQuantity;
+        /// @notice Fixed interest rate at which the position has been opened
+        /// @dev value represented in 18 decimals
+        uint256 fixedInterestRate;
+        /// @notice Liquidation deposit amount
+        /// @dev value represented in 18 decimals
+        uint256 liquidationDepositAmount;
+        /// @notice State of the swap
+        /// @dev 0 - INACTIVE, 1 - ACTIVE
+        IporTypes.SwapState state;
+    }
+
     /// @notice Structure representing configuration of the AmmOpenSwapServicePool for specific asset (pool).
     struct AmmOpenSwapServicePoolConfiguration {
         /// @notice address of the asset
@@ -35,8 +71,6 @@ library AmmTypesGenOne {
     struct AmmCloseSwapPoolConfiguration {
         /// @notice Spread Router
         address spreadRouter;
-        /// @notice Ipor Risk Management Oracle
-        address iporRiskManagementOracle;
         /// @notice asset address
         address asset;
         /// @notice asset decimals
@@ -67,40 +101,11 @@ library AmmTypesGenOne {
 
     struct UnwindParams {
         address messageSigner;
-        AmmTypes.SwapDirection direction;
         uint256 closeTimestamp;
         int256 swapPnlValueToDate;
         uint256 indexValue;
-        AmmTypes.Swap swap;
+        AmmTypesGenOne.Swap swap;
         AmmCloseSwapPoolConfiguration poolCfg;
         AmmTypes.CloseSwapRiskIndicatorsInput riskIndicatorsInputs;
     }
-    //
-    //    /// @notice Risk indicators calculated for swap opening
-    //    struct RiskIndicatorsInputs {
-    //        /// @notice Maximum collateral ratio in general
-    //        uint256 maxCollateralRatio;
-    //        /// @notice Maximum collateral ratio for a given leg
-    //        uint256 maxCollateralRatioPerLeg;
-    //        /// @notice Maximum leverage for a given leg
-    //        uint256 maxLeveragePerLeg;
-    //        /// @notice Base Spread for a given leg (without demand part)
-    //        int256 baseSpreadPerLeg;
-    //        /// @notice Fixed rate cap
-    //        uint256 fixedRateCapPerLeg;
-    //        /// @notice Demand spread factor used to calculate demand spread
-    //        uint256 demandSpreadFactor;
-    //        /// @notice expiration date in seconds
-    //        uint256 expiration;
-    //        /// @notice signature of data (maxCollateralRatio, maxCollateralRatioPerLeg,maxLeveragePerLeg,baseSpreadPerLeg,fixedRateCapPerLeg,demandSpreadFactor,expiration,asset,tenor,direction)
-    //        /// asset - address
-    //        /// tenor - uint256
-    //        /// direction - uint256
-    //        bytes signature;
-    //    }
-    //
-    //    struct CloseSwapRiskIndicatorsInput {
-    //        RiskIndicatorsInputs payFixed;
-    //        RiskIndicatorsInputs receiveFixed;
-    //    }
 }

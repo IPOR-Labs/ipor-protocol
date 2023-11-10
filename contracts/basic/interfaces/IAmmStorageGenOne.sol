@@ -3,8 +3,10 @@ pragma solidity 0.8.20;
 
 import "../../interfaces/types/IporTypes.sol";
 import "../../interfaces/types/AmmTypes.sol";
+import "../types/AmmTypesGenOne.sol";
 import "../../interfaces/types/AmmStorageTypes.sol";
 import "../../amm/libraries/types/AmmInternalTypes.sol";
+import "../types/AmmTypesGenOne.sol";
 
 /// @title Interface for interaction with the IPOR AMM Storage, contract responsible for managing AMM storage.
 interface IAmmStorageGenOne {
@@ -71,7 +73,7 @@ interface IAmmStorageGenOne {
     /// @param direction direction of the swap: 0 for Pay Fixed, 1 for Receive Fixed
     /// @param swapId swap ID
     /// @return swap structure {AmmTypesGenOne.sol.Swap}
-    function getSwap(AmmTypes.SwapDirection direction, uint256 swapId) external view returns (AmmTypes.Swap memory);
+    function getSwap(AmmTypes.SwapDirection direction, uint256 swapId) external view returns (AmmTypesGenOne.Swap memory);
 
     /// @notice Gets the active Pay-Fixed swaps for a given account address.
     /// @param account account address
@@ -83,7 +85,7 @@ interface IAmmStorageGenOne {
         address account,
         uint256 offset,
         uint256 chunkSize
-    ) external view returns (uint256 totalCount, AmmTypes.Swap[] memory swaps);
+    ) external view returns (uint256 totalCount, AmmTypesGenOne.Swap[] memory swaps);
 
     /// @notice Gets the active Receive-Fixed swaps for a given account address.
     /// @param account account address
@@ -95,7 +97,7 @@ interface IAmmStorageGenOne {
         address account,
         uint256 offset,
         uint256 chunkSize
-    ) external view returns (uint256 totalCount, AmmTypes.Swap[] memory swaps);
+    ) external view returns (uint256 totalCount, AmmTypesGenOne.Swap[] memory swaps);
 
     /// @notice Gets the active Pay-Fixed and Receive-Fixed swaps IDs for a given account address.
     /// @param account account address
@@ -151,7 +153,7 @@ interface IAmmStorageGenOne {
     /// @param closingTimestamp The moment when the swap was closed.
     /// @return closedSwap A memory struct representing the closed swap.
     function updateStorageWhenCloseSwapPayFixedInternal(
-        AmmTypes.Swap memory swap,
+        AmmTypesGenOne.Swap memory swap,
         int256 pnlValue,
         uint256 swapUnwindFeeLPAmount,
         uint256 swapUnwindFeeTreasuryAmount,
@@ -168,7 +170,7 @@ interface IAmmStorageGenOne {
     /// @param closingTimestamp The moment when the swap was closed.
     /// @return closedSwap A memory struct representing the closed swap.
     function updateStorageWhenCloseSwapReceiveFixedInternal(
-        AmmTypes.Swap memory swap,
+        AmmTypesGenOne.Swap memory swap,
         int256 pnlValue,
         uint256 swapUnwindFeeLPAmount,
         uint256 swapUnwindFeeTreasuryAmount,

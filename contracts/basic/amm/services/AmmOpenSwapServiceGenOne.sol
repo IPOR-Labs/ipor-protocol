@@ -21,6 +21,7 @@ import "../../../libraries/SwapEvents.sol";
 import "../../../libraries/IporContractValidator.sol";
 import "../../../libraries/RiskManagementLogic.sol";
 import "../../../amm/libraries/types/AmmInternalTypes.sol";
+import "../../../amm/libraries/IporSwapLogic.sol";
 import "../libraries/SwapLogicGenOne.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
@@ -29,6 +30,12 @@ abstract contract AmmOpenSwapServiceGenOne {
     using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
+
+    uint256 public immutable version = 1;
+
+    address public immutable messageSigner;
+    address public immutable iporOracle;
+    address public immutable spreadRouter;
 
     address internal immutable _asset;
     uint256 internal immutable _decimals;
@@ -40,10 +47,6 @@ abstract contract AmmOpenSwapServiceGenOne {
     uint256 internal immutable _minLeverage;
     uint256 internal immutable _openingFeeRate;
     uint256 internal immutable _openingFeeTreasuryPortionRate;
-
-    address public immutable iporOracle;
-    address public immutable messageSigner;
-    address public immutable spreadRouter;
 
     struct Context {
         address beneficiary;
@@ -485,7 +488,7 @@ abstract contract AmmOpenSwapServiceGenOne {
             poolCfg.openingFeeRate
         );
 
-        (uint256 openingFeeLPAmount, uint256 openingFeeTreasuryAmount) = SwapLogicGenOne.splitOpeningFeeAmount(
+        (uint256 openingFeeLPAmount, uint256 openingFeeTreasuryAmount) = IporSwapLogic.splitOpeningFeeAmount(
             openingFeeAmount,
             poolCfg.openingFeeTreasuryPortionRate
         );
@@ -540,7 +543,7 @@ abstract contract AmmOpenSwapServiceGenOne {
                 newSwap.liquidationDepositAmount * 1e18
             ),
             newSwap.openTimestamp,
-            newSwap.openTimestamp + SwapLogicGenOne.getTenorInSeconds(newSwap.tenor),
+            newSwap.openTimestamp + IporSwapLogic.getTenorInSeconds(newSwap.tenor),
             indicator
         );
     }

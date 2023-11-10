@@ -7,6 +7,7 @@ import "../../../libraries/math/InterestRates.sol";
 import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/errors/AmmErrors.sol";
 import "../../../libraries/RiskManagementLogic.sol";
+import "../../../amm/libraries/IporSwapLogic.sol";
 import "../../../governance/AmmConfigurationManager.sol";
 import "../../../security/OwnerManager.sol";
 import "../../types/AmmTypesGenOne.sol";
@@ -49,7 +50,7 @@ library SwapLogicGenOne {
 
         collateral = IporMath.division(
             availableAmount * 1e18,
-            1e18 + IporMath.division(leverage * openingFeeRate * getTenorInDays(tenor), 365 * 1e18)
+            1e18 + IporMath.division(leverage * openingFeeRate * IporSwapLogic.getTenorInDays(tenor), 365 * 1e18)
         );
         notional = IporMath.division(leverage * collateral, 1e18);
         openingFee = availableAmount - collateral;
@@ -62,13 +63,16 @@ library SwapLogicGenOne {
     /// @return pnlValue swap PnL, represented in 18 decimals
     /// @dev Calculated PnL not taken into consideration potential unwinding of the swap.
     function calculatePnlPayFixed(
-        AmmTypes.Swap memory swap,
+        AmmTypesGenOne.Swap memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) internal pure returns (int256 pnlValue) {
         (uint256 interestFixed, uint256 interestFloating) = calculateInterest(swap, closingTimestamp, mdIbtPrice);
 
-        pnlValue = normalizePnlValue(swap.collateral, interestFloating.toInt256() - interestFixed.toInt256());
+        pnlValue = IporSwapLogic.normalizePnlValue(
+            swap.collateral,
+            interestFloating.toInt256() - interestFixed.toInt256()
+        );
     }
 
     /// @notice Calculates Profit and Loss (PnL) for a receive fixed swap for a given swap closing timestamp and IBT price from IporOracle.
@@ -78,29 +82,30 @@ library SwapLogicGenOne {
     /// @return pnlValue swap PnL, represented in 18 decimals
     /// @dev Calculated PnL not taken into consideration potential unwinding of the swap.
     function calculatePnlReceiveFixed(
-        AmmTypes.Swap memory swap,
+        AmmTypesGenOne.Swap memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) internal pure returns (int256 pnlValue) {
         (uint256 interestFixed, uint256 interestFloating) = calculateInterest(swap, closingTimestamp, mdIbtPrice);
 
-        pnlValue = normalizePnlValue(swap.collateral, interestFixed.toInt256() - interestFloating.toInt256());
+        pnlValue = IporSwapLogic.normalizePnlValue(
+            swap.collateral,
+            interestFixed.toInt256() - interestFloating.toInt256()
+        );
     }
 
     function calculateSwapUnwindPnlValueNormalized(
         AmmTypesGenOne.UnwindParams memory unwindParams,
-        uint256 direction,
         AmmTypes.OpenSwapRiskIndicators memory oppositeRiskIndicators
     ) internal view returns (int256) {
         return
-            normalizePnlValue(
+            IporSwapLogic.normalizePnlValue(
                 unwindParams.swap.collateral,
                 calculateSwapUnwindPnlValue(
                     unwindParams.swap,
-                    unwindParams.direction,
                     unwindParams.closeTimestamp,
                     RiskManagementLogic.calculateOfferedRate(
-                        direction,
+                        uint256(unwindParams.swap.direction),
                         unwindParams.swap.tenor,
                         unwindParams.swap.notional,
                         RiskManagementLogic.SpreadOfferedRateContext({
@@ -119,7 +124,6 @@ library SwapLogicGenOne {
 
     /// @notice Calculates the swap unwind PnL value.
     /// @param swap Swap structure
-    /// @param direction swap direction
     /// @param closingTimestamp moment when swap is closed, represented in seconds without 18 decimals
     /// for particular swap at time when swap will be closed by the trader.
     /// @dev Equation for this calculation is:
@@ -128,8 +132,7 @@ library SwapLogicGenOne {
     /// @dev If Swap is Pay Fixed Receive Floating then UnwindValue  = Current Swap PnL + Notional * (e^(Opposite Leg Fixed Rate * time) - e^(Swap Fixed Rate * time))
     /// @dev If Swap is Receive Fixed Pay Floating then UnwindValue  = Current Swap PnL + Notional * (e^(Swap Fixed Rate * time) - e^(Opposite Leg Fixed Rate * time))
     function calculateSwapUnwindPnlValue(
-        AmmTypes.Swap memory swap,
-        AmmTypes.SwapDirection direction,
+        AmmTypesGenOne.Swap memory swap,
         uint256 closingTimestamp,
         uint256 oppositeLegFixedRate
     ) internal pure returns (int256 swapUnwindPnlValue) {
@@ -139,7 +142,7 @@ library SwapLogicGenOne {
 
         uint256 time = (endTimestamp - swap.openTimestamp) - (closingTimestamp - swap.openTimestamp);
 
-        if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
+        if (swap.direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
             swapUnwindPnlValue =
                 swap.notional.toInt256().calculateContinuousCompoundInterestUsingRatePeriodMultiplicationInt(
                     (oppositeLegFixedRate * time).toInt256()
@@ -147,7 +150,7 @@ library SwapLogicGenOne {
                 swap.notional.toInt256().calculateContinuousCompoundInterestUsingRatePeriodMultiplicationInt(
                     (swap.fixedInterestRate * time).toInt256()
                 );
-        } else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
+        } else if (swap.direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
             swapUnwindPnlValue =
                 swap.notional.toInt256().calculateContinuousCompoundInterestUsingRatePeriodMultiplicationInt(
                     (swap.fixedInterestRate * time).toInt256()
@@ -169,7 +172,7 @@ library SwapLogicGenOne {
     /// @return closableStatus Closable status for Swap.
     /// @return swapUnwindRequired True if swap unwind is required.
     function getClosableStatusForSwap(
-        AmmTypes.Swap memory swap,
+        AmmTypesGenOne.Swap memory swap,
         address account,
         int256 swapPnlValueToDate,
         uint256 closeTimestamp,
@@ -260,29 +263,17 @@ library SwapLogicGenOne {
     {
         AmmTypes.OpenSwapRiskIndicators memory oppositeRiskIndicators;
 
-        if (unwindParams.direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
-            oppositeRiskIndicators = unwindParams.riskIndicatorsInputs.receiveFixed.verify(
-                unwindParams.poolCfg.asset,
-                uint256(unwindParams.swap.tenor),
-                uint256(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED),
-                unwindParams.messageSigner
-            );
-            /// @dev Not allow to have swap unwind pnl absolute value larger than swap collateral.
-            swapUnwindPnlValue = calculateSwapUnwindPnlValueNormalized(unwindParams, 1, oppositeRiskIndicators);
-        } else if (unwindParams.direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
-            oppositeRiskIndicators = unwindParams.riskIndicatorsInputs.payFixed.verify(
-                unwindParams.poolCfg.asset,
-                uint256(unwindParams.swap.tenor),
-                uint256(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING),
-                unwindParams.messageSigner
-            );
-            /// @dev Not allow to have swap unwind pnl absolute value larger than swap collateral.
-            swapUnwindPnlValue = calculateSwapUnwindPnlValueNormalized(unwindParams, 0, oppositeRiskIndicators);
-        } else {
-            revert(AmmErrors.UNSUPPORTED_DIRECTION);
-        }
+        oppositeRiskIndicators = unwindParams.riskIndicatorsInputs.receiveFixed.verify(
+            unwindParams.poolCfg.asset,
+            uint256(unwindParams.swap.tenor),
+            uint256(unwindParams.swap.direction),
+            unwindParams.messageSigner
+        );
 
-        swapPnlValue = normalizePnlValue(
+        /// @dev Not allow to have swap unwind pnl absolute value larger than swap collateral.
+        swapUnwindPnlValue = calculateSwapUnwindPnlValueNormalized(unwindParams, oppositeRiskIndicators);
+
+        swapPnlValue = IporSwapLogic.normalizePnlValue(
             unwindParams.swap.collateral,
             unwindParams.swapPnlValueToDate + swapUnwindPnlValue
         );
@@ -299,7 +290,7 @@ library SwapLogicGenOne {
             AmmErrors.COLLATERAL_IS_NOT_SUFFICIENT_TO_COVER_UNWIND_SWAP
         );
 
-        (swapUnwindFeeLPAmount, swapUnwindFeeTreasuryAmount) = splitOpeningFeeAmount(
+        (swapUnwindFeeLPAmount, swapUnwindFeeTreasuryAmount) = IporSwapLogic.splitOpeningFeeAmount(
             swapUnwindFeeAmount,
             unwindParams.poolCfg.unwindingFeeTreasuryPortionRate
         );
@@ -313,7 +304,7 @@ library SwapLogicGenOne {
     /// @param openingFeeRateCfg opening fee rate taken from Protocol configuration, represented in 18 decimals
     /// @return swapOpeningFeeAmount swap opening fee amount, represented in 18 decimals
     function calculateSwapUnwindOpeningFeeAmount(
-        AmmTypes.Swap memory swap,
+        AmmTypesGenOne.Swap memory swap,
         uint256 closingTimestamp,
         uint256 openingFeeRateCfg
     ) internal pure returns (uint256 swapOpeningFeeAmount) {
@@ -338,71 +329,25 @@ library SwapLogicGenOne {
     /// @return interestFixed fixed interest chunk, represented in 18 decimals
     /// @return interestFloating floating interest chunk, represented in 18 decimals
     function calculateInterest(
-        AmmTypes.Swap memory swap,
+        AmmTypesGenOne.Swap memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) internal pure returns (uint256 interestFixed, uint256 interestFloating) {
         require(closingTimestamp >= swap.openTimestamp, AmmErrors.CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP);
 
-        interestFixed = calculateInterestFixed(
+        interestFixed = IporSwapLogic.calculateInterestFixed(
             swap.notional,
             swap.fixedInterestRate,
             closingTimestamp - swap.openTimestamp
         );
 
-        interestFloating = calculateInterestFloating(swap.ibtQuantity, mdIbtPrice);
-    }
-
-    /// @notice Calculates fixed interest chunk including continuous capitalization for a given swap, closing timestamp and IBT price from IporOracle.
-    /// @param notional swap notional, represented in 18 decimals
-    /// @param swapFixedInterestRate fixed interest rate on a swap, represented in 18 decimals
-    /// @param swapPeriodInSeconds swap period in seconds
-    /// @return interestFixed fixed interest chunk, represented in 18 decimals
-    function calculateInterestFixed(
-        uint256 notional,
-        uint256 swapFixedInterestRate,
-        uint256 swapPeriodInSeconds
-    ) internal pure returns (uint256) {
-        return
-            notional.addContinuousCompoundInterestUsingRatePeriodMultiplication(
-                swapFixedInterestRate * swapPeriodInSeconds
-            );
-    }
-
-    /// @notice Calculates floating interest chunk for a given ibt quantity and IBT current price
-    /// @param ibtQuantity IBT quantity, represented in 18 decimals
-    /// @param ibtCurrentPrice IBT price from IporOracle, represented in 18 decimals
-    /// @return interestFloating floating interest chunk, represented in 18 decimals
-    function calculateInterestFloating(uint256 ibtQuantity, uint256 ibtCurrentPrice) internal pure returns (uint256) {
-        //IBTQ * IBTPtc (IBTPtc - interest bearing token price in time when swap is closed)
-        return IporMath.division(ibtQuantity * ibtCurrentPrice, 1e18);
-    }
-
-    /// @notice Normalizes swap value to collateral value. Absolute value Swap PnL can't be higher than collateral.
-    /// @param collateral collateral value, represented in 18 decimals
-    /// @param pnlValue swap PnL, represented in 18 decimals
-    function normalizePnlValue(uint256 collateral, int256 pnlValue) internal pure returns (int256) {
-        int256 intCollateral = collateral.toInt256();
-
-        if (pnlValue > 0) {
-            if (pnlValue < intCollateral) {
-                return pnlValue;
-            } else {
-                return intCollateral;
-            }
-        } else {
-            if (pnlValue < -intCollateral) {
-                return -intCollateral;
-            } else {
-                return pnlValue;
-            }
-        }
+        interestFloating = IporSwapLogic.calculateInterestFloating(swap.ibtQuantity, mdIbtPrice);
     }
 
     /// @notice Gets swap end timestamp based on swap tenor
     /// @param swap Swap structure
     /// @return swap end timestamp in seconds without 18 decimals
-    function getSwapEndTimestamp(AmmTypes.Swap memory swap) internal pure returns (uint256) {
+    function getSwapEndTimestamp(AmmTypesGenOne.Swap memory swap) internal pure returns (uint256) {
         if (swap.tenor == IporTypes.SwapTenor.DAYS_28) {
             return swap.openTimestamp + 28 days;
         } else if (swap.tenor == IporTypes.SwapTenor.DAYS_60) {
@@ -412,47 +357,5 @@ library SwapLogicGenOne {
         } else {
             revert(AmmErrors.UNSUPPORTED_SWAP_TENOR);
         }
-    }
-
-    /// @notice Gets swap tenor in seconds
-    /// @param tenor Swap tenor
-    /// @return swap tenor in seconds
-    function getTenorInSeconds(IporTypes.SwapTenor tenor) internal pure returns (uint256) {
-        if (tenor == IporTypes.SwapTenor.DAYS_28) {
-            return 28 days;
-        } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
-            return 60 days;
-        } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
-            return 90 days;
-        }
-        revert(AmmErrors.UNSUPPORTED_SWAP_TENOR);
-    }
-
-    /// @notice Gets swap tenor in days
-    /// @param tenor Swap tenor
-    /// @return swap tenor in days
-    function getTenorInDays(IporTypes.SwapTenor tenor) internal pure returns (uint256) {
-        if (tenor == IporTypes.SwapTenor.DAYS_28) {
-            return 28;
-        } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
-            return 60;
-        } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
-            return 90;
-        } else {
-            revert(AmmErrors.UNSUPPORTED_SWAP_TENOR);
-        }
-    }
-
-    /// @notice Splits opening fee amount into liquidity pool and treasury portions
-    /// @param openingFeeAmount opening fee amount, represented in 18 decimals
-    /// @param openingFeeForTreasurePortionRate opening fee for treasury portion rate taken from Protocol configuration, represented in 18 decimals
-    /// @return liquidityPoolAmount liquidity pool portion of opening fee, represented in 18 decimals
-    /// @return treasuryAmount treasury portion of opening fee, represented in 18 decimals
-    function splitOpeningFeeAmount(
-        uint256 openingFeeAmount,
-        uint256 openingFeeForTreasurePortionRate
-    ) internal pure returns (uint256 liquidityPoolAmount, uint256 treasuryAmount) {
-        treasuryAmount = IporMath.division(openingFeeAmount * openingFeeForTreasurePortionRate, 1e18);
-        liquidityPoolAmount = openingFeeAmount - treasuryAmount;
     }
 }

@@ -3,31 +3,26 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
-import "../interfaces/types/AmmStorageTypes.sol";
-import "../interfaces/IAmmStorage.sol";
-import "../interfaces/IProxyImplementation.sol";
-import "../interfaces/IIporContractCommonGov.sol";
-import "../libraries/Constants.sol";
-import "../libraries/PaginationUtils.sol";
-import "../libraries/IporContractValidator.sol";
-import "../security/PauseManager.sol";
-import "../security/IporOwnableUpgradeable.sol";
-import "../amm/libraries/types/AmmInternalTypes.sol";
-import "../amm/libraries/types/StorageInternalTypes.sol";
-import "../amm/libraries/SoapIndicatorRebalanceLogic.sol";
+import "../../interfaces/types/AmmStorageTypes.sol";
+import "../interfaces/IAmmStorageGenOne.sol";
+import "../../interfaces/IProxyImplementation.sol";
+import "../../libraries/Constants.sol";
+import "../../libraries/PaginationUtils.sol";
+import "../../libraries/IporContractValidator.sol";
+import "../../security/IporOwnableUpgradeable.sol";
+import "../../amm/libraries/types/AmmInternalTypes.sol";
+import "../../amm/libraries/types/StorageInternalTypes.sol";
+import "../../amm/libraries/SoapIndicatorRebalanceLogic.sol";
 
 /// @dev all stored values related to tokens are in 18 decimals.
-contract AmmStorageStEth is
+contract AmmStorageGenOne is
     Initializable,
-    PausableUpgradeable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-    IAmmStorage,
-    IProxyImplementation,
-    IIporContractCommonGov
+    IAmmStorageGenOne,
+    IProxyImplementation
 {
     using IporContractValidator for address;
     using SafeCast for uint256;
@@ -51,13 +46,6 @@ contract AmmStorageStEth is
     mapping(IporTypes.SwapTenor => AmmInternalTypes.OpenSwapList) private _openedSwapsPayFixed;
     mapping(IporTypes.SwapTenor => AmmInternalTypes.OpenSwapList) private _openedSwapsReceiveFixed;
 
-    modifier onlyPauseGuardian() {
-        if (!PauseManager.isPauseGuardian(msg.sender)) {
-            revert IporErrors.CallerNotPauseGuardian(msg.sender);
-        }
-        _;
-    }
-
     modifier onlyRouter() {
         if (msg.sender != _iporProtocolRouter) {
             revert IporErrors.CallerNotIporProtocolRouter(msg.sender);
@@ -80,7 +68,6 @@ contract AmmStorageStEth is
     }
 
     function initialize() public initializer {
-        __Pausable_init();
         __Ownable_init();
         __UUPSUpgradeable_init();
     }
@@ -143,7 +130,7 @@ contract AmmStorageStEth is
     function getSwap(
         AmmTypes.SwapDirection direction,
         uint256 swapId
-    ) external view override returns (AmmTypes.Swap memory) {
+    ) external view override returns (AmmTypesGenOne.Swap memory) {
         uint32 id = swapId.toUint32();
         StorageInternalTypes.Swap storage swap;
 
@@ -156,11 +143,12 @@ contract AmmStorageStEth is
         }
 
         return
-            AmmTypes.Swap(
+            AmmTypesGenOne.Swap(
                 swap.id,
                 swap.buyer,
                 swap.openTimestamp,
                 swap.tenor,
+                direction,
                 swap.idsIndex,
                 swap.collateral,
                 swap.notional,
@@ -175,7 +163,7 @@ contract AmmStorageStEth is
         address account,
         uint256 offset,
         uint256 chunkSize
-    ) external view override returns (uint256 totalCount, AmmTypes.Swap[] memory swaps) {
+    ) external view override returns (uint256 totalCount, AmmTypesGenOne.Swap[] memory swaps) {
         uint32[] storage ids = _swapsPayFixed.ids[account];
         return (
             ids.length,
@@ -193,7 +181,7 @@ contract AmmStorageStEth is
         address account,
         uint256 offset,
         uint256 chunkSize
-    ) external view override returns (uint256 totalCount, AmmTypes.Swap[] memory swaps) {
+    ) external view override returns (uint256 totalCount, AmmTypesGenOne.Swap[] memory swaps) {
         uint32[] storage ids = _swapsReceiveFixed.ids[account];
         return (
             ids.length,
@@ -300,7 +288,7 @@ contract AmmStorageStEth is
     }
 
     function updateStorageWhenCloseSwapPayFixedInternal(
-        AmmTypes.Swap memory swap,
+        AmmTypesGenOne.Swap memory swap,
         int256 pnlValue,
         uint256 swapUnwindFeeLPAmount,
         uint256 swapUnwindFeeTreasuryAmount,
@@ -313,7 +301,7 @@ contract AmmStorageStEth is
     }
 
     function updateStorageWhenCloseSwapReceiveFixedInternal(
-        AmmTypes.Swap memory swap,
+        AmmTypesGenOne.Swap memory swap,
         int256 pnlValue,
         uint256 swapUnwindFeeLPAmount,
         uint256 swapUnwindFeeTreasuryAmount,
@@ -379,26 +367,6 @@ contract AmmStorageStEth is
         _balances.treasury = balance.toUint128();
     }
 
-    function pause() external override onlyPauseGuardian {
-        _pause();
-    }
-
-    function unpause() external override onlyOwner {
-        _unpause();
-    }
-
-    function isPauseGuardian(address account) external view override returns (bool) {
-        return PauseManager.isPauseGuardian(account);
-    }
-
-    function addPauseGuardians(address[] calldata guardians) external override onlyOwner {
-        PauseManager.addPauseGuardians(guardians);
-    }
-
-    function removePauseGuardians(address[] calldata guardians) external override onlyOwner {
-        PauseManager.removePauseGuardians(guardians);
-    }
-
     function getImplementation() external view override returns (address) {
         return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
@@ -452,23 +420,24 @@ contract AmmStorageStEth is
         uint32[] storage ids,
         uint256 offset,
         uint256 chunkSize
-    ) internal view returns (AmmTypes.Swap[] memory) {
+    ) internal view returns (AmmTypesGenOne.Swap[] memory) {
         require(chunkSize > 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
         require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
 
         uint256 swapsIdsLength = PaginationUtils.resolveResultSetSize(ids.length, offset, chunkSize);
-        AmmTypes.Swap[] memory derivatives = new AmmTypes.Swap[](swapsIdsLength);
+        AmmTypesGenOne.Swap[] memory derivatives = new AmmTypesGenOne.Swap[](swapsIdsLength);
 
         uint32 id;
 
         for (uint256 i; i != swapsIdsLength; ) {
             id = ids[i + offset];
             StorageInternalTypes.Swap storage swap = swaps[id];
-            derivatives[i] = AmmTypes.Swap(
+            derivatives[i] = AmmTypesGenOne.Swap(
                 swap.id,
                 swap.buyer,
                 swap.openTimestamp,
                 swap.tenor,
+                direction,
                 swap.idsIndex,
                 swap.collateral,
                 swap.notional,
@@ -513,7 +482,7 @@ contract AmmStorageStEth is
     }
 
     function _updateBalancesWhenCloseSwapPayFixed(
-        AmmTypes.Swap memory swap,
+        AmmTypesGenOne.Swap memory swap,
         int256 pnlValue,
         uint256 swapUnwindFeeLPAmount,
         uint256 swapUnwindFeeTreasuryAmount
@@ -523,7 +492,7 @@ contract AmmStorageStEth is
     }
 
     function _updateBalancesWhenCloseSwapReceiveFixed(
-        AmmTypes.Swap memory swap,
+        AmmTypesGenOne.Swap memory swap,
         int256 pnlValue,
         uint256 swapUnwindFeeLPAmount,
         uint256 swapUnwindFeeTreasuryAmount
@@ -602,7 +571,7 @@ contract AmmStorageStEth is
         return id;
     }
 
-    function _updateSwapsWhenClosePayFixed(AmmTypes.Swap memory swap) internal {
+    function _updateSwapsWhenClosePayFixed(AmmTypesGenOne.Swap memory swap) internal {
         require(swap.id > 0, AmmErrors.INCORRECT_SWAP_ID);
         require(swap.state != IporTypes.SwapState.INACTIVE, AmmErrors.INCORRECT_SWAP_STATUS);
 
@@ -621,7 +590,7 @@ contract AmmStorageStEth is
         _swapsPayFixed.ids[buyer].pop();
     }
 
-    function _updateSwapsWhenCloseReceiveFixed(AmmTypes.Swap memory swap) internal {
+    function _updateSwapsWhenCloseReceiveFixed(AmmTypesGenOne.Swap memory swap) internal {
         require(swap.id > 0, AmmErrors.INCORRECT_SWAP_ID);
         require(swap.state != IporTypes.SwapState.INACTIVE, AmmErrors.INCORRECT_SWAP_STATUS);
 
@@ -686,7 +655,10 @@ contract AmmStorageStEth is
         _soapIndicatorsReceiveFixed.hypotheticalInterestCumulative = rf.hypotheticalInterestCumulative;
     }
 
-    function _updateSoapIndicatorsWhenCloseSwapPayFixed(AmmTypes.Swap memory swap, uint256 closingTimestamp) internal {
+    function _updateSoapIndicatorsWhenCloseSwapPayFixed(
+        AmmTypesGenOne.Swap memory swap,
+        uint256 closingTimestamp
+    ) internal {
         AmmStorageTypes.SoapIndicators memory pf = AmmStorageTypes.SoapIndicators(
             _soapIndicatorsPayFixed.hypotheticalInterestCumulative,
             _soapIndicatorsPayFixed.totalNotional,
@@ -713,7 +685,7 @@ contract AmmStorageStEth is
     }
 
     function _updateSoapIndicatorsWhenCloseSwapReceiveFixed(
-        AmmTypes.Swap memory swap,
+        AmmTypesGenOne.Swap memory swap,
         uint256 closingTimestamp
     ) internal {
         AmmStorageTypes.SoapIndicators memory rf = AmmStorageTypes.SoapIndicators(
