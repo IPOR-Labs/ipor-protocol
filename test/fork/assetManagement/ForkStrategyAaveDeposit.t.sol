@@ -26,7 +26,7 @@ contract ForkStrategyAaveDepositTest is TestForkCommons {
 
         deal(DAI, address(stanleyProxyDai), 1000_000 * 1e18);
 
-        StrategyAave strategy = StrategyAave(newStrategyAaveDaiProxy);
+        StrategyAave strategy = StrategyAave(strategyAaveDaiProxy);
 
         IERC20Upgradeable asset = IERC20Upgradeable(DAI);
 
@@ -43,7 +43,7 @@ contract ForkStrategyAaveDepositTest is TestForkCommons {
         //then
         address lendingPool = AaveLendingPoolProviderV2(aaveLendingPoolAddressProvider).getLendingPool();
         uint256 newStrategyAllowanceToLendingPool = IERC20Upgradeable(asset).allowance(
-            address(newStrategyAaveDaiProxy),
+            address(strategyAaveDaiProxy),
             lendingPool
         );
         uint256 strategyBalanceAfter = strategy.balanceOf();
@@ -59,7 +59,7 @@ contract ForkStrategyAaveDepositTest is TestForkCommons {
 
         deal(USDT, address(stanleyProxyUsdt), 1000_000 * 1e6);
 
-        StrategyAave strategy = StrategyAave(newStrategyAaveUsdtProxy);
+        StrategyAave strategy = StrategyAave(strategyAaveUsdtProxy);
 
         IERC20Upgradeable asset = IERC20Upgradeable(USDT);
 
@@ -76,7 +76,7 @@ contract ForkStrategyAaveDepositTest is TestForkCommons {
         //then
         address lendingPool = AaveLendingPoolProviderV2(aaveLendingPoolAddressProvider).getLendingPool();
         uint256 newStrategyAllowanceToLendingPool = IERC20Upgradeable(asset).allowance(
-            address(newStrategyAaveUsdtProxy),
+            address(strategyAaveUsdtProxy),
             lendingPool
         );
         uint256 strategyBalanceAfter = strategy.balanceOf();

@@ -144,7 +144,6 @@ contract ForkAssetManagementWithdrawTest is TestForkCommons {
         /// @dev Compound with the lowest APY but paused so withdraw from DSR
         assertLt(IStrategy(strategyCompoundProxyDai).getApy(), IStrategy(strategyAaveProxyDai).getApy());
         assertLt(IStrategy(strategyCompoundProxyDai).getApy(), IStrategy(strategyDsrProxyDai).getApy());
-        console2.log(block.number);
     }
 
     function testShouldWithdrawFromMoreThanOneStrategy() public {

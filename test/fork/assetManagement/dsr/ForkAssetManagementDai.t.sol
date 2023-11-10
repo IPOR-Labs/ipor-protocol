@@ -320,7 +320,7 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         uint256 strategyDsrProxyDaiBalanceBefore = IStrategy(strategyDsrProxyDai).balanceOf();
         uint256 strategyCompoundBalanceBefore = IStrategy(strategyCompoundProxyDai).balanceOf();
         uint256 strategyAaveBalanceBefore = IStrategy(strategyAaveProxyDai).balanceOf();
-        uint256 ammBalanceBefore = IERC20Upgradeable(DAI).balanceOf(address(miltonProxyDai));
+        uint256 ammBalanceBefore = IERC20Upgradeable(DAI).balanceOf(address(ammTreasuryDai));
 
         vm.prank(owner);
         IIporContractCommonGov(strategyAaveProxyDai).unpause();
@@ -338,7 +338,7 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         uint256 strategyDsrProxyDaiBalanceAfter = IStrategy(strategyDsrProxyDai).balanceOf();
         uint256 strategyCompoundBalanceAfter = IStrategy(strategyCompoundProxyDai).balanceOf();
         uint256 strategyAaveBalanceAfter = IStrategy(strategyAaveProxyDai).balanceOf();
-        uint256 ammBalanceAfter = IERC20Upgradeable(DAI).balanceOf(address(miltonProxyDai));
+        uint256 ammBalanceAfter = IERC20Upgradeable(DAI).balanceOf(address(ammTreasuryDai));
 
         assertEq(strategyDsrProxyDaiBalanceAfter, 0, "dsr balance");
         assertEq(strategyCompoundBalanceAfter, 0, "compound balance");

@@ -399,7 +399,7 @@ contract StrategyDsrDaiTest is TestForkCommons {
 
         deal(DAI, address(stanleyProxyDai), 1000_000 * 1e18);
 
-        StrategyDsrDai strategy = StrategyDsrDai(newStrategyDsrDaiProxy);
+        StrategyDsrDai strategy = StrategyDsrDai(strategyDsrDaiProxy);
 
         IERC20Upgradeable asset = IERC20Upgradeable(DAI);
 
@@ -415,7 +415,7 @@ contract StrategyDsrDaiTest is TestForkCommons {
 
         //then
         uint256 newStrategyAllowanceToShareToken = IERC20Upgradeable(asset).allowance(
-            address(newStrategyDsrDaiProxy),
+            address(strategyDsrDaiProxy),
             sDai
         );
         uint256 strategyBalanceAfter = strategy.balanceOf();

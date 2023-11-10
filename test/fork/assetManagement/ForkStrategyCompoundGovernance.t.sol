@@ -22,7 +22,7 @@ contract ForkStrategyCompoundGovernanceTest is TestForkCommons {
         _init();
         _createNewStrategyCompoundDai();
 
-        StrategyCompound strategy = StrategyCompound(newStrategyCompoundDaiProxy);
+        StrategyCompound strategy = StrategyCompound(strategyCompoundDaiProxy);
 
         // when
         vm.expectRevert("IPOR_502");
@@ -35,7 +35,7 @@ contract ForkStrategyCompoundGovernanceTest is TestForkCommons {
         _init();
         _createNewStrategyCompoundDai();
 
-        StrategyCompound strategy = StrategyCompound(newStrategyCompoundDaiProxy);
+        StrategyCompound strategy = StrategyCompound(strategyCompoundDaiProxy);
 
         // when
         vm.expectRevert("IPOR_505");
@@ -48,7 +48,7 @@ contract ForkStrategyCompoundGovernanceTest is TestForkCommons {
         _init();
         _createNewStrategyCompoundDai();
 
-        StrategyCompound strategy = StrategyCompound(newStrategyCompoundDaiProxy);
+        StrategyCompound strategy = StrategyCompound(strategyCompoundDaiProxy);
 
         //when
         vm.expectRevert("Ownable: caller is not the owner");
@@ -61,7 +61,7 @@ contract ForkStrategyCompoundGovernanceTest is TestForkCommons {
         _init();
         _createNewStrategyCompoundDai();
 
-        StrategyCompound strategy = StrategyCompound(newStrategyCompoundDaiProxy);
+        StrategyCompound strategy = StrategyCompound(strategyCompoundDaiProxy);
 
         //when
         vm.prank(owner);
@@ -76,7 +76,7 @@ contract ForkStrategyCompoundGovernanceTest is TestForkCommons {
         _init();
         _createNewStrategyCompoundDai();
 
-        StrategyCompound strategy = StrategyCompound(newStrategyCompoundDaiProxy);
+        StrategyCompound strategy = StrategyCompound(strategyCompoundDaiProxy);
 
         vm.prank(owner);
         strategy.setTreasuryManager(_user);
@@ -94,7 +94,7 @@ contract ForkStrategyCompoundGovernanceTest is TestForkCommons {
         _init();
         _createNewStrategyCompoundDai();
 
-        StrategyAave strategy = StrategyAave(newStrategyCompoundDaiProxy);
+        StrategyAave strategy = StrategyAave(strategyCompoundDaiProxy);
 
         address[] memory guardians = new address[](1);
         guardians[0] = _user;
@@ -115,7 +115,7 @@ contract ForkStrategyCompoundGovernanceTest is TestForkCommons {
         _init();
         _createNewStrategyCompoundDai();
 
-        StrategyAave strategy = StrategyAave(newStrategyCompoundDaiProxy);
+        StrategyAave strategy = StrategyAave(strategyCompoundDaiProxy);
 
         address[] memory guardians = new address[](1);
         guardians[0] = _user;
@@ -141,7 +141,7 @@ contract ForkStrategyCompoundGovernanceTest is TestForkCommons {
         _init();
         _createNewStrategyCompoundDai();
 
-        StrategyAave strategy = StrategyAave(newStrategyCompoundDaiProxy);
+        StrategyAave strategy = StrategyAave(strategyCompoundDaiProxy);
 
         address[] memory guardians = new address[](1);
         guardians[0] = _user;
@@ -165,7 +165,7 @@ contract ForkStrategyCompoundGovernanceTest is TestForkCommons {
         _init();
         _createNewStrategyCompoundDai();
 
-        StrategyAave strategy = StrategyAave(newStrategyCompoundDaiProxy);
+        StrategyAave strategy = StrategyAave(strategyCompoundDaiProxy);
 
         address[] memory guardians = new address[](1);
         guardians[0] = _user;
@@ -192,7 +192,7 @@ contract ForkStrategyCompoundGovernanceTest is TestForkCommons {
         _init();
         _createNewStrategyCompoundDai();
 
-        StrategyAave strategy = StrategyAave(newStrategyCompoundDaiProxy);
+        StrategyAave strategy = StrategyAave(strategyCompoundDaiProxy);
 
         address[] memory guardians = new address[](1);
         guardians[0] = _user;
