@@ -785,7 +785,6 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                         RiskManagementLogic.SpreadOfferedRateContext({
                             asset: unwindParams.poolCfg.asset,
                             ammStorage: unwindParams.poolCfg.ammStorage,
-                            iporRiskManagementOracle: messageSigner,
                             spreadRouter: spreadRouter,
                             minLeverage: unwindParams.poolCfg.minLeverage,
                             indexValue: unwindParams.indexValue
