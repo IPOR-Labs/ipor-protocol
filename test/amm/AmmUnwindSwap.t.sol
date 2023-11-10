@@ -28,7 +28,6 @@ contract AmmUnwindSwap is TestCommons {
         _buyer = _getUserAddress(1);
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE1;
         _cfg.iporOracleUpdater = _admin;
-        _cfg.iporRiskManagementOracleUpdater = _admin;
     }
 
     function testShouldUnwindPayFixedSimple() public {

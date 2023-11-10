@@ -19,10 +19,8 @@ contract IporProtocolRouterTest is TestCommons {
 
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
-        _cfg.iporRiskManagementOracleUpdater = _userOne;
 
         _ammCfg.iporOracleUpdater = _userOne;
-        _ammCfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
     function testSwitchImplementation() public {
@@ -75,27 +73,18 @@ contract IporProtocolRouterTest is TestCommons {
         uint256[] memory swapIds = new uint256[](1);
         swapIds[0] = 1;
 
-        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInputs = getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28);
-        vm.expectRevert("IPOR_014");
-        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsUsdt(
-            swapIds,
-            swapIds,
-            riskIndicatorsInputs
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInputs = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
         );
+        vm.expectRevert("IPOR_014");
+        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsUsdt(swapIds, swapIds, riskIndicatorsInputs);
 
         vm.expectRevert("IPOR_014");
-        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsUsdc(
-            swapIds,
-            swapIds,
-            riskIndicatorsInputs
-        );
+        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsUsdc(swapIds, swapIds, riskIndicatorsInputs);
 
         vm.expectRevert("IPOR_014");
-        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsDai(
-            swapIds,
-            swapIds,
-            riskIndicatorsInputs
-        );
+        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsDai(swapIds, swapIds, riskIndicatorsInputs);
 
         vm.stopPrank();
     }

@@ -25,7 +25,6 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.warp(100);
 
         _cfg.iporOracleUpdater = _userOne;
-        _cfg.iporRiskManagementOracleUpdater = _updater;
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE1;
         _cfg.openSwapServiceTestCase = BuilderUtils.AmmOpenSwapServiceTestCase.CASE3;
         _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE0;

@@ -20,7 +20,6 @@ contract AmmCollateralRatioTest is TestCommons {
 
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
-        _cfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
     function testShouldOpenPayFixedPositionWhenLiquidityPoolCollateralRatioPerLegIsNotExceededAndDefaultCollateralRatio()
@@ -205,10 +204,6 @@ contract AmmCollateralRatioTest is TestCommons {
         public
     {
         // given
-        _cfg.iporRiskManagementOracleInitialParamsTestCase = BuilderUtils
-            .IporRiskManagementOracleInitialParamsTestCase
-            .CASE5;
-
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -298,10 +293,6 @@ contract AmmCollateralRatioTest is TestCommons {
         public
     {
         // given
-        _cfg.iporRiskManagementOracleInitialParamsTestCase = BuilderUtils
-            .IporRiskManagementOracleInitialParamsTestCase
-            .CASE5;
-
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);

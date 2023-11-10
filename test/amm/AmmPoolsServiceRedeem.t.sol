@@ -21,11 +21,9 @@ contract AmmPoolsServiceRedeemTest is TestCommons {
 
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
-        _cfg.iporRiskManagementOracleUpdater = _userOne;
         _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE5;
 
         _ammCfg.iporOracleUpdater = _userOne;
-        _ammCfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
     function testShouldRedeemIpToken18DecimalsSimpleCase1() public {

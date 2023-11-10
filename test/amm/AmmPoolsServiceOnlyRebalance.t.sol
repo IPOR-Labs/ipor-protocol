@@ -8,7 +8,6 @@ contract AmmPoolsServiceOnlyRebalanceTest is TestCommons {
     BuilderUtils.IporProtocol internal _iporProtocol;
 
     function setUp() public {
-        _cfg.iporRiskManagementOracleUpdater = address(this);
     }
 
     function testShouldNotRebalanceWhenNotAppointedSender() public {
