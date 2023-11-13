@@ -14,7 +14,7 @@ contract StrategyDsrDaiTest is TestForkCommons {
     address internal _user;
 
     function setUp() public {
-        uint256 forkId = vm.createSelectFork(vm.envString("PROVIDER_URL"), 18040000);
+        uint256 forkId = vm.createSelectFork(vm.envString("PROVIDER_URL"), 18560825);
         _admin = vm.rememberKey(1);
         _user = vm.rememberKey(2);
         _init();
@@ -399,7 +399,7 @@ contract StrategyDsrDaiTest is TestForkCommons {
 
         deal(DAI, address(stanleyProxyDai), 1000_000 * 1e18);
 
-        StrategyDsrDai strategy = StrategyDsrDai(newStrategyDsrDaiProxy);
+        StrategyDsrDai strategy = StrategyDsrDai(strategyDsrDaiProxy);
 
         IERC20Upgradeable asset = IERC20Upgradeable(DAI);
 
@@ -415,7 +415,7 @@ contract StrategyDsrDaiTest is TestForkCommons {
 
         //then
         uint256 newStrategyAllowanceToShareToken = IERC20Upgradeable(asset).allowance(
-            address(newStrategyDsrDaiProxy),
+            address(strategyDsrDaiProxy),
             sDai
         );
         uint256 strategyBalanceAfter = strategy.balanceOf();
