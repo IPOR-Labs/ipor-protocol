@@ -111,7 +111,6 @@ library SwapLogicGenOne {
                         RiskManagementLogic.SpreadOfferedRateContext({
                             asset: unwindParams.poolCfg.asset,
                             ammStorage: unwindParams.poolCfg.ammStorage,
-                            iporRiskManagementOracle: unwindParams.messageSigner,
                             spreadRouter: unwindParams.poolCfg.spreadRouter,
                             minLeverage: unwindParams.poolCfg.minLeverage,
                             indexValue: unwindParams.indexValue

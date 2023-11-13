@@ -20,7 +20,6 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
-        _cfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
     function testShouldCalculateExchangeRatePayFixedWhenSOAPChangedAndSOAPIsLowerThanZeroAndSOAPAbsoluteValueIsLowerThanLiquidityPoolBalance()

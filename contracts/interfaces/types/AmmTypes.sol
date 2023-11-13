@@ -22,8 +22,6 @@ library AmmTypes {
         address assetManagement;
         /// @notice IPOR Oracle address
         address iporOracle;
-        /// @notice IPOR Risk Management Oracle address
-        address iporRiskManagementOracle;
     }
 
     /// @notice Structure which represents Swap's data that will be saved in the storage.

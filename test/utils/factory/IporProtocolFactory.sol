@@ -54,9 +54,7 @@ contract IporProtocolFactory is Test {
         address ammCharlieTreasury;
         address ammCharlieTreasuryManager;
         address iporOracleUpdater;
-        address iporRiskManagementOracleUpdater;
         BuilderUtils.IporOracleInitialParamsTestCase iporOracleInitialParamsTestCase;
-        BuilderUtils.IporRiskManagementOracleInitialParamsTestCase iporRiskManagementOracleInitialParamsTestCase;
         BuilderUtils.Spread28DaysTestCase spread28DaysTestCase;
         BuilderUtils.Spread60DaysTestCase spread60DaysTestCase;
         BuilderUtils.Spread90DaysTestCase spread90DaysTestCase;
@@ -74,12 +72,10 @@ contract IporProtocolFactory is Test {
         address ammCharlieTreasury;
         address ammCharlieTreasuryManager;
         address iporOracleUpdater;
-        address iporRiskManagementOracleUpdater;
         BuilderUtils.AmmOpenSwapServiceTestCase openSwapServiceTestCase;
         BuilderUtils.AmmCloseSwapServiceTestCase closeSwapServiceTestCase;
         BuilderUtils.AmmPoolsServiceTestCase poolsServiceTestCase;
         BuilderUtils.IporOracleInitialParamsTestCase iporOracleInitialParamsTestCase;
-        BuilderUtils.IporRiskManagementOracleInitialParamsTestCase iporRiskManagementOracleInitialParamsTestCase;
         BuilderUtils.Spread28DaysTestCase spread28DaysTestCase;
         BuilderUtils.Spread60DaysTestCase spread60DaysTestCase;
         BuilderUtils.Spread90DaysTestCase spread90DaysTestCase;

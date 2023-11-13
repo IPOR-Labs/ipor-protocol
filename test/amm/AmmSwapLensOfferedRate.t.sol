@@ -19,10 +19,8 @@ contract AmmSwapLensOfferedRateTest is TestCommons {
 
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
-        _cfg.iporRiskManagementOracleUpdater = _userOne;
 
         _ammCfg.iporOracleUpdater = _userOne;
-        _ammCfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
     function testShouldCalculateOfferedRateForFirstSwap28Days() public {
