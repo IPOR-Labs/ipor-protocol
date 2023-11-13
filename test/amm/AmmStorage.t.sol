@@ -21,7 +21,6 @@ contract AmmStorageTest is TestCommons {
 
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
-        _cfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
     function testShouldTransferOwnershipSimpleCase1() public {

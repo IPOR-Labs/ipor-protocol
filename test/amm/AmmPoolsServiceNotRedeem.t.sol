@@ -20,7 +20,6 @@ contract AmmPoolsServiceNotRedeem is TestCommons {
 
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
-        _cfg.iporRiskManagementOracleUpdater = _userOne;
         _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE5;
     }
 

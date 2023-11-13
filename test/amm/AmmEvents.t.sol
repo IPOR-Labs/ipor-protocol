@@ -54,7 +54,6 @@ contract AmmEventsTest is TestCommons {
         _users = usersToArray(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
-        _cfg.iporRiskManagementOracleUpdater = _userOne;
 
         _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE0;
         _cfg.openSwapServiceTestCase = BuilderUtils.AmmOpenSwapServiceTestCase.CASE1;
