@@ -14,7 +14,7 @@ contract ForkStrategyCompoundDepositTest is TestForkCommons {
 
     function setUp() public {
         /// @dev state of the blockchain: after deploy DSR, before upgrade to V2
-        uint256 forkId = vm.createSelectFork(vm.envString("PROVIDER_URL"), 18070400);
+        uint256 forkId = vm.createSelectFork(vm.envString("PROVIDER_URL"), 18560825);
         _admin = vm.rememberKey(1);
         _user = vm.rememberKey(2);
     }
@@ -41,14 +41,13 @@ contract ForkStrategyCompoundDepositTest is TestForkCommons {
         strategy.deposit(10_000 * 1e18);
 
         //then
-
         uint256 newStrategyAllowanceToShareToken = IERC20Upgradeable(asset).allowance(
             address(strategyCompoundDaiProxy),
             cDAI
         );
         uint256 strategyBalanceAfter = strategy.balanceOf();
 
-        assertEq(strategyBalanceAfter, strategyBalanceBefore + 9999999999999883609072, "strategyBalanceAfter");
+        assertEq(strategyBalanceAfter, strategyBalanceBefore + 9999999999999794581997, "strategyBalanceAfter");
         assertEq(newStrategyAllowanceToShareToken, 0, "newStrategyAllowanceToShareToken");
     }
 
@@ -81,7 +80,7 @@ contract ForkStrategyCompoundDepositTest is TestForkCommons {
         );
         uint256 strategyBalanceAfter = strategy.balanceOf();
 
-        assertEq(strategyBalanceAfter, strategyBalanceBefore + 9999999999999929307595, "strategyBalanceAfter");
+        assertEq(strategyBalanceAfter, strategyBalanceBefore + 9999999999999967627762, "strategyBalanceAfter");
         assertEq(newStrategyAllowanceToShareToken, 0, "newStrategyAllowanceToShareToken");
     }
 }

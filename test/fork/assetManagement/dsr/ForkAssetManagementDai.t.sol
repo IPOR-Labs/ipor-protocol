@@ -21,26 +21,9 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
 
     function setUp() public {
         /// @dev state of the blockchain: after deploy DSR, before upgrade to V2
-        uint256 forkId = vm.createSelectFork(vm.envString("PROVIDER_URL"), 18070400);
+        uint256 forkId = vm.createSelectFork(vm.envString("PROVIDER_URL"), 18533218); // aave pause
         _admin = vm.rememberKey(1);
         _user = vm.rememberKey(2);
-    }
-
-    function testShouldBeTheSameBalanceAfterUpgrade() public {
-        //given
-        IStanleyV1 stanley = IStanleyV1(stanleyProxyDai);
-        uint256 balanceBefore = stanley.totalBalance(0xEd7d74AA7eB1f12F83dA36DFaC1de2257b4e7523);
-        balanceBefore = IporMath.division(balanceBefore, 1e7);
-
-        //when
-        _init();
-
-        //then
-        AssetManagementDai assetManagementDai = AssetManagementDai(stanleyProxyDai);
-        uint256 balanceAfter = assetManagementDai.totalBalance();
-        balanceAfter = IporMath.division(balanceAfter, 1e7);
-
-        assertEq(balanceBefore, balanceAfter);
     }
 
     function testShouldProvideAndRedeemFromDsrStrategy() public {
@@ -220,7 +203,7 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardians(pauseGuardians);
 
         vm.prank(owner);
-        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, 50, 500);
+        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, 5, 50);
 
         vm.prank(owner);
         IIporContractCommonGov(strategyAaveProxyDai).pause();
@@ -228,18 +211,22 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         vm.prank(owner);
         IIporContractCommonGov(strategyCompoundProxyDai).pause();
 
-        deal(address(DAI), _user, 1000_000 * 1e18);
+        deal(address(DAI), _user, 1_000_000 * 1e18);
 
-        uint256 strategyDsrProxyDaiBalanceBefore = IStrategy(strategyDsrProxyDai).balanceOf();
+        uint256 strategyDsrProxyDaiBalanceBefore = IStrategy(strategyDsrDaiProxy).balanceOf();
+        uint256 strategyAaveDaiProxyBefore = IStrategy(strategyAaveDaiProxy).balanceOf();
+        uint256 strategyCompoundDaiProxyBefore = IStrategy(strategyCompoundDaiProxy).balanceOf();
 
         //when
         vm.startPrank(_user);
         IERC20Upgradeable(DAI).approve(address(iporProtocolRouterProxy), type(uint256).max);
-        IAmmPoolsService(iporProtocolRouterProxy).provideLiquidityDai(_user, 70_000 * 1e18);
+        IAmmPoolsService(iporProtocolRouterProxy).provideLiquidityDai(_user, 100_000 * 1e18);
         vm.stopPrank();
 
         //then
-        uint256 strategyDsrProxyDaiBalanceAfter = IStrategy(strategyDsrProxyDai).balanceOf();
+        uint256 strategyDsrProxyDaiBalanceAfter = IStrategy(strategyDsrDaiProxy).balanceOf();
+        uint256 strategyAaveDaiProxyAfter = IStrategy(strategyAaveDaiProxy).balanceOf();
+        uint256 strategyCompoundDaiProxyAfter = IStrategy(strategyCompoundDaiProxy).balanceOf();
 
         assertGt(strategyDsrProxyDaiBalanceAfter, strategyDsrProxyDaiBalanceBefore, "dsr balance");
     }
@@ -366,7 +353,7 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardians(pauseGuardians);
 
         vm.prank(owner);
-        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, 50, 500);
+        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, 50, 50);
 
         vm.prank(owner);
         IIporContractCommonGov(strategyAaveProxyDai).pause();
@@ -399,82 +386,126 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         assertGe(strategyDsrProxyDaiBalanceAfter, strategyDsrProxyDaiBalanceBefore, "dsr balance");
     }
 
-//    function testShouldNotCloseSwapAndWithdrawFromDsrStrategyBecauseTwoStrategiesPausedAndNotEnoughCashInAmmAndAm()
-//        public
-//    {
-//        //given
-//        _init();
-//
-//        deal(DAI, _user, 500_000e18);
-//        vm.prank(_user);
-//        IERC20Upgradeable(DAI).approve(address(iporProtocolRouterProxy), type(uint256).max);
-//
-//        uint256 totalAmount = 100_000 * 1e18;
-//
-//        vm.startPrank(_user);
-//        uint256 swapId = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapPayFixed28daysDai(
-//            _user,
-//            totalAmount,
-//            1e18,
-//            10 * 1e18
-//        );
-//        vm.stopPrank();
-//
-//        (uint256 indexValue, , ) = IIporOracle(iporOracleProxy).getIndex(address(DAI));
-//
-//        vm.prank(owner);
-//        IIporOracle(iporOracleProxy).addUpdater(_user);
-//
-//        vm.prank(_user);
-//        IIporOracle(iporOracleProxy).updateIndex(address(DAI), 5e17);
-//
-//        vm.warp(block.timestamp + 25 days);
-//
-//        /// @dev Start - prepare strategies in this way that there is not enough cash in AMM and AM
-//        vm.startPrank(owner);
-//        IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(DAI);
-//
-//        address[] memory pauseGuardians = new address[](1);
-//        pauseGuardians[0] = owner;
-//        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardians(pauseGuardians);
-//        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardians(pauseGuardians);
-//        IIporContractCommonGov(strategyDsrProxyDai).addPauseGuardians(pauseGuardians);
-//
-//        IIporContractCommonGov(strategyAaveProxyDai).pause();
-//        IIporContractCommonGov(strategyCompoundProxyDai).pause();
-//
-//        IAmmGovernanceService(iporProtocolRouterProxy).depositToAssetManagement(DAI, 100 * 1e18);
-//
-//        IIporContractCommonGov(strategyAaveProxyDai).unpause();
-//        IIporContractCommonGov(strategyDsrProxyDai).pause();
-//
-//        IAmmGovernanceService(iporProtocolRouterProxy).depositToAssetManagement(
-//            DAI,
-//            IERC20Upgradeable(DAI).balanceOf(miltonProxyDai) - 2e18
-//        );
-//
-//        IIporContractCommonGov(strategyAaveProxyDai).pause();
-//        IIporContractCommonGov(strategyDsrProxyDai).unpause();
-//
-//        vm.stopPrank();
-//        /// @dev End - of preparation.
-//
-//        uint256[] memory swapPfIds = new uint256[](1);
-//        swapPfIds[0] = swapId;
-//        uint256[] memory swapRfIds = new uint256[](0);
-//
-//        //then
-//        vm.expectRevert("IPOR_340");
-//        vm.prank(_user);
-//        //when
-//        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(_user, swapPfIds, swapRfIds);
-//    }
+    function testShouldNotCloseSwapAndWithdrawFromDsrStrategyBecauseTwoStrategiesPausedAndNotEnoughCashInAmmAndAm()
+        public
+    {
+        //given
+        _init();
 
+        deal(DAI, _user, 500_000e18);
+        vm.prank(_user);
+        IERC20Upgradeable(DAI).approve(address(iporProtocolRouterProxy), type(uint256).max);
+
+        uint256 totalAmount = 100_000 * 1e18;
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputsPayFixed = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 25000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputsReceiveFixed = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 25000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputsPayFixed.signature = signRiskParams(
+            riskIndicatorsInputsPayFixed,
+            address(DAI),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            messageSignerPrivateKey
+        );
+        riskIndicatorsInputsReceiveFixed.signature = signRiskParams(
+            riskIndicatorsInputsReceiveFixed,
+            address(DAI),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            1,
+            messageSignerPrivateKey
+        );
+
+        vm.startPrank(_user);
+        uint256 swapId = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapPayFixed28daysDai(
+            _user,
+            totalAmount,
+            1e18,
+            10 * 1e18,
+            riskIndicatorsInputsPayFixed
+        );
+        vm.stopPrank();
+
+        (uint256 indexValue, , ) = IIporOracle(iporOracleProxy).getIndex(address(DAI));
+
+        vm.prank(owner);
+        IIporOracle(iporOracleProxy).addUpdater(_user);
+
+        vm.prank(_user);
+        IIporOracle(iporOracleProxy).updateIndex(address(DAI), 5e17);
+
+        vm.warp(block.timestamp + 25 days);
+
+        /// @dev Start - prepare strategies in this way that there is not enough cash in AMM and AM
+        vm.startPrank(owner);
+        IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(DAI);
+        vm.warp(block.timestamp + 25 days);
+
+        address[] memory pauseGuardians = new address[](1);
+        pauseGuardians[0] = owner;
+        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardians(pauseGuardians);
+        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardians(pauseGuardians);
+        IIporContractCommonGov(strategyDsrProxyDai).addPauseGuardians(pauseGuardians);
+
+        IIporContractCommonGov(strategyAaveProxyDai).pause();
+        IIporContractCommonGov(strategyCompoundProxyDai).pause();
+
+        IAmmGovernanceService(iporProtocolRouterProxy).depositToAssetManagement(DAI, 100 * 1e18);
+
+        IIporContractCommonGov(strategyCompoundProxyDai).unpause();
+        IIporContractCommonGov(strategyDsrProxyDai).pause();
+
+        IAmmGovernanceService(iporProtocolRouterProxy).depositToAssetManagement(
+            DAI,
+            IERC20Upgradeable(DAI).balanceOf(ammTreasuryDai) - 2e18
+        );
+
+        IIporContractCommonGov(strategyCompoundProxyDai).pause();
+        IIporContractCommonGov(strategyDsrProxyDai).unpause();
+
+        vm.stopPrank();
+        /// @dev End - of preparation.
+
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = swapId;
+        uint256[] memory swapRfIds = new uint256[](0);
+
+        //then
+        vm.expectRevert("IPOR_340");
+        vm.prank(_user);
+        //when
+        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(
+            _user,
+            swapPfIds,
+            swapRfIds,
+            AmmTypes.CloseSwapRiskIndicatorsInput(riskIndicatorsInputsPayFixed, riskIndicatorsInputsReceiveFixed)
+        );
+    }
+// Aave 0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9 is paused imposible to execute
 //    function testShouldCloseSwapAndWithdrawFromDsrStrategyAndCompound() public {
 //        //given
 //        _init();
-//        AmmStorage ammStorage = new AmmStorage(iporProtocolRouterProxy, miltonProxyDai);
-//        vm.etch(miltonStorageProxyDai, address(ammStorage).code);
+//        AmmStorage ammStorage = new AmmStorage(iporProtocolRouterProxy, ammTreasuryDai);
+//        vm.etch(ammStorageProxyDai, address(ammStorage).code);
 //
 //        deal(DAI, _user, 500_000e18);
 //        vm.prank(_user);
@@ -482,12 +513,50 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
 //
 //        uint256 totalAmount = 100_000 * 1e18;
 //
+//        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputsPayFixed = AmmTypes.RiskIndicatorsInputs({
+//            maxCollateralRatio: 50000000000000000,
+//            maxCollateralRatioPerLeg: 25000000000000000,
+//            maxLeveragePerLeg: 1000000000000000000000,
+//            baseSpreadPerLeg: 3695000000000000,
+//            fixedRateCapPerLeg: 20000000000000000,
+//            demandSpreadFactor: 20,
+//            expiration: block.timestamp + 1000,
+//            signature: bytes("0x00")
+//        });
+//
+//        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputsReceiveFixed = AmmTypes.RiskIndicatorsInputs({
+//            maxCollateralRatio: 50000000000000000,
+//            maxCollateralRatioPerLeg: 25000000000000000,
+//            maxLeveragePerLeg: 1000000000000000000000,
+//            baseSpreadPerLeg: 3695000000000000,
+//            fixedRateCapPerLeg: 20000000000000000,
+//            demandSpreadFactor: 20,
+//            expiration: block.timestamp + 1000,
+//            signature: bytes("0x00")
+//        });
+//
+//        riskIndicatorsInputsPayFixed.signature = signRiskParams(
+//            riskIndicatorsInputsPayFixed,
+//            address(DAI),
+//            uint256(IporTypes.SwapTenor.DAYS_28),
+//            0,
+//            messageSignerPrivateKey
+//        );
+//        riskIndicatorsInputsReceiveFixed.signature = signRiskParams(
+//            riskIndicatorsInputsReceiveFixed,
+//            address(DAI),
+//            uint256(IporTypes.SwapTenor.DAYS_28),
+//            1,
+//            messageSignerPrivateKey
+//        );
+//
 //        vm.startPrank(_user);
 //        uint256 swapId = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapPayFixed28daysDai(
 //            _user,
 //            totalAmount,
 //            1e18,
-//            10 * 1e18
+//            10 * 1e18,
+//            riskIndicatorsInputsPayFixed
 //        );
 //        vm.stopPrank();
 //
@@ -529,7 +598,7 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
 //        // @dev most of assets transferred to Aaave
 //        IAmmGovernanceService(iporProtocolRouterProxy).depositToAssetManagement(
 //            DAI,
-//            IERC20Upgradeable(DAI).balanceOf(miltonProxyDai) - 2e18
+//            100e18
 //        );
 //
 //        IIporContractCommonGov(strategyAaveProxyDai).pause();
@@ -546,9 +615,16 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
 //        swapPfIds[0] = swapId;
 //        uint256[] memory swapRfIds = new uint256[](0);
 //
+//
+//
 //        //when
 //        vm.prank(_user);
-//        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(_user, swapPfIds, swapRfIds);
+//        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(
+//            _user,
+//            swapPfIds,
+//            swapRfIds,
+//            AmmTypes.CloseSwapRiskIndicatorsInput(riskIndicatorsInputsPayFixed, riskIndicatorsInputsReceiveFixed)
+//        );
 //
 //        //then
 //        uint256 strategyDsrProxyDaiBalanceAfterClose = IStrategy(strategyDsrProxyDai).balanceOf();
@@ -559,112 +635,112 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
 //        assertEq(strategyCompoundBalanceAfterClose, 0, "compound balance zero");
 //    }
 
-//    function testShouldCloseSwapAndWithdrawFromDsrStrategyAndAave() public {
-//        //given
-//        _init();
-//
-//        deal(DAI, _user, 500_000e18);
-//        vm.prank(_user);
-//        IERC20Upgradeable(DAI).approve(address(iporProtocolRouterProxy), type(uint256).max);
-//
-//        uint256 totalAmount = 10_000 * 1e18;
-//
-//        vm.prank(_user);
-//        uint256 swapId1 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapPayFixed28daysDai(
-//            _user,
-//            totalAmount,
-//            1e18,
-//            10 * 1e18
-//        );
-//        vm.prank(_user);
-//        uint256 swapId2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapPayFixed28daysDai(
-//            _user,
-//            totalAmount,
-//            1e18,
-//            10 * 1e18
-//        );
-//        vm.prank(_user);
-//        uint256 swapId3 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapReceiveFixed28daysDai(
-//            _user,
-//            totalAmount,
-//            0,
-//            10 * 1e18
-//        );
-//        vm.prank(_user);
-//        uint256 swapId4 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapReceiveFixed28daysDai(
-//            _user,
-//            totalAmount,
-//            0,
-//            10 * 1e18
-//        );
-//
-//        (uint256 indexValue, , ) = IIporOracle(iporOracleProxy).getIndex(address(DAI));
-//
-//        vm.prank(owner);
-//        IIporOracle(iporOracleProxy).addUpdater(_user);
-//
-//        vm.prank(_user);
-//        IIporOracle(iporOracleProxy).updateIndex(address(DAI), 5e17);
-//
-//        /// @dev Start - prepare strategies in this way that there part of cash in DSR and Aave
-//        vm.startPrank(owner);
-//        IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(DAI);
-//
-//        address[] memory pauseGuardians = new address[](1);
-//        pauseGuardians[0] = owner;
-//        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardians(pauseGuardians);
-//        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardians(pauseGuardians);
-//        IIporContractCommonGov(strategyDsrProxyDai).addPauseGuardians(pauseGuardians);
-//
-//        IIporContractCommonGov(strategyCompoundProxyDai).pause();
-//        IIporContractCommonGov(strategyDsrProxyDai).pause();
-//
-//        /// @dev deposit only to Aave
-//        IAmmGovernanceService(iporProtocolRouterProxy).depositToAssetManagement(DAI, 2 * totalAmount);
-//
-//        IIporContractCommonGov(strategyDsrProxyDai).unpause();
-//        IIporContractCommonGov(strategyAaveProxyDai).pause();
-//
-//        /// @dev deposit only to DSR
-//        IAmmGovernanceService(iporProtocolRouterProxy).depositToAssetManagement(DAI, 2 * totalAmount);
-//
-//        IIporContractCommonGov(strategyCompoundProxyDai).unpause();
-//        IIporContractCommonGov(strategyDsrProxyDai).pause();
-//
-//        // @dev most of assets transferred to Compound
-//        IAmmGovernanceService(iporProtocolRouterProxy).depositToAssetManagement(
-//            DAI,
-//            IERC20Upgradeable(DAI).balanceOf(miltonProxyDai) - 2e18
-//        );
-//
-//        IIporContractCommonGov(strategyAaveProxyDai).unpause();
-//        IIporContractCommonGov(strategyCompoundProxyDai).pause();
-//        IIporContractCommonGov(strategyDsrProxyDai).unpause();
-//
-//        vm.stopPrank();
-//        /// @dev End - of preparation.
-//
-//        uint256 strategyDsrProxyDaiBalanceBeforeClose = IStrategy(strategyDsrProxyDai).balanceOf();
-//        uint256 strategyAaveBalanceBeforeClose = IStrategy(strategyAaveProxyDai).balanceOf();
-//
-//        uint256[] memory swapPfIds = new uint256[](2);
-//        swapPfIds[0] = swapId1;
-//        swapPfIds[1] = swapId2;
-//        uint256[] memory swapRfIds = new uint256[](2);
-//        swapRfIds[0] = swapId3;
-//        swapRfIds[1] = swapId4;
-//
-//        vm.warp(block.timestamp + 22 days);
-//
-//        //when
-//        vm.prank(_user);
-//        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(_user, swapPfIds, swapRfIds);
-//
-//        //then
-//        uint256 strategyDsrProxyDaiBalanceAfterClose = IStrategy(strategyDsrProxyDai).balanceOf();
-//        uint256 strategyAaveBalanceAfterClose = IStrategy(strategyAaveProxyDai).balanceOf();
-//
-//        assertEq(strategyDsrProxyDaiBalanceAfterClose, 0, "dsr balance");
-//        assertLt(strategyAaveBalanceAfterClose, strategyAaveBalanceBeforeClose, "aave balance");
-//    }
+    //    function testShouldCloseSwapAndWithdrawFromDsrStrategyAndAave() public {
+    //        //given
+    //        _init();
+    //
+    //        deal(DAI, _user, 500_000e18);
+    //        vm.prank(_user);
+    //        IERC20Upgradeable(DAI).approve(address(iporProtocolRouterProxy), type(uint256).max);
+    //
+    //        uint256 totalAmount = 10_000 * 1e18;
+    //
+    //        vm.prank(_user);
+    //        uint256 swapId1 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapPayFixed28daysDai(
+    //            _user,
+    //            totalAmount,
+    //            1e18,
+    //            10 * 1e18
+    //        );
+    //        vm.prank(_user);
+    //        uint256 swapId2 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapPayFixed28daysDai(
+    //            _user,
+    //            totalAmount,
+    //            1e18,
+    //            10 * 1e18
+    //        );
+    //        vm.prank(_user);
+    //        uint256 swapId3 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapReceiveFixed28daysDai(
+    //            _user,
+    //            totalAmount,
+    //            0,
+    //            10 * 1e18
+    //        );
+    //        vm.prank(_user);
+    //        uint256 swapId4 = IAmmOpenSwapService(iporProtocolRouterProxy).openSwapReceiveFixed28daysDai(
+    //            _user,
+    //            totalAmount,
+    //            0,
+    //            10 * 1e18
+    //        );
+    //
+    //        (uint256 indexValue, , ) = IIporOracle(iporOracleProxy).getIndex(address(DAI));
+    //
+    //        vm.prank(owner);
+    //        IIporOracle(iporOracleProxy).addUpdater(_user);
+    //
+    //        vm.prank(_user);
+    //        IIporOracle(iporOracleProxy).updateIndex(address(DAI), 5e17);
+    //
+    //        /// @dev Start - prepare strategies in this way that there part of cash in DSR and Aave
+    //        vm.startPrank(owner);
+    //        IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(DAI);
+    //
+    //        address[] memory pauseGuardians = new address[](1);
+    //        pauseGuardians[0] = owner;
+    //        IIporContractCommonGov(strategyAaveProxyDai).addPauseGuardians(pauseGuardians);
+    //        IIporContractCommonGov(strategyCompoundProxyDai).addPauseGuardians(pauseGuardians);
+    //        IIporContractCommonGov(strategyDsrProxyDai).addPauseGuardians(pauseGuardians);
+    //
+    //        IIporContractCommonGov(strategyCompoundProxyDai).pause();
+    //        IIporContractCommonGov(strategyDsrProxyDai).pause();
+    //
+    //        /// @dev deposit only to Aave
+    //        IAmmGovernanceService(iporProtocolRouterProxy).depositToAssetManagement(DAI, 2 * totalAmount);
+    //
+    //        IIporContractCommonGov(strategyDsrProxyDai).unpause();
+    //        IIporContractCommonGov(strategyAaveProxyDai).pause();
+    //
+    //        /// @dev deposit only to DSR
+    //        IAmmGovernanceService(iporProtocolRouterProxy).depositToAssetManagement(DAI, 2 * totalAmount);
+    //
+    //        IIporContractCommonGov(strategyCompoundProxyDai).unpause();
+    //        IIporContractCommonGov(strategyDsrProxyDai).pause();
+    //
+    //        // @dev most of assets transferred to Compound
+    //        IAmmGovernanceService(iporProtocolRouterProxy).depositToAssetManagement(
+    //            DAI,
+    //            IERC20Upgradeable(DAI).balanceOf() - 2e18
+    //        );
+    //
+    //        IIporContractCommonGov(strategyAaveProxyDai).unpause();
+    //        IIporContractCommonGov(strategyCompoundProxyDai).pause();
+    //        IIporContractCommonGov(strategyDsrProxyDai).unpause();
+    //
+    //        vm.stopPrank();
+    //        /// @dev End - of preparation.
+    //
+    //        uint256 strategyDsrProxyDaiBalanceBeforeClose = IStrategy(strategyDsrProxyDai).balanceOf();
+    //        uint256 strategyAaveBalanceBeforeClose = IStrategy(strategyAaveProxyDai).balanceOf();
+    //
+    //        uint256[] memory swapPfIds = new uint256[](2);
+    //        swapPfIds[0] = swapId1;
+    //        swapPfIds[1] = swapId2;
+    //        uint256[] memory swapRfIds = new uint256[](2);
+    //        swapRfIds[0] = swapId3;
+    //        swapRfIds[1] = swapId4;
+    //
+    //        vm.warp(block.timestamp + 22 days);
+    //
+    //        //when
+    //        vm.prank(_user);
+    //        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(_user, swapPfIds, swapRfIds);
+    //
+    //        //then
+    //        uint256 strategyDsrProxyDaiBalanceAfterClose = IStrategy(strategyDsrProxyDai).balanceOf();
+    //        uint256 strategyAaveBalanceAfterClose = IStrategy(strategyAaveProxyDai).balanceOf();
+    //
+    //        assertEq(strategyDsrProxyDaiBalanceAfterClose, 0, "dsr balance");
+    //        assertLt(strategyAaveBalanceAfterClose, strategyAaveBalanceBeforeClose, "aave balance");
+    //    }
 }

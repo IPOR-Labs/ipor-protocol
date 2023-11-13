@@ -14,7 +14,7 @@ contract StrategyDsrDaiTest is TestForkCommons {
     address internal _user;
 
     function setUp() public {
-        uint256 forkId = vm.createSelectFork(vm.envString("PROVIDER_URL"), 18040000);
+        uint256 forkId = vm.createSelectFork(vm.envString("PROVIDER_URL"), 18560825);
         _admin = vm.rememberKey(1);
         _user = vm.rememberKey(2);
         _init();
