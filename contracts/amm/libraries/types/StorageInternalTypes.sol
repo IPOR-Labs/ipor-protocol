@@ -66,7 +66,7 @@ library StorageInternalTypes {
         /// @notice Treasury is the balance that belongs to IPOR DAO and funds up to this amount can be transferred to the DAO-appointed multi-sig wallet.
         /// this ballance is fed by part of the opening fee appointed by the DAO. For more information refer to the documentation:
         /// https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/ipor-swaps#fees
-        uint128 treasury;
+        uint128 treasury    ;
     }
 
     /// @notice A struct with parameters required to calculate SOAP for pay fixed and receive fixed legs.

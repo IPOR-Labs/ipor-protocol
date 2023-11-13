@@ -56,8 +56,8 @@ library AmmTypesGenOne {
         uint256 iporPublicationFee;
         /// @notice maximum swap collateral amount, represented in 18 decimals.
         uint256 maxSwapCollateralAmount;
-        /// @notice liquidation deposit amount, represented WITHOUT 18 decimals. Example 25 = 25 USDT.
-        uint256 liquidationDepositAmount;
+        /// @notice liquidation deposit amount, represented with 18 decimals. Example 25000000000000000000 = 25 units.
+        uint256 wadLiquidationDepositAmount;
         /// @notice minimum leverage, represented in 18 decimals.
         uint256 minLeverage;
         /// @notice swap's opening fee rate, represented in 18 decimals. 1e18 = 100%

@@ -13,6 +13,7 @@ import "../interfaces/IAmmGovernanceService.sol";
 import "../interfaces/IAmmGovernanceLens.sol";
 import "../interfaces/IAmmOpenSwapLens.sol";
 import "../interfaces/IAmmOpenSwapService.sol";
+import "../interfaces/IAmmOpenSwapServiceStEth.sol";
 import "../interfaces/IAmmCloseSwapService.sol";
 import "../interfaces/IAmmCloseSwapLens.sol";
 import "../interfaces/IAmmPoolsService.sol";
@@ -37,6 +38,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
     address public immutable _ammPoolsLens;
     address public immutable _assetManagementLens;
     address public immutable _ammOpenSwapService;
+    address public immutable _ammOpenSwapServiceStEth;
     address public immutable _ammCloseSwapService;
     address public immutable _ammPoolsService;
     address public immutable _ammGovernanceService;
@@ -52,6 +54,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         address ammPoolsLens;
         address assetManagementLens;
         address ammOpenSwapService;
+        address ammOpenSwapServiceStEth;
         address ammCloseSwapService;
         address ammPoolsService;
         address ammGovernanceService;
@@ -68,6 +71,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         _ammPoolsLens = deployedContracts.ammPoolsLens.checkAddress();
         _assetManagementLens = deployedContracts.assetManagementLens.checkAddress();
         _ammOpenSwapService = deployedContracts.ammOpenSwapService.checkAddress();
+        _ammOpenSwapServiceStEth = deployedContracts.ammOpenSwapServiceStEth.checkAddress();
         _ammCloseSwapService = deployedContracts.ammCloseSwapService.checkAddress();
         _ammPoolsService = deployedContracts.ammPoolsService.checkAddress();
         _ammGovernanceService = deployedContracts.ammGovernanceService.checkAddress();
@@ -105,6 +109,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
                 ammPoolsLens: _ammPoolsLens,
                 assetManagementLens: _assetManagementLens,
                 ammOpenSwapService: _ammOpenSwapService,
+                ammOpenSwapServiceStEth: _ammOpenSwapServiceStEth,
                 ammCloseSwapService: _ammCloseSwapService,
                 ammPoolsService: _ammPoolsService,
                 ammGovernanceService: _ammGovernanceService,
@@ -138,6 +143,18 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
 
     function _getRouterImplementation(bytes4 sig, uint256 batchOperation) internal returns (address) {
         if (
+            _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapServiceStEth.openSwapPayFixed28daysStEth.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapServiceStEth.openSwapPayFixed60daysStEth.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapServiceStEth.openSwapPayFixed90daysStEth.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapServiceStEth.openSwapReceiveFixed28daysStEth.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapServiceStEth.openSwapReceiveFixed60daysStEth.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapServiceStEth.openSwapReceiveFixed90daysStEth.selector)
+        ) {
+            if (batchOperation == 0) {
+                _nonReentrantBefore();
+            }
+            return _ammOpenSwapServiceStEth;
+        } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapService.openSwapPayFixed60daysUsdt.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapService.openSwapPayFixed28daysUsdt.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapService.openSwapPayFixed90daysUsdt.selector) ||
@@ -216,7 +233,10 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenFlowsService.delegatePwTokensToLiquidityMining.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenFlowsService.updateIndicatorsInLiquidityMining.selector) ||
-            _checkFunctionSigAndIsNotPause(sig, IPowerTokenFlowsService.undelegatePwTokensFromLiquidityMining.selector) ||
+            _checkFunctionSigAndIsNotPause(
+                sig,
+                IPowerTokenFlowsService.undelegatePwTokensFromLiquidityMining.selector
+            ) ||
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenFlowsService.claimRewardsFromLiquidityMining.selector)
         ) {
             if (batchOperation == 0) {

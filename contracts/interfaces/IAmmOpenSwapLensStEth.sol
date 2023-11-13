@@ -5,8 +5,6 @@ import "../basic/types/AmmTypesGenOne.sol";
 
 /// @title Interface of the service allowing to open new swaps.
 interface IAmmOpenSwapLensStEth {
-
-
     /// @notice Returns configuration of the AmmOpenSwapServicePool for specific asset (pool).
     /// @return AmmOpenSwapServicePoolConfigurationStEth structure representing configuration of the AmmOpenSwapServicePoolStEth.
     function getAmmOpenSwapServicePoolConfigurationStEth()

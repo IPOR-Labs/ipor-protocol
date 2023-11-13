@@ -67,9 +67,11 @@ contract AmmStorageGenOne is
         _disableInitializers();
     }
 
-    function initialize() public initializer {
+    function initialize(uint256 initialLiquidityPoolBalance) public initializer {
         __Ownable_init();
         __UUPSUpgradeable_init();
+
+        _balances.liquidityPool = initialLiquidityPoolBalance.toUint128();
     }
 
     function getVersion() external pure virtual override returns (uint256) {

@@ -20,11 +20,14 @@ import "../../contracts/amm/spread/SpreadCloseSwapService.sol";
 import "../../contracts/amm/spread/SpreadStorageLens.sol";
 import "../../contracts/amm/spread/SpreadRouter.sol";
 import "../../contracts/amm/AmmOpenSwapService.sol";
+import "../../contracts/amm-eth/AmmOpenSwapServiceStEth.sol";
 import "../../contracts/amm/AmmCloseSwapService.sol";
 import "../../contracts/amm/AmmPoolsService.sol";
 import "../../contracts/amm/AmmGovernanceService.sol";
 import "../../contracts/amm/AmmStorage.sol";
+import "../../contracts/basic/amm/AmmStorageGenOne.sol";
 import "../../contracts/amm/AmmTreasury.sol";
+import "../../contracts/amm-eth/AmmTreasuryEth.sol";
 import "../../contracts/vault/strategies/StrategyDsrDai.sol";
 import "../../contracts/vault/AssetManagementDai.sol";
 import "../../contracts/vault/AssetManagementUsdt.sol";
@@ -56,6 +59,7 @@ contract TestForkCommons is Test {
     address public constant ipUSDT = 0x9Bd2177027edEE300DC9F1fb88F24DB6e5e1edC6;
 
     address public constant stETH = 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
+    address public constant wETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
 
     address public constant iporOracleProxy = 0x421C69EAa54646294Db30026aeE80D01988a6876;
 
@@ -120,16 +124,37 @@ contract TestForkCommons is Test {
     address public ammOpenSwapService = 0x78034b17f80c6209400B26AB7B217C31F87AE119;
     address public ammCloseSwapService = 0x6650DE6837839DFCb05D188C50b927b008825ee3;
 
+    address public ammTreasuryProxyStEth = 0x63395EDAF74a80aa1155dB7Cd9BBA976a88DeE4E;
+
     uint256 public messageSignerPrivateKey;
     address public messageSignerAddress;
+
+    address public ammStorageProxyStEth;
+    address public ammOpenSwapServiceStEth;
+
+    address public newSpread28Days;
+    address public newSpread60Days;
+    address public newSpread90Days;
+    address public newSpreadCloseSwapService;
 
     function _init() internal {
         messageSignerPrivateKey = 0x12341234;
         messageSignerAddress = vm.addr(messageSignerPrivateKey);
 
+        _createAmmStorageStEth();
+
         _createAmmSwapsLens();
         _createAmmOpenSwapService();
         _createAmmCloseSwapService();
+
+        _upgradeAmmTreasuryStEth();
+
+
+        _createAmmOpenSwapServiceStEth();
+
+        _upgradeSpreadRouter();
+
+        _setupIporOracleStEth();
 
         _updateIporRouterImplementation();
     }
@@ -141,6 +166,7 @@ contract TestForkCommons is Test {
                 ammPoolsLens,
                 assetManagementLens,
                 ammOpenSwapService,
+                ammOpenSwapServiceStEth,
                 ammCloseSwapService,
                 ammPoolsService,
                 ammGovernanceService,
@@ -244,6 +270,26 @@ contract TestForkCommons is Test {
         strategyCompoundUsdtProxy = address(proxy);
     }
 
+    function _upgradeSpreadRouter() internal {
+        newSpread28Days = address(new Spread28Days(DAI, USDC, USDT, stETH));
+        newSpread60Days = address(new Spread60Days(DAI, USDC, USDT, stETH));
+        newSpread90Days = address(new Spread90Days(DAI, USDC, USDT, stETH));
+        newSpreadCloseSwapService = address(new SpreadCloseSwapService(DAI, USDC, USDT, stETH));
+
+        SpreadRouter newImplementation = new SpreadRouter(
+            SpreadRouter.DeployedContracts(
+                iporProtocolRouterProxy,
+                newSpread28Days,
+                newSpread60Days,
+                newSpread90Days,
+                spreadStorageLens,
+                newSpreadCloseSwapService
+            )
+        );
+
+        vm.prank(owner);
+        SpreadRouter(spreadRouter).upgradeTo(address(newImplementation));
+    }
 
     function _createAmmSwapsLens() private {
         IAmmSwapsLens.SwapLensPoolConfiguration memory daiConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
@@ -265,11 +311,19 @@ contract TestForkCommons is Test {
             10 * 1e18
         );
 
+        IAmmSwapsLens.SwapLensPoolConfiguration memory stEthConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
+            stETH,
+            ammStorageProxyStEth,
+            ammTreasuryProxyStEth,
+            10 * 1e18
+        );
+
         ammSwapsLens = address(
             new AmmSwapsLens(
                 usdtConfig,
                 usdcConfig,
                 daiConfig,
+                stEthConfig,
                 iporOracleProxy,
                 messageSignerAddress,
                 spreadRouter
@@ -277,14 +331,55 @@ contract TestForkCommons is Test {
         );
     }
 
+    function _upgradeAmmTreasuryStEth() private {
+        AmmTreasuryEth newImplementation = new AmmTreasuryEth(stETH, iporProtocolRouterProxy);
+
+        vm.prank(owner);
+        AmmTreasuryEth(ammTreasuryProxyStEth).upgradeTo(address(newImplementation));
+    }
+
+    function _createAmmStorageStEth() private {
+        AmmStorageGenOne ammStorageImpl = new AmmStorageGenOne(iporProtocolRouterProxy, ammTreasuryProxyStEth);
+
+        uint256 actualLiquidityPoolBalance = IERC20(stETH).balanceOf(ammTreasuryProxyStEth);
+
+        vm.startPrank(owner);
+        ERC1967Proxy proxy = new ERC1967Proxy(
+            address(ammStorageImpl),
+            abi.encodeWithSignature("initialize(uint256)", actualLiquidityPoolBalance)
+        );
+        vm.stopPrank();
+
+        ammStorageProxyStEth = address(proxy);
+    }
+
+    function _createAmmOpenSwapServiceStEth() private {
+        AmmTypesGenOne.AmmOpenSwapServicePoolConfiguration memory cfg = AmmTypesGenOne
+            .AmmOpenSwapServicePoolConfiguration({
+                asset: stETH,
+                decimals: 18,
+                ammStorage: ammStorageProxyStEth,
+                ammTreasury: ammTreasuryProxyStEth,
+                iporPublicationFee: 10 * 1e15,
+                maxSwapCollateralAmount: 100_000 * 1e18,
+                wadLiquidationDepositAmount: 25,
+                minLeverage: 10 * 1e18,
+                openingFeeRate: 5e14,
+                openingFeeTreasuryPortionRate: 5e17
+            });
+
+        ammOpenSwapServiceStEth = address(
+            new AmmOpenSwapServiceStEth(cfg, iporOracleProxy, messageSignerAddress, spreadRouter)
+        );
+    }
 
     function _createAmmOpenSwapService() private {
         IAmmOpenSwapLens.AmmOpenSwapServicePoolConfiguration memory daiConfig = IAmmOpenSwapLens
             .AmmOpenSwapServicePoolConfiguration(
                 DAI,
                 18,
-            ammStorageProxyDai,
-            ammTreasuryDai,
+                ammStorageProxyDai,
+                ammTreasuryDai,
                 10 * 1e18,
                 100_000 * 1e18,
                 25,
@@ -297,8 +392,8 @@ contract TestForkCommons is Test {
             .AmmOpenSwapServicePoolConfiguration(
                 USDC,
                 6,
-            ammStorageProxyUsdc,
-            ammTreasuryUsdc,
+                ammStorageProxyUsdc,
+                ammTreasuryUsdc,
                 10 * 1e18,
                 100_000 * 1e18,
                 25,
@@ -311,8 +406,8 @@ contract TestForkCommons is Test {
             .AmmOpenSwapServicePoolConfiguration(
                 USDT,
                 6,
-            ammStorageProxyUsdt,
-            ammTreasuryUsdt,
+                ammStorageProxyUsdt,
+                ammTreasuryUsdt,
                 10 * 1e18,
                 100_000 * 1e18,
                 25,
@@ -331,7 +426,6 @@ contract TestForkCommons is Test {
                 spreadRouter
             )
         );
-
     }
 
     function _createAmmCloseSwapService() private {
@@ -339,8 +433,8 @@ contract TestForkCommons is Test {
             .AmmCloseSwapServicePoolConfiguration(
                 DAI,
                 18,
-            ammStorageProxyDai,
-            ammTreasuryDai,
+                ammStorageProxyDai,
+                ammTreasuryDai,
                 stanleyProxyDai,
                 5e14,
                 5e14,
@@ -356,8 +450,8 @@ contract TestForkCommons is Test {
             .AmmCloseSwapServicePoolConfiguration(
                 USDC,
                 6,
-            ammStorageProxyUsdc,
-            ammTreasuryUsdc,
+                ammStorageProxyUsdc,
+                ammTreasuryUsdc,
                 stanleyProxyUsdc,
                 5e11,
                 5e11,
@@ -373,8 +467,8 @@ contract TestForkCommons is Test {
             .AmmCloseSwapServicePoolConfiguration(
                 USDT,
                 6,
-            ammStorageProxyUsdt,
-            ammTreasuryUsdt,
+                ammStorageProxyUsdt,
+                ammTreasuryUsdt,
                 stanleyProxyUsdt,
                 5e11,
                 5e11,
@@ -395,6 +489,13 @@ contract TestForkCommons is Test {
                 spreadRouter
             )
         );
+    }
+
+    function _setupIporOracleStEth() private {
+        IporOracle iporOracle = IporOracle(iporOracleProxy);
+        vm.startPrank(owner);
+        iporOracle.addAsset(stETH, block.timestamp);
+        vm.stopPrank();
     }
 
     function signRiskParams(

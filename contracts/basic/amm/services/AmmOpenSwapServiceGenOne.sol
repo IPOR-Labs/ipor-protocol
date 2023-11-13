@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
-
+import "forge-std/console2.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
@@ -43,7 +43,7 @@ abstract contract AmmOpenSwapServiceGenOne {
     address internal immutable _ammTreasury;
     uint256 internal immutable _iporPublicationFee;
     uint256 internal immutable _maxSwapCollateralAmount;
-    uint256 internal immutable _liquidationDepositAmount;
+    uint256 internal immutable _wadLiquidationDepositAmount;
     uint256 internal immutable _minLeverage;
     uint256 internal immutable _openingFeeRate;
     uint256 internal immutable _openingFeeTreasuryPortionRate;
@@ -68,7 +68,7 @@ abstract contract AmmOpenSwapServiceGenOne {
         _ammTreasury = poolCfg.ammTreasury.checkAddress();
         _iporPublicationFee = poolCfg.iporPublicationFee;
         _maxSwapCollateralAmount = poolCfg.maxSwapCollateralAmount;
-        _liquidationDepositAmount = poolCfg.liquidationDepositAmount;
+        _wadLiquidationDepositAmount = poolCfg.wadLiquidationDepositAmount;
         _minLeverage = poolCfg.minLeverage;
         _openingFeeRate = poolCfg.openingFeeRate;
         _openingFeeTreasuryPortionRate = poolCfg.openingFeeTreasuryPortionRate;
@@ -262,7 +262,7 @@ abstract contract AmmOpenSwapServiceGenOne {
                 ammTreasury: _ammTreasury,
                 iporPublicationFee: _iporPublicationFee,
                 maxSwapCollateralAmount: _maxSwapCollateralAmount,
-                liquidationDepositAmount: _liquidationDepositAmount,
+                wadLiquidationDepositAmount: _wadLiquidationDepositAmount,
                 minLeverage: _minLeverage,
                 openingFeeRate: _openingFeeRate,
                 openingFeeTreasuryPortionRate: _openingFeeTreasuryPortionRate
@@ -477,13 +477,12 @@ abstract contract AmmOpenSwapServiceGenOne {
         );
 
         uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, poolCfg.decimals);
-        uint256 wadLiquidationDepositAmount = poolCfg.liquidationDepositAmount * 1e18;
 
         (uint256 collateral, uint256 notional, uint256 openingFeeAmount) = SwapLogicGenOne.calculateSwapAmount(
             tenor,
             wadTotalAmount,
             leverage,
-            wadLiquidationDepositAmount,
+            poolCfg.wadLiquidationDepositAmount,
             poolCfg.iporPublicationFee,
             poolCfg.openingFeeRate
         );
@@ -496,7 +495,7 @@ abstract contract AmmOpenSwapServiceGenOne {
         require(collateral <= poolCfg.maxSwapCollateralAmount, AmmErrors.COLLATERAL_AMOUNT_TOO_HIGH);
 
         require(
-            wadTotalAmount > wadLiquidationDepositAmount + poolCfg.iporPublicationFee + openingFeeAmount,
+            wadTotalAmount > poolCfg.wadLiquidationDepositAmount + poolCfg.iporPublicationFee + openingFeeAmount,
             AmmErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
         IporTypes.AccruedIpor memory accruedIndex = IIporOracle(iporOracle).getAccruedIndex(
@@ -512,7 +511,7 @@ abstract contract AmmOpenSwapServiceGenOne {
                 openingFeeLPAmount,
                 openingFeeTreasuryAmount,
                 poolCfg.iporPublicationFee,
-                poolCfg.liquidationDepositAmount,
+                poolCfg.wadLiquidationDepositAmount,
                 accruedIndex
             );
     }

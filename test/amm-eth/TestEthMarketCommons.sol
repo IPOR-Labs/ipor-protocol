@@ -147,6 +147,7 @@ contract TestEthMarketCommons is Test {
                 ammPoolsLens: _getUserAddress(123),
                 assetManagementLens: _getUserAddress(123),
                 ammOpenSwapService: _getUserAddress(123),
+                ammOpenSwapServiceStEth: _getUserAddress(123),
                 ammCloseSwapService: _getUserAddress(123),
                 ammPoolsService: _getUserAddress(123),
                 ammGovernanceService: ammGovernanceService,
