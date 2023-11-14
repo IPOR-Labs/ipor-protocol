@@ -6,9 +6,9 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "./GenericDemandSpreadLibs.sol";
-import "./GenericSpreadStorageLibs.sol";
-import "./GenericOfferedRateCalculationLibs.sol";
+import "./DemandSpreadLibsGenOne.sol";
+import "./SpreadStorageLibsGenOne.sol";
+import "./OfferedRateCalculationLibsGenOne.sol";
 import "../../interfaces/IIporContractCommonGov.sol";
 import "../../interfaces/IProxyImplementation.sol";
 import "../../interfaces/types/IporTypes.sol";
@@ -17,7 +17,7 @@ import "../../security/PauseManager.sol";
 import "../../libraries/IporContractValidator.sol";
 
 /// @dev This contract cannot be used directly, should be used only through SpreadRouter.
-contract GenericSpread is
+contract SpreadGenOne is
     Initializable,
     PausableUpgradeable,
     UUPSUpgradeable,
@@ -69,7 +69,6 @@ contract GenericSpread is
         __UUPSUpgradeable_init();
     }
 
-
     modifier onlyPauseGuardian() {
         require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
         _;
@@ -82,8 +81,8 @@ contract GenericSpread is
 
     function calculateAndUpdateOfferedRatePayFixed(
         SpreadInputs calldata spreadInputs
-    ) external  onlyRouter returns (uint256 offeredRate) {
-        offeredRate = GenericOfferedRateCalculationLibs.calculatePayFixedOfferedRate(
+    ) external onlyRouter returns (uint256 offeredRate) {
+        offeredRate = OfferedRateCalculationLibsGenOne.calculatePayFixedOfferedRate(
             spreadInputs.iporIndexValue,
             spreadInputs.baseSpreadPerLeg,
             _calculateDemandPayFixedAndUpdateTimeWeightedNotional(spreadInputs),
@@ -93,8 +92,8 @@ contract GenericSpread is
 
     function calculateOfferedRatePayFixed(
         SpreadInputs calldata spreadInputs
-    ) external view  returns (uint256 offeredRate) {
-        offeredRate = GenericOfferedRateCalculationLibs.calculatePayFixedOfferedRate(
+    ) external view returns (uint256 offeredRate) {
+        offeredRate = OfferedRateCalculationLibsGenOne.calculatePayFixedOfferedRate(
             spreadInputs.iporIndexValue,
             spreadInputs.baseSpreadPerLeg,
             _calculateDemandPayFixed(spreadInputs),
@@ -104,8 +103,8 @@ contract GenericSpread is
 
     function calculateAndUpdateOfferedRateReceiveFixed(
         SpreadInputs calldata spreadInputs
-    ) external  onlyRouter returns (uint256 offeredRate) {
-        offeredRate = GenericOfferedRateCalculationLibs.calculateReceiveFixedOfferedRate(
+    ) external onlyRouter returns (uint256 offeredRate) {
+        offeredRate = OfferedRateCalculationLibsGenOne.calculateReceiveFixedOfferedRate(
             spreadInputs.iporIndexValue,
             spreadInputs.baseSpreadPerLeg,
             _calculateImbalanceReceiveFixedAndUpdateTimeWeightedNotional(spreadInputs),
@@ -115,8 +114,8 @@ contract GenericSpread is
 
     function calculateOfferedRateReceiveFixed(
         SpreadInputs calldata spreadInputs
-    ) external view  returns (uint256 offeredRate) {
-        offeredRate = GenericOfferedRateCalculationLibs.calculateReceiveFixedOfferedRate(
+    ) external view returns (uint256 offeredRate) {
+        offeredRate = OfferedRateCalculationLibsGenOne.calculateReceiveFixedOfferedRate(
             spreadInputs.iporIndexValue,
             spreadInputs.baseSpreadPerLeg,
             _calculateDemandReceiveFixed(spreadInputs),
@@ -125,56 +124,54 @@ contract GenericSpread is
     }
 
     function spreadFunctionConfig() external pure returns (uint256[] memory) {
-        return GenericDemandSpreadLibs.spreadFunctionConfig();
+        return DemandSpreadLibsGenOne.spreadFunctionConfig();
     }
 
     /// @notice Gets the implementation address of a Spread Router.
-    function getImplementation() external view  returns (address) {
+    function getImplementation() external view returns (address) {
         return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
 
-    function getVersion() external pure virtual  returns (uint256) {
+    function getVersion() external pure virtual returns (uint256) {
         return 2_000;
     }
 
-    function pause() external  onlyPauseGuardian {
+    function pause() external onlyPauseGuardian {
         _pause();
     }
 
-    function unpause() external  onlyOwner {
+    function unpause() external onlyOwner {
         _unpause();
     }
 
-    function isPauseGuardian(address account) external view  returns (bool) {
+    function isPauseGuardian(address account) external view returns (bool) {
         return PauseManager.isPauseGuardian(account);
     }
 
-    function addPauseGuardians(address[] calldata guardians) external  onlyOwner {
+    function addPauseGuardians(address[] calldata guardians) external onlyOwner {
         PauseManager.addPauseGuardians(guardians);
     }
 
-    function removePauseGuardians(address[] calldata guardians) external  onlyOwner {
+    function removePauseGuardians(address[] calldata guardians) external onlyOwner {
         PauseManager.removePauseGuardians(guardians);
     }
 
-    function _calculateDemandPayFixed(
-        SpreadInputs memory spreadInputs
-    ) internal view returns (uint256 spreadValue) {
-        GenericDemandSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
+    function _calculateDemandPayFixed(SpreadInputs memory spreadInputs) internal view returns (uint256 spreadValue) {
+        DemandSpreadLibsGenOne.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
 
-        spreadValue = GenericDemandSpreadLibs.calculatePayFixedSpread(inputData);
+        spreadValue = DemandSpreadLibsGenOne.calculatePayFixedSpread(inputData);
     }
 
     function _calculateDemandPayFixedAndUpdateTimeWeightedNotional(
         SpreadInputs memory spreadInputs
     ) internal returns (uint256 spreadValue) {
-        GenericDemandSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
-        spreadValue = GenericDemandSpreadLibs.calculatePayFixedSpread(inputData);
+        DemandSpreadLibsGenOne.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
+        spreadValue = DemandSpreadLibsGenOne.calculatePayFixedSpread(inputData);
 
-        GenericSpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = GenericSpreadStorageLibs
+        SpreadTypesGenOne.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibsGenOne
             .getTimeWeightedNotionalForAssetAndTenor(inputData.timeWeightedNotionalStorageId);
 
-        GenericCalculateTimeWeightedNotionalLibs.updateTimeWeightedNotionalPayFixed(
+        CalculateTimeWeightedNotionalLibsGenOne.updateTimeWeightedNotionalPayFixed(
             weightedNotional,
             inputData.swapNotional,
             _calculateTenorInSeconds(spreadInputs.tenor)
@@ -184,21 +181,21 @@ contract GenericSpread is
     function _calculateDemandReceiveFixed(
         SpreadInputs calldata spreadInputs
     ) internal view returns (uint256 spreadValue) {
-        GenericDemandSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
+        DemandSpreadLibsGenOne.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
 
-        spreadValue = GenericDemandSpreadLibs.calculateReceiveFixedSpread(inputData);
+        spreadValue = DemandSpreadLibsGenOne.calculateReceiveFixedSpread(inputData);
     }
 
     function _calculateImbalanceReceiveFixedAndUpdateTimeWeightedNotional(
         SpreadInputs calldata spreadInputs
     ) internal returns (uint256 spreadValue) {
-        GenericDemandSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
+        DemandSpreadLibsGenOne.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
 
-        spreadValue = GenericDemandSpreadLibs.calculateReceiveFixedSpread(inputData);
-        GenericSpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = GenericSpreadStorageLibs
+        spreadValue = DemandSpreadLibsGenOne.calculateReceiveFixedSpread(inputData);
+        SpreadTypesGenOne.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibsGenOne
             .getTimeWeightedNotionalForAssetAndTenor(inputData.timeWeightedNotionalStorageId);
 
-        GenericCalculateTimeWeightedNotionalLibs.updateTimeWeightedNotionalReceiveFixed(
+        CalculateTimeWeightedNotionalLibsGenOne.updateTimeWeightedNotionalReceiveFixed(
             weightedNotional,
             inputData.swapNotional,
             _calculateTenorInSeconds(spreadInputs.tenor)
@@ -207,15 +204,15 @@ contract GenericSpread is
 
     function _getSpreadConfigForDemand(
         SpreadInputs memory spreadInputs
-    ) internal view returns (GenericDemandSpreadLibs.SpreadInputData memory inputData) {
-        inputData = GenericDemandSpreadLibs.SpreadInputData({
+    ) internal view returns (DemandSpreadLibsGenOne.SpreadInputData memory inputData) {
+        inputData = DemandSpreadLibsGenOne.SpreadInputData({
             totalCollateralPayFixed: spreadInputs.totalCollateralPayFixed,
             totalCollateralReceiveFixed: spreadInputs.totalCollateralReceiveFixed,
             liquidityPoolBalance: spreadInputs.liquidityPoolBalance,
             swapNotional: spreadInputs.swapNotional,
             demandSpreadFactor: spreadInputs.demandSpreadFactor,
             tenorsInSeconds: new uint256[](3),
-            timeWeightedNotionalStorageIds: new GenericSpreadStorageLibs.StorageId[](3),
+            timeWeightedNotionalStorageIds: new SpreadStorageLibsGenOne.StorageId[](3),
             timeWeightedNotionalStorageId: _calculateStorageId(spreadInputs.tenor),
             selectedTenorInSeconds: _calculateTenorInSeconds(spreadInputs.tenor)
         });
@@ -224,9 +221,9 @@ contract GenericSpread is
         inputData.tenorsInSeconds[1] = 60 days;
         inputData.tenorsInSeconds[2] = 90 days;
 
-        inputData.timeWeightedNotionalStorageIds[0] = GenericSpreadStorageLibs.StorageId.TimeWeightedNotional28Days;
-        inputData.timeWeightedNotionalStorageIds[1] = GenericSpreadStorageLibs.StorageId.TimeWeightedNotional60Days;
-        inputData.timeWeightedNotionalStorageIds[2] = GenericSpreadStorageLibs.StorageId.TimeWeightedNotional90Days;
+        inputData.timeWeightedNotionalStorageIds[0] = SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional28Days;
+        inputData.timeWeightedNotionalStorageIds[1] = SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional60Days;
+        inputData.timeWeightedNotionalStorageIds[2] = SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional90Days;
         return inputData;
     }
 
@@ -247,13 +244,13 @@ contract GenericSpread is
 
     function _calculateStorageId(
         IporTypes.SwapTenor tenor
-    ) private pure returns (GenericSpreadStorageLibs.StorageId storageId) {
+    ) private pure returns (SpreadStorageLibsGenOne.StorageId storageId) {
         if (tenor == IporTypes.SwapTenor.DAYS_28) {
-            return GenericSpreadStorageLibs.StorageId.TimeWeightedNotional28Days;
+            return SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional28Days;
         } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
-            return GenericSpreadStorageLibs.StorageId.TimeWeightedNotional60Days;
+            return SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional60Days;
         } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
-            return GenericSpreadStorageLibs.StorageId.TimeWeightedNotional90Days;
+            return SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional90Days;
         }
         revert UnknownTenor({
             tenor: tenor,

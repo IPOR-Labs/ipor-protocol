@@ -37,6 +37,7 @@ import "../../contracts/vault/strategies/StrategyCompound.sol";
 import "../../contracts/interfaces/IIpTokenV1.sol";
 import "../../contracts/amm-eth/interfaces/IWETH9.sol";
 import "../../contracts/amm-eth/interfaces/IStETH.sol";
+import "../../contracts/basic/spread/SpreadGenOne.sol";
 
 contract TestForkCommons is Test {
     address public constant owner = 0xD92E9F039E4189c342b4067CC61f5d063960D248;
@@ -140,6 +141,8 @@ contract TestForkCommons is Test {
     address public newSpread90Days;
     address public newSpreadCloseSwapService;
 
+    address public spreadProxyStEth;
+
     function _init() internal {
         messageSignerPrivateKey = 0x12341234;
         messageSignerAddress = vm.addr(messageSignerPrivateKey);
@@ -152,12 +155,11 @@ contract TestForkCommons is Test {
 
         _upgradeAmmTreasuryStEth();
 
+        _createNewSpreadForStEth();
         _createAmmOpenSwapServiceStEth();
 
-        _upgradeSpreadRouter();
-
+        //        _upgradeSpreadRouter();
         _setupIporOracleStEth();
-
         _updateIporRouterImplementation();
     }
 
@@ -395,7 +397,7 @@ contract TestForkCommons is Test {
                 cfg,
                 iporOracleProxy,
                 messageSignerAddress,
-                spreadRouter,
+                spreadProxyStEth,
                 iporProtocolRouterProxy,
                 wETH,
                 wstETH
@@ -519,6 +521,19 @@ contract TestForkCommons is Test {
                 spreadRouter
             )
         );
+    }
+
+    function _createNewSpreadForStEth() private {
+        SpreadGenOne spreadImpl = new SpreadGenOne(iporProtocolRouterProxy, stETH);
+
+        vm.startPrank(owner);
+        ERC1967Proxy proxy = new ERC1967Proxy(
+            address(spreadImpl),
+            abi.encodeWithSignature("initialize()")
+        );
+        vm.stopPrank();
+
+        spreadProxyStEth = address(proxy);
     }
 
     function _setupIporOracleStEth() private {

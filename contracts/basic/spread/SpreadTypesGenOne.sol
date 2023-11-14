@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 
-import "./GenericSpreadStorageLibs.sol";
+import "./SpreadStorageLibsGenOne.sol";
 
-library GenericSpreadTypes {
+library SpreadTypesGenOne {
     /// @notice structure used to save the weighted notional for the 28 days into storage
     /// timeWeightedNotionalPayFixed without decimals - uint96 - bytes 0-96
     /// lastUpdateTimePayFixed - uint32 - bytes 96-128
@@ -24,7 +24,7 @@ library GenericSpreadTypes {
         /// @notice lastUpdateTimeReceiveFixed timestamp in seconds
         uint256 lastUpdateTimeReceiveFixed;
         /// @notice storageId from SpreadStorageLibs
-        GenericSpreadStorageLibs.StorageId storageId;
+        SpreadStorageLibsGenOne.StorageId storageId;
     }
 
     /// @notice Technical structure used in Lens for the Weighted Notional params

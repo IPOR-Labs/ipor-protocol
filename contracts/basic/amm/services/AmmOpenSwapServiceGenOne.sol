@@ -20,6 +20,7 @@ import "../../../libraries/RiskManagementLogic.sol";
 import "../../../amm/libraries/types/AmmInternalTypes.sol";
 import "../../../amm/libraries/IporSwapLogic.sol";
 import "../libraries/SwapLogicGenOne.sol";
+import "../../../basic/spread/SpreadGenOne.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 abstract contract AmmOpenSwapServiceGenOne {
@@ -34,8 +35,8 @@ abstract contract AmmOpenSwapServiceGenOne {
 
     address public immutable messageSigner;
     address public immutable iporOracle;
-    address public immutable spreadRouter;
 
+    address public immutable spread;
     address public immutable ammStorage;
     address public immutable ammTreasury;
 
@@ -52,19 +53,21 @@ abstract contract AmmOpenSwapServiceGenOne {
         address beneficiary;
         /// @notice swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
         IporTypes.SwapTenor tenor;
-        bytes4 spreadMethodSig;
     }
 
     constructor(
         AmmTypesGenOne.AmmOpenSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput,
         address messageSignerInput,
-        address spreadRouterInput
+        address spreadInput
     ) {
         asset = poolCfg.asset.checkAddress();
         decimals = poolCfg.decimals;
+
+        spread = spreadInput.checkAddress();
         ammStorage = poolCfg.ammStorage.checkAddress();
         ammTreasury = poolCfg.ammTreasury.checkAddress();
+
         iporPublicationFee = poolCfg.iporPublicationFee;
         maxSwapCollateralAmount = poolCfg.maxSwapCollateralAmount;
         wadLiquidationDepositAmount = poolCfg.wadLiquidationDepositAmount;
@@ -74,7 +77,6 @@ abstract contract AmmOpenSwapServiceGenOne {
 
         iporOracle = iporOracleInput.checkAddress();
         messageSigner = messageSignerInput.checkAddress();
-        spreadRouter = spreadRouterInput.checkAddress();
     }
 
     /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
@@ -89,8 +91,7 @@ abstract contract AmmOpenSwapServiceGenOne {
         Context memory context = Context({
             assetInput: assetInput,
             beneficiary: beneficiary,
-            tenor: IporTypes.SwapTenor.DAYS_28,
-            spreadMethodSig: ISpread28Days.calculateAndUpdateOfferedRatePayFixed28Days.selector
+            tenor: IporTypes.SwapTenor.DAYS_28
         });
         return
             _openSwapPayFixed(
@@ -119,8 +120,7 @@ abstract contract AmmOpenSwapServiceGenOne {
         Context memory context = Context({
             assetInput: assetInput,
             beneficiary: beneficiary,
-            tenor: IporTypes.SwapTenor.DAYS_60,
-            spreadMethodSig: ISpread60Days.calculateAndUpdateOfferedRatePayFixed60Days.selector
+            tenor: IporTypes.SwapTenor.DAYS_60
         });
         return
             _openSwapPayFixed(
@@ -149,8 +149,7 @@ abstract contract AmmOpenSwapServiceGenOne {
         Context memory context = Context({
             assetInput: assetInput,
             beneficiary: beneficiary,
-            tenor: IporTypes.SwapTenor.DAYS_90,
-            spreadMethodSig: ISpread90Days.calculateAndUpdateOfferedRatePayFixed90Days.selector
+            tenor: IporTypes.SwapTenor.DAYS_90
         });
         return
             _openSwapPayFixed(
@@ -179,8 +178,7 @@ abstract contract AmmOpenSwapServiceGenOne {
         Context memory context = Context({
             assetInput: assetInput,
             beneficiary: beneficiary,
-            tenor: IporTypes.SwapTenor.DAYS_28,
-            spreadMethodSig: ISpread28Days.calculateAndUpdateOfferedRateReceiveFixed28Days.selector
+            tenor: IporTypes.SwapTenor.DAYS_28
         });
 
         return
@@ -210,8 +208,7 @@ abstract contract AmmOpenSwapServiceGenOne {
         Context memory context = Context({
             assetInput: assetInput,
             beneficiary: beneficiary,
-            tenor: IporTypes.SwapTenor.DAYS_60,
-            spreadMethodSig: ISpread60Days.calculateAndUpdateOfferedRateReceiveFixed60Days.selector
+            tenor: IporTypes.SwapTenor.DAYS_60
         });
         return
             _openSwapReceiveFixed(
@@ -240,8 +237,7 @@ abstract contract AmmOpenSwapServiceGenOne {
         Context memory context = Context({
             assetInput: assetInput,
             beneficiary: beneficiary,
-            tenor: IporTypes.SwapTenor.DAYS_90,
-            spreadMethodSig: ISpread90Days.calculateAndUpdateOfferedRateReceiveFixed90Days.selector
+            tenor: IporTypes.SwapTenor.DAYS_90
         });
         return
             _openSwapReceiveFixed(
@@ -286,22 +282,19 @@ abstract contract AmmOpenSwapServiceGenOne {
             riskIndicators.maxCollateralRatioPerLeg
         );
 
-        uint256 offeredRateValue = abi.decode(
-            spreadRouter.functionCall(
-                abi.encodeWithSelector(
-                    ctx.spreadMethodSig,
-                    asset,
-                    bosStruct.notional,
-                    riskIndicators.demandSpreadFactor,
-                    riskIndicators.baseSpreadPerLeg,
-                    balance.totalCollateralPayFixed,
-                    balance.totalCollateralReceiveFixed,
-                    balance.liquidityPool,
-                    bosStruct.accruedIpor.indexValue,
-                    riskIndicators.fixedRateCapPerLeg
-                )
-            ),
-            (uint256)
+        uint256 offeredRateValue = SpreadGenOne(spread).calculateAndUpdateOfferedRatePayFixed(
+            SpreadGenOne.SpreadInputs({
+                asset: asset,
+                swapNotional: bosStruct.notional,
+                demandSpreadFactor: riskIndicators.demandSpreadFactor,
+                baseSpreadPerLeg: riskIndicators.baseSpreadPerLeg,
+                totalCollateralPayFixed: balance.totalCollateralPayFixed,
+                totalCollateralReceiveFixed: balance.totalCollateralReceiveFixed,
+                liquidityPoolBalance: balance.liquidityPool,
+                iporIndexValue: bosStruct.accruedIpor.indexValue,
+                fixedRateCapPerLeg: riskIndicators.fixedRateCapPerLeg,
+                tenor: ctx.tenor
+            })
         );
 
         require(
@@ -378,22 +371,19 @@ abstract contract AmmOpenSwapServiceGenOne {
             riskIndicators.maxCollateralRatioPerLeg
         );
 
-        uint256 offeredRateValue = abi.decode(
-            spreadRouter.functionCall(
-                abi.encodeWithSelector(
-                    ctx.spreadMethodSig,
-                    asset,
-                    bosStruct.notional,
-                    riskIndicators.demandSpreadFactor,
-                    riskIndicators.baseSpreadPerLeg,
-                    balance.totalCollateralPayFixed,
-                    balance.totalCollateralReceiveFixed,
-                    balance.liquidityPool,
-                    bosStruct.accruedIpor.indexValue,
-                    riskIndicators.fixedRateCapPerLeg
-                )
-            ),
-            (uint256)
+        uint256 offeredRateValue = SpreadGenOne(spread).calculateAndUpdateOfferedRateReceiveFixed(
+            SpreadGenOne.SpreadInputs({
+                asset: asset,
+                swapNotional: bosStruct.notional,
+                demandSpreadFactor: riskIndicators.demandSpreadFactor,
+                baseSpreadPerLeg: riskIndicators.baseSpreadPerLeg,
+                totalCollateralPayFixed: balance.totalCollateralPayFixed,
+                totalCollateralReceiveFixed: balance.totalCollateralReceiveFixed,
+                liquidityPoolBalance: balance.liquidityPool,
+                iporIndexValue: bosStruct.accruedIpor.indexValue,
+                fixedRateCapPerLeg: riskIndicators.fixedRateCapPerLeg,
+                tenor: ctx.tenor
+            })
         );
 
         require(acceptableFixedInterestRate <= offeredRateValue, AmmErrors.ACCEPTABLE_FIXED_INTEREST_RATE_EXCEEDED);

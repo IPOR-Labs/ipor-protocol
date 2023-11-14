@@ -3,12 +3,12 @@ pragma solidity 0.8.20;
 
 
 import "../../libraries/math/IporMath.sol";
-import "./GenericSpreadStorageLibs.sol";
-import "./GenericCalculateTimeWeightedNotionalLibs.sol";
+import "./SpreadStorageLibsGenOne.sol";
+import "./CalculateTimeWeightedNotionalLibsGenOne.sol";
 
 
 
-library GenericDemandSpreadLibs {
+library DemandSpreadLibsGenOne {
     uint256 internal constant INTERVAL_ONE = 2e17;
     uint256 internal constant INTERVAL_TWO = 5e17;
     uint256 internal constant INTERVAL_THREE = 1e18;
@@ -39,9 +39,9 @@ library GenericDemandSpreadLibs {
         /// @notice List of supported tenors in seconds
         uint256[] tenorsInSeconds;
         /// @notice List of storage ids for a TimeWeightedNotional for all tenors for a given asset
-        GenericSpreadStorageLibs.StorageId[] timeWeightedNotionalStorageIds;
+        SpreadStorageLibsGenOne.StorageId[] timeWeightedNotionalStorageIds;
         /// @notice Storage id for a TimeWeightedNotional for a specific tenor and asset.
-        GenericSpreadStorageLibs.StorageId timeWeightedNotionalStorageId;
+        SpreadStorageLibsGenOne.StorageId timeWeightedNotionalStorageId;
         // @notice Calculation for tenor in seconds
         uint256 selectedTenorInSeconds;
     }
@@ -65,7 +65,7 @@ library GenericDemandSpreadLibs {
     /// @param inputData The input data required for the calculation, including liquidity pool information and collateral amounts.
     /// @return spreadValue The calculated spread value for the pay-fixed side.
     function calculatePayFixedSpread(SpreadInputData memory inputData) internal view returns (uint256 spreadValue) {
-        uint256 lpDepth = GenericCalculateTimeWeightedNotionalLibs.calculateLpDepth(
+        uint256 lpDepth = CalculateTimeWeightedNotionalLibsGenOne.calculateLpDepth(
             inputData.liquidityPoolBalance,
             inputData.totalCollateralPayFixed,
             inputData.totalCollateralReceiveFixed
@@ -77,7 +77,7 @@ library GenericDemandSpreadLibs {
         (
             uint256 oldWeightedNotionalPayFixed,
             uint256 timeWeightedNotionalReceiveFixed
-        ) = GenericCalculateTimeWeightedNotionalLibs.getTimeWeightedNotional(
+        ) = CalculateTimeWeightedNotionalLibsGenOne.getTimeWeightedNotional(
                 inputData.timeWeightedNotionalStorageIds,
                 inputData.tenorsInSeconds,
                 inputData.selectedTenorInSeconds
@@ -110,7 +110,7 @@ library GenericDemandSpreadLibs {
     /// @param inputData The input data required for the calculation, including liquidity pool information and collateral amounts.
     /// @return spreadValue The calculated spread value for the receive-fixed side.
     function calculateReceiveFixedSpread(SpreadInputData memory inputData) internal view returns (uint256 spreadValue) {
-        uint256 lpDepth = GenericCalculateTimeWeightedNotionalLibs.calculateLpDepth(
+        uint256 lpDepth = CalculateTimeWeightedNotionalLibsGenOne.calculateLpDepth(
             inputData.liquidityPoolBalance,
             inputData.totalCollateralPayFixed,
             inputData.totalCollateralReceiveFixed
@@ -122,7 +122,7 @@ library GenericDemandSpreadLibs {
         (
             uint256 timeWeightedNotionalPayFixed,
             uint256 oldWeightedNotionalReceiveFixed
-        ) = GenericCalculateTimeWeightedNotionalLibs.getTimeWeightedNotional(
+        ) = CalculateTimeWeightedNotionalLibsGenOne.getTimeWeightedNotional(
                 inputData.timeWeightedNotionalStorageIds,
                 inputData.tenorsInSeconds,
                 inputData.selectedTenorInSeconds

@@ -3,10 +3,10 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../../libraries/errors/AmmErrors.sol";
-import "./GenericSpreadTypes.sol";
+import "./SpreadTypesGenOne.sol";
 
 /// @title Spread storage library
-library GenericSpreadStorageLibs {
+library SpreadStorageLibsGenOne {
     using SafeCast for uint256;
     uint256 private constant STORAGE_SLOT_BASE = 10_000;
 
@@ -38,7 +38,7 @@ library GenericSpreadStorageLibs {
     /// @param timeWeightedNotional The time weighted notional to save
     function saveTimeWeightedNotionalForAssetAndTenor(
         StorageId timeWeightedNotionalStorageId,
-        GenericSpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional
+        SpreadTypesGenOne.TimeWeightedNotionalMemory memory timeWeightedNotional
     ) internal {
         _checkTimeWeightedNotional(timeWeightedNotionalStorageId);
 
@@ -73,7 +73,7 @@ library GenericSpreadStorageLibs {
     /// @param timeWeightedNotionalStorageId The storage ID of the time weighted notional
     function getTimeWeightedNotionalForAssetAndTenor(
         StorageId timeWeightedNotionalStorageId
-    ) internal view returns (GenericSpreadTypes.TimeWeightedNotionalMemory memory weightedNotional28Days) {
+    ) internal view returns (SpreadTypesGenOne.TimeWeightedNotionalMemory memory weightedNotional28Days) {
         _checkTimeWeightedNotional(timeWeightedNotionalStorageId);
 
         uint256 timeWeightedNotionalPayFixed;
@@ -94,7 +94,7 @@ library GenericSpreadStorageLibs {
         }
 
         return
-            GenericSpreadTypes.TimeWeightedNotionalMemory({
+            SpreadTypesGenOne.TimeWeightedNotionalMemory({
                 timeWeightedNotionalPayFixed: timeWeightedNotionalPayFixed,
                 lastUpdateTimePayFixed: lastUpdateTimePayFixed,
                 timeWeightedNotionalReceiveFixed: timeWeightedNotionalReceiveFixed,

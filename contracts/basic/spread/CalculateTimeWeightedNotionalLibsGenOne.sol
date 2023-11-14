@@ -2,10 +2,10 @@
 pragma solidity 0.8.20;
 
 import "../../libraries/math/IporMath.sol";
-import "./GenericSpreadTypes.sol";
-import "./GenericSpreadStorageLibs.sol";
+import "./SpreadTypesGenOne.sol";
+import "./SpreadStorageLibsGenOne.sol";
 
-library GenericCalculateTimeWeightedNotionalLibs {
+library CalculateTimeWeightedNotionalLibsGenOne {
     /// @notice calculate amm lp depth
     /// @param liquidityPoolBalance liquidity pool balance
     /// @param totalCollateralPayFixed total collateral pay fixed
@@ -47,7 +47,7 @@ library GenericCalculateTimeWeightedNotionalLibs {
     /// @param tenorInSeconds Tenor in seconds.
     /// @dev This function is internal and used to update the time-weighted notional value for the receive fixed leg.
     function updateTimeWeightedNotionalReceiveFixed(
-        GenericSpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional,
+        SpreadTypesGenOne.TimeWeightedNotionalMemory memory timeWeightedNotional,
         uint256 newSwapNotional,
         uint256 tenorInSeconds
     ) internal {
@@ -66,7 +66,7 @@ library GenericCalculateTimeWeightedNotionalLibs {
             timeWeightedNotional.timeWeightedNotionalReceiveFixed = newSwapNotional + oldWeightedNotionalReceiveFixed;
         }
         timeWeightedNotional.lastUpdateTimeReceiveFixed = block.timestamp;
-        GenericSpreadStorageLibs.saveTimeWeightedNotionalForAssetAndTenor(timeWeightedNotional.storageId, timeWeightedNotional);
+        SpreadStorageLibsGenOne.saveTimeWeightedNotionalForAssetAndTenor(timeWeightedNotional.storageId, timeWeightedNotional);
     }
 
     /// @notice Updates the time-weighted notional value for the pay fixed leg.
@@ -75,7 +75,7 @@ library GenericCalculateTimeWeightedNotionalLibs {
     /// @param tenorInSeconds Tenor in seconds.
     /// @dev This function is internal and used to update the time-weighted notional value for the pay fixed leg.
     function updateTimeWeightedNotionalPayFixed(
-        GenericSpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional,
+        SpreadTypesGenOne.TimeWeightedNotionalMemory memory timeWeightedNotional,
         uint256 newSwapNotional,
         uint256 tenorInSeconds
     ) internal {
@@ -94,7 +94,7 @@ library GenericCalculateTimeWeightedNotionalLibs {
             timeWeightedNotional.timeWeightedNotionalPayFixed = newSwapNotional + oldWeightedNotionalPayFixed;
         }
         timeWeightedNotional.lastUpdateTimePayFixed = block.timestamp;
-        GenericSpreadStorageLibs.saveTimeWeightedNotionalForAssetAndTenor(timeWeightedNotional.storageId, timeWeightedNotional);
+        SpreadStorageLibsGenOne.saveTimeWeightedNotionalForAssetAndTenor(timeWeightedNotional.storageId, timeWeightedNotional);
     }
 
     /// @notice Calculates the time-weighted notional values for the pay fixed and receive fixed legs.
@@ -105,18 +105,18 @@ library GenericCalculateTimeWeightedNotionalLibs {
     /// @return timeWeightedNotionalReceiveFixed The aggregated time-weighted notional value for the receive fixed leg.
     /// @dev This function is internal and used to calculate the aggregated time-weighted notional values for multiple storage IDs and maturities.
     function getTimeWeightedNotional(
-        GenericSpreadStorageLibs.StorageId[] memory timeWeightedNotionalStorageIds,
+        SpreadStorageLibsGenOne.StorageId[] memory timeWeightedNotionalStorageIds,
         uint256[] memory tenorsInSeconds,
         uint256 selectedTenorInSeconds
     ) internal view returns (uint256 timeWeightedNotionalPayFixed, uint256 timeWeightedNotionalReceiveFixed) {
         uint256 length = timeWeightedNotionalStorageIds.length;
 
-        GenericSpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional;
+        SpreadTypesGenOne.TimeWeightedNotionalMemory memory timeWeightedNotional;
         uint256 timeWeightedNotionalPayFixedIteration;
         uint256 timeWeightedNotionalReceiveFixedIteration;
 
         for (uint256 i; i != length; ) {
-            timeWeightedNotional = GenericSpreadStorageLibs.getTimeWeightedNotionalForAssetAndTenor(timeWeightedNotionalStorageIds[i]);
+            timeWeightedNotional = SpreadStorageLibsGenOne.getTimeWeightedNotionalForAssetAndTenor(timeWeightedNotionalStorageIds[i]);
             timeWeightedNotionalPayFixedIteration = _isTimeWeightedNotionalRecalculationRequired(
                 timeWeightedNotional.lastUpdateTimePayFixed,
                 tenorsInSeconds[i],

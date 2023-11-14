@@ -4,7 +4,7 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
 /// @title Offered rate calculation library
-library GenericOfferedRateCalculationLibs {
+library OfferedRateCalculationLibsGenOne {
     using SafeCast for uint256;
     using SafeCast for int256;
 
