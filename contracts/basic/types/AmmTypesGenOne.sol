@@ -108,4 +108,26 @@ library AmmTypesGenOne {
         AmmCloseSwapPoolConfiguration poolCfg;
         AmmTypes.CloseSwapRiskIndicatorsInput riskIndicatorsInputs;
     }
+
+    /// @notice Struct representing amounts related to Swap that is presently being opened.
+    /// @dev all values represented in 18 decimals
+    struct OpenSwapAmount {
+        /// @notice Amount of asset that is sent from buyer to AmmTreasury when opening swap.
+        uint256 accountInputTokenAmount;
+        /// @notice Total Amount of asset that is sent from buyer to AmmTreasury when opening swap.
+        uint256 totalAmount;
+        /// @notice Swap's collateral
+        uint256 collateral;
+        /// @notice Swap's notional
+        uint256 notional;
+        /// @notice Opening Fee - part allocated as a profit of the Liquidity Pool
+        uint256 openingFeeLPAmount;
+        /// @notice  Part of the fee set aside for subsidizing the oracle that publishes IPOR rate. Flat fee set by the DAO.
+        /// @notice Opening Fee - part allocated in Treasury balance. Part of the fee set asside for subsidising the oracle that publishes IPOR rate. Flat fee set by the DAO.
+        uint256 openingFeeTreasuryAmount;
+        /// @notice Fee set aside for subsidizing the oracle that publishes IPOR rate. Flat fee set by the DAO.
+        uint256 iporPublicationFee;
+        /// @notice Liquidation deposit is retained when the swap is opened. Value represented in 18 decimals.
+        uint256 liquidationDepositAmount;
+    }
 }

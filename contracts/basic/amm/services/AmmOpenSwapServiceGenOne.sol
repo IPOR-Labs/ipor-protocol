@@ -6,15 +6,12 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import "../../../interfaces/IIporOracle.sol";
 import "../../../interfaces/IAmmStorage.sol";
 import "../../../interfaces/IAmmOpenSwapService.sol";
-import "../../../amm/spread/ISpread28Days.sol";
-import "../../../amm/spread/ISpread60Days.sol";
-import "../../../amm/spread/ISpread90Days.sol";
 import "../../../libraries/Constants.sol";
 import "../../../libraries/math/IporMath.sol";
 import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/errors/AmmErrors.sol";
 import "../../../libraries/errors/AmmErrors.sol";
-import "../../../libraries/SwapEvents.sol";
+import "../libraries/SwapEventsGenOne.sol";
 import "../../../libraries/IporContractValidator.sol";
 import "../../../libraries/RiskManagementLogic.sol";
 import "../../../amm/libraries/types/AmmInternalTypes.sol";
@@ -27,6 +24,8 @@ abstract contract AmmOpenSwapServiceGenOne {
     using Address for address;
     using IporContractValidator for address;
     using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
+
+    address public constant ETH_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
     uint256 public immutable version = 1;
 
@@ -48,7 +47,7 @@ abstract contract AmmOpenSwapServiceGenOne {
 
     struct Context {
         /// @dev asset which user enters to open swap, can be different than underlying asset but have to be in 1:1 price relation with underlying asset
-        address assetInput;
+        address accountInputToken;
         address beneficiary;
         /// @notice swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
         IporTypes.SwapTenor tenor;
@@ -80,7 +79,7 @@ abstract contract AmmOpenSwapServiceGenOne {
 
     /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
     function _openSwapPayFixed(
-        address assetInput,
+        address accountInputToken,
         address beneficiary,
         IporTypes.SwapTenor tenor,
         uint256 totalAmount,
@@ -90,7 +89,7 @@ abstract contract AmmOpenSwapServiceGenOne {
     ) internal returns (uint256) {
         return
             _openSwapPayFixedInternal(
-                Context({assetInput: assetInput, beneficiary: beneficiary, tenor: tenor}),
+                Context({accountInputToken: accountInputToken, beneficiary: beneficiary, tenor: tenor}),
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
@@ -105,7 +104,7 @@ abstract contract AmmOpenSwapServiceGenOne {
 
     /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
     function _openSwapReceiveFixed(
-        address assetInput,
+        address accountInputToken,
         address beneficiary,
         IporTypes.SwapTenor tenor,
         uint256 totalAmount,
@@ -115,7 +114,7 @@ abstract contract AmmOpenSwapServiceGenOne {
     ) internal returns (uint256) {
         return
             _openSwapReceiveFixedInternal(
-                Context({assetInput: assetInput, beneficiary: beneficiary, tenor: tenor}),
+                Context({accountInputToken: accountInputToken, beneficiary: beneficiary, tenor: tenor}),
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
@@ -201,10 +200,11 @@ abstract contract AmmOpenSwapServiceGenOne {
             iporPublicationFee
         );
 
-        _transferAssetInputToAmmTreasury(ctx.assetInput, totalAmount);
+        uint256 accountInputTokenAmount = _transferAssetInputToAmmTreasury(ctx.accountInputToken, totalAmount);
 
         _emitOpenSwapEvent(
-            ctx.assetInput,
+            ctx.accountInputToken,
+            accountInputTokenAmount,
             newSwapId,
             bosStruct.wadTotalAmount,
             newSwap,
@@ -287,10 +287,11 @@ abstract contract AmmOpenSwapServiceGenOne {
             iporPublicationFee
         );
 
-        _transferAssetInputToAmmTreasury(ctx.assetInput, totalAmount);
+        uint256 accountInputTokenAmount = _transferAssetInputToAmmTreasury(ctx.accountInputToken, totalAmount);
 
         _emitOpenSwapEvent(
-            ctx.assetInput,
+            ctx.accountInputToken,
+            accountInputTokenAmount,
             newSwapId,
             bosStruct.wadTotalAmount,
             newSwap,
@@ -303,9 +304,13 @@ abstract contract AmmOpenSwapServiceGenOne {
     }
 
     /// @notice Transfer asset input to AMM Treasury in underlying token (asset) after opening swap
-    /// @param assetInput Address of the asset input the asset which user enters to open swap, can be different than underlying asset but have to be in 1:1 price relation with underlying asset
+    /// @param accountInputToken Address of the asset input the asset which user enters to open swap, can be different than underlying asset but have to be in 1:1 price relation with underlying asset
     /// @param totalAmount Total amount of asset input
-    function _transferAssetInputToAmmTreasury(address assetInput, uint256 totalAmount) internal virtual;
+    /// @return accountInputTokenAmount Amount of asset input transferred to AMM Treasury
+    function _transferAssetInputToAmmTreasury(
+        address accountInputToken,
+        uint256 totalAmount
+    ) internal virtual returns (uint256 accountInputTokenAmount);
 
     function _beforeOpenSwap(
         Context memory ctx,
@@ -317,11 +322,11 @@ abstract contract AmmOpenSwapServiceGenOne {
 
         require(totalAmount > 0, AmmErrors.TOTAL_AMOUNT_TOO_LOW);
 
-        if (ctx.assetInput == address(0)) {
+        if (ctx.accountInputToken == ETH_ADDRESS) {
             require(msg.value >= totalAmount, IporErrors.SENDER_ASSET_BALANCE_TOO_LOW);
         } else {
             require(
-                IERC20Upgradeable(ctx.assetInput).balanceOf(msg.sender) >= totalAmount,
+                IERC20Upgradeable(ctx.accountInputToken).balanceOf(msg.sender) >= totalAmount,
                 IporErrors.SENDER_ASSET_BALANCE_TOO_LOW
             );
         }
@@ -365,7 +370,8 @@ abstract contract AmmOpenSwapServiceGenOne {
     }
 
     function _emitOpenSwapEvent(
-        address inputAsset,
+        address accountInputToken,
+        uint256 accountInputTokenAmount,
         uint256 newSwapId,
         uint256 wadTotalAmount,
         AmmTypes.NewSwap memory newSwap,
@@ -373,21 +379,22 @@ abstract contract AmmOpenSwapServiceGenOne {
         uint256 direction,
         uint256 iporPublicationFeeAmount
     ) internal {
-        emit SwapEvents.OpenSwap(
+        emit SwapEventsGenOne.OpenSwap(
             newSwapId,
             newSwap.buyer,
-            inputAsset,
+            accountInputToken,
             asset,
             AmmTypes.SwapDirection(direction),
-            AmmTypes.OpenSwapAmount(
-                wadTotalAmount,
-                newSwap.collateral,
-                newSwap.notional,
-                newSwap.openingFeeLPAmount,
-                newSwap.openingFeeTreasuryAmount,
-                iporPublicationFeeAmount,
-                newSwap.liquidationDepositAmount * 1e18
-            ),
+            AmmTypesGenOne.OpenSwapAmount({
+                accountInputTokenAmount: accountInputTokenAmount,
+                totalAmount: wadTotalAmount,
+                collateral: newSwap.collateral,
+                notional: newSwap.notional,
+                openingFeeLPAmount: newSwap.openingFeeLPAmount,
+                openingFeeTreasuryAmount: newSwap.openingFeeTreasuryAmount,
+                iporPublicationFee: iporPublicationFeeAmount,
+                liquidationDepositAmount: newSwap.liquidationDepositAmount * 1e18
+            }),
             newSwap.openTimestamp,
             newSwap.openTimestamp + IporSwapLogic.getTenorInSeconds(newSwap.tenor),
             indicator

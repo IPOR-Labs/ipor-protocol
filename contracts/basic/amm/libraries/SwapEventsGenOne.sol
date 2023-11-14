@@ -1,22 +1,23 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
-import "../interfaces/types/AmmTypes.sol";
+import "../../../interfaces/types/AmmTypes.sol";
+import "../../types/AmmTypesGenOne.sol";
 
-library SwapEvents {
+library SwapEventsGenOne {
     /// @notice Emitted when the trader opens new swap.
     event OpenSwap(
         /// @notice swap ID.
         uint256 indexed swapId,
         /// @notice trader that opened the swap
         address indexed buyer,
-        /// @notice input asset
-        address inputAsset,
+        /// @notice Account input token address
+        address accountInputToken,
         /// @notice underlying asset
         address asset,
         /// @notice swap direction, Pay Fixed Receive Floating or Pay Floating Receive Fixed.
         AmmTypes.SwapDirection direction,
         /// @notice technical structure with amounts related with this swap
-        AmmTypes.OpenSwapAmount amounts,
+        AmmTypesGenOne.OpenSwapAmount amounts,
         /// @notice the moment when swap was opened
         uint256 openTimestamp,
         /// @notice the moment when swap will achieve maturity

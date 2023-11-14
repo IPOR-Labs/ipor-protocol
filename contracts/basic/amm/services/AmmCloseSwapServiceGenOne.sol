@@ -17,7 +17,7 @@ import "../../../libraries/AssetManagementLogic.sol";
 import "../../../libraries/AmmLib.sol";
 import "../../../governance/AmmConfigurationManager.sol";
 import "../../../security/OwnerManager.sol";
-import "../../../libraries/SwapEvents.sol";
+import "../libraries/SwapEventsGenOne.sol";
 import "../../../amm/libraries/types/AmmInternalTypes.sol";
 import "../../../amm/spread/ISpreadCloseSwapService.sol";
 import "../libraries/SwapLogicGenOne.sol";

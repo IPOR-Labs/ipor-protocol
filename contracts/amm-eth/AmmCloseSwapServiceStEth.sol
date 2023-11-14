@@ -18,7 +18,7 @@ import "../libraries/AmmLib.sol";
 import "../governance/AmmConfigurationManager.sol";
 import "../security/OwnerManager.sol";
 import "../amm/libraries/types/AmmInternalTypes.sol";
-import "../libraries/SwapEvents.sol";
+import "../basic/amm/libraries/SwapEventsGenOne.sol";
 import "../amm/spread/ISpreadCloseSwapService.sol";
 import "../interfaces/IAmmCloseSwapServiceStEth.sol";
 import "../interfaces/IAmmCloseSwapLens.sol";

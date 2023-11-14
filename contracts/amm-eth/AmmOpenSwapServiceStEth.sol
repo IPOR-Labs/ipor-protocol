@@ -17,7 +17,7 @@ import "../libraries/math/IporMath.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/AmmErrors.sol";
 import "../libraries/errors/AmmErrors.sol";
-import "../libraries/SwapEvents.sol";
+import "../basic/amm/libraries/SwapEventsGenOne.sol";
 import "../libraries/IporContractValidator.sol";
 import "../libraries/RiskManagementLogic.sol";
 import "../amm/libraries/types/AmmInternalTypes.sol";
@@ -174,36 +174,42 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
             );
     }
 
-    function _transferAssetInputToAmmTreasury(address assetInput, uint256 totalAmount) internal override {
-        if (assetInput == 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE) {
+    function _transferAssetInputToAmmTreasury(
+        address accountInputToken,
+        uint256 totalAmount
+    ) internal override returns (uint256 accountInputTokenAmount) {
+        if (accountInputToken == ETH_ADDRESS) {
             if (msg.value != totalAmount) {
                 revert IporErrors.WrongAmount("msg.value", msg.value);
             }
             _submitEth(totalAmount);
-        } else if (assetInput == asset) {
-            IERC20Upgradeable(assetInput).safeTransferFrom(msg.sender, ammTreasury, totalAmount);
-        } else if (assetInput == wETH) {
+            accountInputTokenAmount = totalAmount;
+        } else if (accountInputToken == asset) {
+            IERC20Upgradeable(accountInputToken).safeTransferFrom(msg.sender, ammTreasury, totalAmount);
+            accountInputTokenAmount = totalAmount;
+        } else if (accountInputToken == wETH) {
             IWETH9(wETH).safeTransferFrom(msg.sender, iporProtocolRouter, totalAmount);
 
             /// @dev WETH -> ETH
             IWETH9(wETH).withdraw(totalAmount);
 
             _submitEth(totalAmount);
-        } else if (assetInput == wstETH) {
+            accountInputTokenAmount = totalAmount;
+        } else if (accountInputToken == wstETH) {
             IwstEth(wstETH).safeTransferFrom(msg.sender, address(this), totalAmount);
 
             /// @dev wstETH -> stETH
             uint256 tokensPerStEth = IwstEth(wstETH).tokensPerStEth();
-            uint256 stEthAmount = IwstEth(wstETH).unwrap(IporMath.division(tokensPerStEth * totalAmount, 1e18));
 
-            console2.log("totalAmount when unwrap", totalAmount);
-            console2.log("stEthAmount when unwrap", stEthAmount);
+            accountInputTokenAmount = IporMath.division(tokensPerStEth * totalAmount, 1e18);
+
+            uint256 stEthAmount = IwstEth(wstETH).unwrap(accountInputTokenAmount);
 
             if (stEthAmount > 0) {
                 IStETH(asset).safeTransfer(ammTreasury, stEthAmount);
             }
         } else {
-            revert IporErrors.UnsupportedAsset(assetInput);
+            revert IporErrors.UnsupportedAsset(accountInputToken);
         }
     }
 

@@ -5,9 +5,9 @@ import "./types/AmmTypes.sol";
 
 /// @title Interface of the service allowing to open new swaps.
 interface IAmmOpenSwapServiceStEth {
-    /// @notice It opens a swap for USDT pay-fixed receive-floating with a tenor of 28 days.
+    /// @notice It opens a swap for stETH pay-fixed receive-floating with a tenor of 28 days.
     /// @param beneficiary address of the owner of the swap.
-    /// @param totalAmount total amount used by sender to open the swap, represented in decimals specific to the asset.
+    /// @param totalAmount total amount of stETH used by sender to open the swap, represented in 18 decimals.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
@@ -21,9 +21,9 @@ interface IAmmOpenSwapServiceStEth {
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external payable returns (uint256);
 
-    /// @notice It opens a swap for USDT pay-fixed receive-floating with a tenor of 60 days.
+    /// @notice It opens a swap for stETH pay-fixed receive-floating with a tenor of 60 days.
     /// @param beneficiary address of the owner of the swap.
-    /// @param totalAmount total amount used by sender to open the swap, represented in decimals specific to the asset.
+    /// @param totalAmount total amount of stETH used by sender to open the swap, represented in 18 decimals.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
@@ -37,9 +37,9 @@ interface IAmmOpenSwapServiceStEth {
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external returns (uint256);
 
-    /// @notice It opens a swap for USDT pay-fixed receive-floating with a tenor of 90 days.
+    /// @notice It opens a swap for stETH pay-fixed receive-floating with a tenor of 90 days.
     /// @param beneficiary address of the owner of the swap.
-    /// @param totalAmount total amount used by sender to open the swap, represented in decimals specific to the asset.
+    /// @param totalAmount total amount of stETH used by sender to open the swap, represented in 18 decimals.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
@@ -53,9 +53,9 @@ interface IAmmOpenSwapServiceStEth {
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external returns (uint256);
 
-    /// @notice It opens a swap for USDT receive-fixed pay-floating with a tenor of 28 days.
+    /// @notice It opens a swap for stETH receive-fixed pay-floating with a tenor of 28 days.
     /// @param beneficiary address of the owner of the swap.
-    /// @param totalAmount total amount used by sender to open the swap, represented in decimals specific to the asset.
+    /// @param totalAmount total amount of stETH used by sender to open the swap, represented in 18 decimals.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
@@ -69,9 +69,9 @@ interface IAmmOpenSwapServiceStEth {
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external returns (uint256);
 
-    /// @notice It opens a swap for USDT receive-fixed pay-floating with a tenor of 60 days.
+    /// @notice It opens a swap for stETH receive-fixed pay-floating with a tenor of 60 days.
     /// @param beneficiary address of the owner of the swap.
-    /// @param totalAmount total amount used by sender to open the swap, represented in decimals specific to the asset.
+    /// @param totalAmount total amount of stETH used by sender to open the swap, represented in 18 decimals.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
@@ -85,9 +85,9 @@ interface IAmmOpenSwapServiceStEth {
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external returns (uint256);
 
-    /// @notice It opens a swap for USDT receive-fixed pay-floating with a tenor of 90 days.
+    /// @notice It opens a swap for stETH receive-fixed pay-floating with a tenor of 90 days.
     /// @param beneficiary address of the owner of the swap.
-    /// @param totalAmount total amount used by sender to open the swap, represented in decimals specific to the asset.
+    /// @param totalAmount total amount of stETH used by sender to open the swap, represented in 18 decimals.
     /// @param acceptableFixedInterestRate acceptable fixed interest rate, represented in 18 decimals.
     /// @param leverage swap leverage, represented in 18 decimals.
     /// @return swapId ID of the opened swap.
