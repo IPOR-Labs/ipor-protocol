@@ -319,27 +319,23 @@ contract TestForkCommons is Test {
         IAmmSwapsLens.SwapLensPoolConfiguration memory daiConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             DAI,
             ammStorageProxyDai,
-            ammTreasuryDai,
-            10 * 1e18
+            ammTreasuryDai
         );
         IAmmSwapsLens.SwapLensPoolConfiguration memory usdcConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             USDC,
             ammStorageProxyUsdc,
-            ammTreasuryUsdc,
-            10 * 1e18
+            ammTreasuryUsdc
         );
         IAmmSwapsLens.SwapLensPoolConfiguration memory usdtConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             USDT,
             ammStorageProxyUsdt,
-            ammTreasuryUsdt,
-            10 * 1e18
+            ammTreasuryUsdt
         );
 
         IAmmSwapsLens.SwapLensPoolConfiguration memory stEthConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             stETH,
             ammStorageProxyStEth,
-            ammTreasuryProxyStEth,
-            10 * 1e18
+            ammTreasuryProxyStEth
         );
 
         ammSwapsLens = address(

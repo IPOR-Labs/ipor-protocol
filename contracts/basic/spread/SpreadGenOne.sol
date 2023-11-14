@@ -26,7 +26,7 @@ contract SpreadGenOne is
     IIporContractCommonGov
 {
     struct SpreadInputs {
-        //// @notice Swap's assets DAI/USDC/USDT
+        //// @notice Swap's assets DAI/USDC/USDT/stETH/etc.
         address asset;
         /// @notice Swap's notional value
         uint256 swapNotional;

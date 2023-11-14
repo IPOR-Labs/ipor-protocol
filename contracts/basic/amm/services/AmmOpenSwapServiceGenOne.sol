@@ -35,7 +35,6 @@ abstract contract AmmOpenSwapServiceGenOne {
 
     address public immutable messageSigner;
     address public immutable iporOracle;
-
     address public immutable spread;
     address public immutable ammStorage;
     address public immutable ammTreasury;
@@ -80,181 +79,56 @@ abstract contract AmmOpenSwapServiceGenOne {
     }
 
     /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
-    function _openSwapPayFixed28days(
-        address assetInput,
-        address beneficiary,
-        uint256 totalAmount,
-        uint256 acceptableFixedInterestRate,
-        uint256 leverage,
-        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
-    ) internal returns (uint256) {
-        Context memory context = Context({
-            assetInput: assetInput,
-            beneficiary: beneficiary,
-            tenor: IporTypes.SwapTenor.DAYS_28
-        });
-        return
-            _openSwapPayFixed(
-                context,
-                totalAmount,
-                acceptableFixedInterestRate,
-                leverage,
-                riskIndicatorsInputs.verify(
-                    asset,
-                    uint256(context.tenor),
-                    uint256(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING),
-                    messageSigner
-                )
-            );
-    }
-
-    /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
-    function _openSwapPayFixed60days(
-        address assetInput,
-        address beneficiary,
-        uint256 totalAmount,
-        uint256 acceptableFixedInterestRate,
-        uint256 leverage,
-        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
-    ) internal returns (uint256) {
-        Context memory context = Context({
-            assetInput: assetInput,
-            beneficiary: beneficiary,
-            tenor: IporTypes.SwapTenor.DAYS_60
-        });
-        return
-            _openSwapPayFixed(
-                context,
-                totalAmount,
-                acceptableFixedInterestRate,
-                leverage,
-                riskIndicatorsInputs.verify(
-                    asset,
-                    uint256(context.tenor),
-                    uint256(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING),
-                    messageSigner
-                )
-            );
-    }
-
-    /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
-    function _openSwapPayFixed90days(
-        address assetInput,
-        address beneficiary,
-        uint256 totalAmount,
-        uint256 acceptableFixedInterestRate,
-        uint256 leverage,
-        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
-    ) internal returns (uint256) {
-        Context memory context = Context({
-            assetInput: assetInput,
-            beneficiary: beneficiary,
-            tenor: IporTypes.SwapTenor.DAYS_90
-        });
-        return
-            _openSwapPayFixed(
-                context,
-                totalAmount,
-                acceptableFixedInterestRate,
-                leverage,
-                riskIndicatorsInputs.verify(
-                    asset,
-                    uint256(context.tenor),
-                    uint256(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING),
-                    messageSigner
-                )
-            );
-    }
-
-    /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
-    function _openSwapReceiveFixed28days(
-        address assetInput,
-        address beneficiary,
-        uint256 totalAmount,
-        uint256 acceptableFixedInterestRate,
-        uint256 leverage,
-        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
-    ) internal returns (uint256) {
-        Context memory context = Context({
-            assetInput: assetInput,
-            beneficiary: beneficiary,
-            tenor: IporTypes.SwapTenor.DAYS_28
-        });
-
-        return
-            _openSwapReceiveFixed(
-                context,
-                totalAmount,
-                acceptableFixedInterestRate,
-                leverage,
-                riskIndicatorsInputs.verify(
-                    asset,
-                    uint256(context.tenor),
-                    uint256(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED),
-                    messageSigner
-                )
-            );
-    }
-
-    /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
-    function _openSwapReceiveFixed60days(
-        address assetInput,
-        address beneficiary,
-        uint256 totalAmount,
-        uint256 acceptableFixedInterestRate,
-        uint256 leverage,
-        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
-    ) internal returns (uint256) {
-        Context memory context = Context({
-            assetInput: assetInput,
-            beneficiary: beneficiary,
-            tenor: IporTypes.SwapTenor.DAYS_60
-        });
-        return
-            _openSwapReceiveFixed(
-                context,
-                totalAmount,
-                acceptableFixedInterestRate,
-                leverage,
-                riskIndicatorsInputs.verify(
-                    asset,
-                    uint256(context.tenor),
-                    uint256(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED),
-                    messageSigner
-                )
-            );
-    }
-
-    /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
-    function _openSwapReceiveFixed90days(
-        address assetInput,
-        address beneficiary,
-        uint256 totalAmount,
-        uint256 acceptableFixedInterestRate,
-        uint256 leverage,
-        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
-    ) internal returns (uint256) {
-        Context memory context = Context({
-            assetInput: assetInput,
-            beneficiary: beneficiary,
-            tenor: IporTypes.SwapTenor.DAYS_90
-        });
-        return
-            _openSwapReceiveFixed(
-                context,
-                totalAmount,
-                acceptableFixedInterestRate,
-                leverage,
-                riskIndicatorsInputs.verify(
-                    asset,
-                    uint256(context.tenor),
-                    uint256(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED),
-                    messageSigner
-                )
-            );
-    }
-
     function _openSwapPayFixed(
+        address assetInput,
+        address beneficiary,
+        IporTypes.SwapTenor tenor,
+        uint256 totalAmount,
+        uint256 acceptableFixedInterestRate,
+        uint256 leverage,
+        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
+    ) internal returns (uint256) {
+        return
+            _openSwapPayFixedInternal(
+                Context({assetInput: assetInput, beneficiary: beneficiary, tenor: tenor}),
+                totalAmount,
+                acceptableFixedInterestRate,
+                leverage,
+                riskIndicatorsInputs.verify(
+                    asset,
+                    uint256(tenor),
+                    uint256(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING),
+                    messageSigner
+                )
+            );
+    }
+
+    /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
+    function _openSwapReceiveFixed(
+        address assetInput,
+        address beneficiary,
+        IporTypes.SwapTenor tenor,
+        uint256 totalAmount,
+        uint256 acceptableFixedInterestRate,
+        uint256 leverage,
+        AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
+    ) internal returns (uint256) {
+        return
+            _openSwapReceiveFixedInternal(
+                Context({assetInput: assetInput, beneficiary: beneficiary, tenor: tenor}),
+                totalAmount,
+                acceptableFixedInterestRate,
+                leverage,
+                riskIndicatorsInputs.verify(
+                    asset,
+                    uint256(tenor),
+                    uint256(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED),
+                    messageSigner
+                )
+            );
+    }
+
+    function _openSwapPayFixedInternal(
         Context memory ctx,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
@@ -342,7 +216,7 @@ abstract contract AmmOpenSwapServiceGenOne {
         return newSwapId;
     }
 
-    function _openSwapReceiveFixed(
+    function _openSwapReceiveFixedInternal(
         Context memory ctx,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,

@@ -63,9 +63,10 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external payable override returns (uint256) {
         return
-            _openSwapPayFixed28days(
+            _openSwapPayFixed(
                 assetInput,
                 beneficiary,
+                IporTypes.SwapTenor.DAYS_28,
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
@@ -82,9 +83,10 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external override returns (uint256) {
         return
-            _openSwapPayFixed60days(
+            _openSwapPayFixed(
                 assetInput,
                 beneficiary,
+                IporTypes.SwapTenor.DAYS_60,
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
@@ -101,9 +103,10 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external override returns (uint256) {
         return
-            _openSwapPayFixed90days(
+            _openSwapPayFixed(
                 assetInput,
                 beneficiary,
+                IporTypes.SwapTenor.DAYS_90,
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
@@ -120,9 +123,10 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external override returns (uint256) {
         return
-            _openSwapReceiveFixed28days(
+            _openSwapReceiveFixed(
                 assetInput,
                 beneficiary,
+                IporTypes.SwapTenor.DAYS_28,
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
@@ -139,9 +143,10 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external override returns (uint256) {
         return
-            _openSwapReceiveFixed60days(
+            _openSwapReceiveFixed(
                 assetInput,
                 beneficiary,
+                IporTypes.SwapTenor.DAYS_60,
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
@@ -158,9 +163,10 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external override returns (uint256) {
         return
-            _openSwapReceiveFixed90days(
+            _openSwapReceiveFixed(
                 assetInput,
                 beneficiary,
+                IporTypes.SwapTenor.DAYS_90,
                 totalAmount,
                 acceptableFixedInterestRate,
                 leverage,
@@ -169,7 +175,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
     }
 
     function _transferAssetInputToAmmTreasury(address assetInput, uint256 totalAmount) internal override {
-        if (assetInput == address(0)) {
+        if (assetInput == 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE) {
             if (msg.value != totalAmount) {
                 revert IporErrors.WrongAmount("msg.value", msg.value);
             }

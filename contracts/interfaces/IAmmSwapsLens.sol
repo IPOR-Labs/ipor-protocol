@@ -49,8 +49,6 @@ interface IAmmSwapsLens {
         address ammStorage;
         /// @notice Address of the AMM Treasury contract
         address ammTreasury;
-        /// @notice minimum leverage, represented in 18 decimals.
-        uint256 minLeverage;
     }
 
     /// @notice Gets pool configuration for AmmSwapsLens

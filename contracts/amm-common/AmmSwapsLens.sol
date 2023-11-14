@@ -26,25 +26,22 @@ contract AmmSwapsLens is IAmmSwapsLens {
     address internal immutable _usdtAsset;
     address internal immutable _usdtAmmStorage;
     address internal immutable _usdtAmmTreasury;
-    uint256 internal immutable _usdtMinLeverage;
 
     address internal immutable _usdcAsset;
     address internal immutable _usdcAmmStorage;
     address internal immutable _usdcAmmTreasury;
-    uint256 internal immutable _usdcMinLeverage;
 
     address internal immutable _daiAsset;
     address internal immutable _daiAmmStorage;
     address internal immutable _daiAmmTreasury;
-    uint256 internal immutable _daiMinLeverage;
 
     address internal immutable _stEthAsset;
     address internal immutable _stEthAmmStorage;
     address internal immutable _stEthAmmTreasury;
-    uint256 internal immutable _stEthMinLeverage;
 
     address public immutable iporOracle;
     address public immutable messageSigner;
+    /// @dev spread router for stables USDT, USDC, DAI
     address public immutable spreadRouter;
 
     constructor(
@@ -59,22 +56,18 @@ contract AmmSwapsLens is IAmmSwapsLens {
         _usdtAsset = usdtCfg.asset.checkAddress();
         _usdtAmmStorage = usdtCfg.ammStorage.checkAddress();
         _usdtAmmTreasury = usdtCfg.ammTreasury.checkAddress();
-        _usdtMinLeverage = usdtCfg.minLeverage;
 
         _usdcAsset = usdcCfg.asset.checkAddress();
         _usdcAmmStorage = usdcCfg.ammStorage.checkAddress();
         _usdcAmmTreasury = usdcCfg.ammTreasury.checkAddress();
-        _usdcMinLeverage = usdcCfg.minLeverage;
 
         _daiAsset = daiCfg.asset.checkAddress();
         _daiAmmStorage = daiCfg.ammStorage.checkAddress();
         _daiAmmTreasury = daiCfg.ammTreasury.checkAddress();
-        _daiMinLeverage = daiCfg.minLeverage;
 
         _stEthAsset = stEthCfg.asset.checkAddress();
         _stEthAmmStorage = stEthCfg.ammStorage.checkAddress();
         _stEthAmmTreasury = stEthCfg.ammTreasury.checkAddress();
-        _stEthMinLeverage = stEthCfg.minLeverage;
 
         iporOracle = iporOracleInput.checkAddress();
         messageSigner = messageSignerInput.checkAddress();
@@ -191,7 +184,6 @@ contract AmmSwapsLens is IAmmSwapsLens {
         spreadContextPayFixed.spreadFunctionSig = payFixedSig;
         spreadContextPayFixed.tenor = tenor;
         spreadContextPayFixed.notional = notional;
-        spreadContextPayFixed.minLeverage = poolCfg.minLeverage;
         spreadContextPayFixed.indexValue = indexValue;
         spreadContextPayFixed.riskIndicators = payFixedRiskIndicatorsInputs.verify(
             asset,
@@ -208,7 +200,6 @@ contract AmmSwapsLens is IAmmSwapsLens {
         spreadContextReceiveFixed.spreadFunctionSig = receiveFixedSig;
         spreadContextReceiveFixed.tenor = tenor;
         spreadContextReceiveFixed.notional = notional;
-        spreadContextReceiveFixed.minLeverage = poolCfg.minLeverage;
         spreadContextReceiveFixed.indexValue = indexValue;
         spreadContextReceiveFixed.riskIndicators = receiveFixedRiskIndicatorsInputs.verify(
             asset,
@@ -381,32 +372,28 @@ contract AmmSwapsLens is IAmmSwapsLens {
                 SwapLensPoolConfiguration({
                     asset: _usdtAsset,
                     ammStorage: _usdtAmmStorage,
-                    ammTreasury: _usdtAmmTreasury,
-                    minLeverage: _usdtMinLeverage
+                    ammTreasury: _usdtAmmTreasury
                 });
         } else if (asset == _usdcAsset) {
             return
                 SwapLensPoolConfiguration({
                     asset: _usdcAsset,
                     ammStorage: _usdcAmmStorage,
-                    ammTreasury: _usdcAmmTreasury,
-                    minLeverage: _usdcMinLeverage
+                    ammTreasury: _usdcAmmTreasury
                 });
         } else if (asset == _daiAsset) {
             return
                 SwapLensPoolConfiguration({
                     asset: _daiAsset,
                     ammStorage: _daiAmmStorage,
-                    ammTreasury: _daiAmmTreasury,
-                    minLeverage: _daiMinLeverage
+                    ammTreasury: _daiAmmTreasury
                 });
         } else if (asset == _stEthAsset) {
             return
                 SwapLensPoolConfiguration({
                     asset: _stEthAsset,
                     ammStorage: _stEthAmmStorage,
-                    ammTreasury: _stEthAmmTreasury,
-                    minLeverage: _stEthMinLeverage
+                    ammTreasury: _stEthAmmTreasury
                 });
         } else {
             revert(IporErrors.ASSET_NOT_SUPPORTED);
