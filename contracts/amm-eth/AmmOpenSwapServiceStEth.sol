@@ -170,7 +170,9 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
 
     function _transferAssetInputToAmmTreasury(address assetInput, uint256 totalAmount) internal override {
         if (assetInput == address(0)) {
-            require(msg.value == totalAmount, "Wrong amount");
+            if (msg.value != totalAmount) {
+                revert IporErrors.WrongAmount("msg.value", msg.value);
+            }
             _submitEth(totalAmount);
         } else if (assetInput == asset) {
             IERC20Upgradeable(assetInput).safeTransferFrom(msg.sender, ammTreasury, totalAmount);
@@ -183,13 +185,15 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
             _submitEth(totalAmount);
         } else if (assetInput == wstETH) {
             IwstEth(wstETH).safeTransferFrom(msg.sender, address(this), totalAmount);
+
             /// @dev wstETH -> stETH
             uint256 stEthAmount = IwstEth(wstETH).unwrap(totalAmount);
+
             if (stEthAmount > 0) {
                 IStETH(asset).safeTransfer(ammTreasury, stEthAmount);
             }
         } else {
-            revert("Wrong input address");
+            revert IporErrors.UnsupportedAsset(assetInput);
         }
     }
 

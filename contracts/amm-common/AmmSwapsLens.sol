@@ -8,10 +8,10 @@ import "../interfaces/IAmmSwapsLens.sol";
 import "../libraries/IporContractValidator.sol";
 import "../libraries/RiskIndicatorsValidatorLib.sol";
 import "../libraries/AmmLib.sol";
-import "./spread/ISpread28DaysLens.sol";
-import "./spread/ISpread60DaysLens.sol";
-import "./spread/ISpread90DaysLens.sol";
-import "./libraries/IporSwapLogic.sol";
+import "../amm/spread/ISpread28DaysLens.sol";
+import "../amm/spread/ISpread60DaysLens.sol";
+import "../amm/spread/ISpread90DaysLens.sol";
+import "../amm/libraries/IporSwapLogic.sol";
 import "../basic/amm/libraries/SwapLogicGenOne.sol";
 
 /// @dev It is not recommended to use lens contract directly, should be used only through IporProtocolRouter.

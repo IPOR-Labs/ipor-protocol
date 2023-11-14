@@ -10,7 +10,7 @@ import "../../contracts/router/IporProtocolRouter.sol";
 import "../../contracts/interfaces/IAmmSwapsLens.sol";
 import "../../contracts/interfaces/IAmmOpenSwapLens.sol";
 import "../../contracts/interfaces/IAmmCloseSwapLens.sol";
-import "../../contracts/amm/AmmSwapsLens.sol";
+import "../../contracts/amm-common/AmmSwapsLens.sol";
 import "../../contracts/amm/AmmPoolsLens.sol";
 import "../../contracts/amm/AssetManagementLens.sol";
 import "../../contracts/amm/spread/Spread28Days.sol";

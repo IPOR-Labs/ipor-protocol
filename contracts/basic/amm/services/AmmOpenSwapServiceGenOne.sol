@@ -29,14 +29,16 @@ abstract contract AmmOpenSwapServiceGenOne {
 
     uint256 public immutable version = 1;
 
+    address public immutable asset;
+    uint256 public immutable decimals;
+
     address public immutable messageSigner;
     address public immutable iporOracle;
     address public immutable spreadRouter;
 
-    address public immutable asset;
-    uint256 public immutable decimals;
     address public immutable ammStorage;
     address public immutable ammTreasury;
+
     uint256 public immutable iporPublicationFee;
     uint256 public immutable maxSwapCollateralAmount;
     uint256 public immutable wadLiquidationDepositAmount;
@@ -436,6 +438,9 @@ abstract contract AmmOpenSwapServiceGenOne {
         return newSwapId;
     }
 
+    /// @notice Transfer asset input to AMM Treasury in underlying token (asset) after opening swap
+    /// @param assetInput Address of the asset input the asset which user enters to open swap, can be different than underlying asset but have to be in 1:1 price relation with underlying asset
+    /// @param totalAmount Total amount of asset input
     function _transferAssetInputToAmmTreasury(address assetInput, uint256 totalAmount) internal virtual;
 
     function _beforeOpenSwap(
