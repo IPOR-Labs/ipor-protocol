@@ -62,6 +62,7 @@ contract TestForkCommons is Test {
 
     address public constant stETH = 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
     address public constant wETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    address public constant wstETH = 0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0;
 
     address public constant iporOracleProxy = 0x421C69EAa54646294Db30026aeE80D01988a6876;
 
@@ -151,7 +152,6 @@ contract TestForkCommons is Test {
 
         _upgradeAmmTreasuryStEth();
 
-
         _createAmmOpenSwapServiceStEth();
 
         _upgradeSpreadRouter();
@@ -170,6 +170,13 @@ contract TestForkCommons is Test {
 
         IWETH9(wETH).deposit{value: value}();
         IWETH9(wETH).approve(iporProtocolRouterProxy, type(uint256).max);
+
+        IStETH(stETH).submit{value: value}(address(0));
+
+        IWETH9(stETH).approve(wstETH, type(uint256).max);
+        IwstEth(wstETH).wrap(value);
+
+        IWETH9(wstETH).approve(iporProtocolRouterProxy, type(uint256).max);
 
         vm.stopPrank();
     }
@@ -384,7 +391,15 @@ contract TestForkCommons is Test {
             });
 
         ammOpenSwapServiceStEth = address(
-            new AmmOpenSwapServiceStEth(cfg, iporOracleProxy, messageSignerAddress, spreadRouter, iporProtocolRouterProxy, wETH)
+            new AmmOpenSwapServiceStEth(
+                cfg,
+                iporOracleProxy,
+                messageSignerAddress,
+                spreadRouter,
+                iporProtocolRouterProxy,
+                wETH,
+                wstETH
+            )
         );
     }
 

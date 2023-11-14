@@ -26,16 +26,19 @@ import "../basic/amm/services/AmmOpenSwapServiceGenOne.sol";
 import "./interfaces/IAmmPoolsServiceEth.sol";
 import "./interfaces/IStETH.sol";
 import "./interfaces/IWETH9.sol";
+import "./interfaces/IwstEth.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServiceStEth {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeERC20 for IStETH;
     using SafeERC20 for IWETH9;
+    using SafeERC20 for IwstEth;
     using IporContractValidator for address;
 
     address public immutable iporProtocolRouter;
     address public immutable wETH;
+    address public immutable wstETH;
 
     constructor(
         AmmTypesGenOne.AmmOpenSwapServicePoolConfiguration memory poolCfg,
@@ -43,10 +46,12 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
         address messageSignerInput,
         address spreadRouterInput,
         address iporProtocolRouterInput,
-        address wETHInput
+        address wETHInput,
+        address wstETHInput
     ) AmmOpenSwapServiceGenOne(poolCfg, iporOracleInput, messageSignerInput, spreadRouterInput) {
         iporProtocolRouter = iporProtocolRouterInput.checkAddress();
         wETH = wETHInput.checkAddress();
+        wstETH = wstETHInput.checkAddress();
     }
 
     function openSwapPayFixed28daysStEth(
@@ -176,6 +181,13 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
             IWETH9(wETH).withdraw(totalAmount);
 
             _submitEth(totalAmount);
+        } else if (assetInput == wstETH) {
+            IwstEth(wstETH).safeTransferFrom(msg.sender, address(this), totalAmount);
+            /// @dev wstETH -> stETH
+            uint256 stEthAmount = IwstEth(wstETH).unwrap(totalAmount);
+            if (stEthAmount > 0) {
+                IStETH(asset).safeTransfer(ammTreasury, stEthAmount);
+            }
         } else {
             revert("Wrong input address");
         }
