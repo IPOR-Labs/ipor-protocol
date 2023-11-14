@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
-
+import "forge-std/console2.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
@@ -187,7 +187,11 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
             IwstEth(wstETH).safeTransferFrom(msg.sender, address(this), totalAmount);
 
             /// @dev wstETH -> stETH
-            uint256 stEthAmount = IwstEth(wstETH).unwrap(totalAmount);
+            uint256 tokensPerStEth = IwstEth(wstETH).tokensPerStEth();
+            uint256 stEthAmount = IwstEth(wstETH).unwrap(IporMath.division(tokensPerStEth * totalAmount, 1e18));
+
+            console2.log("totalAmount when unwrap", totalAmount);
+            console2.log("stEthAmount when unwrap", stEthAmount);
 
             if (stEthAmount > 0) {
                 IStETH(asset).safeTransfer(ammTreasury, stEthAmount);
