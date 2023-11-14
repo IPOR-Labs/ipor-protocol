@@ -1,14 +1,11 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
-import "forge-std/console2.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 import "../../../interfaces/IIporOracle.sol";
 import "../../../interfaces/IAmmStorage.sol";
 import "../../../interfaces/IAmmOpenSwapService.sol";
-import "../../../interfaces/IAmmOpenSwapServiceStEth.sol";
-import "../../../interfaces/IAmmOpenSwapLensStEth.sol";
 import "../../../amm/spread/ISpread28Days.sol";
 import "../../../amm/spread/ISpread60Days.sol";
 import "../../../amm/spread/ISpread90Days.sol";
@@ -28,7 +25,6 @@ import "../libraries/SwapLogicGenOne.sol";
 abstract contract AmmOpenSwapServiceGenOne {
     using Address for address;
     using IporContractValidator for address;
-    using SafeERC20Upgradeable for IERC20Upgradeable;
     using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
 
     uint256 public immutable version = 1;
@@ -37,23 +33,24 @@ abstract contract AmmOpenSwapServiceGenOne {
     address public immutable iporOracle;
     address public immutable spreadRouter;
 
-    address internal immutable _asset;
-    uint256 internal immutable _decimals;
-    address internal immutable _ammStorage;
-    address internal immutable _ammTreasury;
-    uint256 internal immutable _iporPublicationFee;
-    uint256 internal immutable _maxSwapCollateralAmount;
-    uint256 internal immutable _wadLiquidationDepositAmount;
-    uint256 internal immutable _minLeverage;
-    uint256 internal immutable _openingFeeRate;
-    uint256 internal immutable _openingFeeTreasuryPortionRate;
+    address public immutable asset;
+    uint256 public immutable decimals;
+    address public immutable ammStorage;
+    address public immutable ammTreasury;
+    uint256 public immutable iporPublicationFee;
+    uint256 public immutable maxSwapCollateralAmount;
+    uint256 public immutable wadLiquidationDepositAmount;
+    uint256 public immutable minLeverage;
+    uint256 public immutable openingFeeRate;
+    uint256 public immutable openingFeeTreasuryPortionRate;
 
     struct Context {
+        /// @dev asset which user enters to open swap, can be different than underlying asset but have to be in 1:1 price relation with underlying asset
+        address assetInput;
         address beneficiary;
         /// @notice swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
         IporTypes.SwapTenor tenor;
         bytes4 spreadMethodSig;
-        AmmTypesGenOne.AmmOpenSwapServicePoolConfiguration poolCfg;
     }
 
     constructor(
@@ -62,22 +59,23 @@ abstract contract AmmOpenSwapServiceGenOne {
         address messageSignerInput,
         address spreadRouterInput
     ) {
-        _asset = poolCfg.asset.checkAddress();
-        _decimals = poolCfg.decimals;
-        _ammStorage = poolCfg.ammStorage.checkAddress();
-        _ammTreasury = poolCfg.ammTreasury.checkAddress();
-        _iporPublicationFee = poolCfg.iporPublicationFee;
-        _maxSwapCollateralAmount = poolCfg.maxSwapCollateralAmount;
-        _wadLiquidationDepositAmount = poolCfg.wadLiquidationDepositAmount;
-        _minLeverage = poolCfg.minLeverage;
-        _openingFeeRate = poolCfg.openingFeeRate;
-        _openingFeeTreasuryPortionRate = poolCfg.openingFeeTreasuryPortionRate;
+        asset = poolCfg.asset.checkAddress();
+        decimals = poolCfg.decimals;
+        ammStorage = poolCfg.ammStorage.checkAddress();
+        ammTreasury = poolCfg.ammTreasury.checkAddress();
+        iporPublicationFee = poolCfg.iporPublicationFee;
+        maxSwapCollateralAmount = poolCfg.maxSwapCollateralAmount;
+        wadLiquidationDepositAmount = poolCfg.wadLiquidationDepositAmount;
+        minLeverage = poolCfg.minLeverage;
+        openingFeeRate = poolCfg.openingFeeRate;
+        openingFeeTreasuryPortionRate = poolCfg.openingFeeTreasuryPortionRate;
 
         iporOracle = iporOracleInput.checkAddress();
         messageSigner = messageSignerInput.checkAddress();
         spreadRouter = spreadRouterInput.checkAddress();
     }
 
+    /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
     function _openSwapPayFixed28days(
         address assetInput,
         address beneficiary,
@@ -87,10 +85,10 @@ abstract contract AmmOpenSwapServiceGenOne {
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) internal returns (uint256) {
         Context memory context = Context({
+            assetInput: assetInput,
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_28,
-            spreadMethodSig: ISpread28Days.calculateAndUpdateOfferedRatePayFixed28Days.selector,
-            poolCfg: _getPoolConfiguration()
+            spreadMethodSig: ISpread28Days.calculateAndUpdateOfferedRatePayFixed28Days.selector
         });
         return
             _openSwapPayFixed(
@@ -99,7 +97,7 @@ abstract contract AmmOpenSwapServiceGenOne {
                 acceptableFixedInterestRate,
                 leverage,
                 riskIndicatorsInputs.verify(
-                    _asset,
+                    asset,
                     uint256(context.tenor),
                     uint256(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING),
                     messageSigner
@@ -107,6 +105,7 @@ abstract contract AmmOpenSwapServiceGenOne {
             );
     }
 
+    /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
     function _openSwapPayFixed60days(
         address assetInput,
         address beneficiary,
@@ -116,10 +115,10 @@ abstract contract AmmOpenSwapServiceGenOne {
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) internal returns (uint256) {
         Context memory context = Context({
+            assetInput: assetInput,
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_60,
-            spreadMethodSig: ISpread60Days.calculateAndUpdateOfferedRatePayFixed60Days.selector,
-            poolCfg: _getPoolConfiguration()
+            spreadMethodSig: ISpread60Days.calculateAndUpdateOfferedRatePayFixed60Days.selector
         });
         return
             _openSwapPayFixed(
@@ -128,7 +127,7 @@ abstract contract AmmOpenSwapServiceGenOne {
                 acceptableFixedInterestRate,
                 leverage,
                 riskIndicatorsInputs.verify(
-                    _asset,
+                    asset,
                     uint256(context.tenor),
                     uint256(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING),
                     messageSigner
@@ -136,6 +135,7 @@ abstract contract AmmOpenSwapServiceGenOne {
             );
     }
 
+    /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
     function _openSwapPayFixed90days(
         address assetInput,
         address beneficiary,
@@ -145,10 +145,10 @@ abstract contract AmmOpenSwapServiceGenOne {
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) internal returns (uint256) {
         Context memory context = Context({
+            assetInput: assetInput,
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_90,
-            spreadMethodSig: ISpread90Days.calculateAndUpdateOfferedRatePayFixed90Days.selector,
-            poolCfg: _getPoolConfiguration()
+            spreadMethodSig: ISpread90Days.calculateAndUpdateOfferedRatePayFixed90Days.selector
         });
         return
             _openSwapPayFixed(
@@ -157,7 +157,7 @@ abstract contract AmmOpenSwapServiceGenOne {
                 acceptableFixedInterestRate,
                 leverage,
                 riskIndicatorsInputs.verify(
-                    _asset,
+                    asset,
                     uint256(context.tenor),
                     uint256(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING),
                     messageSigner
@@ -165,6 +165,7 @@ abstract contract AmmOpenSwapServiceGenOne {
             );
     }
 
+    /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
     function _openSwapReceiveFixed28days(
         address assetInput,
         address beneficiary,
@@ -174,10 +175,10 @@ abstract contract AmmOpenSwapServiceGenOne {
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) internal returns (uint256) {
         Context memory context = Context({
+            assetInput: assetInput,
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_28,
-            spreadMethodSig: ISpread28Days.calculateAndUpdateOfferedRateReceiveFixed28Days.selector,
-            poolCfg: _getPoolConfiguration()
+            spreadMethodSig: ISpread28Days.calculateAndUpdateOfferedRateReceiveFixed28Days.selector
         });
 
         return
@@ -187,7 +188,7 @@ abstract contract AmmOpenSwapServiceGenOne {
                 acceptableFixedInterestRate,
                 leverage,
                 riskIndicatorsInputs.verify(
-                    _asset,
+                    asset,
                     uint256(context.tenor),
                     uint256(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED),
                     messageSigner
@@ -195,6 +196,7 @@ abstract contract AmmOpenSwapServiceGenOne {
             );
     }
 
+    /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
     function _openSwapReceiveFixed60days(
         address assetInput,
         address beneficiary,
@@ -204,10 +206,10 @@ abstract contract AmmOpenSwapServiceGenOne {
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) internal returns (uint256) {
         Context memory context = Context({
+            assetInput: assetInput,
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_60,
-            spreadMethodSig: ISpread60Days.calculateAndUpdateOfferedRateReceiveFixed60Days.selector,
-            poolCfg: _getPoolConfiguration()
+            spreadMethodSig: ISpread60Days.calculateAndUpdateOfferedRateReceiveFixed60Days.selector
         });
         return
             _openSwapReceiveFixed(
@@ -216,7 +218,7 @@ abstract contract AmmOpenSwapServiceGenOne {
                 acceptableFixedInterestRate,
                 leverage,
                 riskIndicatorsInputs.verify(
-                    _asset,
+                    asset,
                     uint256(context.tenor),
                     uint256(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED),
                     messageSigner
@@ -224,6 +226,7 @@ abstract contract AmmOpenSwapServiceGenOne {
             );
     }
 
+    /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
     function _openSwapReceiveFixed90days(
         address assetInput,
         address beneficiary,
@@ -233,10 +236,10 @@ abstract contract AmmOpenSwapServiceGenOne {
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) internal returns (uint256) {
         Context memory context = Context({
+            assetInput: assetInput,
             beneficiary: beneficiary,
             tenor: IporTypes.SwapTenor.DAYS_90,
-            spreadMethodSig: ISpread90Days.calculateAndUpdateOfferedRateReceiveFixed90Days.selector,
-            poolCfg: _getPoolConfiguration()
+            spreadMethodSig: ISpread90Days.calculateAndUpdateOfferedRateReceiveFixed90Days.selector
         });
         return
             _openSwapReceiveFixed(
@@ -245,28 +248,12 @@ abstract contract AmmOpenSwapServiceGenOne {
                 acceptableFixedInterestRate,
                 leverage,
                 riskIndicatorsInputs.verify(
-                    _asset,
+                    asset,
                     uint256(context.tenor),
                     uint256(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED),
                     messageSigner
                 )
             );
-    }
-
-    function _getPoolConfiguration() internal view returns (AmmTypesGenOne.AmmOpenSwapServicePoolConfiguration memory) {
-        return
-            AmmTypesGenOne.AmmOpenSwapServicePoolConfiguration({
-                asset: _asset,
-                decimals: _decimals,
-                ammStorage: _ammStorage,
-                ammTreasury: _ammTreasury,
-                iporPublicationFee: _iporPublicationFee,
-                maxSwapCollateralAmount: _maxSwapCollateralAmount,
-                wadLiquidationDepositAmount: _wadLiquidationDepositAmount,
-                minLeverage: _minLeverage,
-                openingFeeRate: _openingFeeRate,
-                openingFeeTreasuryPortionRate: _openingFeeTreasuryPortionRate
-            });
     }
 
     function _openSwapPayFixed(
@@ -277,16 +264,13 @@ abstract contract AmmOpenSwapServiceGenOne {
         AmmTypes.OpenSwapRiskIndicators memory riskIndicators
     ) internal returns (uint256) {
         AmmInternalTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
-            ctx.beneficiary,
+            ctx,
             block.timestamp,
             totalAmount,
-            leverage,
-            ctx.tenor,
-            ctx.poolCfg
+            leverage
         );
 
-        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(ctx.poolCfg.ammStorage)
-            .getBalancesForOpenSwap();
+        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(ammStorage).getBalancesForOpenSwap();
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 
@@ -297,15 +281,14 @@ abstract contract AmmOpenSwapServiceGenOne {
             leverage,
             riskIndicators.maxLeveragePerLeg,
             riskIndicators.maxCollateralRatio,
-            riskIndicators.maxCollateralRatioPerLeg,
-            ctx.poolCfg.minLeverage
+            riskIndicators.maxCollateralRatioPerLeg
         );
 
         uint256 offeredRateValue = abi.decode(
             spreadRouter.functionCall(
                 abi.encodeWithSelector(
                     ctx.spreadMethodSig,
-                    ctx.poolCfg.asset,
+                    asset,
                     bosStruct.notional,
                     riskIndicators.demandSpreadFactor,
                     riskIndicators.baseSpreadPerLeg,
@@ -344,16 +327,15 @@ abstract contract AmmOpenSwapServiceGenOne {
             ctx.tenor
         );
 
-        uint256 newSwapId = IAmmStorage(ctx.poolCfg.ammStorage).updateStorageWhenOpenSwapPayFixedInternal(
+        uint256 newSwapId = IAmmStorage(ammStorage).updateStorageWhenOpenSwapPayFixedInternal(
             newSwap,
-            ctx.poolCfg.iporPublicationFee
+            iporPublicationFee
         );
 
-        IERC20Upgradeable(ctx.poolCfg.asset).safeTransferFrom(msg.sender, ctx.poolCfg.ammTreasury, totalAmount);
+        _transferAssetInputToAmmTreasury(ctx.assetInput, totalAmount);
 
         _emitOpenSwapEvent(
-            ctx.poolCfg.asset, //TODO: fix it
-            ctx.poolCfg.asset,
+            ctx.assetInput,
             newSwapId,
             bosStruct.wadTotalAmount,
             newSwap,
@@ -373,16 +355,13 @@ abstract contract AmmOpenSwapServiceGenOne {
         AmmTypes.OpenSwapRiskIndicators memory riskIndicators
     ) internal returns (uint256) {
         AmmInternalTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
-            ctx.beneficiary,
+            ctx,
             block.timestamp,
             totalAmount,
-            leverage,
-            ctx.tenor,
-            ctx.poolCfg
+            leverage
         );
 
-        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(ctx.poolCfg.ammStorage)
-            .getBalancesForOpenSwap();
+        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(ammStorage).getBalancesForOpenSwap();
 
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralReceiveFixed = balance.totalCollateralReceiveFixed + bosStruct.collateral;
@@ -394,15 +373,14 @@ abstract contract AmmOpenSwapServiceGenOne {
             leverage,
             riskIndicators.maxLeveragePerLeg,
             riskIndicators.maxCollateralRatio,
-            riskIndicators.maxCollateralRatioPerLeg,
-            ctx.poolCfg.minLeverage
+            riskIndicators.maxCollateralRatioPerLeg
         );
 
         uint256 offeredRateValue = abi.decode(
             spreadRouter.functionCall(
                 abi.encodeWithSelector(
                     ctx.spreadMethodSig,
-                    ctx.poolCfg.asset,
+                    asset,
                     bosStruct.notional,
                     riskIndicators.demandSpreadFactor,
                     riskIndicators.baseSpreadPerLeg,
@@ -438,16 +416,15 @@ abstract contract AmmOpenSwapServiceGenOne {
             ctx.tenor
         );
 
-        uint256 newSwapId = IAmmStorage(ctx.poolCfg.ammStorage).updateStorageWhenOpenSwapReceiveFixedInternal(
+        uint256 newSwapId = IAmmStorage(ammStorage).updateStorageWhenOpenSwapReceiveFixedInternal(
             newSwap,
-            ctx.poolCfg.iporPublicationFee
+            iporPublicationFee
         );
 
-        IERC20Upgradeable(ctx.poolCfg.asset).safeTransferFrom(msg.sender, ctx.poolCfg.ammTreasury, totalAmount);
+        _transferAssetInputToAmmTreasury(ctx.assetInput, totalAmount);
 
         _emitOpenSwapEvent(
-            ctx.poolCfg.asset, //TODO: fix it
-            ctx.poolCfg.asset,
+            ctx.assetInput,
             newSwapId,
             bosStruct.wadTotalAmount,
             newSwap,
@@ -459,49 +436,51 @@ abstract contract AmmOpenSwapServiceGenOne {
         return newSwapId;
     }
 
+    function _transferAssetInputToAmmTreasury(address assetInput, uint256 totalAmount) internal virtual;
+
     function _beforeOpenSwap(
-        address beneficiary,
+        Context memory ctx,
         uint256 openTimestamp,
         uint256 totalAmount,
-        uint256 leverage,
-        IporTypes.SwapTenor tenor,
-        AmmTypesGenOne.AmmOpenSwapServicePoolConfiguration memory poolCfg
+        uint256 leverage
     ) internal view returns (AmmInternalTypes.BeforeOpenSwapStruct memory bosStruct) {
-        require(beneficiary != address(0), IporErrors.WRONG_ADDRESS);
+        require(ctx.beneficiary != address(0), IporErrors.WRONG_ADDRESS);
 
         require(totalAmount > 0, AmmErrors.TOTAL_AMOUNT_TOO_LOW);
 
-        require(
-            IERC20Upgradeable(poolCfg.asset).balanceOf(msg.sender) >= totalAmount,
-            IporErrors.SENDER_ASSET_BALANCE_TOO_LOW
-        );
+        if (ctx.assetInput == address(0)) {
+            require(msg.value >= totalAmount, IporErrors.SENDER_ASSET_BALANCE_TOO_LOW);
+        } else {
+            require(
+                IERC20Upgradeable(ctx.assetInput).balanceOf(msg.sender) >= totalAmount,
+                IporErrors.SENDER_ASSET_BALANCE_TOO_LOW
+            );
+        }
 
-        uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, poolCfg.decimals);
+        uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, decimals);
 
         (uint256 collateral, uint256 notional, uint256 openingFeeAmount) = SwapLogicGenOne.calculateSwapAmount(
-            tenor,
+            ctx.tenor,
             wadTotalAmount,
             leverage,
-            poolCfg.wadLiquidationDepositAmount,
-            poolCfg.iporPublicationFee,
-            poolCfg.openingFeeRate
+            wadLiquidationDepositAmount,
+            iporPublicationFee,
+            openingFeeRate
         );
 
         (uint256 openingFeeLPAmount, uint256 openingFeeTreasuryAmount) = IporSwapLogic.splitOpeningFeeAmount(
             openingFeeAmount,
-            poolCfg.openingFeeTreasuryPortionRate
+            openingFeeTreasuryPortionRate
         );
 
-        require(collateral <= poolCfg.maxSwapCollateralAmount, AmmErrors.COLLATERAL_AMOUNT_TOO_HIGH);
+        require(collateral <= maxSwapCollateralAmount, AmmErrors.COLLATERAL_AMOUNT_TOO_HIGH);
 
         require(
-            wadTotalAmount > poolCfg.wadLiquidationDepositAmount + poolCfg.iporPublicationFee + openingFeeAmount,
+            wadTotalAmount > wadLiquidationDepositAmount + iporPublicationFee + openingFeeAmount,
             AmmErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
-        IporTypes.AccruedIpor memory accruedIndex = IIporOracle(iporOracle).getAccruedIndex(
-            openTimestamp,
-            poolCfg.asset
-        );
+
+        IporTypes.AccruedIpor memory accruedIndex = IIporOracle(iporOracle).getAccruedIndex(openTimestamp, asset);
 
         return
             AmmInternalTypes.BeforeOpenSwapStruct(
@@ -510,21 +489,20 @@ abstract contract AmmOpenSwapServiceGenOne {
                 notional,
                 openingFeeLPAmount,
                 openingFeeTreasuryAmount,
-                poolCfg.iporPublicationFee,
-                poolCfg.wadLiquidationDepositAmount,
+                iporPublicationFee,
+                wadLiquidationDepositAmount,
                 accruedIndex
             );
     }
 
     function _emitOpenSwapEvent(
         address inputAsset,
-        address asset,
         uint256 newSwapId,
         uint256 wadTotalAmount,
         AmmTypes.NewSwap memory newSwap,
         AmmTypes.IporSwapIndicator memory indicator,
         uint256 direction,
-        uint256 iporPublicationFee
+        uint256 iporPublicationFeeAmount
     ) internal {
         emit SwapEvents.OpenSwap(
             newSwapId,
@@ -538,7 +516,7 @@ abstract contract AmmOpenSwapServiceGenOne {
                 newSwap.notional,
                 newSwap.openingFeeLPAmount,
                 newSwap.openingFeeTreasuryAmount,
-                iporPublicationFee,
+                iporPublicationFeeAmount,
                 newSwap.liquidationDepositAmount * 1e18
             ),
             newSwap.openTimestamp,
@@ -554,9 +532,8 @@ abstract contract AmmOpenSwapServiceGenOne {
         uint256 leverage,
         uint256 maxLeverage,
         uint256 maxCollateralRatio,
-        uint256 maxCollateralRatioPerLeg,
-        uint256 cfgMinLeverage
-    ) internal pure {
+        uint256 maxCollateralRatioPerLeg
+    ) internal view {
         uint256 collateralRatio;
         uint256 collateralRatioPerLeg;
 
@@ -573,7 +550,7 @@ abstract contract AmmOpenSwapServiceGenOne {
 
         require(collateralRatioPerLeg <= maxCollateralRatioPerLeg, AmmErrors.LP_COLLATERAL_RATIO_PER_LEG_EXCEEDED);
 
-        require(leverage >= cfgMinLeverage, AmmErrors.LEVERAGE_TOO_LOW);
+        require(leverage >= minLeverage, AmmErrors.LEVERAGE_TOO_LOW);
         require(leverage <= maxLeverage, AmmErrors.LEVERAGE_TOO_HIGH);
     }
 }

@@ -19,7 +19,7 @@ interface IAmmOpenSwapServiceStEth {
         uint256 acceptableFixedInterestRate,
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
-    ) external returns (uint256);
+    ) external payable returns (uint256);
 
     /// @notice It opens a swap for USDT pay-fixed receive-floating with a tenor of 60 days.
     /// @param beneficiary address of the owner of the swap.

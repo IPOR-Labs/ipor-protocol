@@ -35,6 +35,8 @@ import "../../contracts/vault/AssetManagementUsdc.sol";
 import "../../contracts/vault/strategies/StrategyAave.sol";
 import "../../contracts/vault/strategies/StrategyCompound.sol";
 import "../../contracts/interfaces/IIpTokenV1.sol";
+import "../../contracts/amm-eth/interfaces/IWETH9.sol";
+import "../../contracts/amm-eth/interfaces/IStETH.sol";
 
 contract TestForkCommons is Test {
     address public constant owner = 0xD92E9F039E4189c342b4067CC61f5d063960D248;
@@ -157,6 +159,19 @@ contract TestForkCommons is Test {
         _setupIporOracleStEth();
 
         _updateIporRouterImplementation();
+    }
+
+    function _setupUser(address user, uint256 value) internal {
+        deal(user, 1_000_000e18);
+        vm.startPrank(user);
+
+        IStETH(stETH).submit{value: value}(address(0));
+        IStETH(stETH).approve(iporProtocolRouterProxy, type(uint256).max);
+
+        IWETH9(wETH).deposit{value: value}();
+        IWETH9(wETH).approve(iporProtocolRouterProxy, type(uint256).max);
+
+        vm.stopPrank();
     }
 
     function _updateIporRouterImplementation() internal {
@@ -369,7 +384,7 @@ contract TestForkCommons is Test {
             });
 
         ammOpenSwapServiceStEth = address(
-            new AmmOpenSwapServiceStEth(cfg, iporOracleProxy, messageSignerAddress, spreadRouter)
+            new AmmOpenSwapServiceStEth(cfg, iporOracleProxy, messageSignerAddress, spreadRouter, iporProtocolRouterProxy, wETH)
         );
     }
 
