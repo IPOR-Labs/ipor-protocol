@@ -12,9 +12,15 @@ import "./OfferedRateCalculationLibsGenOne.sol";
 import "../../interfaces/IIporContractCommonGov.sol";
 import "../../interfaces/IProxyImplementation.sol";
 import "../../interfaces/types/IporTypes.sol";
+import "../../interfaces/types/AmmTypes.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 import "../../security/PauseManager.sol";
 import "../../libraries/IporContractValidator.sol";
+import "../../amm/libraries/types/AmmInternalTypes.sol";
+import "../../amm/spread/SpreadStorageLibs.sol";
+import "../../basic/interfaces/IAmmStorageGenOne.sol";
+import "../../amm/spread/CalculateTimeWeightedNotionalLibs.sol";
+import "../../amm/libraries/IporSwapLogic.sol";
 
 /// @dev This contract cannot be used directly, should be used only through SpreadRouter.
 contract SpreadGenOne is
@@ -42,8 +48,9 @@ contract SpreadGenOne is
         uint256 liquidityPoolBalance;
         /// @notice Ipor index value at the time of swap creation
         uint256 iporIndexValue;
-        // @notice fixed rate cap for given leg for offered rate without demandSpread in 18 decimals
+        /// @notice fixed rate cap for given leg for offered rate without demandSpread in 18 decimals
         uint256 fixedRateCapPerLeg;
+        /// @notice Swap's tenor
         IporTypes.SwapTenor tenor;
     }
 
@@ -90,6 +97,31 @@ contract SpreadGenOne is
         );
     }
 
+    function calculateOfferedRate(
+        AmmTypes.SwapDirection direction,
+        SpreadInputs calldata spreadInputs
+    ) external view returns (uint256) {
+        if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
+            return
+                OfferedRateCalculationLibsGenOne.calculatePayFixedOfferedRate(
+                    spreadInputs.iporIndexValue,
+                    spreadInputs.baseSpreadPerLeg,
+                    _calculateDemandPayFixed(spreadInputs),
+                    spreadInputs.fixedRateCapPerLeg
+                );
+        } else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
+            return
+                OfferedRateCalculationLibsGenOne.calculateReceiveFixedOfferedRate(
+                    spreadInputs.iporIndexValue,
+                    spreadInputs.baseSpreadPerLeg,
+                    _calculateDemandReceiveFixed(spreadInputs),
+                    spreadInputs.fixedRateCapPerLeg
+                );
+        } else {
+            revert IporErrors.UnsupportedDirection(uint256(direction));
+        }
+    }
+
     function calculateOfferedRatePayFixed(
         SpreadInputs calldata spreadInputs
     ) external view returns (uint256 offeredRate) {
@@ -121,6 +153,73 @@ contract SpreadGenOne is
             _calculateDemandReceiveFixed(spreadInputs),
             spreadInputs.fixedRateCapPerLeg
         );
+    }
+
+    function updateTimeWeightedNotionalOnClose(
+        uint256 direction,
+        IporTypes.SwapTenor tenor,
+        uint256 swapNotional,
+        AmmInternalTypes.OpenSwapItem memory closedSwap,
+        address ammStorageAddress
+    ) external onlyRouter {
+        // @dev when timestamp is 0, it means that the swap was open in ipor-protocol v1 .
+        if (closedSwap.openSwapTimestamp == 0) {
+            return;
+        }
+        uint256 tenorInSeconds = IporSwapLogic.getTenorInSeconds(tenor);
+        SpreadStorageLibsGenOne.StorageId storageId = _calculateStorageId(tenor);
+        SpreadTypesGenOne.TimeWeightedNotionalMemory memory timeWeightedNotional = SpreadStorageLibsGenOne
+            .getTimeWeightedNotionalForAssetAndTenor(storageId);
+
+        uint256 timeWeightedNotionalAmount = direction == 0
+            ? timeWeightedNotional.timeWeightedNotionalPayFixed
+            : timeWeightedNotional.timeWeightedNotionalReceiveFixed;
+        uint256 timeOfLastUpdate = direction == 0
+            ? timeWeightedNotional.lastUpdateTimePayFixed
+            : timeWeightedNotional.lastUpdateTimeReceiveFixed;
+
+        uint256 timeWeightedNotionalToRemove = CalculateTimeWeightedNotionalLibs.calculateTimeWeightedNotional(
+            swapNotional,
+            // @dev timeOfLastUpdate should be greater than closedSwap.openSwapTimestamp
+            timeOfLastUpdate - closedSwap.openSwapTimestamp,
+            tenorInSeconds
+        );
+
+        uint256 actualTimeWeightedNotionalToSave;
+        if (timeWeightedNotionalAmount > timeWeightedNotionalToRemove) {
+            actualTimeWeightedNotionalToSave = timeWeightedNotionalAmount - timeWeightedNotionalToRemove;
+        }
+
+        if (closedSwap.nextSwapId == 0) {
+            AmmInternalTypes.OpenSwapItem memory lastOpenSwap = IAmmStorageGenOne(ammStorageAddress).getLastOpenedSwap(
+                tenor,
+                direction
+            );
+            uint256 swapTimePast = block.timestamp - uint256(lastOpenSwap.openSwapTimestamp);
+            if (tenorInSeconds <= swapTimePast) {
+                actualTimeWeightedNotionalToSave = 0;
+                swapTimePast = 0;
+            }
+            if (direction == 0) {
+                timeWeightedNotional.lastUpdateTimePayFixed = lastOpenSwap.openSwapTimestamp;
+                timeWeightedNotional.timeWeightedNotionalPayFixed =
+                    (actualTimeWeightedNotionalToSave * tenorInSeconds) /
+                    (tenorInSeconds - swapTimePast);
+            } else {
+                timeWeightedNotional.lastUpdateTimeReceiveFixed = lastOpenSwap.openSwapTimestamp;
+                timeWeightedNotional.timeWeightedNotionalReceiveFixed =
+                    (actualTimeWeightedNotionalToSave * tenorInSeconds) /
+                    (tenorInSeconds - swapTimePast);
+            }
+        } else {
+            if (direction == 0) {
+                timeWeightedNotional.timeWeightedNotionalPayFixed = actualTimeWeightedNotionalToSave;
+            } else {
+                timeWeightedNotional.timeWeightedNotionalReceiveFixed = actualTimeWeightedNotionalToSave;
+            }
+        }
+
+        SpreadStorageLibsGenOne.saveTimeWeightedNotionalForAssetAndTenor(storageId, timeWeightedNotional);
     }
 
     function spreadFunctionConfig() external pure returns (uint256[] memory) {

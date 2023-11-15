@@ -108,33 +108,6 @@ library SwapLogicGenOne {
         );
     }
 
-    function calculateSwapUnwindPnlValueNormalized(
-        AmmTypesGenOne.UnwindParams memory unwindParams,
-        AmmTypes.OpenSwapRiskIndicators memory oppositeRiskIndicators
-    ) internal view returns (int256) {
-        return
-            IporSwapLogic.normalizePnlValue(
-                unwindParams.swap.collateral,
-                calculateSwapUnwindPnlValue(
-                    unwindParams.swap,
-                    unwindParams.closeTimestamp,
-                    RiskManagementLogic.calculateOfferedRate(
-                        uint256(unwindParams.swap.direction),
-                        unwindParams.swap.tenor,
-                        unwindParams.swap.notional,
-                        RiskManagementLogic.SpreadOfferedRateContext({
-                            asset: unwindParams.poolCfg.asset,
-                            ammStorage: unwindParams.poolCfg.ammStorage,
-                            spreadRouter: unwindParams.poolCfg.spread,
-                            minLeverage: unwindParams.poolCfg.minLeverage,
-                            indexValue: unwindParams.indexValue
-                        }),
-                        oppositeRiskIndicators
-                    )
-                )
-            );
-    }
-
     /// @notice Calculates the swap unwind PnL value.
     /// @param swap Swap structure
     /// @param closingTimestamp moment when swap is closed, represented in seconds without 18 decimals
@@ -254,62 +227,6 @@ library SwapLogicGenOne {
         return (AmmTypes.SwapClosableStatus.SWAP_IS_CLOSABLE, false);
     }
 
-    /// @notice Calculate swap unwind when unwind is required.
-    /// @param unwindParams unwind parameters required to calculate swap unwind pnl value.
-    /// @return swapUnwindPnlValue swap unwind PnL value
-    /// @return swapUnwindFeeAmount swap unwind opening fee amount, sum of swapUnwindFeeLPAmount and swapUnwindFeeTreasuryAmount
-    /// @return swapUnwindFeeLPAmount swap unwind opening fee LP amount
-    /// @return swapUnwindFeeTreasuryAmount swap unwind opening fee treasury amount
-    /// @return swapPnlValue swap PnL value includes swap PnL to date, swap unwind PnL value, this value NOT INCLUDE swap unwind fee amount.
-    function calculateSwapUnwindWhenUnwindRequired(
-        AmmTypesGenOne.UnwindParams memory unwindParams
-    )
-        internal
-        view
-        returns (
-            int256 swapUnwindPnlValue,
-            uint256 swapUnwindFeeAmount,
-            uint256 swapUnwindFeeLPAmount,
-            uint256 swapUnwindFeeTreasuryAmount,
-            int256 swapPnlValue
-        )
-    {
-        AmmTypes.OpenSwapRiskIndicators memory oppositeRiskIndicators;
-
-        oppositeRiskIndicators = unwindParams.riskIndicatorsInputs.receiveFixed.verify(
-            unwindParams.poolCfg.asset,
-            uint256(unwindParams.swap.tenor),
-            uint256(unwindParams.swap.direction),
-            unwindParams.messageSigner
-        );
-
-        /// @dev Not allow to have swap unwind pnl absolute value larger than swap collateral.
-        swapUnwindPnlValue = calculateSwapUnwindPnlValueNormalized(unwindParams, oppositeRiskIndicators);
-
-        swapPnlValue = IporSwapLogic.normalizePnlValue(
-            unwindParams.swap.collateral,
-            unwindParams.swapPnlValueToDate + swapUnwindPnlValue
-        );
-
-        /// @dev swap unwind fee amount is independent of the swap unwind pnl value, takes into consideration notional.
-        swapUnwindFeeAmount = calculateSwapUnwindOpeningFeeAmount(
-            unwindParams.swap,
-            unwindParams.closeTimestamp,
-            unwindParams.poolCfg.unwindingFeeRate
-        );
-
-        require(
-            unwindParams.swap.collateral.toInt256() + swapPnlValue > swapUnwindFeeAmount.toInt256(),
-            AmmErrors.COLLATERAL_IS_NOT_SUFFICIENT_TO_COVER_UNWIND_SWAP
-        );
-
-        (swapUnwindFeeLPAmount, swapUnwindFeeTreasuryAmount) = IporSwapLogic.splitOpeningFeeAmount(
-            swapUnwindFeeAmount,
-            unwindParams.poolCfg.unwindingFeeTreasuryPortionRate
-        );
-
-        swapPnlValue = unwindParams.swapPnlValueToDate + swapUnwindPnlValue;
-    }
 
     /// @notice Calculates the swap unwind opening fee amount for a given swap, closing timestamp and IBT price from IporOracle.
     /// @param swap Swap structure

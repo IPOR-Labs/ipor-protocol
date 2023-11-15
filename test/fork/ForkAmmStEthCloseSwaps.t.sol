@@ -64,9 +64,11 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        IAmmSwapsLens.IporSwap[] memory swaps;
-        (, swaps) = IAmmSwapsLens(iporProtocolRouterProxy).getSwaps(stETH, user, 0, 10);
-        IAmmSwapsLens.IporSwap memory swap = swaps[0];
+
+        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            swapId
+        );
 
         /// @dev checking swap via Router
         assertEq(1, swap.id, "swapId");
@@ -78,7 +80,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(20000699314353823, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(25000000000000000000, swap.liquidationDepositAmount, "swap.liquidationDepositAmount");
 
-        assertEq(0, swap.state, "swap.state");
+        assertEq(0, uint256(swap.state), "swap.state");
     }
 
     function _prepareCloseSwapRiskIndicators(

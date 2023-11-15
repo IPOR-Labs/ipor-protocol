@@ -13,7 +13,7 @@ import "../../../libraries/errors/AmmErrors.sol";
 import "../../../libraries/errors/AmmErrors.sol";
 import "../libraries/SwapEventsGenOne.sol";
 import "../../../libraries/IporContractValidator.sol";
-import "../../../libraries/RiskManagementLogic.sol";
+
 import "../../../amm/libraries/types/AmmInternalTypes.sol";
 import "../../../amm/libraries/IporSwapLogic.sol";
 import "../libraries/SwapLogicGenOne.sol";

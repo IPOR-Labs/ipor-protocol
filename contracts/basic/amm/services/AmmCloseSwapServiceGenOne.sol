@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
-
+import "forge-std/console2.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
@@ -23,6 +23,7 @@ import "../../../amm/spread/ISpreadCloseSwapService.sol";
 import "../libraries/SwapLogicGenOne.sol";
 import "../../types/AmmTypesGenOne.sol";
 import "../../events/AmmEventsGenOne.sol";
+import "../../../basic/spread/SpreadGenOne.sol";
 
 //TODO: other names proposition: AmmCloseSwapS1G1, AmmCloseSwapServiceOneGenOne, AmmCloseSwapServiceOneGenerationOne
 abstract contract AmmCloseSwapServiceGenOne {
@@ -33,6 +34,7 @@ abstract contract AmmCloseSwapServiceGenOne {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SwapLogicGenOne for AmmTypesGenOne.Swap;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
+    using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
 
     uint256 public immutable version = 1;
 
@@ -111,14 +113,13 @@ abstract contract AmmCloseSwapServiceGenOne {
                 closingSwapDetails.swapUnwindFeeLPAmount,
                 closingSwapDetails.swapUnwindFeeTreasuryAmount,
                 closingSwapDetails.pnlValue
-            ) = SwapLogicGenOne.calculateSwapUnwindWhenUnwindRequired(
+            ) = _calculateSwapUnwindWhenUnwindRequired(
                 AmmTypesGenOne.UnwindParams({
                     messageSigner: messageSigner,
                     closeTimestamp: closeTimestamp,
                     swapPnlValueToDate: swapPnlValueToDate,
                     indexValue: accruedIpor.indexValue,
                     swap: swap,
-                    poolCfg: poolCfg,
                     riskIndicatorsInputs: riskIndicatorsInput
                 })
             );
@@ -208,8 +209,7 @@ abstract contract AmmCloseSwapServiceGenOne {
             riskIndicatorsInput
         );
 
-        ISpreadCloseSwapService(spread).updateTimeWeightedNotionalOnClose(
-            asset,
+        SpreadGenOne(spread).updateTimeWeightedNotionalOnClose(
             uint256(swap.direction),
             swap.tenor,
             swap.notional,
@@ -332,7 +332,7 @@ abstract contract AmmCloseSwapServiceGenOne {
             swapId = swapIds[i];
             require(swapId > 0, AmmErrors.INCORRECT_SWAP_ID);
 
-            swap = IAmmStorageGenOne(poolCfg.ammStorage).getSwap(direction, swapId);
+            swap = IAmmStorageGenOne(ammStorage).getSwap(direction, swapId);
 
             if (swap.state == IporTypes.SwapState.ACTIVE) {
                 if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
@@ -407,20 +407,126 @@ abstract contract AmmCloseSwapServiceGenOne {
                 pnlValueStruct.swapUnwindFeeLPAmount,
                 pnlValueStruct.swapUnwindFeeTreasuryAmount,
                 pnlValueStruct.pnlValue
-            ) = SwapLogicGenOne.calculateSwapUnwindWhenUnwindRequired(
+            ) = _calculateSwapUnwindWhenUnwindRequired(
                 AmmTypesGenOne.UnwindParams({
                     messageSigner: messageSigner,
                     closeTimestamp: closeTimestamp,
                     swapPnlValueToDate: swapPnlValueToDate,
                     indexValue: indexValue,
                     swap: swap,
-                    poolCfg: poolCfg,
                     riskIndicatorsInputs: riskIndicatorsInput
                 })
             );
         } else {
             pnlValueStruct.pnlValue = swapPnlValueToDate;
         }
+    }
+
+    /// @notice Calculate swap unwind when unwind is required.
+    /// @param unwindParams unwind parameters required to calculate swap unwind pnl value.
+    /// @return swapUnwindPnlValue swap unwind PnL value
+    /// @return swapUnwindFeeAmount swap unwind opening fee amount, sum of swapUnwindFeeLPAmount and swapUnwindFeeTreasuryAmount
+    /// @return swapUnwindFeeLPAmount swap unwind opening fee LP amount
+    /// @return swapUnwindFeeTreasuryAmount swap unwind opening fee treasury amount
+    /// @return swapPnlValue swap PnL value includes swap PnL to date, swap unwind PnL value, this value NOT INCLUDE swap unwind fee amount.
+    function _calculateSwapUnwindWhenUnwindRequired(
+        AmmTypesGenOne.UnwindParams memory unwindParams
+    )
+        internal
+        view
+        returns (
+            int256 swapUnwindPnlValue,
+            uint256 swapUnwindFeeAmount,
+            uint256 swapUnwindFeeLPAmount,
+            uint256 swapUnwindFeeTreasuryAmount,
+            int256 swapPnlValue
+        )
+    {
+        AmmTypes.OpenSwapRiskIndicators memory oppositeRiskIndicators;
+
+        if (unwindParams.swap.direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
+            oppositeRiskIndicators = unwindParams.riskIndicatorsInputs.receiveFixed.verify(
+                asset,
+                uint256(unwindParams.swap.tenor),
+                uint256(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED),
+                unwindParams.messageSigner
+            );
+            /// @dev Not allow to have swap unwind pnl absolute value larger than swap collateral.
+            swapUnwindPnlValue = _calculateSwapUnwindPnlValueNormalized(
+                unwindParams,
+                AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+                oppositeRiskIndicators
+            );
+        } else if (unwindParams.swap.direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
+            oppositeRiskIndicators = unwindParams.riskIndicatorsInputs.payFixed.verify(
+                asset,
+                uint256(unwindParams.swap.tenor),
+                uint256(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING),
+                unwindParams.messageSigner
+            );
+            /// @dev Not allow to have swap unwind pnl absolute value larger than swap collateral.
+            swapUnwindPnlValue = _calculateSwapUnwindPnlValueNormalized(
+                unwindParams,
+                AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+                oppositeRiskIndicators
+            );
+        } else {
+            revert(AmmErrors.UNSUPPORTED_DIRECTION);
+        }
+
+        swapPnlValue = IporSwapLogic.normalizePnlValue(
+            unwindParams.swap.collateral,
+            unwindParams.swapPnlValueToDate + swapUnwindPnlValue
+        );
+
+        /// @dev swap unwind fee amount is independent of the swap unwind pnl value, takes into consideration notional.
+        swapUnwindFeeAmount = SwapLogicGenOne.calculateSwapUnwindOpeningFeeAmount(
+            unwindParams.swap,
+            unwindParams.closeTimestamp,
+            unwindingFeeRate
+        );
+
+        require(
+            unwindParams.swap.collateral.toInt256() + swapPnlValue > swapUnwindFeeAmount.toInt256(),
+            AmmErrors.COLLATERAL_IS_NOT_SUFFICIENT_TO_COVER_UNWIND_SWAP
+        );
+
+        (swapUnwindFeeLPAmount, swapUnwindFeeTreasuryAmount) = IporSwapLogic.splitOpeningFeeAmount(
+            swapUnwindFeeAmount,
+            unwindingFeeTreasuryPortionRate
+        );
+
+        swapPnlValue = unwindParams.swapPnlValueToDate + swapUnwindPnlValue;
+    }
+
+    function _calculateSwapUnwindPnlValueNormalized(
+        AmmTypesGenOne.UnwindParams memory unwindParams,
+        AmmTypes.SwapDirection oppositeDirection,
+        AmmTypes.OpenSwapRiskIndicators memory oppositeRiskIndicators
+    ) internal view returns (int256) {
+        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(ammStorage).getBalancesForOpenSwap();
+        return
+            IporSwapLogic.normalizePnlValue(
+                unwindParams.swap.collateral,
+                unwindParams.swap.calculateSwapUnwindPnlValue(
+                    unwindParams.closeTimestamp,
+                    SpreadGenOne(spread).calculateOfferedRate(
+                        oppositeDirection,
+                        SpreadGenOne.SpreadInputs({
+                            asset: asset,
+                            swapNotional: unwindParams.swap.notional,
+                            demandSpreadFactor: oppositeRiskIndicators.demandSpreadFactor,
+                            baseSpreadPerLeg: oppositeRiskIndicators.baseSpreadPerLeg,
+                            totalCollateralPayFixed: balance.totalCollateralPayFixed,
+                            totalCollateralReceiveFixed: balance.totalCollateralReceiveFixed,
+                            liquidityPoolBalance: balance.liquidityPool,
+                            iporIndexValue: unwindParams.indexValue,
+                            fixedRateCapPerLeg: oppositeRiskIndicators.fixedRateCapPerLeg,
+                            tenor: unwindParams.swap.tenor
+                        })
+                    )
+                )
+            );
     }
 
     /**
@@ -485,6 +591,7 @@ abstract contract AmmCloseSwapServiceGenOne {
         uint256 wadLiquidationDepositAmount,
         uint256 wadTransferAmount
     ) internal returns (uint256 wadTransferredToBuyer, uint256 wadPayoutForLiquidator) {
+        console2.log("_transferDerivativeAmount");
         if (beneficiary == buyer) {
             wadTransferAmount = wadTransferAmount + wadLiquidationDepositAmount;
         } else {
@@ -493,56 +600,18 @@ abstract contract AmmCloseSwapServiceGenOne {
             wadPayoutForLiquidator = wadLiquidationDepositAmount;
         }
 
-        if (wadTransferAmount + wadPayoutForLiquidator > 0) {
+        if (wadTransferAmount > 0) {
             uint256 transferAmountAssetDecimals = IporMath.convertWadToAssetDecimals(wadTransferAmount, decimals);
-
-            uint256 totalTransferAmountAssetDecimals = transferAmountAssetDecimals +
-                IporMath.convertWadToAssetDecimals(wadPayoutForLiquidator, decimals);
-
-            uint256 ammTreasuryErc20BalanceBeforeRedeem = IERC20Upgradeable(asset).balanceOf(ammTreasury);
-
-            if (ammTreasuryErc20BalanceBeforeRedeem <= totalTransferAmountAssetDecimals) {
-                AmmTypes.AmmPoolCoreModel memory model;
-
-                model.ammStorage = ammStorage;
-                model.ammTreasury = ammTreasury;
-                //TODO: fix it
-                //                model.assetManagement = assetManagement;
-
-                IporTypes.AmmBalancesMemory memory balance = model.getAccruedBalance();
-
-                StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
-                    asset
-                );
-
-                int256 rebalanceAmount = AssetManagementLogic.calculateRebalanceAmountBeforeWithdraw(
-                    IporMath.convertToWad(ammTreasuryErc20BalanceBeforeRedeem, decimals),
-                    balance.vault,
-                    wadTransferAmount + wadPayoutForLiquidator,
-                    /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals,
-                    /// example: 45% = 4500, so to achieve number in 18 decimals we need to multiply by 1e14
-                    uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) * 1e14
-                );
-
-                if (rebalanceAmount < 0) {
-                    IAmmTreasury(ammTreasury).withdrawFromAssetManagementInternal((-rebalanceAmount).toUint256());
-
-                    /// @dev check if withdraw from asset management is enough to cover transfer amount
-                    /// @dev possible case when strategies are paused and assets are temporary locked
-                    require(
-                        totalTransferAmountAssetDecimals <= IERC20Upgradeable(asset).balanceOf(ammTreasury),
-                        AmmErrors.ASSET_MANAGEMENT_WITHDRAW_NOT_ENOUGH
-                    );
-                }
-            }
-
             IERC20Upgradeable(asset).safeTransferFrom(ammTreasury, buyer, transferAmountAssetDecimals);
-
             wadTransferredToBuyer = IporMath.convertToWad(transferAmountAssetDecimals, decimals);
         }
     }
 
-    function _getPoolConfiguration() internal view returns (AmmTypesGenOne.AmmCloseSwapServicePoolConfiguration memory) {
+    function _getPoolConfiguration()
+        internal
+        view
+        returns (AmmTypesGenOne.AmmCloseSwapServicePoolConfiguration memory)
+    {
         return
             AmmTypesGenOne.AmmCloseSwapServicePoolConfiguration({
                 spread: spread,

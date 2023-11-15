@@ -104,7 +104,6 @@ library AmmTypesGenOne {
         int256 swapPnlValueToDate;
         uint256 indexValue;
         AmmTypesGenOne.Swap swap;
-        AmmCloseSwapServicePoolConfiguration poolCfg;
         AmmTypes.CloseSwapRiskIndicatorsInput riskIndicatorsInputs;
     }
 
@@ -129,4 +128,20 @@ library AmmTypesGenOne {
         /// @notice Liquidation deposit is retained when the swap is opened. Value represented in 18 decimals.
         uint256 liquidationDepositAmount;
     }
+    //
+    //    /// @notice Struct describing AMM Pool's core addresses.
+    //    struct AmmPoolCoreModel {
+    //        /// @notice asset address
+    //        address asset;
+    //        /// @notice asset decimals
+    //        uint256 assetDecimals;
+    //        /// @notice ipToken address associated to the asset
+    //        address ipToken;
+    //        /// @notice AMM Storage address
+    //        address ammStorage;
+    //        /// @notice AMM Treasury address
+    //        address ammTreasury;
+    //        /// @notice IPOR Oracle address
+    //        address iporOracle;
+    //    }
 }
