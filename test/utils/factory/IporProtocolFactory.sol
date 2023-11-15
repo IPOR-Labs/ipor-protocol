@@ -843,6 +843,7 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammPoolsLensEth = address(123);
         deployerContracts.ammPoolsServiceEth = address(123);
         deployerContracts.ammOpenSwapServiceStEth = address(123);
+        deployerContracts.ammCloseSwapServiceStEth = address(123);
 
         vm.startPrank(address(_owner));
         IporProtocolRouter(amm.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
@@ -1057,6 +1058,7 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammPoolsServiceEth = address(123);
         deployerContracts.ammPoolsLensEth = address(123);
         deployerContracts.ammOpenSwapServiceStEth = address(123);
+        deployerContracts.ammCloseSwapServiceStEth = address(123);
 
         vm.startPrank(address(_owner));
         IporProtocolRouter(iporProtocol.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
@@ -1246,6 +1248,7 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammPoolsLensEth = address(123);
         deployerContracts.ammPoolsServiceEth = address(123);
         deployerContracts.ammOpenSwapServiceStEth = address(123);
+        deployerContracts.ammCloseSwapServiceStEth = address(123);
 
         vm.startPrank(address(_owner));
         IporProtocolRouter(iporProtocol.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
@@ -1435,6 +1438,7 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammPoolsLensEth = address(_fakeContract);
         deployerContracts.ammPoolsServiceEth = address(_fakeContract);
         deployerContracts.ammOpenSwapServiceStEth = address(_fakeContract);
+        deployerContracts.ammCloseSwapServiceStEth = address(_fakeContract);
 
         vm.startPrank(address(_owner));
 
