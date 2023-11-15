@@ -7,14 +7,6 @@ import "../basic/types/AmmTypesGenOne.sol";
 
 /// @title Interface of the CloseSwap Lens for stETH.
 interface IAmmCloseSwapLensStEth {
-
-    /// @notice Returns the configuration of the AmmCloseSwapService for a given pool (asset).
-    /// @return AmmCloseSwapServicePoolConfiguration struct representing the configuration of the AmmCloseSwapService for a given pool (asset).
-    function getAmmCloseSwapServicePoolConfigurationStEth()
-        external
-        view
-        returns (AmmTypesGenOne.AmmCloseSwapPoolConfiguration memory);
-
     /// @notice Returns the closing swap details for a given swap and closing timestamp.
     /// @param account account address for which are returned closing swap details, for example closableStatus depends on the account
     /// @param direction swap direction

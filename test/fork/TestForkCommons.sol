@@ -22,8 +22,9 @@ import "../../contracts/amm/spread/SpreadRouter.sol";
 import "../../contracts/amm/AmmOpenSwapService.sol";
 import "../../contracts/amm-eth/AmmOpenSwapServiceStEth.sol";
 import "../../contracts/amm/AmmCloseSwapService.sol";
+import "../../contracts/amm-eth/AmmCloseSwapServiceStEth.sol";
 import "../../contracts/amm/AmmPoolsService.sol";
-import "../../contracts/amm/AmmGovernanceService.sol";
+import "../../contracts/amm-common/AmmGovernanceService.sol";
 import "../../contracts/amm/AmmStorage.sol";
 import "../../contracts/basic/amm/AmmStorageGenOne.sol";
 import "../../contracts/amm/AmmTreasury.sol";
@@ -135,6 +136,7 @@ contract TestForkCommons is Test {
 
     address public ammStorageProxyStEth;
     address public ammOpenSwapServiceStEth;
+    address public ammCloseSwapServiceStEth;
 
     address public newSpread28Days;
     address public newSpread60Days;
@@ -157,6 +159,7 @@ contract TestForkCommons is Test {
 
         _createNewSpreadForStEth();
         _createAmmOpenSwapServiceStEth();
+        _createAmmCloseSwapServiceStEth();
 
         //        _upgradeSpreadRouter();
         _setupIporOracleStEth();
@@ -192,6 +195,7 @@ contract TestForkCommons is Test {
                 ammOpenSwapService,
                 ammOpenSwapServiceStEth,
                 ammCloseSwapService,
+                ammCloseSwapServiceStEth,
                 ammPoolsService,
                 ammGovernanceService,
                 _getUserAddress(123),
@@ -519,14 +523,34 @@ contract TestForkCommons is Test {
         );
     }
 
+    function _createAmmCloseSwapServiceStEth() private {
+        AmmTypesGenOne.AmmCloseSwapServicePoolConfiguration memory stEthConfig = AmmTypesGenOne.AmmCloseSwapServicePoolConfiguration({
+            spread: spreadProxyStEth,
+            asset: stETH,
+            decimals: 18,
+            ammStorage: ammStorageProxyStEth,
+            ammTreasury: ammTreasuryProxyStEth,
+            assetManagement: address(0),
+            unwindingFeeRate: 5e11,
+            unwindingFeeTreasuryPortionRate: 5e11,
+            maxLengthOfLiquidatedSwapsPerLeg: 10,
+            timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
+            timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
+            minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
+            minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
+            minLeverage: 10 * 1e18
+        });
+
+        ammCloseSwapServiceStEth = address(
+            new AmmCloseSwapServiceStEth(stEthConfig, iporOracleProxy, messageSignerAddress, spreadProxyStEth)
+        );
+    }
+
     function _createNewSpreadForStEth() private {
         SpreadGenOne spreadImpl = new SpreadGenOne(iporProtocolRouterProxy, stETH);
 
         vm.startPrank(owner);
-        ERC1967Proxy proxy = new ERC1967Proxy(
-            address(spreadImpl),
-            abi.encodeWithSignature("initialize()")
-        );
+        ERC1967Proxy proxy = new ERC1967Proxy(address(spreadImpl), abi.encodeWithSignature("initialize()"));
         vm.stopPrank();
 
         spreadProxyStEth = address(proxy);

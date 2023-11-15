@@ -29,7 +29,7 @@ import "../../../contracts/amm/AmmOpenSwapService.sol";
 import "../../../contracts/amm/AmmCloseSwapService.sol";
 
 import "../../../contracts/amm/AmmPoolsService.sol";
-import "../../../contracts/amm/AmmGovernanceService.sol";
+import "../../../contracts/amm-common/AmmGovernanceService.sol";
 import "../../mocks/EmptyImplementation.sol";
 import "../builder/PowerTokenLensBuilder.sol";
 import "../builder/LiquidityMiningLensBuilder.sol";
@@ -561,7 +561,6 @@ contract IporProtocolFactory is Test {
         _ammStorageBuilder.withAmmTreasury(address(iporProtocol.ammTreasury));
         iporProtocol.ammStorage = _ammStorageBuilder.build();
 
-
         _spreadRouterBuilder.withIporRouter(address(iporProtocol.router));
 
         _spreadRouterBuilder.withUsdt(address(_fakeContract));
@@ -823,6 +822,15 @@ contract IporProtocolFactory is Test {
                     cfg.ammPoolsTreasuryManager,
                     cfg.ammCharlieTreasury,
                     cfg.ammCharlieTreasuryManager
+                ),
+                stEthPoolCfg: _preparePoolCfgForGovernanceService(
+                    address(amm.stEth.asset),
+                    address(amm.stEth.ammTreasury),
+                    address(amm.stEth.ammStorage),
+                    cfg.ammPoolsTreasury,
+                    cfg.ammPoolsTreasuryManager,
+                    cfg.ammCharlieTreasury,
+                    cfg.ammCharlieTreasuryManager
                 )
             })
         );
@@ -1036,7 +1044,8 @@ contract IporProtocolFactory is Test {
                     cfg.ammCharlieTreasuryManager
                 ),
                 usdcPoolCfg: _prepareFakePoolCfgForGovernanceService(),
-                daiPoolCfg: _prepareFakePoolCfgForGovernanceService()
+                daiPoolCfg: _prepareFakePoolCfgForGovernanceService(),
+                stEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
 
@@ -1223,7 +1232,8 @@ contract IporProtocolFactory is Test {
                     cfg.ammCharlieTreasury,
                     cfg.ammCharlieTreasuryManager
                 ),
-                daiPoolCfg: _prepareFakePoolCfgForGovernanceService()
+                daiPoolCfg: _prepareFakePoolCfgForGovernanceService(),
+                stEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
 
@@ -1413,7 +1423,8 @@ contract IporProtocolFactory is Test {
                     cfg.ammPoolsTreasuryManager,
                     cfg.ammCharlieTreasury,
                     cfg.ammCharlieTreasuryManager
-                )
+                ),
+                stEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
         deployerContracts.powerTokenLens = address(_powerTokenLensBuilder.build());

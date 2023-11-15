@@ -27,20 +27,11 @@ import "../basic/amm/services/AmmCloseSwapServiceGenOne.sol";
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmCloseSwapServiceStEth is AmmCloseSwapServiceGenOne, IAmmCloseSwapServiceStEth, IAmmCloseSwapLensStEth {
     constructor(
-        AmmTypesGenOne.AmmCloseSwapPoolConfiguration memory poolCfg,
+        AmmTypesGenOne.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput,
-        address iporRiskManagementOracleInput,
-        address spreadRouterInput
-    ) AmmCloseSwapServiceGenOne(poolCfg, iporOracleInput, iporRiskManagementOracleInput, spreadRouterInput) {}
-
-    function getAmmCloseSwapServicePoolConfigurationStEth()
-        external
-        view
-        override
-        returns (AmmTypesGenOne.AmmCloseSwapPoolConfiguration memory)
-    {
-        return _getPoolConfiguration();
-    }
+        address messageSignerInput,
+        address spreadInput
+    ) AmmCloseSwapServiceGenOne(poolCfg, iporOracleInput, messageSignerInput, spreadInput) {}
 
     function getClosingSwapDetailsStEth(
         address account,

@@ -229,23 +229,6 @@ contract AmmStorageGenOne is
         }
     }
 
-    function addLiquidityInternal(
-        address account,
-        uint256 assetAmount,
-        uint256 cfgMaxLiquidityPoolBalance
-    ) external override onlyRouter {
-        require(assetAmount > 0, AmmErrors.DEPOSIT_AMOUNT_IS_TOO_LOW);
-
-        uint128 newLiquidityPoolBalance = _balances.liquidityPool + assetAmount.toUint128();
-        require(newLiquidityPoolBalance <= cfgMaxLiquidityPoolBalance, AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH);
-
-        _balances.liquidityPool = newLiquidityPoolBalance;
-    }
-
-    function subtractLiquidityInternal(uint256 assetAmount) external override onlyRouter {
-        _balances.liquidityPool = _balances.liquidityPool - assetAmount.toUint128();
-    }
-
     function updateStorageWhenOpenSwapPayFixedInternal(
         AmmTypes.NewSwap memory newSwap,
         uint256 cfgIporPublicationFee

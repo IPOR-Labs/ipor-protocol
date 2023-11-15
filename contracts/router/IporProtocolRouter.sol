@@ -15,6 +15,7 @@ import "../interfaces/IAmmOpenSwapLens.sol";
 import "../interfaces/IAmmOpenSwapService.sol";
 import "../interfaces/IAmmOpenSwapServiceStEth.sol";
 import "../interfaces/IAmmCloseSwapService.sol";
+import "../interfaces/IAmmCloseSwapServiceStEth.sol";
 import "../interfaces/IAmmCloseSwapLens.sol";
 import "../interfaces/IAmmPoolsService.sol";
 import "../interfaces/IPowerTokenFlowsService.sol";
@@ -40,6 +41,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
     address public immutable _ammOpenSwapService;
     address public immutable _ammOpenSwapServiceStEth;
     address public immutable _ammCloseSwapService;
+    address public immutable _ammCloseSwapServiceStEth;
     address public immutable _ammPoolsService;
     address public immutable _ammGovernanceService;
     address public immutable _liquidityMiningLens;
@@ -56,6 +58,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         address ammOpenSwapService;
         address ammOpenSwapServiceStEth;
         address ammCloseSwapService;
+        address ammCloseSwapServiceStEth;
         address ammPoolsService;
         address ammGovernanceService;
         address liquidityMiningLens;
@@ -73,6 +76,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         _ammOpenSwapService = deployedContracts.ammOpenSwapService.checkAddress();
         _ammOpenSwapServiceStEth = deployedContracts.ammOpenSwapServiceStEth.checkAddress();
         _ammCloseSwapService = deployedContracts.ammCloseSwapService.checkAddress();
+        _ammCloseSwapServiceStEth = deployedContracts.ammCloseSwapServiceStEth.checkAddress();
         _ammPoolsService = deployedContracts.ammPoolsService.checkAddress();
         _ammGovernanceService = deployedContracts.ammGovernanceService.checkAddress();
         _liquidityMiningLens = deployedContracts.liquidityMiningLens.checkAddress();
@@ -111,6 +115,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
                 ammOpenSwapService: _ammOpenSwapService,
                 ammOpenSwapServiceStEth: _ammOpenSwapServiceStEth,
                 ammCloseSwapService: _ammCloseSwapService,
+                ammCloseSwapServiceStEth: _ammCloseSwapServiceStEth,
                 ammPoolsService: _ammPoolsService,
                 ammGovernanceService: _ammGovernanceService,
                 liquidityMiningLens: _liquidityMiningLens,
@@ -178,6 +183,11 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
                 _nonReentrantBefore();
             }
             return _ammOpenSwapService;
+        } else if (_checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapServiceStEth.closeSwapsStEth.selector)) {
+            if (batchOperation == 0) {
+                _nonReentrantBefore();
+            }
+            return _ammCloseSwapServiceStEth;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapsUsdt.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapsUsdc.selector) ||
@@ -263,6 +273,9 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         ) {
             _onlyOwner();
             return _ammGovernanceService;
+        } else if (sig == IAmmCloseSwapServiceStEth.emergencyCloseSwapsStEth.selector) {
+            _onlyOwner();
+            return _ammCloseSwapServiceStEth;
         } else if (
             sig == IAmmCloseSwapService.emergencyCloseSwapsUsdt.selector ||
             sig == IAmmCloseSwapService.emergencyCloseSwapsUsdc.selector ||

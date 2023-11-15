@@ -5,7 +5,7 @@ import "forge-std/Script.sol";
 import "../contracts/router/IporProtocolRouter.sol";
 import "../contracts/amm/AmmPoolsLens.sol";
 import "../contracts/amm/AmmOpenSwapService.sol";
-import "../contracts/amm/AmmGovernanceService.sol";
+import "../contracts/amm-common/AmmGovernanceService.sol";
 import "../contracts/amm-common/AmmSwapsLens.sol";
 import "../contracts/amm/AssetManagementLens.sol";
 import "../contracts/amm/AmmCloseSwapService.sol";

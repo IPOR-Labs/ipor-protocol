@@ -56,6 +56,20 @@ library SwapLogicGenOne {
         openingFee = availableAmount - collateral;
     }
 
+    function calculatePnl(
+        AmmTypesGenOne.Swap memory swap,
+        uint256 closingTimestamp,
+        uint256 mdIbtPrice
+    ) internal pure returns (int256 pnlValue) {
+        if (swap.direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
+            pnlValue = calculatePnlPayFixed(swap, closingTimestamp, mdIbtPrice);
+        } else if (swap.direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
+            pnlValue = calculatePnlReceiveFixed(swap, closingTimestamp, mdIbtPrice);
+        } else {
+            revert(AmmErrors.UNSUPPORTED_DIRECTION);
+        }
+    }
+
     /// @notice Calculates Profit and Loss (PnL) for a pay fixed swap for a given swap closing timestamp and IBT price from IporOracle.
     /// @param swap Swap structure
     /// @param closingTimestamp moment when swap is closed, represented in seconds
@@ -111,7 +125,7 @@ library SwapLogicGenOne {
                         RiskManagementLogic.SpreadOfferedRateContext({
                             asset: unwindParams.poolCfg.asset,
                             ammStorage: unwindParams.poolCfg.ammStorage,
-                            spreadRouter: unwindParams.poolCfg.spreadRouter,
+                            spreadRouter: unwindParams.poolCfg.spread,
                             minLeverage: unwindParams.poolCfg.minLeverage,
                             indexValue: unwindParams.indexValue
                         }),
@@ -175,7 +189,7 @@ library SwapLogicGenOne {
         address account,
         int256 swapPnlValueToDate,
         uint256 closeTimestamp,
-        AmmTypesGenOne.AmmCloseSwapPoolConfiguration memory poolCfg
+        AmmTypesGenOne.AmmCloseSwapServicePoolConfiguration memory poolCfg
     ) internal view returns (AmmTypes.SwapClosableStatus, bool) {
         if (swap.state != IporTypes.SwapState.ACTIVE) {
             return (AmmTypes.SwapClosableStatus.SWAP_ALREADY_CLOSED, false);

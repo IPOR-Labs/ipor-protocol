@@ -73,7 +73,10 @@ interface IAmmStorageGenOne {
     /// @param direction direction of the swap: 0 for Pay Fixed, 1 for Receive Fixed
     /// @param swapId swap ID
     /// @return swap structure {AmmTypesGenOne.sol.Swap}
-    function getSwap(AmmTypes.SwapDirection direction, uint256 swapId) external view returns (AmmTypesGenOne.Swap memory);
+    function getSwap(
+        AmmTypes.SwapDirection direction,
+        uint256 swapId
+    ) external view returns (AmmTypesGenOne.Swap memory);
 
     /// @notice Gets the active Pay-Fixed swaps for a given account address.
     /// @param account account address
@@ -110,18 +113,6 @@ interface IAmmStorageGenOne {
         uint256 offset,
         uint256 chunkSize
     ) external view returns (uint256 totalCount, AmmStorageTypes.IporSwapId[] memory ids);
-
-    /// @notice adds liquidity to the Liquidity Pool. Function available only to Router.
-    /// @param account account address executing request for redeem asset amount
-    /// @param assetAmount amount of asset added to balance of Liquidity Pool, represented in 18 decimals
-    /// @param cfgMaxLiquidityPoolBalance max liquidity pool balance taken from AmmPoolsService configuration, represented in 18 decimals.
-    /// @dev Function is only available to AmmPoolsService, can be executed only by IPOR Protocol Router as internal interaction.
-    function addLiquidityInternal(address account, uint256 assetAmount, uint256 cfgMaxLiquidityPoolBalance) external;
-
-    /// @notice subtract liquidity from the Liquidity Pool. Function available only to Router.
-    /// @param assetAmount amount of asset subtracted from Liquidity Pool, represented in 18 decimals
-    /// @dev Function is only available to AmmPoolsService, it can be executed only by IPOR Protocol Router as internal interaction.
-    function subtractLiquidityInternal(uint256 assetAmount) external;
 
     /// @notice Updates structures in storage: balance, swaps, SOAP indicators when new Pay-Fixed swap is opened.
     /// @dev Function is only available to AmmOpenSwapService, it can be executed only by IPOR Protocol Router as internal interaction.

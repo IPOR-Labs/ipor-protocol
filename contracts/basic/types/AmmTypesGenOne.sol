@@ -68,9 +68,8 @@ library AmmTypesGenOne {
     }
 
     /// @notice Structure representing the configuration of the AmmCloseSwapService for a given pool (asset).
-    struct AmmCloseSwapPoolConfiguration {
-        /// @notice Spread Router
-        address spreadRouter;
+    struct AmmCloseSwapServicePoolConfiguration {
+        address spread;
         /// @notice asset address
         address asset;
         /// @notice asset decimals
@@ -105,7 +104,7 @@ library AmmTypesGenOne {
         int256 swapPnlValueToDate;
         uint256 indexValue;
         AmmTypesGenOne.Swap swap;
-        AmmCloseSwapPoolConfiguration poolCfg;
+        AmmCloseSwapServicePoolConfiguration poolCfg;
         AmmTypes.CloseSwapRiskIndicatorsInput riskIndicatorsInputs;
     }
 

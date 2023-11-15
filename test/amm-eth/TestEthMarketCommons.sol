@@ -9,7 +9,7 @@ import "../../contracts/amm-eth/AmmTreasuryEth.sol";
 import "../../contracts/amm-eth/AmmPoolsServiceEth.sol";
 import "../../contracts/amm-eth/AmmPoolsLensEth.sol";
 import "../../contracts/interfaces/IAmmGovernanceLens.sol";
-import "../../contracts/amm/AmmGovernanceService.sol";
+import "../../contracts/amm-common/AmmGovernanceService.sol";
 import "../../contracts/router/IporProtocolRouter.sol";
 
 contract TestEthMarketCommons is Test {
@@ -135,7 +135,19 @@ contract TestEthMarketCommons is Test {
                 _getUserAddress(123)
             );
 
-        ammGovernanceService = address(new AmmGovernanceService(usdtConfig, usdcConfig, daiConfig));
+        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory stEthConfig = IAmmGovernanceLens
+            .AmmGovernancePoolConfiguration(
+            stEth,
+            18,
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123)
+        );
+
+        ammGovernanceService = address(new AmmGovernanceService(usdtConfig, usdcConfig, daiConfig, stEthConfig));
         vm.stopPrank();
     }
 
@@ -149,6 +161,7 @@ contract TestEthMarketCommons is Test {
                 ammOpenSwapService: _getUserAddress(123),
                 ammOpenSwapServiceStEth: _getUserAddress(123),
                 ammCloseSwapService: _getUserAddress(123),
+                ammCloseSwapServiceStEth: _getUserAddress(123),
                 ammPoolsService: _getUserAddress(123),
                 ammGovernanceService: ammGovernanceService,
                 liquidityMiningLens: _getUserAddress(123),
