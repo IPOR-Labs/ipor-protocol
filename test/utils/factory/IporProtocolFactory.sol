@@ -230,8 +230,6 @@ contract IporProtocolFactory is Test {
         _spreadRouterBuilder.withUsdc(address(amm.usdc.asset));
         _spreadRouterBuilder.withDai(address(amm.dai.asset));
 
-        _spreadRouterBuilder.withStEth(address(amm.stEth.asset));
-
         _spreadRouterBuilder.withSpread28DaysTestCase(cfg.spread28DaysTestCase);
         _spreadRouterBuilder.withSpread60DaysTestCase(cfg.spread60DaysTestCase);
         _spreadRouterBuilder.withSpread90DaysTestCase(cfg.spread90DaysTestCase);
@@ -361,7 +359,7 @@ contract IporProtocolFactory is Test {
         _spreadRouterBuilder.withUsdt(address(iporProtocol.asset));
         _spreadRouterBuilder.withUsdc(address(_fakeContract));
         _spreadRouterBuilder.withDai(address(_fakeContract));
-        _spreadRouterBuilder.withStEth(address(_fakeContract));
+
 
         _spreadRouterBuilder.withSpread28DaysTestCase(cfg.spread28DaysTestCase);
         _spreadRouterBuilder.withSpread60DaysTestCase(cfg.spread60DaysTestCase);
@@ -463,7 +461,6 @@ contract IporProtocolFactory is Test {
         _spreadRouterBuilder.withUsdt(address(_fakeContract));
         _spreadRouterBuilder.withUsdc(address(iporProtocol.asset));
         _spreadRouterBuilder.withDai(address(_fakeContract));
-        _spreadRouterBuilder.withStEth(address(_fakeContract));
 
         _spreadRouterBuilder.withSpread28DaysTestCase(cfg.spread28DaysTestCase);
         _spreadRouterBuilder.withSpread60DaysTestCase(cfg.spread60DaysTestCase);
@@ -566,7 +563,6 @@ contract IporProtocolFactory is Test {
         _spreadRouterBuilder.withUsdt(address(_fakeContract));
         _spreadRouterBuilder.withUsdc(address(_fakeContract));
         _spreadRouterBuilder.withDai(address(iporProtocol.asset));
-        _spreadRouterBuilder.withStEth(address(_fakeContract));
 
         _spreadRouterBuilder.withSpread28DaysTestCase(cfg.spread28DaysTestCase);
         _spreadRouterBuilder.withSpread60DaysTestCase(cfg.spread60DaysTestCase);

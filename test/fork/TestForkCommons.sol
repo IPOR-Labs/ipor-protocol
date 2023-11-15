@@ -299,10 +299,10 @@ contract TestForkCommons is Test {
     }
 
     function _upgradeSpreadRouter() internal {
-        newSpread28Days = address(new Spread28Days(DAI, USDC, USDT, stETH));
-        newSpread60Days = address(new Spread60Days(DAI, USDC, USDT, stETH));
-        newSpread90Days = address(new Spread90Days(DAI, USDC, USDT, stETH));
-        newSpreadCloseSwapService = address(new SpreadCloseSwapService(DAI, USDC, USDT, stETH));
+        newSpread28Days = address(new Spread28Days(DAI, USDC, USDT));
+        newSpread60Days = address(new Spread60Days(DAI, USDC, USDT));
+        newSpread90Days = address(new Spread90Days(DAI, USDC, USDT));
+        newSpreadCloseSwapService = address(new SpreadCloseSwapService(DAI, USDC, USDT));
 
         SpreadRouter newImplementation = new SpreadRouter(
             SpreadRouter.DeployedContracts(

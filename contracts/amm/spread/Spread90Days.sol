@@ -20,13 +20,11 @@ contract Spread90Days is ISpread90Days, ISpread90DaysLens {
     address internal immutable _dai;
     address internal immutable _usdc;
     address internal immutable _usdt;
-    address internal immutable _stEth;
 
-    constructor(address dai, address usdc, address usdt, address stEth) {
+    constructor(address dai, address usdc, address usdt) {
         _dai = dai.checkAddress();
         _usdc = usdc.checkAddress();
         _usdt = usdt.checkAddress();
-        _stEth = stEth.checkAddress();
     }
 
     function calculateAndUpdateOfferedRatePayFixed90Days(
@@ -171,12 +169,6 @@ contract Spread90Days is ISpread90Days, ISpread90DaysLens {
             inputData.timeWeightedNotionalStorageIds[0] = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai;
             inputData.timeWeightedNotionalStorageIds[1] = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysDai;
             inputData.timeWeightedNotionalStorageIds[2] = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysDai;
-            return inputData;
-        } else if (spreadInputs.asset == _stEth) {
-            inputData.timeWeightedNotionalStorageId = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysStEth;
-            inputData.timeWeightedNotionalStorageIds[0] = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysStEth;
-            inputData.timeWeightedNotionalStorageIds[1] = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysStEth;
-            inputData.timeWeightedNotionalStorageIds[2] = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysStEth;
             return inputData;
         }
         revert(string.concat(IporOracleErrors.ASSET_NOT_SUPPORTED, " ", Strings.toHexString(spreadInputs.asset)));

@@ -19,21 +19,18 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
     address internal immutable _dai;
     address internal immutable _usdc;
     address internal immutable _usdt;
-    address internal immutable _stEth;
 
-    constructor(address dai, address usdc, address usdt, address stEth) {
+    constructor(address dai, address usdc, address usdt) {
         _dai = dai.checkAddress();
         _usdc = usdc.checkAddress();
         _usdt = usdt.checkAddress();
-        _stEth = stEth.checkAddress();
     }
 
     function getSupportedAssets() external view returns (address[] memory) {
-        address[] memory assets = new address[](4);
+        address[] memory assets = new address[](3);
         assets[0] = _dai;
         assets[1] = _usdc;
         assets[2] = _usdt;
-        assets[3] = _stEth;
         return assets;
     }
 
@@ -132,14 +129,6 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
                 storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysUsdt;
             } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
                 storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysUsdt;
-            }
-        } else if (asset == _stEth) {
-            if (tenor == IporTypes.SwapTenor.DAYS_28) {
-                storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysStEth;
-            } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
-                storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysStEth;
-            } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
-                storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysStEth;
             }
         } else {
             revert(IporErrors.WRONG_ADDRESS);
