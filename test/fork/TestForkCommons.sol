@@ -62,6 +62,7 @@ contract TestForkCommons is Test {
     address public constant ipUSDC = 0x7c0e72f431FD69560D951e4C04A4de3657621a88;
     address public constant ipUSDT = 0x9Bd2177027edEE300DC9F1fb88F24DB6e5e1edC6;
 
+    address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
     address public constant stETH = 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
     address public constant wETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address public constant wstETH = 0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0;

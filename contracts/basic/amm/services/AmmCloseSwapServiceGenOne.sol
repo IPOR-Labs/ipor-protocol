@@ -143,7 +143,6 @@ abstract contract AmmCloseSwapServiceGenOne {
             msg.sender,
             payFixedSwapIds,
             receiveFixedSwapIds,
-            _getPoolConfiguration(),
             riskIndicatorsInput
         );
     }
@@ -152,7 +151,6 @@ abstract contract AmmCloseSwapServiceGenOne {
         address beneficiary,
         uint256[] memory payFixedSwapIds,
         uint256[] memory receiveFixedSwapIds,
-        AmmTypesGenOne.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     )
         internal
@@ -162,8 +160,7 @@ abstract contract AmmCloseSwapServiceGenOne {
         )
     {
         require(
-            payFixedSwapIds.length <= poolCfg.maxLengthOfLiquidatedSwapsPerLeg &&
-                receiveFixedSwapIds.length <= poolCfg.maxLengthOfLiquidatedSwapsPerLeg,
+            payFixedSwapIds.length <= liquidationLegLimit && receiveFixedSwapIds.length <= liquidationLegLimit,
             AmmErrors.MAX_LENGTH_LIQUIDATED_SWAPS_PER_LEG_EXCEEDED
         );
 
@@ -174,7 +171,6 @@ abstract contract AmmCloseSwapServiceGenOne {
             beneficiary,
             AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             payFixedSwapIds,
-            poolCfg,
             riskIndicatorsInput
         );
 
@@ -182,7 +178,6 @@ abstract contract AmmCloseSwapServiceGenOne {
             beneficiary,
             AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             receiveFixedSwapIds,
-            poolCfg,
             riskIndicatorsInput
         );
 
@@ -194,7 +189,6 @@ abstract contract AmmCloseSwapServiceGenOne {
         uint256 indexValue,
         uint256 ibtPrice,
         AmmTypesGenOne.Swap memory swap,
-        AmmTypesGenOne.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     ) internal returns (uint256 payoutForLiquidator) {
         uint256 timestamp = block.timestamp;
@@ -205,7 +199,6 @@ abstract contract AmmCloseSwapServiceGenOne {
             swapPnlValueToDate,
             indexValue,
             swap,
-            poolCfg,
             riskIndicatorsInput
         );
 
@@ -252,7 +245,6 @@ abstract contract AmmCloseSwapServiceGenOne {
         uint256 indexValue,
         uint256 ibtPrice,
         AmmTypesGenOne.Swap memory swap,
-        AmmTypesGenOne.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     ) internal returns (uint256 payoutForLiquidator) {
         uint256 timestamp = block.timestamp;
@@ -263,7 +255,6 @@ abstract contract AmmCloseSwapServiceGenOne {
             swapPnlValueToDate,
             indexValue,
             swap,
-            poolCfg,
             riskIndicatorsInput
         );
 
@@ -310,22 +301,15 @@ abstract contract AmmCloseSwapServiceGenOne {
         address beneficiary,
         AmmTypes.SwapDirection direction,
         uint256[] memory swapIds,
-        AmmTypesGenOne.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     ) internal returns (uint256 payoutForLiquidator, AmmTypes.IporSwapClosingResult[] memory closedSwaps) {
         uint256 swapIdsLength = swapIds.length;
-        require(
-            swapIdsLength <= poolCfg.maxLengthOfLiquidatedSwapsPerLeg,
-            AmmErrors.MAX_LENGTH_LIQUIDATED_SWAPS_PER_LEG_EXCEEDED
-        );
+        require(swapIdsLength <= liquidationLegLimit, AmmErrors.MAX_LENGTH_LIQUIDATED_SWAPS_PER_LEG_EXCEEDED);
 
         closedSwaps = new AmmTypes.IporSwapClosingResult[](swapIdsLength);
         AmmTypesGenOne.Swap memory swap;
 
-        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(iporOracle).getAccruedIndex(
-            block.timestamp,
-            poolCfg.asset
-        );
+        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(iporOracle).getAccruedIndex(block.timestamp, asset);
         uint256 swapId;
 
         for (uint256 i; i != swapIdsLength; ) {
@@ -341,7 +325,6 @@ abstract contract AmmCloseSwapServiceGenOne {
                         accruedIpor.indexValue,
                         accruedIpor.ibtPrice,
                         swap,
-                        poolCfg,
                         riskIndicatorsInput
                     );
                 } else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
@@ -350,7 +333,6 @@ abstract contract AmmCloseSwapServiceGenOne {
                         accruedIpor.indexValue,
                         accruedIpor.ibtPrice,
                         swap,
-                        poolCfg,
                         riskIndicatorsInput
                     );
                 } else {
@@ -385,7 +367,6 @@ abstract contract AmmCloseSwapServiceGenOne {
         int256 swapPnlValueToDate,
         uint256 indexValue,
         AmmTypesGenOne.Swap memory swap,
-        AmmTypesGenOne.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     ) internal view returns (AmmInternalTypes.PnlValueStruct memory pnlValueStruct) {
         AmmTypes.SwapClosableStatus closableStatus;
@@ -395,7 +376,7 @@ abstract contract AmmCloseSwapServiceGenOne {
             msg.sender,
             swapPnlValueToDate,
             closeTimestamp,
-            poolCfg
+            _getPoolConfiguration()
         );
 
         _validateAllowanceToCloseSwap(closableStatus);
@@ -592,6 +573,7 @@ abstract contract AmmCloseSwapServiceGenOne {
         uint256 wadTransferAmount
     ) internal returns (uint256 wadTransferredToBuyer, uint256 wadPayoutForLiquidator) {
         console2.log("_transferDerivativeAmount");
+        console2.log("wadLiquidationDepositAmount", wadLiquidationDepositAmount);
         if (beneficiary == buyer) {
             wadTransferAmount = wadTransferAmount + wadLiquidationDepositAmount;
         } else {

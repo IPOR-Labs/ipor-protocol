@@ -60,7 +60,6 @@ contract AmmCloseSwapServiceStEth is AmmCloseSwapServiceGenOne, IAmmCloseSwapSer
             beneficiary,
             payFixedSwapIds,
             receiveFixedSwapIds,
-            _getPoolConfiguration(),
             riskIndicatorsInput
         );
     }

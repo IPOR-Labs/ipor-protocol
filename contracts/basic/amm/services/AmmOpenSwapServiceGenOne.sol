@@ -313,6 +313,8 @@ abstract contract AmmOpenSwapServiceGenOne {
         uint256 totalAmount
     ) internal virtual returns (uint256 accountInputTokenAmount);
 
+    function _validateTotalAmount(address accountInputToken, uint256 totalAmount) internal view virtual;
+
     function _beforeOpenSwap(
         Context memory ctx,
         uint256 openTimestamp,
@@ -321,16 +323,7 @@ abstract contract AmmOpenSwapServiceGenOne {
     ) internal view returns (AmmInternalTypes.BeforeOpenSwapStruct memory bosStruct) {
         require(ctx.beneficiary != address(0), IporErrors.WRONG_ADDRESS);
 
-        require(totalAmount > 0, AmmErrors.TOTAL_AMOUNT_TOO_LOW);
-
-        if (ctx.accountInputToken == ETH_ADDRESS) {
-            require(msg.value >= totalAmount, IporErrors.SENDER_ASSET_BALANCE_TOO_LOW);
-        } else {
-            require(
-                IERC20Upgradeable(ctx.accountInputToken).balanceOf(msg.sender) >= totalAmount,
-                IporErrors.SENDER_ASSET_BALANCE_TOO_LOW
-            );
-        }
+        _validateTotalAmount(ctx.accountInputToken, totalAmount);
 
         uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, decimals);
 
