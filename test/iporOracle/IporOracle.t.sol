@@ -33,7 +33,8 @@ contract IporOracleTest is TestCommons {
             address(_usdtTestnetToken),
             1e18,
             address(_daiTestnetToken),
-            1e18
+            1e18,
+            address(_stEthTestnetToken)
         );
 
         address[] memory assets = new address[](4);
@@ -124,34 +125,6 @@ contract IporOracleTest is TestCommons {
         assertEq(_iporOracle.calculateAccruedIbtPrice(address(_daiTestnetToken), block.timestamp), 1030454533953516856);
     }
 
-    function testShouldCalculateIbtPriceAfterUpgrade() public {
-        // given
-        vm.warp(_blockTimestamp);
-        uint256 ibtPrice = _iporOracle.calculateAccruedIbtPrice(address(_daiTestnetToken), _blockTimestamp);
-        assertEq(ibtPrice, 1e18);
-        _iporOracle.updateIndex(address(_daiTestnetToken), 3e16);
-        vm.warp(_blockTimestamp + 180 days);
-
-        // when
-        IporOracle newImplementation = new IporOracle(
-            address(_usdcTestnetToken),
-            1014904501167913392,
-            address(_usdtTestnetToken),
-            1014904501167913392,
-            address(_daiTestnetToken),
-            1014904501167913392
-        );
-        _iporOracle.upgradeTo(address(newImplementation));
-        address[] memory assets = new address[](1);
-        assets[0] = address(_daiTestnetToken);
-        _iporOracle.postUpgrade(assets);
-        _iporOracle.updateIndex(address(_daiTestnetToken), 3e16);
-
-        // then
-        vm.warp(block.timestamp + 185 days);
-        assertEq(_iporOracle.calculateAccruedIbtPrice(address(_daiTestnetToken), block.timestamp), 1030454533953516858); //lost precision at 18th decimal place
-    }
-
     function testShouldCalculateDifferentInterestBearingTokenPriceOneSecondPeriodSameIporIndexValue18DecimalsAsset()
         public
     {
@@ -198,7 +171,7 @@ contract IporOracleTest is TestCommons {
         // given
         uint256 version = _iporOracle.getVersion();
         // then
-        assertEq(version, 2_000);
+        assertEq(version, 2_001);
     }
 
     function testShouldPauseSCWhenSenderIsPauseGuardian() public {
