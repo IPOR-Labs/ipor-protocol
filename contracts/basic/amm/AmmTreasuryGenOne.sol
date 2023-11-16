@@ -73,10 +73,6 @@ contract AmmTreasuryGenOne is
     function getLiquidityPoolBalance() external view override returns (uint256) {
         AmmTypesGenOne.Balance memory balance = IAmmStorageGenOne(ammStorage).getBalance();
 
-        console2.log("Amm treasury balance: totalCollateralPayFixed", balance.totalCollateralPayFixed);
-        console2.log("Amm treasury balance: totalCollateralReceiveFixed", balance.totalCollateralReceiveFixed);
-        console2.log("Amm treasury balance: iporPublicationFee", balance.iporPublicationFee);
-        console2.log("Amm treasury balance: treasury", balance.treasury);
         uint256 liquidityPool = (IERC20Upgradeable(asset).balanceOf(address(this)).toInt256() -
             balance.totalCollateralPayFixed.toInt256() -
             balance.totalCollateralReceiveFixed.toInt256() -

@@ -132,6 +132,16 @@ library AmmTypes {
         uint256 wadRedeemAmount;
     }
 
+    struct UnwindParams {
+        SwapDirection direction;
+        uint256 closeTimestamp;
+        int256 swapPnlValueToDate;
+        uint256 indexValue;
+        Swap swap;
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration poolCfg;
+        CloseSwapRiskIndicatorsInput riskIndicatorsInputs;
+    }
+
     /// @notice Swap direction (long = Pay Fixed and Receive a Floating or short = receive fixed and pay a floating)
     enum SwapDirection {
         /// @notice When taking the "long" position the trader will pay a fixed rate and receive a floating rate.

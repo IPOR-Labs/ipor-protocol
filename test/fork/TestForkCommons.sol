@@ -12,6 +12,7 @@ import "../../contracts/interfaces/IAmmOpenSwapLens.sol";
 import "../../contracts/interfaces/IAmmCloseSwapLens.sol";
 import "../../contracts/amm-common/AmmSwapsLens.sol";
 import "../../contracts/amm/AmmPoolsLens.sol";
+import "../../contracts/amm-eth/AmmPoolsLensEth.sol";
 import "../../contracts/amm/AssetManagementLens.sol";
 import "../../contracts/amm/spread/Spread28Days.sol";
 import "../../contracts/amm/spread/Spread60Days.sol";
@@ -61,6 +62,7 @@ contract TestForkCommons is Test {
     address public constant ipDAI = 0x8537b194BFf354c4738E9F3C81d67E3371DaDAf8;
     address public constant ipUSDC = 0x7c0e72f431FD69560D951e4C04A4de3657621a88;
     address public constant ipUSDT = 0x9Bd2177027edEE300DC9F1fb88F24DB6e5e1edC6;
+    address public constant ipstETH = 0xc40431b6C510AeB45Fbb5e21E40D49F12b0c1F0c;
 
     address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
     address public constant stETH = 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
@@ -138,6 +140,7 @@ contract TestForkCommons is Test {
     address public ammStorageProxyStEth;
     address public ammOpenSwapServiceStEth;
     address public ammCloseSwapServiceStEth;
+    address public ammPoolsLensStEth;
 
     address public newSpread28Days;
     address public newSpread60Days;
@@ -161,6 +164,7 @@ contract TestForkCommons is Test {
         _createNewSpreadForStEth();
         _createAmmOpenSwapServiceStEth();
         _createAmmCloseSwapServiceStEth();
+        _createAmmPoolsLensStEth();
 
         //        _upgradeSpreadRouter();
         _setupIporOracleStEth();
@@ -204,7 +208,7 @@ contract TestForkCommons is Test {
                 _getUserAddress(123),
                 _getUserAddress(123),
                 _getUserAddress(123),
-                _getUserAddress(123)
+                ammPoolsLensStEth
             )
         );
         vm.prank(owner);
@@ -353,6 +357,12 @@ contract TestForkCommons is Test {
                 messageSignerAddress,
                 spreadRouter
             )
+        );
+    }
+
+    function _createAmmPoolsLensStEth() private {
+        ammPoolsLensStEth = address(
+            new AmmPoolsLensEth(stETH, ipstETH, ammTreasuryProxyStEth, ammStorageProxyStEth, iporOracleProxy)
         );
     }
 

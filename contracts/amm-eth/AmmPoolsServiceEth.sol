@@ -63,7 +63,6 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
             AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH
         );
 
-        //        uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ipstEth, ammTreasuryStEth);
         uint256 exchangeRate = _getExchangeRate();
 
         IStETH(stEth).safeTransferFrom(msg.sender, ammTreasuryStEth, stEthAmount);
@@ -122,7 +121,6 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         );
         require(beneficiary != address(0), IporErrors.WRONG_ADDRESS);
 
-        //        uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ipstEth, ammTreasuryStEth);
         uint256 exchangeRate = _getExchangeRate();
 
         uint256 stEthAmount = IporMath.division(ipTokenAmount * exchangeRate, 1e18);
