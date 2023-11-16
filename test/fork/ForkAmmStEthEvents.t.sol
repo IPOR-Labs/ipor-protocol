@@ -50,548 +50,547 @@ contract ForkAmmStEthEventsTest is TestForkCommons {
         vm.createSelectFork(vm.envString("PROVIDER_URL"), 18562032);
     }
 
-    //
-    //    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForEth28daysPayFixed() public {
-    //        //given
-    //        _init();
-    //        address user = _getUserAddress(22);
-    //        _setupUser(user, 1000 * 1e18);
-    //
-    //        uint256 totalAmount = 1e17;
-    //
-    //        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
-    //            maxCollateralRatio: 50000000000000000,
-    //            maxCollateralRatioPerLeg: 50000000000000000,
-    //            maxLeveragePerLeg: 1000000000000000000000,
-    //            baseSpreadPerLeg: 3695000000000000,
-    //            fixedRateCapPerLeg: 20000000000000000,
-    //            demandSpreadFactor: 20,
-    //            expiration: block.timestamp + 1000,
-    //            signature: bytes("0x00")
-    //        });
-    //
-    //        riskIndicatorsInputs.signature = signRiskParams(
-    //            riskIndicatorsInputs,
-    //            address(stETH),
-    //            uint256(IporTypes.SwapTenor.DAYS_28),
-    //            0,
-    //            messageSignerPrivateKey
-    //        );
-    //
-    //        address expectedAccountInputToken = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
-    //        uint256 expectedAccountInputTokenAmount = 100000000000000000;
-    //
-    //        vm.prank(user);
-    //        //then
-    //        vm.expectEmit(true, true, true, true);
-    //        emit OpenSwap({
-    //            swapId: 1,
-    //            buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
-    //            accountInputToken: expectedAccountInputToken,
-    //            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
-    //            direction: AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-    //            amounts: OpenSwapAmount({
-    //                accountInputTokenAmount: expectedAccountInputTokenAmount,
-    //                totalAmount: 100000000000000000,
-    //                collateral: 89965492687736186,
-    //                notional: 899654926877361860,
-    //                openingFeeLPAmount: 17253656131894,
-    //                openingFeeTreasuryAmount: 17253656131895,
-    //                iporPublicationFee: 10000000000000000,
-    //                liquidationDepositAmount: 25000000000000000000
-    //            }),
-    //            openTimestamp: 1699867019,
-    //            endTimestamp: 1702286219,
-    //            indicator: IporSwapIndicator({
-    //                iporIndexValue: 0,
-    //                ibtPrice: 1000000000000000000,
-    //                ibtQuantity: 899654926877361860,
-    //                fixedInterestRate: 20000699314353823
-    //            })
-    //        });
-    //        //when
-    //        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth{
-    //            value: totalAmount
-    //        }(ETH, user, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
-    //    }
-    //
-    //    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForStEth28daysPayFixed() public {
-    //        //given
-    //        _init();
-    //        address user = _getUserAddress(22);
-    //        _setupUser(user, 1000 * 1e18);
-    //
-    //        uint256 totalAmount = 1e17;
-    //
-    //        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
-    //            maxCollateralRatio: 50000000000000000,
-    //            maxCollateralRatioPerLeg: 50000000000000000,
-    //            maxLeveragePerLeg: 1000000000000000000000,
-    //            baseSpreadPerLeg: 3695000000000000,
-    //            fixedRateCapPerLeg: 20000000000000000,
-    //            demandSpreadFactor: 20,
-    //            expiration: block.timestamp + 1000,
-    //            signature: bytes("0x00")
-    //        });
-    //
-    //        riskIndicatorsInputs.signature = signRiskParams(
-    //            riskIndicatorsInputs,
-    //            address(stETH),
-    //            uint256(IporTypes.SwapTenor.DAYS_28),
-    //            0,
-    //            messageSignerPrivateKey
-    //        );
-    //
-    //        address expectedAccountInputToken = 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
-    //        uint256 expectedAccountInputTokenAmount = 100000000000000000;
-    //
-    //        vm.prank(user);
-    //        //then
-    //        vm.expectEmit(true, true, true, true);
-    //        emit OpenSwap({
-    //            swapId: 1,
-    //            buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
-    //            accountInputToken: expectedAccountInputToken,
-    //            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
-    //            direction: AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-    //            amounts: OpenSwapAmount({
-    //                accountInputTokenAmount: expectedAccountInputTokenAmount,
-    //                totalAmount: 100000000000000000,
-    //                collateral: 89965492687736186,
-    //                notional: 899654926877361860,
-    //                openingFeeLPAmount: 17253656131894,
-    //                openingFeeTreasuryAmount: 17253656131895,
-    //                iporPublicationFee: 10000000000000000,
-    //                liquidationDepositAmount: 25000000000000000000
-    //            }),
-    //            openTimestamp: 1699867019,
-    //            endTimestamp: 1702286219,
-    //            indicator: IporSwapIndicator({
-    //                iporIndexValue: 0,
-    //                ibtPrice: 1000000000000000000,
-    //                ibtQuantity: 899654926877361860,
-    //                fixedInterestRate: 20000699314353823
-    //            })
-    //        });
-    //        //when
-    //        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
-    //            stETH,
-    //            user,
-    //            totalAmount,
-    //            1e18,
-    //            10e18,
-    //            riskIndicatorsInputs
-    //        );
-    //    }
-    //
-    //    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForWEth28daysPayFixed() public {
-    //        //given
-    //        _init();
-    //        address user = _getUserAddress(22);
-    //        _setupUser(user, 1000 * 1e18);
-    //
-    //        uint256 totalAmount = 1e17;
-    //
-    //        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
-    //            maxCollateralRatio: 50000000000000000,
-    //            maxCollateralRatioPerLeg: 50000000000000000,
-    //            maxLeveragePerLeg: 1000000000000000000000,
-    //            baseSpreadPerLeg: 3695000000000000,
-    //            fixedRateCapPerLeg: 20000000000000000,
-    //            demandSpreadFactor: 20,
-    //            expiration: block.timestamp + 1000,
-    //            signature: bytes("0x00")
-    //        });
-    //
-    //        riskIndicatorsInputs.signature = signRiskParams(
-    //            riskIndicatorsInputs,
-    //            address(stETH),
-    //            uint256(IporTypes.SwapTenor.DAYS_28),
-    //            0,
-    //            messageSignerPrivateKey
-    //        );
-    //
-    //        address expectedAccountInputToken = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    //        uint256 expectedAccountInputTokenAmount = 100000000000000000;
-    //
-    //        vm.prank(user);
-    //        //then
-    //        vm.expectEmit(true, true, true, true);
-    //        emit OpenSwap({
-    //            swapId: 1,
-    //            buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
-    //            accountInputToken: expectedAccountInputToken,
-    //            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
-    //            direction: AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-    //            amounts: OpenSwapAmount({
-    //                accountInputTokenAmount: expectedAccountInputTokenAmount,
-    //                totalAmount: 100000000000000000,
-    //                collateral: 89965492687736186,
-    //                notional: 899654926877361860,
-    //                openingFeeLPAmount: 17253656131894,
-    //                openingFeeTreasuryAmount: 17253656131895,
-    //                iporPublicationFee: 10000000000000000,
-    //                liquidationDepositAmount: 25000000000000000000
-    //            }),
-    //            openTimestamp: 1699867019,
-    //            endTimestamp: 1702286219,
-    //            indicator: IporSwapIndicator({
-    //                iporIndexValue: 0,
-    //                ibtPrice: 1000000000000000000,
-    //                ibtQuantity: 899654926877361860,
-    //                fixedInterestRate: 20000699314353823
-    //            })
-    //        });
-    //        //when
-    //        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
-    //            wETH,
-    //            user,
-    //            totalAmount,
-    //            1e18,
-    //            10e18,
-    //            riskIndicatorsInputs
-    //        );
-    //    }
-    //
-    //    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForwstEth28daysPayFixed() public {
-    //        //given
-    //        _init();
-    //        address user = _getUserAddress(22);
-    //        _setupUser(user, 1000 * 1e18);
-    //
-    //        uint256 totalAmount = 1e17;
-    //
-    //        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
-    //            maxCollateralRatio: 50000000000000000,
-    //            maxCollateralRatioPerLeg: 50000000000000000,
-    //            maxLeveragePerLeg: 1000000000000000000000,
-    //            baseSpreadPerLeg: 3695000000000000,
-    //            fixedRateCapPerLeg: 20000000000000000,
-    //            demandSpreadFactor: 20,
-    //            expiration: block.timestamp + 1000,
-    //            signature: bytes("0x00")
-    //        });
-    //
-    //        riskIndicatorsInputs.signature = signRiskParams(
-    //            riskIndicatorsInputs,
-    //            address(stETH),
-    //            uint256(IporTypes.SwapTenor.DAYS_28),
-    //            0,
-    //            messageSignerPrivateKey
-    //        );
-    //
-    //        address expectedAccountInputToken = 0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0;
-    //        uint256 expectedAccountInputTokenAmount = 87235841251539969;
-    //
-    //        vm.prank(user);
-    //        //then
-    //        vm.expectEmit(true, true, true, true);
-    //        emit OpenSwap({
-    //            swapId: 1,
-    //            buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
-    //            accountInputToken: expectedAccountInputToken,
-    //            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
-    //            direction: AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-    //            amounts: OpenSwapAmount({
-    //                accountInputTokenAmount: expectedAccountInputTokenAmount,
-    //                totalAmount: 100000000000000000,
-    //                collateral: 89965492687736186,
-    //                notional: 899654926877361860,
-    //                openingFeeLPAmount: 17253656131894,
-    //                openingFeeTreasuryAmount: 17253656131895,
-    //                iporPublicationFee: 10000000000000000,
-    //                liquidationDepositAmount: 25000000000000000000
-    //            }),
-    //            openTimestamp: 1699867019,
-    //            endTimestamp: 1702286219,
-    //            indicator: IporSwapIndicator({
-    //                iporIndexValue: 0,
-    //                ibtPrice: 1000000000000000000,
-    //                ibtQuantity: 899654926877361860,
-    //                fixedInterestRate: 20000699314353823
-    //            })
-    //        });
-    //        //when
-    //        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
-    //            wstETH,
-    //            user,
-    //            totalAmount,
-    //            1e18,
-    //            10e18,
-    //            riskIndicatorsInputs
-    //        );
-    //    }
-    //
-    //    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForEth28daysReceiveFixed() public {
-    //        //given
-    //        _init();
-    //        address user = _getUserAddress(22);
-    //        _setupUser(user, 1000 * 1e18);
-    //
-    //        uint256 totalAmount = 1e17;
-    //
-    //        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
-    //            maxCollateralRatio: 50000000000000000,
-    //            maxCollateralRatioPerLeg: 50000000000000000,
-    //            maxLeveragePerLeg: 1000000000000000000000,
-    //            baseSpreadPerLeg: 3695000000000000,
-    //            fixedRateCapPerLeg: 20000000000000000,
-    //            demandSpreadFactor: 20,
-    //            expiration: block.timestamp + 1000,
-    //            signature: bytes("0x00")
-    //        });
-    //
-    //        riskIndicatorsInputs.signature = signRiskParams(
-    //            riskIndicatorsInputs,
-    //            address(stETH),
-    //            uint256(IporTypes.SwapTenor.DAYS_28),
-    //            1,
-    //            messageSignerPrivateKey
-    //        );
-    //
-    //        address expectedAccountInputToken = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
-    //        uint256 expectedAccountInputTokenAmount = 100000000000000000;
-    //
-    //        vm.prank(user);
-    //        //then
-    //        vm.expectEmit(true, true, true, true);
-    //        emit OpenSwap({
-    //            swapId: 1,
-    //            buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
-    //            accountInputToken: expectedAccountInputToken,
-    //            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
-    //            direction: AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-    //            amounts: OpenSwapAmount({
-    //                accountInputTokenAmount: expectedAccountInputTokenAmount,
-    //                totalAmount: 100000000000000000,
-    //                collateral: 89965492687736186,
-    //                notional: 899654926877361860,
-    //                openingFeeLPAmount: 17253656131894,
-    //                openingFeeTreasuryAmount: 17253656131895,
-    //                iporPublicationFee: 10000000000000000,
-    //                liquidationDepositAmount: 25000000000000000000
-    //            }),
-    //            openTimestamp: 1699867019,
-    //            endTimestamp: 1702286219,
-    //            indicator: IporSwapIndicator({
-    //                iporIndexValue: 0,
-    //                ibtPrice: 1000000000000000000,
-    //                ibtQuantity: 899654926877361860,
-    //                fixedInterestRate: 3694300685646177
-    //            })
-    //        });
-    //        //when
-    //        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth{
-    //            value: totalAmount
-    //        }(ETH, user, totalAmount, 0, 10e18, riskIndicatorsInputs);
-    //    }
-    //
-    //    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForStEth28daysReceiveFixed() public {
-    //        //given
-    //        _init();
-    //        address user = _getUserAddress(22);
-    //        _setupUser(user, 1000 * 1e18);
-    //
-    //        uint256 totalAmount = 1e17;
-    //
-    //        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
-    //            maxCollateralRatio: 50000000000000000,
-    //            maxCollateralRatioPerLeg: 50000000000000000,
-    //            maxLeveragePerLeg: 1000000000000000000000,
-    //            baseSpreadPerLeg: 3695000000000000,
-    //            fixedRateCapPerLeg: 20000000000000000,
-    //            demandSpreadFactor: 20,
-    //            expiration: block.timestamp + 1000,
-    //            signature: bytes("0x00")
-    //        });
-    //
-    //        riskIndicatorsInputs.signature = signRiskParams(
-    //            riskIndicatorsInputs,
-    //            address(stETH),
-    //            uint256(IporTypes.SwapTenor.DAYS_28),
-    //            1,
-    //            messageSignerPrivateKey
-    //        );
-    //
-    //        address expectedAccountInputToken = 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
-    //        uint256 expectedAccountInputTokenAmount = 100000000000000000;
-    //
-    //        vm.prank(user);
-    //        //then
-    //        vm.expectEmit(true, true, true, true);
-    //        emit OpenSwap({
-    //            swapId: 1,
-    //            buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
-    //            accountInputToken: expectedAccountInputToken,
-    //            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
-    //            direction: AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-    //            amounts: OpenSwapAmount({
-    //                accountInputTokenAmount: expectedAccountInputTokenAmount,
-    //                totalAmount: 100000000000000000,
-    //                collateral: 89965492687736186,
-    //                notional: 899654926877361860,
-    //                openingFeeLPAmount: 17253656131894,
-    //                openingFeeTreasuryAmount: 17253656131895,
-    //                iporPublicationFee: 10000000000000000,
-    //                liquidationDepositAmount: 25000000000000000000
-    //            }),
-    //            openTimestamp: 1699867019,
-    //            endTimestamp: 1702286219,
-    //            indicator: IporSwapIndicator({
-    //                iporIndexValue: 0,
-    //                ibtPrice: 1000000000000000000,
-    //                ibtQuantity: 899654926877361860,
-    //                fixedInterestRate: 3694300685646177
-    //            })
-    //        });
-    //        //when
-    //        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
-    //            stETH,
-    //            user,
-    //            totalAmount,
-    //            0,
-    //            10e18,
-    //            riskIndicatorsInputs
-    //        );
-    //    }
-    //
-    //    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForWEth28daysReceiveFixed() public {
-    //        //given
-    //        _init();
-    //        address user = _getUserAddress(22);
-    //        _setupUser(user, 1000 * 1e18);
-    //
-    //        uint256 totalAmount = 1e17;
-    //
-    //        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
-    //            maxCollateralRatio: 50000000000000000,
-    //            maxCollateralRatioPerLeg: 50000000000000000,
-    //            maxLeveragePerLeg: 1000000000000000000000,
-    //            baseSpreadPerLeg: 3695000000000000,
-    //            fixedRateCapPerLeg: 20000000000000000,
-    //            demandSpreadFactor: 20,
-    //            expiration: block.timestamp + 1000,
-    //            signature: bytes("0x00")
-    //        });
-    //
-    //        riskIndicatorsInputs.signature = signRiskParams(
-    //            riskIndicatorsInputs,
-    //            address(stETH),
-    //            uint256(IporTypes.SwapTenor.DAYS_28),
-    //            1,
-    //            messageSignerPrivateKey
-    //        );
-    //
-    //        address expectedAccountInputToken = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    //        uint256 expectedAccountInputTokenAmount = 100000000000000000;
-    //
-    //        vm.prank(user);
-    //        //then
-    //        vm.expectEmit(true, true, true, true);
-    //        emit OpenSwap({
-    //            swapId: 1,
-    //            buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
-    //            accountInputToken: expectedAccountInputToken,
-    //            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
-    //            direction: AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-    //            amounts: OpenSwapAmount({
-    //                accountInputTokenAmount: expectedAccountInputTokenAmount,
-    //                totalAmount: 100000000000000000,
-    //                collateral: 89965492687736186,
-    //                notional: 899654926877361860,
-    //                openingFeeLPAmount: 17253656131894,
-    //                openingFeeTreasuryAmount: 17253656131895,
-    //                iporPublicationFee: 10000000000000000,
-    //                liquidationDepositAmount: 25000000000000000000
-    //            }),
-    //            openTimestamp: 1699867019,
-    //            endTimestamp: 1702286219,
-    //            indicator: IporSwapIndicator({
-    //                iporIndexValue: 0,
-    //                ibtPrice: 1000000000000000000,
-    //                ibtQuantity: 899654926877361860,
-    //                fixedInterestRate: 3694300685646177
-    //            })
-    //        });
-    //        //when
-    //        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
-    //            wETH,
-    //            user,
-    //            totalAmount,
-    //            0,
-    //            10e18,
-    //            riskIndicatorsInputs
-    //        );
-    //    }
-    //
-    //    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForwstEth28daysReceiveFixed() public {
-    //        //given
-    //        _init();
-    //        address user = _getUserAddress(22);
-    //        _setupUser(user, 1000 * 1e18);
-    //
-    //        uint256 totalAmount = 1e17;
-    //
-    //        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
-    //            maxCollateralRatio: 50000000000000000,
-    //            maxCollateralRatioPerLeg: 50000000000000000,
-    //            maxLeveragePerLeg: 1000000000000000000000,
-    //            baseSpreadPerLeg: 3695000000000000,
-    //            fixedRateCapPerLeg: 20000000000000000,
-    //            demandSpreadFactor: 20,
-    //            expiration: block.timestamp + 1000,
-    //            signature: bytes("0x00")
-    //        });
-    //
-    //        riskIndicatorsInputs.signature = signRiskParams(
-    //            riskIndicatorsInputs,
-    //            address(stETH),
-    //            uint256(IporTypes.SwapTenor.DAYS_28),
-    //            1,
-    //            messageSignerPrivateKey
-    //        );
-    //
-    //        address expectedAccountInputToken = 0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0;
-    //        uint256 expectedAccountInputTokenAmount = 87235841251539969;
-    //
-    //        vm.prank(user);
-    //        //then
-    //        vm.expectEmit(true, true, true, true);
-    //        emit OpenSwap({
-    //            swapId: 1,
-    //            buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
-    //            accountInputToken: expectedAccountInputToken,
-    //            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
-    //            direction: AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-    //            amounts: OpenSwapAmount({
-    //                accountInputTokenAmount: expectedAccountInputTokenAmount,
-    //                totalAmount: 100000000000000000,
-    //                collateral: 89965492687736186,
-    //                notional: 899654926877361860,
-    //                openingFeeLPAmount: 17253656131894,
-    //                openingFeeTreasuryAmount: 17253656131895,
-    //                iporPublicationFee: 10000000000000000,
-    //                liquidationDepositAmount: 25000000000000000000
-    //            }),
-    //            openTimestamp: 1699867019,
-    //            endTimestamp: 1702286219,
-    //            indicator: IporSwapIndicator({
-    //                iporIndexValue: 0,
-    //                ibtPrice: 1000000000000000000,
-    //                ibtQuantity: 899654926877361860,
-    //                fixedInterestRate: 3694300685646177
-    //            })
-    //        });
-    //        //when
-    //        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
-    //            wstETH,
-    //            user,
-    //            totalAmount,
-    //            0,
-    //            10e18,
-    //            riskIndicatorsInputs
-    //        );
-    //    }
+    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForEth28daysPayFixed() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+
+        uint256 totalAmount = 1e17;
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            messageSignerPrivateKey
+        );
+
+        address expectedAccountInputToken = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+        uint256 expectedAccountInputTokenAmount = 100000000000000000;
+
+        vm.prank(user);
+        //then
+        vm.expectEmit(true, true, true, true);
+        emit OpenSwap({
+            swapId: 1,
+            buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
+            accountInputToken: expectedAccountInputToken,
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            direction: AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            amounts: OpenSwapAmount({
+                accountInputTokenAmount: expectedAccountInputTokenAmount,
+                totalAmount: 100000000000000000,
+                collateral: 89965492687736186,
+                notional: 899654926877361860,
+                openingFeeLPAmount: 17253656131894,
+                openingFeeTreasuryAmount: 17253656131895,
+                iporPublicationFee: 10000000000000000,
+                liquidationDepositAmount: 25000000000000000000
+            }),
+            openTimestamp: 1699867019,
+            endTimestamp: 1702286219,
+            indicator: IporSwapIndicator({
+                iporIndexValue: 0,
+                ibtPrice: 1000000000000000000,
+                ibtQuantity: 899654926877361860,
+                fixedInterestRate: 20000699314353823
+            })
+        });
+        //when
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth{
+            value: totalAmount
+        }(ETH, user, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
+    }
+
+    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForStEth28daysPayFixed() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+
+        uint256 totalAmount = 1e17;
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            messageSignerPrivateKey
+        );
+
+        address expectedAccountInputToken = 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
+        uint256 expectedAccountInputTokenAmount = 100000000000000000;
+
+        vm.prank(user);
+        //then
+        vm.expectEmit(true, true, true, true);
+        emit OpenSwap({
+            swapId: 1,
+            buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
+            accountInputToken: expectedAccountInputToken,
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            direction: AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            amounts: OpenSwapAmount({
+                accountInputTokenAmount: expectedAccountInputTokenAmount,
+                totalAmount: 100000000000000000,
+                collateral: 89965492687736186,
+                notional: 899654926877361860,
+                openingFeeLPAmount: 17253656131894,
+                openingFeeTreasuryAmount: 17253656131895,
+                iporPublicationFee: 10000000000000000,
+                liquidationDepositAmount: 25000000000000000000
+            }),
+            openTimestamp: 1699867019,
+            endTimestamp: 1702286219,
+            indicator: IporSwapIndicator({
+                iporIndexValue: 0,
+                ibtPrice: 1000000000000000000,
+                ibtQuantity: 899654926877361860,
+                fixedInterestRate: 20000699314353823
+            })
+        });
+        //when
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
+            stETH,
+            user,
+            totalAmount,
+            1e18,
+            10e18,
+            riskIndicatorsInputs
+        );
+    }
+
+    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForWEth28daysPayFixed() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+
+        uint256 totalAmount = 1e17;
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            messageSignerPrivateKey
+        );
+
+        address expectedAccountInputToken = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+        uint256 expectedAccountInputTokenAmount = 100000000000000000;
+
+        vm.prank(user);
+        //then
+        vm.expectEmit(true, true, true, true);
+        emit OpenSwap({
+            swapId: 1,
+            buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
+            accountInputToken: expectedAccountInputToken,
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            direction: AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            amounts: OpenSwapAmount({
+                accountInputTokenAmount: expectedAccountInputTokenAmount,
+                totalAmount: 100000000000000000,
+                collateral: 89965492687736186,
+                notional: 899654926877361860,
+                openingFeeLPAmount: 17253656131894,
+                openingFeeTreasuryAmount: 17253656131895,
+                iporPublicationFee: 10000000000000000,
+                liquidationDepositAmount: 25000000000000000000
+            }),
+            openTimestamp: 1699867019,
+            endTimestamp: 1702286219,
+            indicator: IporSwapIndicator({
+                iporIndexValue: 0,
+                ibtPrice: 1000000000000000000,
+                ibtQuantity: 899654926877361860,
+                fixedInterestRate: 20000699314353823
+            })
+        });
+        //when
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
+            wETH,
+            user,
+            totalAmount,
+            1e18,
+            10e18,
+            riskIndicatorsInputs
+        );
+    }
+
+    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForwstEth28daysPayFixed() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+
+        uint256 totalAmount = 1e17;
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            messageSignerPrivateKey
+        );
+
+        address expectedAccountInputToken = 0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0;
+        uint256 expectedAccountInputTokenAmount = 87235841251539969;
+
+        vm.prank(user);
+        //then
+        vm.expectEmit(true, true, true, true);
+        emit OpenSwap({
+            swapId: 1,
+            buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
+            accountInputToken: expectedAccountInputToken,
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            direction: AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            amounts: OpenSwapAmount({
+                accountInputTokenAmount: expectedAccountInputTokenAmount,
+                totalAmount: 100000000000000000,
+                collateral: 89965492687736186,
+                notional: 899654926877361860,
+                openingFeeLPAmount: 17253656131894,
+                openingFeeTreasuryAmount: 17253656131895,
+                iporPublicationFee: 10000000000000000,
+                liquidationDepositAmount: 25000000000000000000
+            }),
+            openTimestamp: 1699867019,
+            endTimestamp: 1702286219,
+            indicator: IporSwapIndicator({
+                iporIndexValue: 0,
+                ibtPrice: 1000000000000000000,
+                ibtQuantity: 899654926877361860,
+                fixedInterestRate: 20000699314353823
+            })
+        });
+        //when
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
+            wstETH,
+            user,
+            totalAmount,
+            1e18,
+            10e18,
+            riskIndicatorsInputs
+        );
+    }
+
+    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForEth28daysReceiveFixed() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+
+        uint256 totalAmount = 1e17;
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            1,
+            messageSignerPrivateKey
+        );
+
+        address expectedAccountInputToken = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+        uint256 expectedAccountInputTokenAmount = 100000000000000000;
+
+        vm.prank(user);
+        //then
+        vm.expectEmit(true, true, true, true);
+        emit OpenSwap({
+            swapId: 1,
+            buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
+            accountInputToken: expectedAccountInputToken,
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            direction: AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            amounts: OpenSwapAmount({
+                accountInputTokenAmount: expectedAccountInputTokenAmount,
+                totalAmount: 100000000000000000,
+                collateral: 89965492687736186,
+                notional: 899654926877361860,
+                openingFeeLPAmount: 17253656131894,
+                openingFeeTreasuryAmount: 17253656131895,
+                iporPublicationFee: 10000000000000000,
+                liquidationDepositAmount: 25000000000000000000
+            }),
+            openTimestamp: 1699867019,
+            endTimestamp: 1702286219,
+            indicator: IporSwapIndicator({
+                iporIndexValue: 0,
+                ibtPrice: 1000000000000000000,
+                ibtQuantity: 899654926877361860,
+                fixedInterestRate: 3694300685646177
+            })
+        });
+        //when
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth{
+            value: totalAmount
+        }(ETH, user, totalAmount, 0, 10e18, riskIndicatorsInputs);
+    }
+
+    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForStEth28daysReceiveFixed() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+
+        uint256 totalAmount = 1e17;
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            1,
+            messageSignerPrivateKey
+        );
+
+        address expectedAccountInputToken = 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
+        uint256 expectedAccountInputTokenAmount = 100000000000000000;
+
+        vm.prank(user);
+        //then
+        vm.expectEmit(true, true, true, true);
+        emit OpenSwap({
+            swapId: 1,
+            buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
+            accountInputToken: expectedAccountInputToken,
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            direction: AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            amounts: OpenSwapAmount({
+                accountInputTokenAmount: expectedAccountInputTokenAmount,
+                totalAmount: 100000000000000000,
+                collateral: 89965492687736186,
+                notional: 899654926877361860,
+                openingFeeLPAmount: 17253656131894,
+                openingFeeTreasuryAmount: 17253656131895,
+                iporPublicationFee: 10000000000000000,
+                liquidationDepositAmount: 25000000000000000000
+            }),
+            openTimestamp: 1699867019,
+            endTimestamp: 1702286219,
+            indicator: IporSwapIndicator({
+                iporIndexValue: 0,
+                ibtPrice: 1000000000000000000,
+                ibtQuantity: 899654926877361860,
+                fixedInterestRate: 3694300685646177
+            })
+        });
+        //when
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
+            stETH,
+            user,
+            totalAmount,
+            0,
+            10e18,
+            riskIndicatorsInputs
+        );
+    }
+
+    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForWEth28daysReceiveFixed() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+
+        uint256 totalAmount = 1e17;
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            1,
+            messageSignerPrivateKey
+        );
+
+        address expectedAccountInputToken = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+        uint256 expectedAccountInputTokenAmount = 100000000000000000;
+
+        vm.prank(user);
+        //then
+        vm.expectEmit(true, true, true, true);
+        emit OpenSwap({
+            swapId: 1,
+            buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
+            accountInputToken: expectedAccountInputToken,
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            direction: AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            amounts: OpenSwapAmount({
+                accountInputTokenAmount: expectedAccountInputTokenAmount,
+                totalAmount: 100000000000000000,
+                collateral: 89965492687736186,
+                notional: 899654926877361860,
+                openingFeeLPAmount: 17253656131894,
+                openingFeeTreasuryAmount: 17253656131895,
+                iporPublicationFee: 10000000000000000,
+                liquidationDepositAmount: 25000000000000000000
+            }),
+            openTimestamp: 1699867019,
+            endTimestamp: 1702286219,
+            indicator: IporSwapIndicator({
+                iporIndexValue: 0,
+                ibtPrice: 1000000000000000000,
+                ibtQuantity: 899654926877361860,
+                fixedInterestRate: 3694300685646177
+            })
+        });
+        //when
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
+            wETH,
+            user,
+            totalAmount,
+            0,
+            10e18,
+            riskIndicatorsInputs
+        );
+    }
+
+    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForwstEth28daysReceiveFixed() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+
+        uint256 totalAmount = 1e17;
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            1,
+            messageSignerPrivateKey
+        );
+
+        address expectedAccountInputToken = 0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0;
+        uint256 expectedAccountInputTokenAmount = 87235841251539969;
+
+        vm.prank(user);
+        //then
+        vm.expectEmit(true, true, true, true);
+        emit OpenSwap({
+            swapId: 1,
+            buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
+            accountInputToken: expectedAccountInputToken,
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            direction: AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
+            amounts: OpenSwapAmount({
+                accountInputTokenAmount: expectedAccountInputTokenAmount,
+                totalAmount: 100000000000000000,
+                collateral: 89965492687736186,
+                notional: 899654926877361860,
+                openingFeeLPAmount: 17253656131894,
+                openingFeeTreasuryAmount: 17253656131895,
+                iporPublicationFee: 10000000000000000,
+                liquidationDepositAmount: 25000000000000000000
+            }),
+            openTimestamp: 1699867019,
+            endTimestamp: 1702286219,
+            indicator: IporSwapIndicator({
+                iporIndexValue: 0,
+                ibtPrice: 1000000000000000000,
+                ibtQuantity: 899654926877361860,
+                fixedInterestRate: 3694300685646177
+            })
+        });
+        //when
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
+            wstETH,
+            user,
+            totalAmount,
+            0,
+            10e18,
+            riskIndicatorsInputs
+        );
+    }
 
     function testShouldSendCorrectEventCloseSwapWhenClosePositionStEthForStEth60daysPayFixed() public {
         //given
@@ -961,14 +960,9 @@ contract ForkAmmStEthEventsTest is TestForkCommons {
             messageSignerPrivateKey
         );
         vm.prank(user);
-        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth{value:totalAmount}(
-            ETH,
-            user,
-            totalAmount,
-            0,
-            10e18,
-            riskIndicatorsInputs
-        );
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth{
+            value: totalAmount
+        }(ETH, user, totalAmount, 0, 10e18, riskIndicatorsInputs);
 
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);

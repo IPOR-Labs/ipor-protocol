@@ -88,6 +88,7 @@ abstract contract AmmOpenSwapServiceGenOne {
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) internal returns (uint256) {
+        _validateAccountInputToken(accountInputToken);
         return
             _openSwapPayFixedInternal(
                 Context({accountInputToken: accountInputToken, beneficiary: beneficiary, tenor: tenor}),
@@ -113,6 +114,7 @@ abstract contract AmmOpenSwapServiceGenOne {
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) internal returns (uint256) {
+        _validateAccountInputToken(accountInputToken);
         return
             _openSwapReceiveFixedInternal(
                 Context({accountInputToken: accountInputToken, beneficiary: beneficiary, tenor: tenor}),
@@ -319,6 +321,7 @@ abstract contract AmmOpenSwapServiceGenOne {
     ) internal virtual returns (uint256 accountInputTokenAmount);
 
     function _validateTotalAmount(address accountInputToken, uint256 totalAmount) internal view virtual;
+    function _validateAccountInputToken(address accountInputToken) internal view virtual;
 
     function _beforeOpenSwap(
         Context memory ctx,

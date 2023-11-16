@@ -174,6 +174,17 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
             );
     }
 
+    function _validateAccountInputToken(address accountInputToken) internal view override {
+        if (
+            accountInputToken != ETH_ADDRESS &&
+            accountInputToken != asset &&
+            accountInputToken != wETH &&
+            accountInputToken != wstETH
+        ) {
+            revert IporErrors.UnsupportedAsset(accountInputToken);
+        }
+    }
+
     function _validateTotalAmount(address accountInputToken, uint256 totalAmount) internal view override {
         require(totalAmount > 0, AmmErrors.TOTAL_AMOUNT_TOO_LOW);
 
