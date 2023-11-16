@@ -190,8 +190,6 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
                 }
             } else if (accountInputToken == wstETH) {
                 uint256 inputTokenTotalAmount = IporMath.division(IwstEth(wstETH).tokensPerStEth() * totalAmount, 1e18);
-                console2.log("accountBalance", accountBalance);
-                console2.log("inputTokenTotalAmount", inputTokenTotalAmount);
 
                 if (accountBalance < inputTokenTotalAmount) {
                     revert IporErrors.AccountInputTokenBalanceTooLow(

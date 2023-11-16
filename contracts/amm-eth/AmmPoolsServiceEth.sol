@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
-
+import "forge-std/console2.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../libraries/IporContractValidator.sol";
 import "../libraries/math/IporMath.sol";
@@ -124,6 +124,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         uint256 exchangeRate = _getExchangeRate();
 
         uint256 stEthAmount = IporMath.division(ipTokenAmount * exchangeRate, 1e18);
+
         uint256 amountToRedeem = IporMath.division(stEthAmount * (1e18 - redeemFeeRateStEth), 1e18);
 
         require(amountToRedeem > 0, AmmPoolsErrors.CANNOT_REDEEM_ASSET_AMOUNT_TOO_LOW);

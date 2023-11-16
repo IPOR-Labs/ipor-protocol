@@ -575,7 +575,6 @@ abstract contract AmmCloseSwapServiceGenOne {
         uint256 wadLiquidationDepositAmount,
         uint256 wadTransferAmount
     ) internal returns (uint256 wadTransferredToBuyer, uint256 wadPayoutForLiquidator) {
-        console2.log("wadLiquidationDepositAmount", wadLiquidationDepositAmount);
         if (beneficiary == buyer) {
             wadTransferAmount = wadTransferAmount + wadLiquidationDepositAmount;
         } else {
