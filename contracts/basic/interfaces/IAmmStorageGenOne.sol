@@ -40,8 +40,8 @@ interface IAmmStorageGenOne {
     /// # Pay Fixed Total Collateral
     /// # Receive Fixed Total Collateral
     /// # Liquidity Pool and Vault balances.
-    /// @return balance structure {IporTypes.AmmBalancesMemory}
-    function getBalance() external view returns (IporTypes.AmmBalancesMemory memory);
+    /// @return balance structure {AmmTypesGenOne.AmmBalancesMemory}
+    function getBalance() external view returns (AmmTypesGenOne.AmmBalancesMemory memory);
 
     /// @notice Gets the balance for open swap
     /// @dev Balance contains:
@@ -52,10 +52,6 @@ interface IAmmStorageGenOne {
     /// # Total Notional Receive Fixed
     /// @return balance structure {IporTypes.AmmBalancesForOpenSwapMemory}
     function getBalancesForOpenSwap() external view returns (IporTypes.AmmBalancesForOpenSwapMemory memory);
-
-    /// @notice Gets the balance with the extended information: IPOR publication fee balance and Treasury balance.
-    /// @return balance structure {AmmStorageTypes.ExtendedBalancesMemory}
-    function getExtendedBalance() external view returns (AmmStorageTypes.ExtendedBalancesMemory memory);
 
     /// @notice gets the SOAP indicators.
     /// @dev SOAP is a Sum Of All Payouts, aka undealised PnL.
@@ -167,17 +163,6 @@ interface IAmmStorageGenOne {
         uint256 swapUnwindFeeTreasuryAmount,
         uint256 closingTimestamp
     ) external returns (AmmInternalTypes.OpenSwapItem memory closedSwap);
-
-    /// @notice Updates the balance when the AmmPoolsService withdraws AmmTreasury's assets from the AssetManagement.
-    /// @dev Function is only available to the AmmTreasury contract.
-    /// @param withdrawnAmount asset amount that was withdrawn from AssetManagement to AmmTreasury by AmmPoolsService, represented in 18 decimals.
-    /// @param vaultBalance Asset Management Vault (AssetManagement) balance, represented in 18 decimals
-    function updateStorageWhenWithdrawFromAssetManagement(uint256 withdrawnAmount, uint256 vaultBalance) external;
-
-    /// @notice Updates the balance when AmmPoolsService deposits AmmTreasury's assets to AssetManagement. Function is only available to AmmTreasury.
-    /// @param depositAmount asset amount deposited from AmmTreasury to AssetManagement by AmmPoolsService, represented in 18 decimals.
-    /// @param vaultBalance actual Asset Management Vault(AssetManagement) balance , represented in 18 decimals
-    function updateStorageWhenDepositToAssetManagement(uint256 depositAmount, uint256 vaultBalance) external;
 
     /// @notice Updates the balance when AmmPoolsService transfers AmmTreasury's assets to Oracle Treasury's multisig wallet.
     /// @dev Function is only available to the AmmGovernanceService, can be executed only by IPOR Protocol Router as internal interaction.

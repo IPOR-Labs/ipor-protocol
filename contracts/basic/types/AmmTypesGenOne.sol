@@ -128,20 +128,27 @@ library AmmTypesGenOne {
         /// @notice Liquidation deposit is retained when the swap is opened. Value represented in 18 decimals.
         uint256 liquidationDepositAmount;
     }
-    //
-    //    /// @notice Struct describing AMM Pool's core addresses.
-    //    struct AmmPoolCoreModel {
-    //        /// @notice asset address
-    //        address asset;
-    //        /// @notice asset decimals
-    //        uint256 assetDecimals;
-    //        /// @notice ipToken address associated to the asset
-    //        address ipToken;
-    //        /// @notice AMM Storage address
-    //        address ammStorage;
-    //        /// @notice AMM Treasury address
-    //        address ammTreasury;
-    //        /// @notice IPOR Oracle address
-    //        address iporOracle;
-    //    }
+
+    struct AmmBalancesForOpenSwapMemory {
+        /// @notice Sum of all collateral put forward by the derivative buyer's on  Pay Fixed & Receive Floating leg.
+        uint256 totalCollateralPayFixed;
+        /// @notice Total notional amount of all swaps on  Pay Fixed leg (denominated in 18 decimals).
+        uint256 totalNotionalPayFixed;
+        /// @notice Sum of all collateral put forward by the derivative buyer's on  Pay Floating & Receive Fixed leg.
+        uint256 totalCollateralReceiveFixed;
+        /// @notice Total notional amount of all swaps on  Receive Fixed leg (denominated in 18 decimals).
+        uint256 totalNotionalReceiveFixed;
+    }
+
+    /// @notice Struct representing balances used internally for asset calculations
+    /// @dev all balances in 18 decimals
+    struct AmmBalancesMemory {
+        /// @notice Sum of all collateral put forward by the derivative buyer's on  Pay Fixed & Receive Floating leg.
+        uint256 totalCollateralPayFixed;
+        /// @notice Sum of all collateral put forward by the derivative buyer's on  Pay Floating & Receive Fixed leg.
+        uint256 totalCollateralReceiveFixed;
+        /// @notice Liquidity Pool Balance. This balance is where the liquidity from liquidity providers and the opening fee are accounted for,
+        /// @dev Amount of opening fee accounted in this balance is defined by _OPENING_FEE_FOR_TREASURY_PORTION_RATE param.
+        uint256 liquidityPool;
+    }
 }

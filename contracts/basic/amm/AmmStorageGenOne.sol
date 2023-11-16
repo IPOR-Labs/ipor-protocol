@@ -4,6 +4,7 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "../../interfaces/types/AmmStorageTypes.sol";
 import "../interfaces/IAmmStorageGenOne.sol";
@@ -13,6 +14,7 @@ import "../../libraries/PaginationUtils.sol";
 import "../../libraries/IporContractValidator.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 import "../../amm/libraries/types/AmmInternalTypes.sol";
+import "../types/StorageInternalTypesGenOne.sol";
 import "../../amm/libraries/types/StorageInternalTypes.sol";
 import "../../amm/libraries/SoapIndicatorRebalanceLogic.sol";
 
@@ -27,17 +29,17 @@ contract AmmStorageGenOne is
     using IporContractValidator for address;
     using SafeCast for uint256;
     using SafeCast for int256;
-
     using SoapIndicatorRebalanceLogic for AmmStorageTypes.SoapIndicators;
 
     int256 private constant INTEREST_THRESHOLD = -1e18;
 
+    address private immutable _asset;
     address private immutable _iporProtocolRouter;
     address private immutable _ammTreasury;
 
     uint32 private _lastSwapId;
 
-    StorageInternalTypes.Balances internal _balances;
+    StorageInternalTypesGenOne.Balances internal _balances;
     StorageInternalTypes.SoapIndicatorsStorage internal _soapIndicatorsPayFixed;
     StorageInternalTypes.SoapIndicatorsStorage internal _soapIndicatorsReceiveFixed;
     StorageInternalTypes.SwapContainer internal _swapsPayFixed;
@@ -61,17 +63,16 @@ contract AmmStorageGenOne is
     }
 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address iporProtocolRouterInput, address ammTreasury) {
+    constructor(address assetInput, address iporProtocolRouterInput, address ammTreasury) {
+        _asset = assetInput.checkAddress();
         _iporProtocolRouter = iporProtocolRouterInput.checkAddress();
         _ammTreasury = ammTreasury.checkAddress();
         _disableInitializers();
     }
 
-    function initialize(uint256 initialLiquidityPoolBalance) public initializer {
+    function initialize() public initializer {
         __Ownable_init();
         __UUPSUpgradeable_init();
-
-        _balances.liquidityPool = initialLiquidityPoolBalance.toUint128();
     }
 
     function getVersion() external pure virtual override returns (uint256) {
@@ -96,37 +97,40 @@ contract AmmStorageGenOne is
                 : _openedSwapsReceiveFixed[tenor].swaps[_openedSwapsReceiveFixed[tenor].headSwapId];
     }
 
-    function getBalance() external view virtual override returns (IporTypes.AmmBalancesMemory memory) {
+    function getBalance() external view virtual override returns (AmmTypesGenOne.AmmBalancesMemory memory) {
+        StorageInternalTypesGenOne.Balances memory balances = _balances;
+
+        uint256 liquidityPool = IERC20(_asset).balanceOf(_ammTreasury) -
+            balances.totalCollateralPayFixed -
+            balances.totalCollateralReceiveFixed -
+            balances.iporPublicationFee -
+            balances.treasury;
+
         return
-            IporTypes.AmmBalancesMemory(
-                _balances.totalCollateralPayFixed,
-                _balances.totalCollateralReceiveFixed,
-                _balances.liquidityPool,
-                _balances.vault
+            AmmTypesGenOne.AmmBalancesMemory(
+                balances.totalCollateralPayFixed,
+                balances.totalCollateralReceiveFixed,
+                liquidityPool
             );
     }
 
     function getBalancesForOpenSwap() external view override returns (IporTypes.AmmBalancesForOpenSwapMemory memory) {
+        StorageInternalTypesGenOne.Balances memory balances = _balances;
+
+        uint256 liquidityPool = IERC20(_asset).balanceOf(_ammTreasury) -
+            balances.totalCollateralPayFixed -
+            balances.totalCollateralReceiveFixed -
+            balances.iporPublicationFee -
+            balances.treasury;
+
         return
             IporTypes.AmmBalancesForOpenSwapMemory({
-                totalCollateralPayFixed: _balances.totalCollateralPayFixed,
+                totalCollateralPayFixed: balances.totalCollateralPayFixed,
                 totalNotionalPayFixed: _soapIndicatorsPayFixed.totalNotional,
-                totalCollateralReceiveFixed: _balances.totalCollateralReceiveFixed,
+                totalCollateralReceiveFixed: balances.totalCollateralReceiveFixed,
                 totalNotionalReceiveFixed: _soapIndicatorsReceiveFixed.totalNotional,
-                liquidityPool: _balances.liquidityPool
+                liquidityPool: liquidityPool
             });
-    }
-
-    function getExtendedBalance() external view override returns (AmmStorageTypes.ExtendedBalancesMemory memory) {
-        return
-            AmmStorageTypes.ExtendedBalancesMemory(
-                _balances.totalCollateralPayFixed,
-                _balances.totalCollateralReceiveFixed,
-                _balances.liquidityPool,
-                _balances.vault,
-                _balances.iporPublicationFee,
-                _balances.treasury
-            );
     }
 
     function getSwap(
@@ -298,34 +302,6 @@ contract AmmStorageGenOne is
         return _updateOpenedSwapWhenCloseReceiveFixed(swap.tenor, swap.id);
     }
 
-    /// @dev vaultBalance is the balance of the vault after the withdraw
-    function updateStorageWhenWithdrawFromAssetManagement(
-        uint256 withdrawnAmount,
-        uint256 vaultBalance
-    ) external override onlyAmmTreasury {
-        uint256 currentVaultBalance = _balances.vault;
-        uint256 currentLiquidityPoolBalance = _balances.liquidityPool;
-
-        int256 interest = (vaultBalance + withdrawnAmount).toInt256() - currentVaultBalance.toInt256();
-
-        _updateStorageWhenInteractionWithAssetManagement(currentLiquidityPoolBalance, vaultBalance, interest);
-    }
-
-    function updateStorageWhenDepositToAssetManagement(
-        uint256 depositAmount,
-        uint256 vaultBalance
-    ) external override onlyAmmTreasury {
-        /// @dev vaultBalance is the balance of the vault after the deposit depositAmount, so should always be vaultBalance >= depositAmount
-        require(vaultBalance >= depositAmount, AmmErrors.VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE);
-
-        uint256 currentVaultBalance = _balances.vault;
-        uint256 currentLiquidityPoolBalance = _balances.liquidityPool;
-
-        int256 interest = (vaultBalance - depositAmount).toInt256() - currentVaultBalance.toInt256();
-
-        _updateStorageWhenInteractionWithAssetManagement(currentLiquidityPoolBalance, vaultBalance, interest);
-    }
-
     function updateStorageWhenTransferToCharlieTreasuryInternal(
         uint256 transferredAmount
     ) external override onlyRouter {
@@ -384,21 +360,6 @@ contract AmmStorageGenOne is
         });
     }
 
-    function _updateStorageWhenInteractionWithAssetManagement(
-        uint256 ammLiquidityPoolBalance,
-        uint256 vaultBalance,
-        int256 interest
-    ) internal {
-        /// @dev allow to have negative interest but not lower than INTEREST_THRESHOLD
-        require(interest >= INTEREST_THRESHOLD, AmmErrors.INTEREST_FROM_STRATEGY_EXCEEDED_THRESHOLD);
-        require(ammLiquidityPoolBalance.toInt256() >= -interest, AmmErrors.LIQUIDITY_POOL_AMOUNT_TOO_LOW);
-
-        ammLiquidityPoolBalance = (ammLiquidityPoolBalance.toInt256() + interest).toUint256();
-
-        _balances.liquidityPool = ammLiquidityPoolBalance.toUint128();
-        _balances.vault = vaultBalance.toUint128();
-    }
-
     function _getPositions(
         AmmTypes.SwapDirection direction,
         mapping(uint32 => StorageInternalTypes.Swap) storage swaps,
@@ -445,10 +406,7 @@ contract AmmStorageGenOne is
         uint256 cfgIporPublicationFee
     ) internal {
         _balances.totalCollateralPayFixed = _balances.totalCollateralPayFixed + collateral.toUint128();
-
         _balances.iporPublicationFee = _balances.iporPublicationFee + cfgIporPublicationFee.toUint128();
-
-        _balances.liquidityPool = _balances.liquidityPool + openingFeeLPAmount.toUint128();
         _balances.treasury = _balances.treasury + openingFeeTreasuryAmount.toUint128();
     }
 
@@ -459,10 +417,7 @@ contract AmmStorageGenOne is
         uint256 cfgIporPublicationFee
     ) internal {
         _balances.totalCollateralReceiveFixed = _balances.totalCollateralReceiveFixed + collateral.toUint128();
-
         _balances.iporPublicationFee = _balances.iporPublicationFee + cfgIporPublicationFee.toUint128();
-
-        _balances.liquidityPool = _balances.liquidityPool + openingFeeLPAmount.toUint128();
         _balances.treasury = _balances.treasury + openingFeeTreasuryAmount.toUint128();
     }
 
@@ -472,8 +427,8 @@ contract AmmStorageGenOne is
         uint256 swapUnwindFeeLPAmount,
         uint256 swapUnwindFeeTreasuryAmount
     ) internal {
-        _updateBalancesWhenCloseSwap(pnlValue, swapUnwindFeeLPAmount, swapUnwindFeeTreasuryAmount);
         _balances.totalCollateralPayFixed = _balances.totalCollateralPayFixed - swap.collateral.toUint128();
+        _balances.treasury = _balances.treasury + swapUnwindFeeTreasuryAmount.toUint128();
     }
 
     function _updateBalancesWhenCloseSwapReceiveFixed(
@@ -482,32 +437,7 @@ contract AmmStorageGenOne is
         uint256 swapUnwindFeeLPAmount,
         uint256 swapUnwindFeeTreasuryAmount
     ) internal {
-        _updateBalancesWhenCloseSwap(pnlValue, swapUnwindFeeLPAmount, swapUnwindFeeTreasuryAmount);
         _balances.totalCollateralReceiveFixed = _balances.totalCollateralReceiveFixed - swap.collateral.toUint128();
-    }
-
-    function _updateBalancesWhenCloseSwap(
-        int256 pnlValue,
-        uint256 swapUnwindFeeLPAmount,
-        uint256 swapUnwindFeeTreasuryAmount
-    ) internal {
-        uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
-
-        if (pnlValue > 0) {
-            /// @dev Buyer earns, AMM (LP) looses
-            require(_balances.liquidityPool >= absPnlValue, AmmErrors.CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW);
-            /// @dev When AMM (LP) looses, then  always substract all pnlValue
-            _balances.liquidityPool =
-                _balances.liquidityPool -
-                absPnlValue.toUint128() +
-                swapUnwindFeeLPAmount.toUint128();
-        } else {
-            /// @dev AMM earns, Buyer looses,
-            _balances.liquidityPool =
-                _balances.liquidityPool +
-                absPnlValue.toUint128() +
-                swapUnwindFeeLPAmount.toUint128();
-        }
         _balances.treasury = _balances.treasury + swapUnwindFeeTreasuryAmount.toUint128();
     }
 

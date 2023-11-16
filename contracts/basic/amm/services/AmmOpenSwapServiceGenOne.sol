@@ -141,7 +141,7 @@ abstract contract AmmOpenSwapServiceGenOne {
             leverage
         );
 
-        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(ammStorage).getBalancesForOpenSwap();
+        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorageGenOne(ammStorage).getBalancesForOpenSwap();
 
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;

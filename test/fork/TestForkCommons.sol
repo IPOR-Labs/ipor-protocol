@@ -364,15 +364,10 @@ contract TestForkCommons is Test {
     }
 
     function _createAmmStorageStEth() private {
-        AmmStorageGenOne ammStorageImpl = new AmmStorageGenOne(iporProtocolRouterProxy, ammTreasuryProxyStEth);
-
-        uint256 actualLiquidityPoolBalance = IERC20(stETH).balanceOf(ammTreasuryProxyStEth);
+        AmmStorageGenOne ammStorageImpl = new AmmStorageGenOne(stETH, iporProtocolRouterProxy, ammTreasuryProxyStEth);
 
         vm.startPrank(owner);
-        ERC1967Proxy proxy = new ERC1967Proxy(
-            address(ammStorageImpl),
-            abi.encodeWithSignature("initialize(uint256)", actualLiquidityPoolBalance)
-        );
+        ERC1967Proxy proxy = new ERC1967Proxy(address(ammStorageImpl), abi.encodeWithSignature("initialize()"));
         vm.stopPrank();
 
         ammStorageProxyStEth = address(proxy);
@@ -525,22 +520,23 @@ contract TestForkCommons is Test {
     }
 
     function _createAmmCloseSwapServiceStEth() private {
-        AmmTypesGenOne.AmmCloseSwapServicePoolConfiguration memory stEthConfig = AmmTypesGenOne.AmmCloseSwapServicePoolConfiguration({
-            spread: spreadProxyStEth,
-            asset: stETH,
-            decimals: 18,
-            ammStorage: ammStorageProxyStEth,
-            ammTreasury: ammTreasuryProxyStEth,
-            assetManagement: address(0),
-            unwindingFeeRate: 5e11,
-            unwindingFeeTreasuryPortionRate: 5e11,
-            maxLengthOfLiquidatedSwapsPerLeg: 10,
-            timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
-            timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
-            minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
-            minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
-            minLeverage: 10 * 1e18
-        });
+        AmmTypesGenOne.AmmCloseSwapServicePoolConfiguration memory stEthConfig = AmmTypesGenOne
+            .AmmCloseSwapServicePoolConfiguration({
+                spread: spreadProxyStEth,
+                asset: stETH,
+                decimals: 18,
+                ammStorage: ammStorageProxyStEth,
+                ammTreasury: ammTreasuryProxyStEth,
+                assetManagement: address(0),
+                unwindingFeeRate: 5e11,
+                unwindingFeeTreasuryPortionRate: 5e11,
+                maxLengthOfLiquidatedSwapsPerLeg: 10,
+                timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
+                timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
+                minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
+                minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
+                minLeverage: 10 * 1e18
+            });
 
         ammCloseSwapServiceStEth = address(
             new AmmCloseSwapServiceStEth(stEthConfig, iporOracleProxy, messageSignerAddress, spreadProxyStEth)
