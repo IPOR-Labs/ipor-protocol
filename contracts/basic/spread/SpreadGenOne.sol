@@ -1,20 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-
-import "@openzeppelin/contracts/utils/Strings.sol";
 import "./DemandSpreadLibsGenOne.sol";
 import "./SpreadStorageLibsGenOne.sol";
 import "./OfferedRateCalculationLibsGenOne.sol";
-import "../../interfaces/IIporContractCommonGov.sol";
-import "../../interfaces/IProxyImplementation.sol";
 import "../../interfaces/types/IporTypes.sol";
 import "../../interfaces/types/AmmTypes.sol";
-import "../../security/IporOwnableUpgradeable.sol";
-import "../../security/PauseManager.sol";
+import "../../security/IporOwnable.sol";
 import "../../libraries/IporContractValidator.sol";
 import "../../amm/libraries/types/AmmInternalTypes.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
@@ -22,15 +14,8 @@ import "../../basic/interfaces/IAmmStorageGenOne.sol";
 import "../../amm/spread/CalculateTimeWeightedNotionalLibs.sol";
 import "../../amm/libraries/IporSwapLogic.sol";
 
-/// @dev This contract cannot be used directly, should be used only through SpreadRouter.
-contract SpreadGenOne is
-    Initializable,
-    PausableUpgradeable,
-    UUPSUpgradeable,
-    IporOwnableUpgradeable,
-    IProxyImplementation,
-    IIporContractCommonGov
-{
+/// @dev This contract cannot be used directly, should be used only through Router.
+contract SpreadGenOne is IporOwnable {
     struct SpreadInputs {
         //// @notice Swap's assets DAI/USDC/USDT/stETH/etc.
         address asset;
@@ -64,21 +49,23 @@ contract SpreadGenOne is
     address public immutable iporProtocolRouter;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address iporProtocolRouterInput, address assetInput) {
+    constructor(
+        address iporProtocolRouterInput,
+        address assetInput,
+        SpreadTypesGenOne.TimeWeightedNotionalMemory[] memory timeWeightedNotional
+    ) {
         iporProtocolRouter = iporProtocolRouterInput.checkAddress();
         asset = assetInput.checkAddress();
-        _disableInitializers();
-    }
-
-    function initialize() public initializer {
-        __Pausable_init();
-        __Ownable_init();
-        __UUPSUpgradeable_init();
-    }
-
-    modifier onlyPauseGuardian() {
-        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
-        _;
+        uint256 length = timeWeightedNotional.length;
+        for (uint256 i; i < length; ) {
+            SpreadStorageLibsGenOne.saveTimeWeightedNotionalForAssetAndTenor(
+                timeWeightedNotional[i].storageId,
+                timeWeightedNotional[i]
+            );
+            unchecked {
+                ++i;
+            }
+        }
     }
 
     modifier onlyRouter() {
@@ -226,33 +213,8 @@ contract SpreadGenOne is
         return DemandSpreadLibsGenOne.spreadFunctionConfig();
     }
 
-    /// @notice Gets the implementation address of a Spread Router.
-    function getImplementation() external view returns (address) {
-        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
-    }
-
     function getVersion() external pure virtual returns (uint256) {
-        return 2_000;
-    }
-
-    function pause() external onlyPauseGuardian {
-        _pause();
-    }
-
-    function unpause() external onlyOwner {
-        _unpause();
-    }
-
-    function isPauseGuardian(address account) external view returns (bool) {
-        return PauseManager.isPauseGuardian(account);
-    }
-
-    function addPauseGuardians(address[] calldata guardians) external onlyOwner {
-        PauseManager.addPauseGuardians(guardians);
-    }
-
-    function removePauseGuardians(address[] calldata guardians) external onlyOwner {
-        PauseManager.removePauseGuardians(guardians);
+        return 2_001;
     }
 
     function _calculateDemandPayFixed(SpreadInputs memory spreadInputs) internal view returns (uint256 spreadValue) {
@@ -357,7 +319,4 @@ contract SpreadGenOne is
             methodName: "_calculateStorageId"
         });
     }
-
-    //solhint-disable no-empty-blocks
-    function _authorizeUpgrade(address) internal override onlyOwner {}
 }

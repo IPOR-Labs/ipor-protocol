@@ -18,21 +18,6 @@ library SpreadStorageLibsGenOne {
         TimeWeightedNotional90Days
     }
 
-    /// @notice Struct which contains owner address of Spread Router
-    struct OwnerStorage {
-        address owner;
-    }
-
-    /// @notice Struct which contains pause flag on Spread Router
-    struct PausedStorage {
-        uint256 value;
-    }
-
-    /// @notice Struct which contains address of appointed owner of Spread Router
-    struct AppointedOwnerStorage {
-        address appointedOwner;
-    }
-
     /// @notice Saves time weighted notional for a specific asset and tenor
     /// @param timeWeightedNotionalStorageId The storage ID of the time weighted notional
     /// @param timeWeightedNotional The time weighted notional to save
