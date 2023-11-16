@@ -147,6 +147,8 @@ abstract contract AmmOpenSwapServiceGenOne {
         uint256 liquidityPoolBalance = IAmmTreasuryGenOne(ammTreasury).getLiquidityPoolBalance() +
             bosStruct.openingFeeLPAmount;
 
+        console2.log("liquidityPoolBalance=", liquidityPoolBalance);
+
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 
         _validateLiquidityPoolCollateralRatioAndSwapLeverage(

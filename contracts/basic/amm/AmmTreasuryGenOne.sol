@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
-
+import "forge-std/console2.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
@@ -73,6 +73,10 @@ contract AmmTreasuryGenOne is
     function getLiquidityPoolBalance() external view override returns (uint256) {
         AmmTypesGenOne.Balance memory balance = IAmmStorageGenOne(ammStorage).getBalance();
 
+        console2.log("Amm treasury balance: totalCollateralPayFixed", balance.totalCollateralPayFixed);
+        console2.log("Amm treasury balance: totalCollateralReceiveFixed", balance.totalCollateralReceiveFixed);
+        console2.log("Amm treasury balance: iporPublicationFee", balance.iporPublicationFee);
+        console2.log("Amm treasury balance: treasury", balance.treasury);
         uint256 liquidityPool = (IERC20Upgradeable(asset).balanceOf(address(this)).toInt256() -
             balance.totalCollateralPayFixed.toInt256() -
             balance.totalCollateralReceiveFixed.toInt256() -

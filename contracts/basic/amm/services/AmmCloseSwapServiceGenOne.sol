@@ -24,6 +24,7 @@ import "../libraries/SwapLogicGenOne.sol";
 import "../../types/AmmTypesGenOne.sol";
 import "../../events/AmmEventsGenOne.sol";
 import "../../../basic/spread/SpreadGenOne.sol";
+import "../../interfaces/IAmmTreasuryGenOne.sol";
 
 //TODO: other names proposition: AmmCloseSwapS1G1, AmmCloseSwapServiceOneGenOne, AmmCloseSwapServiceOneGenerationOne
 abstract contract AmmCloseSwapServiceGenOne {
@@ -485,7 +486,9 @@ abstract contract AmmCloseSwapServiceGenOne {
         AmmTypes.SwapDirection oppositeDirection,
         AmmTypes.OpenSwapRiskIndicators memory oppositeRiskIndicators
     ) internal view returns (int256) {
-        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(ammStorage).getBalancesForOpenSwap();
+        AmmTypesGenOne.AmmBalanceForOpenSwap memory balance = IAmmStorageGenOne(ammStorage).getBalancesForOpenSwap();
+        uint256 liquidityPoolBalance = IAmmTreasuryGenOne(ammTreasury).getLiquidityPoolBalance();
+
         return
             IporSwapLogic.normalizePnlValue(
                 unwindParams.swap.collateral,
@@ -500,7 +503,7 @@ abstract contract AmmCloseSwapServiceGenOne {
                             baseSpreadPerLeg: oppositeRiskIndicators.baseSpreadPerLeg,
                             totalCollateralPayFixed: balance.totalCollateralPayFixed,
                             totalCollateralReceiveFixed: balance.totalCollateralReceiveFixed,
-                            liquidityPoolBalance: balance.liquidityPool,
+                            liquidityPoolBalance: liquidityPoolBalance,
                             iporIndexValue: unwindParams.indexValue,
                             fixedRateCapPerLeg: oppositeRiskIndicators.fixedRateCapPerLeg,
                             tenor: unwindParams.swap.tenor
@@ -572,7 +575,6 @@ abstract contract AmmCloseSwapServiceGenOne {
         uint256 wadLiquidationDepositAmount,
         uint256 wadTransferAmount
     ) internal returns (uint256 wadTransferredToBuyer, uint256 wadPayoutForLiquidator) {
-        console2.log("_transferDerivativeAmount");
         console2.log("wadLiquidationDepositAmount", wadLiquidationDepositAmount);
         if (beneficiary == buyer) {
             wadTransferAmount = wadTransferAmount + wadLiquidationDepositAmount;

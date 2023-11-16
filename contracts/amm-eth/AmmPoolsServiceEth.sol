@@ -11,33 +11,42 @@ import "../governance/AmmConfigurationManager.sol";
 import "./interfaces/IStETH.sol";
 import "./interfaces/IWETH9.sol";
 import "./interfaces/IAmmPoolsServiceEth.sol";
-import "./AmmLibEth.sol";
+import "../basic/interfaces/IAmmTreasuryGenOne.sol";
+import "../libraries/AmmLib.sol";
+import "../interfaces/types/AmmTypes.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
     using IporContractValidator for address;
     using SafeERC20 for IStETH;
     using SafeERC20 for IWETH9;
+    using AmmLib for AmmTypes.AmmPoolCoreModel;
 
     address public immutable stEth;
     address public immutable wEth;
     address public immutable ipstEth;
-    address public immutable ammTreasuryEth;
-    uint256 public immutable redeemFeeRateStEth;
+    address public immutable ammTreasuryStEth;
+    address public immutable ammStorageStEth;
+    address public immutable iporOracle;
     address public immutable iporProtocolRouter;
+    uint256 public immutable redeemFeeRateStEth;
 
     constructor(
         address stEthInput,
         address wEthInput,
         address ipstEthInput,
-        address ammTreasuryEthInput,
+        address ammTreasuryStEthInput,
+        address ammStorageStEthInput,
+        address iporOracleInput,
         address iporProtocolRouterInput,
         uint256 redeemFeeRateStEthInput
     ) {
         stEth = stEthInput.checkAddress();
         wEth = wEthInput.checkAddress();
         ipstEth = ipstEthInput.checkAddress();
-        ammTreasuryEth = ammTreasuryEthInput.checkAddress();
+        ammTreasuryStEth = ammTreasuryStEthInput.checkAddress();
+        ammStorageStEth = ammStorageStEthInput.checkAddress();
+        iporOracle = iporOracleInput.checkAddress();
         iporProtocolRouter = iporProtocolRouterInput.checkAddress();
         redeemFeeRateStEth = redeemFeeRateStEthInput;
 
@@ -47,16 +56,17 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
     function provideLiquidityStEth(address beneficiary, uint256 stEthAmount) external payable override {
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
 
-        uint256 newPoolBalance = stEthAmount + IStETH(stEth).balanceOf(ammTreasuryEth);
+        uint256 newPoolBalance = stEthAmount + IStETH(stEth).balanceOf(ammTreasuryStEth);
 
         require(
             newPoolBalance <= uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
             AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH
         );
 
-        uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ipstEth, ammTreasuryEth);
+        //        uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ipstEth, ammTreasuryStEth);
+        uint256 exchangeRate = _getExchangeRate();
 
-        IStETH(stEth).safeTransferFrom(msg.sender, ammTreasuryEth, stEthAmount);
+        IStETH(stEth).safeTransferFrom(msg.sender, ammTreasuryStEth, stEthAmount);
 
         uint256 ipTokenAmount = IporMath.division(stEthAmount * 1e18, exchangeRate);
 
@@ -65,7 +75,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         emit IAmmPoolsServiceEth.ProvideLiquidityStEth(
             msg.sender,
             beneficiary,
-            ammTreasuryEth,
+            ammTreasuryStEth,
             exchangeRate,
             stEthAmount,
             ipTokenAmount
@@ -76,7 +86,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         require(wEthAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
-        uint256 newPoolBalance = wEthAmount + IStETH(stEth).balanceOf(ammTreasuryEth);
+        uint256 newPoolBalance = wEthAmount + IStETH(stEth).balanceOf(ammTreasuryStEth);
 
         require(
             newPoolBalance <= uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
@@ -95,7 +105,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
 
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
 
-        uint256 newPoolBalance = ethAmount + IStETH(stEth).balanceOf(ammTreasuryEth);
+        uint256 newPoolBalance = ethAmount + IStETH(stEth).balanceOf(ammTreasuryStEth);
 
         require(
             newPoolBalance <= uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
@@ -112,7 +122,8 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         );
         require(beneficiary != address(0), IporErrors.WRONG_ADDRESS);
 
-        uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ipstEth, ammTreasuryEth);
+        //        uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ipstEth, ammTreasuryStEth);
+        uint256 exchangeRate = _getExchangeRate();
 
         uint256 stEthAmount = IporMath.division(ipTokenAmount * exchangeRate, 1e18);
         uint256 amountToRedeem = IporMath.division(stEthAmount * (1e18 - redeemFeeRateStEth), 1e18);
@@ -121,10 +132,10 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
 
         IIpToken(ipstEth).burn(msg.sender, ipTokenAmount);
 
-        IStETH(stEth).safeTransferFrom(ammTreasuryEth, beneficiary, amountToRedeem);
+        IStETH(stEth).safeTransferFrom(ammTreasuryStEth, beneficiary, amountToRedeem);
 
         emit RedeemStEth(
-            ammTreasuryEth,
+            ammTreasuryStEth,
             msg.sender,
             beneficiary,
             exchangeRate,
@@ -139,9 +150,10 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
             uint256 stEthAmount = IStETH(stEth).balanceOf(address(this));
 
             if (stEthAmount > 0) {
-                uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ipstEth, ammTreasuryEth);
+                //                uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ipstEth, ammTreasuryStEth);
+                uint256 exchangeRate = _getExchangeRate();
 
-                IStETH(stEth).safeTransfer(ammTreasuryEth, stEthAmount);
+                IStETH(stEth).safeTransfer(ammTreasuryStEth, stEthAmount);
 
                 uint256 ipTokenAmount = IporMath.division(stEthAmount * 1e18, exchangeRate);
 
@@ -150,7 +162,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
                 emit IAmmPoolsServiceEth.ProvideLiquidityEth(
                     msg.sender,
                     beneficiary,
-                    ammTreasuryEth,
+                    ammTreasuryStEth,
                     exchangeRate,
                     ethAmount,
                     stEthAmount,
@@ -160,5 +172,19 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
         } catch {
             revert IAmmPoolsServiceEth.StEthSubmitFailed({amount: ethAmount, errorCode: AmmErrors.STETH_SUBMIT_FAILED});
         }
+    }
+
+    function _getExchangeRate() internal returns (uint256) {
+        AmmTypes.AmmPoolCoreModel memory model = AmmTypes.AmmPoolCoreModel({
+            asset: stEth,
+            assetDecimals: 18,
+            ipToken: ipstEth,
+            ammStorage: ammStorageStEth,
+            ammTreasury: ammTreasuryStEth,
+            assetManagement: address(0),
+            iporOracle: iporOracle
+        });
+        uint256 liquidityPoolBalance = IAmmTreasuryGenOne(ammTreasuryStEth).getLiquidityPoolBalance();
+        return model.getExchangeRate(liquidityPoolBalance);
     }
 }
