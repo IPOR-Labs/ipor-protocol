@@ -357,14 +357,14 @@ contract TestForkCommons is Test {
     }
 
     function _upgradeAmmTreasuryStEth() private {
-        AmmTreasuryEth newImplementation = new AmmTreasuryEth(stETH, iporProtocolRouterProxy);
+        AmmTreasuryEth newImplementation = new AmmTreasuryEth(stETH, iporProtocolRouterProxy, ammStorageProxyStEth);
 
         vm.prank(owner);
         AmmTreasuryEth(ammTreasuryProxyStEth).upgradeTo(address(newImplementation));
     }
 
     function _createAmmStorageStEth() private {
-        AmmStorageGenOne ammStorageImpl = new AmmStorageGenOne(stETH, iporProtocolRouterProxy, ammTreasuryProxyStEth);
+        AmmStorageGenOne ammStorageImpl = new AmmStorageGenOne(iporProtocolRouterProxy, ammTreasuryProxyStEth);
 
         vm.startPrank(owner);
         ERC1967Proxy proxy = new ERC1967Proxy(address(ammStorageImpl), abi.encodeWithSignature("initialize()"));

@@ -71,7 +71,7 @@ contract TestEthMarketCommons is Test {
 
     function _createAmmTreasuryEth() private {
         vm.prank(owner);
-        AmmTreasuryEth impl = new AmmTreasuryEth(stEth, iporProtocolRouter);
+        AmmTreasuryEth impl = new AmmTreasuryEth(stEth, iporProtocolRouter, userOne);
         ERC1967Proxy proxy = _constructProxy(address(impl));
         ammTreasuryEth = address(proxy);
     }

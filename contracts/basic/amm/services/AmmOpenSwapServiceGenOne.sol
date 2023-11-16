@@ -18,6 +18,7 @@ import "../../../amm/libraries/types/AmmInternalTypes.sol";
 import "../../../amm/libraries/IporSwapLogic.sol";
 import "../libraries/SwapLogicGenOne.sol";
 import "../../../basic/spread/SpreadGenOne.sol";
+import "../../interfaces/IAmmTreasuryGenOne.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 abstract contract AmmOpenSwapServiceGenOne {
@@ -141,13 +142,15 @@ abstract contract AmmOpenSwapServiceGenOne {
             leverage
         );
 
-        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorageGenOne(ammStorage).getBalancesForOpenSwap();
+        AmmTypesGenOne.AmmBalanceForOpenSwap memory balance = IAmmStorageGenOne(ammStorage).getBalancesForOpenSwap();
 
-        balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
+        uint256 liquidityPoolBalance = IAmmTreasuryGenOne(ammTreasury).getLiquidityPoolBalance() +
+            bosStruct.openingFeeLPAmount;
+
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 
         _validateLiquidityPoolCollateralRatioAndSwapLeverage(
-            balance.liquidityPool,
+            liquidityPoolBalance,
             balance.totalCollateralPayFixed,
             balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
             leverage,
@@ -164,7 +167,7 @@ abstract contract AmmOpenSwapServiceGenOne {
                 baseSpreadPerLeg: riskIndicators.baseSpreadPerLeg,
                 totalCollateralPayFixed: balance.totalCollateralPayFixed,
                 totalCollateralReceiveFixed: balance.totalCollateralReceiveFixed,
-                liquidityPoolBalance: balance.liquidityPool,
+                liquidityPoolBalance: liquidityPoolBalance,
                 iporIndexValue: bosStruct.accruedIpor.indexValue,
                 fixedRateCapPerLeg: riskIndicators.fixedRateCapPerLeg,
                 tenor: ctx.tenor
@@ -196,7 +199,7 @@ abstract contract AmmOpenSwapServiceGenOne {
             ctx.tenor
         );
 
-        uint256 newSwapId = IAmmStorage(ammStorage).updateStorageWhenOpenSwapPayFixedInternal(
+        uint256 newSwapId = IAmmStorageGenOne(ammStorage).updateStorageWhenOpenSwapPayFixedInternal(
             newSwap,
             iporPublicationFee
         );
@@ -231,13 +234,15 @@ abstract contract AmmOpenSwapServiceGenOne {
             leverage
         );
 
-        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(ammStorage).getBalancesForOpenSwap();
+        AmmTypesGenOne.AmmBalanceForOpenSwap memory balance = IAmmStorageGenOne(ammStorage).getBalancesForOpenSwap();
 
-        balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
+        uint256 liquidityPoolBalance = IAmmTreasuryGenOne(ammTreasury).getLiquidityPoolBalance() +
+            bosStruct.openingFeeLPAmount;
+
         balance.totalCollateralReceiveFixed = balance.totalCollateralReceiveFixed + bosStruct.collateral;
 
         _validateLiquidityPoolCollateralRatioAndSwapLeverage(
-            balance.liquidityPool,
+            liquidityPoolBalance,
             balance.totalCollateralReceiveFixed,
             balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
             leverage,
@@ -254,7 +259,7 @@ abstract contract AmmOpenSwapServiceGenOne {
                 baseSpreadPerLeg: riskIndicators.baseSpreadPerLeg,
                 totalCollateralPayFixed: balance.totalCollateralPayFixed,
                 totalCollateralReceiveFixed: balance.totalCollateralReceiveFixed,
-                liquidityPoolBalance: balance.liquidityPool,
+                liquidityPoolBalance: liquidityPoolBalance,
                 iporIndexValue: bosStruct.accruedIpor.indexValue,
                 fixedRateCapPerLeg: riskIndicators.fixedRateCapPerLeg,
                 tenor: ctx.tenor
@@ -283,7 +288,7 @@ abstract contract AmmOpenSwapServiceGenOne {
             ctx.tenor
         );
 
-        uint256 newSwapId = IAmmStorage(ammStorage).updateStorageWhenOpenSwapReceiveFixedInternal(
+        uint256 newSwapId = IAmmStorageGenOne(ammStorage).updateStorageWhenOpenSwapReceiveFixedInternal(
             newSwap,
             iporPublicationFee
         );
@@ -409,7 +414,6 @@ abstract contract AmmOpenSwapServiceGenOne {
 
         if (totalLiquidityPoolBalance > 0) {
             collateralRatio = IporMath.division(totalCollateralBalance * 1e18, totalLiquidityPoolBalance);
-
             collateralRatioPerLeg = IporMath.division(collateralPerLegBalance * 1e18, totalLiquidityPoolBalance);
         } else {
             collateralRatio = Constants.MAX_VALUE;
@@ -417,9 +421,7 @@ abstract contract AmmOpenSwapServiceGenOne {
         }
 
         require(collateralRatio <= maxCollateralRatio, AmmErrors.LP_COLLATERAL_RATIO_EXCEEDED);
-
         require(collateralRatioPerLeg <= maxCollateralRatioPerLeg, AmmErrors.LP_COLLATERAL_RATIO_PER_LEG_EXCEEDED);
-
         require(leverage >= minLeverage, AmmErrors.LEVERAGE_TOO_LOW);
         require(leverage <= maxLeverage, AmmErrors.LEVERAGE_TOO_HIGH);
     }

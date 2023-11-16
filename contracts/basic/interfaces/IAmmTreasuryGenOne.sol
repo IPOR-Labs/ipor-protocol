@@ -2,20 +2,17 @@
 pragma solidity 0.8.20;
 
 /// @notice Interface of the AmmTreasuryEth contract.
-interface IAmmTreasuryEth {
+interface IAmmTreasuryGenOne {
     /// @notice Gets router address.
     function router() external view returns (address);
-
-    /// @notice Retrieves the configuration addresses for stEth and the router.
-    /// return (asset, router) The addresses of stEth and the router respectively.
-    /// @dev This function provides a way to access the current configuration of the contract.
-    function getConfiguration() external view returns (address asset, address router);
 
     /// @notice Retrieves the version number of the contract.
     /// @return The version number of the contract.
     /// @dev This function provides a way to access the version information of the contract.
     /// Currently, the version is set to 1.
     function getVersion() external pure returns (uint256);
+
+    function getLiquidityPoolBalance() external view returns (uint256);
 
     /// @notice Pauses the contract and revokes the approval of stEth tokens for the router.
     /// @dev This function can only be called by the pause guardian.
