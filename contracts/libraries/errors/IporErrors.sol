@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 library IporErrors {
-    error WrongAddress(address wrongAddress, string errorCode, string methodName);
+    error WrongAddress(string errorCode, address wrongAddress, string methodName);
     error WrongAmount(string code, uint256 value);
 
     error CallerNotIporProtocolRouter(address caller);

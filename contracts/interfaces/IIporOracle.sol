@@ -59,11 +59,11 @@ interface IIporOracle {
     /// @param indexValue The new value of the IPOR index for the specified asset.
     /// @param updateTimestamp The timestamp at which the index value is updated.
     ///         This value must be greater than the last update timestamp and less than the current block timestamp.
-    /// @param newQuasiIbtPrice The new quasi IBT price for the specified asset.
+    /// @param newQuasiIbtPrice The new quasi IBT price for the specified asset. For more information, see IporOracleTypes.IPOR.
     /// @custom:modifier onlyUpdater Restricts the function to be callable only by an authorized updater.
     /// @custom:modifier whenNotPaused Ensures the function is executed only when the contract is not paused.
-    /// @custom:modifier onlyAcceptStEth Ensures that the asset is accepted and specific conditions (if any) for the asset are met.
-    ///         The modifier onlyAcceptStEth is assumed to be a custom modifier specific to the asset type, in this case, possibly stETH.
+    /// @custom:modifier whenAssetStEth Ensures that the asset is accepted and specific conditions (if any) for the asset are met.
+    ///         The modifier whenAssetStEth is assumed to be a custom modifier specific to the asset type, in this case, possibly stETH.
     /// @custom:error IporOracleErrors.UpdateIndex This error is thrown if the asset is not supported or if the update timestamp is invalid.
     function updateIndexAndQuasiIbtPrice(
         address asset,

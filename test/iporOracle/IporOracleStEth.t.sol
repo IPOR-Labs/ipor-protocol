@@ -28,9 +28,9 @@ contract IporOracleStEth is Test {
         //when
         vm.expectRevert(
             abi.encodeWithSignature(
-                "WrongAddress(address,string,string)",
-                address(0x00),
+                "WrongAddress(string,address,string)",
                 IporErrors.WRONG_ADDRESS,
+                address(0x00),
                 "constructor stEth"
             )
         );
@@ -41,9 +41,9 @@ contract IporOracleStEth is Test {
         //when
         vm.expectRevert(
             abi.encodeWithSignature(
-                "WrongAddress(address,string,string)",
-                stETH,
+                "WrongAddress(string,address,string)",
                 IporErrors.WRONG_ADDRESS,
+                stETH,
                 "onlyAcceptStEth"
             )
         );
@@ -51,13 +51,34 @@ contract IporOracleStEth is Test {
         IporOracle(iporOracleProxy).updateIndex(stETH, 1e18);
     }
 
+    function testShouldRevertWhenCallUpdateIndexesWithStEth() external {
+        //given
+
+        address[] memory assets = new address[](1);
+        assets[0] = stETH;
+        uint256[] memory indexValues = new uint256[](1);
+        indexValues[0] = 1e18;
+
+        //when
+        vm.expectRevert(
+            abi.encodeWithSignature(
+                "WrongAddress(string,address,string)",
+                IporErrors.WRONG_ADDRESS,
+                stETH,
+                "onlyAcceptStEth"
+            )
+        );
+        vm.prank(oracleUpdater);
+        IporOracle(iporOracleProxy).updateIndexes(assets, indexValues);
+    }
+
     function testShouldRevertWhenCallUpdateIndexAndQuasiIbtPriceWithNotStEth() external {
         //when
         vm.expectRevert(
             abi.encodeWithSignature(
-                "WrongAddress(address,string,string)",
-                USDT,
+                "WrongAddress(string,address,string)",
                 IporErrors.WRONG_ADDRESS,
+                USDT,
                 "onlyAcceptStEth"
             )
         );
@@ -149,6 +170,7 @@ contract IporOracleStEth is Test {
         assertEq(indexValueBefore, 0);
         assertEq(ibtPriceBefore, 1e18);
         assertEq(lastUpdateTimestampBefore, block.timestamp - 1000);
-
     }
+
+
 }

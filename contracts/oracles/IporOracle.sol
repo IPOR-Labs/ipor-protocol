@@ -61,16 +61,16 @@ contract IporOracle is
     /// @dev This modifier allows function execution only if the conditions related to stETH and acceptStEth are met.
     /// @dev IporErrors.WrongAddress if the conditions are not met, indicating either a non-stETH asset when stETH is required, or an stETH asset when it is not accepted.
     /// @param asset The address of the asset to be checked against stETH.
-    /// @param acceptStEth A boolean-like unsigned integer where 1 signifies acceptance of stETH and 0 signifies otherwise.
-    modifier onlyAcceptStEth(address asset, uint256 acceptStEth) {
-        if (asset == _stEth && acceptStEth == 1) {
+    /// @param accept A boolean-like unsigned integer where 1 signifies acceptance of stETH and 0 signifies otherwise.
+    modifier whenAssetStEth(address asset, uint256 accept) {
+        if (asset == _stEth && accept == 1) {
             _;
             return;
-        } else if (asset != _stEth && acceptStEth == 0) {
+        } else if (asset != _stEth && accept == 0) {
             _;
             return;
         }
-        revert IporErrors.WrongAddress(asset, IporErrors.WRONG_ADDRESS, "onlyAcceptStEth");
+        revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS,asset , "onlyAcceptStEth");
     }
 
     /// @custom:oz-upgrades-unsafe-allow constructor
@@ -84,16 +84,16 @@ contract IporOracle is
         address stEth
     ) {
         if (usdt == address(0)) {
-            revert IporErrors.WrongAddress(usdc, IporErrors.WRONG_ADDRESS, "constructor USDT");
+            revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, usdt, "constructor USDT");
         }
         if (usdc == address(0)) {
-            revert IporErrors.WrongAddress(usdc, IporErrors.WRONG_ADDRESS, "constructor USDC");
+            revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, usdc, "constructor USDC");
         }
         if (dai == address(0)) {
-            revert IporErrors.WrongAddress(dai, IporErrors.WRONG_ADDRESS, "constructor DAI");
+            revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, dai, "constructor DAI");
         }
         if (stEth == address(0)) {
-            revert IporErrors.WrongAddress(stEth, IporErrors.WRONG_ADDRESS, "constructor stEth");
+            revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, stEth, "constructor stEth");
         }
 
         _usdt = usdt;
@@ -180,7 +180,7 @@ contract IporOracle is
     function updateIndex(
         address asset,
         uint256 indexValue
-    ) external override onlyUpdater whenNotPaused onlyAcceptStEth(asset, 0) {
+    ) external override onlyUpdater whenNotPaused {
         _updateIndex(asset, indexValue, block.timestamp);
     }
 
@@ -196,7 +196,7 @@ contract IporOracle is
         uint256 indexValue,
         uint256 updateTimestamp,
         uint256 newQuasiIbtPrice
-    ) external override onlyUpdater whenNotPaused onlyAcceptStEth(asset, 1) {
+    ) external override onlyUpdater whenNotPaused whenAssetStEth(asset, 1) {
         IporOracleTypes.IPOR memory oldIpor = _indexes[asset];
         if (oldIpor.lastUpdateTimestamp == 0) {
             revert IporOracleErrors.UpdateIndex(
@@ -292,7 +292,7 @@ contract IporOracle is
         address asset,
         uint256 indexValue,
         uint256 updateTimestamp
-    ) internal onlyAcceptStEth(asset, 0) {
+    ) internal whenAssetStEth(asset, 0) {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
 
         require(ipor.lastUpdateTimestamp > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
