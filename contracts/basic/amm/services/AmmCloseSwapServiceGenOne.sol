@@ -259,8 +259,7 @@ abstract contract AmmCloseSwapServiceGenOne {
             riskIndicatorsInput
         );
 
-        ISpreadCloseSwapService(spread).updateTimeWeightedNotionalOnClose(
-            asset,
+        SpreadGenOne(spread).updateTimeWeightedNotionalOnClose(
             uint256(swap.direction),
             swap.tenor,
             swap.notional,

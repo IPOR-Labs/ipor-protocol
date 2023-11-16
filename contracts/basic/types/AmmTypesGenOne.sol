@@ -125,7 +125,7 @@ library AmmTypesGenOne {
         uint256 openingFeeTreasuryAmount;
         /// @notice Fee set aside for subsidizing the oracle that publishes IPOR rate. Flat fee set by the DAO.
         uint256 iporPublicationFee;
-        /// @notice Liquidation deposit is retained when the swap is opened. Value represented in 18 decimals.
+        /// @notice Liquidation deposit is retained when the swap is opened. Notice! Value represented in 18 decimals.
         uint256 liquidationDepositAmount;
     }
 
