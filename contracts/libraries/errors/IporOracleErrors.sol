@@ -19,4 +19,14 @@ library IporOracleErrors {
 
     /// @notice Address is not a valid oracle address
     string public constant INVALID_ORACLE_ADDRESS = "IPOR_204";
+
+    /// @notice wrong new index timestamp
+    string public constant WRONG_INDEX_TIMESTAMP = "IPOR_205";
+
+    /// @notice Emitted when an error occurs during the update of the IPOR index for a specific asset.
+    /// @dev This error is typically emitted from methods responsible for updating the IPOR index values.
+    /// @param asset The address of the asset (underlying/stablecoin) for which the index update was attempted.
+    /// @param errorCode A string representing the error code associated with the failure of the update.
+    /// @param methodName The name of the method where the error occurred during the index update process.
+    error UpdateIndex(address asset, string errorCode, string methodName);
 }

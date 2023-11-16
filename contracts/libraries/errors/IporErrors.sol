@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 library IporErrors {
-    error WrongAddress(string code);
+    error WrongAddress(address wrongAddress, string errorCode, string methodName);
     error WrongAmount(string code, uint256 value);
 
     error CallerNotIporProtocolRouter(address caller);
@@ -77,4 +77,5 @@ library IporErrors {
 
     /// @notice
     string public constant RISK_INDICATORS_SIGNATURE_INVALID = "IPOR_020";
+
 }

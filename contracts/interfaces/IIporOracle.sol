@@ -51,6 +51,27 @@ interface IIporOracle {
     /// @param indexValues new IPOR Index values
     function updateIndexes(address[] memory assets, uint256[] memory indexValues) external;
 
+    /// @notice Updates the IPOR index and quasi IBT (Interest Bearing Token) price for a specific asset.
+    /// @dev This function can only be called by an authorized updater and when the contract is not paused.
+    ///         It performs several checks to ensure the integrity of the update, such as asset support verification
+    ///         and timestamp validation. If any of these checks fail, the function reverts with an appropriate error message.
+    /// @param asset The address of the underlying asset for which the index and quasi IBT price are being updated.
+    /// @param indexValue The new value of the IPOR index for the specified asset.
+    /// @param updateTimestamp The timestamp at which the index value is updated.
+    ///         This value must be greater than the last update timestamp and less than the current block timestamp.
+    /// @param newQuasiIbtPrice The new quasi IBT price for the specified asset.
+    /// @custom:modifier onlyUpdater Restricts the function to be callable only by an authorized updater.
+    /// @custom:modifier whenNotPaused Ensures the function is executed only when the contract is not paused.
+    /// @custom:modifier onlyAcceptStEth Ensures that the asset is accepted and specific conditions (if any) for the asset are met.
+    ///         The modifier onlyAcceptStEth is assumed to be a custom modifier specific to the asset type, in this case, possibly stETH.
+    /// @custom:error IporOracleErrors.UpdateIndex This error is thrown if the asset is not supported or if the update timestamp is invalid.
+    function updateIndexAndQuasiIbtPrice(
+        address asset,
+        uint256 indexValue,
+        uint256 updateTimestamp,
+        uint256 newQuasiIbtPrice
+    ) external;
+
     /// @notice Adds new Updater. Updater has right to update IPOR Index. Function available only for Owner.
     /// @param newUpdater new updater address
     function addUpdater(address newUpdater) external;
