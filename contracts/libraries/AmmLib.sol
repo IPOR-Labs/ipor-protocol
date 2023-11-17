@@ -8,7 +8,6 @@ import "../interfaces/IIpToken.sol";
 import "../interfaces/IIporOracle.sol";
 import "../interfaces/IAmmStorage.sol";
 import "../interfaces/IAssetManagement.sol";
-import "../interfaces/IIporRiskManagementOracle.sol";
 import "./errors/IporErrors.sol";
 import "./errors/AmmErrors.sol";
 import "./Constants.sol";

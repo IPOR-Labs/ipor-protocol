@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 import "./IporTypes.sol";
+import "../IAmmCloseSwapLens.sol";
 
 /// @title Types used in interfaces strictly related to AMM (Automated Market Maker).
 /// @dev Used by IAmmTreasury and IAmmStorage interfaces.
@@ -21,8 +22,6 @@ library AmmTypes {
         address assetManagement;
         /// @notice IPOR Oracle address
         address iporOracle;
-        /// @notice IPOR Risk Management Oracle address
-        address iporRiskManagementOracle;
     }
 
     /// @notice Structure which represents Swap's data that will be saved in the storage.
@@ -133,6 +132,16 @@ library AmmTypes {
         uint256 wadRedeemAmount;
     }
 
+    struct UnwindParams {
+        SwapDirection direction;
+        uint256 closeTimestamp;
+        int256 swapPnlValueToDate;
+        uint256 indexValue;
+        Swap swap;
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration poolCfg;
+        CloseSwapRiskIndicatorsInput riskIndicatorsInputs;
+    }
+
     /// @notice Swap direction (long = Pay Fixed and Receive a Floating or short = receive fixed and pay a floating)
     enum SwapDirection {
         /// @notice When taking the "long" position the trader will pay a fixed rate and receive a floating rate.
@@ -182,6 +191,34 @@ library AmmTypes {
         uint256 fixedRateCapPerLeg;
         /// @notice Demand spread factor used to calculate demand spread
         uint256 demandSpreadFactor;
+    }
+
+    /// @notice Risk indicators calculated for swap opening
+    struct RiskIndicatorsInputs {
+        /// @notice Maximum collateral ratio in general
+                uint256 maxCollateralRatio;
+        /// @notice Maximum collateral ratio for a given leg
+        uint256 maxCollateralRatioPerLeg;
+        /// @notice Maximum leverage for a given leg
+        uint256 maxLeveragePerLeg;
+        /// @notice Base Spread for a given leg (without demand part)
+        int256 baseSpreadPerLeg;
+        /// @notice Fixed rate cap
+        uint256 fixedRateCapPerLeg;
+        /// @notice Demand spread factor used to calculate demand spread
+        uint256 demandSpreadFactor;
+        /// @notice expiration date in seconds
+        uint256 expiration;
+        /// @notice signature of data (maxCollateralRatio, maxCollateralRatioPerLeg,maxLeveragePerLeg,baseSpreadPerLeg,fixedRateCapPerLeg,demandSpreadFactor,expiration,asset,tenor,direction)
+        /// asset - address
+        /// tenor - uint256
+        /// direction - uint256
+        bytes  signature;
+    }
+
+    struct CloseSwapRiskIndicatorsInput {
+        RiskIndicatorsInputs payFixed;
+        RiskIndicatorsInputs receiveFixed;
     }
 
     /// @notice Structure containing information about swap's closing status, unwind values and PnL for a given swap and time.

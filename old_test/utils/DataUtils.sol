@@ -14,7 +14,6 @@ import "contracts/libraries/Constants.sol";
 import "test/mocks/tokens/MockTestnetToken.sol";
 import "test/mocks/spread/MockSpreadModel.sol";
 import "test/mocks/assetManagement/MockCaseBaseAssetManagement.sol";
-import "contracts/interfaces/IIporRiskManagementOracle.sol";
 import "contracts/itf/ItfIporOracle.sol";
 import "contracts/itf/ItfAmmTreasury.sol";
 import "contracts/itf/ItfAssetManagement.sol";

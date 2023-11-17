@@ -28,7 +28,6 @@ contract AmmUnwindSwap is TestCommons {
         _buyer = _getUserAddress(1);
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE1;
         _cfg.iporOracleUpdater = _admin;
-        _cfg.iporRiskManagementOracleUpdater = _admin;
     }
 
     function testShouldUnwindPayFixedSimple() public {
@@ -52,13 +51,34 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
 
-        vm.prank(_buyer);
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 280,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            _iporProtocolFactory.messageSignerPrivateKey()
+        );
+
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            riskIndicatorsInputs
         );
+        vm.stopPrank();
 
         vm.warp(5 days);
 
@@ -72,6 +92,10 @@ contract AmmUnwindSwap is TestCommons {
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
         uint256[] memory swapRfIds = new uint256[](0);
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeSwapRiskIndicatorsInput = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
         vm.prank(_buyer);
         vm.expectEmit(true, true, true, true);
@@ -83,7 +107,7 @@ contract AmmUnwindSwap is TestCommons {
             expectedOpeningFeeLpAmount,
             expectedOpeningFeeTreasuryAmount
         );
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds, closeSwapRiskIndicatorsInput);
 
         //then
         assertGe(pnlValue, expectedSwapUnwindAmount);
@@ -94,14 +118,6 @@ contract AmmUnwindSwap is TestCommons {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 liquidityAmount = 1_000_000 * 1e18;
-        uint256 totalAmount = 10_000 * 1e18;
-        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
-        uint256 leverage = 100 * 10 ** 18;
-
-        int256 expectedSwapPnlValueToDateOne = -13739566523224092853;
-        int256 expectedSwapUnwindAmountOne = -121691316061789903590;
-        uint256 expectedOpeningFeeLpAmountOne = 29145104043000041192;
-        uint256 expectedOpeningFeeTreasuryAmountOne = 14579841942471256;
 
         int256 expectedSwapPnlValueToDateTwo = -47677244969467080928;
         int256 expectedSwapUnwindAmountTwo = -74502689729439282708;
@@ -110,29 +126,52 @@ contract AmmUnwindSwap is TestCommons {
 
         _iporProtocol.asset.approve(address(_iporProtocol.router), liquidityAmount);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_admin, liquidityAmount);
-        _iporProtocol.asset.transfer(_buyer, 2 * totalAmount);
+        _iporProtocol.asset.transfer(_buyer, 2 * 10_000 * 1e18);
 
         vm.prank(_buyer);
-        _iporProtocol.asset.approve(address(_iporProtocol.router), 2 * totalAmount);
+        _iporProtocol.asset.approve(address(_iporProtocol.router), 2 * 10_000 * 1e18);
 
         vm.prank(_admin);
         _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_2_5_18DEC);
 
-        vm.prank(_buyer);
-        uint256 swapIdOne = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
-            _buyer,
-            totalAmount,
-            acceptableFixedInterestRate,
-            leverage
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 280,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            _iporProtocolFactory.messageSignerPrivateKey()
         );
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
+        uint256 swapIdOne = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
+            _buyer,
+            10_000 * 1e18,
+            10 * 10 ** 16,
+            100 * 10 ** 18,
+            riskIndicatorsInputs
+        );
+        vm.stopPrank();
+
+        vm.startPrank(_buyer);
         uint256 swapIdTwo = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _buyer,
-            totalAmount,
-            acceptableFixedInterestRate,
-            leverage
+            10_000 * 1e18,
+            10 * 10 ** 16,
+            100 * 10 ** 18,
+            riskIndicatorsInputs
         );
+        vm.stopPrank();
 
         AmmTypes.Swap memory swapOne = _iporProtocol.ammStorage.getSwap(
             AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
@@ -147,21 +186,36 @@ contract AmmUnwindSwap is TestCommons {
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
 
-        //when/then
         vm.warp(5 days);
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeSwapRiskIndicatorsInput = getCostumeCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
+
+//      when/then
         vm.prank(_buyer);
         vm.expectEmit(true, true, true, true);
         emit SwapUnwind(
             address(_iporProtocol.asset),
             swapOne.id,
-            expectedSwapPnlValueToDateOne,
-            expectedSwapUnwindAmountOne,
-            expectedOpeningFeeLpAmountOne,
-            expectedOpeningFeeTreasuryAmountOne
+            -13739566523224092853,
+            -121691316061789903590,
+            29145104043000041192,
+            14579841942471256
         );
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, new uint256[](0));
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(
+            _buyer,
+            swapPfIds,
+            new uint256[](0),
+            closeSwapRiskIndicatorsInput
+        );
 
         vm.warp(15 days);
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeSwapRiskIndicatorsInput2 = getCostumeCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
+
         vm.prank(_buyer);
         vm.expectEmit(true, true, true, true);
         emit SwapUnwind(
@@ -175,7 +229,12 @@ contract AmmUnwindSwap is TestCommons {
 
         swapPfIds[0] = 2;
 
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, new uint256[](0));
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(
+            _buyer,
+            swapPfIds,
+            new uint256[](0),
+            closeSwapRiskIndicatorsInput2
+        );
     }
 
     function testShouldUnwindReceiveFixedWhenCloseTwoPositionInDifferentMoment() public {
@@ -197,21 +256,44 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_admin);
         _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_2_5_18DEC);
 
-        vm.prank(_buyer);
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: -1000000000000000,
+            fixedRateCapPerLeg: 35000000000000000,
+            demandSpreadFactor: 280,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            1,
+            _iporProtocolFactory.messageSignerPrivateKey()
+        );
+
+        vm.startPrank(_buyer);
         uint256 swapIdOne = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
             _buyer,
             10_000 * 1e18,
             0,
-            100 * 10 ** 18
+            100 * 10 ** 18,
+            riskIndicatorsInputs
         );
+        vm.stopPrank();
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapIdTwo = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
             _buyer,
             10_000 * 1e18,
             0,
-            100 * 10 ** 18
+            100 * 10 ** 18,
+            riskIndicatorsInputs
         );
+        vm.stopPrank();
 
         AmmTypes.Swap memory swapOne = _iporProtocol.ammStorage.getSwap(
             AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
@@ -240,10 +322,19 @@ contract AmmUnwindSwap is TestCommons {
             29145104043000041192,
             14579841942471256
         );
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(
+            _buyer,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
         vm.stopPrank();
 
         vm.warp(15 days);
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeSwapRiskIndicatorsInput = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
         vm.prank(_buyer);
         vm.expectEmit(true, true, true, true);
         emit SwapUnwind(
@@ -257,7 +348,7 @@ contract AmmUnwindSwap is TestCommons {
 
         swapRfIds[0] = 2;
 
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds, closeSwapRiskIndicatorsInput);
     }
 
     function testShouldUnwindPayFixedDaiCorrectTransfer() public {
@@ -276,13 +367,34 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
 
-        vm.prank(_buyer);
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 280,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            _iporProtocolFactory.messageSignerPrivateKey()
+        );
+
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            riskIndicatorsInputs
         );
+        vm.stopPrank();
 
         vm.warp(5 days);
 
@@ -297,13 +409,17 @@ contract AmmUnwindSwap is TestCommons {
 
         /// @dev value include subtracted unwind fee
         uint256 expectedAmountToTransfer = 7824222809664918933294;
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeSwapRiskIndicatorsInput = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
         vm.prank(_buyer);
         vm.expectEmit(true, true, true, true);
         //then
         emit Transfer(address(_iporProtocol.ammTreasury), _buyer, expectedAmountToTransfer);
         //when
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds, closeSwapRiskIndicatorsInput);
     }
 
     function testShouldUnwindReceiveFixedDaiCorrectTransfer() public {
@@ -322,13 +438,34 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
 
-        vm.prank(_buyer);
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: -1000000000000000,
+            fixedRateCapPerLeg: 35000000000000000,
+            demandSpreadFactor: 280,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            1,
+            _iporProtocolFactory.messageSignerPrivateKey()
+        );
+
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
             _buyer,
             totalAmount,
             acceptableFixedInterestRate,
-            leverage
+            leverage,
+            riskIndicatorsInputs
         );
+        vm.stopPrank();
 
         vm.warp(5 days);
 
@@ -340,6 +477,10 @@ contract AmmUnwindSwap is TestCommons {
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = 1;
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeSwapRiskIndicatorsInput = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
         /// @dev value include subtracted unwind fee
         uint256 expectedAmountToTransfer = 8082874034293901023151;
@@ -349,7 +490,7 @@ contract AmmUnwindSwap is TestCommons {
         //then
         emit Transfer(address(_iporProtocol.ammTreasury), _buyer, expectedAmountToTransfer);
         //when
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds, closeSwapRiskIndicatorsInput);
     }
 
     function testShouldNotUnwindBecauseNotEfficientCollateral99PercentageUnwindFeePayFixedDai() public {
@@ -367,23 +508,30 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _buyer,
             totalAmount,
             10 * 10 ** 16,
-            100 * 10 ** 18
+            100 * 10 ** 18,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), PAY_FIXED)
         );
+        vm.stopPrank();
 
         vm.warp(5 days);
 
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
         uint256[] memory swapRfIds = new uint256[](0);
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeSwapRiskIndicatorsInput = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         vm.expectRevert(abi.encodePacked(AmmErrors.COLLATERAL_IS_NOT_SUFFICIENT_TO_COVER_UNWIND_SWAP));
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds, closeSwapRiskIndicatorsInput);
+        vm.stopPrank();
     }
 
     function testShouldNotUnwindBecauseNotEfficientCollateral15PercentageUnwindFeePayFixedDai() public {
@@ -401,23 +549,30 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _buyer,
             totalAmount,
             10 * 10 ** 16,
-            100 * 10 ** 18
+            100 * 10 ** 18,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), PAY_FIXED)
         );
+        vm.stopPrank();
 
         vm.warp(5 days);
 
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
         uint256[] memory swapRfIds = new uint256[](0);
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeSwapRiskIndicatorsInput = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         vm.expectRevert(abi.encodePacked(AmmErrors.COLLATERAL_IS_NOT_SUFFICIENT_TO_COVER_UNWIND_SWAP));
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds, closeSwapRiskIndicatorsInput);
+        vm.stopPrank();
     }
 
     function testShouldNotUnwindBecauseNotEfficientCollateral99PercentageUnwindFeeReceiveFixedDai() public {
@@ -435,23 +590,30 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
             _buyer,
             totalAmount,
             0,
-            100 * 10 ** 18
+            100 * 10 ** 18,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), RECEIVE_FIXED)
         );
+        vm.stopPrank();
 
         vm.warp(5 days);
 
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = 1;
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeSwapRiskIndicatorsInput = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         vm.expectRevert(abi.encodePacked(AmmErrors.COLLATERAL_IS_NOT_SUFFICIENT_TO_COVER_UNWIND_SWAP));
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds, closeSwapRiskIndicatorsInput);
+        vm.stopPrank();
     }
 
     function testShouldNotUnwindBecauseNotEfficientCollateral15PercentageUnwindFeeReceiveFixedDai() public {
@@ -469,23 +631,30 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
             _buyer,
             totalAmount,
             0,
-            100 * 10 ** 18
+            100 * 10 ** 18,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), RECEIVE_FIXED)
         );
+        vm.stopPrank();
 
         vm.warp(5 days);
 
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = 1;
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeSwapRiskIndicatorsInput = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         vm.expectRevert(abi.encodePacked(AmmErrors.COLLATERAL_IS_NOT_SUFFICIENT_TO_COVER_UNWIND_SWAP));
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsDai(_buyer, swapPfIds, swapRfIds, closeSwapRiskIndicatorsInput);
+        vm.stopPrank();
     }
 
     function testShouldNotUnwindBecauseNotEfficientCollateral99PercentageUnwindFeePayFixedUsdt() public {
@@ -503,23 +672,30 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             10 * 10 ** 16,
-            100 * 10 ** 18
+            100 * 10 ** 18,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), PAY_FIXED)
         );
+        vm.stopPrank();
 
         vm.warp(5 days);
 
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
         uint256[] memory swapRfIds = new uint256[](0);
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeSwapRiskIndicatorsInput = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         vm.expectRevert(abi.encodePacked(AmmErrors.COLLATERAL_IS_NOT_SUFFICIENT_TO_COVER_UNWIND_SWAP));
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds, closeSwapRiskIndicatorsInput);
+        vm.stopPrank();
     }
 
     function testShouldNotUnwindBecauseNotEfficientCollateral15PercentageUnwindFeePayFixedUsdt() public {
@@ -537,23 +713,30 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _buyer,
             totalAmount,
             10 * 10 ** 16,
-            100 * 10 ** 18
+            100 * 10 ** 18,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), PAY_FIXED)
         );
+        vm.stopPrank();
 
         vm.warp(5 days);
 
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = 1;
         uint256[] memory swapRfIds = new uint256[](0);
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeSwapRiskIndicatorsInput = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         vm.expectRevert(abi.encodePacked(AmmErrors.COLLATERAL_IS_NOT_SUFFICIENT_TO_COVER_UNWIND_SWAP));
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds, closeSwapRiskIndicatorsInput);
+        vm.stopPrank();
     }
 
     function testShouldNotUnwindBecauseNotEfficientCollateral99PercentageUnwindFeeReceiveFixedUsdt() public {
@@ -571,23 +754,30 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             0,
-            100 * 10 ** 18
+            100 * 10 ** 18,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), RECEIVE_FIXED)
         );
+        vm.stopPrank();
 
         vm.warp(5 days);
 
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = 1;
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeSwapRiskIndicatorsInput = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         vm.expectRevert(abi.encodePacked(AmmErrors.COLLATERAL_IS_NOT_SUFFICIENT_TO_COVER_UNWIND_SWAP));
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds, closeSwapRiskIndicatorsInput);
+        vm.stopPrank();
     }
 
     function testShouldNotUnwindBecauseNotEfficientCollateral15PercentageUnwindFeeReceiveFixedUsdt() public {
@@ -605,22 +795,69 @@ contract AmmUnwindSwap is TestCommons {
         vm.prank(_buyer);
         _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _buyer,
             totalAmount,
             0,
-            100 * 10 ** 18
+            100 * 10 ** 18,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), RECEIVE_FIXED)
         );
+        vm.stopPrank();
 
         vm.warp(5 days);
 
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = 1;
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeSwapRiskIndicatorsInput = getCloseRiskIndicatorsInputs(
+            address(_iporProtocol.asset),
+            IporTypes.SwapTenor.DAYS_28
+        );
 
-        vm.prank(_buyer);
+        vm.startPrank(_buyer);
         vm.expectRevert(abi.encodePacked(AmmErrors.COLLATERAL_IS_NOT_SUFFICIENT_TO_COVER_UNWIND_SWAP));
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_buyer, swapPfIds, swapRfIds, closeSwapRiskIndicatorsInput);
+        vm.stopPrank();
+    }
+
+    function getCostumeCloseRiskIndicatorsInputs(address asset, IporTypes.SwapTenor tenor) internal returns (AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInputs) {
+        riskIndicatorsInputs.payFixed = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 280,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.receiveFixed = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: -1000000000000000,
+            fixedRateCapPerLeg: 35000000000000000,
+            demandSpreadFactor: 280,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.payFixed.signature = signRiskParams(
+            riskIndicatorsInputs.payFixed,
+            address(asset),
+            uint256(tenor),
+            0,
+            _iporProtocolFactory.messageSignerPrivateKey()
+        );
+        riskIndicatorsInputs.receiveFixed.signature = signRiskParams(
+            riskIndicatorsInputs.receiveFixed,
+            address(asset),
+            uint256(tenor),
+            1,
+            _iporProtocolFactory.messageSignerPrivateKey()
+        );
+
     }
 }

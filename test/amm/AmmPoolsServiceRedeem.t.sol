@@ -21,11 +21,9 @@ contract AmmPoolsServiceRedeemTest is TestCommons {
 
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
-        _cfg.iporRiskManagementOracleUpdater = _userOne;
         _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE5;
 
         _ammCfg.iporOracleUpdater = _userOne;
-        _ammCfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
     function testShouldRedeemIpToken18DecimalsSimpleCase1() public {
@@ -310,13 +308,15 @@ contract AmmPoolsServiceRedeemTest is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_100_000_18DEC);
 
-        vm.prank(_userTwo);
+        vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _userTwo,
             27000 * TestConstants.D18,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), 0)
         );
+        vm.stopPrank();
 
         IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getAmmBalance(
             address(_iporProtocol.asset)
@@ -347,13 +347,15 @@ contract AmmPoolsServiceRedeemTest is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_100_000_18DEC);
 
-        vm.prank(_userTwo);
+        vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
             _userTwo,
             40000 * TestConstants.D18,
             TestConstants.D16,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), 1)
         );
+        vm.stopPrank();
 
         IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getAmmBalance(
             address(_iporProtocol.asset)
@@ -385,26 +387,49 @@ contract AmmPoolsServiceRedeemTest is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_100_000_18DEC);
 
-        vm.prank(_userTwo);
+        vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _userTwo,
             48000 * TestConstants.D18,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), 0)
         );
+        vm.stopPrank();
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.redeemFromAmmPoolDai(_liquidityProvider, TestConstants.USD_10_000_18DEC);
 
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 300000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 280,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            _iporProtocolFactory.messageSignerPrivateKey()
+        );
+
         //show that currently liquidity pool collateral ratio for opening position is achieved
         vm.expectRevert("IPOR_303");
-        vm.prank(_userTwo);
+        vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _userTwo,
             50 * TestConstants.D18,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            riskIndicatorsInputs
         );
+        vm.stopPrank();
 
         uint256 expectedIpTokenBalanceSender = 79700 * TestConstants.D18;
 
@@ -430,26 +455,51 @@ contract AmmPoolsServiceRedeemTest is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_100_000_18DEC);
 
-        vm.prank(_userTwo);
+        vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
             _userTwo,
             48000 * TestConstants.D18,
             TestConstants.D16,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            getRiskIndicatorsInputs(address(_iporProtocol.asset), 1)
         );
+        vm.stopPrank();
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.redeemFromAmmPoolDai(_liquidityProvider, TestConstants.USD_10_000_18DEC);
 
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 800000000000000000,
+            maxCollateralRatioPerLeg: 300000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 500,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            1,
+            _iporProtocolFactory.messageSignerPrivateKey()
+        );
+
+
         //show that currently liquidity pool collateral ratio for opening position is achieved
         vm.expectRevert("IPOR_303");
-        vm.prank(_userTwo);
+        vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
             _userTwo,
             50 * TestConstants.D18,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            riskIndicatorsInputs
         );
+        vm.stopPrank();
 
         uint256 expectedIpTokenBalanceSender = 79700 * TestConstants.D18;
 

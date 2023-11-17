@@ -11,7 +11,6 @@ contract AmmPoolsServiceProvideLiquidityAndRebalanceTest is TestCommons {
         _admin = address(this);
         _userOne = _getUserAddress(1);
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE1;
-        _cfg.iporRiskManagementOracleUpdater = _admin;
     }
 
     function testProvideLiquidityAndRebalanceSameTimestamp() public {

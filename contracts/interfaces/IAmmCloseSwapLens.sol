@@ -48,12 +48,14 @@ interface IAmmCloseSwapLens {
     /// @param direction swap direction
     /// @param swapId swap id
     /// @param closeTimestamp closing timestamp
+    /// @param riskIndicatorsInput risk indicators input
     /// @return closingSwapDetails struct representing the closing swap details for a given swap and closing timestamp.
     function getClosingSwapDetails(
         address asset,
         address account,
         AmmTypes.SwapDirection direction,
         uint256 swapId,
-        uint256 closeTimestamp
+        uint256 closeTimestamp,
+        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     ) external view returns (AmmTypes.ClosingSwapDetails memory closingSwapDetails);
 }

@@ -19,10 +19,8 @@ contract AmmShouldClosePositionTest is TestCommons {
 
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
-        _cfg.iporRiskManagementOracleUpdater = _userOne;
 
         _ammCfg.iporOracleUpdater = _userOne;
-        _ammCfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
     function testShouldClosePositionUSDTAndWithdrawFromAssetManagement() public {
@@ -33,12 +31,32 @@ contract AmmShouldClosePositionTest is TestCommons {
 
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_28_000_6DEC);
 
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 500,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            _iporProtocolFactory.messageSignerPrivateKey()
+        );
+
         vm.prank(_userTwo);
         uint256 swap1 = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _userTwo,
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             TestConstants.PERCENTAGE_10_18DEC,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            riskIndicatorsInputs
         );
 
         vm.prank(_userOne);
@@ -61,9 +79,10 @@ contract AmmShouldClosePositionTest is TestCommons {
         pfSwapIds[0] = swap1;
 
         // when
-        vm.prank(_userTwo);
+        vm.startPrank(_userTwo);
         vm.warp(endTimestamp);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, pfSwapIds, rfSwapIds);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, pfSwapIds, rfSwapIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        vm.stopPrank();
 
         // then
         uint256 ammERC20BalanceAfter = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
@@ -85,12 +104,32 @@ contract AmmShouldClosePositionTest is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_28_000_6DEC);
 
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 500,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            _iporProtocolFactory.messageSignerPrivateKey()
+        );
+
         vm.prank(_userTwo);
         uint256 swap1 = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
             _userTwo,
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             TestConstants.PERCENTAGE_10_18DEC,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            riskIndicatorsInputs
         );
 
         vm.prank(_userOne);
@@ -118,8 +157,9 @@ contract AmmShouldClosePositionTest is TestCommons {
 
         // when
         vm.warp(endTimestamp);
-        vm.prank(_userTwo);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userThree, pfSwapIds, rfSwapIds);
+        vm.startPrank(_userTwo);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userThree, pfSwapIds, rfSwapIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        vm.stopPrank();
 
         // then
         uint256 ammERC20BalanceAfter = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
@@ -141,12 +181,32 @@ contract AmmShouldClosePositionTest is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_28_000_6DEC);
 
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 500,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            1,
+            _iporProtocolFactory.messageSignerPrivateKey()
+        );
+
         vm.prank(_userTwo);
         uint256 swap1 = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
             _userTwo,
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             0,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            riskIndicatorsInputs
         );
 
         vm.prank(_userOne);
@@ -169,8 +229,9 @@ contract AmmShouldClosePositionTest is TestCommons {
 
         // when
         vm.warp(endTimestamp);
-        vm.prank(_userTwo);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userThree, pfSwapIds, rfSwapIds);
+        vm.startPrank(_userTwo);
+        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userThree, pfSwapIds, rfSwapIds,getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        vm.stopPrank();
 
         // then
         uint256 ammERC20BalanceAfter = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));

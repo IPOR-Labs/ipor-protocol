@@ -5,7 +5,6 @@ import "forge-std/Test.sol";
 import "forge-std/console2.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../../contracts/oracles/IporOracle.sol";
-import "../../contracts/oracles/IporRiskManagementOracle.sol";
 import "../mocks/EmptyRouterImplementation.sol";
 import "../../contracts/router/IporProtocolRouter.sol";
 import "../../contracts/interfaces/IAmmSwapsLens.sol";
@@ -58,13 +57,13 @@ contract TestForkCommons is Test {
 
     address public constant iporOracleProxy = 0x421C69EAa54646294Db30026aeE80D01988a6876;
 
-    address public constant miltonStorageProxyDai = 0xb99f2a02c0851efdD417bd6935d2eFcd23c56e61;
-    address public constant miltonStorageProxyUsdc = 0xB3d1c1aB4D30800162da40eb18B3024154924ba5;
-    address public constant miltonStorageProxyUsdt = 0x364f116352EB95033D73822bA81257B8c1f5B1CE;
+    address public constant ammStorageProxyDai = 0xb99f2a02c0851efdD417bd6935d2eFcd23c56e61;
+    address public constant ammStorageProxyUsdc = 0xB3d1c1aB4D30800162da40eb18B3024154924ba5;
+    address public constant ammStorageProxyUsdt = 0x364f116352EB95033D73822bA81257B8c1f5B1CE;
 
-    address public constant miltonProxyDai = 0xEd7d74AA7eB1f12F83dA36DFaC1de2257b4e7523;
-    address public constant miltonProxyUsdc = 0x137000352B4ed784e8fa8815d225c713AB2e7Dc9;
-    address public constant miltonProxyUsdt = 0x28BC58e600eF718B9E97d294098abecb8c96b687;
+    address public constant ammTreasuryDai = 0xEd7d74AA7eB1f12F83dA36DFaC1de2257b4e7523;
+    address public constant ammTreasuryUsdc = 0x137000352B4ed784e8fa8815d225c713AB2e7Dc9;
+    address public constant ammTreasuryUsdt = 0x28BC58e600eF718B9E97d294098abecb8c96b687;
 
     address public constant josephProxyDai = 0x086d4daab14741b195deE65aFF050ba184B65045;
     address public constant josephProxyUsdc = 0xC52569b5A349A7055E9192dBdd271F1Bd8133277;
@@ -94,64 +93,43 @@ contract TestForkCommons is Test {
     address public constant COMP = 0xc00e94Cb662C3520282E6f5717214004A7f26888;
     address public constant comptroller = 0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B;
 
-    // new contracts for v2
-    address public iporRiskManagementOracleProxy;
-    address payable public iporProtocolRouterProxy;
-    address public ammSwapsLens;
-    address public ammPoolsLens;
-    address public assetManagementLens;
+    address payable public iporProtocolRouterProxy = payable(0x16d104009964e694761C0bf09d7Be49B7E3C26fd);
+    address public ammSwapsLens = 0x41e34756a7772A4ca1115AFbE2e2aFbd1B0172CF;
+    address public ammPoolsLens = 0xb653ED2bBd28DF9dde734FBe85f9312151940D01;
+    address public assetManagementLens = 0xB8dbDecBaF552e765619B2677f724a8415192389;
 
-    address public spread28Days;
-    address public spread60Days;
-    address public spread90Days;
-    address public spreadCloseSwapService;
-    address public spreadStorageLens;
-    address public spreadRouter;
+    address public spread28Days = 0xb8d531ea16CAF1CF7B7cBC333E8963dB59E8dAD5;
+    address public spread60Days = 0x36618cE1615305f3b99eeB9dF8d4272E729A81aB;
+    address public spread90Days = 0x22C1CF8FCDE74A373791863953B8C9aB417795D5;
+    address public spreadStorageLens = 0xB50c618d63806Ec1594547ECDB3E97737d6C12C6;
+    address public spreadRouter = 0xAc1C86CEacf03d5AFC8b08A22fc38Ec7c72338ed;
 
-    address public ammOpenSwapService;
-    address public ammCloseSwapService;
-    address public ammPoolsService;
-    address public ammGovernanceService;
+    address public ammPoolsService = 0x9bcde34F504A1a9BC3496Ba9f1AEA4c5FC400517;
+    address public ammGovernanceService = 0x8Ec9AEF0241A19Ffb278b3963d0EaaE7De52158d;
 
-    address public newStrategyDsrDaiProxy;
-    address public newStrategyAaveDaiProxy;
-    address public newStrategyAaveUsdtProxy;
-    address public newStrategyCompoundDaiProxy;
-    address public newStrategyCompoundUsdtProxy;
+    address public strategyDsrDaiProxy = 0xc26be51E50a358eC6d366147d78Ab94E9597239C;
+    address public strategyAaveDaiProxy = 0x526d0047725D48BBc6e24C7B82A3e47C1AF1f62f;
+    address public strategyAaveUsdtProxy = 0x58703DA5295794ed4E82323fcce7371272c5127D;
+    address public strategyCompoundDaiProxy = 0x87CEF19aCa214d12082E201e6130432Df39fc774;
+    address public strategyCompoundUsdtProxy = 0xE4cD9AA68Be5b5276573E24FA7A0007da29aB5B1;
+
+    // new Implementations
+    address public spreadCloseSwapService = 0x948548414A364C7D6f379ED73aeDDb3C795Dcacd;
+    address public ammOpenSwapService = 0x78034b17f80c6209400B26AB7B217C31F87AE119;
+    address public ammCloseSwapService = 0x6650DE6837839DFCb05D188C50b927b008825ee3;
+
+    uint256 public messageSignerPrivateKey;
+    address public messageSignerAddress;
 
     function _init() internal {
-        (uint IporOracleVersionBefore, uint IporOracleVersionAfter) = _switchImplementationOfIporOracle();
-        uint iporRiskManagementOracleVersion = _createIporRiskManagementOracle();
-        _createEmptyRouterImplementation();
-
-        _createAmmPoolsLens();
-        _createAssetManagementLens();
-
-        _creatSpreadModule();
+        messageSignerPrivateKey = 0x12341234;
+        messageSignerAddress = vm.addr(messageSignerPrivateKey);
 
         _createAmmSwapsLens();
         _createAmmOpenSwapService();
         _createAmmCloseSwapService();
-        _createAmmPoolsService();
-        _createAmmGovernanceService();
+
         _updateIporRouterImplementation();
-        _switchMiltonStorageToAmmStorage();
-
-        _switchStrategyAaveDaiToV2();
-        _switchStrategyAaveUsdcToV2();
-        _switchStrategyAaveUsdtToV2();
-
-        _switchStrategyCompoundDaiToV2();
-        _switchStrategyCompoundUsdcToV2();
-        _switchStrategyCompoundUsdtToV2();
-
-        _switchStrategyDsrDaiV1toV2();
-        _switchStanleyToAssetManagement();
-
-        _switchMiltonToAmmTreasury();
-
-        _setUpIpTokens();
-        _setAmmPoolsParams();
     }
 
     function _updateIporRouterImplementation() internal {
@@ -172,11 +150,6 @@ contract TestForkCommons is Test {
                 _getUserAddress(123)
             )
         );
-        console2.log("owner", owner);
-        console2.log(
-            "IporProtocolRouter(iporProtocolRouterProxy)",
-            IporProtocolRouter(iporProtocolRouterProxy).owner()
-        );
         vm.prank(owner);
         IporProtocolRouter(iporProtocolRouterProxy).upgradeTo(address(newImplementation));
     }
@@ -192,7 +165,7 @@ contract TestForkCommons is Test {
         ERC1967Proxy proxy = new ERC1967Proxy(address(strategyDsrDaiImpl), abi.encodeWithSignature("initialize()"));
         vm.stopPrank();
 
-        newStrategyDsrDaiProxy = address(proxy);
+        strategyDsrDaiProxy = address(proxy);
     }
 
     function _createNewStrategyAaveDai() internal {
@@ -211,7 +184,7 @@ contract TestForkCommons is Test {
         ERC1967Proxy proxy = new ERC1967Proxy(address(strategyAaveImpl), abi.encodeWithSignature("initialize()"));
         vm.stopPrank();
 
-        newStrategyAaveDaiProxy = address(proxy);
+        strategyAaveDaiProxy = address(proxy);
     }
 
     function _createNewStrategyAaveUsdt() internal {
@@ -230,7 +203,7 @@ contract TestForkCommons is Test {
         ERC1967Proxy proxy = new ERC1967Proxy(address(strategyAaveImpl), abi.encodeWithSignature("initialize()"));
         vm.stopPrank();
 
-        newStrategyAaveUsdtProxy = address(proxy);
+        strategyAaveUsdtProxy = address(proxy);
     }
 
     function _createNewStrategyCompoundDai() internal {
@@ -248,7 +221,7 @@ contract TestForkCommons is Test {
         ERC1967Proxy proxy = new ERC1967Proxy(address(strategyCompoundImpl), abi.encodeWithSignature("initialize()"));
         vm.stopPrank();
 
-        newStrategyCompoundDaiProxy = address(proxy);
+        strategyCompoundDaiProxy = address(proxy);
     }
 
     function _createNewStrategyCompoundUsdt() internal {
@@ -266,128 +239,27 @@ contract TestForkCommons is Test {
         ERC1967Proxy proxy = new ERC1967Proxy(address(strategyCompoundImpl), abi.encodeWithSignature("initialize()"));
         vm.stopPrank();
 
-        newStrategyCompoundUsdtProxy = address(proxy);
+        strategyCompoundUsdtProxy = address(proxy);
     }
 
-    function _switchImplementationOfIporOracle() private returns (uint256 versionBefore, uint256 versionAfter) {
-        versionBefore = IporOracle(iporOracleProxy).getVersion();
-        // todo fix złe wartości
-        IporTypes.AccruedIpor memory daiAccruedIpor = IporOracle(iporOracleProxy).getAccruedIndex(block.timestamp, DAI);
-        IporTypes.AccruedIpor memory usdcAccruedIpor = IporOracle(iporOracleProxy).getAccruedIndex(
-            block.timestamp,
-            USDC
-        );
-        IporTypes.AccruedIpor memory usdtAccruedIpor = IporOracle(iporOracleProxy).getAccruedIndex(
-            block.timestamp,
-            USDT
-        );
-
-        console2.log("daiInitialIbtPrice", daiAccruedIpor.ibtPrice);
-
-        IporOracle iporOracleImplementation = new IporOracle(
-            USDT,
-            usdtAccruedIpor.ibtPrice,
-            USDC,
-            usdcAccruedIpor.ibtPrice,
-            DAI,
-            daiAccruedIpor.ibtPrice
-        );
-
-        vm.prank(owner);
-        IporOracle(iporOracleProxy).upgradeTo(address(iporOracleImplementation));
-
-        address[] memory assets = new address[](3);
-        assets[2] = DAI;
-        assets[1] = USDC;
-        assets[0] = USDT;
-
-        vm.prank(owner);
-        IporOracle(iporOracleProxy).postUpgrade(assets);
-
-        versionAfter = IporOracle(iporOracleProxy).getVersion();
-    }
-
-    function _createIporRiskManagementOracle() private returns (uint256 version) {
-        IporRiskManagementOracle iporRiskManagementOracleImplementation = new IporRiskManagementOracle();
-
-        IporRiskManagementOracleTypes.RiskIndicators memory riskIndicator = IporRiskManagementOracleTypes
-            .RiskIndicators({
-                maxNotionalPayFixed: 100, // 1_000_000
-                maxNotionalReceiveFixed: 100, // 1_000_000
-                maxCollateralRatioPayFixed: 500, // 5%
-                maxCollateralRatioReceiveFixed: 500, // 5%
-                maxCollateralRatio: 500, // 5%
-                demandSpreadFactor28: 280,
-                demandSpreadFactor60: 600,
-                demandSpreadFactor90: 900
-            });
-
-        IporRiskManagementOracleTypes.RiskIndicators[]
-            memory riskIndicators = new IporRiskManagementOracleTypes.RiskIndicators[](3);
-        riskIndicators[0] = riskIndicator;
-        riskIndicators[1] = riskIndicator;
-        riskIndicators[2] = riskIndicator;
-
-        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps
-            memory baseSpreadsAndFixedRateCap = IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps(
-                1000, // 0.1%
-                -1000, // -0.1%
-                1000, // 0.1%
-                -1000, // -0.1%
-                1000, // 0.1%
-                -1000, // -0.1%
-                200, // 2%
-                350, // 3.5%
-                200, // 2%
-                350, // 3.5%
-                200, // 2%
-                350 // 3.5%
-            );
-
-        IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[]
-            memory baseSpreadsAndFixedRateCaps = new IporRiskManagementOracleTypes.BaseSpreadsAndFixedRateCaps[](3);
-        baseSpreadsAndFixedRateCaps[0] = baseSpreadsAndFixedRateCap;
-        baseSpreadsAndFixedRateCaps[1] = baseSpreadsAndFixedRateCap;
-        baseSpreadsAndFixedRateCaps[2] = baseSpreadsAndFixedRateCap;
-
-        ERC1967Proxy proxy = new ERC1967Proxy(
-            address(iporRiskManagementOracleImplementation),
-            abi.encodeWithSignature(
-                "initialize(address[],(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)[],(int256,int256,int256,int256,int256,int256,uint256,uint256,uint256,uint256,uint256,uint256)[])",
-                _getAssets(),
-                riskIndicators,
-                baseSpreadsAndFixedRateCaps
-            )
-        );
-
-        iporRiskManagementOracleProxy = address(proxy);
-        version = IporRiskManagementOracle(iporRiskManagementOracleProxy).getVersion();
-    }
-
-    function _createEmptyRouterImplementation() private {
-        vm.prank(owner);
-        address implementation = address(new EmptyRouterImplementation());
-        ERC1967Proxy proxy = _constructProxy(implementation);
-        iporProtocolRouterProxy = payable(address(proxy));
-    }
 
     function _createAmmSwapsLens() private {
         IAmmSwapsLens.SwapLensPoolConfiguration memory daiConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             DAI,
-            miltonStorageProxyDai,
-            miltonProxyDai,
+            ammStorageProxyDai,
+            ammTreasuryDai,
             10 * 1e18
         );
         IAmmSwapsLens.SwapLensPoolConfiguration memory usdcConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             USDC,
-            miltonStorageProxyUsdc,
-            miltonProxyUsdc,
+            ammStorageProxyUsdc,
+            ammTreasuryUsdc,
             10 * 1e18
         );
         IAmmSwapsLens.SwapLensPoolConfiguration memory usdtConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             USDT,
-            miltonStorageProxyUsdt,
-            miltonProxyUsdt,
+            ammStorageProxyUsdt,
+            ammTreasuryUsdt,
             10 * 1e18
         );
 
@@ -397,92 +269,20 @@ contract TestForkCommons is Test {
                 usdcConfig,
                 daiConfig,
                 iporOracleProxy,
-                iporRiskManagementOracleProxy,
+                messageSignerAddress,
                 spreadRouter
             )
         );
-        console2.log("ammSwapsLens: ", ammSwapsLens);
     }
 
-    function _createAmmPoolsLens() private {
-        IAmmPoolsLens.AmmPoolsLensPoolConfiguration memory daiConfig = IAmmPoolsLens.AmmPoolsLensPoolConfiguration(
-            DAI,
-            18,
-            ipDAI,
-            miltonStorageProxyDai,
-            miltonProxyDai,
-            stanleyProxyDai
-        );
-
-        IAmmPoolsLens.AmmPoolsLensPoolConfiguration memory usdcConfig = IAmmPoolsLens.AmmPoolsLensPoolConfiguration(
-            USDC,
-            6,
-            ipUSDC,
-            miltonStorageProxyUsdc,
-            miltonProxyUsdc,
-            stanleyProxyUsdc
-        );
-
-        IAmmPoolsLens.AmmPoolsLensPoolConfiguration memory usdtConfig = IAmmPoolsLens.AmmPoolsLensPoolConfiguration(
-            USDT,
-            6,
-            ipUSDT,
-            miltonStorageProxyUsdt,
-            miltonProxyUsdt,
-            stanleyProxyUsdt
-        );
-
-        ammPoolsLens = address(new AmmPoolsLens(usdtConfig, usdcConfig, daiConfig, iporOracleProxy));
-        console2.log("ammPoolsLens: ", ammPoolsLens);
-    }
-
-    function _createAssetManagementLens() private {
-        IAssetManagementLens.AssetManagementConfiguration memory daiConfig = IAssetManagementLens
-            .AssetManagementConfiguration(DAI, 18, stanleyProxyDai, miltonProxyDai);
-
-        IAssetManagementLens.AssetManagementConfiguration memory usdcConfig = IAssetManagementLens
-            .AssetManagementConfiguration(USDC, 6, stanleyProxyUsdc, miltonProxyUsdc);
-
-        IAssetManagementLens.AssetManagementConfiguration memory usdtConfig = IAssetManagementLens
-            .AssetManagementConfiguration(USDT, 6, stanleyProxyUsdt, miltonProxyUsdt);
-
-        assetManagementLens = address(new AssetManagementLens(usdtConfig, usdcConfig, daiConfig));
-
-        console2.log("assetManagementLens: ", assetManagementLens);
-    }
-
-    function _creatSpreadModule() private {
-        spread28Days = address(new Spread28Days(DAI, USDC, USDT));
-        spread60Days = address(new Spread60Days(DAI, USDC, USDT));
-        spread90Days = address(new Spread90Days(DAI, USDC, USDT));
-        spreadCloseSwapService = address(new SpreadCloseSwapService(DAI, USDC, USDT));
-        spreadStorageLens = address(new SpreadStorageLens());
-
-        SpreadRouter routerImplementation = new SpreadRouter(
-            SpreadRouter.DeployedContracts(
-                iporProtocolRouterProxy,
-                spread28Days,
-                spread60Days,
-                spread90Days,
-                spreadStorageLens,
-                spreadCloseSwapService
-            )
-        );
-        ERC1967Proxy proxy = new ERC1967Proxy(
-            address(routerImplementation),
-            abi.encodeWithSignature("initialize(bool)", false)
-        );
-        spreadRouter = address(proxy);
-        console2.log("spreadRouter: ", spreadRouter);
-    }
 
     function _createAmmOpenSwapService() private {
         IAmmOpenSwapLens.AmmOpenSwapServicePoolConfiguration memory daiConfig = IAmmOpenSwapLens
             .AmmOpenSwapServicePoolConfiguration(
                 DAI,
                 18,
-                miltonStorageProxyDai,
-                miltonProxyDai,
+            ammStorageProxyDai,
+            ammTreasuryDai,
                 10 * 1e18,
                 100_000 * 1e18,
                 25,
@@ -495,8 +295,8 @@ contract TestForkCommons is Test {
             .AmmOpenSwapServicePoolConfiguration(
                 USDC,
                 6,
-                miltonStorageProxyUsdc,
-                miltonProxyUsdc,
+            ammStorageProxyUsdc,
+            ammTreasuryUsdc,
                 10 * 1e18,
                 100_000 * 1e18,
                 25,
@@ -509,8 +309,8 @@ contract TestForkCommons is Test {
             .AmmOpenSwapServicePoolConfiguration(
                 USDT,
                 6,
-                miltonStorageProxyUsdt,
-                miltonProxyUsdt,
+            ammStorageProxyUsdt,
+            ammTreasuryUsdt,
                 10 * 1e18,
                 100_000 * 1e18,
                 25,
@@ -525,12 +325,11 @@ contract TestForkCommons is Test {
                 usdcConfig,
                 daiConfig,
                 iporOracleProxy,
-                iporRiskManagementOracleProxy,
+                messageSignerAddress,
                 spreadRouter
             )
         );
 
-        console2.log("ammOpenSwapService: ", ammOpenSwapService);
     }
 
     function _createAmmCloseSwapService() private {
@@ -538,8 +337,8 @@ contract TestForkCommons is Test {
             .AmmCloseSwapServicePoolConfiguration(
                 DAI,
                 18,
-                miltonStorageProxyDai,
-                miltonProxyDai,
+            ammStorageProxyDai,
+            ammTreasuryDai,
                 stanleyProxyDai,
                 5e14,
                 5e14,
@@ -555,8 +354,8 @@ contract TestForkCommons is Test {
             .AmmCloseSwapServicePoolConfiguration(
                 USDC,
                 6,
-                miltonStorageProxyUsdc,
-                miltonProxyUsdc,
+            ammStorageProxyUsdc,
+            ammTreasuryUsdc,
                 stanleyProxyUsdc,
                 5e11,
                 5e11,
@@ -572,8 +371,8 @@ contract TestForkCommons is Test {
             .AmmCloseSwapServicePoolConfiguration(
                 USDT,
                 6,
-                miltonStorageProxyUsdt,
-                miltonProxyUsdt,
+            ammStorageProxyUsdt,
+            ammTreasuryUsdt,
                 stanleyProxyUsdt,
                 5e11,
                 5e11,
@@ -590,299 +389,41 @@ contract TestForkCommons is Test {
                 usdcConfig,
                 daiConfig,
                 iporOracleProxy,
-                iporRiskManagementOracleProxy,
+                messageSignerAddress,
                 spreadRouter
             )
         );
-        console2.log("ammCloseSwapService: ", ammCloseSwapService);
     }
 
-    function _createAmmPoolsService() private {
-        IAmmPoolsService.AmmPoolsServicePoolConfiguration memory daiConfig = IAmmPoolsService
-            .AmmPoolsServicePoolConfiguration(
-                DAI,
-                18,
-                ipDAI,
-                miltonStorageProxyDai,
-                miltonProxyDai,
-                stanleyProxyDai,
-                5e15,
-                1e18
-            );
-
-        IAmmPoolsService.AmmPoolsServicePoolConfiguration memory usdcConfig = IAmmPoolsService
-            .AmmPoolsServicePoolConfiguration(
-                USDC,
-                6,
-                ipUSDC,
-                miltonStorageProxyUsdc,
-                miltonProxyUsdc,
-                stanleyProxyUsdc,
-                5e15,
-                1e18
-            );
-
-        IAmmPoolsService.AmmPoolsServicePoolConfiguration memory usdtConfig = IAmmPoolsService
-            .AmmPoolsServicePoolConfiguration(
-                USDT,
-                6,
-                ipUSDT,
-                miltonStorageProxyUsdt,
-                miltonProxyUsdt,
-                stanleyProxyUsdt,
-                5e15,
-                1e18
-            );
-
-        ammPoolsService = address(new AmmPoolsService(usdtConfig, usdcConfig, daiConfig, iporOracleProxy));
-        console2.log("ammPoolsService: ", ammPoolsService);
-    }
-
-    function _createAmmGovernanceService() private {
-        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory daiConfig = IAmmGovernanceLens
-            .AmmGovernancePoolConfiguration(
-                DAI,
-                18,
-                miltonStorageProxyDai,
-                miltonProxyDai,
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123)
-            );
-
-        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory usdcConfig = IAmmGovernanceLens
-            .AmmGovernancePoolConfiguration(
-                USDC,
-                6,
-                miltonStorageProxyUsdc,
-                miltonProxyUsdc,
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123)
-            );
-
-        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory usdtConfig = IAmmGovernanceLens
-            .AmmGovernancePoolConfiguration(
-                USDT,
-                6,
-                miltonStorageProxyUsdt,
-                miltonProxyUsdt,
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123)
-            );
-
-        ammGovernanceService = address(new AmmGovernanceService(usdtConfig, usdcConfig, daiConfig));
-
-        console2.log("ammGovernanceService: ", ammGovernanceService);
-    }
-
-    function _switchStrategyAaveDaiToV2() internal {
-        StrategyAave impl = new StrategyAave(
-            DAI,
-            18,
-            aDAI,
-            stanleyProxyDai,
-            AAVE,
-            stakedAAVE,
-            aaveLendingPoolAddressProvider,
-            aaveIncentivesController
+    function signRiskParams(
+        AmmTypes.RiskIndicatorsInputs memory riskParamsInput,
+        address asset,
+        uint256 tenor,
+        uint256 direction,
+        uint256 privateKey
+    ) internal view returns (bytes memory) {
+        // create digest: keccak256 gives us the first 32bytes after doing the hash
+        // so this is always 32 bytes.
+        bytes32 digest = keccak256(
+            abi.encodePacked(
+                riskParamsInput.maxCollateralRatio,
+                riskParamsInput.maxCollateralRatioPerLeg,
+                riskParamsInput.maxLeveragePerLeg,
+                riskParamsInput.baseSpreadPerLeg,
+                riskParamsInput.fixedRateCapPerLeg,
+                riskParamsInput.demandSpreadFactor,
+                riskParamsInput.expiration,
+                asset,
+                tenor,
+                direction
+            )
         );
-        vm.startPrank(owner);
-        StrategyAave(strategyAaveProxyDai).upgradeTo(address(impl));
-        vm.stopPrank();
-    }
+        // r and s are the outputs of the ECDSA signature
+        // r,s and v are packed into the signature. It should be 65 bytes: 32 + 32 + 1
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(privateKey, digest);
 
-    function _switchStrategyAaveUsdcToV2() internal {
-        StrategyAave impl = new StrategyAave(
-            USDC,
-            6,
-            aUSDC,
-            stanleyProxyUsdc,
-            AAVE,
-            stakedAAVE,
-            aaveLendingPoolAddressProvider,
-            aaveIncentivesController
-        );
-        vm.startPrank(owner);
-        StrategyAave(strategyAaveProxyUsdc).upgradeTo(address(impl));
-        vm.stopPrank();
-    }
-
-    function _switchStrategyAaveUsdtToV2() internal {
-        StrategyAave impl = new StrategyAave(
-            USDT,
-            6,
-            aUSDT,
-            stanleyProxyUsdt,
-            AAVE,
-            stakedAAVE,
-            aaveLendingPoolAddressProvider,
-            aaveIncentivesController
-        );
-        vm.startPrank(owner);
-        StrategyAave(strategyAaveProxyUsdt).upgradeTo(address(impl));
-        vm.stopPrank();
-    }
-
-    function _switchStrategyCompoundDaiToV2() internal {
-        StrategyCompound impl = new StrategyCompound(DAI, 18, cDAI, address(stanleyProxyDai), 7200, comptroller, COMP);
-        vm.startPrank(owner);
-        StrategyCompound(strategyCompoundProxyDai).upgradeTo(address(impl));
-        vm.stopPrank();
-    }
-
-    function _switchStrategyCompoundUsdcToV2() internal {
-        StrategyCompound impl = new StrategyCompound(
-            USDC,
-            6,
-            cUSDC,
-            address(stanleyProxyUsdc),
-            7200,
-            comptroller,
-            COMP
-        );
-        vm.startPrank(owner);
-        StrategyCompound(strategyCompoundProxyUsdc).upgradeTo(address(impl));
-        vm.stopPrank();
-    }
-
-    function _switchStrategyCompoundUsdtToV2() internal {
-        StrategyCompound impl = new StrategyCompound(
-            USDT,
-            6,
-            cUSDT,
-            address(stanleyProxyUsdt),
-            7200,
-            comptroller,
-            COMP
-        );
-        vm.startPrank(owner);
-        StrategyCompound(strategyCompoundProxyUsdt).upgradeTo(address(impl));
-        vm.stopPrank();
-    }
-
-    function _switchStrategyDsrDaiV1toV2() internal {
-        StrategyDsrDai impl = new StrategyDsrDai(DAI, sDai, address(stanleyProxyDai));
-        vm.startPrank(owner);
-        StrategyDsrDai(strategyDsrProxyDai).upgradeTo(address(impl));
-        vm.stopPrank();
-    }
-
-    function _switchStanleyToAssetManagement() internal {
-        AssetManagementDai assetManagementDai = new AssetManagementDai(
-            DAI,
-            miltonProxyDai,
-            strategyAaveProxyDai,
-            strategyCompoundProxyDai,
-            strategyDsrProxyDai
-        );
-
-        vm.startPrank(owner);
-        AssetManagementDai(stanleyProxyDai).upgradeTo(address(assetManagementDai));
-        vm.stopPrank();
-
-        AssetManagementUsdt assetManagementUsdt = new AssetManagementUsdt(
-            USDT,
-            miltonProxyUsdt,
-            strategyAaveProxyUsdt,
-            strategyCompoundProxyUsdt
-        );
-
-        vm.startPrank(owner);
-        AssetManagementUsdt(stanleyProxyUsdt).upgradeTo(address(assetManagementUsdt));
-        vm.stopPrank();
-
-        AssetManagementUsdc assetManagementUsdc = new AssetManagementUsdc(
-            USDC,
-            miltonProxyUsdc,
-            strategyAaveProxyUsdc,
-            strategyCompoundProxyUsdc
-        );
-
-        vm.startPrank(owner);
-        AssetManagementUsdc(stanleyProxyUsdc).upgradeTo(address(assetManagementUsdc));
-        vm.stopPrank();
-    }
-
-    function _switchMiltonStorageToAmmStorage() private {
-        AmmStorage daiStorageImplementation = new AmmStorage(iporProtocolRouterProxy, miltonProxyDai);
-        AmmStorage usdcStorageImplementation = new AmmStorage(iporProtocolRouterProxy, miltonProxyUsdc);
-        AmmStorage usdtStorageImplementation = new AmmStorage(iporProtocolRouterProxy, miltonProxyUsdt);
-        vm.startPrank(owner);
-        AmmStorage(miltonStorageProxyDai).upgradeTo(address(daiStorageImplementation));
-        AmmStorage(miltonStorageProxyUsdc).upgradeTo(address(usdcStorageImplementation));
-        AmmStorage(miltonStorageProxyUsdt).upgradeTo(address(usdtStorageImplementation));
-        AmmStorage(miltonStorageProxyDai).postUpgrade();
-        AmmStorage(miltonStorageProxyUsdc).postUpgrade();
-        AmmStorage(miltonStorageProxyUsdt).postUpgrade();
-        vm.stopPrank();
-    }
-
-    function _switchMiltonToAmmTreasury() private {
-        AmmTreasury daiTreasuryImplementation = new AmmTreasury(
-            DAI,
-            18,
-            miltonStorageProxyDai,
-            stanleyProxyDai,
-            iporProtocolRouterProxy
-        );
-
-        AmmTreasury usdcTreasuryImplementation = new AmmTreasury(
-            USDC,
-            6,
-            miltonStorageProxyUsdc,
-            stanleyProxyUsdc,
-            iporProtocolRouterProxy
-        );
-
-        AmmTreasury usdtTreasuryImplementation = new AmmTreasury(
-            USDT,
-            6,
-            miltonStorageProxyUsdt,
-            stanleyProxyUsdt,
-            iporProtocolRouterProxy
-        );
-
-        vm.startPrank(owner);
-        AmmTreasury(miltonProxyDai).upgradeTo(address(daiTreasuryImplementation));
-        AmmTreasury(miltonProxyUsdc).upgradeTo(address(usdcTreasuryImplementation));
-        AmmTreasury(miltonProxyUsdt).upgradeTo(address(usdtTreasuryImplementation));
-        AmmTreasury(miltonProxyDai).grantMaxAllowanceForSpender(iporProtocolRouterProxy);
-        AmmTreasury(miltonProxyUsdc).grantMaxAllowanceForSpender(iporProtocolRouterProxy);
-        AmmTreasury(miltonProxyUsdt).grantMaxAllowanceForSpender(iporProtocolRouterProxy);
-        vm.stopPrank();
-    }
-
-    function _setUpIpTokens() private {
-        vm.startPrank(owner);
-        IIpTokenV1(ipDAI).setJoseph(iporProtocolRouterProxy);
-        IIpTokenV1(ipUSDC).setJoseph(iporProtocolRouterProxy);
-        IIpTokenV1(ipUSDT).setJoseph(iporProtocolRouterProxy);
-        vm.stopPrank();
-    }
-
-    function _setAmmPoolsParams() private {
-        vm.startPrank(owner);
-        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(DAI, type(uint32).max, 0, 5000);
-        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(USDC, type(uint32).max, 0, 5000);
-        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(USDT, type(uint32).max, 0, 5000);
-        vm.stopPrank();
-    }
-
-    function _getAssets() internal returns (address[] memory) {
-        address[] memory assets = new address[](3);
-        assets[0] = DAI;
-        assets[1] = USDC;
-        assets[2] = USDT;
-        return assets;
-    }
-
-    function _constructProxy(address impl) private returns (ERC1967Proxy proxy) {
-        vm.prank(owner);
-        proxy = new ERC1967Proxy(address(impl), abi.encodeWithSignature("initialize(bool)", false));
+        // pack v, r, s into 65bytes signature
+        // bytes memory signature = abi.encodePacked(r, s, v);
+        return abi.encodePacked(r, s, v);
     }
 }

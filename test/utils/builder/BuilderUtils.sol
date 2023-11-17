@@ -3,7 +3,6 @@ pragma solidity 0.8.20;
 
 import "../../../contracts/tokens/IpToken.sol";
 import "../../../contracts/oracles/IporOracle.sol";
-import "../../../contracts/oracles/IporRiskManagementOracle.sol";
 import "../../mocks/MockIporWeighted.sol";
 import "../../../contracts/amm/AmmStorage.sol";
 import "../../../contracts/amm/AmmTreasury.sol";
@@ -30,7 +29,6 @@ contract BuilderUtils {
         MockTestnetToken asset;
         IpToken ipToken;
         IporOracle iporOracle;
-        IporRiskManagementOracle iporRiskManagementOracle;
         MockIporWeighted iporWeighted;
         AmmStorage ammStorage;
         SpreadRouter spreadRouter;
@@ -70,36 +68,6 @@ contract BuilderUtils {
         CASE1
     }
 
-    enum IporRiskManagementOracleInitialParamsTestCase {
-        /// @dev collateral ratio per leg 48%
-        /// @dev Max collateral ratio 90%
-        /// @dev Max notional 1 000 000
-        DEFAULT,
-        /// @dev collateral ratio per leg 0%
-        /// @dev Max collateral ratio 0%
-        /// @dev Max notional 1 000 000
-        CASE1,
-        /// @dev collateral ratio per leg 20%
-        /// @dev Max collateral ratio 20%
-        /// @dev Max notional 0
-        CASE2,
-        /// @dev collateral ratio per leg 20%
-        /// @dev Max collateral ratio 20%
-        /// @dev Max notional max uint64
-        CASE3,
-        /// @dev collateral ratio per leg max uint16
-        /// @dev Max collateral ratio max uint16
-        /// @dev Max notional max uint64
-        CASE4,
-        /// @dev collateral ratio per leg 30%
-        /// @dev Max collateral ratio 80%
-        /// @dev Max notional 1 000 000
-        CASE5,
-        /// @dev collateral ratio per leg 48%
-        /// @dev Max collateral ratio 80%
-        /// @dev Max notional 1 000 000
-        CASE6
-    }
     enum AmmOpenSwapServiceTestCase {
         DEFAULT,
         CASE1,

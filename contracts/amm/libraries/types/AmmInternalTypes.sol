@@ -48,8 +48,6 @@ library AmmInternalTypes {
     struct RiskIndicatorsContext {
         /// @notice Asset address for which the risk indicators are calculated.
         address asset;
-        /// @notice Ipor Risk Management Oracle address.
-        address iporRiskManagementOracle;
         /// @notice Tenor of the swap.
         IporTypes.SwapTenor tenor;
         /// @notice AMM Liquidity Pool balance.

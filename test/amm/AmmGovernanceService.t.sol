@@ -19,7 +19,6 @@ contract AmmGovernanceServiceTest is TestCommons {
 
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
-        _cfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
     function testShouldSetupMaxAllowanceInAmmTreasury() public {
@@ -133,12 +132,32 @@ contract AmmGovernanceServiceTest is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
 
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 500,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            _iporProtocolFactory.messageSignerPrivateKey()
+        );
+
         vm.prank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _userTwo,
             TestConstants.USD_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            riskIndicatorsInputs
         );
 
         // when
@@ -186,12 +205,32 @@ contract AmmGovernanceServiceTest is TestCommons {
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
 
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 500,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            _iporProtocolFactory.messageSignerPrivateKey()
+        );
+
         vm.prank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
             _userTwo,
             TestConstants.USD_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
-            TestConstants.LEVERAGE_18DEC
+            TestConstants.LEVERAGE_18DEC,
+            riskIndicatorsInputs
         );
 
         // when
