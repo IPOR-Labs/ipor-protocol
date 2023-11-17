@@ -544,7 +544,8 @@ contract TestForkCommons is Test {
     }
 
     function _createNewSpreadForStEth() private {
-        SpreadGenOne spreadImpl = new SpreadGenOne(iporProtocolRouterProxy, stETH);
+        SpreadGenOne spreadImpl = new SpreadGenOne(iporProtocolRouterProxy, stETH, new SpreadTypesGenOne
+        .TimeWeightedNotionalMemory[](0));
 
         vm.startPrank(owner);
         ERC1967Proxy proxy = new ERC1967Proxy(address(spreadImpl), abi.encodeWithSignature("initialize()"));

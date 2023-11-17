@@ -4,40 +4,17 @@ pragma solidity 0.8.20;
 import "./DemandSpreadLibsGenOne.sol";
 import "./SpreadStorageLibsGenOne.sol";
 import "./OfferedRateCalculationLibsGenOne.sol";
-import "../../interfaces/types/IporTypes.sol";
-import "../../interfaces/types/AmmTypes.sol";
 import "../../security/IporOwnable.sol";
 import "../../libraries/IporContractValidator.sol";
-import "../../amm/libraries/types/AmmInternalTypes.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
 import "../../basic/interfaces/IAmmStorageGenOne.sol";
 import "../../amm/spread/CalculateTimeWeightedNotionalLibs.sol";
 import "../../amm/libraries/IporSwapLogic.sol";
+import "./ISpreadGenOne.sol";
 
 /// @dev This contract cannot be used directly, should be used only through Router.
-contract SpreadGenOne is IporOwnable {
-    struct SpreadInputs {
-        //// @notice Swap's assets DAI/USDC/USDT/stETH/etc.
-        address asset;
-        /// @notice Swap's notional value
-        uint256 swapNotional;
-        /// @notice demand spread factor used in demand spread calculation
-        uint256 demandSpreadFactor;
-        /// @notice Base spread
-        int256 baseSpreadPerLeg;
-        /// @notice Swap's balance for Pay Fixed leg
-        uint256 totalCollateralPayFixed;
-        /// @notice Swap's balance for Receive Fixed leg
-        uint256 totalCollateralReceiveFixed;
-        /// @notice Liquidity Pool's Balance
-        uint256 liquidityPoolBalance;
-        /// @notice Ipor index value at the time of swap creation
-        uint256 iporIndexValue;
-        /// @notice fixed rate cap for given leg for offered rate without demandSpread in 18 decimals
-        uint256 fixedRateCapPerLeg;
-        /// @notice Swap's tenor
-        IporTypes.SwapTenor tenor;
-    }
+contract SpreadGenOne is IporOwnable, ISpreadGenOne  {
+
 
     error UnknownTenor(IporTypes.SwapTenor tenor, string errorCode, string methodName);
 
@@ -75,7 +52,7 @@ contract SpreadGenOne is IporOwnable {
 
     function calculateAndUpdateOfferedRatePayFixed(
         SpreadInputs calldata spreadInputs
-    ) external onlyRouter returns (uint256 offeredRate) {
+    ) external onlyRouter override returns (uint256 offeredRate) {
         offeredRate = OfferedRateCalculationLibsGenOne.calculatePayFixedOfferedRate(
             spreadInputs.iporIndexValue,
             spreadInputs.baseSpreadPerLeg,
@@ -87,7 +64,7 @@ contract SpreadGenOne is IporOwnable {
     function calculateOfferedRate(
         AmmTypes.SwapDirection direction,
         SpreadInputs calldata spreadInputs
-    ) external view returns (uint256) {
+    ) external view override returns (uint256) {
         if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
             return
                 OfferedRateCalculationLibsGenOne.calculatePayFixedOfferedRate(
@@ -111,7 +88,7 @@ contract SpreadGenOne is IporOwnable {
 
     function calculateOfferedRatePayFixed(
         SpreadInputs calldata spreadInputs
-    ) external view returns (uint256 offeredRate) {
+    ) external view override returns (uint256 offeredRate) {
         offeredRate = OfferedRateCalculationLibsGenOne.calculatePayFixedOfferedRate(
             spreadInputs.iporIndexValue,
             spreadInputs.baseSpreadPerLeg,
@@ -122,7 +99,7 @@ contract SpreadGenOne is IporOwnable {
 
     function calculateAndUpdateOfferedRateReceiveFixed(
         SpreadInputs calldata spreadInputs
-    ) external onlyRouter returns (uint256 offeredRate) {
+    ) external onlyRouter override returns (uint256 offeredRate) {
         offeredRate = OfferedRateCalculationLibsGenOne.calculateReceiveFixedOfferedRate(
             spreadInputs.iporIndexValue,
             spreadInputs.baseSpreadPerLeg,
@@ -133,7 +110,7 @@ contract SpreadGenOne is IporOwnable {
 
     function calculateOfferedRateReceiveFixed(
         SpreadInputs calldata spreadInputs
-    ) external view returns (uint256 offeredRate) {
+    ) external view override returns (uint256 offeredRate) {
         offeredRate = OfferedRateCalculationLibsGenOne.calculateReceiveFixedOfferedRate(
             spreadInputs.iporIndexValue,
             spreadInputs.baseSpreadPerLeg,
@@ -148,7 +125,7 @@ contract SpreadGenOne is IporOwnable {
         uint256 swapNotional,
         AmmInternalTypes.OpenSwapItem memory closedSwap,
         address ammStorageAddress
-    ) external onlyRouter {
+    ) external onlyRouter override {
         // @dev when timestamp is 0, it means that the swap was open in ipor-protocol v1 .
         if (closedSwap.openSwapTimestamp == 0) {
             return;
@@ -209,11 +186,11 @@ contract SpreadGenOne is IporOwnable {
         SpreadStorageLibsGenOne.saveTimeWeightedNotionalForAssetAndTenor(storageId, timeWeightedNotional);
     }
 
-    function spreadFunctionConfig() external pure returns (uint256[] memory) {
+    function spreadFunctionConfig() external pure override returns (uint256[] memory) {
         return DemandSpreadLibsGenOne.spreadFunctionConfig();
     }
 
-    function getVersion() external pure virtual returns (uint256) {
+    function getVersion() external pure virtual override returns (uint256) {
         return 2_001;
     }
 

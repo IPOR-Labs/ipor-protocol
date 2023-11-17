@@ -1,9 +1,34 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "./SpreadGenOne.sol";
+import "../../interfaces/types/IporTypes.sol";
+import "../../interfaces/types/AmmTypes.sol";
+import "../../amm/libraries/types/AmmInternalTypes.sol";
 
 interface ISpreadGenOne {
+    struct SpreadInputs {
+        //// @notice Swap's assets DAI/USDC/USDT/stETH/etc.
+        address asset;
+        /// @notice Swap's notional value
+        uint256 swapNotional;
+        /// @notice demand spread factor used in demand spread calculation
+        uint256 demandSpreadFactor;
+        /// @notice Base spread
+        int256 baseSpreadPerLeg;
+        /// @notice Swap's balance for Pay Fixed leg
+        uint256 totalCollateralPayFixed;
+        /// @notice Swap's balance for Receive Fixed leg
+        uint256 totalCollateralReceiveFixed;
+        /// @notice Liquidity Pool's Balance
+        uint256 liquidityPoolBalance;
+        /// @notice Ipor index value at the time of swap creation
+        uint256 iporIndexValue;
+        /// @notice fixed rate cap for given leg for offered rate without demandSpread in 18 decimals
+        uint256 fixedRateCapPerLeg;
+        /// @notice Swap's tenor
+        IporTypes.SwapTenor tenor;
+    }
+
     /// @notice Calculates and updates the offered rate for Pay Fixed leg of a swap.
     /// @dev This function should be called only through the Router contract as per the 'onlyRouter' modifier.
     ///      It calculates the offered rate for Pay Fixed swaps by taking into account various factors like
@@ -61,7 +86,7 @@ interface ISpreadGenOne {
     /// @return offeredRate The calculated offered rate for the Receive Fixed leg in the swap, returned as a uint256.
     function calculateAndUpdateOfferedRateReceiveFixed(
         SpreadInputs calldata spreadInputs
-    ) external onlyRouter returns (uint256 offeredRate);
+    ) external returns (uint256 offeredRate);
 
     /// @notice Calculates the offered rate for a Receive Fixed swap.
     /// @dev This view function computes the offered rate specifically for swaps where the Receive Fixed leg is chosen.
@@ -85,7 +110,7 @@ interface ISpreadGenOne {
     /// @param swapNotional The notional value of the swap that is being closed.
     /// @param closedSwap An 'OpenSwapItem' struct from 'AmmInternalTypes' representing the details of the swap that was closed.
     /// @param ammStorageAddress The address of the AMM (Automated Market Maker) storage contract where the swap data is maintained.
-    /// @remarks This function should only be called by an authorized Router, as it can significantly impact the contract's state.
+    /// @dev This function should only be called by an authorized Router, as it can significantly impact the contract's state.
     function updateTimeWeightedNotionalOnClose(
         uint256 direction,
         IporTypes.SwapTenor tenor,
@@ -100,7 +125,7 @@ interface ISpreadGenOne {
     ///      the calculation of spreads for different swap legs or conditions.
     /// @return An array of uint256 values representing the configuration parameters of the spread function.
     ///      These parameters are critical in determining how spreads are calculated for Pay Fixed and Receive Fixed swaps.
-    function spreadFunctionConfig() external;
+    function spreadFunctionConfig() external returns (uint256[] memory);
 
     /// @notice Returns the version number of the contract.
     /// @dev This function provides a simple way to retrieve the version number of the current contract.

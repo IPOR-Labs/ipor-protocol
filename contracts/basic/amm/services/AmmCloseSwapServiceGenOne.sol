@@ -23,7 +23,7 @@ import "../../../amm/spread/ISpreadCloseSwapService.sol";
 import "../libraries/SwapLogicGenOne.sol";
 import "../../types/AmmTypesGenOne.sol";
 import "../../events/AmmEventsGenOne.sol";
-import "../../../basic/spread/SpreadGenOne.sol";
+import "../../../basic/spread/ISpreadGenOne.sol";
 
 //TODO: other names proposition: AmmCloseSwapS1G1, AmmCloseSwapServiceOneGenOne, AmmCloseSwapServiceOneGenerationOne
 abstract contract AmmCloseSwapServiceGenOne {
@@ -202,7 +202,7 @@ abstract contract AmmCloseSwapServiceGenOne {
             riskIndicatorsInput
         );
 
-        SpreadGenOne(spread).updateTimeWeightedNotionalOnClose(
+        ISpreadGenOne(spread).updateTimeWeightedNotionalOnClose(
             uint256(swap.direction),
             swap.tenor,
             swap.notional,
@@ -491,9 +491,9 @@ abstract contract AmmCloseSwapServiceGenOne {
                 unwindParams.swap.collateral,
                 unwindParams.swap.calculateSwapUnwindPnlValue(
                     unwindParams.closeTimestamp,
-                    SpreadGenOne(spread).calculateOfferedRate(
+                    ISpreadGenOne(spread).calculateOfferedRate(
                         oppositeDirection,
-                        SpreadGenOne.SpreadInputs({
+                        ISpreadGenOne.SpreadInputs({
                             asset: asset,
                             swapNotional: unwindParams.swap.notional,
                             demandSpreadFactor: oppositeRiskIndicators.demandSpreadFactor,
