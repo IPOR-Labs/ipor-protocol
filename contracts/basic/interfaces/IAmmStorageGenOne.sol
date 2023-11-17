@@ -3,8 +3,6 @@ pragma solidity 0.8.20;
 
 import "../../interfaces/types/IporTypes.sol";
 import "../../interfaces/types/AmmTypes.sol";
-import "../types/AmmTypesGenOne.sol";
-import "../types/StorageTypesGenOne.sol";
 import "../../interfaces/types/AmmStorageTypes.sol";
 import "../../amm/libraries/types/AmmInternalTypes.sol";
 import "../types/AmmTypesGenOne.sol";

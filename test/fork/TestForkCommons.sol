@@ -480,7 +480,7 @@ contract TestForkCommons is Test {
                 ammTreasury: ammTreasuryProxyStEth,
                 iporPublicationFee: 10 * 1e15,
                 maxSwapCollateralAmount: 100_000 * 1e18,
-                wadLiquidationDepositAmount: 25,
+                liquidationDepositAmount: 1000, /// @dev 0.001 ETH
                 minLeverage: 10 * 1e18,
                 openingFeeRate: 5e14,
                 openingFeeTreasuryPortionRate: 5e17
@@ -508,7 +508,7 @@ contract TestForkCommons is Test {
                 ammTreasury: ammTreasuryProxyStEth,
                 iporPublicationFee: 10 * 1e15,
                 maxSwapCollateralAmount: 100_000 * 1e18,
-                wadLiquidationDepositAmount: 25,
+                liquidationDepositAmount: 1000, /// @dev 0.001 ETH
                 minLeverage: 10 * 1e18,
                 openingFeeRate: 0,
                 openingFeeTreasuryPortionRate: 5e17

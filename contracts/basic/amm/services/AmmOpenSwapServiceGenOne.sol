@@ -1,24 +1,19 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 import "../../../interfaces/IIporOracle.sol";
-import "../../../interfaces/IAmmStorage.sol";
-import "../../../interfaces/IAmmOpenSwapService.sol";
+import "../../interfaces/IAmmTreasuryGenOne.sol";
 import "../../../libraries/Constants.sol";
 import "../../../libraries/math/IporMath.sol";
 import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/errors/AmmErrors.sol";
-import "../../../libraries/errors/AmmErrors.sol";
-import "../libraries/SwapEventsGenOne.sol";
 import "../../../libraries/IporContractValidator.sol";
-
 import "../../../amm/libraries/types/AmmInternalTypes.sol";
 import "../../../amm/libraries/IporSwapLogic.sol";
-import "../libraries/SwapLogicGenOne.sol";
 import "../../../basic/spread/SpreadGenOne.sol";
-import "../../interfaces/IAmmTreasuryGenOne.sol";
+import "../libraries/SwapEventsGenOne.sol";
+import "../libraries/SwapLogicGenOne.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 abstract contract AmmOpenSwapServiceGenOne {
@@ -39,13 +34,17 @@ abstract contract AmmOpenSwapServiceGenOne {
     address public immutable ammStorage;
     address public immutable ammTreasury;
 
-    /// @dev IPOR publication fee in underlying token (asset)
+    /// @dev IPOR publication fee in underlying token (asset), represented in 18 decimals
     uint256 public immutable iporPublicationFee;
+    /// @dev Maximum collateral amount for swap, represented in 18 decimals
     uint256 public immutable maxSwapCollateralAmount;
-    uint256 public immutable wadLiquidationDepositAmount;
+    /// @dev Liquidation deposit amount for stETH represented in 6 decimals. Example 25 stETH = 25000000 = 25.000000
+    uint256 public immutable liquidationDepositAmount;
+    /// @dev Minimum leverage for swap, represented in 18 decimals
     uint256 public immutable minLeverage;
+    /// @dev Opening fee rate, represented in 18 decimals
     uint256 public immutable openingFeeRate;
-
+    /// @dev Opening fee treasury portion rate, represented in 18 decimals
     uint256 public immutable openingFeeTreasuryPortionRate;
 
     struct Context {
@@ -71,7 +70,7 @@ abstract contract AmmOpenSwapServiceGenOne {
 
         iporPublicationFee = poolCfg.iporPublicationFee;
         maxSwapCollateralAmount = poolCfg.maxSwapCollateralAmount;
-        wadLiquidationDepositAmount = poolCfg.wadLiquidationDepositAmount;
+        liquidationDepositAmount = poolCfg.liquidationDepositAmount;
         minLeverage = poolCfg.minLeverage;
         openingFeeRate = poolCfg.openingFeeRate;
         openingFeeTreasuryPortionRate = poolCfg.openingFeeTreasuryPortionRate;
@@ -337,6 +336,9 @@ abstract contract AmmOpenSwapServiceGenOne {
         _validateTotalAmount(ctx.accountInputToken, totalAmount);
 
         uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, decimals);
+        /// @dev to achieve 18 decimals precision we multiply by 1e12 because for stETH
+        /// pool liquidationDepositAmount is represented in 6 decimals in storage and in Service configuration.
+        uint256 wadLiquidationDepositAmount = liquidationDepositAmount * 1e12;
 
         (uint256 collateral, uint256 notional, uint256 openingFeeAmount) = SwapLogicGenOne.calculateSwapAmount(
             ctx.tenor,
@@ -369,7 +371,7 @@ abstract contract AmmOpenSwapServiceGenOne {
                 openingFeeLPAmount,
                 openingFeeTreasuryAmount,
                 iporPublicationFee,
-                wadLiquidationDepositAmount,
+                liquidationDepositAmount,
                 accruedIndex
             );
     }

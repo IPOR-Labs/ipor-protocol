@@ -92,20 +92,20 @@ contract ForkAmmStEthEventsTest is TestForkCommons {
             amounts: OpenSwapAmount({
                 accountInputTokenAmount: expectedAccountInputTokenAmount,
                 totalAmount: 100000000000000000,
-                collateral: 89965492687736186,
-                notional: 899654926877361860,
-                openingFeeLPAmount: 17253656131894,
-                openingFeeTreasuryAmount: 17253656131895,
+                collateral: 88965876102316920,
+                notional: 889658761023169200,
+                openingFeeLPAmount: 17061948841540,
+                openingFeeTreasuryAmount: 17061948841540,
                 iporPublicationFee: 10000000000000000,
-                liquidationDepositAmount: 25000000000000000000
+                liquidationDepositAmount: 1000000000000000
             }),
             openTimestamp: 1699867019,
             endTimestamp: 1702286219,
             indicator: IporSwapIndicator({
                 iporIndexValue: 0,
                 ibtPrice: 1000000000000000000,
-                ibtQuantity: 899654926877361860,
-                fixedInterestRate: 20000699314353823
+                ibtQuantity: 889658761023169200,
+                fixedInterestRate: 20000691543764546
             })
         });
         //when
@@ -156,20 +156,20 @@ contract ForkAmmStEthEventsTest is TestForkCommons {
             amounts: OpenSwapAmount({
                 accountInputTokenAmount: expectedAccountInputTokenAmount,
                 totalAmount: 100000000000000000,
-                collateral: 89965492687736186,
-                notional: 899654926877361860,
-                openingFeeLPAmount: 17253656131894,
-                openingFeeTreasuryAmount: 17253656131895,
+                collateral: 88965876102316920,
+                notional: 889658761023169200,
+                openingFeeLPAmount: 17061948841540,
+                openingFeeTreasuryAmount: 17061948841540,
                 iporPublicationFee: 10000000000000000,
-                liquidationDepositAmount: 25000000000000000000
+                liquidationDepositAmount: 1000000000000000
             }),
             openTimestamp: 1699867019,
             endTimestamp: 1702286219,
             indicator: IporSwapIndicator({
                 iporIndexValue: 0,
                 ibtPrice: 1000000000000000000,
-                ibtQuantity: 899654926877361860,
-                fixedInterestRate: 20000699314353823
+                ibtQuantity: 889658761023169200,
+                fixedInterestRate: 20000691543764546
             })
         });
         //when
@@ -225,20 +225,20 @@ contract ForkAmmStEthEventsTest is TestForkCommons {
             amounts: OpenSwapAmount({
                 accountInputTokenAmount: expectedAccountInputTokenAmount,
                 totalAmount: 100000000000000000,
-                collateral: 89965492687736186,
-                notional: 899654926877361860,
-                openingFeeLPAmount: 17253656131894,
-                openingFeeTreasuryAmount: 17253656131895,
+                collateral: 88965876102316920,
+                notional: 889658761023169200,
+                openingFeeLPAmount: 17061948841540,
+                openingFeeTreasuryAmount: 17061948841540,
                 iporPublicationFee: 10000000000000000,
-                liquidationDepositAmount: 25000000000000000000
+                liquidationDepositAmount: 1000000000000000
             }),
             openTimestamp: 1699867019,
             endTimestamp: 1702286219,
             indicator: IporSwapIndicator({
                 iporIndexValue: 0,
                 ibtPrice: 1000000000000000000,
-                ibtQuantity: 899654926877361860,
-                fixedInterestRate: 20000699314353823
+                ibtQuantity: 889658761023169200,
+                fixedInterestRate: 20000691543764546
             })
         });
         //when
@@ -294,20 +294,20 @@ contract ForkAmmStEthEventsTest is TestForkCommons {
             amounts: OpenSwapAmount({
                 accountInputTokenAmount: expectedAccountInputTokenAmount,
                 totalAmount: 100000000000000000,
-                collateral: 89965492687736186,
-                notional: 899654926877361860,
-                openingFeeLPAmount: 17253656131894,
-                openingFeeTreasuryAmount: 17253656131895,
+                collateral: 88965876102316920,
+                notional: 889658761023169200,
+                openingFeeLPAmount: 17061948841540,
+                openingFeeTreasuryAmount: 17061948841540,
                 iporPublicationFee: 10000000000000000,
-                liquidationDepositAmount: 25000000000000000000
+                liquidationDepositAmount: 1000000000000000
             }),
             openTimestamp: 1699867019,
             endTimestamp: 1702286219,
             indicator: IporSwapIndicator({
                 iporIndexValue: 0,
                 ibtPrice: 1000000000000000000,
-                ibtQuantity: 899654926877361860,
-                fixedInterestRate: 20000699314353823
+                ibtQuantity: 889658761023169200,
+                fixedInterestRate: 20000691543764546
             })
         });
         //when
@@ -363,20 +363,20 @@ contract ForkAmmStEthEventsTest is TestForkCommons {
             amounts: OpenSwapAmount({
                 accountInputTokenAmount: expectedAccountInputTokenAmount,
                 totalAmount: 100000000000000000,
-                collateral: 89965492687736186,
-                notional: 899654926877361860,
-                openingFeeLPAmount: 17253656131894,
-                openingFeeTreasuryAmount: 17253656131895,
+                collateral: 88965876102316920,
+                notional: 889658761023169200,
+                openingFeeLPAmount: 17061948841540,
+                openingFeeTreasuryAmount: 17061948841540,
                 iporPublicationFee: 10000000000000000,
-                liquidationDepositAmount: 25000000000000000000
+                liquidationDepositAmount: 1000000000000000
             }),
             openTimestamp: 1699867019,
             endTimestamp: 1702286219,
             indicator: IporSwapIndicator({
                 iporIndexValue: 0,
                 ibtPrice: 1000000000000000000,
-                ibtQuantity: 899654926877361860,
-                fixedInterestRate: 3694300685646177
+                ibtQuantity: 889658761023169200,
+                fixedInterestRate: 3694308456235454
             })
         });
         //when
@@ -427,20 +427,20 @@ contract ForkAmmStEthEventsTest is TestForkCommons {
             amounts: OpenSwapAmount({
                 accountInputTokenAmount: expectedAccountInputTokenAmount,
                 totalAmount: 100000000000000000,
-                collateral: 89965492687736186,
-                notional: 899654926877361860,
-                openingFeeLPAmount: 17253656131894,
-                openingFeeTreasuryAmount: 17253656131895,
+                collateral: 88965876102316920,
+                notional: 889658761023169200,
+                openingFeeLPAmount: 17061948841540,
+                openingFeeTreasuryAmount: 17061948841540,
                 iporPublicationFee: 10000000000000000,
-                liquidationDepositAmount: 25000000000000000000
+                liquidationDepositAmount: 1000000000000000
             }),
             openTimestamp: 1699867019,
             endTimestamp: 1702286219,
             indicator: IporSwapIndicator({
                 iporIndexValue: 0,
                 ibtPrice: 1000000000000000000,
-                ibtQuantity: 899654926877361860,
-                fixedInterestRate: 3694300685646177
+                ibtQuantity: 889658761023169200,
+                fixedInterestRate: 3694308456235454
             })
         });
         //when
@@ -496,20 +496,20 @@ contract ForkAmmStEthEventsTest is TestForkCommons {
             amounts: OpenSwapAmount({
                 accountInputTokenAmount: expectedAccountInputTokenAmount,
                 totalAmount: 100000000000000000,
-                collateral: 89965492687736186,
-                notional: 899654926877361860,
-                openingFeeLPAmount: 17253656131894,
-                openingFeeTreasuryAmount: 17253656131895,
+                collateral: 88965876102316920,
+                notional: 889658761023169200,
+                openingFeeLPAmount: 17061948841540,
+                openingFeeTreasuryAmount: 17061948841540,
                 iporPublicationFee: 10000000000000000,
-                liquidationDepositAmount: 25000000000000000000
+                liquidationDepositAmount: 1000000000000000
             }),
             openTimestamp: 1699867019,
             endTimestamp: 1702286219,
             indicator: IporSwapIndicator({
                 iporIndexValue: 0,
                 ibtPrice: 1000000000000000000,
-                ibtQuantity: 899654926877361860,
-                fixedInterestRate: 3694300685646177
+                ibtQuantity: 889658761023169200,
+                fixedInterestRate: 3694308456235454
             })
         });
         //when
@@ -565,20 +565,20 @@ contract ForkAmmStEthEventsTest is TestForkCommons {
             amounts: OpenSwapAmount({
                 accountInputTokenAmount: expectedAccountInputTokenAmount,
                 totalAmount: 100000000000000000,
-                collateral: 89965492687736186,
-                notional: 899654926877361860,
-                openingFeeLPAmount: 17253656131894,
-                openingFeeTreasuryAmount: 17253656131895,
+                collateral: 88965876102316920,
+                notional: 889658761023169200,
+                openingFeeLPAmount: 17061948841540,
+                openingFeeTreasuryAmount: 17061948841540,
                 iporPublicationFee: 10000000000000000,
-                liquidationDepositAmount: 25000000000000000000
+                liquidationDepositAmount: 1000000000000000
             }),
             openTimestamp: 1699867019,
             endTimestamp: 1702286219,
             indicator: IporSwapIndicator({
                 iporIndexValue: 0,
                 ibtPrice: 1000000000000000000,
-                ibtQuantity: 899654926877361860,
-                fixedInterestRate: 3694300685646177
+                ibtQuantity: 889658761023169200,
+                fixedInterestRate: 3694308456235454
             })
         });
         //when
@@ -650,9 +650,10 @@ contract ForkAmmStEthEventsTest is TestForkCommons {
             asset: stETH,
             closeTimestamp: 1705051019,
             liquidator: liquidator,
-            transferredToBuyer: 86964645057802772,
-            transferredToLiquidator: 25000000000000000000
+            transferredToBuyer: 85998372362982978,
+            transferredToLiquidator: 1000000000000000
         });
+
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             liquidator,
             swapPfIds,
@@ -719,8 +720,8 @@ contract ForkAmmStEthEventsTest is TestForkCommons {
             asset: stETH,
             closeTimestamp: 1705051019,
             liquidator: liquidator,
-            transferredToBuyer: 90472359266062921,
-            transferredToLiquidator: 25000000000000000000
+            transferredToBuyer: 89467111965879705,
+            transferredToLiquidator: 1000000000000000
         });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             liquidator,
@@ -788,8 +789,8 @@ contract ForkAmmStEthEventsTest is TestForkCommons {
             asset: stETH,
             closeTimestamp: 1705051019,
             liquidator: liquidator,
-            transferredToBuyer: 86964645057802772,
-            transferredToLiquidator: 25000000000000000000
+            transferredToBuyer: 85998372362982978,
+            transferredToLiquidator: 1000000000000000
         });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             liquidator,
@@ -857,8 +858,8 @@ contract ForkAmmStEthEventsTest is TestForkCommons {
             asset: stETH,
             closeTimestamp: 1705051019,
             liquidator: liquidator,
-            transferredToBuyer: 90472359266062921,
-            transferredToLiquidator: 25000000000000000000
+            transferredToBuyer: 89467111965879705,
+            transferredToLiquidator: 1000000000000000
         });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             liquidator,
@@ -921,8 +922,8 @@ contract ForkAmmStEthEventsTest is TestForkCommons {
             asset: stETH,
             closeTimestamp: 1705051019,
             liquidator: liquidator,
-            transferredToBuyer: 86964645057802772,
-            transferredToLiquidator: 25000000000000000000
+            transferredToBuyer: 85998372362982978,
+            transferredToLiquidator: 1000000000000000
         });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             liquidator,
@@ -985,8 +986,8 @@ contract ForkAmmStEthEventsTest is TestForkCommons {
             asset: stETH,
             closeTimestamp: 1705051019,
             liquidator: liquidator,
-            transferredToBuyer: 90472359266062921,
-            transferredToLiquidator: 25000000000000000000
+            transferredToBuyer: 89467111965879705,
+            transferredToLiquidator: 1000000000000000
         });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             liquidator,
@@ -1054,8 +1055,8 @@ contract ForkAmmStEthEventsTest is TestForkCommons {
             asset: stETH,
             closeTimestamp: 1705051019,
             liquidator: liquidator,
-            transferredToBuyer: 86964645057802772,
-            transferredToLiquidator: 25000000000000000000
+            transferredToBuyer: 85998372362982978,
+            transferredToLiquidator: 1000000000000000
         });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             liquidator,
@@ -1123,8 +1124,8 @@ contract ForkAmmStEthEventsTest is TestForkCommons {
             asset: stETH,
             closeTimestamp: 1705051019,
             liquidator: liquidator,
-            transferredToBuyer: 90472359266062921,
-            transferredToLiquidator: 25000000000000000000
+            transferredToBuyer: 89467111965879705,
+            transferredToLiquidator: 1000000000000000
         });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             liquidator,

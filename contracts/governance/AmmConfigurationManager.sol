@@ -120,7 +120,7 @@ library AmmConfigurationManager {
     /// @notice Sets AMM Pools Params.
     /// @param asset address of the asset (pool)
     /// @param newMaxLiquidityPoolBalance maximum liquidity pool balance
-    /// @param newAutoRebalanceThreshold auto rebalance threshold (for USDT, USDC, DAI in thousands)
+    /// @param newAutoRebalanceThresholdInThousands auto rebalance threshold (for USDT, USDC, DAI in thousands)
     /// @param newAmmTreasuryAndAssetManagementRatio AMM treasury and asset management ratio
     /// @dev Allowed only for the owner of the Ipor Protocol Router
     function setAmmPoolsParams(

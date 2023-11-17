@@ -46,6 +46,7 @@ library AmmTypes {
         /// @notice Liquidation deposit is retained when the swap is opened. It is then paid back to agent who closes the derivative at maturity.
         /// It can be both trader or community member. Trader receives the deposit back when he chooses to close the derivative before maturity.
         /// @dev value represented WITHOUT 18 decimals for USDT, USDC, DAI pool. Notice! Value represented in 6 decimals for stETH pool.
+        /// @dev Example value in 6 decimals: 25000000 (in 6 decimals) = 25 stETH = 25.000000
         uint256 liquidationDepositAmount;
         /// @notice Opening fee amount part which is allocated in Liquidity Pool Balance. This fee is calculated as a rate of the swap's collateral.
         /// @dev value represented in 18 decimals

@@ -36,7 +36,7 @@ library AmmTypesGenOne {
         uint256 fixedInterestRate;
         /// @notice Liquidation deposit amount
         /// @dev value represented in 18 decimals
-        uint256 liquidationDepositAmount;
+        uint256 wadLiquidationDepositAmount;
         /// @notice State of the swap
         /// @dev 0 - INACTIVE, 1 - ACTIVE
         IporTypes.SwapState state;
@@ -56,8 +56,8 @@ library AmmTypesGenOne {
         uint256 iporPublicationFee;
         /// @notice maximum swap collateral amount, represented in 18 decimals.
         uint256 maxSwapCollateralAmount;
-        /// @notice liquidation deposit amount, represented with 18 decimals. Example 25000000000000000000 = 25 units.
-        uint256 wadLiquidationDepositAmount;
+        /// @notice liquidation deposit amount, represented with 6 decimals. Example 25000000 = 25 units = 25.000000.
+        uint256 liquidationDepositAmount;
         /// @notice minimum leverage, represented in 18 decimals.
         uint256 minLeverage;
         /// @notice swap's opening fee rate, represented in 18 decimals. 1e18 = 100%

@@ -1,22 +1,21 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
+import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+import "../../interfaces/IProxyImplementation.sol";
 import "../../interfaces/types/AmmStorageTypes.sol";
 import "../interfaces/IAmmStorageGenOne.sol";
-import "../../interfaces/IProxyImplementation.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/PaginationUtils.sol";
 import "../../libraries/IporContractValidator.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 import "../../amm/libraries/types/AmmInternalTypes.sol";
-import "../types/StorageTypesGenOne.sol";
 import "../../amm/libraries/types/StorageInternalTypes.sol";
 import "../../amm/libraries/SoapIndicatorRebalanceLogic.sol";
+import "../types/StorageTypesGenOne.sol";
 
 /// @dev all stored values related to tokens are in 18 decimals.
 contract AmmStorageGenOne is
@@ -132,21 +131,21 @@ contract AmmStorageGenOne is
         }
 
         return
-            AmmTypesGenOne.Swap(
-                swap.id,
-                swap.buyer,
-                swap.openTimestamp,
-                swap.tenor,
-                direction,
-                swap.idsIndex,
-                swap.collateral,
-                swap.notional,
-                swap.ibtQuantity,
-                swap.fixedInterestRate,
+            AmmTypesGenOne.Swap({
+                id: swap.id,
+                buyer: swap.buyer,
+                openTimestamp: swap.openTimestamp,
+                tenor: swap.tenor,
+                direction: direction,
+                idsIndex: swap.idsIndex,
+                collateral: swap.collateral,
+                notional: swap.notional,
+                ibtQuantity: swap.ibtQuantity,
+                fixedInterestRate: swap.fixedInterestRate,
                 /// @dev to achieve 18 decimals precision we multiply by 1e12 because for stETH pool liquidationDepositAmount is represented in 6 decimals in storage.
-                uint256(swap.liquidationDepositAmount) * 1e12,
-                swap.state
-            );
+                wadLiquidationDepositAmount: uint256(swap.liquidationDepositAmount) * 1e12,
+                state: swap.state
+            });
     }
 
     function getSwapsPayFixed(

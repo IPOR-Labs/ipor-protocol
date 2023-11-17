@@ -37,7 +37,7 @@ library AmmInternalTypes {
         /// @notice Refundable deposit blocked for the entity that will close the swap.
         /// For more information on how the liquidations work refer to the documentation.
         /// https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/liquidations
-        /// @dev value represented without decimals for USDT, uSDC, DAI, with decimals for stETH, as an integer.
+        /// @dev value represented without decimals for USDT, USDC, DAI, with 6 decimals for stETH, as an integer.
         uint256 liquidationDepositAmount;
         /// @notice The struct describing the IPOR and its params calculated for the time when it was most recently updated and the change that took place since the update.
         /// Namely, the interest that would be computed into IBT should the rebalance occur.

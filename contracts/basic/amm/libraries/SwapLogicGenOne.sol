@@ -4,14 +4,13 @@ import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../../../interfaces/types/IporTypes.sol";
 import "../../../libraries/math/IporMath.sol";
 import "../../../libraries/math/InterestRates.sol";
-import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/errors/AmmErrors.sol";
+import "../../../interfaces/types/AmmTypes.sol";
+import "../../../security/OwnerManager.sol";
+import "../../../governance/AmmConfigurationManager.sol";
 import "../../../libraries/RiskManagementLogic.sol";
 import "../../../amm/libraries/IporSwapLogic.sol";
-import "../../../governance/AmmConfigurationManager.sol";
-import "../../../security/OwnerManager.sol";
 import "../../types/AmmTypesGenOne.sol";
-import "../../../interfaces/types/AmmTypes.sol";
 
 /// @title Core logic for IPOR Swap
 library SwapLogicGenOne {
@@ -226,7 +225,6 @@ library SwapLogicGenOne {
 
         return (AmmTypes.SwapClosableStatus.SWAP_IS_CLOSABLE, false);
     }
-
 
     /// @notice Calculates the swap unwind opening fee amount for a given swap, closing timestamp and IBT price from IporOracle.
     /// @param swap Swap structure

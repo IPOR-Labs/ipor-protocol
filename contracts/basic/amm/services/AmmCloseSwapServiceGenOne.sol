@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
-import "forge-std/console2.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
@@ -8,25 +7,17 @@ import "../../../interfaces/types/IporTypes.sol";
 import "../../../interfaces/types/AmmTypes.sol";
 import "../../../interfaces/IIporOracle.sol";
 import "../../../interfaces/IAmmTreasury.sol";
-import "../../interfaces/IAmmStorageGenOne.sol";
-import "../../../interfaces/IAmmCloseSwapService.sol";
-import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/math/IporMath.sol";
 import "../../../libraries/IporContractValidator.sol";
-import "../../../libraries/AssetManagementLogic.sol";
 import "../../../libraries/AmmLib.sol";
-import "../../../governance/AmmConfigurationManager.sol";
-import "../../../security/OwnerManager.sol";
-import "../libraries/SwapEventsGenOne.sol";
-import "../../../amm/libraries/types/AmmInternalTypes.sol";
-import "../../../amm/spread/ISpreadCloseSwapService.sol";
-import "../libraries/SwapLogicGenOne.sol";
+import "../../interfaces/IAmmStorageGenOne.sol";
+import "../../interfaces/IAmmTreasuryGenOne.sol";
 import "../../types/AmmTypesGenOne.sol";
 import "../../events/AmmEventsGenOne.sol";
+import "../../../amm/libraries/types/AmmInternalTypes.sol";
 import "../../../basic/spread/SpreadGenOne.sol";
-import "../../interfaces/IAmmTreasuryGenOne.sol";
+import "../libraries/SwapLogicGenOne.sol";
 
-//TODO: other names proposition: AmmCloseSwapS1G1, AmmCloseSwapServiceOneGenOne, AmmCloseSwapServiceOneGenerationOne
 abstract contract AmmCloseSwapServiceGenOne {
     using Address for address;
     using IporContractValidator for address;
@@ -541,7 +532,7 @@ abstract contract AmmCloseSwapServiceGenOne {
             (transferredToBuyer, payoutForLiquidator) = _transferDerivativeAmount(
                 beneficiary,
                 swap.buyer,
-                swap.liquidationDepositAmount,
+                swap.wadLiquidationDepositAmount,
                 swap.collateral + absPnlValue
             );
         } else {
@@ -549,7 +540,7 @@ abstract contract AmmCloseSwapServiceGenOne {
             (transferredToBuyer, payoutForLiquidator) = _transferDerivativeAmount(
                 beneficiary,
                 swap.buyer,
-                swap.liquidationDepositAmount,
+                swap.wadLiquidationDepositAmount,
                 swap.collateral - absPnlValue
             );
         }

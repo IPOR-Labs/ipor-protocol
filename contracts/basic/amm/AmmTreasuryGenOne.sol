@@ -1,21 +1,20 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
-import "forge-std/console2.sol";
-import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../../interfaces/IProxyImplementation.sol";
+import "../interfaces/IAmmTreasuryGenOne.sol";
+import "../interfaces/IAmmStorageGenOne.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/IporContractValidator.sol";
 import "../../security/PauseManager.sol";
 import "../../security/IporOwnableUpgradeable.sol";
-import "../interfaces/IAmmTreasuryGenOne.sol";
-import "../interfaces/IAmmStorageGenOne.sol";
 import "../types/StorageTypesGenOne.sol";
 
 contract AmmTreasuryGenOne is
