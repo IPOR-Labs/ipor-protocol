@@ -1240,7 +1240,9 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
 
-    function testShouldNOTChangeExchangeRateWhenOpenBecauseOpeningFeeIsZeroSwap28daysStEth() public {
+    function testShouldNOTChangeExchangeRateWhenOpenBecauseOpeningFeeAndLiquidationDepositIsZeroSwap28daysStEth()
+        public
+    {
         //given
         _init();
 
@@ -1291,7 +1293,9 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
 
-    function testShouldNOTChangeExchangeRateWhenOpenBecauseOpeningFeeIsZeroSwap28daysWEth() public {
+    function testShouldNOTChangeExchangeRateWhenOpenBecauseOpeningFeeAndLiquidationDepositIsZeroSwap28daysWEth()
+        public
+    {
         //given
         _init();
 
@@ -1342,7 +1346,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
 
-    function testShouldNOTChangeExchangeRateWhenOpenBecauseOpeningFeeIsZeroSwap28daysEth() public {
+    function testShouldNOTChangeExchangeRateWhenOpenBecauseOpeningFeeAndLiquidationDepositIsZeroSwap28daysEth() public {
         //given
         _init();
 
@@ -1388,7 +1392,9 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
 
-    function testShouldNOTChangeExchangeRateWhenOpenBecauseOpeningFeeIsZeroSwap28dayswstEth() public {
+    function testShouldNOTChangeExchangeRateWhenOpenBecauseOpeningFeeAndLiquidationDepositIsZeroSwap28dayswstEth()
+        public
+    {
         //given
         _init();
 
