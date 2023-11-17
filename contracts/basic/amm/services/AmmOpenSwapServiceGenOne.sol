@@ -39,11 +39,13 @@ abstract contract AmmOpenSwapServiceGenOne {
     address public immutable ammStorage;
     address public immutable ammTreasury;
 
+    /// @dev IPOR publication fee in underlying token (asset)
     uint256 public immutable iporPublicationFee;
     uint256 public immutable maxSwapCollateralAmount;
     uint256 public immutable wadLiquidationDepositAmount;
     uint256 public immutable minLeverage;
     uint256 public immutable openingFeeRate;
+
     uint256 public immutable openingFeeTreasuryPortionRate;
 
     struct Context {
@@ -321,6 +323,7 @@ abstract contract AmmOpenSwapServiceGenOne {
     ) internal virtual returns (uint256 accountInputTokenAmount);
 
     function _validateTotalAmount(address accountInputToken, uint256 totalAmount) internal view virtual;
+
     function _validateAccountInputToken(address accountInputToken) internal view virtual;
 
     function _beforeOpenSwap(
@@ -395,7 +398,8 @@ abstract contract AmmOpenSwapServiceGenOne {
                 openingFeeLPAmount: newSwap.openingFeeLPAmount,
                 openingFeeTreasuryAmount: newSwap.openingFeeTreasuryAmount,
                 iporPublicationFee: iporPublicationFeeAmount,
-                liquidationDepositAmount: newSwap.liquidationDepositAmount * 1e18
+                /// @dev to achieve 18 decimals precision we multiply by 1e12 because for stETH pool liquidationDepositAmount is represented in 6 decimals in storage.
+                liquidationDepositAmount: newSwap.liquidationDepositAmount * 1e12
             }),
             newSwap.openTimestamp,
             newSwap.openTimestamp + IporSwapLogic.getTenorInSeconds(newSwap.tenor),

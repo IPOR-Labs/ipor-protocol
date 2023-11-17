@@ -9,7 +9,6 @@ import "../../interfaces/types/AmmStorageTypes.sol";
 import "../../amm/libraries/types/AmmInternalTypes.sol";
 import "../types/AmmTypesGenOne.sol";
 
-
 /// @title Interface for interaction with the IPOR AMM Storage, contract responsible for managing AMM storage.
 interface IAmmStorageGenOne {
     /// @notice Returns the current version of AmmTreasury Storage
@@ -42,7 +41,8 @@ interface IAmmStorageGenOne {
     /// # Pay Fixed Total Collateral
     /// # Receive Fixed Total Collateral
     /// # Liquidity Pool and Vault balances.
-    /// @return balance structure {StorageInternalTypesGenOne.Balance}
+    /// All balances are represented in 18 decimals.
+    /// @return balance structure {AmmTypesGenOne.Balance}
     function getBalance() external view returns (AmmTypesGenOne.Balance memory);
 
     /// @notice Gets the balance for open swap

@@ -143,7 +143,8 @@ contract AmmStorageGenOne is
                 swap.notional,
                 swap.ibtQuantity,
                 swap.fixedInterestRate,
-                uint256(swap.liquidationDepositAmount) * 1e18,
+                /// @dev to achieve 18 decimals precision we multiply by 1e12 because for stETH pool liquidationDepositAmount is represented in 6 decimals in storage.
+                uint256(swap.liquidationDepositAmount) * 1e12,
                 swap.state
             );
     }
@@ -372,7 +373,8 @@ contract AmmStorageGenOne is
                 swap.notional,
                 swap.ibtQuantity,
                 swap.fixedInterestRate,
-                uint256(swap.liquidationDepositAmount) * 1e18,
+                /// @dev to achieve 18 decimals precision we multiply by 1e12 because for stETH pool liquidationDepositAmount is represented in 6 decimals in storage.
+                uint256(swap.liquidationDepositAmount) * 1e12,
                 swaps[id].state
             );
             unchecked {

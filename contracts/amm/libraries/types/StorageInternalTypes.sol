@@ -29,7 +29,8 @@ library StorageInternalTypes {
         /// @dev value represented in 18 decimals
         uint64 fixedInterestRate;
         /// @notice Liquidation deposit amount
-        /// @dev value represented WITHOUT decimals
+        /// @dev value represented WITHOUT decimals for USDT, USDC, DAI pool. Notice! Value represented in 6 decimals for stETH pool.
+        /// @dev Value in 6 decimals example: 25000000 (in 6 decimals) = 25.000000 = 25 stETH
         uint32 liquidationDepositAmount;
         /// @notice State of the swap
         /// @dev 0 - INACTIVE, 1 - ACTIVE

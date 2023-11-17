@@ -48,13 +48,21 @@ abstract contract AmmCloseSwapServiceGenOne {
     address public immutable ammStorage;
     address public immutable ammTreasury;
 
+    /// @dev Unwinding fee rate, value represented in 18 decimals. Represents percentage of swap notional.
     uint256 public immutable unwindingFeeRate;
+    /// @dev Unwinding fee treasury portion rate, value represented in 18 decimals. Represents percentage of unwinding fee, which is transferred to treasury.
     uint256 public immutable unwindingFeeTreasuryPortionRate;
+    /// @dev Maximum length of liquidated swaps per leg, value represented WITHOUT 18 decimals.
     uint256 public immutable liquidationLegLimit;
+    /// @dev Time in seconds before maturity allowed to close swap by community.
     uint256 public immutable timeBeforeMaturityAllowedToCloseSwapByCommunity;
+    /// @dev Time in seconds before maturity allowed to close swap by buyer.
     uint256 public immutable timeBeforeMaturityAllowedToCloseSwapByBuyer;
+    /// @dev Minimum liquidation threshold to close swap before maturity by community, value represented in 18 decimals.
     uint256 public immutable minLiquidationThresholdToCloseBeforeMaturityByCommunity;
+    /// @dev Minimum liquidation threshold to close swap before maturity by buyer, value represented in 18 decimals.
     uint256 public immutable minLiquidationThresholdToCloseBeforeMaturityByBuyer;
+    /// @dev Minimum leverage, value represented in 18 decimals.
     uint256 public immutable minLeverage;
 
     constructor(
