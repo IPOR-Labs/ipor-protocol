@@ -5,9 +5,9 @@ import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "forge-std/Test.sol";
 import "../mocks/EmptyRouterImplementation.sol";
 import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/amm-eth/AmmTreasuryEth.sol";
-import "../../contracts/amm-eth/AmmPoolsServiceEth.sol";
-import "../../contracts/amm-eth/AmmPoolsLensEth.sol";
+import "../../contracts/amm-eth/AmmTreasuryStEth.sol";
+import "../../contracts/amm-eth/AmmPoolsServiceStEth.sol";
+import "../../contracts/amm-eth/AmmPoolsLensStEth.sol";
 import "../../contracts/interfaces/IAmmGovernanceLens.sol";
 import "../../contracts/amm-common/AmmGovernanceService.sol";
 import "../../contracts/router/IporProtocolRouter.sol";
@@ -31,11 +31,11 @@ contract TestEthMarketCommons is Test {
 
     address public ipstEth;
     address payable public iporProtocolRouter;
-    address public ammTreasuryEth;
+    address public ammTreasuryStEth;
     address public ammStorageStEth;
     address public ammGovernanceService;
-    address public ammPoolsServiceEth;
-    address public ammPoolsLensEth;
+    address public ammPoolsServiceStEth;
+    address public ammPoolsLensStEth;
 
     // tests data
     address public userOne = address(11);
@@ -49,8 +49,8 @@ contract TestEthMarketCommons is Test {
         _createDummyAmmTreasuryStEth();
         _createAmmStorageStEth();
         _upgradeAmmTreasuryStEth();
-        _createAmmPoolServiceEth();
-        _createAmmPoolsLensEth();
+        _createAmmPoolServiceStEth();
+        _createAmmPoolsLensStEth();
         _createAmmGovernanceService();
         _updateIporRouterImplementation();
 
@@ -78,50 +78,50 @@ contract TestEthMarketCommons is Test {
 
     function _createDummyAmmTreasuryStEth() private {
         vm.prank(owner);
-        AmmTreasuryEth impl = new AmmTreasuryEth(stEth, iporProtocolRouter, defaultAnvilAddress);
+        AmmTreasuryStEth impl = new AmmTreasuryStEth(stEth, iporProtocolRouter, defaultAnvilAddress);
         ERC1967Proxy proxy = _constructProxy(address(impl));
-        ammTreasuryEth = address(proxy);
+        ammTreasuryStEth = address(proxy);
     }
 
     function _createAmmStorageStEth() private {
         vm.startPrank(owner);
-        AmmStorageGenOne impl = new AmmStorageGenOne(iporProtocolRouter, ammTreasuryEth);
+        AmmStorageGenOne impl = new AmmStorageGenOne(iporProtocolRouter, ammTreasuryStEth);
         ERC1967Proxy proxy = new ERC1967Proxy(address(impl), abi.encodeWithSignature("initialize()"));
         ammStorageStEth = address(proxy);
     }
 
     function _upgradeAmmTreasuryStEth() private {
-        address impl = address(new AmmTreasuryEth(stEth, iporProtocolRouter, ammStorageStEth));
-        AmmTreasuryEth(ammTreasuryEth).upgradeTo(impl);
+        address impl = address(new AmmTreasuryStEth(stEth, iporProtocolRouter, ammStorageStEth));
+        AmmTreasuryStEth(ammTreasuryStEth).upgradeTo(impl);
     }
 
-    function _createAmmTreasuryEth() private {
+    function _createAmmTreasuryStEth() private {
         vm.prank(owner);
-        AmmTreasuryEth impl = new AmmTreasuryEth(stEth, iporProtocolRouter, userOne);
+        AmmTreasuryStEth impl = new AmmTreasuryStEth(stEth, iporProtocolRouter, userOne);
         ERC1967Proxy proxy = _constructProxy(address(impl));
-        ammTreasuryEth = address(proxy);
+        ammTreasuryStEth = address(proxy);
     }
 
-    function _createAmmPoolServiceEth() private {
+    function _createAmmPoolServiceStEth() private {
         vm.startPrank(owner);
-        AmmPoolsServiceEth pool = new AmmPoolsServiceEth(
+        AmmPoolsServiceStEth pool = new AmmPoolsServiceStEth(
             stEth,
             wEth,
             ipstEth,
-            ammTreasuryEth,
+            ammTreasuryStEth,
             ammStorageStEth,
             iporOracle,
             iporProtocolRouter,
             redeemFeeRateEth
         );
-        ammPoolsServiceEth = address(pool);
+        ammPoolsServiceStEth = address(pool);
         vm.stopPrank();
     }
 
-    function _createAmmPoolsLensEth() private {
+    function _createAmmPoolsLensStEth() private {
         vm.startPrank(owner);
-        AmmPoolsLensEth lens = new AmmPoolsLensEth(stEth, ipstEth, ammTreasuryEth, ammStorageStEth, iporOracle);
-        ammPoolsLensEth = address(lens);
+        AmmPoolsLensStEth lens = new AmmPoolsLensStEth(stEth, ipstEth, ammTreasuryStEth, ammStorageStEth, iporOracle);
+        ammPoolsLensStEth = address(lens);
         vm.stopPrank();
     }
 
@@ -196,8 +196,8 @@ contract TestEthMarketCommons is Test {
                 powerTokenLens: _getUserAddress(123),
                 flowService: _getUserAddress(123),
                 stakeService: _getUserAddress(123),
-                ammPoolsServiceEth: ammPoolsServiceEth,
-                ammPoolsLensEth: ammPoolsLensEth
+                ammPoolsServiceStEth: ammPoolsServiceStEth,
+                ammPoolsLensStEth: ammPoolsLensStEth
             })
         );
 

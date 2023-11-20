@@ -10,14 +10,14 @@ contract IporProtocolRouterBuilder is Test {
     struct BuilderData {
         address ammSwapsLens;
         address ammPoolsLens;
-        address ammPoolsLensEth;
+        address ammPoolsLensStEth;
         address assetManagementLens;
         address ammOpenSwapService;
         address ammOpenSwapServiceStEth;
         address ammCloseSwapService;
         address ammCloseSwapServiceStEth;
         address ammPoolsService;
-        address ammPoolsServiceEth;
+        address ammPoolsServiceStEth;
         address ammGovernanceService;
         address liquidityMiningLens;
         address powerTokenLens;
@@ -100,8 +100,8 @@ contract IporProtocolRouterBuilder is Test {
             powerTokenLens: builderData.powerTokenLens,
             flowService: builderData.flowService,
             stakeService: builderData.stakeService,
-            ammPoolsServiceEth: builderData.ammPoolsServiceEth,
-            ammPoolsLensEth: builderData.ammPoolsLensEth
+            ammPoolsServiceStEth: builderData.ammPoolsServiceStEth,
+            ammPoolsLensStEth: builderData.ammPoolsLensStEth
         });
 
         address payable proxy = _constructProxy(new IporProtocolRouter(deployedContracts));
@@ -118,14 +118,14 @@ contract IporProtocolRouterBuilder is Test {
         IporProtocolRouter.DeployedContracts memory deployedContracts = IporProtocolRouter.DeployedContracts({
             ammSwapsLens: builderData.ammSwapsLens,
             ammPoolsLens: builderData.ammPoolsLens,
-            ammPoolsLensEth: builderData.ammPoolsLensEth,
+            ammPoolsLensStEth: builderData.ammPoolsLensStEth,
             assetManagementLens: builderData.assetManagementLens,
             ammOpenSwapService: builderData.ammOpenSwapService,
             ammOpenSwapServiceStEth: builderData.ammOpenSwapServiceStEth,
             ammCloseSwapService: builderData.ammCloseSwapService,
             ammCloseSwapServiceStEth: builderData.ammCloseSwapServiceStEth,
             ammPoolsService: builderData.ammPoolsService,
-            ammPoolsServiceEth: builderData.ammPoolsServiceEth,
+            ammPoolsServiceStEth: builderData.ammPoolsServiceStEth,
             ammGovernanceService: builderData.ammGovernanceService,
             liquidityMiningLens: builderData.liquidityMiningLens,
             powerTokenLens: builderData.powerTokenLens,

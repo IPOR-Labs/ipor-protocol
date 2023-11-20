@@ -19,14 +19,14 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
 
         uint256 provideAmount = 1 ether;
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         // when
         vm.prank(user);
-        IAmmPoolsServiceEth(iporProtocolRouterProxy).provideLiquidityStEth(user, provideAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouterProxy).provideLiquidityStEth(user, provideAmount);
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -39,14 +39,14 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
 
         uint256 provideAmount = 1 ether;
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         // when
         vm.prank(user);
-        IAmmPoolsServiceEth(iporProtocolRouterProxy).provideLiquidityWEth(user, provideAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouterProxy).provideLiquidityWEth(user, provideAmount);
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -59,14 +59,14 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
 
         uint256 provideAmount = 1 ether;
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         // when
         vm.prank(user);
-        IAmmPoolsServiceEth(iporProtocolRouterProxy).provideLiquidityEth{value: provideAmount}(user, provideAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouterProxy).provideLiquidityEth{value: provideAmount}(user, provideAmount);
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -79,17 +79,17 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
 
         uint256 provideAmount = 1 ether;
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         // when
         vm.startPrank(user);
-        IAmmPoolsServiceEth(iporProtocolRouterProxy).provideLiquidityStEth(user, provideAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouterProxy).provideLiquidityStEth(user, provideAmount);
         uint256 ipstEthAmount = IERC20(ipstETH).balanceOf(user);
-        IAmmPoolsServiceEth(iporProtocolRouterProxy).redeemFromAmmPoolStEth(user, ipstEthAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouterProxy).redeemFromAmmPoolStEth(user, ipstEthAmount);
         vm.stopPrank();
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertLt(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -102,17 +102,17 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
 
         uint256 provideAmount = 1 ether;
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         // when
         vm.startPrank(user);
-        IAmmPoolsServiceEth(iporProtocolRouterProxy).provideLiquidityWEth(user, provideAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouterProxy).provideLiquidityWEth(user, provideAmount);
         uint256 ipstEthAmount = IERC20(ipstETH).balanceOf(user);
-        IAmmPoolsServiceEth(iporProtocolRouterProxy).redeemFromAmmPoolStEth(user, ipstEthAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouterProxy).redeemFromAmmPoolStEth(user, ipstEthAmount);
         vm.stopPrank();
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertLt(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -125,17 +125,17 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
 
         uint256 provideAmount = 1 ether;
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         // when
         vm.startPrank(user);
-        IAmmPoolsServiceEth(iporProtocolRouterProxy).provideLiquidityEth{value: provideAmount}(user, provideAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouterProxy).provideLiquidityEth{value: provideAmount}(user, provideAmount);
         uint256 ipstEthAmount = IERC20(ipstETH).balanceOf(user);
-        IAmmPoolsServiceEth(iporProtocolRouterProxy).redeemFromAmmPoolStEth(user, ipstEthAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouterProxy).redeemFromAmmPoolStEth(user, ipstEthAmount);
         vm.stopPrank();
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertLt(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -151,17 +151,17 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
 
         uint256 provideAmount = 1 ether;
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         // when
         vm.startPrank(user);
-        IAmmPoolsServiceEth(iporProtocolRouterProxy).provideLiquidityEth{value: provideAmount}(user, provideAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouterProxy).provideLiquidityEth{value: provideAmount}(user, provideAmount);
         uint256 ipstEthAmount = IERC20(ipstETH).balanceOf(user);
-        IAmmPoolsServiceEth(iporProtocolRouterProxy).redeemFromAmmPoolStEth(user, ipstEthAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouterProxy).redeemFromAmmPoolStEth(user, ipstEthAmount);
         vm.stopPrank();
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -193,7 +193,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -207,7 +207,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -239,7 +239,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -253,7 +253,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -285,7 +285,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -294,7 +294,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         }(ETH, user, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -326,7 +326,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -340,7 +340,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -372,7 +372,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -386,7 +386,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -418,7 +418,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -432,7 +432,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -464,7 +464,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -473,7 +473,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         }(ETH, user, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -505,7 +505,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -519,7 +519,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -551,7 +551,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -565,7 +565,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -597,7 +597,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -611,7 +611,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -643,7 +643,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -652,7 +652,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         }(ETH, user, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -684,7 +684,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -698,7 +698,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -730,7 +730,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -744,7 +744,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -776,7 +776,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -790,7 +790,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -822,7 +822,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -831,7 +831,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         }(ETH, user, totalAmount, 0, 10e18, riskIndicatorsInputs);
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -863,7 +863,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -877,7 +877,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -909,7 +909,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -923,7 +923,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -955,7 +955,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -969,7 +969,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -1001,7 +1001,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -1010,7 +1010,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         }(ETH, user, totalAmount, 0, 10e18, riskIndicatorsInputs);
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -1042,7 +1042,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -1056,7 +1056,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -1088,7 +1088,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -1102,7 +1102,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -1134,7 +1134,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -1148,7 +1148,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -1180,7 +1180,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -1189,7 +1189,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         }(ETH, user, totalAmount, 0, 10e18, riskIndicatorsInputs);
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -1221,7 +1221,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -1235,7 +1235,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -1274,7 +1274,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -1288,7 +1288,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -1327,7 +1327,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -1341,7 +1341,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -1378,7 +1378,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -1387,7 +1387,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         }(ETH, user, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -1426,7 +1426,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         //when
         vm.prank(user);
@@ -1440,7 +1440,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -1497,7 +1497,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             closeRiskIndicatorsInputs
         );
         AmmTypesGenOne.Balance memory balance = AmmStorageGenOne(ammStorageProxyStEth).getBalance();
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         uint256 balancePublicationFeeBefore = AmmStorageGenOne(ammStorageProxyStEth).getBalance().iporPublicationFee;
 
@@ -1506,7 +1506,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         IAmmGovernanceService(iporProtocolRouterProxy).transferToCharlieTreasury(stETH, balancePublicationFeeBefore);
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
         uint256 balancePublicationFeeAfter = AmmStorageGenOne(ammStorageProxyStEth).getBalance().iporPublicationFee;
 
         assertEq(balancePublicationFeeAfter, 0, "iporPublicationFee after");
@@ -1566,7 +1566,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             closeRiskIndicatorsInputs
         );
         AmmTypesGenOne.Balance memory balance = AmmStorageGenOne(ammStorageProxyStEth).getBalance();
-        uint256 exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
         uint256 balanceTreasuryBefore = AmmStorageGenOne(ammStorageProxyStEth).getBalance().treasury;
 
@@ -1575,7 +1575,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         IAmmGovernanceService(iporProtocolRouterProxy).transferToTreasury(stETH, balanceTreasuryBefore);
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
         uint256 balanceTreasuryAfter = AmmStorageGenOne(ammStorageProxyStEth).getBalance().treasury;
 
         assertEq(balanceTreasuryAfter, 0, "iporPublicationFee after");

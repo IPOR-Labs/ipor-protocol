@@ -2,13 +2,13 @@
 pragma solidity 0.8.20;
 
 /// @title Interface of the AmmPoolsServiceEth contract.
-interface IAmmPoolsServiceEth {
+interface IAmmPoolsServiceStEth {
     /// @notice Allows the router to provide liquidity in the form of stEth to the AMM pool.
     /// @param beneficiary Address that will receive the minted ipstEth tokens in exchange for the provided stEth.
     /// @param stEthAmount Amount of stEth tokens to be provided as liquidity.
     /// @dev This function can only be called by the router. It calculates the new pool balance, checks if it's within the allowed limit,
     /// calculates the exchange rate, transfers the stEth from the sender to the AmmTreasury contract, and mints ipstEth tokens to the beneficiary.
-    /// An event IAmmPoolsServiceEth.ProvideLiquidityStEth is emitted after the liquidity is provided.
+    /// An event IAmmPoolsServiceStEth.ProvideLiquidityStEth is emitted after the liquidity is provided.
     /// require the new pool balance after adding the provided stEth should not exceed the maximum allowed pool balance.
     function provideLiquidityStEth(address beneficiary, uint256 stEthAmount) external payable;
 
@@ -19,7 +19,7 @@ interface IAmmPoolsServiceEth {
     /// calculates the new pool balance, checks if it's within the allowed limit.
     /// @dev Flow is following: Transfers the wEth from the sender to Router contract, Router withdraws the wEth to convert it to Ether,
     /// Router submit  the Ether to stETH contract and transfer stETH to AmmTreasury contract, mints ipstETH to the beneficiary.
-    /// An event IAmmPoolsServiceEth.ProvideLiquidityEth is emitted after the liquidity is provided.
+    /// An event IAmmPoolsServiceStEth.ProvideLiquidityEth is emitted after the liquidity is provided.
     /// require The provided wEth amount should be greater than zero.
     /// require The beneficiary address should not be the zero address.
     /// require The new pool balance after adding the provided wEth should not exceed the maximum allowed pool balance.
@@ -32,7 +32,7 @@ interface IAmmPoolsServiceEth {
     /// and the beneficiary address, calculates the new pool balance, and checks if it's within the allowed limit.
     /// @dev Flow is following: User transfer to Router ETH, Router submit ETH to stETH contract and transfer stETH to AmmTreasury contract,
     /// Router mints ipstETH to the beneficiary.
-    /// An event IAmmPoolsServiceEth.ProvideLiquidityEth is emitted after the liquidity is provided.
+    /// An event IAmmPoolsServiceStEth.ProvideLiquidityEth is emitted after the liquidity is provided.
     /// require The provided Ether amount should be greater than zero.
     /// require The sent Ether value with the transaction should be greater than zero.
     /// require The beneficiary address should not be the zero address.
@@ -71,7 +71,7 @@ interface IAmmPoolsServiceEth {
         uint256 ipTokenAmount
     );
 
-    /// @notice Event emitted when liquidity is provided in the form of wEth.
+    /// @notice Event emitted when liquidity is provided in the form of wEth or ETH.
     /// @param from Address of the sender.
     /// @param beneficiary Address that will benefit from the provided liquidity.
     /// @param to Address of the AMM treasury.
@@ -90,7 +90,7 @@ interface IAmmPoolsServiceEth {
     );
 
     /// @notice Event emitted when liquidity is redeemed from the AMM pool in exchange for stEth.
-    /// @param ammTreasuryEth Address of the AMM Treasury contract.
+    /// @param ammTreasuryEth Address of the AMM Treasury stETH contract.
     /// @param from Address of the sender. From who ipstEth tokens were burned.
     /// @param beneficiary Address that will receive the redeemed stEth tokens.
     /// @param exchangeRate Exchange rate between stEth and ipstEth.

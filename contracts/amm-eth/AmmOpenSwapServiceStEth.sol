@@ -7,7 +7,7 @@ import "../interfaces/IAmmOpenSwapServiceStEth.sol";
 import "./interfaces/IStETH.sol";
 import "./interfaces/IWETH9.sol";
 import "./interfaces/IwstEth.sol";
-import "./interfaces/IAmmPoolsServiceEth.sol";
+import "./interfaces/IAmmPoolsServiceStEth.sol";
 import "../basic/amm/services/AmmOpenSwapServiceGenOne.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
@@ -244,7 +244,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
                 IStETH(asset).safeTransfer(ammTreasury, stEthAmount);
             }
         } catch {
-            revert IAmmPoolsServiceEth.StEthSubmitFailed({
+            revert IAmmPoolsServiceStEth.StEthSubmitFailed({
                 amount: totalAmount,
                 errorCode: AmmErrors.STETH_SUBMIT_FAILED
             });

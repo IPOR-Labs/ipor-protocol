@@ -5,7 +5,7 @@ import "../interfaces/IIpToken.sol";
 import "../interfaces/types/AmmTypes.sol";
 import "./interfaces/IStETH.sol";
 import "./interfaces/IWETH9.sol";
-import "./interfaces/IAmmPoolsServiceEth.sol";
+import "./interfaces/IAmmPoolsServiceStEth.sol";
 import "../libraries/errors/AmmErrors.sol";
 import "../libraries/math/IporMath.sol";
 import "../libraries/StorageLib.sol";
@@ -15,7 +15,7 @@ import "../governance/AmmConfigurationManager.sol";
 import "../basic/interfaces/IAmmTreasuryGenOne.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
-contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
+contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
     using IporContractValidator for address;
     using SafeERC20 for IStETH;
     using SafeERC20 for IWETH9;
@@ -70,7 +70,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
 
         IIpToken(ipstEth).mint(beneficiary, ipTokenAmount);
 
-        emit IAmmPoolsServiceEth.ProvideLiquidityStEth(
+        emit IAmmPoolsServiceStEth.ProvideLiquidityStEth(
             msg.sender,
             beneficiary,
             ammTreasuryStEth,
@@ -157,7 +157,7 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
 
                 IIpToken(ipstEth).mint(beneficiary, ipTokenAmount);
 
-                emit IAmmPoolsServiceEth.ProvideLiquidityEth(
+                emit IAmmPoolsServiceStEth.ProvideLiquidityEth(
                     msg.sender,
                     beneficiary,
                     ammTreasuryStEth,
@@ -168,7 +168,10 @@ contract AmmPoolsServiceEth is IAmmPoolsServiceEth {
                 );
             }
         } catch {
-            revert IAmmPoolsServiceEth.StEthSubmitFailed({amount: ethAmount, errorCode: AmmErrors.STETH_SUBMIT_FAILED});
+            revert IAmmPoolsServiceStEth.StEthSubmitFailed({
+                amount: ethAmount,
+                errorCode: AmmErrors.STETH_SUBMIT_FAILED
+            });
         }
     }
 

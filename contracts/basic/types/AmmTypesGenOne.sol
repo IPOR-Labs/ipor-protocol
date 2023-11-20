@@ -79,6 +79,7 @@ library AmmTypesGenOne {
         /// @notice Amm Treasury contract address
         address ammTreasury;
         /// @notice Asset Management contract address
+        //TODO: remove it
         address assetManagement;
         /// @notice Unwinding Fee Rate for unwinding the swap, represented in 18 decimals, 1e18 = 100%
         uint256 unwindingFeeRate;

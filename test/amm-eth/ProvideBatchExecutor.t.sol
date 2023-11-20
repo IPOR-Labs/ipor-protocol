@@ -19,23 +19,23 @@ contract ProvideBatchExecutor is TestEthMarketCommons {
         uint userStEthBalanceBefore = IStETH(stEth).balanceOf(userOne);
         uint userWEthBalanceBefore = IERC20(wEth).balanceOf(userOne);
 
-        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
-        uint ammTreasuryStEthBalanceBefore = IStETH(stEth).balanceOf(ammTreasuryEth);
+        uint exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint ammTreasuryStEthBalanceBefore = IStETH(stEth).balanceOf(ammTreasuryStEth);
 
         bytes[] memory requestData = new bytes[](3);
         requestData[0] = abi.encodeWithSelector(
-            IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth.selector,
+            IAmmPoolsServiceStEth(iporProtocolRouter).provideLiquidityStEth.selector,
             userOne,
             100e18
         );
         requestData[1] = abi.encodeWithSelector(
-            IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityWEth.selector,
+            IAmmPoolsServiceStEth(iporProtocolRouter).provideLiquidityWEth.selector,
             userOne,
             100e18
         );
 
         requestData[2] = abi.encodeWithSelector(
-            IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityEth.selector,
+            IAmmPoolsServiceStEth(iporProtocolRouter).provideLiquidityEth.selector,
             userOne,
             100e18
         );
@@ -50,8 +50,8 @@ contract ProvideBatchExecutor is TestEthMarketCommons {
         uint userStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
         uint userWethBalanceAfter = IERC20(wEth).balanceOf(userOne);
 
-        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
-        uint ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryEth);
+        uint exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryStEth);
 
         assertEq(
             userEthBalanceAfter,
@@ -66,7 +66,7 @@ contract ProvideBatchExecutor is TestEthMarketCommons {
         );
         assertEq(userWEthBalanceBefore, 50_000e18, " balance of userOne should be 50_000e18");
         assertEq(exchangeRateBefore, exchangeRateAfter, " exchange rate should not be changed");
-        assertEq(ammTreasuryStEthBalanceBefore, 0, "balance of ammTreasuryEth should be 0 before providing liquidity");
+        assertEq(ammTreasuryStEthBalanceBefore, 0, "balance of ammTreasuryStEth should be 0 before providing liquidity");
 
         assertEq(
             userIpstEthBalanceAfter,
@@ -86,7 +86,7 @@ contract ProvideBatchExecutor is TestEthMarketCommons {
         assertEq(
             ammTreasuryStEthBalanceAfter,
             299999999999999999998,
-            "balance of ammTreasuryEth should be 299999999999999999998 after providing liquidity"
+            "balance of ammTreasuryStEth should be 299999999999999999998 after providing liquidity"
         );
     }
 }

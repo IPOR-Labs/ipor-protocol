@@ -12,7 +12,7 @@ import "../../contracts/interfaces/IAmmOpenSwapLens.sol";
 import "../../contracts/interfaces/IAmmCloseSwapLens.sol";
 import "../../contracts/amm-common/AmmSwapsLens.sol";
 import "../../contracts/amm/AmmPoolsLens.sol";
-import "../../contracts/amm-eth/AmmPoolsLensEth.sol";
+import "../../contracts/amm-eth/AmmPoolsLensStEth.sol";
 import "../../contracts/amm/AssetManagementLens.sol";
 import "../../contracts/amm/spread/Spread28Days.sol";
 import "../../contracts/amm/spread/Spread60Days.sol";
@@ -29,8 +29,8 @@ import "../../contracts/amm-common/AmmGovernanceService.sol";
 import "../../contracts/amm/AmmStorage.sol";
 import "../../contracts/basic/amm/AmmStorageGenOne.sol";
 import "../../contracts/amm/AmmTreasury.sol";
-import "../../contracts/amm-eth/AmmTreasuryEth.sol";
-import "../../contracts/amm-eth/AmmPoolsServiceEth.sol";
+import "../../contracts/amm-eth/AmmTreasuryStEth.sol";
+import "../../contracts/amm-eth/AmmPoolsServiceStEth.sol";
 import "../../contracts/vault/strategies/StrategyDsrDai.sol";
 import "../../contracts/vault/AssetManagementDai.sol";
 import "../../contracts/vault/AssetManagementUsdt.sol";
@@ -370,13 +370,13 @@ contract TestForkCommons is Test {
 
     function _createAmmPoolsLensStEth() private {
         ammPoolsLensStEth = address(
-            new AmmPoolsLensEth(stETH, ipstETH, ammTreasuryProxyStEth, ammStorageProxyStEth, iporOracleProxy)
+            new AmmPoolsLensStEth(stETH, ipstETH, ammTreasuryProxyStEth, ammStorageProxyStEth, iporOracleProxy)
         );
     }
 
     function _createNewAmmPoolsServiceStEth() private {
         ammPoolsServiceStEth = address(
-            new AmmPoolsServiceEth(
+            new AmmPoolsServiceStEth(
                 stETH,
                 wETH,
                 ipstETH,
@@ -391,7 +391,7 @@ contract TestForkCommons is Test {
 
     function _createNewAmmPoolsServiceStEthWithZEROFee() internal {
         ammPoolsServiceStEth = address(
-            new AmmPoolsServiceEth(
+            new AmmPoolsServiceStEth(
                 stETH,
                 wETH,
                 ipstETH,
@@ -455,10 +455,10 @@ contract TestForkCommons is Test {
     }
 
     function _upgradeAmmTreasuryStEth() private {
-        AmmTreasuryEth newImplementation = new AmmTreasuryEth(stETH, iporProtocolRouterProxy, ammStorageProxyStEth);
+        AmmTreasuryStEth newImplementation = new AmmTreasuryStEth(stETH, iporProtocolRouterProxy, ammStorageProxyStEth);
 
         vm.prank(owner);
-        AmmTreasuryEth(ammTreasuryProxyStEth).upgradeTo(address(newImplementation));
+        AmmTreasuryStEth(ammTreasuryProxyStEth).upgradeTo(address(newImplementation));
     }
 
     function _createAmmStorageStEth() private {
