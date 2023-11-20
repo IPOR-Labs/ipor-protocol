@@ -15,7 +15,6 @@ import "./ISpreadGenOne.sol";
 /// @dev This contract cannot be used directly, should be used only through Router.
 contract SpreadGenOne is IporOwnable, ISpreadGenOne  {
 
-
     error UnknownTenor(IporTypes.SwapTenor tenor, string errorCode, string methodName);
 
     using IporContractValidator for address;
@@ -184,6 +183,26 @@ contract SpreadGenOne is IporOwnable, ISpreadGenOne  {
         }
 
         SpreadStorageLibsGenOne.saveTimeWeightedNotionalForAssetAndTenor(storageId, timeWeightedNotional);
+    }
+
+    function getTimeWeightedNotional()
+    external
+    view
+    override
+    returns (SpreadTypesGenOne.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse)
+    {
+        (SpreadStorageLibsGenOne.StorageId[] memory storageIds, string[] memory keys) = SpreadStorageLibsGenOne.getAllStorageId();
+        uint256 storageIdLength = storageIds.length;
+        timeWeightedNotionalResponse = new SpreadTypesGenOne.TimeWeightedNotionalResponse[](storageIdLength);
+
+        for (uint256 i; i != storageIdLength; ) {
+            timeWeightedNotionalResponse[i].timeWeightedNotional = SpreadStorageLibsGenOne
+                .getTimeWeightedNotionalForAssetAndTenor(storageIds[i]);
+            timeWeightedNotionalResponse[i].key = keys[i];
+            unchecked {
+                ++i;
+            }
+        }
     }
 
     function spreadFunctionConfig() external pure override returns (uint256[] memory) {

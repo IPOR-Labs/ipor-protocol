@@ -4,6 +4,7 @@ pragma solidity 0.8.20;
 import "../../interfaces/types/IporTypes.sol";
 import "../../interfaces/types/AmmTypes.sol";
 import "../../amm/libraries/types/AmmInternalTypes.sol";
+import "./SpreadTypesGenOne.sol";
 
 interface ISpreadGenOne {
     struct SpreadInputs {
@@ -118,6 +119,14 @@ interface ISpreadGenOne {
         AmmInternalTypes.OpenSwapItem memory closedSwap,
         address ammStorageAddress
     ) external;
+
+    /// @notice Retrieves time-weighted notional values for various asset-tenor pairs.
+    /// @dev Returns an array of `TimeWeightedNotionalResponse` containing time-weighted notional values and associated keys.
+    /// @return timeWeightedNotionalResponse An array of `TimeWeightedNotionalResponse` structures, each including a time-weighted notional value and a corresponding key.
+    function getTimeWeightedNotional()
+        external
+        view
+        returns (SpreadTypesGenOne.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse);
 
     /// @notice Retrieves the configuration parameters for the spread function.
     /// @dev This function provides access to the current configuration of the spread function used in the contract.
