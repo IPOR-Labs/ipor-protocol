@@ -26,11 +26,10 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
         AmmTypesGenOne.AmmOpenSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput,
         address messageSignerInput,
-        address spreadInput,
         address iporProtocolRouterInput,
         address wETHInput,
         address wstETHInput
-    ) AmmOpenSwapServiceGenOne(poolCfg, iporOracleInput, messageSignerInput, spreadInput) {
+    ) AmmOpenSwapServiceGenOne(poolCfg, iporOracleInput, messageSignerInput) {
         iporProtocolRouter = iporProtocolRouterInput.checkAddress();
         wETH = wETHInput.checkAddress();
         wstETH = wstETHInput.checkAddress();

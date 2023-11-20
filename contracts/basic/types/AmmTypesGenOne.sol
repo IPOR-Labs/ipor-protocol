@@ -52,6 +52,8 @@ library AmmTypesGenOne {
         address ammStorage;
         /// @notice address of the AMM Treasury
         address ammTreasury;
+        /// @notice spread contract address
+        address spread;
         /// @notice ipor publication fee, fee used when opening swap, represented in 18 decimals.
         uint256 iporPublicationFee;
         /// @notice maximum swap collateral amount, represented in 18 decimals.
@@ -78,9 +80,6 @@ library AmmTypesGenOne {
         address ammStorage;
         /// @notice Amm Treasury contract address
         address ammTreasury;
-        /// @notice Asset Management contract address
-        //TODO: remove it
-        address assetManagement;
         /// @notice Unwinding Fee Rate for unwinding the swap, represented in 18 decimals, 1e18 = 100%
         uint256 unwindingFeeRate;
         /// @notice Unwinding Fee Rate for unwinding the swap, part earmarked for the treasury, represented in 18 decimals, 1e18 = 100%

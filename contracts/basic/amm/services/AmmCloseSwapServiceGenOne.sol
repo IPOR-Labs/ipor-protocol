@@ -18,6 +18,8 @@ import "../../../amm/libraries/types/AmmInternalTypes.sol";
 import "../../../basic/spread/SpreadGenOne.sol";
 import "../libraries/SwapLogicGenOne.sol";
 
+/// @title Abstract contract for closing swap, generation one, characterized by:
+/// - no asset management, so also no auto rebalance
 abstract contract AmmCloseSwapServiceGenOne {
     using Address for address;
     using IporContractValidator for address;
@@ -28,7 +30,7 @@ abstract contract AmmCloseSwapServiceGenOne {
     using AmmLib for AmmTypes.AmmPoolCoreModel;
     using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
 
-    uint256 public immutable version = 1;
+    uint256 public immutable version = 2001;
 
     address public immutable asset;
     uint256 public immutable decimals;
@@ -59,15 +61,14 @@ abstract contract AmmCloseSwapServiceGenOne {
     constructor(
         AmmTypesGenOne.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput,
-        address messageSignerInput,
-        address spreadInput
+        address messageSignerInput
     ) {
         asset = poolCfg.asset.checkAddress();
         decimals = poolCfg.decimals;
 
         messageSigner = messageSignerInput.checkAddress();
         iporOracle = iporOracleInput.checkAddress();
-        spread = spreadInput.checkAddress();
+        spread = poolCfg.spread.checkAddress();
         ammStorage = poolCfg.ammStorage.checkAddress();
         ammTreasury = poolCfg.ammTreasury.checkAddress();
 
@@ -600,7 +601,6 @@ abstract contract AmmCloseSwapServiceGenOne {
                 decimals: decimals,
                 ammStorage: ammStorage,
                 ammTreasury: ammTreasury,
-                assetManagement: address(0x0),
                 unwindingFeeRate: unwindingFeeRate,
                 unwindingFeeTreasuryPortionRate: unwindingFeeTreasuryPortionRate,
                 maxLengthOfLiquidatedSwapsPerLeg: liquidationLegLimit,

@@ -10,9 +10,8 @@ contract AmmCloseSwapServiceStEth is AmmCloseSwapServiceGenOne, IAmmCloseSwapSer
     constructor(
         AmmTypesGenOne.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput,
-        address messageSignerInput,
-        address spreadInput
-    ) AmmCloseSwapServiceGenOne(poolCfg, iporOracleInput, messageSignerInput, spreadInput) {}
+        address messageSignerInput
+    ) AmmCloseSwapServiceGenOne(poolCfg, iporOracleInput, messageSignerInput) {}
 
     function getClosingSwapDetailsStEth(
         address account,

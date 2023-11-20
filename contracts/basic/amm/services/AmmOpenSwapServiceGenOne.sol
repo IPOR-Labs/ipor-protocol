@@ -58,13 +58,12 @@ abstract contract AmmOpenSwapServiceGenOne {
     constructor(
         AmmTypesGenOne.AmmOpenSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput,
-        address messageSignerInput,
-        address spreadInput
+        address messageSignerInput
     ) {
         asset = poolCfg.asset.checkAddress();
         decimals = poolCfg.decimals;
 
-        spread = spreadInput.checkAddress();
+        spread = poolCfg.spread.checkAddress();
         ammStorage = poolCfg.ammStorage.checkAddress();
         ammTreasury = poolCfg.ammTreasury.checkAddress();
 

@@ -478,6 +478,7 @@ contract TestForkCommons is Test {
                 decimals: 18,
                 ammStorage: ammStorageProxyStEth,
                 ammTreasury: ammTreasuryProxyStEth,
+                spread: spreadProxyStEth,
                 iporPublicationFee: 10 * 1e15,
                 maxSwapCollateralAmount: 100_000 * 1e18,
                 liquidationDepositAmount: 1000, /// @dev 0.001 ETH
@@ -491,7 +492,6 @@ contract TestForkCommons is Test {
                 cfg,
                 iporOracleProxy,
                 messageSignerAddress,
-                spreadProxyStEth,
                 iporProtocolRouterProxy,
                 wETH,
                 wstETH
@@ -507,6 +507,7 @@ contract TestForkCommons is Test {
                 decimals: 18,
                 ammStorage: ammStorageProxyStEth,
                 ammTreasury: ammTreasuryProxyStEth,
+                spread: spreadProxyStEth,
                 iporPublicationFee: 9 * 1e15,
                 maxSwapCollateralAmount: 100_000 * 1e18,
                 liquidationDepositAmount: 0,
@@ -520,7 +521,6 @@ contract TestForkCommons is Test {
                 cfg,
                 iporOracleProxy,
                 messageSignerAddress,
-                spreadProxyStEth,
                 iporProtocolRouterProxy,
                 wETH,
                 wstETH
@@ -654,7 +654,6 @@ contract TestForkCommons is Test {
                 decimals: 18,
                 ammStorage: ammStorageProxyStEth,
                 ammTreasury: ammTreasuryProxyStEth,
-                assetManagement: address(0),
                 unwindingFeeRate: 5e11,
                 unwindingFeeTreasuryPortionRate: 5e11,
                 maxLengthOfLiquidatedSwapsPerLeg: 10,
@@ -666,7 +665,7 @@ contract TestForkCommons is Test {
             });
 
         ammCloseSwapServiceStEth = address(
-            new AmmCloseSwapServiceStEth(stEthConfig, iporOracleProxy, messageSignerAddress, spreadProxyStEth)
+            new AmmCloseSwapServiceStEth(stEthConfig, iporOracleProxy, messageSignerAddress)
         );
     }
 

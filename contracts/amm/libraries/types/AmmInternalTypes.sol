@@ -66,6 +66,8 @@ library AmmInternalTypes {
         IporTypes.SwapTenor tenor;
         /// @notice Swap's notional
         uint256 notional;
+        /// @notice Minimum leverage allowed for a swap.
+        uint256 minLeverage;
         /// @notice Ipor Index Value
         uint256 indexValue;
         /// @notice Risk Indicators data for a opened swap used to calculate spread.
