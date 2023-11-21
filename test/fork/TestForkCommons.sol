@@ -655,7 +655,7 @@ contract TestForkCommons is Test {
                 ammStorage: ammStorageProxyStEth,
                 ammTreasury: ammTreasuryProxyStEth,
                 unwindingFeeRate: 5e11,
-                unwindingFeeTreasuryPortionRate: 5e11,
+                unwindingFeeTreasuryPortionRate: 25e16,
                 maxLengthOfLiquidatedSwapsPerLeg: 10,
                 timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
                 timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
