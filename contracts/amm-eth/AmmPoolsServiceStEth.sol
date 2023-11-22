@@ -55,7 +55,7 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
     function provideLiquidityStEth(address beneficiary, uint256 stEthAmount) external payable override {
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
 
-        uint256 newPoolBalance = stEthAmount + IStETH(stEth).balanceOf(ammTreasuryStEth);
+        uint256 newPoolBalance = stEthAmount + IAmmTreasuryGenOne(ammTreasuryStEth).getLiquidityPoolBalance();
 
         require(
             newPoolBalance <= uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
@@ -84,7 +84,7 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
         require(wEthAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
-        uint256 newPoolBalance = wEthAmount + IStETH(stEth).balanceOf(ammTreasuryStEth);
+        uint256 newPoolBalance = wEthAmount + IAmmTreasuryGenOne(ammTreasuryStEth).getLiquidityPoolBalance();
 
         require(
             newPoolBalance <= uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
@@ -103,7 +103,7 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
 
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
 
-        uint256 newPoolBalance = ethAmount + IStETH(stEth).balanceOf(ammTreasuryStEth);
+        uint256 newPoolBalance = ethAmount + IAmmTreasuryGenOne(ammTreasuryStEth).getLiquidityPoolBalance();
 
         require(
             newPoolBalance <= uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
@@ -148,7 +148,6 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
             uint256 stEthAmount = IStETH(stEth).balanceOf(address(this));
 
             if (stEthAmount > 0) {
-                //                uint256 exchangeRate = AmmLibEth.getExchangeRate(stEth, ipstEth, ammTreasuryStEth);
                 uint256 exchangeRate = _getExchangeRate();
 
                 IStETH(stEth).safeTransfer(ammTreasuryStEth, stEthAmount);

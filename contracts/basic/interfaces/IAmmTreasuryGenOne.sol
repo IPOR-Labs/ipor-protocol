@@ -12,6 +12,8 @@ interface IAmmTreasuryGenOne {
     /// Currently, the version is set to 1.
     function getVersion() external pure returns (uint256);
 
+    /// @notice Gets the balance of the liquidity pool.
+    /// @dev Liquidity Pool balance not take into account following balances: collateral, ipor publication fee, treasury
     function getLiquidityPoolBalance() external view returns (uint256);
 
     /// @notice Pauses the contract and revokes the approval of stEth tokens for the router.

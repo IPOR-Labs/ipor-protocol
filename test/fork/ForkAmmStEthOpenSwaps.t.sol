@@ -2910,6 +2910,235 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         );
     }
 
+    function testShouldNotProvideLiquidityStEthForStEthWhenOpenedSwapAndMaxLiquidityPoolBalanceAchieved() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+
+        uint256 totalAmount = 10 * 1e18;
+
+        uint256 ammTreasuryErc20Balance = IStETH(stETH).balanceOf(ammTreasuryProxyStEth);
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            messageSignerPrivateKey
+        );
+
+        vm.prank(user);
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
+            user,
+            stETH,
+            totalAmount,
+            1e18,
+            10e18,
+            riskIndicatorsInputs
+        );
+
+        uint256 newLpLimit = IporMath.division(ammTreasuryErc20Balance, 1e18) +
+            IporMath.division(totalAmount / 2, 1e18);
+
+        /// @dev this limit should still allow to provide liquidity
+        vm.prank(owner);
+        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(stETH, uint32(newLpLimit), 0, 0);
+
+        uint userOneStEthBalanceBefore = IStETH(stETH).balanceOf(user);
+        uint userOneIpstEthBalanceBefore = IERC20(ipstETH).balanceOf(user);
+        uint ammTreasuryStEthBalanceBefore = IStETH(stETH).balanceOf(ammTreasuryProxyStEth);
+        uint exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+
+        uint provideAmount = 1 * 1e18;
+
+        //when
+        vm.prank(user);
+        IAmmPoolsServiceStEth(iporProtocolRouterProxy).provideLiquidityStEth(user, provideAmount);
+
+        //then
+        uint userOneStEthBalanceAfter = IStETH(stETH).balanceOf(user);
+        uint userOneIpstEthBalanceAfter = IERC20(ipstETH).balanceOf(user);
+        uint ammTreasuryStEthBalanceAfter = IStETH(stETH).balanceOf(ammTreasuryProxyStEth);
+        uint exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+
+        assertEq(
+            userOneStEthBalanceBefore - provideAmount,
+            userOneStEthBalanceAfter,
+            "user balance of stEth should decrease"
+        );
+        assertLt(userOneIpstEthBalanceBefore, userOneIpstEthBalanceAfter, "user balance of ipstEth should increase");
+
+        assertEq(
+            ammTreasuryStEthBalanceBefore,
+            ammTreasuryStEthBalanceAfter - provideAmount + 1,
+            "amm treasury balance"
+        );
+
+        assertEq(exchangeRateBefore, exchangeRateAfter, "exchangeRate should not change");
+    }
+
+    function testShouldNotProvideLiquidityStEthForWEthWhenOpenedSwapAndMaxLiquidityPoolBalanceAchieved() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+
+        uint256 totalAmount = 10 * 1e18;
+
+        uint256 ammTreasuryErc20Balance = IStETH(stETH).balanceOf(ammTreasuryProxyStEth);
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            messageSignerPrivateKey
+        );
+
+        vm.prank(user);
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
+            user,
+            stETH,
+            totalAmount,
+            1e18,
+            10e18,
+            riskIndicatorsInputs
+        );
+
+        uint256 newLpLimit = IporMath.division(ammTreasuryErc20Balance, 1e18) +
+            IporMath.division(totalAmount / 2, 1e18);
+
+        /// @dev this limit should still allow to provide liquidity
+        vm.prank(owner);
+        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(stETH, uint32(newLpLimit), 0, 0);
+
+        uint userWEthBalanceBefore = IWETH9(wETH).balanceOf(user);
+        uint userOneIpstEthBalanceBefore = IERC20(ipstETH).balanceOf(user);
+        uint ammTreasuryStEthBalanceBefore = IStETH(stETH).balanceOf(ammTreasuryProxyStEth);
+        uint exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+
+        uint provideAmount = 1 * 1e18;
+
+        //when
+        vm.prank(user);
+        IAmmPoolsServiceStEth(iporProtocolRouterProxy).provideLiquidityWEth(user, provideAmount);
+
+        //then
+        uint userWEthBalanceAfter = IWETH9(wETH).balanceOf(user);
+        uint userOneIpstEthBalanceAfter = IERC20(ipstETH).balanceOf(user);
+        uint ammTreasuryStEthBalanceAfter = IStETH(stETH).balanceOf(ammTreasuryProxyStEth);
+        uint exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+
+        assertEq(userWEthBalanceBefore - provideAmount, userWEthBalanceAfter, "user balance of wEth should decrease");
+        assertLt(userOneIpstEthBalanceBefore, userOneIpstEthBalanceAfter, "user balance of ipstEth should increase");
+
+        assertEq(
+            ammTreasuryStEthBalanceBefore,
+            ammTreasuryStEthBalanceAfter - provideAmount + 1,
+            "amm treasury balance"
+        );
+
+        assertEq(exchangeRateBefore, exchangeRateAfter, "exchangeRate should not change");
+    }
+
+    function testShouldNotProvideLiquidityStEthForEthWhenOpenedSwapAndMaxLiquidityPoolBalanceAchieved() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+
+        uint256 totalAmount = 10 * 1e18;
+
+        uint256 ammTreasuryErc20Balance = IStETH(stETH).balanceOf(ammTreasuryProxyStEth);
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            messageSignerPrivateKey
+        );
+
+        vm.prank(user);
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
+            user,
+            stETH,
+            totalAmount,
+            1e18,
+            10e18,
+            riskIndicatorsInputs
+        );
+
+        uint256 newLpLimit = IporMath.division(ammTreasuryErc20Balance, 1e18) +
+            IporMath.division(totalAmount / 2, 1e18);
+
+        /// @dev this limit should still allow to provide liquidity
+        vm.prank(owner);
+        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(stETH, uint32(newLpLimit), 0, 0);
+
+        uint userEthBalanceBefore = user.balance;
+        uint userOneIpstEthBalanceBefore = IERC20(ipstETH).balanceOf(user);
+        uint ammTreasuryStEthBalanceBefore = IStETH(stETH).balanceOf(ammTreasuryProxyStEth);
+        uint exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+
+        uint provideAmount = 1 * 1e18;
+
+        //when
+        vm.prank(user);
+        IAmmPoolsServiceStEth(iporProtocolRouterProxy).provideLiquidityEth{value: provideAmount}(user, provideAmount);
+
+        //then
+        uint userEthBalanceAfter = user.balance;
+        uint userOneIpstEthBalanceAfter = IERC20(ipstETH).balanceOf(user);
+        uint ammTreasuryStEthBalanceAfter = IStETH(stETH).balanceOf(ammTreasuryProxyStEth);
+        uint exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+
+        assertEq(userEthBalanceBefore - provideAmount, userEthBalanceAfter, "user balance of Eth should decrease");
+        assertLt(userOneIpstEthBalanceBefore, userOneIpstEthBalanceAfter, "user balance of ipstEth should increase");
+
+        assertEq(
+            ammTreasuryStEthBalanceBefore,
+            ammTreasuryStEthBalanceAfter - provideAmount + 1,
+            "amm treasury balance"
+        );
+
+        assertEq(exchangeRateBefore, exchangeRateAfter, "exchangeRate should not change");
+    }
+
     function testShouldOpenPositionStEthForStEthAndTransferCorrectLiquidationDepositAmount() public {}
 
     function testShouldOpenPositionStEthForEthAndTransferCorrectLiquidationDepositAmount() public {}

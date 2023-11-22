@@ -5,7 +5,7 @@ pragma solidity 0.8.20;
 interface IAmmPoolsServiceStEth {
     /// @notice Allows the router to provide liquidity in the form of stEth to the AMM pool.
     /// @param beneficiary Address that will receive the minted ipstEth tokens in exchange for the provided stEth.
-    /// @param stEthAmount Amount of stEth tokens to be provided as liquidity.
+    /// @param stEthAmount Amount of stEth tokens to be provided as liquidity. Represented in 18 decimals.
     /// @dev This function can only be called by the router. It calculates the new pool balance, checks if it's within the allowed limit,
     /// calculates the exchange rate, transfers the stEth from the sender to the AmmTreasury contract, and mints ipstEth tokens to the beneficiary.
     /// An event IAmmPoolsServiceStEth.ProvideLiquidityStEth is emitted after the liquidity is provided.
@@ -14,7 +14,7 @@ interface IAmmPoolsServiceStEth {
 
     /// @notice Allows the router to provide liquidity in the form of wEth to the AMM pool.
     /// @param beneficiary Address that will benefit from the provided liquidity.
-    /// @param assetAmount Amount of wEth tokens to be provided as liquidity.
+    /// @param assetAmount Amount of wEth tokens to be provided as liquidity. Represented in 18 decimals.
     /// @dev This function can only be called by the router. It checks the validity of the provided wEth amount and beneficiary address,
     /// calculates the new pool balance, checks if it's within the allowed limit.
     /// @dev Flow is following: Transfers the wEth from the sender to Router contract, Router withdraws the wEth to convert it to Ether,
@@ -27,7 +27,7 @@ interface IAmmPoolsServiceStEth {
 
     /// @notice Allows the router to provide liquidity in the form of Ether to the AMM pool.
     /// @param beneficiary Address that will benefit from the provided liquidity.
-    /// @param assetAmount Amount of Ether to be provided as liquidity.
+    /// @param assetAmount Amount of Ether to be provided as liquidity. Represented in 18 decimals.
     /// @dev This function can only be called by the router. It checks the validity of the provided Ether amount, the sent Ether value,
     /// and the beneficiary address, calculates the new pool balance, and checks if it's within the allowed limit.
     /// @dev Flow is following: User transfer to Router ETH, Router submit ETH to stETH contract and transfer stETH to AmmTreasury contract,
@@ -41,7 +41,7 @@ interface IAmmPoolsServiceStEth {
 
     /// @notice Allows the router to redeem stEth from the AMM pool in exchange for ipstEth tokens.
     /// @param beneficiary Address that will receive the redeemed stEth.
-    /// @param ipTokenAmount Amount of ipstEth tokens to be redeemed.
+    /// @param ipTokenAmount Amount of ipstEth tokens to be redeemed. Represented in 18 decimals.
     /// @dev This function can only be called by the router. It checks the validity of the provided ipstEth amount and beneficiary address,
     /// calculates the exchange rate, determines the amount of stEth equivalent to the provided ipstEth, and transfers the stEth to the beneficiary.
     /// The function also accounts for a redemption fee. An event is emitted after the redemption.
