@@ -42,8 +42,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
 
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             1e18,
             10e18,
@@ -107,8 +107,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
 
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             1e18,
             10e18,
@@ -173,7 +173,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth{
             value: totalAmount
-        }(ETH, user, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
+        }(user, ETH, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
 
         //then
         uint256 ammTreasuryStEthErc20BalanceAfter = ERC20(stETH).balanceOf(ammTreasuryProxyStEth);
@@ -232,8 +232,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
 
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             1e18,
             10e18,
@@ -304,8 +304,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
             abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wstETH, totalAmount - 1000, totalAmount)
         );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             1e18,
             10e18,
@@ -346,8 +346,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
 
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             1e18,
             10e18,
@@ -411,8 +411,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
 
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             1e18,
             10e18,
@@ -476,8 +476,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
 
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             1e18,
             10e18,
@@ -548,8 +548,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
             abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wstETH, totalAmount - 1000, totalAmount)
         );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             1e18,
             10e18,
@@ -591,7 +591,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth{
             value: totalAmount
-        }(ETH, user, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
+        }(user, ETH, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
 
         //then
         uint256 ammTreasuryStEthErc20BalanceAfter = ERC20(stETH).balanceOf(ammTreasuryProxyStEth);
@@ -650,8 +650,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
 
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed90daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             1e18,
             10e18,
@@ -715,8 +715,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
 
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed90daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             1e18,
             10e18,
@@ -780,8 +780,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
 
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed90daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             1e18,
             10e18,
@@ -852,8 +852,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
             abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wstETH, totalAmount - 1000, totalAmount)
         );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed90daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             1e18,
             10e18,
@@ -895,7 +895,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed90daysStEth{
             value: totalAmount
-        }(ETH, user, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
+        }(user, ETH, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
 
         //then
         uint256 ammTreasuryStEthErc20BalanceAfter = ERC20(stETH).balanceOf(ammTreasuryProxyStEth);
@@ -953,8 +953,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             0,
             10e18,
@@ -1018,8 +1018,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             0,
             10e18,
@@ -1083,8 +1083,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             0,
             10e18,
@@ -1156,8 +1156,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
             abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wstETH, totalAmount - 1000, totalAmount)
         );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             0,
             10e18,
@@ -1198,7 +1198,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth{
             value: totalAmount
-        }(ETH, user, totalAmount, 0, 10e18, riskIndicatorsInputs);
+        }(user, ETH, totalAmount, 0, 10e18, riskIndicatorsInputs);
 
         //then
         uint256 ammTreasuryStEthErc20BalanceAfter = ERC20(stETH).balanceOf(ammTreasuryProxyStEth);
@@ -1257,8 +1257,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             0,
             10e18,
@@ -1322,8 +1322,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             0,
             10e18,
@@ -1387,8 +1387,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             0,
             10e18,
@@ -1456,10 +1456,12 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
-        vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wstETH, totalAmount - 1000, totalAmount));
+        vm.expectRevert(
+            abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wstETH, totalAmount - 1000, totalAmount)
+        );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             0,
             10e18,
@@ -1500,7 +1502,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth{
             value: totalAmount
-        }(ETH, user, totalAmount, 0, 10e18, riskIndicatorsInputs);
+        }(user, ETH, totalAmount, 0, 10e18, riskIndicatorsInputs);
 
         //then
         uint256 ammTreasuryStEthErc20BalanceAfter = ERC20(stETH).balanceOf(ammTreasuryProxyStEth);
@@ -1559,8 +1561,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed90daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             0,
             10e18,
@@ -1625,7 +1627,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed90daysStEth{
             value: totalAmount
-        }(ETH, user, totalAmount, 0, 10e18, riskIndicatorsInputs);
+        }(user, ETH, totalAmount, 0, 10e18, riskIndicatorsInputs);
 
         //then
         uint256 ammTreasuryStEthErc20BalanceAfter = ERC20(stETH).balanceOf(ammTreasuryProxyStEth);
@@ -1684,8 +1686,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed90daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             0,
             10e18,
@@ -1749,8 +1751,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed90daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             0,
             10e18,
@@ -1818,10 +1820,12 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
-        vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wstETH, totalAmount - 1000, totalAmount));
+        vm.expectRevert(
+            abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wstETH, totalAmount - 1000, totalAmount)
+        );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed90daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             0,
             10e18,
@@ -1862,8 +1866,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert();
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth{value: 1 * 1e16}(
-            ETH,
             user,
+            ETH,
             totalAmount,
             1e18,
             10e18,
@@ -1902,8 +1906,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, ETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
-            ETH,
             user,
+            ETH,
             totalAmount,
             1e18,
             10e18,
@@ -1941,8 +1945,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, stETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             1e18,
             10e18,
@@ -1980,8 +1984,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             1e18,
             10e18,
@@ -2019,8 +2023,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert();
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth{value: 123}(
-            ETH,
             user,
+            ETH,
             totalAmount,
             1e18,
             10e18,
@@ -2072,8 +2076,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
             )
         );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             1e18,
             10e18,
@@ -2111,8 +2115,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, stETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             1e18,
             10e18,
@@ -2150,8 +2154,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             1e18,
             10e18,
@@ -2189,8 +2193,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, ETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth{value: 0}(
-            ETH,
             user,
+            ETH,
             totalAmount,
             1e18,
             10e18,
@@ -2240,8 +2244,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
             )
         );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             1e18,
             10e18,
@@ -2279,8 +2283,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, stETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed90daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             1e18,
             10e18,
@@ -2318,8 +2322,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed90daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             1e18,
             10e18,
@@ -2357,8 +2361,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, ETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed90daysStEth{value: 0}(
-            ETH,
             user,
+            ETH,
             totalAmount,
             1e18,
             10e18,
@@ -2399,16 +2403,11 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         //when
         vm.prank(user);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                IporErrors.InputAssetBalanceTooLow.selector,
-                wstETH,
-                totalAmount / 2,
-                totalAmount
-            )
+            abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wstETH, totalAmount / 2, totalAmount)
         );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed90daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             1e18,
             10e18,
@@ -2446,8 +2445,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, stETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             0,
             10e18,
@@ -2485,8 +2484,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             0,
             10e18,
@@ -2524,8 +2523,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert();
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth{value: 123}(
-            ETH,
             user,
+            ETH,
             totalAmount,
             0,
             10e18,
@@ -2569,16 +2568,11 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         //when
         vm.prank(user);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                IporErrors.InputAssetBalanceTooLow.selector,
-                wstETH,
-                totalAmount / 2,
-                totalAmount
-            )
+            abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wstETH, totalAmount / 2, totalAmount)
         );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             0,
             10e18,
@@ -2616,8 +2610,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, stETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             0,
             10e18,
@@ -2655,8 +2649,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             0,
             10e18,
@@ -2694,8 +2688,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, ETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth{value: 0}(
-            ETH,
             user,
+            ETH,
             totalAmount,
             0,
             10e18,
@@ -2737,16 +2731,11 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         //when
         vm.prank(user);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                IporErrors.InputAssetBalanceTooLow.selector,
-                wstETH,
-                totalAmount / 2,
-                totalAmount
-            )
+            abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wstETH, totalAmount / 2, totalAmount)
         );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             0,
             10e18,
@@ -2784,8 +2773,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, stETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed90daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             0,
             10e18,
@@ -2823,8 +2812,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed90daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             0,
             10e18,
@@ -2862,8 +2851,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, ETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed90daysStEth{value: 0}(
-            ETH,
             user,
+            ETH,
             totalAmount,
             0,
             10e18,
@@ -2912,8 +2901,8 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
             )
         );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed90daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             0,
             10e18,

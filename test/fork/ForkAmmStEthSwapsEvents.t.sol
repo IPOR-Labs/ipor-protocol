@@ -111,7 +111,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         //when
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth{
             value: totalAmount
-        }(ETH, user, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
+        }(user, ETH, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
     }
 
     function testShouldContainInputAssetInEventWhenOpenPositionStEthForStEth28daysPayFixed() public {
@@ -174,8 +174,8 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         });
         //when
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             1e18,
             10e18,
@@ -243,8 +243,8 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         });
         //when
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             1e18,
             10e18,
@@ -312,8 +312,8 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         });
         //when
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             1e18,
             10e18,
@@ -382,7 +382,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         //when
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth{
             value: totalAmount
-        }(ETH, user, totalAmount, 0, 10e18, riskIndicatorsInputs);
+        }(user, ETH, totalAmount, 0, 10e18, riskIndicatorsInputs);
     }
 
     function testShouldContainInputAssetInEventWhenOpenPositionStEthForStEth28daysReceiveFixed() public {
@@ -445,8 +445,8 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         });
         //when
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             0,
             10e18,
@@ -514,8 +514,8 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         });
         //when
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             0,
             10e18,
@@ -583,8 +583,8 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         });
         //when
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             0,
             10e18,
@@ -621,8 +621,8 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         );
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             1e18,
             10e18,
@@ -691,8 +691,8 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         );
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             0,
             10e18,
@@ -760,8 +760,8 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         );
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             1e18,
             10e18,
@@ -829,8 +829,8 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         );
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             0,
             10e18,
@@ -899,7 +899,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth{
             value: totalAmount
-        }(ETH, user, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
+        }(user, ETH, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
 
         uint256[] memory swapPfIds = new uint256[](1);
         swapPfIds[0] = swapId;
@@ -963,7 +963,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth{
             value: totalAmount
-        }(ETH, user, totalAmount, 0, 10e18, riskIndicatorsInputs);
+        }(user, ETH, totalAmount, 0, 10e18, riskIndicatorsInputs);
 
         uint256[] memory swapPfIds = new uint256[](0);
         uint256[] memory swapRfIds = new uint256[](1);
@@ -1026,8 +1026,8 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         );
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             1e18,
             10e18,
@@ -1095,8 +1095,8 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         );
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             0,
             10e18,

@@ -82,10 +82,10 @@ abstract contract AmmOpenSwapServiceGenOne {
 
     /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
     function _openSwapPayFixed(
-        address inputAsset,
         address beneficiary,
-        IporTypes.SwapTenor tenor,
+        address inputAsset,
         uint256 inputAssetTotalAmount,
+        IporTypes.SwapTenor tenor,
         uint256 acceptableFixedInterestRate,
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
@@ -108,10 +108,10 @@ abstract contract AmmOpenSwapServiceGenOne {
 
     /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
     function _openSwapReceiveFixed(
-        address inputAsset,
         address beneficiary,
-        IporTypes.SwapTenor tenor,
+        address inputAsset,
         uint256 inputAssetTotalAmount,
+        IporTypes.SwapTenor tenor,
         uint256 acceptableFixedInterestRate,
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs

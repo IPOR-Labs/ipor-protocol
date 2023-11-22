@@ -198,8 +198,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             1e18,
             10e18,
@@ -244,8 +244,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             1e18,
             10e18,
@@ -291,7 +291,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth{
             value: totalAmount
-        }(ETH, user, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
+        }(user, ETH, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
 
         //then
         uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
@@ -331,8 +331,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             1e18,
             10e18,
@@ -377,8 +377,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             1e18,
             10e18,
@@ -423,8 +423,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             1e18,
             10e18,
@@ -470,7 +470,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth{
             value: totalAmount
-        }(ETH, user, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
+        }(user, ETH, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
 
         //then
         uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
@@ -510,8 +510,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             1e18,
             10e18,
@@ -556,8 +556,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed90daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             1e18,
             10e18,
@@ -602,8 +602,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed90daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             1e18,
             10e18,
@@ -649,7 +649,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed90daysStEth{
             value: totalAmount
-        }(ETH, user, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
+        }(user, ETH, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
 
         //then
         uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
@@ -689,8 +689,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed90daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             1e18,
             10e18,
@@ -735,8 +735,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             0,
             10e18,
@@ -781,8 +781,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             0,
             10e18,
@@ -828,7 +828,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth{
             value: totalAmount
-        }(ETH, user, totalAmount, 0, 10e18, riskIndicatorsInputs);
+        }(user, ETH, totalAmount, 0, 10e18, riskIndicatorsInputs);
 
         //then
         uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
@@ -868,8 +868,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             0,
             10e18,
@@ -914,8 +914,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             0,
             10e18,
@@ -960,8 +960,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             0,
             10e18,
@@ -1007,7 +1007,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth{
             value: totalAmount
-        }(ETH, user, totalAmount, 0, 10e18, riskIndicatorsInputs);
+        }(user, ETH, totalAmount, 0, 10e18, riskIndicatorsInputs);
 
         //then
         uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
@@ -1047,8 +1047,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             0,
             10e18,
@@ -1093,8 +1093,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed90daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             0,
             10e18,
@@ -1139,8 +1139,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed90daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             0,
             10e18,
@@ -1186,7 +1186,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed90daysStEth{
             value: totalAmount
-        }(ETH, user, totalAmount, 0, 10e18, riskIndicatorsInputs);
+        }(user, ETH, totalAmount, 0, 10e18, riskIndicatorsInputs);
 
         //then
         uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
@@ -1226,8 +1226,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed90daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             0,
             10e18,
@@ -1279,8 +1279,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             1e18,
             10e18,
@@ -1332,8 +1332,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
-            wETH,
             user,
+            wETH,
             totalAmount,
             1e18,
             10e18,
@@ -1384,7 +1384,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth{
             value: totalAmount
-        }(ETH, user, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
+        }(user, ETH, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
 
         //then
         uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
@@ -1431,8 +1431,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         //when
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
-            wstETH,
             user,
+            wstETH,
             totalAmount,
             1e18,
             10e18,
@@ -1473,8 +1473,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
 
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             1e18,
             10e18,
@@ -1542,8 +1542,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
 
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
-            stETH,
             user,
+            stETH,
             totalAmount,
             1e18,
             10e18,
