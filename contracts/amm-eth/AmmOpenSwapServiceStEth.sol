@@ -1,32 +1,14 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
-import "forge-std/console2.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
-import "../interfaces/IIporOracle.sol";
-import "../interfaces/IAmmStorage.sol";
-import "../interfaces/IAmmOpenSwapService.sol";
 import "../interfaces/IAmmOpenSwapServiceStEth.sol";
-import "../amm/spread/ISpread28Days.sol";
-import "../amm/spread/ISpread60Days.sol";
-import "../amm/spread/ISpread90Days.sol";
-import "../libraries/Constants.sol";
-import "../libraries/math/IporMath.sol";
-import "../libraries/errors/IporErrors.sol";
-import "../libraries/errors/AmmErrors.sol";
-import "../libraries/errors/AmmErrors.sol";
-import "../basic/amm/libraries/SwapEventsGenOne.sol";
-import "../libraries/IporContractValidator.sol";
-import "../libraries/RiskManagementLogic.sol";
-import "../amm/libraries/types/AmmInternalTypes.sol";
-import "../amm/libraries/IporSwapLogic.sol";
-import "../basic/amm/services/AmmOpenSwapServiceGenOne.sol";
-import "./interfaces/IAmmPoolsServiceEth.sol";
 import "./interfaces/IStETH.sol";
 import "./interfaces/IWETH9.sol";
 import "./interfaces/IwstEth.sol";
+import "./interfaces/IAmmPoolsServiceStEth.sol";
+import "../basic/amm/services/AmmOpenSwapServiceGenOne.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServiceStEth {
@@ -44,11 +26,10 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
         AmmTypesGenOne.AmmOpenSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput,
         address messageSignerInput,
-        address spreadInput,
         address iporProtocolRouterInput,
         address wETHInput,
         address wstETHInput
-    ) AmmOpenSwapServiceGenOne(poolCfg, iporOracleInput, messageSignerInput, spreadInput) {
+    ) AmmOpenSwapServiceGenOne(poolCfg, iporOracleInput, messageSignerInput) {
         iporProtocolRouter = iporProtocolRouterInput.checkAddress();
         wETH = wETHInput.checkAddress();
         wstETH = wstETHInput.checkAddress();
@@ -174,6 +155,17 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
             );
     }
 
+    function _validateAccountInputToken(address accountInputToken) internal view override {
+        if (
+            accountInputToken != ETH_ADDRESS &&
+            accountInputToken != asset &&
+            accountInputToken != wETH &&
+            accountInputToken != wstETH
+        ) {
+            revert IporErrors.UnsupportedAsset(accountInputToken);
+        }
+    }
+
     function _validateTotalAmount(address accountInputToken, uint256 totalAmount) internal view override {
         require(totalAmount > 0, AmmErrors.TOTAL_AMOUNT_TOO_LOW);
 
@@ -190,8 +182,6 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
                 }
             } else if (accountInputToken == wstETH) {
                 uint256 inputTokenTotalAmount = IporMath.division(IwstEth(wstETH).tokensPerStEth() * totalAmount, 1e18);
-                console2.log("accountBalance", accountBalance);
-                console2.log("inputTokenTotalAmount", inputTokenTotalAmount);
 
                 if (accountBalance < inputTokenTotalAmount) {
                     revert IporErrors.AccountInputTokenBalanceTooLow(
@@ -253,7 +243,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
                 IStETH(asset).safeTransfer(ammTreasury, stEthAmount);
             }
         } catch {
-            revert IAmmPoolsServiceEth.StEthSubmitFailed({
+            revert IAmmPoolsServiceStEth.StEthSubmitFailed({
                 amount: totalAmount,
                 errorCode: AmmErrors.STETH_SUBMIT_FAILED
             });

@@ -34,7 +34,7 @@ contract ProvideStEthTest is TestEthMarketCommons {
         //given
 
         //when
-        uint exchangeRate = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint exchangeRate = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
         //then
         assertEq(exchangeRate, 1e18, "exchangeRate should be 1");
     }
@@ -46,7 +46,7 @@ contract ProvideStEthTest is TestEthMarketCommons {
 
         // when
         vm.expectRevert(bytes(AmmPoolsErrors.IP_TOKEN_MINT_AMOUNT_TOO_LOW));
-        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth(userOne, 0);
+        IAmmPoolsServiceStEth(iporProtocolRouter).provideLiquidityStEth(userOne, 0);
 
         // then
         uint userStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
@@ -65,7 +65,7 @@ contract ProvideStEthTest is TestEthMarketCommons {
         // when
         vm.prank(userOne);
         vm.expectRevert(bytes("ERC20: mint to the zero address"));
-        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth(address(0), provideAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouter).provideLiquidityStEth(address(0), provideAmount);
 
         // then
         uint userStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
@@ -79,21 +79,21 @@ contract ProvideStEthTest is TestEthMarketCommons {
         // given
         uint userStEthBalanceBefore = IStETH(stEth).balanceOf(userOne);
         uint userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
-        uint ammTreasuryStEthBalanceBefore = IStETH(stEth).balanceOf(ammTreasuryEth);
+        uint ammTreasuryStEthBalanceBefore = IStETH(stEth).balanceOf(ammTreasuryStEth);
 
         uint provideAmount = 100e18;
-        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
 
         // when
         vm.prank(userOne);
-        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth(userOne, provideAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouter).provideLiquidityStEth(userOne, provideAmount);
 
         // then
         uint userStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
         uint userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
-        uint ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryEth);
+        uint ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryStEth);
 
-        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
 
         assertEq(
             userStEthBalanceBefore - provideAmount,
@@ -121,22 +121,22 @@ contract ProvideStEthTest is TestEthMarketCommons {
         uint userOneIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
         uint userTwoStEthBalanceBefore = IStETH(stEth).balanceOf(userTwo);
         uint userTwoIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userTwo);
-        uint ammTreasuryStEthBalanceBefore = IStETH(stEth).balanceOf(ammTreasuryEth);
+        uint ammTreasuryStEthBalanceBefore = IStETH(stEth).balanceOf(ammTreasuryStEth);
 
         uint provideAmount = 100e18;
-        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
 
         // when
         vm.prank(userOne);
-        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth(userTwo, provideAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouter).provideLiquidityStEth(userTwo, provideAmount);
 
         // then
         uint userOneStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
         uint userOneIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
         uint userTwoStEthBalanceAfter = IStETH(stEth).balanceOf(userTwo);
         uint userTwoIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userTwo);
-        uint ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryEth);
-        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryStEth);
+        uint exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
 
         assertEq(
             userOneStEthBalanceBefore - provideAmount,
@@ -166,17 +166,17 @@ contract ProvideStEthTest is TestEthMarketCommons {
         uint userOneIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
         uint userTwoStEthBalanceBefore = IStETH(stEth).balanceOf(userTwo);
         uint userTwoIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userTwo);
-        uint ammTreasuryStEthBalanceBefore = IStETH(stEth).balanceOf(ammTreasuryEth);
+        uint ammTreasuryStEthBalanceBefore = IStETH(stEth).balanceOf(ammTreasuryStEth);
 
         uint provideAmount = 10e18;
-        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
 
         // when
         for (uint i; i < 10; ++i) {
             vm.prank(userOne);
-            IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth(userOne, provideAmount);
+            IAmmPoolsServiceStEth(iporProtocolRouter).provideLiquidityStEth(userOne, provideAmount);
             vm.prank(userTwo);
-            IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth(userTwo, provideAmount);
+            IAmmPoolsServiceStEth(iporProtocolRouter).provideLiquidityStEth(userTwo, provideAmount);
         }
 
         // then
@@ -184,8 +184,8 @@ contract ProvideStEthTest is TestEthMarketCommons {
         uint userOneIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
         uint userTwoStEthBalanceAfter = IStETH(stEth).balanceOf(userTwo);
         uint userTwoIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userTwo);
-        uint ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryEth);
-        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryStEth);
+        uint exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
 
         assertEq(
             userOneStEthBalanceBefore,
@@ -227,10 +227,10 @@ contract ProvideStEthTest is TestEthMarketCommons {
 
         console2.log("IERC20(ipstEth): ", IERC20(ipstEth).totalSupply());
         console2.log(
-            "IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate(): ",
-            IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate()
+            "IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate(): ",
+            IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate()
         );
-        console2.log("IStETH(stEth).balanceOf(ammTreasuryEth): ", IStETH(stEth).balanceOf(ammTreasuryEth));
+        console2.log("IStETH(stEth).balanceOf(ammTreasuryStEth): ", IStETH(stEth).balanceOf(ammTreasuryStEth));
         // 49_999 999999999999999999 (userOne Balance)
         //-   100 000000000000000000 (transfer to ammTreasury)
         //-----------------------------
@@ -247,13 +247,13 @@ contract ProvideStEthTest is TestEthMarketCommons {
         // when other user provides liquidity
         vm.prank(userOne);
         vm.expectRevert(bytes(AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH));
-        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth(userOne, provideAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouter).provideLiquidityStEth(userOne, provideAmount);
     }
 
     function testShouldEmitProvideLiquidityStEthBeneficiaryIsNotSender() public {
         // given
         uint provideAmount = 100e18;
-        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
         uint256 ipTokenAmount = IporMath.division(provideAmount * 1e18, exchangeRateBefore);
 
         vm.prank(userOne);
@@ -262,14 +262,14 @@ contract ProvideStEthTest is TestEthMarketCommons {
         emit ProvideLiquidityStEth(
             userOne,
             userTwo,
-            ammTreasuryEth,
+            ammTreasuryStEth,
             exchangeRateBefore,
             provideAmount,
             ipTokenAmount
         );
 
         // when
-        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth(userTwo, provideAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouter).provideLiquidityStEth(userTwo, provideAmount);
     }
 
     function testShouldEmitRedeemStEthBeneficiaryIsNotSender() public {
@@ -280,7 +280,7 @@ contract ProvideStEthTest is TestEthMarketCommons {
         uint256 ipTokenAmount = 99999999999999999999;
 
         vm.prank(userOne);
-        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth(userTwo, provideAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouter).provideLiquidityStEth(userTwo, provideAmount);
 
         uint exchangeRate = 1000000000000000000;
 
@@ -288,7 +288,7 @@ contract ProvideStEthTest is TestEthMarketCommons {
         vm.expectEmit(true, true, true, true);
         //then
         emit RedeemStEth(
-            ammTreasuryEth,
+            ammTreasuryStEth,
             userTwo,
             userOne,
             exchangeRate,
@@ -298,7 +298,7 @@ contract ProvideStEthTest is TestEthMarketCommons {
         );
 
         //when
-        IAmmPoolsServiceEth(iporProtocolRouter).redeemFromAmmPoolStEth(userOne, amountStEth);
+        IAmmPoolsServiceStEth(iporProtocolRouter).redeemFromAmmPoolStEth(userOne, amountStEth);
     }
 
     function testShouldRevertBecauseUserOneDoesntHaveIpstEthTokensToRedeem() public {
@@ -306,7 +306,7 @@ contract ProvideStEthTest is TestEthMarketCommons {
         uint256 amountStEth = 99999999999999999999;
 
         vm.prank(userOne);
-        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth(userTwo, provideAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouter).provideLiquidityStEth(userTwo, provideAmount);
 
         /// @dev userOne provide liquidity on behalf of userTwo
         vm.prank(userOne);
@@ -314,7 +314,7 @@ contract ProvideStEthTest is TestEthMarketCommons {
         vm.expectRevert(bytes(AmmPoolsErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW));
 
         //when
-        IAmmPoolsServiceEth(iporProtocolRouter).redeemFromAmmPoolStEth(userTwo, amountStEth);
+        IAmmPoolsServiceStEth(iporProtocolRouter).redeemFromAmmPoolStEth(userTwo, amountStEth);
     }
 
     function testShouldRevertWhenProvideLiquidityDirectlyOnService() public {
@@ -325,7 +325,7 @@ contract ProvideStEthTest is TestEthMarketCommons {
         //then
         vm.expectRevert(bytes(AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH));
         //when
-        IAmmPoolsServiceEth(ammPoolsServiceEth).provideLiquidityStEth(userTwo, provideAmount);
+        IAmmPoolsServiceStEth(ammPoolsServiceStEth).provideLiquidityStEth(userTwo, provideAmount);
     }
 
     function testShouldProvideEthToWhenBeneficiaryIsNotSenderAndReturnRestOfEthAndDirectTransferEthBeforeByTheSameUser()
@@ -334,10 +334,10 @@ contract ProvideStEthTest is TestEthMarketCommons {
         // given
         uint userEthBalanceBefore = userOne.balance;
         uint userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
-        uint ammTreasuryStEthBalanceBefore = IStETH(stEth).balanceOf(ammTreasuryEth);
+        uint ammTreasuryStEthBalanceBefore = IStETH(stEth).balanceOf(ammTreasuryStEth);
 
         uint provideAmount = 100e18;
-        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
 
         /// @dev direct eth transfer
         vm.prank(userOne);
@@ -347,14 +347,14 @@ contract ProvideStEthTest is TestEthMarketCommons {
 
         // when
         vm.prank(userOne);
-        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth{value: 10e18}(userOne, provideAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouter).provideLiquidityStEth{value: 10e18}(userOne, provideAmount);
 
         // then
         uint userEthBalanceAfter = userOne.balance;
         uint userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
-        uint ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryEth);
+        uint ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryStEth);
 
-        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
 
         uint routerEthBalance = address(iporProtocolRouter).balance;
 
@@ -383,10 +383,10 @@ contract ProvideStEthTest is TestEthMarketCommons {
         // given
         uint userEthBalanceBefore = userOne.balance;
         uint userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
-        uint ammTreasuryStEthBalanceBefore = IStETH(stEth).balanceOf(ammTreasuryEth);
+        uint ammTreasuryStEthBalanceBefore = IStETH(stEth).balanceOf(ammTreasuryStEth);
 
         uint provideAmount = 100e18;
-        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
 
         /// @dev direct eth transfer
         vm.prank(userTwo);
@@ -396,14 +396,14 @@ contract ProvideStEthTest is TestEthMarketCommons {
 
         // when
         vm.prank(userOne);
-        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth{value: 10e18}(userOne, provideAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouter).provideLiquidityStEth{value: 10e18}(userOne, provideAmount);
 
         // then
         uint userEthBalanceAfter = userOne.balance;
         uint userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
-        uint ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryEth);
+        uint ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryStEth);
 
-        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
 
         uint routerEthBalance = address(iporProtocolRouter).balance;
 

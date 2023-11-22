@@ -3,10 +3,9 @@ pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "contracts/libraries/math/IporMath.sol";
-import "../TestConstants.sol";
 
 contract IporMathTest is Test {
-    uint256 public constant N1__0_18DEC = TestConstants.N1__0_18DEC;
+    uint256 public constant N1__0_18DEC = 1e18;
 
     function testShouldDivide() public {
         assertDivision(0, 1, 0);
@@ -241,51 +240,27 @@ contract IporMathTest is Test {
         IporMath.divisionInt(0, 0);
     }
 
-    function assertDivision(
-        uint256 x,
-        uint256 y,
-        uint256 z
-    ) internal {
+    function assertDivision(uint256 x, uint256 y, uint256 z) internal {
         assertEq(IporMath.division(x, y), z);
     }
 
-    function assetConvertWadToAssetDecimals(
-        uint256 amount,
-        uint256 decimals,
-        uint256 result
-    ) internal {
+    function assetConvertWadToAssetDecimals(uint256 amount, uint256 decimals, uint256 result) internal {
         assertEq(IporMath.convertWadToAssetDecimals(amount, decimals), result);
     }
 
-    function assetConvertWadToAssetDecimalsWithoutRound(
-        uint256 amount,
-        uint256 decimals,
-        uint256 result
-    ) internal {
+    function assetConvertWadToAssetDecimalsWithoutRound(uint256 amount, uint256 decimals, uint256 result) internal {
         assertEq(IporMath.convertWadToAssetDecimalsWithoutRound(amount, decimals), result);
     }
 
-    function assetConvertToWad(
-        uint256 amount,
-        uint256 decimals,
-        uint256 result
-    ) internal {
+    function assetConvertToWad(uint256 amount, uint256 decimals, uint256 result) internal {
         assertEq(IporMath.convertToWad(amount, decimals), result);
     }
 
-    function assertDivisionInt(
-        int256 x,
-        int256 y,
-        int256 z
-    ) internal {
+    function assertDivisionInt(int256 x, int256 y, int256 z) internal {
         assertEq(IporMath.divisionInt(x, y), z);
     }
 
-    function assertDivisionWithoutRound(
-        uint256 x,
-        uint256 y,
-        uint256 z
-    ) internal {
+    function assertDivisionWithoutRound(uint256 x, uint256 y, uint256 z) internal {
         assertEq(IporMath.divisionWithoutRound(x, y), z);
     }
 }

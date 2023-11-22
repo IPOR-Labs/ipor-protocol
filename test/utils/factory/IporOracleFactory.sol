@@ -45,7 +45,8 @@ contract IporOracleFactory is Test {
             constructorParams.usdc,
             constructorParams.usdcInitialIbtPrice,
             constructorParams.dai,
-            constructorParams.daiInitialIbtPrice
+            constructorParams.daiInitialIbtPrice,
+            address(0x123)// random address for stETH
         );
 
         iporOracleBuilder.withIporOracleImplementation(address(iporOracleImpl));
@@ -83,7 +84,8 @@ contract IporOracleFactory is Test {
             constructorParams.usdc,
             constructorParams.usdcInitialIbtPrice,
             constructorParams.dai,
-            constructorParams.daiInitialIbtPrice
+            constructorParams.daiInitialIbtPrice,
+            address(0x123)// random address for stETH
         );
 
         iporOracleBuilder.withIporOracleImplementation(address(iporOracleImpl));

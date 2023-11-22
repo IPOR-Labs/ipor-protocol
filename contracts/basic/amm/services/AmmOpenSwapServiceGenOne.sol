@@ -1,21 +1,18 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 import "../../../interfaces/IIporOracle.sol";
-import "../../../interfaces/IAmmStorage.sol";
-import "../../../interfaces/IAmmOpenSwapService.sol";
+import "../../interfaces/IAmmTreasuryGenOne.sol";
 import "../../../libraries/Constants.sol";
 import "../../../libraries/math/IporMath.sol";
 import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/errors/AmmErrors.sol";
-import "../../../libraries/errors/AmmErrors.sol";
-import "../libraries/SwapEventsGenOne.sol";
 import "../../../libraries/IporContractValidator.sol";
-
 import "../../../amm/libraries/types/AmmInternalTypes.sol";
 import "../../../amm/libraries/IporSwapLogic.sol";
+import "../../../basic/spread/SpreadGenOne.sol";
+import "../libraries/SwapEventsGenOne.sol";
 import "../libraries/SwapLogicGenOne.sol";
 import "../../../basic/spread/ISpreadGenOne.sol";
 import "../../../basic/interfaces/IAmmStorageGenOne.sol";
@@ -39,11 +36,17 @@ abstract contract AmmOpenSwapServiceGenOne {
     address public immutable ammStorage;
     address public immutable ammTreasury;
 
+    /// @dev IPOR publication fee in underlying token (asset), represented in 18 decimals
     uint256 public immutable iporPublicationFee;
+    /// @dev Maximum collateral amount for swap, represented in 18 decimals
     uint256 public immutable maxSwapCollateralAmount;
-    uint256 public immutable wadLiquidationDepositAmount;
+    /// @dev Liquidation deposit amount for stETH represented in 6 decimals. Example 25 stETH = 25000000 = 25.000000
+    uint256 public immutable liquidationDepositAmount;
+    /// @dev Minimum leverage for swap, represented in 18 decimals
     uint256 public immutable minLeverage;
+    /// @dev Opening fee rate, represented in 18 decimals
     uint256 public immutable openingFeeRate;
+    /// @dev Opening fee treasury portion rate, represented in 18 decimals
     uint256 public immutable openingFeeTreasuryPortionRate;
 
     struct Context {
@@ -57,19 +60,18 @@ abstract contract AmmOpenSwapServiceGenOne {
     constructor(
         AmmTypesGenOne.AmmOpenSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput,
-        address messageSignerInput,
-        address spreadInput
+        address messageSignerInput
     ) {
         asset = poolCfg.asset.checkAddress();
         decimals = poolCfg.decimals;
 
-        spread = spreadInput.checkAddress();
+        spread = poolCfg.spread.checkAddress();
         ammStorage = poolCfg.ammStorage.checkAddress();
         ammTreasury = poolCfg.ammTreasury.checkAddress();
 
         iporPublicationFee = poolCfg.iporPublicationFee;
         maxSwapCollateralAmount = poolCfg.maxSwapCollateralAmount;
-        wadLiquidationDepositAmount = poolCfg.wadLiquidationDepositAmount;
+        liquidationDepositAmount = poolCfg.liquidationDepositAmount;
         minLeverage = poolCfg.minLeverage;
         openingFeeRate = poolCfg.openingFeeRate;
         openingFeeTreasuryPortionRate = poolCfg.openingFeeTreasuryPortionRate;
@@ -88,6 +90,7 @@ abstract contract AmmOpenSwapServiceGenOne {
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) internal returns (uint256) {
+        _validateAccountInputToken(accountInputToken);
         return
             _openSwapPayFixedInternal(
                 Context({accountInputToken: accountInputToken, beneficiary: beneficiary, tenor: tenor}),
@@ -113,6 +116,7 @@ abstract contract AmmOpenSwapServiceGenOne {
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) internal returns (uint256) {
+        _validateAccountInputToken(accountInputToken);
         return
             _openSwapReceiveFixedInternal(
                 Context({accountInputToken: accountInputToken, beneficiary: beneficiary, tenor: tenor}),
@@ -142,13 +146,15 @@ abstract contract AmmOpenSwapServiceGenOne {
             leverage
         );
 
-        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorageGenOne(ammStorage).getBalancesForOpenSwap();
+        AmmTypesGenOne.AmmBalanceForOpenSwap memory balance = IAmmStorageGenOne(ammStorage).getBalancesForOpenSwap();
 
-        balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
+        uint256 liquidityPoolBalance = IAmmTreasuryGenOne(ammTreasury).getLiquidityPoolBalance() +
+            bosStruct.openingFeeLPAmount;
+
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 
         _validateLiquidityPoolCollateralRatioAndSwapLeverage(
-            balance.liquidityPool,
+            liquidityPoolBalance,
             balance.totalCollateralPayFixed,
             balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
             leverage,
@@ -165,7 +171,7 @@ abstract contract AmmOpenSwapServiceGenOne {
                 baseSpreadPerLeg: riskIndicators.baseSpreadPerLeg,
                 totalCollateralPayFixed: balance.totalCollateralPayFixed,
                 totalCollateralReceiveFixed: balance.totalCollateralReceiveFixed,
-                liquidityPoolBalance: balance.liquidityPool,
+                liquidityPoolBalance: liquidityPoolBalance,
                 iporIndexValue: bosStruct.accruedIpor.indexValue,
                 fixedRateCapPerLeg: riskIndicators.fixedRateCapPerLeg,
                 tenor: ctx.tenor
@@ -197,7 +203,7 @@ abstract contract AmmOpenSwapServiceGenOne {
             ctx.tenor
         );
 
-        uint256 newSwapId = IAmmStorage(ammStorage).updateStorageWhenOpenSwapPayFixedInternal(
+        uint256 newSwapId = IAmmStorageGenOne(ammStorage).updateStorageWhenOpenSwapPayFixedInternal(
             newSwap,
             iporPublicationFee
         );
@@ -232,13 +238,15 @@ abstract contract AmmOpenSwapServiceGenOne {
             leverage
         );
 
-        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(ammStorage).getBalancesForOpenSwap();
+        AmmTypesGenOne.AmmBalanceForOpenSwap memory balance = IAmmStorageGenOne(ammStorage).getBalancesForOpenSwap();
 
-        balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
+        uint256 liquidityPoolBalance = IAmmTreasuryGenOne(ammTreasury).getLiquidityPoolBalance() +
+            bosStruct.openingFeeLPAmount;
+
         balance.totalCollateralReceiveFixed = balance.totalCollateralReceiveFixed + bosStruct.collateral;
 
         _validateLiquidityPoolCollateralRatioAndSwapLeverage(
-            balance.liquidityPool,
+            liquidityPoolBalance,
             balance.totalCollateralReceiveFixed,
             balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
             leverage,
@@ -255,7 +263,7 @@ abstract contract AmmOpenSwapServiceGenOne {
                 baseSpreadPerLeg: riskIndicators.baseSpreadPerLeg,
                 totalCollateralPayFixed: balance.totalCollateralPayFixed,
                 totalCollateralReceiveFixed: balance.totalCollateralReceiveFixed,
-                liquidityPoolBalance: balance.liquidityPool,
+                liquidityPoolBalance: liquidityPoolBalance,
                 iporIndexValue: bosStruct.accruedIpor.indexValue,
                 fixedRateCapPerLeg: riskIndicators.fixedRateCapPerLeg,
                 tenor: ctx.tenor
@@ -284,7 +292,7 @@ abstract contract AmmOpenSwapServiceGenOne {
             ctx.tenor
         );
 
-        uint256 newSwapId = IAmmStorage(ammStorage).updateStorageWhenOpenSwapReceiveFixedInternal(
+        uint256 newSwapId = IAmmStorageGenOne(ammStorage).updateStorageWhenOpenSwapReceiveFixedInternal(
             newSwap,
             iporPublicationFee
         );
@@ -316,6 +324,8 @@ abstract contract AmmOpenSwapServiceGenOne {
 
     function _validateTotalAmount(address accountInputToken, uint256 totalAmount) internal view virtual;
 
+    function _validateAccountInputToken(address accountInputToken) internal view virtual;
+
     function _beforeOpenSwap(
         Context memory ctx,
         uint256 openTimestamp,
@@ -327,6 +337,9 @@ abstract contract AmmOpenSwapServiceGenOne {
         _validateTotalAmount(ctx.accountInputToken, totalAmount);
 
         uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, decimals);
+        /// @dev to achieve 18 decimals precision we multiply by 1e12 because for stETH
+        /// pool liquidationDepositAmount is represented in 6 decimals in storage and in Service configuration.
+        uint256 wadLiquidationDepositAmount = liquidationDepositAmount * 1e12;
 
         (uint256 collateral, uint256 notional, uint256 openingFeeAmount) = SwapLogicGenOne.calculateSwapAmount(
             ctx.tenor,
@@ -359,7 +372,7 @@ abstract contract AmmOpenSwapServiceGenOne {
                 openingFeeLPAmount,
                 openingFeeTreasuryAmount,
                 iporPublicationFee,
-                wadLiquidationDepositAmount,
+                liquidationDepositAmount,
                 accruedIndex
             );
     }
@@ -388,7 +401,8 @@ abstract contract AmmOpenSwapServiceGenOne {
                 openingFeeLPAmount: newSwap.openingFeeLPAmount,
                 openingFeeTreasuryAmount: newSwap.openingFeeTreasuryAmount,
                 iporPublicationFee: iporPublicationFeeAmount,
-                liquidationDepositAmount: newSwap.liquidationDepositAmount * 1e18
+                /// @dev to achieve 18 decimals precision we multiply by 1e12 because for stETH pool liquidationDepositAmount is represented in 6 decimals in storage.
+                liquidationDepositAmount: newSwap.liquidationDepositAmount * 1e12
             }),
             newSwap.openTimestamp,
             newSwap.openTimestamp + IporSwapLogic.getTenorInSeconds(newSwap.tenor),
@@ -410,7 +424,6 @@ abstract contract AmmOpenSwapServiceGenOne {
 
         if (totalLiquidityPoolBalance > 0) {
             collateralRatio = IporMath.division(totalCollateralBalance * 1e18, totalLiquidityPoolBalance);
-
             collateralRatioPerLeg = IporMath.division(collateralPerLegBalance * 1e18, totalLiquidityPoolBalance);
         } else {
             collateralRatio = Constants.MAX_VALUE;
@@ -418,9 +431,7 @@ abstract contract AmmOpenSwapServiceGenOne {
         }
 
         require(collateralRatio <= maxCollateralRatio, AmmErrors.LP_COLLATERAL_RATIO_EXCEEDED);
-
         require(collateralRatioPerLeg <= maxCollateralRatioPerLeg, AmmErrors.LP_COLLATERAL_RATIO_PER_LEG_EXCEEDED);
-
         require(leverage >= minLeverage, AmmErrors.LEVERAGE_TOO_LOW);
         require(leverage <= maxLeverage, AmmErrors.LEVERAGE_TOO_HIGH);
     }

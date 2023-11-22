@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
-import "forge-std/console2.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "../interfaces/types/AmmTypes.sol";
 import {IporErrors} from "./errors/IporErrors.sol";

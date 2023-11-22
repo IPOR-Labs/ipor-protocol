@@ -263,13 +263,13 @@ library IporSwapLogic {
     /// @notice Splits opening fee amount into liquidity pool and treasury portions
     /// @param openingFeeAmount opening fee amount, represented in 18 decimals
     /// @param openingFeeForTreasurePortionRate opening fee for treasury portion rate taken from Protocol configuration, represented in 18 decimals
-    /// @return liquidityPoolAmount liquidity pool portion of opening fee, represented in 18 decimals
-    /// @return treasuryAmount treasury portion of opening fee, represented in 18 decimals
+    /// @return feeForLiquidityPoolAmount liquidity pool portion of opening fee, represented in 18 decimals
+    /// @return feeForTreasuryAmount treasury portion of opening fee, represented in 18 decimals
     function splitOpeningFeeAmount(
         uint256 openingFeeAmount,
         uint256 openingFeeForTreasurePortionRate
-    ) internal pure returns (uint256 liquidityPoolAmount, uint256 treasuryAmount) {
-        treasuryAmount = IporMath.division(openingFeeAmount * openingFeeForTreasurePortionRate, 1e18);
-        liquidityPoolAmount = openingFeeAmount - treasuryAmount;
+    ) internal pure returns (uint256 feeForLiquidityPoolAmount, uint256 feeForTreasuryAmount) {
+        feeForTreasuryAmount = IporMath.division(openingFeeAmount * openingFeeForTreasurePortionRate, 1e18);
+        feeForLiquidityPoolAmount = openingFeeAmount - feeForTreasuryAmount;
     }
 }

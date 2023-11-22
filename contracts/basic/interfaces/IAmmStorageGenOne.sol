@@ -3,7 +3,6 @@ pragma solidity 0.8.20;
 
 import "../../interfaces/types/IporTypes.sol";
 import "../../interfaces/types/AmmTypes.sol";
-import "../types/AmmTypesGenOne.sol";
 import "../../interfaces/types/AmmStorageTypes.sol";
 import "../../amm/libraries/types/AmmInternalTypes.sol";
 import "../types/AmmTypesGenOne.sol";
@@ -40,8 +39,9 @@ interface IAmmStorageGenOne {
     /// # Pay Fixed Total Collateral
     /// # Receive Fixed Total Collateral
     /// # Liquidity Pool and Vault balances.
-    /// @return balance structure {AmmTypesGenOne.AmmBalancesMemory}
-    function getBalance() external view returns (AmmTypesGenOne.AmmBalancesMemory memory);
+    /// All balances are represented in 18 decimals.
+    /// @return balance structure {AmmTypesGenOne.Balance}
+    function getBalance() external view returns (AmmTypesGenOne.Balance memory);
 
     /// @notice Gets the balance for open swap
     /// @dev Balance contains:
@@ -50,8 +50,8 @@ interface IAmmStorageGenOne {
     /// # Liquidity Pool balance
     /// # Total Notional Pay Fixed
     /// # Total Notional Receive Fixed
-    /// @return balance structure {IporTypes.AmmBalancesForOpenSwapMemory}
-    function getBalancesForOpenSwap() external view returns (IporTypes.AmmBalancesForOpenSwapMemory memory);
+    /// @return balance structure {AmmTypesGenOne.AmmBalanceForOpenSwap}
+    function getBalancesForOpenSwap() external view returns (AmmTypesGenOne.AmmBalanceForOpenSwap memory);
 
     /// @notice gets the SOAP indicators.
     /// @dev SOAP is a Sum Of All Payouts, aka undealised PnL.

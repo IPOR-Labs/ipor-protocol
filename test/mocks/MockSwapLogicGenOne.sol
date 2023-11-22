@@ -9,7 +9,7 @@ contract MockSwapLogicGenOne {
         IporTypes.SwapTenor tenor,
         uint256 totalAmount,
         uint256 leverage,
-        uint256 liquidationDepositAmount,
+        uint256 wadLiquidationDepositAmount,
         uint256 iporPublicationFeeAmount,
         uint256 openingFeeRate
     ) public view returns (uint256 collateral, uint256 notional, uint256 openingFee) {
@@ -18,7 +18,7 @@ contract MockSwapLogicGenOne {
                 tenor,
                 totalAmount,
                 leverage,
-                liquidationDepositAmount,
+                wadLiquidationDepositAmount,
                 iporPublicationFeeAmount,
                 openingFeeRate
             );

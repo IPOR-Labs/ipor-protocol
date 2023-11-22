@@ -1,35 +1,39 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
-
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "../interfaces/IProxyImplementation.sol";
-import "../libraries/Constants.sol";
-import "../libraries/errors/IporErrors.sol";
-import "../libraries/IporContractValidator.sol";
-import "../security/PauseManager.sol";
-import "../security/IporOwnableUpgradeable.sol";
-import "./interfaces/IAmmTreasuryEth.sol";
+import "../../interfaces/IProxyImplementation.sol";
+import "../interfaces/IAmmTreasuryGenOne.sol";
+import "../interfaces/IAmmStorageGenOne.sol";
+import "../../libraries/Constants.sol";
+import "../../libraries/errors/IporErrors.sol";
+import "../../libraries/IporContractValidator.sol";
+import "../../security/PauseManager.sol";
+import "../../security/IporOwnableUpgradeable.sol";
+import "../types/StorageTypesGenOne.sol";
 
-//TODO: change name to AmmTreasuryStEth
-contract AmmTreasuryEth is
+contract AmmTreasuryGenOne is
     Initializable,
     PausableUpgradeable,
     ReentrancyGuardUpgradeable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-    IAmmTreasuryEth,
+    IAmmTreasuryGenOne,
     IProxyImplementation
 {
+    using SafeCast for uint256;
+    using SafeCast for int256;
     using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    address public immutable stEth;
+    address public immutable asset;
     address public immutable router;
+    address public immutable ammStorage;
 
     modifier onlyPauseGuardian() {
         if (!PauseManager.isPauseGuardian(msg.sender)) {
@@ -45,9 +49,10 @@ contract AmmTreasuryEth is
         _;
     }
 
-    constructor(address stEthInput, address routerInput) {
-        stEth = stEthInput.checkAddress();
+    constructor(address assetInput, address routerInput, address ammStorageInput) {
+        asset = assetInput.checkAddress();
         router = routerInput.checkAddress();
+        ammStorage = ammStorageInput.checkAddress();
 
         _disableInitializers();
     }
@@ -60,12 +65,20 @@ contract AmmTreasuryEth is
         if (paused) {
             _pause();
         } else {
-            IERC20Upgradeable(stEth).forceApprove(router, Constants.MAX_VALUE);
+            IERC20Upgradeable(asset).forceApprove(router, Constants.MAX_VALUE);
         }
     }
 
-    function getConfiguration() external view override returns (address, address) {
-        return (stEth, router);
+    function getLiquidityPoolBalance() external view override returns (uint256) {
+        AmmTypesGenOne.Balance memory balance = IAmmStorageGenOne(ammStorage).getBalance();
+
+        uint256 liquidityPool = (IERC20Upgradeable(asset).balanceOf(address(this)).toInt256() -
+            balance.totalCollateralPayFixed.toInt256() -
+            balance.totalCollateralReceiveFixed.toInt256() -
+            balance.iporPublicationFee.toInt256() -
+            balance.treasury.toInt256()).toUint256();
+
+        return liquidityPool;
     }
 
     function getVersion() external pure returns (uint256) {
@@ -73,13 +86,13 @@ contract AmmTreasuryEth is
     }
 
     function pause() external override onlyPauseGuardian {
-        IERC20Upgradeable(stEth).safeApprove(router, 0);
+        IERC20Upgradeable(asset).safeApprove(router, 0);
         _pause();
     }
 
     function unpause() external override onlyOwner {
         _unpause();
-        IERC20Upgradeable(stEth).forceApprove(router, Constants.MAX_VALUE);
+        IERC20Upgradeable(asset).forceApprove(router, Constants.MAX_VALUE);
     }
 
     function isPauseGuardian(address account) external view override returns (bool) {

@@ -6,17 +6,28 @@ import "./TestForkCommons.sol";
 import "../../contracts/interfaces/IAmmCloseSwapServiceStEth.sol";
 import "../../contracts/interfaces/types/AmmTypes.sol";
 
-contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
+contract ForkAmmStEthUnwindTest is TestForkCommons {
+    event SwapUnwind(
+        address asset,
+        uint256 indexed swapId,
+        int256 swapPnlValueToDate,
+        int256 swapUnwindAmount,
+        uint256 unwindFeeLPAmount,
+        uint256 unwindFeeTreasuryAmount
+    );
+
     function setUp() public {
         vm.createSelectFork(vm.envString("PROVIDER_URL"), 18562032);
     }
 
-    function testShouldClosePositionStEthForStEth28daysPayFixed() public {
+    function testShouldUnwindWithCorrectEventEth28daysPayFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
         uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -25,7 +36,69 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             baseSpreadPerLeg: 3695000000000000,
             fixedRateCapPerLeg: 20000000000000000,
             demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
+            expiration: block.timestamp + 10 days + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            messageSignerPrivateKey
+        );
+
+        vm.prank(user);
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth{
+            value: totalAmount
+        }(ETH, user, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
+
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = swapId;
+        uint256[] memory swapRfIds = new uint256[](0);
+
+        vm.warp(block.timestamp + 10 days);
+
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
+            IporTypes.SwapTenor.DAYS_28
+        );
+
+        //when
+        vm.prank(user);
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: -487634699415820,
+            swapUnwindAmount: -715837580068375,
+            unwindFeeLPAmount: 16452593526,
+            unwindFeeTreasuryAmount: 5484197842
+        });
+        IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
+            user,
+            swapPfIds,
+            swapRfIds,
+            closeRiskIndicatorsInputs
+        );
+    }
+
+    function testShouldUnwindWithCorrectEventStEth28daysPayFixed() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+        uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 10 days + 1000,
             signature: bytes("0x00")
         });
 
@@ -51,43 +124,39 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         swapPfIds[0] = swapId;
         uint256[] memory swapRfIds = new uint256[](0);
 
+        vm.warp(block.timestamp + 10 days);
+
         AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
             IporTypes.SwapTenor.DAYS_28
         );
 
         //when
         vm.prank(user);
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: -487634699415820,
+            swapUnwindAmount: -715837580068375,
+            unwindFeeLPAmount: 16452593526,
+            unwindFeeTreasuryAmount: 5484197842
+        });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             user,
             swapPfIds,
             swapRfIds,
             closeRiskIndicatorsInputs
         );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88965876102316920, swap.collateral, "swap.collateral");
-        assertEq(889658761023169200, swap.notional, "swap.notional");
-        assertEq(889658761023169200, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000691543764546, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
     }
 
-    function testShouldClosePositionStEthForEth28daysPayFixed() public {
+    function testShouldUnwindWithCorrectEventWEth28daysPayFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
-
         uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -96,7 +165,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             baseSpreadPerLeg: 3695000000000000,
             fixedRateCapPerLeg: 20000000000000000,
             demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
+            expiration: block.timestamp + 10 days + 1000,
             signature: bytes("0x00")
         });
 
@@ -107,71 +176,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             0,
             messageSignerPrivateKey
         );
-        vm.prank(user);
-        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth{
-            value: totalAmount
-        }(ETH, user, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
 
-        uint256[] memory swapPfIds = new uint256[](1);
-        swapPfIds[0] = swapId;
-        uint256[] memory swapRfIds = new uint256[](0);
-
-        AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
-            IporTypes.SwapTenor.DAYS_28
-        );
-
-        //when
-        vm.prank(user);
-        IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
-            user,
-            swapPfIds,
-            swapRfIds,
-            closeRiskIndicatorsInputs
-        );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88965876102316920, swap.collateral, "swap.collateral");
-        assertEq(889658761023169200, swap.notional, "swap.notional");
-        assertEq(889658761023169200, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000691543764546, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
-    }
-
-    function testShouldClosePositionStEthForWEth28daysPayFixed() public {
-        //given
-        _init();
-        address user = _getUserAddress(22);
-        _setupUser(user, 1000 * 1e18);
-
-        uint256 totalAmount = 1 * 1e17;
-
-        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
-            maxCollateralRatio: 50000000000000000,
-            maxCollateralRatioPerLeg: 50000000000000000,
-            maxLeveragePerLeg: 1000000000000000000000,
-            baseSpreadPerLeg: 3695000000000000,
-            fixedRateCapPerLeg: 20000000000000000,
-            demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
-            signature: bytes("0x00")
-        });
-
-        riskIndicatorsInputs.signature = signRiskParams(
-            riskIndicatorsInputs,
-            address(stETH),
-            uint256(IporTypes.SwapTenor.DAYS_28),
-            0,
-            messageSignerPrivateKey
-        );
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
             wETH,
@@ -186,43 +191,39 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         swapPfIds[0] = swapId;
         uint256[] memory swapRfIds = new uint256[](0);
 
+        vm.warp(block.timestamp + 10 days);
+
         AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
             IporTypes.SwapTenor.DAYS_28
         );
 
         //when
         vm.prank(user);
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: -487634699415820,
+            swapUnwindAmount: -715837580068375,
+            unwindFeeLPAmount: 16452593526,
+            unwindFeeTreasuryAmount: 5484197842
+        });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             user,
             swapPfIds,
             swapRfIds,
             closeRiskIndicatorsInputs
         );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88965876102316920, swap.collateral, "swap.collateral");
-        assertEq(889658761023169200, swap.notional, "swap.notional");
-        assertEq(889658761023169200, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000691543764546, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
     }
 
-    function testShouldClosePositionStEthForwstEth28daysPayFixed() public {
+    function testShouldUnwindWithCorrectEventwstEth28daysPayFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
-
         uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -231,7 +232,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             baseSpreadPerLeg: 3695000000000000,
             fixedRateCapPerLeg: 20000000000000000,
             demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
+            expiration: block.timestamp + 10 days + 1000,
             signature: bytes("0x00")
         });
 
@@ -242,6 +243,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             0,
             messageSignerPrivateKey
         );
+
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
             wstETH,
@@ -256,112 +258,39 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         swapPfIds[0] = swapId;
         uint256[] memory swapRfIds = new uint256[](0);
 
+        vm.warp(block.timestamp + 10 days);
+
         AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
             IporTypes.SwapTenor.DAYS_28
         );
 
         //when
         vm.prank(user);
-        IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
-            user,
-            swapPfIds,
-            swapRfIds,
-            closeRiskIndicatorsInputs
-        );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88965876102316920, swap.collateral, "swap.collateral");
-        assertEq(889658761023169200, swap.notional, "swap.notional");
-        assertEq(889658761023169200, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000691543764546, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
-    }
-
-    function testShouldClosePositionStEthForStEth60daysPayFixed() public {
-        //given
-        _init();
-        address user = _getUserAddress(22);
-        _setupUser(user, 1000 * 1e18);
-        uint256 totalAmount = 1 * 1e17;
-
-        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
-            maxCollateralRatio: 50000000000000000,
-            maxCollateralRatioPerLeg: 50000000000000000,
-            maxLeveragePerLeg: 1000000000000000000000,
-            baseSpreadPerLeg: 3695000000000000,
-            fixedRateCapPerLeg: 20000000000000000,
-            demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
-            signature: bytes("0x00")
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: -487634699415820,
+            swapUnwindAmount: -715837580068375,
+            unwindFeeLPAmount: 16452593526,
+            unwindFeeTreasuryAmount: 5484197842
         });
-
-        riskIndicatorsInputs.signature = signRiskParams(
-            riskIndicatorsInputs,
-            address(stETH),
-            uint256(IporTypes.SwapTenor.DAYS_60),
-            0,
-            messageSignerPrivateKey
-        );
-
-        vm.prank(user);
-        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
-            stETH,
-            user,
-            totalAmount,
-            1e18,
-            10e18,
-            riskIndicatorsInputs
-        );
-
-        uint256[] memory swapPfIds = new uint256[](1);
-        swapPfIds[0] = swapId;
-        uint256[] memory swapRfIds = new uint256[](0);
-
-        AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
-            IporTypes.SwapTenor.DAYS_60
-        );
-
-        //when
-        vm.prank(user);
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             user,
             swapPfIds,
             swapRfIds,
             closeRiskIndicatorsInputs
         );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88926909389542842, swap.collateral, "swap.collateral");
-        assertEq(889269093895428420, swap.notional, "swap.notional");
-        assertEq(889269093895428420, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000691240845903, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
     }
 
-    function testShouldClosePositionStEthForEth60daysPayFixed() public {
+    function testShouldUnwindWithCorrectEventEth60daysPayFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
         uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -370,7 +299,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             baseSpreadPerLeg: 3695000000000000,
             fixedRateCapPerLeg: 20000000000000000,
             demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
+            expiration: block.timestamp + 40 days + 1000,
             signature: bytes("0x00")
         });
 
@@ -391,42 +320,39 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         swapPfIds[0] = swapId;
         uint256[] memory swapRfIds = new uint256[](0);
 
+        vm.warp(block.timestamp + 40 days);
+
         AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
             IporTypes.SwapTenor.DAYS_60
         );
 
         //when
         vm.prank(user);
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: -1951288000323578,
+            swapUnwindAmount: -795078306276645,
+            unwindFeeLPAmount: 18272652614,
+            unwindFeeTreasuryAmount: 6090884205
+        });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             user,
             swapPfIds,
             swapRfIds,
             closeRiskIndicatorsInputs
         );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88926909389542842, swap.collateral, "swap.collateral");
-        assertEq(889269093895428420, swap.notional, "swap.notional");
-        assertEq(889269093895428420, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000691240845903, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
     }
 
-    function testShouldClosePositionStEthForWEth60daysPayFixed() public {
+    function testShouldUnwindWithCorrectEventStEth60daysPayFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
         uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -435,7 +361,74 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             baseSpreadPerLeg: 3695000000000000,
             fixedRateCapPerLeg: 20000000000000000,
             demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
+            expiration: block.timestamp + 40 days + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_60),
+            0,
+            messageSignerPrivateKey
+        );
+
+        vm.prank(user);
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
+            stETH,
+            user,
+            totalAmount,
+            1e18,
+            10e18,
+            riskIndicatorsInputs
+        );
+
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = swapId;
+        uint256[] memory swapRfIds = new uint256[](0);
+
+        vm.warp(block.timestamp + 40 days);
+
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
+            IporTypes.SwapTenor.DAYS_60
+        );
+
+        //when
+        vm.prank(user);
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: -1951288000323578,
+            swapUnwindAmount: -795078306276645,
+            unwindFeeLPAmount: 18272652614,
+            unwindFeeTreasuryAmount: 6090884205
+        });
+        IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
+            user,
+            swapPfIds,
+            swapRfIds,
+            closeRiskIndicatorsInputs
+        );
+    }
+
+    function testShouldUnwindWithCorrectEventWEth60daysPayFixed() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+        uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 40 days + 1000,
             signature: bytes("0x00")
         });
 
@@ -461,42 +454,39 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         swapPfIds[0] = swapId;
         uint256[] memory swapRfIds = new uint256[](0);
 
+        vm.warp(block.timestamp + 40 days);
+
         AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
             IporTypes.SwapTenor.DAYS_60
         );
 
         //when
         vm.prank(user);
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: -1951288000323578,
+            swapUnwindAmount: -795078306276645,
+            unwindFeeLPAmount: 18272652614,
+            unwindFeeTreasuryAmount: 6090884205
+        });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             user,
             swapPfIds,
             swapRfIds,
             closeRiskIndicatorsInputs
         );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88926909389542842, swap.collateral, "swap.collateral");
-        assertEq(889269093895428420, swap.notional, "swap.notional");
-        assertEq(889269093895428420, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000691240845903, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
     }
 
-    function testShouldClosePositionStEthForwstEth60daysPayFixed() public {
+    function testShouldUnwindWithCorrectEventwstEth60daysPayFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
         uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -505,7 +495,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             baseSpreadPerLeg: 3695000000000000,
             fixedRateCapPerLeg: 20000000000000000,
             demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
+            expiration: block.timestamp + 40 days + 1000,
             signature: bytes("0x00")
         });
 
@@ -531,112 +521,39 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         swapPfIds[0] = swapId;
         uint256[] memory swapRfIds = new uint256[](0);
 
+        vm.warp(block.timestamp + 40 days);
+
         AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
             IporTypes.SwapTenor.DAYS_60
         );
 
         //when
         vm.prank(user);
-        IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
-            user,
-            swapPfIds,
-            swapRfIds,
-            closeRiskIndicatorsInputs
-        );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88926909389542842, swap.collateral, "swap.collateral");
-        assertEq(889269093895428420, swap.notional, "swap.notional");
-        assertEq(889269093895428420, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000691240845903, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
-    }
-
-    function testShouldClosePositionStEthForStEth90daysPayFixed() public {
-        //given
-        _init();
-        address user = _getUserAddress(22);
-        _setupUser(user, 1000 * 1e18);
-        uint256 totalAmount = 1 * 1e17;
-
-        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
-            maxCollateralRatio: 50000000000000000,
-            maxCollateralRatioPerLeg: 50000000000000000,
-            maxLeveragePerLeg: 1000000000000000000000,
-            baseSpreadPerLeg: 3695000000000000,
-            fixedRateCapPerLeg: 20000000000000000,
-            demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
-            signature: bytes("0x00")
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: -1951288000323578,
+            swapUnwindAmount: -795078306276645,
+            unwindFeeLPAmount: 18272652614,
+            unwindFeeTreasuryAmount: 6090884205
         });
-
-        riskIndicatorsInputs.signature = signRiskParams(
-            riskIndicatorsInputs,
-            address(stETH),
-            uint256(IporTypes.SwapTenor.DAYS_90),
-            0,
-            messageSignerPrivateKey
-        );
-
-        vm.prank(user);
-        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed90daysStEth(
-            stETH,
-            user,
-            totalAmount,
-            1e18,
-            10e18,
-            riskIndicatorsInputs
-        );
-
-        uint256[] memory swapPfIds = new uint256[](1);
-        swapPfIds[0] = swapId;
-        uint256[] memory swapRfIds = new uint256[](0);
-
-        AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
-            IporTypes.SwapTenor.DAYS_90
-        );
-
-        //when
-        vm.prank(user);
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             user,
             swapPfIds,
             swapRfIds,
             closeRiskIndicatorsInputs
         );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88890409084690108, swap.collateral, "swap.collateral");
-        assertEq(888904090846901080, swap.notional, "swap.notional");
-        assertEq(888904090846901080, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000690957100591, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
     }
 
-    function testShouldClosePositionStEthForEth90daysPayFixed() public {
+    function testShouldUnwindWithCorrectEventEth90daysPayFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
         uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -645,7 +562,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             baseSpreadPerLeg: 3695000000000000,
             fixedRateCapPerLeg: 20000000000000000,
             demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
+            expiration: block.timestamp + 40 days + 1000,
             signature: bytes("0x00")
         });
 
@@ -666,42 +583,39 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         swapPfIds[0] = swapId;
         uint256[] memory swapRfIds = new uint256[](0);
 
+        vm.warp(block.timestamp + 40 days);
+
         AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
             IporTypes.SwapTenor.DAYS_90
         );
 
         //when
         vm.prank(user);
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: -1950487060869353,
+            swapUnwindAmount: -1988815889017207,
+            unwindFeeLPAmount: 45662881379,
+            unwindFeeTreasuryAmount: 15220960460
+        });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             user,
             swapPfIds,
             swapRfIds,
             closeRiskIndicatorsInputs
         );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88890409084690108, swap.collateral, "swap.collateral");
-        assertEq(888904090846901080, swap.notional, "swap.notional");
-        assertEq(888904090846901080, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000690957100591, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
     }
 
-    function testShouldClosePositionStEthForWEth90daysPayFixed() public {
+    function testShouldUnwindWithCorrectEventStEth90daysPayFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
         uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -710,7 +624,74 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             baseSpreadPerLeg: 3695000000000000,
             fixedRateCapPerLeg: 20000000000000000,
             demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
+            expiration: block.timestamp + 40 days + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_90),
+            0,
+            messageSignerPrivateKey
+        );
+
+        vm.prank(user);
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed90daysStEth(
+            stETH,
+            user,
+            totalAmount,
+            1e18,
+            10e18,
+            riskIndicatorsInputs
+        );
+
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = swapId;
+        uint256[] memory swapRfIds = new uint256[](0);
+
+        vm.warp(block.timestamp + 40 days);
+
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
+            IporTypes.SwapTenor.DAYS_90
+        );
+
+        //when
+        vm.prank(user);
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: -1950487060869353,
+            swapUnwindAmount: -1988815889017207,
+            unwindFeeLPAmount: 45662881379,
+            unwindFeeTreasuryAmount: 15220960460
+        });
+        IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
+            user,
+            swapPfIds,
+            swapRfIds,
+            closeRiskIndicatorsInputs
+        );
+    }
+
+    function testShouldUnwindWithCorrectEventWEth90daysPayFixed() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+        uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 40 days + 1000,
             signature: bytes("0x00")
         });
 
@@ -736,42 +717,39 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         swapPfIds[0] = swapId;
         uint256[] memory swapRfIds = new uint256[](0);
 
+        vm.warp(block.timestamp + 40 days);
+
         AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
             IporTypes.SwapTenor.DAYS_90
         );
 
         //when
         vm.prank(user);
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: -1950487060869353,
+            swapUnwindAmount: -1988815889017207,
+            unwindFeeLPAmount: 45662881379,
+            unwindFeeTreasuryAmount: 15220960460
+        });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             user,
             swapPfIds,
             swapRfIds,
             closeRiskIndicatorsInputs
         );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88890409084690108, swap.collateral, "swap.collateral");
-        assertEq(888904090846901080, swap.notional, "swap.notional");
-        assertEq(888904090846901080, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000690957100591, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
     }
 
-    function testShouldClosePositionStEthForwstEth90daysPayFixed() public {
+    function testShouldUnwindWithCorrectEventwstEth90daysPayFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
         uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -780,7 +758,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             baseSpreadPerLeg: 3695000000000000,
             fixedRateCapPerLeg: 20000000000000000,
             demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
+            expiration: block.timestamp + 40 days + 1000,
             signature: bytes("0x00")
         });
 
@@ -806,42 +784,39 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         swapPfIds[0] = swapId;
         uint256[] memory swapRfIds = new uint256[](0);
 
+        vm.warp(block.timestamp + 40 days);
+
         AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
             IporTypes.SwapTenor.DAYS_90
         );
 
         //when
         vm.prank(user);
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: -1950487060869353,
+            swapUnwindAmount: -1988815889017207,
+            unwindFeeLPAmount: 45662881379,
+            unwindFeeTreasuryAmount: 15220960460
+        });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             user,
             swapPfIds,
             swapRfIds,
             closeRiskIndicatorsInputs
         );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88890409084690108, swap.collateral, "swap.collateral");
-        assertEq(888904090846901080, swap.notional, "swap.notional");
-        assertEq(888904090846901080, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000690957100591, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
     }
 
-    function testShouldClosePositionStEthForStEth28daysReceiveFixed() public {
+    function testShouldUnwindWithCorrectEventEth28daysReceiveFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
         uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -850,7 +825,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             baseSpreadPerLeg: 3695000000000000,
             fixedRateCapPerLeg: 20000000000000000,
             demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
+            expiration: block.timestamp + 10 days + 1000,
             signature: bytes("0x00")
         });
 
@@ -862,76 +837,6 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        vm.prank(user);
-        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
-            stETH,
-            user,
-            totalAmount,
-            0,
-            10e18,
-            riskIndicatorsInputs
-        );
-
-        uint256[] memory swapPfIds = new uint256[](0);
-        uint256[] memory swapRfIds = new uint256[](1);
-        swapRfIds[0] = swapId;
-
-        AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
-            IporTypes.SwapTenor.DAYS_28
-        );
-
-        //when
-        vm.prank(user);
-        IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
-            user,
-            swapPfIds,
-            swapRfIds,
-            closeRiskIndicatorsInputs
-        );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88965876102316920, swap.collateral, "swap.collateral");
-        assertEq(889658761023169200, swap.notional, "swap.notional");
-        assertEq(889658761023169200, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694308456235454, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
-    }
-
-    function testShouldClosePositionStEthForEth28daysReceiveFixed() public {
-        //given
-        _init();
-        address user = _getUserAddress(22);
-        _setupUser(user, 1000 * 1e18);
-
-        uint256 totalAmount = 1 * 1e17;
-
-        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
-            maxCollateralRatio: 50000000000000000,
-            maxCollateralRatioPerLeg: 50000000000000000,
-            maxLeveragePerLeg: 1000000000000000000000,
-            baseSpreadPerLeg: 3695000000000000,
-            fixedRateCapPerLeg: 20000000000000000,
-            demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
-            signature: bytes("0x00")
-        });
-
-        riskIndicatorsInputs.signature = signRiskParams(
-            riskIndicatorsInputs,
-            address(stETH),
-            uint256(IporTypes.SwapTenor.DAYS_28),
-            1,
-            messageSignerPrivateKey
-        );
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth{
             value: totalAmount
@@ -941,43 +846,39 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = swapId;
 
+        vm.warp(block.timestamp + 10 days);
+
         AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
             IporTypes.SwapTenor.DAYS_28
         );
 
         //when
         vm.prank(user);
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: 90050416937380,
+            swapUnwindAmount: -715837580068361,
+            unwindFeeLPAmount: 16452593526,
+            unwindFeeTreasuryAmount: 5484197842
+        });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             user,
             swapPfIds,
             swapRfIds,
             closeRiskIndicatorsInputs
         );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88965876102316920, swap.collateral, "swap.collateral");
-        assertEq(889658761023169200, swap.notional, "swap.notional");
-        assertEq(889658761023169200, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694308456235454, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
     }
 
-    function testShouldClosePositionStEthForWEth28daysReceiveFixed() public {
+    function testShouldUnwindWithCorrectEventStEth28daysReceiveFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
-
         uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -986,7 +887,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             baseSpreadPerLeg: 3695000000000000,
             fixedRateCapPerLeg: 20000000000000000,
             demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
+            expiration: block.timestamp + 10 days + 1000,
             signature: bytes("0x00")
         });
 
@@ -997,6 +898,74 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             1,
             messageSignerPrivateKey
         );
+
+        vm.prank(user);
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
+            stETH,
+            user,
+            totalAmount,
+            0,
+            10e18,
+            riskIndicatorsInputs
+        );
+
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = swapId;
+
+        vm.warp(block.timestamp + 10 days);
+
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
+            IporTypes.SwapTenor.DAYS_28
+        );
+
+        //when
+        vm.prank(user);
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: 90050416937380,
+            swapUnwindAmount: -715837580068361,
+            unwindFeeLPAmount: 16452593526,
+            unwindFeeTreasuryAmount: 5484197842
+        });
+        IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
+            user,
+            swapPfIds,
+            swapRfIds,
+            closeRiskIndicatorsInputs
+        );
+    }
+
+    function testShouldUnwindWithCorrectEventWEth28daysReceiveFixed() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+        uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 10 days + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            1,
+            messageSignerPrivateKey
+        );
+
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
             wETH,
@@ -1011,43 +980,39 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = swapId;
 
+        vm.warp(block.timestamp + 10 days);
+
         AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
             IporTypes.SwapTenor.DAYS_28
         );
 
         //when
         vm.prank(user);
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: 90050416937380,
+            swapUnwindAmount: -715837580068361,
+            unwindFeeLPAmount: 16452593526,
+            unwindFeeTreasuryAmount: 5484197842
+        });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             user,
             swapPfIds,
             swapRfIds,
             closeRiskIndicatorsInputs
         );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88965876102316920, swap.collateral, "swap.collateral");
-        assertEq(889658761023169200, swap.notional, "swap.notional");
-        assertEq(889658761023169200, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694308456235454, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
     }
 
-    function testShouldClosePositionStEthForwstEth28daysReceiveFixed() public {
+    function testShouldUnwindWithCorrectEventwstEth28dayReceiveFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
-
         uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -1056,7 +1021,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             baseSpreadPerLeg: 3695000000000000,
             fixedRateCapPerLeg: 20000000000000000,
             demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
+            expiration: block.timestamp + 10 days + 1000,
             signature: bytes("0x00")
         });
 
@@ -1067,6 +1032,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             1,
             messageSignerPrivateKey
         );
+
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
             wstETH,
@@ -1081,112 +1047,39 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = swapId;
 
+        vm.warp(block.timestamp + 10 days);
+
         AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
             IporTypes.SwapTenor.DAYS_28
         );
 
         //when
         vm.prank(user);
-        IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
-            user,
-            swapPfIds,
-            swapRfIds,
-            closeRiskIndicatorsInputs
-        );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88965876102316920, swap.collateral, "swap.collateral");
-        assertEq(889658761023169200, swap.notional, "swap.notional");
-        assertEq(889658761023169200, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694308456235454, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
-    }
-
-    function testShouldClosePositionStEthForStEth60daysReceiveFixed() public {
-        //given
-        _init();
-        address user = _getUserAddress(22);
-        _setupUser(user, 1000 * 1e18);
-        uint256 totalAmount = 1 * 1e17;
-
-        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
-            maxCollateralRatio: 50000000000000000,
-            maxCollateralRatioPerLeg: 50000000000000000,
-            maxLeveragePerLeg: 1000000000000000000000,
-            baseSpreadPerLeg: 3695000000000000,
-            fixedRateCapPerLeg: 20000000000000000,
-            demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
-            signature: bytes("0x00")
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: 90050416937380,
+            swapUnwindAmount: -715837580068361,
+            unwindFeeLPAmount: 16452593526,
+            unwindFeeTreasuryAmount: 5484197842
         });
-
-        riskIndicatorsInputs.signature = signRiskParams(
-            riskIndicatorsInputs,
-            address(stETH),
-            uint256(IporTypes.SwapTenor.DAYS_60),
-            1,
-            messageSignerPrivateKey
-        );
-
-        vm.prank(user);
-        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth(
-            stETH,
-            user,
-            totalAmount,
-            0,
-            10e18,
-            riskIndicatorsInputs
-        );
-
-        uint256[] memory swapPfIds = new uint256[](0);
-        uint256[] memory swapRfIds = new uint256[](1);
-        swapRfIds[0] = swapId;
-
-        AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
-            IporTypes.SwapTenor.DAYS_60
-        );
-
-        //when
-        vm.prank(user);
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             user,
             swapPfIds,
             swapRfIds,
             closeRiskIndicatorsInputs
         );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88926909389542842, swap.collateral, "swap.collateral");
-        assertEq(889269093895428420, swap.notional, "swap.notional");
-        assertEq(889269093895428420, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694308759154097, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
     }
 
-    function testShouldClosePositionStEthForEth60daysReceiveFixed() public {
+    function testShouldUnwindWithCorrectEventEth60daysReceiveFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
         uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -1195,7 +1088,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             baseSpreadPerLeg: 3695000000000000,
             fixedRateCapPerLeg: 20000000000000000,
             demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
+            expiration: block.timestamp + 40 days + 1000,
             signature: bytes("0x00")
         });
 
@@ -1216,42 +1109,39 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = swapId;
 
+        vm.warp(block.timestamp + 40 days);
+
         AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
             IporTypes.SwapTenor.DAYS_60
         );
 
         //when
         vm.prank(user);
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: 360098598974788,
+            swapUnwindAmount: -795078306276626,
+            unwindFeeLPAmount: 18272652614,
+            unwindFeeTreasuryAmount: 6090884205
+        });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             user,
             swapPfIds,
             swapRfIds,
             closeRiskIndicatorsInputs
         );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88926909389542842, swap.collateral, "swap.collateral");
-        assertEq(889269093895428420, swap.notional, "swap.notional");
-        assertEq(889269093895428420, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694308759154097, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
     }
 
-    function testShouldClosePositionStEthForWEth60daysReceiveFixed() public {
+    function testShouldUnwindWithCorrectEventStEth60daysReceiveFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
         uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -1260,7 +1150,74 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             baseSpreadPerLeg: 3695000000000000,
             fixedRateCapPerLeg: 20000000000000000,
             demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
+            expiration: block.timestamp + 40 days + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_60),
+            1,
+            messageSignerPrivateKey
+        );
+
+        vm.prank(user);
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth(
+            stETH,
+            user,
+            totalAmount,
+            0,
+            10e18,
+            riskIndicatorsInputs
+        );
+
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = swapId;
+
+        vm.warp(block.timestamp + 40 days);
+
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
+            IporTypes.SwapTenor.DAYS_60
+        );
+
+        //when
+        vm.prank(user);
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: 360098598974788,
+            swapUnwindAmount: -795078306276626,
+            unwindFeeLPAmount: 18272652614,
+            unwindFeeTreasuryAmount: 6090884205
+        });
+        IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
+            user,
+            swapPfIds,
+            swapRfIds,
+            closeRiskIndicatorsInputs
+        );
+    }
+
+    function testShouldUnwindWithCorrectEventWEth60daysReceiveFixed() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+        uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 40 days + 1000,
             signature: bytes("0x00")
         });
 
@@ -1286,42 +1243,39 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = swapId;
 
+        vm.warp(block.timestamp + 40 days);
+
         AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
             IporTypes.SwapTenor.DAYS_60
         );
 
         //when
         vm.prank(user);
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: 360098598974788,
+            swapUnwindAmount: -795078306276626,
+            unwindFeeLPAmount: 18272652614,
+            unwindFeeTreasuryAmount: 6090884205
+        });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             user,
             swapPfIds,
             swapRfIds,
             closeRiskIndicatorsInputs
         );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88926909389542842, swap.collateral, "swap.collateral");
-        assertEq(889269093895428420, swap.notional, "swap.notional");
-        assertEq(889269093895428420, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694308759154097, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
     }
 
-    function testShouldClosePositionStEthForwstEth60daysReceiveFixed() public {
+    function testShouldUnwindWithCorrectEventwstEth60daysReceiveFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
         uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -1330,7 +1284,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             baseSpreadPerLeg: 3695000000000000,
             fixedRateCapPerLeg: 20000000000000000,
             demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
+            expiration: block.timestamp + 40 days + 1000,
             signature: bytes("0x00")
         });
 
@@ -1356,42 +1310,39 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = swapId;
 
+        vm.warp(block.timestamp + 40 days);
+
         AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
             IporTypes.SwapTenor.DAYS_60
         );
 
         //when
         vm.prank(user);
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: 360098598974788,
+            swapUnwindAmount: -795078306276626,
+            unwindFeeLPAmount: 18272652614,
+            unwindFeeTreasuryAmount: 6090884205
+        });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             user,
             swapPfIds,
             swapRfIds,
             closeRiskIndicatorsInputs
         );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88926909389542842, swap.collateral, "swap.collateral");
-        assertEq(889269093895428420, swap.notional, "swap.notional");
-        assertEq(889269093895428420, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694308759154097, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
     }
 
-    function testShouldClosePositionStEthForStEth90daysReceiveFixed() public {
+    function testShouldUnwindWithCorrectEventEth90daysReceiveFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
         uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -1400,7 +1351,69 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             baseSpreadPerLeg: 3695000000000000,
             fixedRateCapPerLeg: 20000000000000000,
             demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
+            expiration: block.timestamp + 40 days + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_90),
+            1,
+            messageSignerPrivateKey
+        );
+
+        vm.prank(user);
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed90daysStEth{
+            value: totalAmount
+        }(ETH, user, totalAmount, 0, 10e18, riskIndicatorsInputs);
+
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = swapId;
+
+        vm.warp(block.timestamp + 40 days);
+
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
+            IporTypes.SwapTenor.DAYS_90
+        );
+
+        //when
+        vm.prank(user);
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: 359950823124678,
+            swapUnwindAmount: -1988815889017090,
+            unwindFeeLPAmount: 45662881379,
+            unwindFeeTreasuryAmount: 15220960460
+        });
+        IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
+            user,
+            swapPfIds,
+            swapRfIds,
+            closeRiskIndicatorsInputs
+        );
+    }
+
+    function testShouldUnwindWithCorrectEventStEth90daysReceiveFixed() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+        uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 40 days + 1000,
             signature: bytes("0x00")
         });
 
@@ -1426,107 +1439,39 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = swapId;
 
+        vm.warp(block.timestamp + 40 days);
+
         AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
             IporTypes.SwapTenor.DAYS_90
         );
 
         //when
         vm.prank(user);
-        IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
-            user,
-            swapPfIds,
-            swapRfIds,
-            closeRiskIndicatorsInputs
-        );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88890409084690108, swap.collateral, "swap.collateral");
-        assertEq(888904090846901080, swap.notional, "swap.notional");
-        assertEq(888904090846901080, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694309042899409, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
-    }
-
-    function testShouldClosePositionStEthForEth90daysReceiveFixed() public {
-        //given
-        _init();
-        address user = _getUserAddress(22);
-        _setupUser(user, 1000 * 1e18);
-        uint256 totalAmount = 1 * 1e17;
-
-        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
-            maxCollateralRatio: 50000000000000000,
-            maxCollateralRatioPerLeg: 50000000000000000,
-            maxLeveragePerLeg: 1000000000000000000000,
-            baseSpreadPerLeg: 3695000000000000,
-            fixedRateCapPerLeg: 20000000000000000,
-            demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
-            signature: bytes("0x00")
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: 359950823124678,
+            swapUnwindAmount: -1988815889017090,
+            unwindFeeLPAmount: 45662881379,
+            unwindFeeTreasuryAmount: 15220960460
         });
-
-        riskIndicatorsInputs.signature = signRiskParams(
-            riskIndicatorsInputs,
-            address(stETH),
-            uint256(IporTypes.SwapTenor.DAYS_90),
-            1,
-            messageSignerPrivateKey
-        );
-
-        vm.prank(user);
-        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed90daysStEth{
-            value: totalAmount
-        }(ETH, user, totalAmount, 0, 10e18, riskIndicatorsInputs);
-
-        uint256[] memory swapPfIds = new uint256[](0);
-        uint256[] memory swapRfIds = new uint256[](1);
-        swapRfIds[0] = swapId;
-
-        AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
-            IporTypes.SwapTenor.DAYS_90
-        );
-
-        //when
-        vm.prank(user);
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             user,
             swapPfIds,
             swapRfIds,
             closeRiskIndicatorsInputs
         );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88890409084690108, swap.collateral, "swap.collateral");
-        assertEq(888904090846901080, swap.notional, "swap.notional");
-        assertEq(888904090846901080, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694309042899409, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
     }
 
-    function testShouldClosePositionStEthForWEth90daysReceiveFixed() public {
+    function testShouldUnwindWithCorrectEventWEth90daysReceiveFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
         uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -1535,7 +1480,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             baseSpreadPerLeg: 3695000000000000,
             fixedRateCapPerLeg: 20000000000000000,
             demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
+            expiration: block.timestamp + 40 days + 1000,
             signature: bytes("0x00")
         });
 
@@ -1561,42 +1506,39 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = swapId;
 
+        vm.warp(block.timestamp + 40 days);
+
         AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
             IporTypes.SwapTenor.DAYS_90
         );
 
         //when
         vm.prank(user);
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: 359950823124678,
+            swapUnwindAmount: -1988815889017090,
+            unwindFeeLPAmount: 45662881379,
+            unwindFeeTreasuryAmount: 15220960460
+        });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             user,
             swapPfIds,
             swapRfIds,
             closeRiskIndicatorsInputs
         );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88890409084690108, swap.collateral, "swap.collateral");
-        assertEq(888904090846901080, swap.notional, "swap.notional");
-        assertEq(888904090846901080, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694309042899409, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
     }
 
-    function testShouldClosePositionStEthForwstEth90daysReceiveFixed() public {
+    function testShouldUnwindWithCorrectEventwstEth90daysReceiveFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
         uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -1605,7 +1547,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
             baseSpreadPerLeg: 3695000000000000,
             fixedRateCapPerLeg: 20000000000000000,
             demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
+            expiration: block.timestamp + 40 days + 1000,
             signature: bytes("0x00")
         });
 
@@ -1631,33 +1573,28 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = swapId;
 
+        vm.warp(block.timestamp + 40 days);
+
         AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
             IporTypes.SwapTenor.DAYS_90
         );
 
         //when
         vm.prank(user);
+        vm.expectEmit(true, true, true, true);
+        emit SwapUnwind({
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            swapId: 1,
+            swapPnlValueToDate: 359950823124678,
+            swapUnwindAmount: -1988815889017090,
+            unwindFeeLPAmount: 45662881379,
+            unwindFeeTreasuryAmount: 15220960460
+        });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
             user,
             swapPfIds,
             swapRfIds,
             closeRiskIndicatorsInputs
         );
-
-        //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
-            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-            swapId
-        );
-
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88890409084690108, swap.collateral, "swap.collateral");
-        assertEq(888904090846901080, swap.notional, "swap.notional");
-        assertEq(888904090846901080, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694309042899409, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
-
-        assertEq(0, uint256(swap.state), "swap.state");
     }
 }

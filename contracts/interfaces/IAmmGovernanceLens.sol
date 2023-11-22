@@ -28,11 +28,13 @@ interface IAmmGovernanceLens {
         /// @dev max liquidity pool balance in the asset pool, represented in 18 decimals
         uint256 maxLiquidityPoolBalance;
         /// @dev The threshold for auto-rebalancing the pool. Value represented without 18 decimals.
+        /// @dev Supported in USDT, USDC, DAI pool, not supported in stETH pool.
         /// Value represents multiplication of 1000.
         uint256 autoRebalanceThresholdInThousands;
         /// @dev asset management ratio, represented without 18 decimals, value represents percentage with 2 decimals
         /// 65% = 6500, 99,99% = 9999, this is a percentage which stay in Amm Treasury in opposite to Asset Management
         /// based on AMM Treasury balance (100%).
+        /// @dev Supported in USDT, USDC, DAI pool, not supported in stETH pool.
         uint256 ammTreasuryAndAssetManagementRatio;
     }
 

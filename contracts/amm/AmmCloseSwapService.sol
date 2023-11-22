@@ -84,16 +84,6 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
     address public immutable messageSigner;
     address public immutable spreadRouter;
 
-    struct UnwindParams {
-        AmmTypes.SwapDirection direction;
-        uint256 closeTimestamp;
-        int256 swapPnlValueToDate;
-        uint256 indexValue;
-        AmmTypes.Swap swap;
-        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration poolCfg;
-        AmmTypes.CloseSwapRiskIndicatorsInput riskIndicatorsInputs;
-    }
-
     constructor(
         AmmCloseSwapServicePoolConfiguration memory usdtPoolCfg,
         AmmCloseSwapServicePoolConfiguration memory usdcPoolCfg,
@@ -209,7 +199,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                 closingSwapDetails.swapUnwindFeeTreasuryAmount,
                 closingSwapDetails.pnlValue
             ) = _calculateSwapUnwindWhenUnwindRequired(
-                UnwindParams({
+                AmmTypes.UnwindParams({
                     direction: direction,
                     closeTimestamp: closeTimestamp,
                     swapPnlValueToDate: swapPnlValueToDate,
@@ -684,7 +674,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
                 pnlValueStruct.swapUnwindFeeTreasuryAmount,
                 pnlValueStruct.pnlValue
             ) = _calculateSwapUnwindWhenUnwindRequired(
-                UnwindParams({
+                AmmTypes.UnwindParams({
                     direction: direction,
                     closeTimestamp: closeTimestamp,
                     swapPnlValueToDate: swapPnlValueToDate,
@@ -707,7 +697,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
     /// @return swapUnwindFeeTreasuryAmount swap unwind opening fee treasury amount
     /// @return swapPnlValue swap PnL value includes swap PnL to date, swap unwind PnL value, this value NOT INCLUDE swap unwind fee amount.
     function _calculateSwapUnwindWhenUnwindRequired(
-        UnwindParams memory unwindParams
+        AmmTypes.UnwindParams memory unwindParams
     )
         internal
         view
@@ -768,7 +758,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService, IAmmCloseSwapLens {
     }
 
     function calculateSwapUnwindPnlValue(
-        UnwindParams memory unwindParams,
+        AmmTypes.UnwindParams memory unwindParams,
         uint256 direction,
         AmmTypes.OpenSwapRiskIndicators memory oppositeRiskIndicators
     ) internal view returns (int256) {

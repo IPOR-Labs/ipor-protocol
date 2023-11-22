@@ -21,8 +21,8 @@ import "../interfaces/IAmmPoolsService.sol";
 import "../interfaces/IPowerTokenFlowsService.sol";
 import "../interfaces/IPowerTokenStakeService.sol";
 import "../interfaces/IProxyImplementation.sol";
-import "../amm-eth/interfaces/IAmmPoolsServiceEth.sol";
-import "../amm-eth/interfaces/IAmmPoolsLensEth.sol";
+import "../amm-eth/interfaces/IAmmPoolsServiceStEth.sol";
+import "../amm-eth/interfaces/IAmmPoolsLensStEth.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/IporContractValidator.sol";
 import "./AccessControl.sol";
@@ -48,8 +48,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
     address public immutable _powerTokenLens;
     address public immutable _flowService;
     address public immutable _stakeService;
-    address public immutable _ammPoolsServiceEth;
-    address public immutable _ammPoolsLensEth;
+    address public immutable _ammPoolsServiceStEth;
+    address public immutable _ammPoolsLensStEth;
 
     struct DeployedContracts {
         address ammSwapsLens;
@@ -65,8 +65,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         address powerTokenLens;
         address flowService;
         address stakeService;
-        address ammPoolsServiceEth;
-        address ammPoolsLensEth;
+        address ammPoolsServiceStEth;
+        address ammPoolsLensStEth;
     }
 
     constructor(DeployedContracts memory deployedContracts) {
@@ -83,8 +83,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         _powerTokenLens = deployedContracts.powerTokenLens.checkAddress();
         _flowService = deployedContracts.flowService.checkAddress();
         _stakeService = deployedContracts.stakeService.checkAddress();
-        _ammPoolsServiceEth = deployedContracts.ammPoolsServiceEth.checkAddress();
-        _ammPoolsLensEth = deployedContracts.ammPoolsLensEth.checkAddress();
+        _ammPoolsServiceStEth = deployedContracts.ammPoolsServiceStEth.checkAddress();
+        _ammPoolsLensStEth = deployedContracts.ammPoolsLensStEth.checkAddress();
         _disableInitializers();
     }
 
@@ -122,8 +122,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
                 powerTokenLens: _powerTokenLens,
                 flowService: _flowService,
                 stakeService: _stakeService,
-                ammPoolsServiceEth: _ammPoolsServiceEth,
-                ammPoolsLensEth: _ammPoolsLensEth
+                ammPoolsServiceStEth: _ammPoolsServiceStEth,
+                ammPoolsLensStEth: _ammPoolsLensStEth
             });
     }
 
@@ -198,15 +198,15 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             }
             return _ammCloseSwapService;
         } else if (
-            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceEth.provideLiquidityStEth.selector) ||
-            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceEth.provideLiquidityWEth.selector) ||
-            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceEth.provideLiquidityEth.selector) ||
-            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceEth.redeemFromAmmPoolStEth.selector)
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceStEth.provideLiquidityStEth.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceStEth.provideLiquidityWEth.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceStEth.provideLiquidityEth.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceStEth.redeemFromAmmPoolStEth.selector)
         ) {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
-            return _ammPoolsServiceEth;
+            return _ammPoolsServiceStEth;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsService.provideLiquidityUsdt.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsService.provideLiquidityUsdc.selector) ||
@@ -338,8 +338,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             sig == IAmmCloseSwapLens.getClosingSwapDetails.selector
         ) {
             return _ammCloseSwapService;
-        } else if (sig == IAmmPoolsLensEth.getIpstEthExchangeRate.selector) {
-            return _ammPoolsLensEth;
+        } else if (sig == IAmmPoolsLensStEth.getIpstEthExchangeRate.selector) {
+            return _ammPoolsLensStEth;
         } else if (sig == IAmmPoolsService.getAmmPoolServiceConfiguration.selector) {
             return _ammPoolsService;
         }

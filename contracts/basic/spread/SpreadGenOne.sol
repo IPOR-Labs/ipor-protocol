@@ -1,16 +1,25 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+
+import "../../interfaces/IIporContractCommonGov.sol";
+import "../../interfaces/IProxyImplementation.sol";
+import "../../interfaces/types/IporTypes.sol";
+import "../../interfaces/types/AmmTypes.sol";
+import "../../libraries/IporContractValidator.sol";
+import "../../security/PauseManager.sol";
+import "../../security/IporOwnableUpgradeable.sol";
+import "../../amm/libraries/types/AmmInternalTypes.sol";
+import "../../amm/libraries/IporSwapLogic.sol";
+import "../../amm/spread/SpreadStorageLibs.sol";
+import "../../amm/spread/CalculateTimeWeightedNotionalLibs.sol";
+import "../../basic/interfaces/IAmmStorageGenOne.sol";
 import "./DemandSpreadLibsGenOne.sol";
 import "./SpreadStorageLibsGenOne.sol";
 import "./OfferedRateCalculationLibsGenOne.sol";
-import "../../security/IporOwnable.sol";
-import "../../libraries/IporContractValidator.sol";
-import "../../amm/spread/SpreadStorageLibs.sol";
-import "../../basic/interfaces/IAmmStorageGenOne.sol";
-import "../../amm/spread/CalculateTimeWeightedNotionalLibs.sol";
-import "../../amm/libraries/IporSwapLogic.sol";
-import "./ISpreadGenOne.sol";
 
 /// @dev This contract cannot be used directly, should be used only through Router.
 contract SpreadGenOne is IporOwnable, ISpreadGenOne  {

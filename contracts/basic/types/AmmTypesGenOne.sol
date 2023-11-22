@@ -36,7 +36,7 @@ library AmmTypesGenOne {
         uint256 fixedInterestRate;
         /// @notice Liquidation deposit amount
         /// @dev value represented in 18 decimals
-        uint256 liquidationDepositAmount;
+        uint256 wadLiquidationDepositAmount;
         /// @notice State of the swap
         /// @dev 0 - INACTIVE, 1 - ACTIVE
         IporTypes.SwapState state;
@@ -52,12 +52,14 @@ library AmmTypesGenOne {
         address ammStorage;
         /// @notice address of the AMM Treasury
         address ammTreasury;
+        /// @notice spread contract address
+        address spread;
         /// @notice ipor publication fee, fee used when opening swap, represented in 18 decimals.
         uint256 iporPublicationFee;
         /// @notice maximum swap collateral amount, represented in 18 decimals.
         uint256 maxSwapCollateralAmount;
-        /// @notice liquidation deposit amount, represented with 18 decimals. Example 25000000000000000000 = 25 units.
-        uint256 wadLiquidationDepositAmount;
+        /// @notice liquidation deposit amount, represented with 6 decimals. Example 25000000 = 25 units = 25.000000.
+        uint256 liquidationDepositAmount;
         /// @notice minimum leverage, represented in 18 decimals.
         uint256 minLeverage;
         /// @notice swap's opening fee rate, represented in 18 decimals. 1e18 = 100%
@@ -78,8 +80,6 @@ library AmmTypesGenOne {
         address ammStorage;
         /// @notice Amm Treasury contract address
         address ammTreasury;
-        /// @notice Asset Management contract address
-        address assetManagement;
         /// @notice Unwinding Fee Rate for unwinding the swap, represented in 18 decimals, 1e18 = 100%
         uint256 unwindingFeeRate;
         /// @notice Unwinding Fee Rate for unwinding the swap, part earmarked for the treasury, represented in 18 decimals, 1e18 = 100%
@@ -125,11 +125,11 @@ library AmmTypesGenOne {
         uint256 openingFeeTreasuryAmount;
         /// @notice Fee set aside for subsidizing the oracle that publishes IPOR rate. Flat fee set by the DAO.
         uint256 iporPublicationFee;
-        /// @notice Liquidation deposit is retained when the swap is opened. Value represented in 18 decimals.
+        /// @notice Liquidation deposit is retained when the swap is opened. Notice! Value represented in 18 decimals.
         uint256 liquidationDepositAmount;
     }
 
-    struct AmmBalancesForOpenSwapMemory {
+    struct AmmBalanceForOpenSwap {
         /// @notice Sum of all collateral put forward by the derivative buyer's on  Pay Fixed & Receive Floating leg.
         uint256 totalCollateralPayFixed;
         /// @notice Total notional amount of all swaps on  Pay Fixed leg (denominated in 18 decimals).
@@ -140,15 +140,16 @@ library AmmTypesGenOne {
         uint256 totalNotionalReceiveFixed;
     }
 
-    /// @notice Struct representing balances used internally for asset calculations
-    /// @dev all balances in 18 decimals
-    struct AmmBalancesMemory {
+    struct Balance {
         /// @notice Sum of all collateral put forward by the derivative buyer's on  Pay Fixed & Receive Floating leg.
         uint256 totalCollateralPayFixed;
         /// @notice Sum of all collateral put forward by the derivative buyer's on  Pay Floating & Receive Fixed leg.
         uint256 totalCollateralReceiveFixed;
-        /// @notice Liquidity Pool Balance. This balance is where the liquidity from liquidity providers and the opening fee are accounted for,
-        /// @dev Amount of opening fee accounted in this balance is defined by _OPENING_FEE_FOR_TREASURY_PORTION_RATE param.
-        uint256 liquidityPool;
+        /// @notice This balance is used to track the funds accounted for IporOracle subsidization.
+        uint256 iporPublicationFee;
+        /// @notice Treasury is the balance that belongs to IPOR DAO and funds up to this amount can be transferred to the DAO-appointed multi-sig wallet.
+        /// this ballance is fed by part of the opening fee appointed by the DAO. For more information refer to the documentation:
+        /// https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/ipor-swaps#fees
+        uint256 treasury;
     }
 }

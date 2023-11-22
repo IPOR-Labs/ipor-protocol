@@ -34,6 +34,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
     address internal immutable _usdtAmmTreasury;
     uint256 internal immutable _usdtIporPublicationFee;
     uint256 internal immutable _usdtMaxSwapCollateralAmount;
+    /// @dev Liquidation deposit amount for USDT represented WITHOUT decimals. Example 25 USDT = 25
     uint256 internal immutable _usdtLiquidationDepositAmount;
     uint256 internal immutable _usdtMinLeverage;
     uint256 internal immutable _usdtOpeningFeeRate;
@@ -45,6 +46,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
     address internal immutable _usdcAmmTreasury;
     uint256 internal immutable _usdcIporPublicationFee;
     uint256 internal immutable _usdcMaxSwapCollateralAmount;
+    /// @dev Liquidation deposit amount for USDC represented WITHOUT decimals. Example 25 USDC = 25
     uint256 internal immutable _usdcLiquidationDepositAmount;
     uint256 internal immutable _usdcMinLeverage;
     uint256 internal immutable _usdcOpeningFeeRate;
@@ -56,6 +58,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
     address internal immutable _daiAmmTreasury;
     uint256 internal immutable _daiIporPublicationFee;
     uint256 internal immutable _daiMaxSwapCollateralAmount;
+    /// @dev Liquidation deposit amount for DAI represented WITHOUT decimals. Example 25 DAI = 25
     uint256 internal immutable _daiLiquidationDepositAmount;
     uint256 internal immutable _daiMinLeverage;
     uint256 internal immutable _daiOpeningFeeRate;
@@ -608,7 +611,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
 
         IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(ctx.poolCfg.ammStorage)
             .getBalancesForOpenSwap();
-        //TODO: liquidityPool - take from AmmTreasury.balanceOf (
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 

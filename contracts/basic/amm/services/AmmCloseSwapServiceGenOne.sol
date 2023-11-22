@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
-import "forge-std/console2.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
@@ -8,24 +7,20 @@ import "../../../interfaces/types/IporTypes.sol";
 import "../../../interfaces/types/AmmTypes.sol";
 import "../../../interfaces/IIporOracle.sol";
 import "../../../interfaces/IAmmTreasury.sol";
-import "../../interfaces/IAmmStorageGenOne.sol";
-import "../../../interfaces/IAmmCloseSwapService.sol";
-import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/math/IporMath.sol";
 import "../../../libraries/IporContractValidator.sol";
-import "../../../libraries/AssetManagementLogic.sol";
 import "../../../libraries/AmmLib.sol";
-import "../../../governance/AmmConfigurationManager.sol";
-import "../../../security/OwnerManager.sol";
-import "../libraries/SwapEventsGenOne.sol";
-import "../../../amm/libraries/types/AmmInternalTypes.sol";
-import "../../../amm/spread/ISpreadCloseSwapService.sol";
-import "../libraries/SwapLogicGenOne.sol";
+import "../../interfaces/IAmmStorageGenOne.sol";
+import "../../interfaces/IAmmTreasuryGenOne.sol";
 import "../../types/AmmTypesGenOne.sol";
 import "../../events/AmmEventsGenOne.sol";
+import "../../../amm/libraries/types/AmmInternalTypes.sol";
+import "../../../basic/spread/SpreadGenOne.sol";
+import "../libraries/SwapLogicGenOne.sol";
 import "../../../basic/spread/ISpreadGenOne.sol";
 
-//TODO: other names proposition: AmmCloseSwapS1G1, AmmCloseSwapServiceOneGenOne, AmmCloseSwapServiceOneGenerationOne
+/// @title Abstract contract for closing swap, generation one, characterized by:
+/// - no asset management, so also no auto rebalance
 abstract contract AmmCloseSwapServiceGenOne {
     using Address for address;
     using IporContractValidator for address;
@@ -36,7 +31,7 @@ abstract contract AmmCloseSwapServiceGenOne {
     using AmmLib for AmmTypes.AmmPoolCoreModel;
     using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
 
-    uint256 public immutable version = 1;
+    uint256 public immutable version = 2001;
 
     address public immutable asset;
     uint256 public immutable decimals;
@@ -47,27 +42,34 @@ abstract contract AmmCloseSwapServiceGenOne {
     address public immutable ammStorage;
     address public immutable ammTreasury;
 
+    /// @dev Unwinding fee rate, value represented in 18 decimals. Represents percentage of swap notional.
     uint256 public immutable unwindingFeeRate;
+    /// @dev Unwinding fee treasury portion rate, value represented in 18 decimals. Represents percentage of unwinding fee, which is transferred to treasury.
     uint256 public immutable unwindingFeeTreasuryPortionRate;
+    /// @dev Maximum length of liquidated swaps per leg, value represented WITHOUT 18 decimals.
     uint256 public immutable liquidationLegLimit;
+    /// @dev Time in seconds before maturity allowed to close swap by community.
     uint256 public immutable timeBeforeMaturityAllowedToCloseSwapByCommunity;
+    /// @dev Time in seconds before maturity allowed to close swap by buyer.
     uint256 public immutable timeBeforeMaturityAllowedToCloseSwapByBuyer;
+    /// @dev Minimum liquidation threshold to close swap before maturity by community, value represented in 18 decimals.
     uint256 public immutable minLiquidationThresholdToCloseBeforeMaturityByCommunity;
+    /// @dev Minimum liquidation threshold to close swap before maturity by buyer, value represented in 18 decimals.
     uint256 public immutable minLiquidationThresholdToCloseBeforeMaturityByBuyer;
+    /// @dev Minimum leverage, value represented in 18 decimals.
     uint256 public immutable minLeverage;
 
     constructor(
         AmmTypesGenOne.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput,
-        address messageSignerInput,
-        address spreadInput
+        address messageSignerInput
     ) {
         asset = poolCfg.asset.checkAddress();
         decimals = poolCfg.decimals;
 
         messageSigner = messageSignerInput.checkAddress();
         iporOracle = iporOracleInput.checkAddress();
-        spread = spreadInput.checkAddress();
+        spread = poolCfg.spread.checkAddress();
         ammStorage = poolCfg.ammStorage.checkAddress();
         ammTreasury = poolCfg.ammTreasury.checkAddress();
 
@@ -258,8 +260,7 @@ abstract contract AmmCloseSwapServiceGenOne {
             riskIndicatorsInput
         );
 
-        ISpreadCloseSwapService(spread).updateTimeWeightedNotionalOnClose(
-            asset,
+        SpreadGenOne(spread).updateTimeWeightedNotionalOnClose(
             uint256(swap.direction),
             swap.tenor,
             swap.notional,
@@ -485,7 +486,9 @@ abstract contract AmmCloseSwapServiceGenOne {
         AmmTypes.SwapDirection oppositeDirection,
         AmmTypes.OpenSwapRiskIndicators memory oppositeRiskIndicators
     ) internal view returns (int256) {
-        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(ammStorage).getBalancesForOpenSwap();
+        AmmTypesGenOne.AmmBalanceForOpenSwap memory balance = IAmmStorageGenOne(ammStorage).getBalancesForOpenSwap();
+        uint256 liquidityPoolBalance = IAmmTreasuryGenOne(ammTreasury).getLiquidityPoolBalance();
+
         return
             IporSwapLogic.normalizePnlValue(
                 unwindParams.swap.collateral,
@@ -500,7 +503,7 @@ abstract contract AmmCloseSwapServiceGenOne {
                             baseSpreadPerLeg: oppositeRiskIndicators.baseSpreadPerLeg,
                             totalCollateralPayFixed: balance.totalCollateralPayFixed,
                             totalCollateralReceiveFixed: balance.totalCollateralReceiveFixed,
-                            liquidityPoolBalance: balance.liquidityPool,
+                            liquidityPoolBalance: liquidityPoolBalance,
                             iporIndexValue: unwindParams.indexValue,
                             fixedRateCapPerLeg: oppositeRiskIndicators.fixedRateCapPerLeg,
                             tenor: unwindParams.swap.tenor
@@ -531,7 +534,7 @@ abstract contract AmmCloseSwapServiceGenOne {
             (transferredToBuyer, payoutForLiquidator) = _transferDerivativeAmount(
                 beneficiary,
                 swap.buyer,
-                swap.liquidationDepositAmount,
+                swap.wadLiquidationDepositAmount,
                 swap.collateral + absPnlValue
             );
         } else {
@@ -539,7 +542,7 @@ abstract contract AmmCloseSwapServiceGenOne {
             (transferredToBuyer, payoutForLiquidator) = _transferDerivativeAmount(
                 beneficiary,
                 swap.buyer,
-                swap.liquidationDepositAmount,
+                swap.wadLiquidationDepositAmount,
                 swap.collateral - absPnlValue
             );
         }
@@ -572,8 +575,6 @@ abstract contract AmmCloseSwapServiceGenOne {
         uint256 wadLiquidationDepositAmount,
         uint256 wadTransferAmount
     ) internal returns (uint256 wadTransferredToBuyer, uint256 wadPayoutForLiquidator) {
-        console2.log("_transferDerivativeAmount");
-        console2.log("wadLiquidationDepositAmount", wadLiquidationDepositAmount);
         if (beneficiary == buyer) {
             wadTransferAmount = wadTransferAmount + wadLiquidationDepositAmount;
         } else {
@@ -601,7 +602,6 @@ abstract contract AmmCloseSwapServiceGenOne {
                 decimals: decimals,
                 ammStorage: ammStorage,
                 ammTreasury: ammTreasury,
-                assetManagement: address(0x0),
                 unwindingFeeRate: unwindingFeeRate,
                 unwindingFeeTreasuryPortionRate: unwindingFeeTreasuryPortionRate,
                 maxLengthOfLiquidatedSwapsPerLeg: liquidationLegLimit,

@@ -45,7 +45,8 @@ library AmmTypes {
         uint256 fixedInterestRate;
         /// @notice Liquidation deposit is retained when the swap is opened. It is then paid back to agent who closes the derivative at maturity.
         /// It can be both trader or community member. Trader receives the deposit back when he chooses to close the derivative before maturity.
-        /// @dev value represented WITHOUT 18 decimals
+        /// @dev value represented WITHOUT 18 decimals for USDT, USDC, DAI pool. Notice! Value represented in 6 decimals for stETH pool.
+        /// @dev Example value in 6 decimals: 25000000 (in 6 decimals) = 25 stETH = 25.000000
         uint256 liquidationDepositAmount;
         /// @notice Opening fee amount part which is allocated in Liquidity Pool Balance. This fee is calculated as a rate of the swap's collateral.
         /// @dev value represented in 18 decimals
@@ -130,6 +131,16 @@ library AmmTypes {
         uint256 wadRedeemFee;
         /// @notice Redeem amount represented in 18 decimals
         uint256 wadRedeemAmount;
+    }
+
+    struct UnwindParams {
+        SwapDirection direction;
+        uint256 closeTimestamp;
+        int256 swapPnlValueToDate;
+        uint256 indexValue;
+        Swap swap;
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration poolCfg;
+        CloseSwapRiskIndicatorsInput riskIndicatorsInputs;
     }
 
     /// @notice Swap direction (long = Pay Fixed and Receive a Floating or short = receive fixed and pay a floating)

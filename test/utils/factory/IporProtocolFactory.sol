@@ -836,8 +836,8 @@ contract IporProtocolFactory is Test {
         deployerContracts.flowService = address(_powerTokenFlowsServiceBuilder.build());
         deployerContracts.stakeService = address(_powerTokenStakeServiceBuilder.build());
         //      todo fix addresses
-        deployerContracts.ammPoolsLensEth = address(123);
-        deployerContracts.ammPoolsServiceEth = address(123);
+        deployerContracts.ammPoolsLensStEth = address(123);
+        deployerContracts.ammPoolsServiceStEth = address(123);
         deployerContracts.ammOpenSwapServiceStEth = address(123);
         deployerContracts.ammCloseSwapServiceStEth = address(123);
 
@@ -1051,8 +1051,8 @@ contract IporProtocolFactory is Test {
         deployerContracts.flowService = address(_powerTokenFlowsServiceBuilder.build());
         deployerContracts.stakeService = address(_powerTokenStakeServiceBuilder.build());
         //        todo fix addresses
-        deployerContracts.ammPoolsServiceEth = address(123);
-        deployerContracts.ammPoolsLensEth = address(123);
+        deployerContracts.ammPoolsServiceStEth = address(123);
+        deployerContracts.ammPoolsLensStEth = address(123);
         deployerContracts.ammOpenSwapServiceStEth = address(123);
         deployerContracts.ammCloseSwapServiceStEth = address(123);
 
@@ -1241,8 +1241,8 @@ contract IporProtocolFactory is Test {
         deployerContracts.stakeService = address(_powerTokenStakeServiceBuilder.build());
 
         //        todo fix addresses
-        deployerContracts.ammPoolsLensEth = address(123);
-        deployerContracts.ammPoolsServiceEth = address(123);
+        deployerContracts.ammPoolsLensStEth = address(123);
+        deployerContracts.ammPoolsServiceStEth = address(123);
         deployerContracts.ammOpenSwapServiceStEth = address(123);
         deployerContracts.ammCloseSwapServiceStEth = address(123);
 
@@ -1278,8 +1278,8 @@ contract IporProtocolFactory is Test {
         IporProtocolRouter.DeployedContracts memory deployerContracts;
 
         //todo Fix
-        deployerContracts.ammPoolsLensEth = address(123);
-        deployerContracts.ammPoolsServiceEth = address(123);
+        deployerContracts.ammPoolsLensStEth = address(123);
+        deployerContracts.ammPoolsServiceStEth = address(123);
 
         deployerContracts.ammSwapsLens = address(
             new AmmSwapsLens(
@@ -1431,8 +1431,8 @@ contract IporProtocolFactory is Test {
         deployerContracts.flowService = address(_powerTokenFlowsServiceBuilder.build());
         deployerContracts.stakeService = address(_powerTokenStakeServiceBuilder.build());
 
-        deployerContracts.ammPoolsLensEth = address(_fakeContract);
-        deployerContracts.ammPoolsServiceEth = address(_fakeContract);
+        deployerContracts.ammPoolsLensStEth = address(_fakeContract);
+        deployerContracts.ammPoolsServiceStEth = address(_fakeContract);
         deployerContracts.ammOpenSwapServiceStEth = address(_fakeContract);
         deployerContracts.ammCloseSwapServiceStEth = address(_fakeContract);
 
@@ -1446,8 +1446,8 @@ contract IporProtocolFactory is Test {
         address powerTokenLens;
         address flowService;
         address stakeService;
-        address ammPoolsServiceEth;
-        address ammPoolsLensEth;
+        address ammPoolsServiceStEth;
+        address ammPoolsLensStEth;
         IporProtocolRouter(iporProtocol.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
         vm.stopPrank();
 

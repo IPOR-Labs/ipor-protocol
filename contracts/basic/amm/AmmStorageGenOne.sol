@@ -1,22 +1,21 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
+import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+import "../../interfaces/IProxyImplementation.sol";
 import "../../interfaces/types/AmmStorageTypes.sol";
 import "../interfaces/IAmmStorageGenOne.sol";
-import "../../interfaces/IProxyImplementation.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/PaginationUtils.sol";
 import "../../libraries/IporContractValidator.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 import "../../amm/libraries/types/AmmInternalTypes.sol";
-import "../types/StorageInternalTypesGenOne.sol";
 import "../../amm/libraries/types/StorageInternalTypes.sol";
 import "../../amm/libraries/SoapIndicatorRebalanceLogic.sol";
+import "../types/StorageTypesGenOne.sol";
 
 /// @dev all stored values related to tokens are in 18 decimals.
 contract AmmStorageGenOne is
@@ -33,13 +32,12 @@ contract AmmStorageGenOne is
 
     int256 private constant INTEREST_THRESHOLD = -1e18;
 
-    address private immutable _asset;
     address private immutable _iporProtocolRouter;
     address private immutable _ammTreasury;
 
     uint32 private _lastSwapId;
 
-    StorageInternalTypesGenOne.Balances internal _balances;
+    StorageTypesGenOne.Balance internal _balance;
     StorageInternalTypes.SoapIndicatorsStorage internal _soapIndicatorsPayFixed;
     StorageInternalTypes.SoapIndicatorsStorage internal _soapIndicatorsReceiveFixed;
     StorageInternalTypes.SwapContainer internal _swapsPayFixed;
@@ -63,8 +61,7 @@ contract AmmStorageGenOne is
     }
 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address assetInput, address iporProtocolRouterInput, address ammTreasury) {
-        _asset = assetInput.checkAddress();
+    constructor(address iporProtocolRouterInput, address ammTreasury) {
         _iporProtocolRouter = iporProtocolRouterInput.checkAddress();
         _ammTreasury = ammTreasury.checkAddress();
         _disableInitializers();
@@ -97,39 +94,24 @@ contract AmmStorageGenOne is
                 : _openedSwapsReceiveFixed[tenor].swaps[_openedSwapsReceiveFixed[tenor].headSwapId];
     }
 
-    function getBalance() external view virtual override returns (AmmTypesGenOne.AmmBalancesMemory memory) {
-        StorageInternalTypesGenOne.Balances memory balances = _balances;
-
-        uint256 liquidityPool = IERC20(_asset).balanceOf(_ammTreasury) -
-            balances.totalCollateralPayFixed -
-            balances.totalCollateralReceiveFixed -
-            balances.iporPublicationFee -
-            balances.treasury;
-
+    function getBalance() external view override returns (AmmTypesGenOne.Balance memory) {
+        StorageTypesGenOne.Balance memory balance = _balance;
         return
-            AmmTypesGenOne.AmmBalancesMemory(
-                balances.totalCollateralPayFixed,
-                balances.totalCollateralReceiveFixed,
-                liquidityPool
-            );
+            AmmTypesGenOne.Balance({
+                totalCollateralPayFixed: balance.totalCollateralPayFixed,
+                totalCollateralReceiveFixed: balance.totalCollateralReceiveFixed,
+                iporPublicationFee: balance.iporPublicationFee,
+                treasury: balance.treasury
+            });
     }
 
-    function getBalancesForOpenSwap() external view override returns (IporTypes.AmmBalancesForOpenSwapMemory memory) {
-        StorageInternalTypesGenOne.Balances memory balances = _balances;
-
-        uint256 liquidityPool = IERC20(_asset).balanceOf(_ammTreasury) -
-            balances.totalCollateralPayFixed -
-            balances.totalCollateralReceiveFixed -
-            balances.iporPublicationFee -
-            balances.treasury;
-
+    function getBalancesForOpenSwap() external view override returns (AmmTypesGenOne.AmmBalanceForOpenSwap memory) {
         return
-            IporTypes.AmmBalancesForOpenSwapMemory({
-                totalCollateralPayFixed: balances.totalCollateralPayFixed,
+            AmmTypesGenOne.AmmBalanceForOpenSwap({
+                totalCollateralPayFixed: _balance.totalCollateralPayFixed,
                 totalNotionalPayFixed: _soapIndicatorsPayFixed.totalNotional,
-                totalCollateralReceiveFixed: balances.totalCollateralReceiveFixed,
-                totalNotionalReceiveFixed: _soapIndicatorsReceiveFixed.totalNotional,
-                liquidityPool: liquidityPool
+                totalCollateralReceiveFixed: _balance.totalCollateralReceiveFixed,
+                totalNotionalReceiveFixed: _soapIndicatorsReceiveFixed.totalNotional
             });
     }
 
@@ -149,20 +131,21 @@ contract AmmStorageGenOne is
         }
 
         return
-            AmmTypesGenOne.Swap(
-                swap.id,
-                swap.buyer,
-                swap.openTimestamp,
-                swap.tenor,
-                direction,
-                swap.idsIndex,
-                swap.collateral,
-                swap.notional,
-                swap.ibtQuantity,
-                swap.fixedInterestRate,
-                uint256(swap.liquidationDepositAmount) * 1e18,
-                swap.state
-            );
+            AmmTypesGenOne.Swap({
+                id: swap.id,
+                buyer: swap.buyer,
+                openTimestamp: swap.openTimestamp,
+                tenor: swap.tenor,
+                direction: direction,
+                idsIndex: swap.idsIndex,
+                collateral: swap.collateral,
+                notional: swap.notional,
+                ibtQuantity: swap.ibtQuantity,
+                fixedInterestRate: swap.fixedInterestRate,
+                /// @dev to achieve 18 decimals precision we multiply by 1e12 because for stETH pool liquidationDepositAmount is represented in 6 decimals in storage.
+                wadLiquidationDepositAmount: uint256(swap.liquidationDepositAmount) * 1e12,
+                state: swap.state
+            });
     }
 
     function getSwapsPayFixed(
@@ -307,25 +290,25 @@ contract AmmStorageGenOne is
     ) external override onlyRouter {
         require(transferredAmount > 0, IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER);
 
-        uint256 balance = _balances.iporPublicationFee;
+        uint256 balance = _balance.iporPublicationFee;
 
         require(transferredAmount <= balance, AmmErrors.PUBLICATION_FEE_BALANCE_IS_TOO_LOW);
 
         balance = balance - transferredAmount;
 
-        _balances.iporPublicationFee = balance.toUint128();
+        _balance.iporPublicationFee = balance.toUint128();
     }
 
     function updateStorageWhenTransferToTreasuryInternal(uint256 transferredAmount) external override onlyRouter {
         require(transferredAmount > 0, IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER);
 
-        uint256 balance = _balances.treasury;
+        uint256 balance = _balance.treasury;
 
         require(transferredAmount <= balance, AmmErrors.TREASURY_BALANCE_IS_TOO_LOW);
 
         balance = balance - transferredAmount;
 
-        _balances.treasury = balance.toUint128();
+        _balance.treasury = balance.toUint128();
     }
 
     function getImplementation() external view override returns (address) {
@@ -389,7 +372,8 @@ contract AmmStorageGenOne is
                 swap.notional,
                 swap.ibtQuantity,
                 swap.fixedInterestRate,
-                uint256(swap.liquidationDepositAmount) * 1e18,
+                /// @dev to achieve 18 decimals precision we multiply by 1e12 because for stETH pool liquidationDepositAmount is represented in 6 decimals in storage.
+                uint256(swap.liquidationDepositAmount) * 1e12,
                 swaps[id].state
             );
             unchecked {
@@ -405,9 +389,9 @@ contract AmmStorageGenOne is
         uint256 openingFeeTreasuryAmount,
         uint256 cfgIporPublicationFee
     ) internal {
-        _balances.totalCollateralPayFixed = _balances.totalCollateralPayFixed + collateral.toUint128();
-        _balances.iporPublicationFee = _balances.iporPublicationFee + cfgIporPublicationFee.toUint128();
-        _balances.treasury = _balances.treasury + openingFeeTreasuryAmount.toUint128();
+        _balance.totalCollateralPayFixed = _balance.totalCollateralPayFixed + collateral.toUint128();
+        _balance.iporPublicationFee = _balance.iporPublicationFee + cfgIporPublicationFee.toUint128();
+        _balance.treasury = _balance.treasury + openingFeeTreasuryAmount.toUint128();
     }
 
     function _updateBalancesWhenOpenSwapReceiveFixed(
@@ -416,9 +400,9 @@ contract AmmStorageGenOne is
         uint256 openingFeeTreasuryAmount,
         uint256 cfgIporPublicationFee
     ) internal {
-        _balances.totalCollateralReceiveFixed = _balances.totalCollateralReceiveFixed + collateral.toUint128();
-        _balances.iporPublicationFee = _balances.iporPublicationFee + cfgIporPublicationFee.toUint128();
-        _balances.treasury = _balances.treasury + openingFeeTreasuryAmount.toUint128();
+        _balance.totalCollateralReceiveFixed = _balance.totalCollateralReceiveFixed + collateral.toUint128();
+        _balance.iporPublicationFee = _balance.iporPublicationFee + cfgIporPublicationFee.toUint128();
+        _balance.treasury = _balance.treasury + openingFeeTreasuryAmount.toUint128();
     }
 
     function _updateBalancesWhenCloseSwapPayFixed(
@@ -427,8 +411,8 @@ contract AmmStorageGenOne is
         uint256 swapUnwindFeeLPAmount,
         uint256 swapUnwindFeeTreasuryAmount
     ) internal {
-        _balances.totalCollateralPayFixed = _balances.totalCollateralPayFixed - swap.collateral.toUint128();
-        _balances.treasury = _balances.treasury + swapUnwindFeeTreasuryAmount.toUint128();
+        _balance.totalCollateralPayFixed = _balance.totalCollateralPayFixed - swap.collateral.toUint128();
+        _balance.treasury = _balance.treasury + swapUnwindFeeTreasuryAmount.toUint128();
     }
 
     function _updateBalancesWhenCloseSwapReceiveFixed(
@@ -437,8 +421,8 @@ contract AmmStorageGenOne is
         uint256 swapUnwindFeeLPAmount,
         uint256 swapUnwindFeeTreasuryAmount
     ) internal {
-        _balances.totalCollateralReceiveFixed = _balances.totalCollateralReceiveFixed - swap.collateral.toUint128();
-        _balances.treasury = _balances.treasury + swapUnwindFeeTreasuryAmount.toUint128();
+        _balance.totalCollateralReceiveFixed = _balance.totalCollateralReceiveFixed - swap.collateral.toUint128();
+        _balance.treasury = _balance.treasury + swapUnwindFeeTreasuryAmount.toUint128();
     }
 
     function _updateSwapsWhenOpen(

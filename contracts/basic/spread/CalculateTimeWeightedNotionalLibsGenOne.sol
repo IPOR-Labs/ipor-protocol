@@ -66,7 +66,10 @@ library CalculateTimeWeightedNotionalLibsGenOne {
             timeWeightedNotional.timeWeightedNotionalReceiveFixed = newSwapNotional + oldWeightedNotionalReceiveFixed;
         }
         timeWeightedNotional.lastUpdateTimeReceiveFixed = block.timestamp;
-        SpreadStorageLibsGenOne.saveTimeWeightedNotionalForAssetAndTenor(timeWeightedNotional.storageId, timeWeightedNotional);
+        SpreadStorageLibsGenOne.saveTimeWeightedNotionalForAssetAndTenor(
+            timeWeightedNotional.storageId,
+            timeWeightedNotional
+        );
     }
 
     /// @notice Updates the time-weighted notional value for the pay fixed leg.
@@ -94,7 +97,10 @@ library CalculateTimeWeightedNotionalLibsGenOne {
             timeWeightedNotional.timeWeightedNotionalPayFixed = newSwapNotional + oldWeightedNotionalPayFixed;
         }
         timeWeightedNotional.lastUpdateTimePayFixed = block.timestamp;
-        SpreadStorageLibsGenOne.saveTimeWeightedNotionalForAssetAndTenor(timeWeightedNotional.storageId, timeWeightedNotional);
+        SpreadStorageLibsGenOne.saveTimeWeightedNotionalForAssetAndTenor(
+            timeWeightedNotional.storageId,
+            timeWeightedNotional
+        );
     }
 
     /// @notice Calculates the time-weighted notional values for the pay fixed and receive fixed legs.
@@ -116,7 +122,9 @@ library CalculateTimeWeightedNotionalLibsGenOne {
         uint256 timeWeightedNotionalReceiveFixedIteration;
 
         for (uint256 i; i != length; ) {
-            timeWeightedNotional = SpreadStorageLibsGenOne.getTimeWeightedNotionalForAssetAndTenor(timeWeightedNotionalStorageIds[i]);
+            timeWeightedNotional = SpreadStorageLibsGenOne.getTimeWeightedNotionalForAssetAndTenor(
+                timeWeightedNotionalStorageIds[i]
+            );
             timeWeightedNotionalPayFixedIteration = _isTimeWeightedNotionalRecalculationRequired(
                 timeWeightedNotional.lastUpdateTimePayFixed,
                 tenorsInSeconds[i],
@@ -141,7 +149,9 @@ library CalculateTimeWeightedNotionalLibsGenOne {
                     tenorsInSeconds[i]
                 )
                 : timeWeightedNotional.timeWeightedNotionalReceiveFixed;
-            timeWeightedNotionalReceiveFixed = timeWeightedNotionalReceiveFixedIteration + timeWeightedNotionalReceiveFixed;
+            timeWeightedNotionalReceiveFixed =
+                timeWeightedNotionalReceiveFixedIteration +
+                timeWeightedNotionalReceiveFixed;
 
             unchecked {
                 ++i;

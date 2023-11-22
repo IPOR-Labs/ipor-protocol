@@ -2,17 +2,17 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Address.sol";
-import "../basic/types/AmmTypesGenOne.sol";
 import "../basic/interfaces/IAmmStorageGenOne.sol";
 import "../interfaces/IAmmSwapsLens.sol";
-import "../libraries/IporContractValidator.sol";
-import "../libraries/RiskIndicatorsValidatorLib.sol";
-import "../libraries/AmmLib.sol";
 import "../amm/spread/ISpread28DaysLens.sol";
 import "../amm/spread/ISpread60DaysLens.sol";
 import "../amm/spread/ISpread90DaysLens.sol";
 import "../amm/libraries/IporSwapLogic.sol";
+import "../basic/types/AmmTypesGenOne.sol";
 import "../basic/amm/libraries/SwapLogicGenOne.sol";
+import "../libraries/IporContractValidator.sol";
+import "../libraries/RiskIndicatorsValidatorLib.sol";
+import "../libraries/AmmLib.sol";
 
 /// @dev It is not recommended to use lens contract directly, should be used only through IporProtocolRouter.
 contract AmmSwapsLens is IAmmSwapsLens {
@@ -347,7 +347,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
                 pnlValue: pnlValue,
                 openTimestamp: swap.openTimestamp,
                 endTimestamp: swap.getSwapEndTimestamp(),
-                liquidationDepositAmount: swap.liquidationDepositAmount,
+                liquidationDepositAmount: swap.wadLiquidationDepositAmount,
                 state: uint256(swap.state)
             });
     }
@@ -383,11 +383,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
                 });
         } else if (asset == _daiAsset) {
             return
-                SwapLensPoolConfiguration({
-                    asset: _daiAsset,
-                    ammStorage: _daiAmmStorage,
-                    ammTreasury: _daiAmmTreasury
-                });
+                SwapLensPoolConfiguration({asset: _daiAsset, ammStorage: _daiAmmStorage, ammTreasury: _daiAmmTreasury});
         } else if (asset == _stEthAsset) {
             return
                 SwapLensPoolConfiguration({
