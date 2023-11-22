@@ -6,7 +6,7 @@ import "./TestForkCommons.sol";
 import "../../contracts/interfaces/IAmmCloseSwapServiceStEth.sol";
 import "../../contracts/interfaces/types/AmmTypes.sol";
 
-contract ForkAmmStEthUnwindTest is TestForkCommons {
+contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
     event SwapUnwind(
         address asset,
         uint256 indexed swapId,

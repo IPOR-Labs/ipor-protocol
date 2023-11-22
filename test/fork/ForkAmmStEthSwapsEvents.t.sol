@@ -6,7 +6,7 @@ import "./TestForkCommons.sol";
 import "../../contracts/interfaces/IAmmCloseSwapServiceStEth.sol";
 import "../../contracts/interfaces/types/AmmTypes.sol";
 
-contract ForkAmmStEthEventsTest is TestForkCommons {
+contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
     struct OpenSwapAmount {
         uint256 accountInputTokenAmount;
         uint256 totalAmount;
