@@ -41,6 +41,7 @@ import "../../contracts/interfaces/IIpTokenV1.sol";
 import "../../contracts/amm-eth/interfaces/IWETH9.sol";
 import "../../contracts/amm-eth/interfaces/IStETH.sol";
 import "../../contracts/basic/spread/SpreadGenOne.sol";
+import "../../contracts/amm/spread/SpreadStorageService.sol";
 
 contract TestForkCommons is Test {
     address public constant owner = 0xD92E9F039E4189c342b4067CC61f5d063960D248;
@@ -152,6 +153,7 @@ contract TestForkCommons is Test {
     address public newSpread60Days;
     address public newSpread90Days;
     address public newSpreadCloseSwapService;
+    address public newSpreadStorageService;
 
     address public spreadStEth;
 
@@ -316,6 +318,7 @@ contract TestForkCommons is Test {
         newSpread60Days = address(new Spread60Days(DAI, USDC, USDT));
         newSpread90Days = address(new Spread90Days(DAI, USDC, USDT));
         newSpreadCloseSwapService = address(new SpreadCloseSwapService(DAI, USDC, USDT));
+        newSpreadStorageService = address(new SpreadStorageService());
 
         SpreadRouter newImplementation = new SpreadRouter(
             SpreadRouter.DeployedContracts(
@@ -324,7 +327,8 @@ contract TestForkCommons is Test {
                 newSpread60Days,
                 newSpread90Days,
                 spreadStorageLens,
-                newSpreadCloseSwapService
+                newSpreadCloseSwapService,
+                newSpreadStorageService
             )
         );
 

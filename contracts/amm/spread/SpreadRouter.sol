@@ -14,6 +14,7 @@ import "../../amm/spread/ISpreadCloseSwapService.sol";
 import "../../libraries/IporContractValidator.sol";
 import "../../amm/spread/SpreadAccessControl.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
+import "./ISpreadStorageService.sol";
 
 /// @title Single entry point for all spread models
 contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl, IProxyImplementation {
@@ -24,6 +25,7 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl, IProxyImplementat
     address internal immutable _spread90Days;
     address internal immutable _closeSwapService;
     address internal immutable _storageLens;
+    address internal immutable _storageService;
 
     struct DeployedContracts {
         address iporProtocolRouter;
@@ -32,6 +34,7 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl, IProxyImplementat
         address spread90Days;
         address storageLens;
         address closeSwapService;
+        address storageService;
     }
 
     constructor(DeployedContracts memory deployedContracts) SpreadAccessControl(deployedContracts.iporProtocolRouter) {
@@ -40,6 +43,7 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl, IProxyImplementat
         _spread90Days = deployedContracts.spread90Days.checkAddress();
         _storageLens = deployedContracts.storageLens.checkAddress();
         _closeSwapService = deployedContracts.closeSwapService.checkAddress();
+        _storageService = deployedContracts.storageService.checkAddress();
 
         _disableInitializers();
     }
@@ -112,6 +116,9 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl, IProxyImplementat
             _onlyIporProtocolRouter();
             _whenNotPaused();
             return _closeSwapService;
+        } else if (sig == ISpreadStorageService.updateTimeWeightedNotional.selector) {
+            _onlyOwner();
+            return _storageService;
         }
         revert(AmmErrors.FUNCTION_NOT_SUPPORTED);
     }

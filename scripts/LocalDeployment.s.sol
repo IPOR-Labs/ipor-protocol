@@ -32,6 +32,7 @@ import "../test/mocks/TestnetFaucet.sol";
 import "../contracts/tokens/IporToken.sol";
 
 import "../test/mocks/assetManagement/MockTestnetStrategy.sol";
+import "../contracts/amm/spread/SpreadStorageService.sol";
 
 // run:
 // $ anvil
@@ -431,6 +432,7 @@ contract LocalDeployment is Script {
             )
         );
 
+        deployedContracts.storageService = address(new SpreadStorageService());
         system.spreadRouterImpl = address(new SpreadRouter(deployedContracts));
         system.spreadRouterProxy = address(
             new ERC1967Proxy(system.spreadRouterImpl, abi.encodeWithSignature("initialize(bool)", false))
