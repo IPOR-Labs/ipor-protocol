@@ -14,6 +14,8 @@ import "../../../amm/libraries/IporSwapLogic.sol";
 import "../../../basic/spread/SpreadGenOne.sol";
 import "../libraries/SwapEventsGenOne.sol";
 import "../libraries/SwapLogicGenOne.sol";
+import "../../../basic/spread/ISpreadGenOne.sol";
+import "../../../basic/interfaces/IAmmStorageGenOne.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 abstract contract AmmOpenSwapServiceGenOne {
@@ -161,8 +163,8 @@ abstract contract AmmOpenSwapServiceGenOne {
             riskIndicators.maxCollateralRatioPerLeg
         );
 
-        uint256 offeredRateValue = SpreadGenOne(spread).calculateAndUpdateOfferedRatePayFixed(
-            SpreadGenOne.SpreadInputs({
+        uint256 offeredRateValue = ISpreadGenOne(spread).calculateAndUpdateOfferedRatePayFixed(
+            ISpreadGenOne.SpreadInputs({
                 asset: asset,
                 swapNotional: bosStruct.notional,
                 demandSpreadFactor: riskIndicators.demandSpreadFactor,
@@ -253,8 +255,8 @@ abstract contract AmmOpenSwapServiceGenOne {
             riskIndicators.maxCollateralRatioPerLeg
         );
 
-        uint256 offeredRateValue = SpreadGenOne(spread).calculateAndUpdateOfferedRateReceiveFixed(
-            SpreadGenOne.SpreadInputs({
+        uint256 offeredRateValue = ISpreadGenOne(spread).calculateAndUpdateOfferedRateReceiveFixed(
+            ISpreadGenOne.SpreadInputs({
                 asset: asset,
                 swapNotional: bosStruct.notional,
                 demandSpreadFactor: riskIndicators.demandSpreadFactor,

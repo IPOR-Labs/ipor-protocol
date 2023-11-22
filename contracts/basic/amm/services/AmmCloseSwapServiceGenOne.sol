@@ -17,6 +17,7 @@ import "../../events/AmmEventsGenOne.sol";
 import "../../../amm/libraries/types/AmmInternalTypes.sol";
 import "../../../basic/spread/SpreadGenOne.sol";
 import "../libraries/SwapLogicGenOne.sol";
+import "../../../basic/spread/ISpreadGenOne.sol";
 
 /// @title Abstract contract for closing swap, generation one, characterized by:
 /// - no asset management, so also no auto rebalance
@@ -203,7 +204,7 @@ abstract contract AmmCloseSwapServiceGenOne {
             riskIndicatorsInput
         );
 
-        SpreadGenOne(spread).updateTimeWeightedNotionalOnClose(
+        ISpreadGenOne(spread).updateTimeWeightedNotionalOnClose(
             uint256(swap.direction),
             swap.tenor,
             swap.notional,
@@ -493,9 +494,9 @@ abstract contract AmmCloseSwapServiceGenOne {
                 unwindParams.swap.collateral,
                 unwindParams.swap.calculateSwapUnwindPnlValue(
                     unwindParams.closeTimestamp,
-                    SpreadGenOne(spread).calculateOfferedRate(
+                    ISpreadGenOne(spread).calculateOfferedRate(
                         oppositeDirection,
-                        SpreadGenOne.SpreadInputs({
+                        ISpreadGenOne.SpreadInputs({
                             asset: asset,
                             swapNotional: unwindParams.swap.notional,
                             demandSpreadFactor: oppositeRiskIndicators.demandSpreadFactor,

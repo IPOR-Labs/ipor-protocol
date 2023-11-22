@@ -2,7 +2,6 @@
 pragma solidity 0.8.20;
 
 import "../../amm/spread/SpreadTypes.sol";
-
 /// @title Spread interface for storage lens
 interface ISpreadStorageLens {
     /// @notice Gets the time-weighted notional for all supported assets and tenors.

@@ -153,7 +153,7 @@ contract TestForkCommons is Test {
     address public newSpread90Days;
     address public newSpreadCloseSwapService;
 
-    address public spreadProxyStEth;
+    address public spreadStEth;
 
     function _init() internal {
         messageSignerPrivateKey = 0x12341234;
@@ -478,7 +478,7 @@ contract TestForkCommons is Test {
                 decimals: 18,
                 ammStorage: ammStorageProxyStEth,
                 ammTreasury: ammTreasuryProxyStEth,
-                spread: spreadProxyStEth,
+                spread: spreadStEth,
                 iporPublicationFee: 10 * 1e15,
                 maxSwapCollateralAmount: 100_000 * 1e18,
                 liquidationDepositAmount: 1000, /// @dev 0.001 ETH
@@ -507,7 +507,7 @@ contract TestForkCommons is Test {
                 decimals: 18,
                 ammStorage: ammStorageProxyStEth,
                 ammTreasury: ammTreasuryProxyStEth,
-                spread: spreadProxyStEth,
+                spread: spreadStEth,
                 iporPublicationFee: 9 * 1e15,
                 maxSwapCollateralAmount: 100_000 * 1e18,
                 liquidationDepositAmount: 0,
@@ -649,7 +649,7 @@ contract TestForkCommons is Test {
     function _createAmmCloseSwapServiceStEth() private {
         AmmTypesGenOne.AmmCloseSwapServicePoolConfiguration memory stEthConfig = AmmTypesGenOne
             .AmmCloseSwapServicePoolConfiguration({
-                spread: spreadProxyStEth,
+                spread: spreadStEth,
                 asset: stETH,
                 decimals: 18,
                 ammStorage: ammStorageProxyStEth,
@@ -670,13 +670,15 @@ contract TestForkCommons is Test {
     }
 
     function _createNewSpreadForStEth() private {
-        SpreadGenOne spreadImpl = new SpreadGenOne(iporProtocolRouterProxy, stETH);
-
         vm.startPrank(owner);
-        ERC1967Proxy proxy = new ERC1967Proxy(address(spreadImpl), abi.encodeWithSignature("initialize()"));
+        SpreadGenOne spread = new SpreadGenOne(
+            iporProtocolRouterProxy,
+            stETH,
+            new SpreadTypesGenOne.TimeWeightedNotionalMemory[](0)
+        );
         vm.stopPrank();
 
-        spreadProxyStEth = address(proxy);
+        spreadStEth = address(spread);
     }
 
     function _setupIporOracleStEth() private {

@@ -11,7 +11,7 @@ import "../../interfaces/types/IporTypes.sol";
 import "../../interfaces/types/AmmTypes.sol";
 import "../../libraries/IporContractValidator.sol";
 import "../../security/PauseManager.sol";
-import "../../security/IporOwnableUpgradeable.sol";
+import "../../security/IporOwnable.sol";
 import "../../amm/libraries/types/AmmInternalTypes.sol";
 import "../../amm/libraries/IporSwapLogic.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
@@ -20,38 +20,10 @@ import "../../basic/interfaces/IAmmStorageGenOne.sol";
 import "./DemandSpreadLibsGenOne.sol";
 import "./SpreadStorageLibsGenOne.sol";
 import "./OfferedRateCalculationLibsGenOne.sol";
+import "./ISpreadGenOne.sol";
 
-/// @dev This contract cannot be used directly, should be used only through SpreadRouter.
-contract SpreadGenOne is
-    Initializable,
-    PausableUpgradeable,
-    UUPSUpgradeable,
-    IporOwnableUpgradeable,
-    IProxyImplementation,
-    IIporContractCommonGov
-{
-    struct SpreadInputs {
-        //// @notice Swap's assets DAI/USDC/USDT/stETH/etc.
-        address asset;
-        /// @notice Swap's notional value
-        uint256 swapNotional;
-        /// @notice demand spread factor used in demand spread calculation
-        uint256 demandSpreadFactor;
-        /// @notice Base spread
-        int256 baseSpreadPerLeg;
-        /// @notice Swap's balance for Pay Fixed leg
-        uint256 totalCollateralPayFixed;
-        /// @notice Swap's balance for Receive Fixed leg
-        uint256 totalCollateralReceiveFixed;
-        /// @notice Liquidity Pool's Balance
-        uint256 liquidityPoolBalance;
-        /// @notice Ipor index value at the time of swap creation
-        uint256 iporIndexValue;
-        /// @notice fixed rate cap for given leg for offered rate without demandSpread in 18 decimals
-        uint256 fixedRateCapPerLeg;
-        /// @notice Swap's tenor
-        IporTypes.SwapTenor tenor;
-    }
+// @dev This contract should calculate the spread for one asset and for all tenors.
+contract SpreadGenOne is IporOwnable, ISpreadGenOne  {
 
     error UnknownTenor(IporTypes.SwapTenor tenor, string errorCode, string methodName);
 
@@ -63,21 +35,23 @@ contract SpreadGenOne is
     address public immutable iporProtocolRouter;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address iporProtocolRouterInput, address assetInput) {
+    constructor(
+        address iporProtocolRouterInput,
+        address assetInput,
+        SpreadTypesGenOne.TimeWeightedNotionalMemory[] memory timeWeightedNotional
+    ) {
         iporProtocolRouter = iporProtocolRouterInput.checkAddress();
         asset = assetInput.checkAddress();
-        _disableInitializers();
-    }
-
-    function initialize() public initializer {
-        __Pausable_init();
-        __Ownable_init();
-        __UUPSUpgradeable_init();
-    }
-
-    modifier onlyPauseGuardian() {
-        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
-        _;
+        uint256 length = timeWeightedNotional.length;
+        for (uint256 i; i < length; ) {
+            SpreadStorageLibsGenOne.saveTimeWeightedNotionalForAssetAndTenor(
+                timeWeightedNotional[i].storageId,
+                timeWeightedNotional[i]
+            );
+            unchecked {
+                ++i;
+            }
+        }
     }
 
     modifier onlyRouter() {
@@ -87,7 +61,7 @@ contract SpreadGenOne is
 
     function calculateAndUpdateOfferedRatePayFixed(
         SpreadInputs calldata spreadInputs
-    ) external onlyRouter returns (uint256 offeredRate) {
+    ) external onlyRouter override returns (uint256 offeredRate) {
         offeredRate = OfferedRateCalculationLibsGenOne.calculatePayFixedOfferedRate(
             spreadInputs.iporIndexValue,
             spreadInputs.baseSpreadPerLeg,
@@ -99,7 +73,7 @@ contract SpreadGenOne is
     function calculateOfferedRate(
         AmmTypes.SwapDirection direction,
         SpreadInputs calldata spreadInputs
-    ) external view returns (uint256) {
+    ) external view override returns (uint256) {
         if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
             return
                 OfferedRateCalculationLibsGenOne.calculatePayFixedOfferedRate(
@@ -123,7 +97,7 @@ contract SpreadGenOne is
 
     function calculateOfferedRatePayFixed(
         SpreadInputs calldata spreadInputs
-    ) external view returns (uint256 offeredRate) {
+    ) external view override returns (uint256 offeredRate) {
         offeredRate = OfferedRateCalculationLibsGenOne.calculatePayFixedOfferedRate(
             spreadInputs.iporIndexValue,
             spreadInputs.baseSpreadPerLeg,
@@ -134,7 +108,7 @@ contract SpreadGenOne is
 
     function calculateAndUpdateOfferedRateReceiveFixed(
         SpreadInputs calldata spreadInputs
-    ) external onlyRouter returns (uint256 offeredRate) {
+    ) external onlyRouter override returns (uint256 offeredRate) {
         offeredRate = OfferedRateCalculationLibsGenOne.calculateReceiveFixedOfferedRate(
             spreadInputs.iporIndexValue,
             spreadInputs.baseSpreadPerLeg,
@@ -145,7 +119,7 @@ contract SpreadGenOne is
 
     function calculateOfferedRateReceiveFixed(
         SpreadInputs calldata spreadInputs
-    ) external view returns (uint256 offeredRate) {
+    ) external view override returns (uint256 offeredRate) {
         offeredRate = OfferedRateCalculationLibsGenOne.calculateReceiveFixedOfferedRate(
             spreadInputs.iporIndexValue,
             spreadInputs.baseSpreadPerLeg,
@@ -160,7 +134,7 @@ contract SpreadGenOne is
         uint256 swapNotional,
         AmmInternalTypes.OpenSwapItem memory closedSwap,
         address ammStorageAddress
-    ) external onlyRouter {
+    ) external onlyRouter override {
         // @dev when timestamp is 0, it means that the swap was open in ipor-protocol v1 .
         if (closedSwap.openSwapTimestamp == 0) {
             return;
@@ -221,37 +195,32 @@ contract SpreadGenOne is
         SpreadStorageLibsGenOne.saveTimeWeightedNotionalForAssetAndTenor(storageId, timeWeightedNotional);
     }
 
-    function spreadFunctionConfig() external pure returns (uint256[] memory) {
+    function getTimeWeightedNotional()
+    external
+    view
+    override
+    returns (SpreadTypesGenOne.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse)
+    {
+        (SpreadStorageLibsGenOne.StorageId[] memory storageIds, string[] memory keys) = SpreadStorageLibsGenOne.getAllStorageId();
+        uint256 storageIdLength = storageIds.length;
+        timeWeightedNotionalResponse = new SpreadTypesGenOne.TimeWeightedNotionalResponse[](storageIdLength);
+
+        for (uint256 i; i != storageIdLength; ) {
+            timeWeightedNotionalResponse[i].timeWeightedNotional = SpreadStorageLibsGenOne
+                .getTimeWeightedNotionalForAssetAndTenor(storageIds[i]);
+            timeWeightedNotionalResponse[i].key = keys[i];
+            unchecked {
+                ++i;
+            }
+        }
+    }
+
+    function spreadFunctionConfig() external pure override returns (uint256[] memory) {
         return DemandSpreadLibsGenOne.spreadFunctionConfig();
     }
 
-    /// @notice Gets the implementation address of a Spread Router.
-    function getImplementation() external view returns (address) {
-        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
-    }
-
-    function getVersion() external pure virtual returns (uint256) {
-        return 2_000;
-    }
-
-    function pause() external onlyPauseGuardian {
-        _pause();
-    }
-
-    function unpause() external onlyOwner {
-        _unpause();
-    }
-
-    function isPauseGuardian(address account) external view returns (bool) {
-        return PauseManager.isPauseGuardian(account);
-    }
-
-    function addPauseGuardians(address[] calldata guardians) external onlyOwner {
-        PauseManager.addPauseGuardians(guardians);
-    }
-
-    function removePauseGuardians(address[] calldata guardians) external onlyOwner {
-        PauseManager.removePauseGuardians(guardians);
+    function getVersion() external pure virtual override returns (uint256) {
+        return 2_001;
     }
 
     function _calculateDemandPayFixed(SpreadInputs memory spreadInputs) internal view returns (uint256 spreadValue) {
@@ -356,7 +325,4 @@ contract SpreadGenOne is
             methodName: "_calculateStorageId"
         });
     }
-
-    //solhint-disable no-empty-blocks
-    function _authorizeUpgrade(address) internal override onlyOwner {}
 }
