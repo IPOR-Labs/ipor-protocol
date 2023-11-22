@@ -11,7 +11,7 @@ import "../../interfaces/types/IporTypes.sol";
 import "../../interfaces/types/AmmTypes.sol";
 import "../../libraries/IporContractValidator.sol";
 import "../../security/PauseManager.sol";
-import "../../security/IporOwnableUpgradeable.sol";
+import "../../security/IporOwnable.sol";
 import "../../amm/libraries/types/AmmInternalTypes.sol";
 import "../../amm/libraries/IporSwapLogic.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
@@ -20,8 +20,9 @@ import "../../basic/interfaces/IAmmStorageGenOne.sol";
 import "./DemandSpreadLibsGenOne.sol";
 import "./SpreadStorageLibsGenOne.sol";
 import "./OfferedRateCalculationLibsGenOne.sol";
+import "./ISpreadGenOne.sol";
 
-/// @dev This contract cannot be used directly, should be used only through Router.
+// @dev This contract should calculate the spread for one asset and for all tenors.
 contract SpreadGenOne is IporOwnable, ISpreadGenOne  {
 
     error UnknownTenor(IporTypes.SwapTenor tenor, string errorCode, string methodName);
