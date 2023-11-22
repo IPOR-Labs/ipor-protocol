@@ -222,7 +222,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
 
-        uint256 totalAmount = 1 * 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -277,9 +277,9 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
 
         assertEq(1, swap.id, "swapId");
         assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88965876102316920, swap.collateral, "swap.collateral");
-        assertEq(889658761023169200, swap.notional, "swap.notional");
-        assertEq(889658761023169200, swap.ibtQuantity, "swap.ibtQuantity");
+        assertEq(88965876102316919, swap.collateral, "swap.collateral");
+        assertEq(889658761023169190, swap.notional, "swap.notional");
+        assertEq(889658761023169190, swap.ibtQuantity, "swap.ibtQuantity");
         assertEq(20000691543764546, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
@@ -496,7 +496,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
-        uint256 totalAmount = 1 * 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -552,9 +552,9 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
 
         assertEq(1, swap.id, "swapId");
         assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88926909389542842, swap.collateral, "swap.collateral");
-        assertEq(889269093895428420, swap.notional, "swap.notional");
-        assertEq(889269093895428420, swap.ibtQuantity, "swap.ibtQuantity");
+        assertEq(88926909389542841, swap.collateral, "swap.collateral");
+        assertEq(889269093895428410, swap.notional, "swap.notional");
+        assertEq(889269093895428410, swap.ibtQuantity, "swap.ibtQuantity");
         assertEq(20000691240845903, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
@@ -771,7 +771,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
-        uint256 totalAmount = 1 * 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -827,9 +827,9 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
 
         assertEq(1, swap.id, "swapId");
         assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88890409084690108, swap.collateral, "swap.collateral");
-        assertEq(888904090846901080, swap.notional, "swap.notional");
-        assertEq(888904090846901080, swap.ibtQuantity, "swap.ibtQuantity");
+        assertEq(88890409084690107, swap.collateral, "swap.collateral");
+        assertEq(888904090846901070, swap.notional, "swap.notional");
+        assertEq(888904090846901070, swap.ibtQuantity, "swap.ibtQuantity");
         assertEq(20000690957100591, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
@@ -1047,7 +1047,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
 
-        uint256 totalAmount = 1 * 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -1102,9 +1102,9 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
 
         assertEq(1, swap.id, "swapId");
         assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88965876102316920, swap.collateral, "swap.collateral");
-        assertEq(889658761023169200, swap.notional, "swap.notional");
-        assertEq(889658761023169200, swap.ibtQuantity, "swap.ibtQuantity");
+        assertEq(88965876102316919, swap.collateral, "swap.collateral");
+        assertEq(889658761023169190, swap.notional, "swap.notional");
+        assertEq(889658761023169190, swap.ibtQuantity, "swap.ibtQuantity");
         assertEq(3694308456235454, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
@@ -1321,7 +1321,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
-        uint256 totalAmount = 1 * 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -1377,9 +1377,9 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
 
         assertEq(1, swap.id, "swapId");
         assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88926909389542842, swap.collateral, "swap.collateral");
-        assertEq(889269093895428420, swap.notional, "swap.notional");
-        assertEq(889269093895428420, swap.ibtQuantity, "swap.ibtQuantity");
+        assertEq(88926909389542841, swap.collateral, "swap.collateral");
+        assertEq(889269093895428410, swap.notional, "swap.notional");
+        assertEq(889269093895428410, swap.ibtQuantity, "swap.ibtQuantity");
         assertEq(3694308759154097, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
@@ -1596,7 +1596,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
-        uint256 totalAmount = 1 * 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -1652,9 +1652,9 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
 
         assertEq(1, swap.id, "swapId");
         assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(88890409084690108, swap.collateral, "swap.collateral");
-        assertEq(888904090846901080, swap.notional, "swap.notional");
-        assertEq(888904090846901080, swap.ibtQuantity, "swap.ibtQuantity");
+        assertEq(88890409084690107, swap.collateral, "swap.collateral");
+        assertEq(888904090846901070, swap.notional, "swap.notional");
+        assertEq(888904090846901070, swap.ibtQuantity, "swap.ibtQuantity");
         assertEq(3694309042899409, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 

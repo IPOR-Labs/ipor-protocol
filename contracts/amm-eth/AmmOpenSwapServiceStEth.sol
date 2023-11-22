@@ -36,19 +36,19 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
     }
 
     function openSwapPayFixed28daysStEth(
-        address accountInputToken,
+        address inputAsset,
         address beneficiary,
-        uint256 totalAmount,
+        uint256 inputAssetTotalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) external payable override returns (uint256) {
         return
             _openSwapPayFixed(
-                accountInputToken,
+                inputAsset,
                 beneficiary,
                 IporTypes.SwapTenor.DAYS_28,
-                totalAmount,
+                inputAssetTotalAmount,
                 acceptableFixedInterestRate,
                 leverage,
                 riskIndicatorsInputs
@@ -56,7 +56,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
     }
 
     function openSwapPayFixed60daysStEth(
-        address accountInputToken,
+        address inputAsset,
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
@@ -65,7 +65,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
     ) external payable override returns (uint256) {
         return
             _openSwapPayFixed(
-                accountInputToken,
+                inputAsset,
                 beneficiary,
                 IporTypes.SwapTenor.DAYS_60,
                 totalAmount,
@@ -76,7 +76,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
     }
 
     function openSwapPayFixed90daysStEth(
-        address accountInputToken,
+        address inputAsset,
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
@@ -85,7 +85,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
     ) external payable override returns (uint256) {
         return
             _openSwapPayFixed(
-                accountInputToken,
+                inputAsset,
                 beneficiary,
                 IporTypes.SwapTenor.DAYS_90,
                 totalAmount,
@@ -96,7 +96,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
     }
 
     function openSwapReceiveFixed28daysStEth(
-        address accountInputToken,
+        address inputAsset,
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
@@ -105,7 +105,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
     ) external payable override returns (uint256) {
         return
             _openSwapReceiveFixed(
-                accountInputToken,
+                inputAsset,
                 beneficiary,
                 IporTypes.SwapTenor.DAYS_28,
                 totalAmount,
@@ -116,7 +116,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
     }
 
     function openSwapReceiveFixed60daysStEth(
-        address accountInputToken,
+        address inputAsset,
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
@@ -125,7 +125,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
     ) external payable override returns (uint256) {
         return
             _openSwapReceiveFixed(
-                accountInputToken,
+                inputAsset,
                 beneficiary,
                 IporTypes.SwapTenor.DAYS_60,
                 totalAmount,
@@ -136,7 +136,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
     }
 
     function openSwapReceiveFixed90daysStEth(
-        address accountInputToken,
+        address inputAsset,
         address beneficiary,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
@@ -145,7 +145,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
     ) external payable override returns (uint256) {
         return
             _openSwapReceiveFixed(
-                accountInputToken,
+                inputAsset,
                 beneficiary,
                 IporTypes.SwapTenor.DAYS_90,
                 totalAmount,
@@ -155,81 +155,82 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
             );
     }
 
-    function _validateAccountInputToken(address accountInputToken) internal view override {
-        if (
-            accountInputToken != ETH_ADDRESS &&
-            accountInputToken != asset &&
-            accountInputToken != wETH &&
-            accountInputToken != wstETH
-        ) {
-            revert IporErrors.UnsupportedAsset(accountInputToken);
+    function _convertToAssetAmount(address inputAsset, uint256 inputAssetAmount) internal view override returns (uint256) {
+        if (inputAsset == asset || inputAsset == wETH || inputAsset == ETH_ADDRESS) {
+            /// @dev entered asset is in relation 1:1 with underlying asset (stETH)
+            return inputAssetAmount;
+        } else if (inputAsset == wstETH) {
+            return IwstEth(wstETH).getStETHByWstETH(inputAssetAmount);
         }
+
+        revert IporErrors.UnsupportedAsset(inputAsset);
     }
 
-    function _validateTotalAmount(address accountInputToken, uint256 totalAmount) internal view override {
-        require(totalAmount > 0, AmmErrors.TOTAL_AMOUNT_TOO_LOW);
+    function _convertInputAssetAmountToWadAmount(
+        address inputAsset,
+        uint256 inputAssetAmount
+    ) internal view override returns (uint256) {
+        if (inputAsset == asset || inputAsset == wETH || inputAsset == ETH_ADDRESS || inputAsset == wstETH) {
+            /// @dev stETH, wETH, ETH, wstETH are represented in 18 decimals so no conversion is needed
+            return inputAssetAmount;
+        }
+        revert IporErrors.UnsupportedAsset(inputAsset);
+    }
 
-        if (accountInputToken == ETH_ADDRESS) {
-            if (msg.value != totalAmount) {
-                revert IporErrors.AccountInputTokenBalanceTooLow(ETH_ADDRESS, msg.value, totalAmount);
+    function _validateInputAsset(address inputAsset, uint256 inputAssetTotalAmount) internal view override {
+        if (inputAssetTotalAmount <= 0) {
+            revert IporErrors.InputAssetTotalAmountTooLow(inputAssetTotalAmount);
+        }
+
+        if (inputAsset == ETH_ADDRESS) {
+            if (msg.value < inputAssetTotalAmount) {
+                revert IporErrors.InputAssetBalanceTooLow(ETH_ADDRESS, msg.value, inputAssetTotalAmount);
             }
         } else {
-            uint256 accountBalance = IERC20Upgradeable(accountInputToken).balanceOf(msg.sender);
+            if (inputAsset == wETH || inputAsset == asset || inputAsset == wstETH) {
+                uint256 accountBalance = IERC20Upgradeable(inputAsset).balanceOf(msg.sender);
 
-            if (accountInputToken == wETH || accountInputToken == asset) {
-                if (accountBalance < totalAmount) {
-                    revert IporErrors.AccountInputTokenBalanceTooLow(accountInputToken, accountBalance, totalAmount);
+                if (accountBalance < inputAssetTotalAmount) {
+                    revert IporErrors.InputAssetBalanceTooLow(inputAsset, accountBalance, inputAssetTotalAmount);
                 }
-            } else if (accountInputToken == wstETH) {
-                uint256 inputTokenTotalAmount = IporMath.division(IwstEth(wstETH).tokensPerStEth() * totalAmount, 1e18);
-
-                if (accountBalance < inputTokenTotalAmount) {
-                    revert IporErrors.AccountInputTokenBalanceTooLow(
-                        accountInputToken,
-                        accountBalance,
-                        inputTokenTotalAmount
-                    );
-                }
+            } else {
+                revert IporErrors.UnsupportedAsset(inputAsset);
             }
         }
     }
 
-    function _transferAssetInputToAmmTreasury(
-        address accountInputToken,
-        uint256 totalAmount
-    ) internal override returns (uint256 accountInputTokenAmount) {
-        if (accountInputToken == ETH_ADDRESS) {
-            if (msg.value != totalAmount) {
+    /// @param inputAsset - input asset address (ETH, wETH, stETH, wstETH) entered by user
+    /// @param inputAssetTotalAmount - total amount of input asset entered by user, value represented in decimals of input asset
+    /// @param assetTotalAmount - total amount of underlying asset (stETH) calculated by service, takes into consideration exchange rate of input asset, value represented in decimals of underlying asset
+    function _transferTotalAmountToAmmTreasury(
+        address inputAsset,
+        uint256 inputAssetTotalAmount,
+        uint256 assetTotalAmount
+    ) internal override {
+        if (inputAsset == ETH_ADDRESS) {
+            if (msg.value < inputAssetTotalAmount) {
                 revert IporErrors.WrongAmount("msg.value", msg.value);
             }
-            _submitEth(totalAmount);
-            accountInputTokenAmount = totalAmount;
-        } else if (accountInputToken == asset) {
-            IERC20Upgradeable(accountInputToken).safeTransferFrom(msg.sender, ammTreasury, totalAmount);
-            accountInputTokenAmount = totalAmount;
-        } else if (accountInputToken == wETH) {
-            IWETH9(wETH).safeTransferFrom(msg.sender, iporProtocolRouter, totalAmount);
+            _submitEth(inputAssetTotalAmount);
+        } else if (inputAsset == asset) {
+            IERC20Upgradeable(inputAsset).safeTransferFrom(msg.sender, ammTreasury, inputAssetTotalAmount);
+        } else if (inputAsset == wETH) {
+            IWETH9(wETH).safeTransferFrom(msg.sender, iporProtocolRouter, inputAssetTotalAmount);
 
-            /// @dev WETH -> ETH
-            IWETH9(wETH).withdraw(totalAmount);
+            /// @dev swap in relation 1:1 wETH -> ETH
+            IWETH9(wETH).withdraw(inputAssetTotalAmount);
 
-            _submitEth(totalAmount);
-            accountInputTokenAmount = totalAmount;
-        } else if (accountInputToken == wstETH) {
-            /// @dev wstETH -> stETH
-            uint256 tokensPerStEth = IwstEth(wstETH).tokensPerStEth();
+            _submitEth(inputAssetTotalAmount);
+        } else if (inputAsset == wstETH) {
+            IwstEth(wstETH).safeTransferFrom(msg.sender, address(this), inputAssetTotalAmount);
 
-            accountInputTokenAmount = IporMath.division(tokensPerStEth * totalAmount, 1e18);
-
-            IwstEth(wstETH).safeTransferFrom(msg.sender, address(this), accountInputTokenAmount);
-
-            uint256 stEthAmount = IwstEth(wstETH).unwrap(accountInputTokenAmount);
+            uint256 stEthAmount = IwstEth(wstETH).unwrap(inputAssetTotalAmount);
 
             if (stEthAmount > 0) {
                 IStETH(asset).safeTransfer(ammTreasury, stEthAmount);
             }
         } else {
-            revert IporErrors.UnsupportedAsset(accountInputToken);
+            revert IporErrors.UnsupportedAsset(inputAsset);
         }
     }
 

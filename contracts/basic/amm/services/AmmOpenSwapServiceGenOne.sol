@@ -51,7 +51,7 @@ abstract contract AmmOpenSwapServiceGenOne {
 
     struct Context {
         /// @dev asset which user enters to open swap, can be different than underlying asset but have to be in 1:1 price relation with underlying asset
-        address accountInputToken;
+        address inputAsset;
         address beneficiary;
         /// @notice swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
         IporTypes.SwapTenor tenor;
@@ -82,19 +82,19 @@ abstract contract AmmOpenSwapServiceGenOne {
 
     /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
     function _openSwapPayFixed(
-        address accountInputToken,
+        address inputAsset,
         address beneficiary,
         IporTypes.SwapTenor tenor,
-        uint256 totalAmount,
+        uint256 inputAssetTotalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) internal returns (uint256) {
-        _validateAccountInputToken(accountInputToken);
+        _validateInputAsset(inputAsset, inputAssetTotalAmount);
         return
             _openSwapPayFixedInternal(
-                Context({accountInputToken: accountInputToken, beneficiary: beneficiary, tenor: tenor}),
-                totalAmount,
+                Context({inputAsset: inputAsset, beneficiary: beneficiary, tenor: tenor}),
+                inputAssetTotalAmount,
                 acceptableFixedInterestRate,
                 leverage,
                 riskIndicatorsInputs.verify(
@@ -108,19 +108,19 @@ abstract contract AmmOpenSwapServiceGenOne {
 
     /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
     function _openSwapReceiveFixed(
-        address accountInputToken,
+        address inputAsset,
         address beneficiary,
         IporTypes.SwapTenor tenor,
-        uint256 totalAmount,
+        uint256 inputAssetTotalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
     ) internal returns (uint256) {
-        _validateAccountInputToken(accountInputToken);
+        _validateInputAsset(inputAsset, inputAssetTotalAmount);
         return
             _openSwapReceiveFixedInternal(
-                Context({accountInputToken: accountInputToken, beneficiary: beneficiary, tenor: tenor}),
-                totalAmount,
+                Context({inputAsset: inputAsset, beneficiary: beneficiary, tenor: tenor}),
+                inputAssetTotalAmount,
                 acceptableFixedInterestRate,
                 leverage,
                 riskIndicatorsInputs.verify(
@@ -134,15 +134,15 @@ abstract contract AmmOpenSwapServiceGenOne {
 
     function _openSwapPayFixedInternal(
         Context memory ctx,
-        uint256 totalAmount,
+        uint256 inputAssetTotalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage,
         AmmTypes.OpenSwapRiskIndicators memory riskIndicators
     ) internal returns (uint256) {
-        AmmInternalTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
+        AmmTypesGenOne.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
             ctx,
             block.timestamp,
-            totalAmount,
+            inputAssetTotalAmount,
             leverage
         );
 
@@ -208,13 +208,13 @@ abstract contract AmmOpenSwapServiceGenOne {
             iporPublicationFee
         );
 
-        uint256 accountInputTokenAmount = _transferAssetInputToAmmTreasury(ctx.accountInputToken, totalAmount);
+        _transferTotalAmountToAmmTreasury(ctx.inputAsset, bosStruct.inputAssetTotalAmount, bosStruct.assetTotalAmount);
 
         _emitOpenSwapEvent(
-            ctx.accountInputToken,
-            accountInputTokenAmount,
+            ctx.inputAsset,
+            bosStruct.wadInputAssetTotalAmount,
             newSwapId,
-            bosStruct.wadTotalAmount,
+            bosStruct.wadAssetTotalAmount,
             newSwap,
             indicator,
             0,
@@ -231,7 +231,7 @@ abstract contract AmmOpenSwapServiceGenOne {
         uint256 leverage,
         AmmTypes.OpenSwapRiskIndicators memory riskIndicators
     ) internal returns (uint256) {
-        AmmInternalTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
+        AmmTypesGenOne.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
             ctx,
             block.timestamp,
             totalAmount,
@@ -297,13 +297,13 @@ abstract contract AmmOpenSwapServiceGenOne {
             iporPublicationFee
         );
 
-        uint256 accountInputTokenAmount = _transferAssetInputToAmmTreasury(ctx.accountInputToken, totalAmount);
+        _transferTotalAmountToAmmTreasury(ctx.inputAsset, bosStruct.inputAssetTotalAmount, bosStruct.assetTotalAmount);
 
         _emitOpenSwapEvent(
-            ctx.accountInputToken,
-            accountInputTokenAmount,
+            ctx.inputAsset,
+            bosStruct.wadInputAssetTotalAmount,
             newSwapId,
-            bosStruct.wadTotalAmount,
+            bosStruct.wadAssetTotalAmount,
             newSwap,
             indicator,
             1,
@@ -314,36 +314,56 @@ abstract contract AmmOpenSwapServiceGenOne {
     }
 
     /// @notice Transfer asset input to AMM Treasury in underlying token (asset) after opening swap
-    /// @param accountInputToken Address of the asset input the asset which user enters to open swap, can be different than underlying asset but have to be in 1:1 price relation with underlying asset
-    /// @param totalAmount Total amount of asset input
-    /// @return accountInputTokenAmount Amount of asset input transferred to AMM Treasury
-    function _transferAssetInputToAmmTreasury(
-        address accountInputToken,
-        uint256 totalAmount
-    ) internal virtual returns (uint256 accountInputTokenAmount);
+    /// @param inputAsset Address of the asset input the asset which user enters to open swap, can be different than underlying asset but have to be in 1:1 price relation with underlying asset
+    /// @param assetTotalAmount Total amount of underlying asset.
+    function _transferTotalAmountToAmmTreasury(
+        address inputAsset,
+        uint256 inputAssetTotalAmount,
+        uint256 assetTotalAmount
+    ) internal virtual;
 
-    function _validateTotalAmount(address accountInputToken, uint256 totalAmount) internal view virtual;
+    //    function _validateTotalAmount(address inputAsset, uint256 totalAmount) internal view virtual;
 
-    function _validateAccountInputToken(address accountInputToken) internal view virtual;
+    function _validateInputAsset(address inputAsset, uint256 inputAssetTotalAmount) internal view virtual;
+
+    /// @notice Converts input asset amount to underlying asset amount using exchange rate between input asset and underlying asset.
+    /// @param inputAsset Address of the asset input the asset which user enters to open swap, can be different than underlying asset.
+    /// @param inputAssetAmount Amount of input asset.
+    /// @return asset amount represented in underlying asset in decimals of underlying asset
+    /// @dev Notice! Returned value is represented in decimals of underlying asset which in general can could be different than 18 decimals.
+    function _convertToAssetAmount(
+        address inputAsset,
+        uint256 inputAssetAmount
+    ) internal view virtual returns (uint256);
+
+    /// @notice Converts input asset amount to amount represented in 18 decimals.
+    /// @param inputAsset Address of the asset input the asset which user enters to open swap, can be different than underlying asset.
+    /// @param inputAssetAmount Amount of input asset.
+    /// @return input asset amount represented in 18 decimals
+    function _convertInputAssetAmountToWadAmount(
+        address inputAsset,
+        uint256 inputAssetAmount
+    ) internal view virtual returns (uint256);
 
     function _beforeOpenSwap(
         Context memory ctx,
         uint256 openTimestamp,
-        uint256 totalAmount,
+        uint256 inputAssetTotalAmount,
         uint256 leverage
-    ) internal view returns (AmmInternalTypes.BeforeOpenSwapStruct memory bosStruct) {
+    ) internal view returns (AmmTypesGenOne.BeforeOpenSwapStruct memory bosStruct) {
         require(ctx.beneficiary != address(0), IporErrors.WRONG_ADDRESS);
 
-        _validateTotalAmount(ctx.accountInputToken, totalAmount);
+        uint256 assetTotalAmount = _convertToAssetAmount(ctx.inputAsset, inputAssetTotalAmount);
 
-        uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, decimals);
+        uint256 wadAssetTotalAmount = IporMath.convertToWad(assetTotalAmount, decimals);
+
         /// @dev to achieve 18 decimals precision we multiply by 1e12 because for stETH
         /// pool liquidationDepositAmount is represented in 6 decimals in storage and in Service configuration.
         uint256 wadLiquidationDepositAmount = liquidationDepositAmount * 1e12;
 
         (uint256 collateral, uint256 notional, uint256 openingFeeAmount) = SwapLogicGenOne.calculateSwapAmount(
             ctx.tenor,
-            wadTotalAmount,
+            wadAssetTotalAmount,
             leverage,
             wadLiquidationDepositAmount,
             iporPublicationFee,
@@ -358,30 +378,31 @@ abstract contract AmmOpenSwapServiceGenOne {
         require(collateral <= maxSwapCollateralAmount, AmmErrors.COLLATERAL_AMOUNT_TOO_HIGH);
 
         require(
-            wadTotalAmount > wadLiquidationDepositAmount + iporPublicationFee + openingFeeAmount,
+            wadAssetTotalAmount > wadLiquidationDepositAmount + iporPublicationFee + openingFeeAmount,
             AmmErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
 
-        IporTypes.AccruedIpor memory accruedIndex = IIporOracle(iporOracle).getAccruedIndex(openTimestamp, asset);
-
         return
-            AmmInternalTypes.BeforeOpenSwapStruct(
-                wadTotalAmount,
-                collateral,
-                notional,
-                openingFeeLPAmount,
-                openingFeeTreasuryAmount,
-                iporPublicationFee,
-                liquidationDepositAmount,
-                accruedIndex
-            );
+            AmmTypesGenOne.BeforeOpenSwapStruct({
+                inputAssetTotalAmount: inputAssetTotalAmount,
+                wadInputAssetTotalAmount: _convertInputAssetAmountToWadAmount(ctx.inputAsset, inputAssetTotalAmount),
+                assetTotalAmount: assetTotalAmount,
+                wadAssetTotalAmount: wadAssetTotalAmount,
+                collateral: collateral,
+                notional: notional,
+                openingFeeLPAmount: openingFeeLPAmount,
+                openingFeeTreasuryAmount: openingFeeTreasuryAmount,
+                iporPublicationFeeAmount: iporPublicationFee,
+                liquidationDepositAmount: liquidationDepositAmount,
+                accruedIpor: IIporOracle(iporOracle).getAccruedIndex(openTimestamp, asset)
+            });
     }
 
     function _emitOpenSwapEvent(
-        address accountInputToken,
-        uint256 accountInputTokenAmount,
+        address inputAsset,
+        uint256 wadInputAssetTotalAmount,
         uint256 newSwapId,
-        uint256 wadTotalAmount,
+        uint256 wadAssetTotalAmount,
         AmmTypes.NewSwap memory newSwap,
         AmmTypes.IporSwapIndicator memory indicator,
         uint256 direction,
@@ -390,12 +411,12 @@ abstract contract AmmOpenSwapServiceGenOne {
         emit SwapEventsGenOne.OpenSwap(
             newSwapId,
             newSwap.buyer,
-            accountInputToken,
+            inputAsset,
             asset,
             AmmTypes.SwapDirection(direction),
             AmmTypesGenOne.OpenSwapAmount({
-                accountInputTokenAmount: accountInputTokenAmount,
-                totalAmount: wadTotalAmount,
+                inputAssetTotalAmount: wadInputAssetTotalAmount,
+                assetTotalAmount: wadAssetTotalAmount,
                 collateral: newSwap.collateral,
                 notional: newSwap.notional,
                 openingFeeLPAmount: newSwap.openingFeeLPAmount,

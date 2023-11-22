@@ -21,7 +21,7 @@ library AmmInternalTypes {
     }
 
     struct BeforeOpenSwapStruct {
-        /// @notice Sum of all asset transfered when opening swap. It includes the collateral, fees and desposits.
+        /// @notice Sum of all asset transferred when opening swap. It includes the collateral, fees and deposits.
         /// @dev The amount is represented in 18 decimals regardless of the decimals of the asset.
         uint256 wadTotalAmount;
         /// @notice Swap's collateral.

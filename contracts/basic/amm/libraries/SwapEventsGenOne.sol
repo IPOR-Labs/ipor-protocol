@@ -11,7 +11,7 @@ library SwapEventsGenOne {
         /// @notice trader that opened the swap
         address indexed buyer,
         /// @notice Account input token address
-        address accountInputToken,
+        address inputAsset,
         /// @notice underlying asset
         address asset,
         /// @notice swap direction, Pay Fixed Receive Floating or Pay Floating Receive Fixed.

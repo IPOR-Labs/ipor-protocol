@@ -221,7 +221,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
-        uint256 totalAmount = 1 * 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         vm.warp(block.timestamp);
 
@@ -484,7 +484,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
-        uint256 totalAmount = 1 * 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         vm.warp(block.timestamp);
 
@@ -747,7 +747,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
-        uint256 totalAmount = 1 * 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         vm.warp(block.timestamp);
 
@@ -1010,7 +1010,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
-        uint256 totalAmount = 1 * 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         vm.warp(block.timestamp);
 
@@ -1273,7 +1273,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
-        uint256 totalAmount = 1 * 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         vm.warp(block.timestamp);
 
@@ -1536,7 +1536,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
-        uint256 totalAmount = 1 * 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         vm.warp(block.timestamp);
 

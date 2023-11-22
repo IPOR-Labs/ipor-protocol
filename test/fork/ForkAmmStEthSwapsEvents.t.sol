@@ -8,8 +8,8 @@ import "../../contracts/interfaces/types/AmmTypes.sol";
 
 contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
     struct OpenSwapAmount {
-        uint256 accountInputTokenAmount;
-        uint256 totalAmount;
+        uint256 inputAssetTotalAmount;
+        uint256 assetTotalAmount;
         uint256 collateral;
         uint256 notional;
         uint256 openingFeeLPAmount;
@@ -28,7 +28,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
     event OpenSwap(
         uint256 indexed swapId,
         address indexed buyer,
-        address accountInputToken,
+        address inputAsset,
         address asset,
         AmmTypes.SwapDirection direction,
         OpenSwapAmount amounts,
@@ -50,7 +50,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         vm.createSelectFork(vm.envString("PROVIDER_URL"), 18562032);
     }
 
-    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForEth28daysPayFixed() public {
+    function testShouldContainInputAssetInEventWhenOpenPositionStEthForEth28daysPayFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
@@ -77,8 +77,8 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        address expectedAccountInputToken = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
-        uint256 expectedAccountInputTokenAmount = 100000000000000000;
+        address expectedInputAsset = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+        uint256 expectedInputAssetAmount = 100000000000000000;
 
         vm.prank(user);
         //then
@@ -86,12 +86,12 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         emit OpenSwap({
             swapId: 1,
             buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
-            accountInputToken: expectedAccountInputToken,
+            inputAsset: expectedInputAsset,
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             direction: AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             amounts: OpenSwapAmount({
-                accountInputTokenAmount: expectedAccountInputTokenAmount,
-                totalAmount: 100000000000000000,
+                inputAssetTotalAmount: expectedInputAssetAmount,
+                assetTotalAmount: 100000000000000000,
                 collateral: 88965876102316920,
                 notional: 889658761023169200,
                 openingFeeLPAmount: 17061948841540,
@@ -114,7 +114,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         }(ETH, user, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
     }
 
-    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForStEth28daysPayFixed() public {
+    function testShouldContainInputAssetInEventWhenOpenPositionStEthForStEth28daysPayFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
@@ -141,8 +141,8 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        address expectedAccountInputToken = 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
-        uint256 expectedAccountInputTokenAmount = 100000000000000000;
+        address expectedInputAsset = 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
+        uint256 expectedInputAssetAmount = 100000000000000000;
 
         vm.prank(user);
         //then
@@ -150,12 +150,12 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         emit OpenSwap({
             swapId: 1,
             buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
-            accountInputToken: expectedAccountInputToken,
+            inputAsset: expectedInputAsset,
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             direction: AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             amounts: OpenSwapAmount({
-                accountInputTokenAmount: expectedAccountInputTokenAmount,
-                totalAmount: 100000000000000000,
+                inputAssetTotalAmount: expectedInputAssetAmount,
+                assetTotalAmount: 100000000000000000,
                 collateral: 88965876102316920,
                 notional: 889658761023169200,
                 openingFeeLPAmount: 17061948841540,
@@ -183,7 +183,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         );
     }
 
-    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForWEth28daysPayFixed() public {
+    function testShouldContainInputAssetInEventWhenOpenPositionStEthForWEth28daysPayFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
@@ -210,8 +210,8 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        address expectedAccountInputToken = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-        uint256 expectedAccountInputTokenAmount = 100000000000000000;
+        address expectedInputAsset = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+        uint256 expectedInputAssetAmount = 100000000000000000;
 
         vm.prank(user);
         //then
@@ -219,12 +219,12 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         emit OpenSwap({
             swapId: 1,
             buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
-            accountInputToken: expectedAccountInputToken,
+            inputAsset: expectedInputAsset,
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             direction: AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             amounts: OpenSwapAmount({
-                accountInputTokenAmount: expectedAccountInputTokenAmount,
-                totalAmount: 100000000000000000,
+                inputAssetTotalAmount: expectedInputAssetAmount,
+                assetTotalAmount: 100000000000000000,
                 collateral: 88965876102316920,
                 notional: 889658761023169200,
                 openingFeeLPAmount: 17061948841540,
@@ -252,13 +252,13 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         );
     }
 
-    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForwstEth28daysPayFixed() public {
+    function testShouldContainInputAssetInEventWhenOpenPositionStEthForwstEth28daysPayFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
 
-        uint256 totalAmount = 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -279,8 +279,8 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        address expectedAccountInputToken = 0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0;
-        uint256 expectedAccountInputTokenAmount = 87235841251539969;
+        address expectedInputAsset = 0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0;
+        uint256 expectedInputAssetAmount = 87235841251539968;
 
         vm.prank(user);
         //then
@@ -288,14 +288,14 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         emit OpenSwap({
             swapId: 1,
             buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
-            accountInputToken: expectedAccountInputToken,
+            inputAsset: expectedInputAsset,
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             direction: AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             amounts: OpenSwapAmount({
-                accountInputTokenAmount: expectedAccountInputTokenAmount,
-                totalAmount: 100000000000000000,
-                collateral: 88965876102316920,
-                notional: 889658761023169200,
+                inputAssetTotalAmount: expectedInputAssetAmount,
+                assetTotalAmount: 99999999999999999,
+                collateral: 88965876102316919,
+                notional: 889658761023169190,
                 openingFeeLPAmount: 17061948841540,
                 openingFeeTreasuryAmount: 17061948841540,
                 iporPublicationFee: 10000000000000000,
@@ -306,7 +306,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
             indicator: IporSwapIndicator({
                 iporIndexValue: 0,
                 ibtPrice: 1000000000000000000,
-                ibtQuantity: 889658761023169200,
+                ibtQuantity: 889658761023169190,
                 fixedInterestRate: 20000691543764546
             })
         });
@@ -321,7 +321,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         );
     }
 
-    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForEth28daysReceiveFixed() public {
+    function testShouldContainInputAssetInEventWhenOpenPositionStEthForEth28daysReceiveFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
@@ -348,8 +348,8 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        address expectedAccountInputToken = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
-        uint256 expectedAccountInputTokenAmount = 100000000000000000;
+        address expectedInputAsset = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+        uint256 expectedInputAssetAmount = 100000000000000000;
 
         vm.prank(user);
         //then
@@ -357,12 +357,12 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         emit OpenSwap({
             swapId: 1,
             buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
-            accountInputToken: expectedAccountInputToken,
+            inputAsset: expectedInputAsset,
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             direction: AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             amounts: OpenSwapAmount({
-                accountInputTokenAmount: expectedAccountInputTokenAmount,
-                totalAmount: 100000000000000000,
+                inputAssetTotalAmount: expectedInputAssetAmount,
+                assetTotalAmount: 100000000000000000,
                 collateral: 88965876102316920,
                 notional: 889658761023169200,
                 openingFeeLPAmount: 17061948841540,
@@ -385,7 +385,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         }(ETH, user, totalAmount, 0, 10e18, riskIndicatorsInputs);
     }
 
-    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForStEth28daysReceiveFixed() public {
+    function testShouldContainInputAssetInEventWhenOpenPositionStEthForStEth28daysReceiveFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
@@ -412,8 +412,8 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        address expectedAccountInputToken = 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
-        uint256 expectedAccountInputTokenAmount = 100000000000000000;
+        address expectedInputAsset = 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
+        uint256 expectedInputAssetAmount = 100000000000000000;
 
         vm.prank(user);
         //then
@@ -421,12 +421,12 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         emit OpenSwap({
             swapId: 1,
             buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
-            accountInputToken: expectedAccountInputToken,
+            inputAsset: expectedInputAsset,
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             direction: AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             amounts: OpenSwapAmount({
-                accountInputTokenAmount: expectedAccountInputTokenAmount,
-                totalAmount: 100000000000000000,
+                inputAssetTotalAmount: expectedInputAssetAmount,
+                assetTotalAmount: 100000000000000000,
                 collateral: 88965876102316920,
                 notional: 889658761023169200,
                 openingFeeLPAmount: 17061948841540,
@@ -454,7 +454,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         );
     }
 
-    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForWEth28daysReceiveFixed() public {
+    function testShouldContainInputAssetInEventWhenOpenPositionStEthForWEth28daysReceiveFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
@@ -481,8 +481,8 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        address expectedAccountInputToken = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-        uint256 expectedAccountInputTokenAmount = 100000000000000000;
+        address expectedInputAsset = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+        uint256 expectedInputAssetAmount = 100000000000000000;
 
         vm.prank(user);
         //then
@@ -490,12 +490,12 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         emit OpenSwap({
             swapId: 1,
             buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
-            accountInputToken: expectedAccountInputToken,
+            inputAsset: expectedInputAsset,
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             direction: AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             amounts: OpenSwapAmount({
-                accountInputTokenAmount: expectedAccountInputTokenAmount,
-                totalAmount: 100000000000000000,
+                inputAssetTotalAmount: expectedInputAssetAmount,
+                assetTotalAmount: 100000000000000000,
                 collateral: 88965876102316920,
                 notional: 889658761023169200,
                 openingFeeLPAmount: 17061948841540,
@@ -523,13 +523,13 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         );
     }
 
-    function testShouldContainAccountInputTokenInEventWhenOpenPositionStEthForwstEth28daysReceiveFixed() public {
+    function testShouldContainInputAssetInEventWhenOpenPositionStEthForwstEth28daysReceiveFixed() public {
         //given
         _init();
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
 
-        uint256 totalAmount = 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -550,8 +550,8 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
-        address expectedAccountInputToken = 0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0;
-        uint256 expectedAccountInputTokenAmount = 87235841251539969;
+        address expectedInputAsset = 0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0;
+        uint256 expectedInputAssetAmount = 87235841251539968;
 
         vm.prank(user);
         //then
@@ -559,14 +559,14 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         emit OpenSwap({
             swapId: 1,
             buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
-            accountInputToken: expectedAccountInputToken,
+            inputAsset: expectedInputAsset,
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             direction: AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             amounts: OpenSwapAmount({
-                accountInputTokenAmount: expectedAccountInputTokenAmount,
-                totalAmount: 100000000000000000,
-                collateral: 88965876102316920,
-                notional: 889658761023169200,
+                inputAssetTotalAmount: expectedInputAssetAmount,
+                assetTotalAmount: 99999999999999999,
+                collateral: 88965876102316919,
+                notional: 889658761023169190,
                 openingFeeLPAmount: 17061948841540,
                 openingFeeTreasuryAmount: 17061948841540,
                 iporPublicationFee: 10000000000000000,
@@ -577,7 +577,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
             indicator: IporSwapIndicator({
                 iporIndexValue: 0,
                 ibtPrice: 1000000000000000000,
-                ibtQuantity: 889658761023169200,
+                ibtQuantity: 889658761023169190,
                 fixedInterestRate: 3694308456235454
             })
         });
@@ -1004,7 +1004,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         address liquidator = _getUserAddress(23);
         _setupUser(user, 1000 * 1e18);
 
-        uint256 totalAmount = 1 * 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -1055,7 +1055,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
             asset: stETH,
             closeTimestamp: 1705051019,
             liquidator: liquidator,
-            transferredToBuyer: 85998372362982978,
+            transferredToBuyer: 85998372362982977,
             transferredToLiquidator: 1000000000000000
         });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
@@ -1073,7 +1073,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         address liquidator = _getUserAddress(23);
         _setupUser(user, 1000 * 1e18);
 
-        uint256 totalAmount = 1 * 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -1124,7 +1124,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
             asset: stETH,
             closeTimestamp: 1705051019,
             liquidator: liquidator,
-            transferredToBuyer: 89467111965879705,
+            transferredToBuyer: 89467111965879704,
             transferredToLiquidator: 1000000000000000
         });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(

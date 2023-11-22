@@ -107,25 +107,59 @@ library AmmTypesGenOne {
         AmmTypes.CloseSwapRiskIndicatorsInput riskIndicatorsInputs;
     }
 
+    struct BeforeOpenSwapStruct {
+        /// @notice Amount of entered asset that is sent from buyer to AmmTreasury when opening swap.
+        /// @dev Notice! Input Asset can be different than the asset that is used as a collateral. Value represented in decimals of input asset.
+        uint256 inputAssetTotalAmount;
+        /// @notice Amount of entered asset that is sent from buyer to AmmTreasury when opening swap.
+        /// @dev Notice! Input Asset can be different than the asset that is used as a collateral. Value represented in 18 decimals.
+        uint256 wadInputAssetTotalAmount;
+        /// @notice Amount of underlying asset that is used as a collateral and other costs related to swap opening.
+        /// @dev The amount is represented in decimals of the asset.
+        uint256 assetTotalAmount;
+        /// @notice Amount of underlying asset that is used as a collateral and other costs related to swap opening.
+        /// @dev The amount is represented in 18 decimals regardless of the decimals of the asset.
+        uint256 wadAssetTotalAmount;
+        /// @notice Swap's collateral.
+        uint256 collateral;
+        /// @notice Swap's notional amount.
+        uint256 notional;
+        /// @notice The part of the opening fee that will be added to the liquidity pool balance.
+        uint256 openingFeeLPAmount;
+        /// @notice Part of the opening fee that will be added to the treasury balance.
+        uint256 openingFeeTreasuryAmount;
+        /// @notice Amount of asset set aside for the oracle subsidization.
+        uint256 iporPublicationFeeAmount;
+        /// @notice Refundable deposit blocked for the entity that will close the swap.
+        /// For more information on how the liquidations work refer to the documentation.
+        /// https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/liquidations
+        /// @dev value represented without decimals for USDT, USDC, DAI, with 6 decimals for stETH, as an integer.
+        uint256 liquidationDepositAmount;
+        /// @notice The struct describing the IPOR and its params calculated for the time when it was most recently updated and the change that took place since the update.
+        /// Namely, the interest that would be computed into IBT should the rebalance occur.
+        IporTypes.AccruedIpor accruedIpor;
+    }
+
     /// @notice Struct representing amounts related to Swap that is presently being opened.
     /// @dev all values represented in 18 decimals
     struct OpenSwapAmount {
-        /// @notice Amount of asset that is sent from buyer to AmmTreasury when opening swap.
-        uint256 accountInputTokenAmount;
-        /// @notice Total Amount of asset that is sent from buyer to AmmTreasury when opening swap.
-        uint256 totalAmount;
-        /// @notice Swap's collateral
+        /// @notice Amount of entered asset that is sent from buyer to AmmTreasury when opening swap.
+        /// @dev Notice. Input Asset can be different than the asset that is used as a collateral. Represented in 18 decimals.
+        uint256 inputAssetTotalAmount;
+        /// @notice Total Amount of underlying asset that is used as a collateral.
+        uint256 assetTotalAmount;
+        /// @notice Swap's collateral, represented in underlying asset.
         uint256 collateral;
-        /// @notice Swap's notional
+        /// @notice Swap's notional, represented in underlying asset.
         uint256 notional;
-        /// @notice Opening Fee - part allocated as a profit of the Liquidity Pool
+        /// @notice Opening Fee - part allocated as a profit of the Liquidity Pool, represented in underlying asset.
         uint256 openingFeeLPAmount;
-        /// @notice  Part of the fee set aside for subsidizing the oracle that publishes IPOR rate. Flat fee set by the DAO.
+        /// @notice  Part of the fee set aside for subsidizing the oracle that publishes IPOR rate. Flat fee set by the DAO. Represented in underlying asset.
         /// @notice Opening Fee - part allocated in Treasury balance. Part of the fee set asside for subsidising the oracle that publishes IPOR rate. Flat fee set by the DAO.
         uint256 openingFeeTreasuryAmount;
-        /// @notice Fee set aside for subsidizing the oracle that publishes IPOR rate. Flat fee set by the DAO.
+        /// @notice Fee set aside for subsidizing the oracle that publishes IPOR rate. Flat fee set by the DAO. Represented in underlying asset.
         uint256 iporPublicationFee;
-        /// @notice Liquidation deposit is retained when the swap is opened. Notice! Value represented in 18 decimals.
+        /// @notice Liquidation deposit is retained when the swap is opened. Notice! Value represented in 18 decimals. Represents in underlying asset.
         uint256 liquidationDepositAmount;
     }
 

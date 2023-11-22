@@ -205,7 +205,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
 
-        uint256 totalAmount = 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -251,25 +251,26 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         assertEq(1, swap.id, "swapId");
         assertEq(user, swap.buyer, "swap.buyer");
         assertEq(block.timestamp, swap.openTimestamp, "swap.openTimestamp");
-        assertEq(88965876102316920, swap.collateral, "swap.collateral");
-        assertEq(889658761023169200, swap.notional, "swap.notional");
-        assertEq(889658761023169200, swap.ibtQuantity, "swap.ibtQuantity");
+        assertEq(88965876102316919, swap.collateral, "swap.collateral");
+        assertEq(889658761023169190, swap.notional, "swap.notional");
+        assertEq(889658761023169190, swap.ibtQuantity, "swap.ibtQuantity");
         assertEq(20000691543764546, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.liquidationDepositAmount, "swap.liquidationDepositAmount");
         assertEq(1, swap.state, "swap.state");
         assertEq(
             totalAmount,
-            ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore + 1,
+            IwstEth(wstETH).getWstETHByStETH(ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore) +
+                1,
             "ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore"
         );
     }
 
-    function testShouldOpenPositionStEthForwstEthPayFixed28DaysEnoughBalanceCase1() public {
+    function testShouldNotOpenPositionStEthForwstEthPayFixed28DaysNotEnoughBalanceCase1() public {
         //given
         _init();
         address user = _getUserAddress(22);
 
-        uint256 totalAmount = 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         deal(wstETH, user, totalAmount - 1000);
 
@@ -299,6 +300,9 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
+        vm.expectRevert(
+            abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wstETH, totalAmount - 1000, totalAmount)
+        );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
             wstETH,
             user,
@@ -306,29 +310,6 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
             1e18,
             10e18,
             riskIndicatorsInputs
-        );
-
-        //then
-        uint256 ammTreasuryStEthErc20BalanceAfter = ERC20(stETH).balanceOf(ammTreasuryProxyStEth);
-
-        IAmmSwapsLens.IporSwap[] memory swaps;
-        (, swaps) = IAmmSwapsLens(iporProtocolRouterProxy).getSwaps(stETH, user, 0, 10);
-        IAmmSwapsLens.IporSwap memory swap = swaps[0];
-
-        /// @dev checking swap via Router
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(block.timestamp, swap.openTimestamp, "swap.openTimestamp");
-        assertEq(88965876102316920, swap.collateral, "swap.collateral");
-        assertEq(889658761023169200, swap.notional, "swap.notional");
-        assertEq(889658761023169200, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000691543764546, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.liquidationDepositAmount, "swap.liquidationDepositAmount");
-        assertEq(1, swap.state, "swap.state");
-        assertEq(
-            totalAmount,
-            ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore + 1,
-            "ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore"
         );
     }
 
@@ -468,7 +449,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
 
-        uint256 totalAmount = 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -514,25 +495,26 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         assertEq(1, swap.id, "swapId");
         assertEq(user, swap.buyer, "swap.buyer");
         assertEq(block.timestamp, swap.openTimestamp, "swap.openTimestamp");
-        assertEq(88926909389542842, swap.collateral, "swap.collateral");
-        assertEq(889269093895428420, swap.notional, "swap.notional");
-        assertEq(889269093895428420, swap.ibtQuantity, "swap.ibtQuantity");
+        assertEq(88926909389542841, swap.collateral, "swap.collateral");
+        assertEq(889269093895428410, swap.notional, "swap.notional");
+        assertEq(889269093895428410, swap.ibtQuantity, "swap.ibtQuantity");
         assertEq(20000691240845903, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.liquidationDepositAmount, "swap.liquidationDepositAmount");
         assertEq(1, swap.state, "swap.state");
         assertEq(
             totalAmount,
-            ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore + 1,
+            IwstEth(wstETH).getWstETHByStETH(ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore) +
+                1,
             "ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore"
         );
     }
 
-    function testShouldOpenPositionStEthForwstEthPayFixed60DaysEnoughBalanceCase1() public {
+    function testShouldNotOpenPositionStEthForwstEthPayFixed60DaysNotEnoughBalanceCase1() public {
         //given
         _init();
         address user = _getUserAddress(22);
 
-        uint256 totalAmount = 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         deal(wstETH, user, totalAmount - 1000);
 
@@ -562,6 +544,9 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
+        vm.expectRevert(
+            abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wstETH, totalAmount - 1000, totalAmount)
+        );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
             wstETH,
             user,
@@ -569,29 +554,6 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
             1e18,
             10e18,
             riskIndicatorsInputs
-        );
-
-        //then
-        uint256 ammTreasuryStEthErc20BalanceAfter = ERC20(stETH).balanceOf(ammTreasuryProxyStEth);
-
-        IAmmSwapsLens.IporSwap[] memory swaps;
-        (, swaps) = IAmmSwapsLens(iporProtocolRouterProxy).getSwaps(stETH, user, 0, 10);
-        IAmmSwapsLens.IporSwap memory swap = swaps[0];
-
-        /// @dev checking swap via Router
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(block.timestamp, swap.openTimestamp, "swap.openTimestamp");
-        assertEq(88926909389542842, swap.collateral, "swap.collateral");
-        assertEq(889269093895428420, swap.notional, "swap.notional");
-        assertEq(889269093895428420, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000691240845903, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.liquidationDepositAmount, "swap.liquidationDepositAmount");
-        assertEq(1, swap.state, "swap.state");
-        assertEq(
-            totalAmount,
-            ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore + 1,
-            "ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore"
         );
     }
 
@@ -791,7 +753,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
 
-        uint256 totalAmount = 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -837,25 +799,26 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         assertEq(1, swap.id, "swapId");
         assertEq(user, swap.buyer, "swap.buyer");
         assertEq(block.timestamp, swap.openTimestamp, "swap.openTimestamp");
-        assertEq(88890409084690108, swap.collateral, "swap.collateral");
-        assertEq(888904090846901080, swap.notional, "swap.notional");
-        assertEq(888904090846901080, swap.ibtQuantity, "swap.ibtQuantity");
+        assertEq(88890409084690107, swap.collateral, "swap.collateral");
+        assertEq(888904090846901070, swap.notional, "swap.notional");
+        assertEq(888904090846901070, swap.ibtQuantity, "swap.ibtQuantity");
         assertEq(20000690957100591, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.liquidationDepositAmount, "swap.liquidationDepositAmount");
         assertEq(1, swap.state, "swap.state");
         assertEq(
             totalAmount,
-            ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore + 1,
+            IwstEth(wstETH).getWstETHByStETH(ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore) +
+                1,
             "ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore"
         );
     }
 
-    function testShouldOpenPositionStEthForwstEthPayFixed90DaysEnoughBalanceCase1() public {
+    function testShouldNotOpenPositionStEthForwstEthPayFixed90DaysNotEnoughBalanceCase1() public {
         //given
         _init();
         address user = _getUserAddress(22);
 
-        uint256 totalAmount = 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         deal(wstETH, user, totalAmount - 1000);
 
@@ -885,6 +848,9 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
+        vm.expectRevert(
+            abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wstETH, totalAmount - 1000, totalAmount)
+        );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed90daysStEth(
             wstETH,
             user,
@@ -892,29 +858,6 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
             1e18,
             10e18,
             riskIndicatorsInputs
-        );
-
-        //then
-        uint256 ammTreasuryStEthErc20BalanceAfter = ERC20(stETH).balanceOf(ammTreasuryProxyStEth);
-
-        IAmmSwapsLens.IporSwap[] memory swaps;
-        (, swaps) = IAmmSwapsLens(iporProtocolRouterProxy).getSwaps(stETH, user, 0, 10);
-        IAmmSwapsLens.IporSwap memory swap = swaps[0];
-
-        /// @dev checking swap via Router
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(block.timestamp, swap.openTimestamp, "swap.openTimestamp");
-        assertEq(88890409084690108, swap.collateral, "swap.collateral");
-        assertEq(888904090846901080, swap.notional, "swap.notional");
-        assertEq(888904090846901080, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000690957100591, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.liquidationDepositAmount, "swap.liquidationDepositAmount");
-        assertEq(1, swap.state, "swap.state");
-        assertEq(
-            totalAmount,
-            ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore + 1,
-            "ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore"
         );
     }
 
@@ -1114,7 +1057,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
 
-        uint256 totalAmount = 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -1159,26 +1102,27 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         assertEq(1, swap.id, "swapId");
         assertEq(user, swap.buyer, "swap.buyer");
         assertEq(block.timestamp, swap.openTimestamp, "swap.openTimestamp");
-        assertEq(88965876102316920, swap.collateral, "swap.collateral");
-        assertEq(889658761023169200, swap.notional, "swap.notional");
-        assertEq(889658761023169200, swap.ibtQuantity, "swap.ibtQuantity");
+        assertEq(88965876102316919, swap.collateral, "swap.collateral");
+        assertEq(889658761023169190, swap.notional, "swap.notional");
+        assertEq(889658761023169190, swap.ibtQuantity, "swap.ibtQuantity");
         assertEq(3694308456235454, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.liquidationDepositAmount, "swap.liquidationDepositAmount");
         assertEq(1, swap.state, "swap.state");
         assertEq(1, swap.direction, "swap.direction");
         assertEq(
             totalAmount,
-            ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore + 1,
+            IwstEth(wstETH).getWstETHByStETH(ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore) +
+                1,
             "ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore"
         );
     }
 
-    function testShouldOpenPositionStEthForwstEthReceiveFixed28DaysEnoughBalanceCase1() public {
+    function testShouldNotOpenPositionStEthForwstEthReceiveFixed28DaysNotEnoughBalanceCase1() public {
         //given
         _init();
         address user = _getUserAddress(22);
 
-        uint256 totalAmount = 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         deal(wstETH, user, totalAmount - 1000);
 
@@ -1208,6 +1152,9 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
+        vm.expectRevert(
+            abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wstETH, totalAmount - 1000, totalAmount)
+        );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
             wstETH,
             user,
@@ -1215,29 +1162,6 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
             0,
             10e18,
             riskIndicatorsInputs
-        );
-
-        //then
-        uint256 ammTreasuryStEthErc20BalanceAfter = ERC20(stETH).balanceOf(ammTreasuryProxyStEth);
-
-        IAmmSwapsLens.IporSwap[] memory swaps;
-        (, swaps) = IAmmSwapsLens(iporProtocolRouterProxy).getSwaps(stETH, user, 0, 10);
-        IAmmSwapsLens.IporSwap memory swap = swaps[0];
-
-        /// @dev checking swap via Router
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(block.timestamp, swap.openTimestamp, "swap.openTimestamp");
-        assertEq(88965876102316920, swap.collateral, "swap.collateral");
-        assertEq(889658761023169200, swap.notional, "swap.notional");
-        assertEq(889658761023169200, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694308456235454, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.liquidationDepositAmount, "swap.liquidationDepositAmount");
-        assertEq(1, swap.state, "swap.state");
-        assertEq(
-            totalAmount,
-            ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore + 1,
-            "ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore"
         );
     }
 
@@ -1437,7 +1361,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
 
-        uint256 totalAmount = 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -1482,26 +1406,27 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         assertEq(1, swap.id, "swapId");
         assertEq(user, swap.buyer, "swap.buyer");
         assertEq(block.timestamp, swap.openTimestamp, "swap.openTimestamp");
-        assertEq(88926909389542842, swap.collateral, "swap.collateral");
-        assertEq(889269093895428420, swap.notional, "swap.notional");
-        assertEq(889269093895428420, swap.ibtQuantity, "swap.ibtQuantity");
+        assertEq(88926909389542841, swap.collateral, "swap.collateral");
+        assertEq(889269093895428410, swap.notional, "swap.notional");
+        assertEq(889269093895428410, swap.ibtQuantity, "swap.ibtQuantity");
         assertEq(3694308759154097, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.liquidationDepositAmount, "swap.liquidationDepositAmount");
         assertEq(1, swap.state, "swap.state");
         assertEq(1, swap.direction, "swap.direction");
         assertEq(
             totalAmount,
-            ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore + 1,
+            IwstEth(wstETH).getWstETHByStETH(ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore) +
+                1,
             "ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore"
         );
     }
 
-    function testShouldOpenPositionStEthForwstEthReceiveFixed60DaysEnoughBalanceCase1() public {
+    function testShouldNotOpenPositionStEthForwstEthReceiveFixed60DaysNotEnoughBalanceCase1() public {
         //given
         _init();
         address user = _getUserAddress(22);
 
-        uint256 totalAmount = 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         deal(wstETH, user, totalAmount - 1000);
 
@@ -1531,6 +1456,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
+        vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wstETH, totalAmount - 1000, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth(
             wstETH,
             user,
@@ -1538,29 +1464,6 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
             0,
             10e18,
             riskIndicatorsInputs
-        );
-
-        //then
-        uint256 ammTreasuryStEthErc20BalanceAfter = ERC20(stETH).balanceOf(ammTreasuryProxyStEth);
-
-        IAmmSwapsLens.IporSwap[] memory swaps;
-        (, swaps) = IAmmSwapsLens(iporProtocolRouterProxy).getSwaps(stETH, user, 0, 10);
-        IAmmSwapsLens.IporSwap memory swap = swaps[0];
-
-        /// @dev checking swap via Router
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(block.timestamp, swap.openTimestamp, "swap.openTimestamp");
-        assertEq(88926909389542842, swap.collateral, "swap.collateral");
-        assertEq(889269093895428420, swap.notional, "swap.notional");
-        assertEq(889269093895428420, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694308759154097, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.liquidationDepositAmount, "swap.liquidationDepositAmount");
-        assertEq(1, swap.state, "swap.state");
-        assertEq(
-            totalAmount,
-            ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore + 1,
-            "ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore"
         );
     }
 
@@ -1820,7 +1723,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
 
-        uint256 totalAmount = 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -1865,26 +1768,27 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         assertEq(1, swap.id, "swapId");
         assertEq(user, swap.buyer, "swap.buyer");
         assertEq(block.timestamp, swap.openTimestamp, "swap.openTimestamp");
-        assertEq(88890409084690108, swap.collateral, "swap.collateral");
-        assertEq(888904090846901080, swap.notional, "swap.notional");
-        assertEq(888904090846901080, swap.ibtQuantity, "swap.ibtQuantity");
+        assertEq(88890409084690107, swap.collateral, "swap.collateral");
+        assertEq(888904090846901070, swap.notional, "swap.notional");
+        assertEq(888904090846901070, swap.ibtQuantity, "swap.ibtQuantity");
         assertEq(3694309042899409, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.liquidationDepositAmount, "swap.liquidationDepositAmount");
         assertEq(1, swap.state, "swap.state");
         assertEq(1, swap.direction, "swap.direction");
         assertEq(
             totalAmount,
-            ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore + 1,
+            IwstEth(wstETH).getWstETHByStETH(ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore) +
+                1,
             "ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore"
         );
     }
 
-    function testShouldOpenPositionStEthForwstEthReceiveFixed90DaysEnoughBalanceCase1() public {
+    function testShouldNotOpenPositionStEthForwstEthReceiveFixed90DaysNotEnoughBalanceCase1() public {
         //given
         _init();
         address user = _getUserAddress(22);
 
-        uint256 totalAmount = 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
 
         deal(wstETH, user, totalAmount - 1000);
 
@@ -1914,6 +1818,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
+        vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wstETH, totalAmount - 1000, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed90daysStEth(
             wstETH,
             user,
@@ -1921,29 +1826,6 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
             0,
             10e18,
             riskIndicatorsInputs
-        );
-
-        //then
-        uint256 ammTreasuryStEthErc20BalanceAfter = ERC20(stETH).balanceOf(ammTreasuryProxyStEth);
-
-        IAmmSwapsLens.IporSwap[] memory swaps;
-        (, swaps) = IAmmSwapsLens(iporProtocolRouterProxy).getSwaps(stETH, user, 0, 10);
-        IAmmSwapsLens.IporSwap memory swap = swaps[0];
-
-        /// @dev checking swap via Router
-        assertEq(1, swap.id, "swapId");
-        assertEq(user, swap.buyer, "swap.buyer");
-        assertEq(block.timestamp, swap.openTimestamp, "swap.openTimestamp");
-        assertEq(88890409084690108, swap.collateral, "swap.collateral");
-        assertEq(888904090846901080, swap.notional, "swap.notional");
-        assertEq(888904090846901080, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694309042899409, swap.fixedInterestRate, "swap.fixedInterestRate");
-        assertEq(1000000000000000, swap.liquidationDepositAmount, "swap.liquidationDepositAmount");
-        assertEq(1, swap.state, "swap.state");
-        assertEq(
-            totalAmount,
-            ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore + 1,
-            "ammTreasuryStEthErc20BalanceAfter - ammTreasuryStEthErc20BalanceBefore"
         );
     }
 
@@ -2018,9 +1900,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
-        vm.expectRevert(
-            abi.encodeWithSelector(IporErrors.AccountInputTokenBalanceTooLow.selector, ETH, 0, totalAmount)
-        );
+        vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, ETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
             ETH,
             user,
@@ -2059,9 +1939,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
-        vm.expectRevert(
-            abi.encodeWithSelector(IporErrors.AccountInputTokenBalanceTooLow.selector, stETH, 0, totalAmount)
-        );
+        vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, stETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
             stETH,
             user,
@@ -2100,9 +1978,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
-        vm.expectRevert(
-            abi.encodeWithSelector(IporErrors.AccountInputTokenBalanceTooLow.selector, wETH, 0, totalAmount)
-        );
+        vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
             wETH,
             user,
@@ -2157,7 +2033,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         _init();
         address user = _getUserAddress(22);
 
-        uint256 totalAmount = 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1e17);
 
         deal(wstETH, user, totalAmount / 2);
 
@@ -2189,10 +2065,10 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(
             abi.encodeWithSelector(
-                IporErrors.AccountInputTokenBalanceTooLow.selector,
+                IporErrors.InputAssetBalanceTooLow.selector,
                 wstETH,
-                50000000000000000,
-                87235841251539969
+                totalAmount / 2,
+                87235841251539968
             )
         );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
@@ -2233,9 +2109,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
-        vm.expectRevert(
-            abi.encodeWithSelector(IporErrors.AccountInputTokenBalanceTooLow.selector, stETH, 0, totalAmount)
-        );
+        vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, stETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
             stETH,
             user,
@@ -2274,9 +2148,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
-        vm.expectRevert(
-            abi.encodeWithSelector(IporErrors.AccountInputTokenBalanceTooLow.selector, wETH, 0, totalAmount)
-        );
+        vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
             wETH,
             user,
@@ -2315,9 +2187,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
-        vm.expectRevert(
-            abi.encodeWithSelector(IporErrors.AccountInputTokenBalanceTooLow.selector, ETH, 0, totalAmount)
-        );
+        vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, ETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth{value: 0}(
             ETH,
             user,
@@ -2333,7 +2203,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         _init();
         address user = _getUserAddress(22);
 
-        uint256 totalAmount = 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1e17);
 
         deal(wstETH, user, totalAmount / 2);
 
@@ -2363,10 +2233,10 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(
             abi.encodeWithSelector(
-                IporErrors.AccountInputTokenBalanceTooLow.selector,
+                IporErrors.InputAssetBalanceTooLow.selector,
                 wstETH,
-                50000000000000000,
-                87235841251539969
+                totalAmount / 2,
+                87235841251539968
             )
         );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
@@ -2407,9 +2277,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
-        vm.expectRevert(
-            abi.encodeWithSelector(IporErrors.AccountInputTokenBalanceTooLow.selector, stETH, 0, totalAmount)
-        );
+        vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, stETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed90daysStEth(
             stETH,
             user,
@@ -2448,9 +2316,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
-        vm.expectRevert(
-            abi.encodeWithSelector(IporErrors.AccountInputTokenBalanceTooLow.selector, wETH, 0, totalAmount)
-        );
+        vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed90daysStEth(
             wETH,
             user,
@@ -2489,9 +2355,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
-        vm.expectRevert(
-            abi.encodeWithSelector(IporErrors.AccountInputTokenBalanceTooLow.selector, ETH, 0, totalAmount)
-        );
+        vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, ETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed90daysStEth{value: 0}(
             ETH,
             user,
@@ -2507,7 +2371,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         _init();
         address user = _getUserAddress(22);
 
-        uint256 totalAmount = 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1e17);
 
         deal(wstETH, user, totalAmount / 2);
         vm.prank(user);
@@ -2536,10 +2400,10 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(
             abi.encodeWithSelector(
-                IporErrors.AccountInputTokenBalanceTooLow.selector,
+                IporErrors.InputAssetBalanceTooLow.selector,
                 wstETH,
-                50000000000000000,
-                87235841251539969
+                totalAmount / 2,
+                totalAmount
             )
         );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed90daysStEth(
@@ -2580,9 +2444,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
-        vm.expectRevert(
-            abi.encodeWithSelector(IporErrors.AccountInputTokenBalanceTooLow.selector, stETH, 0, totalAmount)
-        );
+        vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, stETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
             stETH,
             user,
@@ -2621,9 +2483,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
-        vm.expectRevert(
-            abi.encodeWithSelector(IporErrors.AccountInputTokenBalanceTooLow.selector, wETH, 0, totalAmount)
-        );
+        vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
             wETH,
             user,
@@ -2678,7 +2538,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         _init();
         address user = _getUserAddress(22);
 
-        uint256 totalAmount = 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1e17);
 
         deal(wstETH, user, totalAmount / 2);
 
@@ -2710,10 +2570,10 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(
             abi.encodeWithSelector(
-                IporErrors.AccountInputTokenBalanceTooLow.selector,
+                IporErrors.InputAssetBalanceTooLow.selector,
                 wstETH,
-                50000000000000000,
-                87235841251539969
+                totalAmount / 2,
+                totalAmount
             )
         );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
@@ -2754,9 +2614,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
-        vm.expectRevert(
-            abi.encodeWithSelector(IporErrors.AccountInputTokenBalanceTooLow.selector, stETH, 0, totalAmount)
-        );
+        vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, stETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth(
             stETH,
             user,
@@ -2795,9 +2653,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
-        vm.expectRevert(
-            abi.encodeWithSelector(IporErrors.AccountInputTokenBalanceTooLow.selector, wETH, 0, totalAmount)
-        );
+        vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth(
             wETH,
             user,
@@ -2836,9 +2692,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
-        vm.expectRevert(
-            abi.encodeWithSelector(IporErrors.AccountInputTokenBalanceTooLow.selector, ETH, 0, totalAmount)
-        );
+        vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, ETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth{value: 0}(
             ETH,
             user,
@@ -2854,7 +2708,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         _init();
         address user = _getUserAddress(22);
 
-        uint256 totalAmount = 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1e17);
 
         deal(wstETH, user, totalAmount / 2);
 
@@ -2884,10 +2738,10 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(
             abi.encodeWithSelector(
-                IporErrors.AccountInputTokenBalanceTooLow.selector,
+                IporErrors.InputAssetBalanceTooLow.selector,
                 wstETH,
-                50000000000000000,
-                87235841251539969
+                totalAmount / 2,
+                totalAmount
             )
         );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth(
@@ -2928,9 +2782,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
-        vm.expectRevert(
-            abi.encodeWithSelector(IporErrors.AccountInputTokenBalanceTooLow.selector, stETH, 0, totalAmount)
-        );
+        vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, stETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed90daysStEth(
             stETH,
             user,
@@ -2969,9 +2821,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
-        vm.expectRevert(
-            abi.encodeWithSelector(IporErrors.AccountInputTokenBalanceTooLow.selector, wETH, 0, totalAmount)
-        );
+        vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, wETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed90daysStEth(
             wETH,
             user,
@@ -3010,9 +2860,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         //when
         vm.prank(user);
-        vm.expectRevert(
-            abi.encodeWithSelector(IporErrors.AccountInputTokenBalanceTooLow.selector, ETH, 0, totalAmount)
-        );
+        vm.expectRevert(abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector, ETH, 0, totalAmount));
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed90daysStEth{value: 0}(
             ETH,
             user,
@@ -3028,7 +2876,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         _init();
         address user = _getUserAddress(22);
 
-        uint256 totalAmount = 1e17;
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1e17);
 
         deal(wstETH, user, totalAmount / 2);
         vm.prank(user);
@@ -3057,10 +2905,10 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         vm.prank(user);
         vm.expectRevert(
             abi.encodeWithSelector(
-                IporErrors.AccountInputTokenBalanceTooLow.selector,
+                IporErrors.InputAssetBalanceTooLow.selector,
                 wstETH,
-                50000000000000000,
-                87235841251539969
+                totalAmount / 2,
+                87235841251539968
             )
         );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed90daysStEth(
@@ -3072,6 +2920,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
             riskIndicatorsInputs
         );
     }
+
     function testShouldOpenPositionStEthForStEthAndTransferCorrectLiquidationDepositAmount() public {}
 
     function testShouldOpenPositionStEthForEthAndTransferCorrectLiquidationDepositAmount() public {}
