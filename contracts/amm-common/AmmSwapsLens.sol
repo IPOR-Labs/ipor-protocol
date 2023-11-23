@@ -2,14 +2,12 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Address.sol";
-import "../basic/interfaces/IAmmStorageGenOne.sol";
 import "../interfaces/IAmmSwapsLens.sol";
 import "../amm/spread/ISpread28DaysLens.sol";
 import "../amm/spread/ISpread60DaysLens.sol";
 import "../amm/spread/ISpread90DaysLens.sol";
 import "../amm/libraries/IporSwapLogic.sol";
-import "../basic/types/AmmTypesGenOne.sol";
-import "../basic/amm/libraries/SwapLogicGenOne.sol";
+import "../basic/amm/libraries/AmmSwapsLensLibGenOne.sol";
 import "../libraries/IporContractValidator.sol";
 import "../libraries/RiskIndicatorsValidatorLib.sol";
 import "../libraries/AmmLib.sol";
@@ -19,30 +17,31 @@ contract AmmSwapsLens is IAmmSwapsLens {
     using Address for address;
     using IporContractValidator for address;
     using IporSwapLogic for AmmTypes.Swap;
-    using SwapLogicGenOne for AmmTypesGenOne.Swap;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
     using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
 
     address internal immutable _usdtAsset;
     address internal immutable _usdtAmmStorage;
     address internal immutable _usdtAmmTreasury;
+    address internal immutable _usdtSpread;
 
     address internal immutable _usdcAsset;
     address internal immutable _usdcAmmStorage;
     address internal immutable _usdcAmmTreasury;
+    address internal immutable _usdcSpread;
 
     address internal immutable _daiAsset;
     address internal immutable _daiAmmStorage;
     address internal immutable _daiAmmTreasury;
+    address internal immutable _daiSpread;
 
     address internal immutable _stEthAsset;
     address internal immutable _stEthAmmStorage;
     address internal immutable _stEthAmmTreasury;
+    address internal immutable _stEthSpread;
 
     address public immutable iporOracle;
     address public immutable messageSigner;
-    /// @dev spread router for stables USDT, USDC, DAI
-    address public immutable spreadRouter;
 
     constructor(
         SwapLensPoolConfiguration memory usdtCfg,
@@ -50,28 +49,30 @@ contract AmmSwapsLens is IAmmSwapsLens {
         SwapLensPoolConfiguration memory daiCfg,
         SwapLensPoolConfiguration memory stEthCfg,
         address iporOracleInput,
-        address messageSignerInput,
-        address spreadRouterInput
+        address messageSignerInput
     ) {
         _usdtAsset = usdtCfg.asset.checkAddress();
         _usdtAmmStorage = usdtCfg.ammStorage.checkAddress();
         _usdtAmmTreasury = usdtCfg.ammTreasury.checkAddress();
+        _usdtSpread = usdtCfg.spread.checkAddress();
 
         _usdcAsset = usdcCfg.asset.checkAddress();
         _usdcAmmStorage = usdcCfg.ammStorage.checkAddress();
         _usdcAmmTreasury = usdcCfg.ammTreasury.checkAddress();
+        _usdcSpread = usdcCfg.spread.checkAddress();
 
         _daiAsset = daiCfg.asset.checkAddress();
         _daiAmmStorage = daiCfg.ammStorage.checkAddress();
         _daiAmmTreasury = daiCfg.ammTreasury.checkAddress();
+        _daiSpread = daiCfg.spread.checkAddress();
 
         _stEthAsset = stEthCfg.asset.checkAddress();
         _stEthAmmStorage = stEthCfg.ammStorage.checkAddress();
         _stEthAmmTreasury = stEthCfg.ammTreasury.checkAddress();
+        _stEthSpread = stEthCfg.spread.checkAddress();
 
         iporOracle = iporOracleInput.checkAddress();
         messageSigner = messageSignerInput.checkAddress();
-        spreadRouter = spreadRouterInput.checkAddress();
     }
 
     function getSwapLensPoolConfiguration(
@@ -87,13 +88,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         uint256 chunkSize
     ) external view returns (uint256 totalCount, IAmmSwapsLens.IporSwap[] memory swaps) {
         if (asset == _stEthAsset) {
-            IAmmStorageGenOne ammStorageGenOne = IAmmStorageGenOne(_stEthAmmStorage);
-            (uint256 count, AmmStorageTypes.IporSwapId[] memory swapIds) = ammStorageGenOne.getSwapIds(
-                account,
-                offset,
-                chunkSize
-            );
-            return (count, _mapSwapsGenOne(asset, ammStorageGenOne, swapIds));
+            return AmmSwapsLensLibGenOne.getSwaps(iporOracle, _stEthAmmStorage, asset, account, offset, chunkSize);
         } else {
             IAmmStorage ammStorage = IAmmStorage(_getAmmStorage(asset));
             (uint256 count, AmmStorageTypes.IporSwapId[] memory swapIds) = ammStorage.getSwapIds(
@@ -106,18 +101,10 @@ contract AmmSwapsLens is IAmmSwapsLens {
     }
 
     function getPnlPayFixed(address asset, uint256 swapId) external view override returns (int256) {
-        uint256 accruedIbtPrice = IIporOracle(iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
-
         if (asset == _stEthAsset) {
-            AmmTypesGenOne.Swap memory swapGenOne = IAmmStorageGenOne(_getAmmStorage(asset)).getSwap(
-                AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-                swapId
-            );
-
-            require(swapGenOne.id > 0, AmmErrors.INCORRECT_SWAP_ID);
-
-            return swapGenOne.calculatePnlPayFixed(block.timestamp, accruedIbtPrice);
+            return AmmSwapsLensLibGenOne.getPnlPayFixed(iporOracle, _stEthAmmStorage, _stEthAsset, swapId);
         } else {
+            uint256 accruedIbtPrice = IIporOracle(iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
             AmmTypes.Swap memory swap = IAmmStorage(_getAmmStorage(asset)).getSwap(
                 AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
                 swapId
@@ -130,17 +117,10 @@ contract AmmSwapsLens is IAmmSwapsLens {
     }
 
     function getPnlReceiveFixed(address asset, uint256 swapId) external view override returns (int256) {
-        uint256 accruedIbtPrice = IIporOracle(iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
         if (asset == _stEthAsset) {
-            AmmTypesGenOne.Swap memory swapGenOne = IAmmStorageGenOne(_getAmmStorage(asset)).getSwap(
-                AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
-                swapId
-            );
-
-            require(swapGenOne.id > 0, AmmErrors.INCORRECT_SWAP_ID);
-
-            return swapGenOne.calculatePnlReceiveFixed(block.timestamp, accruedIbtPrice);
+            return AmmSwapsLensLibGenOne.getPnlReceiveFixed(iporOracle, _stEthAmmStorage, _stEthAsset, swapId);
         } else {
+            uint256 accruedIbtPrice = IIporOracle(iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
             AmmTypes.Swap memory swap = IAmmStorage(_getAmmStorage(asset)).getSwap(
                 AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
                 swapId
@@ -173,49 +153,67 @@ contract AmmSwapsLens is IAmmSwapsLens {
 
         SwapLensPoolConfiguration memory poolCfg = _getSwapLensPoolConfiguration(asset);
 
-        (bytes4 payFixedSig, bytes4 receiveFixedSig) = _getSpreadRouterSignatures(tenor);
         (uint256 indexValue, , ) = IIporOracle(iporOracle).getIndex(asset);
 
-        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(poolCfg.ammStorage)
-            .getBalancesForOpenSwap();
-
-        AmmInternalTypes.SpreadContext memory spreadContextPayFixed;
-        spreadContextPayFixed.asset = asset;
-        spreadContextPayFixed.spreadFunctionSig = payFixedSig;
-        spreadContextPayFixed.tenor = tenor;
-        spreadContextPayFixed.notional = notional;
-        spreadContextPayFixed.indexValue = indexValue;
-        spreadContextPayFixed.riskIndicators = payFixedRiskIndicatorsInputs.verify(
+        AmmTypes.OpenSwapRiskIndicators memory swapRiskIndicatorsPayFixed = payFixedRiskIndicatorsInputs.verify(
             asset,
             uint256(tenor),
             uint256(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING),
             messageSigner
         );
 
-        spreadContextPayFixed.balance = balance;
-        offeredRatePayFixed = _getOfferedRatePerLeg(spreadContextPayFixed);
-
-        AmmInternalTypes.SpreadContext memory spreadContextReceiveFixed;
-        spreadContextReceiveFixed.asset = asset;
-        spreadContextReceiveFixed.spreadFunctionSig = receiveFixedSig;
-        spreadContextReceiveFixed.tenor = tenor;
-        spreadContextReceiveFixed.notional = notional;
-        spreadContextReceiveFixed.indexValue = indexValue;
-        spreadContextReceiveFixed.riskIndicators = receiveFixedRiskIndicatorsInputs.verify(
+        AmmTypes.OpenSwapRiskIndicators memory swapRiskIndicatorsReceiveFixed = receiveFixedRiskIndicatorsInputs.verify(
             asset,
             uint256(tenor),
             uint256(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED),
             messageSigner
         );
-        spreadContextReceiveFixed.balance = balance;
-        offeredRateReceiveFixed = _getOfferedRatePerLeg(spreadContextReceiveFixed);
+
+        if (asset == _stEthAsset) {
+            (offeredRatePayFixed, offeredRateReceiveFixed) = AmmSwapsLensLibGenOne.getOfferedRate(
+                poolCfg,
+                indexValue,
+                tenor,
+                notional,
+                messageSigner,
+                swapRiskIndicatorsPayFixed,
+                swapRiskIndicatorsReceiveFixed
+            );
+        } else {
+            (bytes4 payFixedSig, bytes4 receiveFixedSig) = _getSpreadRouterSignatures(tenor);
+
+            IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(poolCfg.ammStorage)
+                .getBalancesForOpenSwap();
+
+            AmmInternalTypes.SpreadContext memory spreadContextPayFixed;
+            spreadContextPayFixed.asset = asset;
+            spreadContextPayFixed.spreadFunctionSig = payFixedSig;
+            spreadContextPayFixed.tenor = tenor;
+            spreadContextPayFixed.notional = notional;
+            spreadContextPayFixed.indexValue = indexValue;
+            spreadContextPayFixed.riskIndicators = swapRiskIndicatorsPayFixed;
+
+            spreadContextPayFixed.balance = balance;
+            offeredRatePayFixed = _getOfferedRatePerLeg(poolCfg.spread, spreadContextPayFixed);
+
+            AmmInternalTypes.SpreadContext memory spreadContextReceiveFixed;
+            spreadContextReceiveFixed.asset = asset;
+            spreadContextReceiveFixed.spreadFunctionSig = receiveFixedSig;
+            spreadContextReceiveFixed.tenor = tenor;
+            spreadContextReceiveFixed.notional = notional;
+            spreadContextReceiveFixed.indexValue = indexValue;
+            spreadContextReceiveFixed.riskIndicators = swapRiskIndicatorsReceiveFixed;
+            spreadContextReceiveFixed.balance = balance;
+            offeredRateReceiveFixed = _getOfferedRatePerLeg(poolCfg.spread, spreadContextReceiveFixed);
+        }
     }
 
     function _getOfferedRatePerLeg(
+        address spread,
         AmmInternalTypes.SpreadContext memory spreadContext
     ) internal view returns (uint256 offeredRate) {
         offeredRate = abi.decode(
-            spreadRouter.functionStaticCall(
+            spread.functionStaticCall(
                 abi.encodeWithSelector(
                     spreadContext.spreadFunctionSig,
                     spreadContext.asset,
@@ -236,7 +234,11 @@ contract AmmSwapsLens is IAmmSwapsLens {
     function getBalancesForOpenSwap(
         address asset
     ) external view returns (IporTypes.AmmBalancesForOpenSwapMemory memory) {
-        return IAmmStorage(_getAmmStorage(asset)).getBalancesForOpenSwap();
+        if (asset == _stEthAsset) {
+            return AmmSwapsLensLibGenOne.getBalancesForOpenSwap(_stEthAmmStorage, _stEthAmmTreasury);
+        } else {
+            return IAmmStorage(_getAmmStorage(asset)).getBalancesForOpenSwap();
+        }
     }
 
     function _mapSwaps(
@@ -271,38 +273,6 @@ contract AmmSwapsLens is IAmmSwapsLens {
         return mappedSwaps;
     }
 
-    function _mapSwapsGenOne(
-        address asset,
-        IAmmStorageGenOne ammStorage,
-        AmmStorageTypes.IporSwapId[] memory swapIds
-    ) internal view returns (IAmmSwapsLens.IporSwap[] memory swaps) {
-        uint256 accruedIbtPrice = IIporOracle(iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
-        uint256 swapCount = swapIds.length;
-
-        IAmmSwapsLens.IporSwap[] memory mappedSwaps = new IAmmSwapsLens.IporSwap[](swapCount);
-        AmmStorageTypes.IporSwapId memory swapId;
-        AmmTypesGenOne.Swap memory swap;
-        int256 swapValue;
-
-        for (uint256 i; i != swapCount; ) {
-            swapId = swapIds[i];
-
-            if (swapId.direction == 0) {
-                swap = ammStorage.getSwap(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, swapId.id);
-                swapValue = swap.calculatePnlPayFixed(block.timestamp, accruedIbtPrice);
-                mappedSwaps[i] = _mapSwapGenOne(asset, swap, swapValue);
-            } else {
-                swap = ammStorage.getSwap(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, swapId.id);
-                swapValue = swap.calculatePnlReceiveFixed(block.timestamp, accruedIbtPrice);
-                mappedSwaps[i] = _mapSwapGenOne(asset, swap, swapValue);
-            }
-            unchecked {
-                ++i;
-            }
-        }
-        return mappedSwaps;
-    }
-
     function _mapSwap(
         address asset,
         AmmTypes.Swap memory swap,
@@ -328,30 +298,6 @@ contract AmmSwapsLens is IAmmSwapsLens {
             });
     }
 
-    function _mapSwapGenOne(
-        address asset,
-        AmmTypesGenOne.Swap memory swap,
-        int256 pnlValue
-    ) internal pure returns (IAmmSwapsLens.IporSwap memory) {
-        return
-            IAmmSwapsLens.IporSwap({
-                id: swap.id,
-                asset: asset,
-                buyer: swap.buyer,
-                collateral: swap.collateral,
-                notional: swap.notional,
-                leverage: IporMath.division(swap.notional * 1e18, swap.collateral),
-                direction: uint256(swap.direction),
-                ibtQuantity: swap.ibtQuantity,
-                fixedInterestRate: swap.fixedInterestRate,
-                pnlValue: pnlValue,
-                openTimestamp: swap.openTimestamp,
-                endTimestamp: swap.getSwapEndTimestamp(),
-                liquidationDepositAmount: swap.wadLiquidationDepositAmount,
-                state: uint256(swap.state)
-            });
-    }
-
     function _getAmmStorage(address asset) internal view returns (address ammStorage) {
         if (asset == _usdtAsset) {
             return _usdtAmmStorage;
@@ -372,24 +318,32 @@ contract AmmSwapsLens is IAmmSwapsLens {
                 SwapLensPoolConfiguration({
                     asset: _usdtAsset,
                     ammStorage: _usdtAmmStorage,
-                    ammTreasury: _usdtAmmTreasury
+                    ammTreasury: _usdtAmmTreasury,
+                    spread: _usdtSpread
                 });
         } else if (asset == _usdcAsset) {
             return
                 SwapLensPoolConfiguration({
                     asset: _usdcAsset,
                     ammStorage: _usdcAmmStorage,
-                    ammTreasury: _usdcAmmTreasury
+                    ammTreasury: _usdcAmmTreasury,
+                    spread: _usdcSpread
                 });
         } else if (asset == _daiAsset) {
             return
-                SwapLensPoolConfiguration({asset: _daiAsset, ammStorage: _daiAmmStorage, ammTreasury: _daiAmmTreasury});
+                SwapLensPoolConfiguration({
+                    asset: _daiAsset,
+                    ammStorage: _daiAmmStorage,
+                    ammTreasury: _daiAmmTreasury,
+                    spread: _daiSpread
+                });
         } else if (asset == _stEthAsset) {
             return
                 SwapLensPoolConfiguration({
                     asset: _stEthAsset,
                     ammStorage: _stEthAmmStorage,
-                    ammTreasury: _stEthAmmTreasury
+                    ammTreasury: _stEthAmmTreasury,
+                    spread: _stEthSpread
                 });
         } else {
             revert(IporErrors.ASSET_NOT_SUPPORTED);

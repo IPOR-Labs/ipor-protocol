@@ -162,6 +162,7 @@ contract TestForkCommons is Test {
         messageSignerAddress = vm.addr(messageSignerPrivateKey);
 
         _createAmmStorageStEth();
+        _createNewSpreadForStEth();
 
         _createAmmSwapsLens();
         _createAmmOpenSwapService();
@@ -169,7 +170,6 @@ contract TestForkCommons is Test {
 
         _upgradeAmmTreasuryStEth();
 
-        _createNewSpreadForStEth();
         _createAmmOpenSwapServiceStEth();
         _createAmmCloseSwapServiceStEth();
         _createNewAmmPoolsServiceStEth();
@@ -340,35 +340,31 @@ contract TestForkCommons is Test {
         IAmmSwapsLens.SwapLensPoolConfiguration memory daiConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             DAI,
             ammStorageProxyDai,
-            ammTreasuryDai
+            ammTreasuryDai,
+            spreadRouter
         );
         IAmmSwapsLens.SwapLensPoolConfiguration memory usdcConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             USDC,
             ammStorageProxyUsdc,
-            ammTreasuryUsdc
+            ammTreasuryUsdc,
+            spreadRouter
         );
         IAmmSwapsLens.SwapLensPoolConfiguration memory usdtConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             USDT,
             ammStorageProxyUsdt,
-            ammTreasuryUsdt
+            ammTreasuryUsdt,
+            spreadRouter
         );
 
         IAmmSwapsLens.SwapLensPoolConfiguration memory stEthConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             stETH,
             ammStorageProxyStEth,
-            ammTreasuryProxyStEth
+            ammTreasuryProxyStEth,
+            spreadStEth
         );
 
         ammSwapsLens = address(
-            new AmmSwapsLens(
-                usdtConfig,
-                usdcConfig,
-                daiConfig,
-                stEthConfig,
-                iporOracleProxy,
-                messageSignerAddress,
-                spreadRouter
-            )
+            new AmmSwapsLens(usdtConfig, usdcConfig, daiConfig, stEthConfig, iporOracleProxy, messageSignerAddress)
         );
     }
 

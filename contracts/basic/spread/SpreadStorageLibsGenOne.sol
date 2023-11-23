@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../../libraries/errors/AmmErrors.sol";
-import "./SpreadTypesGenOne.sol";
+import "../types/SpreadTypesGenOne.sol";
 
 /// @title Spread storage library
 library SpreadStorageLibsGenOne {

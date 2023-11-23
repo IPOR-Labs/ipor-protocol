@@ -17,7 +17,7 @@ import "../../events/AmmEventsGenOne.sol";
 import "../../../amm/libraries/types/AmmInternalTypes.sol";
 import "../../../basic/spread/SpreadGenOne.sol";
 import "../libraries/SwapLogicGenOne.sol";
-import "../../../basic/spread/ISpreadGenOne.sol";
+import "../../interfaces/ISpreadGenOne.sol";
 
 /// @title Abstract contract for closing swap, generation one, characterized by:
 /// - no asset management, so also no auto rebalance

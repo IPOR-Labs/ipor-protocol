@@ -4,7 +4,7 @@ pragma solidity 0.8.20;
 import "../../interfaces/types/IporTypes.sol";
 import "../../interfaces/types/AmmTypes.sol";
 import "../../amm/libraries/types/AmmInternalTypes.sol";
-import "./SpreadTypesGenOne.sol";
+import "../types/SpreadTypesGenOne.sol";
 
 interface ISpreadGenOne {
     struct SpreadInputs {

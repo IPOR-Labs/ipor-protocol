@@ -49,6 +49,8 @@ interface IAmmSwapsLens {
         address ammStorage;
         /// @notice Address of the AMM Treasury contract
         address ammTreasury;
+        /// @notice Spread module
+        address spread;
     }
 
     /// @notice Gets pool configuration for AmmSwapsLens

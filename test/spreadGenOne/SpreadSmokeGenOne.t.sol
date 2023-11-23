@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
-import "../../contracts/basic/spread/ISpreadGenOne.sol";
+import "../../contracts/basic/interfaces/ISpreadGenOne.sol";
 import "../../contracts/basic/amm/AmmStorageGenOne.sol";
 import "../mocks/tokens/MockTestnetToken.sol";
 import "../../contracts/basic/spread/SpreadGenOne.sol";

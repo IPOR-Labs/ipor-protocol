@@ -13,6 +13,8 @@ library IporErrors {
 
     error UnsupportedAsset(address asset);
 
+    error UnsupportedModule(address asset, string code);
+
     error InputAssetTotalAmountTooLow(uint256 value);
 
     /// @dev Error appears if user/account doesn't have enough balance to open a swap with a specific totalAmount

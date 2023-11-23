@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 import "../../libraries/math/IporMath.sol";
-import "./SpreadTypesGenOne.sol";
+import "../types/SpreadTypesGenOne.sol";
 import "./SpreadStorageLibsGenOne.sol";
 
 library CalculateTimeWeightedNotionalLibsGenOne {

@@ -104,14 +104,23 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     }
 
     function depositToAssetManagement(address asset, uint256 wadAssetAmount) external override {
+        if (asset == _stEth) {
+            revert IporErrors.UnsupportedModule(asset, "AssetManagement");
+        }
         IAmmTreasury(_getAmmTreasury(asset)).depositToAssetManagementInternal(wadAssetAmount);
     }
 
     function withdrawFromAssetManagement(address asset, uint256 wadAssetAmount) external override {
+        if (asset == _stEth) {
+            revert IporErrors.UnsupportedModule(asset, "AssetManagement");
+        }
         IAmmTreasury(_getAmmTreasury(asset)).withdrawFromAssetManagementInternal(wadAssetAmount);
     }
 
     function withdrawAllFromAssetManagement(address asset) external override {
+        if (asset == _stEth) {
+            revert IporErrors.UnsupportedModule(asset, "AssetManagement");
+        }
         IAmmTreasury(_getAmmTreasury(asset)).withdrawAllFromAssetManagementInternal();
     }
 

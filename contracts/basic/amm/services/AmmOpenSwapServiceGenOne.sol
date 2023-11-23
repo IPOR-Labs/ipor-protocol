@@ -14,7 +14,7 @@ import "../../../amm/libraries/IporSwapLogic.sol";
 import "../../../basic/spread/SpreadGenOne.sol";
 import "../libraries/SwapEventsGenOne.sol";
 import "../libraries/SwapLogicGenOne.sol";
-import "../../../basic/spread/ISpreadGenOne.sol";
+import "../../interfaces/ISpreadGenOne.sol";
 import "../../../basic/interfaces/IAmmStorageGenOne.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.

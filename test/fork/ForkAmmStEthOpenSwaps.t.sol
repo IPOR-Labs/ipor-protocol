@@ -3149,5 +3149,5 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
     function testShouldTransferCorrectLiquidationDepositAmountAfterClose() public {}
 
-    function testAmmSwapsLensGetSwapsLiquiditaionDepositAmountIsCorrect() public {}
+    function testAmmSwapsLensGetSwapsLiquidationDepositAmountIsCorrect() public {}
 }

@@ -360,7 +360,6 @@ contract IporProtocolFactory is Test {
         _spreadRouterBuilder.withUsdc(address(_fakeContract));
         _spreadRouterBuilder.withDai(address(_fakeContract));
 
-
         _spreadRouterBuilder.withSpread28DaysTestCase(cfg.spread28DaysTestCase);
         _spreadRouterBuilder.withSpread60DaysTestCase(cfg.spread60DaysTestCase);
         _spreadRouterBuilder.withSpread90DaysTestCase(cfg.spread90DaysTestCase);
@@ -627,26 +626,29 @@ contract IporProtocolFactory is Test {
                 IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(amm.usdt.asset),
                     ammStorage: address(amm.usdt.ammStorage),
-                    ammTreasury: address(amm.usdt.ammTreasury)
+                    ammTreasury: address(amm.usdt.ammTreasury),
+                    spread: address(amm.spreadRouter)
                 }),
                 IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(amm.usdc.asset),
                     ammStorage: address(amm.usdc.ammStorage),
-                    ammTreasury: address(amm.usdc.ammTreasury)
+                    ammTreasury: address(amm.usdc.ammTreasury),
+                    spread: address(amm.spreadRouter)
                 }),
                 IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(amm.dai.asset),
                     ammStorage: address(amm.dai.ammStorage),
-                    ammTreasury: address(amm.dai.ammTreasury)
+                    ammTreasury: address(amm.dai.ammTreasury),
+                    spread: address(amm.spreadRouter)
                 }),
                 IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(amm.stEth.asset),
                     ammStorage: address(amm.stEth.ammStorage),
-                    ammTreasury: address(amm.stEth.ammTreasury)
+                    ammTreasury: address(amm.stEth.ammTreasury),
+                    spread: address(amm.spreadRouter)
                 }),
                 address(amm.iporOracle),
-                messageSignerAddress,
-                address(amm.spreadRouter)
+                messageSignerAddress
             )
         );
 
@@ -903,26 +905,29 @@ contract IporProtocolFactory is Test {
                 IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(iporProtocol.asset),
                     ammStorage: address(iporProtocol.ammStorage),
-                    ammTreasury: address(iporProtocol.ammTreasury)
+                    ammTreasury: address(iporProtocol.ammTreasury),
+                    spread: address(iporProtocol.spreadRouter)
                 }),
                 IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: _fakeContract,
                     ammStorage: _fakeContract,
-                    ammTreasury: _fakeContract
+                    ammTreasury: _fakeContract,
+                    spread: _fakeContract
                 }),
                 IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: _fakeContract,
                     ammStorage: _fakeContract,
-                    ammTreasury: _fakeContract
+                    ammTreasury: _fakeContract,
+                    spread: _fakeContract
                 }),
                 IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: _fakeContract,
                     ammStorage: _fakeContract,
-                    ammTreasury: _fakeContract
+                    ammTreasury: _fakeContract,
+                    spread: _fakeContract
                 }),
                 address(iporProtocol.iporOracle),
-                messageSignerAddress,
-                address(iporProtocol.spreadRouter)
+                messageSignerAddress
             )
         );
 
@@ -1092,26 +1097,29 @@ contract IporProtocolFactory is Test {
                 IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: _fakeContract,
                     ammStorage: _fakeContract,
-                    ammTreasury: _fakeContract
+                    ammTreasury: _fakeContract,
+                    spread: _fakeContract
                 }),
                 IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(iporProtocol.asset),
                     ammStorage: address(iporProtocol.ammStorage),
-                    ammTreasury: address(iporProtocol.ammTreasury)
+                    ammTreasury: address(iporProtocol.ammTreasury),
+                    spread: address(iporProtocol.spreadRouter)
                 }),
                 IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: _fakeContract,
                     ammStorage: _fakeContract,
-                    ammTreasury: _fakeContract
+                    ammTreasury: _fakeContract,
+                    spread: _fakeContract
                 }),
                 IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: _fakeContract,
                     ammStorage: _fakeContract,
-                    ammTreasury: _fakeContract
+                    ammTreasury: _fakeContract,
+                    spread: _fakeContract
                 }),
                 address(iporProtocol.iporOracle),
-                messageSignerAddress,
-                address(iporProtocol.spreadRouter)
+                messageSignerAddress
             )
         );
 
@@ -1286,26 +1294,29 @@ contract IporProtocolFactory is Test {
                 IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: _fakeContract,
                     ammStorage: _fakeContract,
-                    ammTreasury: _fakeContract
+                    ammTreasury: _fakeContract,
+                    spread: _fakeContract
                 }),
                 IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: _fakeContract,
                     ammStorage: _fakeContract,
-                    ammTreasury: _fakeContract
+                    ammTreasury: _fakeContract,
+                    spread: _fakeContract
                 }),
                 IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(iporProtocol.asset),
                     ammStorage: address(iporProtocol.ammStorage),
-                    ammTreasury: address(iporProtocol.ammTreasury)
+                    ammTreasury: address(iporProtocol.ammTreasury),
+                    spread: address(iporProtocol.spreadRouter)
                 }),
                 IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: _fakeContract,
                     ammStorage: _fakeContract,
-                    ammTreasury: _fakeContract
+                    ammTreasury: _fakeContract,
+                    spread: _fakeContract
                 }),
                 address(iporProtocol.iporOracle),
-                messageSignerAddress,
-                address(iporProtocol.spreadRouter)
+                messageSignerAddress
             )
         );
 

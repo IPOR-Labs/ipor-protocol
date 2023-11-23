@@ -20,7 +20,7 @@ import "../../basic/interfaces/IAmmStorageGenOne.sol";
 import "./DemandSpreadLibsGenOne.sol";
 import "./SpreadStorageLibsGenOne.sol";
 import "./OfferedRateCalculationLibsGenOne.sol";
-import "./ISpreadGenOne.sol";
+import "../interfaces/ISpreadGenOne.sol";
 
 // @dev This contract should calculate the spread for one asset and for all tenors.
 contract SpreadGenOne is IporOwnable, ISpreadGenOne  {
