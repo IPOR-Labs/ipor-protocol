@@ -3139,15 +3139,4 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         assertEq(exchangeRateBefore, exchangeRateAfter, "exchangeRate should not change");
     }
 
-    function testShouldOpenPositionStEthForStEthAndTransferCorrectLiquidationDepositAmount() public {}
-
-    function testShouldOpenPositionStEthForEthAndTransferCorrectLiquidationDepositAmount() public {}
-
-    function testShouldOpenPositionStEthForWEthAndTransferCorrectLiquidationDepositAmount() public {}
-
-    function testShouldOpenPositionStEthForwstEthAndTransferCorrectLiquidationDepositAmount() public {}
-
-    function testShouldTransferCorrectLiquidationDepositAmountAfterClose() public {}
-
-    function testAmmSwapsLensGetSwapsLiquidationDepositAmountIsCorrect() public {}
 }

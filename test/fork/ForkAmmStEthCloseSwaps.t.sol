@@ -1660,4 +1660,351 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
 
         assertEq(0, uint256(swap.state), "swap.state");
     }
+
+    function testShouldOpenAndClosePositionStEthForStEthAndTransferCorrectLiquidationDepositAmount() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        address liquidator = _getUserAddress(23);
+
+        _setupUser(user, 1000 * 1e18);
+        uint256 totalAmount = 1 * 1e17;
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_60),
+            0,
+            messageSignerPrivateKey
+        );
+
+        vm.warp(block.timestamp);
+
+        vm.prank(user);
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
+            user,
+            stETH,
+            totalAmount,
+            1e18,
+            10e18,
+            riskIndicatorsInputs
+        );
+
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = swapId;
+        uint256[] memory swapRfIds = new uint256[](0);
+
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
+            IporTypes.SwapTenor.DAYS_60
+        );
+
+        vm.prank(owner);
+        IAmmGovernanceService(iporProtocolRouterProxy).addSwapLiquidator(stETH, liquidator);
+
+        vm.warp(block.timestamp + 61 days);
+
+        uint256 liquidatorBalanceBefore = IStETH(stETH).balanceOf(liquidator);
+
+        //when
+        vm.prank(liquidator);
+        IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
+            liquidator,
+            swapPfIds,
+            swapRfIds,
+            closeRiskIndicatorsInputs
+        );
+
+        //then
+        uint256 liquidatorBalanceAfter = IStETH(stETH).balanceOf(liquidator);
+
+        assertEq(liquidatorBalanceBefore, 0, "liquidatorBalanceBefore");
+
+        /// @dev 0.0001 ETH
+        assertEq(liquidatorBalanceAfter, 999999999999999, "liquidatorBalanceAfter");
+    }
+
+    function testShouldOpenAndClosePositionStEthForEthAndTransferCorrectLiquidationDepositAmount() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        address liquidator = _getUserAddress(23);
+
+        _setupUser(user, 1000 * 1e18);
+        uint256 totalAmount = 1 * 1e17;
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_60),
+            0,
+            messageSignerPrivateKey
+        );
+
+        vm.warp(block.timestamp);
+
+        vm.prank(user);
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth{
+            value: totalAmount
+        }(user, ETH, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
+
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = swapId;
+        uint256[] memory swapRfIds = new uint256[](0);
+
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
+            IporTypes.SwapTenor.DAYS_60
+        );
+
+        vm.prank(owner);
+        IAmmGovernanceService(iporProtocolRouterProxy).addSwapLiquidator(stETH, liquidator);
+
+        vm.warp(block.timestamp + 61 days);
+
+        uint256 liquidatorBalanceBefore = IStETH(stETH).balanceOf(liquidator);
+
+        //when
+        vm.prank(liquidator);
+        IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
+            liquidator,
+            swapPfIds,
+            swapRfIds,
+            closeRiskIndicatorsInputs
+        );
+
+        //then
+        uint256 liquidatorBalanceAfter = IStETH(stETH).balanceOf(liquidator);
+
+        assertEq(liquidatorBalanceBefore, 0, "liquidatorBalanceBefore");
+        /// @dev 0.0001 ETH
+        assertEq(liquidatorBalanceAfter, 999999999999999, "liquidatorBalanceAfter");
+    }
+
+    function testShouldOpenAndClosePositionStEthForWEthAndTransferCorrectLiquidationDepositAmount() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        address liquidator = _getUserAddress(23);
+
+        _setupUser(user, 1000 * 1e18);
+        uint256 totalAmount = 1 * 1e17;
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_60),
+            0,
+            messageSignerPrivateKey
+        );
+
+        vm.warp(block.timestamp);
+
+        vm.prank(user);
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
+            user,
+            wETH,
+            totalAmount,
+            1e18,
+            10e18,
+            riskIndicatorsInputs
+        );
+
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = swapId;
+        uint256[] memory swapRfIds = new uint256[](0);
+
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
+            IporTypes.SwapTenor.DAYS_60
+        );
+
+        vm.prank(owner);
+        IAmmGovernanceService(iporProtocolRouterProxy).addSwapLiquidator(stETH, liquidator);
+
+        vm.warp(block.timestamp + 61 days);
+
+        uint256 liquidatorBalanceBefore = IStETH(stETH).balanceOf(liquidator);
+
+        //when
+        vm.prank(liquidator);
+        IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
+            liquidator,
+            swapPfIds,
+            swapRfIds,
+            closeRiskIndicatorsInputs
+        );
+
+        //then
+        uint256 liquidatorBalanceAfter = IStETH(stETH).balanceOf(liquidator);
+
+        assertEq(liquidatorBalanceBefore, 0, "liquidatorBalanceBefore");
+
+        /// @dev 0.0001 ETH
+        assertEq(liquidatorBalanceAfter, 999999999999999, "liquidatorBalanceAfter");
+    }
+
+    function testShouldOpenAndClosePositionStEthForwstEthAndTransferCorrectLiquidationDepositAmount() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        address liquidator = _getUserAddress(23);
+
+        _setupUser(user, 1000 * 1e18);
+        uint256 totalAmount = 1 * 1e17;
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_60),
+            0,
+            messageSignerPrivateKey
+        );
+
+        vm.warp(block.timestamp);
+
+        vm.prank(user);
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
+            user,
+            wstETH,
+            totalAmount,
+            1e18,
+            10e18,
+            riskIndicatorsInputs
+        );
+
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = swapId;
+        uint256[] memory swapRfIds = new uint256[](0);
+
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
+            IporTypes.SwapTenor.DAYS_60
+        );
+
+        vm.prank(owner);
+        IAmmGovernanceService(iporProtocolRouterProxy).addSwapLiquidator(stETH, liquidator);
+
+        vm.warp(block.timestamp + 61 days);
+
+        uint256 liquidatorBalanceBefore = IStETH(stETH).balanceOf(liquidator);
+
+        //when
+        vm.prank(liquidator);
+        IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
+            liquidator,
+            swapPfIds,
+            swapRfIds,
+            closeRiskIndicatorsInputs
+        );
+
+        //then
+        uint256 liquidatorBalanceAfter = IStETH(stETH).balanceOf(liquidator);
+
+        assertEq(liquidatorBalanceBefore, 0, "liquidatorBalanceBefore");
+
+        /// @dev 0.0001 ETH
+        assertEq(liquidatorBalanceAfter, 999999999999999, "liquidatorBalanceAfter");
+    }
+
+    function testShouldNotCloseSwapStEthForStEthBecauseIsNotLiquidator() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        address liquidator = _getUserAddress(23);
+
+        _setupUser(user, 1000 * 1e18);
+        uint256 totalAmount = 1 * 1e17;
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_60),
+            0,
+            messageSignerPrivateKey
+        );
+
+        vm.warp(block.timestamp);
+
+        vm.prank(user);
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed60daysStEth(
+            user,
+            wstETH,
+            totalAmount,
+            1e18,
+            10e18,
+            riskIndicatorsInputs
+        );
+
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = swapId;
+        uint256[] memory swapRfIds = new uint256[](0);
+
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
+            IporTypes.SwapTenor.DAYS_60
+        );
+
+        vm.warp(block.timestamp + 61 days);
+
+        //when
+        vm.prank(liquidator);
+        vm.expectRevert(abi.encodePacked(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
+        IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
+            liquidator,
+            swapPfIds,
+            swapRfIds,
+            closeRiskIndicatorsInputs
+        );
+    }
 }
