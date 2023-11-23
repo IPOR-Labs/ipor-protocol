@@ -136,6 +136,20 @@ interface ISpreadGenOne {
     ///      These parameters are critical in determining how spreads are calculated for Pay Fixed and Receive Fixed swaps.
     function spreadFunctionConfig() external returns (uint256[] memory);
 
+    /// @notice Updates the time-weighted notional values for multiple assets and tenors.
+    /// @dev This function can only be called by the contract owner and overrides any existing implementation.
+    ///     It iterates through an array of `TimeWeightedNotionalMemory` structures, checks each one for validity,
+    ///     and then saves the updated time-weighted notional values.
+    /// @param timeWeightedNotionalMemories An array of `TimeWeightedNotionalMemory` structures, where each structure
+    ///        contains information about the asset, tenor, and the new time-weighted notional value to be updated.
+    ///        Each `TimeWeightedNotionalMemory` structure should have a `storageId` identifying the asset and tenor
+    ///        combination, along with the notional values and other relevant information.
+    /// @dev The function employs an `unchecked` block for the loop iteration to optimize gas usage, assuming that
+    ///         the arithmetic operation will not overflow under normal operation conditions.
+    function updateTimeWeightedNotional(
+        SpreadTypesGenOne.TimeWeightedNotionalMemory[] calldata timeWeightedNotionalMemories
+    ) external;
+
     /// @notice Returns the version number of the contract.
     /// @dev This function provides a simple way to retrieve the version number of the current contract.
     ///      It's useful for compatibility checks, upgradeability assessments, and tracking contract iterations.

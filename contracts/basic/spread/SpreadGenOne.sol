@@ -219,6 +219,22 @@ contract SpreadGenOne is IporOwnable, ISpreadGenOne  {
         return DemandSpreadLibsGenOne.spreadFunctionConfig();
     }
 
+    function updateTimeWeightedNotional(
+        SpreadTypesGenOne.TimeWeightedNotionalMemory[] calldata timeWeightedNotionalMemories
+    ) external override onlyOwner {
+        uint256 length = timeWeightedNotionalMemories.length;
+        for (uint256 i; i < length; ) {
+            SpreadStorageLibsGenOne._checkTimeWeightedNotional(timeWeightedNotionalMemories[i].storageId);
+            SpreadStorageLibsGenOne.saveTimeWeightedNotionalForAssetAndTenor(
+                timeWeightedNotionalMemories[i].storageId,
+                timeWeightedNotionalMemories[i]
+            );
+            unchecked {
+                ++i;
+            }
+        }
+    }
+
     function getVersion() external pure virtual override returns (uint256) {
         return 2_001;
     }

@@ -64,10 +64,6 @@ contract SpreadSmokeGenOne is Test {
         });
     }
 
-    function testTT() external {
-        assertTrue(true);
-    }
-
     function testShouldGetZeroSpreadValue() external {
         // given
 
@@ -701,31 +697,23 @@ contract SpreadSmokeGenOne is Test {
         );
 
         // when
-        uint256 receiveFixed90Open = ISpreadGenOne(_spread).calculateAndUpdateOfferedRateReceiveFixed(
-            spreadInputsOpen
-        );
+        uint256 receiveFixed90Open = ISpreadGenOne(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
 
         // then
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_28;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_28;
         uint256 payFixed28After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed28After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
-            spreadInputsReceiveFixed
-        );
+        uint256 receiveFixed28After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_60;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_60;
         uint256 payFixed60After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed60After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
-            spreadInputsReceiveFixed
-        );
+        uint256 receiveFixed60After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_90;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_90;
         uint256 payFixed90After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed90After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
-            spreadInputsReceiveFixed
-        );
+        uint256 receiveFixed90After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         assertEq(payFixed28Before, 1e16, "payFixed28Before should be 1e16");
         assertEq(receiveFixed28Before, 1e16, "receiveFixed28Before should be 1e16");
@@ -747,27 +735,119 @@ contract SpreadSmokeGenOne is Test {
         assertTrue(payFixed90After == 1e16, "payFixed90After should be equal than 1e16");
     }
 
-        function testShouldUseCapWhenOneSwapOpenOn90ReceiveFixed() external {
-            // given
-            ISpreadGenOne.SpreadInputs memory spreadInputsOpen = ISpreadGenOne.SpreadInputs({
-                asset: address(stEth),
-                swapNotional: 10_000e18,
-                baseSpreadPerLeg: 0,
-                totalCollateralPayFixed: 10_000e18,
-                totalCollateralReceiveFixed: 10_000e18,
-                liquidityPoolBalance: 1_000_000e18,
-                iporIndexValue: 1e16,
-                fixedRateCapPerLeg: 1e15,
-                demandSpreadFactor: 1000,
-                tenor: IporTypes.SwapTenor.DAYS_90
-            });
+    function testShouldUseCapWhenOneSwapOpenOn90ReceiveFixed() external {
+        // given
+        ISpreadGenOne.SpreadInputs memory spreadInputsOpen = ISpreadGenOne.SpreadInputs({
+            asset: address(stEth),
+            swapNotional: 10_000e18,
+            baseSpreadPerLeg: 0,
+            totalCollateralPayFixed: 10_000e18,
+            totalCollateralReceiveFixed: 10_000e18,
+            liquidityPoolBalance: 1_000_000e18,
+            iporIndexValue: 1e16,
+            fixedRateCapPerLeg: 1e15,
+            demandSpreadFactor: 1000,
+            tenor: IporTypes.SwapTenor.DAYS_90
+        });
 
-            // when
-            uint256 receiveFixed90Open = ISpreadGenOne(_spread).calculateAndUpdateOfferedRateReceiveFixed(
-                spreadInputsOpen
+        // when
+        uint256 receiveFixed90Open = ISpreadGenOne(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
+
+        // then
+        assertTrue(receiveFixed90Open < 1e15, "receiveFixed90Open should be less than 1e15");
+    }
+
+    function testShouldBeAbleToOverrideTimeWaitedNotional() external {
+        // given
+        SpreadTypesGenOne.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse = ISpreadGenOne(_spread)
+            .getTimeWeightedNotional();
+        SpreadTypesGenOne.TimeWeightedNotionalMemory[] memory timeWeightedNotional = new SpreadTypesGenOne.TimeWeightedNotionalMemory[](
+                timeWeightedNotionalResponse.length
             );
 
-            // then
-            assertTrue(receiveFixed90Open < 1e15, "receiveFixed90Open should be less than 1e15");
+        for (uint i; i < timeWeightedNotionalResponse.length; i++) {
+            timeWeightedNotional[i] = SpreadTypesGenOne.TimeWeightedNotionalMemory({
+                timeWeightedNotionalPayFixed: timeWeightedNotionalResponse[i]
+                    .timeWeightedNotional
+                    .timeWeightedNotionalPayFixed + 100e18,
+                timeWeightedNotionalReceiveFixed: timeWeightedNotionalResponse[i]
+                    .timeWeightedNotional
+                    .timeWeightedNotionalReceiveFixed + 200e18,
+                lastUpdateTimePayFixed: timeWeightedNotionalResponse[i].timeWeightedNotional.lastUpdateTimePayFixed +
+                    1000,
+                lastUpdateTimeReceiveFixed: timeWeightedNotionalResponse[i]
+                    .timeWeightedNotional
+                    .lastUpdateTimeReceiveFixed + 2000,
+                storageId: timeWeightedNotionalResponse[i].timeWeightedNotional.storageId
+            });
         }
+
+        // when
+        ISpreadGenOne(_spread).updateTimeWeightedNotional(timeWeightedNotional);
+
+        // then
+        SpreadTypesGenOne.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseAfter = ISpreadGenOne(
+            _spread
+        ).getTimeWeightedNotional();
+
+        for (uint i; i < timeWeightedNotionalResponseAfter.length; i++) {
+            assertEq(
+                timeWeightedNotionalResponse[i].key,
+                timeWeightedNotionalResponseAfter[i].key,
+                "key should be equal"
+            );
+            assertEq(
+                timeWeightedNotionalResponse[i].timeWeightedNotional.timeWeightedNotionalPayFixed + 100e18,
+                timeWeightedNotionalResponseAfter[i].timeWeightedNotional.timeWeightedNotionalPayFixed,
+                "timeWeightedNotionalPayFixed should be equal"
+            );
+            assertEq(
+                timeWeightedNotionalResponse[i].timeWeightedNotional.timeWeightedNotionalReceiveFixed + 200e18,
+                timeWeightedNotionalResponseAfter[i].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
+                "timeWeightedNotionalReceiveFixed should be equal"
+            );
+            assertEq(
+                timeWeightedNotionalResponse[i].timeWeightedNotional.lastUpdateTimePayFixed + 1000,
+                timeWeightedNotionalResponseAfter[i].timeWeightedNotional.lastUpdateTimePayFixed,
+                "lastUpdateTimePayFixed should be equal"
+            );
+            assertEq(
+                timeWeightedNotionalResponse[i].timeWeightedNotional.lastUpdateTimeReceiveFixed + 2000,
+                timeWeightedNotionalResponseAfter[i].timeWeightedNotional.lastUpdateTimeReceiveFixed,
+                "lastUpdateTimeReceiveFixed should be equal"
+            );
+        }
+    }
+
+
+    function testShouldNotBeAbleToOverrideTimeWaitedNotionalWhenNotOwner() external {
+        // given
+        SpreadTypesGenOne.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse = ISpreadGenOne(_spread)
+            .getTimeWeightedNotional();
+        SpreadTypesGenOne.TimeWeightedNotionalMemory[] memory timeWeightedNotional = new SpreadTypesGenOne.TimeWeightedNotionalMemory[](
+                timeWeightedNotionalResponse.length
+            );
+
+        for (uint i; i < timeWeightedNotionalResponse.length; i++) {
+            timeWeightedNotional[i] = SpreadTypesGenOne.TimeWeightedNotionalMemory({
+                timeWeightedNotionalPayFixed: timeWeightedNotionalResponse[i]
+                    .timeWeightedNotional
+                    .timeWeightedNotionalPayFixed + 100e18,
+                timeWeightedNotionalReceiveFixed: timeWeightedNotionalResponse[i]
+                    .timeWeightedNotional
+                    .timeWeightedNotionalReceiveFixed + 200e18,
+                lastUpdateTimePayFixed: timeWeightedNotionalResponse[i].timeWeightedNotional.lastUpdateTimePayFixed +
+                    1000,
+                lastUpdateTimeReceiveFixed: timeWeightedNotionalResponse[i]
+                    .timeWeightedNotional
+                    .lastUpdateTimeReceiveFixed + 2000,
+                storageId: timeWeightedNotionalResponse[i].timeWeightedNotional.storageId
+            });
+        }
+
+        // when
+        vm.prank(address(_ammStorage));
+        vm.expectRevert("Ownable: caller is not the owner");
+        ISpreadGenOne(_spread).updateTimeWeightedNotional(timeWeightedNotional);
+    }
 }

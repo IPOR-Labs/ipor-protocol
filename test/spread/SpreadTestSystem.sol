@@ -9,6 +9,7 @@ import "../../contracts/amm/spread/SpreadStorageLens.sol";
 import "../../contracts/amm/spread/SpreadRouter.sol";
 import "../../contracts/amm/spread/SpreadCloseSwapService.sol";
 import "../../contracts/amm/AmmStorage.sol";
+import "../../contracts/amm/spread/SpreadStorageService.sol";
 
 contract SpreadTestSystem is TestCommons {
     address public owner;
@@ -20,6 +21,7 @@ contract SpreadTestSystem is TestCommons {
     Spread90Days public spread90Days;
     SpreadStorageLens public spreadStorageLens;
     SpreadCloseSwapService public spreadCloseSwapService;
+    SpreadStorageService public spreadStorageService;
     address public router;
     address public ammStorage;
 
@@ -32,6 +34,7 @@ contract SpreadTestSystem is TestCommons {
         spread90Days = new Spread90Days(address(dai), address(usdc), address(usdt));
         spreadCloseSwapService = new SpreadCloseSwapService(address(dai), address(usdc), address(usdt));
         spreadStorageLens = new SpreadStorageLens();
+        spreadStorageService = new SpreadStorageService();
         SpreadRouter routerImplementation = new SpreadRouter(
             SpreadRouter.DeployedContracts(
                 ammAddress,
@@ -39,7 +42,8 @@ contract SpreadTestSystem is TestCommons {
                 address(spread60Days),
                 address(spread90Days),
                 address(spreadStorageLens),
-                address(spreadCloseSwapService)
+                address(spreadCloseSwapService),
+                address(spreadStorageService)
             )
         );
         ERC1967Proxy proxy = new ERC1967Proxy(
