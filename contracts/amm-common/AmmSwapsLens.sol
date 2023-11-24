@@ -7,7 +7,7 @@ import "../amm/spread/ISpread28DaysLens.sol";
 import "../amm/spread/ISpread60DaysLens.sol";
 import "../amm/spread/ISpread90DaysLens.sol";
 import "../amm/libraries/IporSwapLogic.sol";
-import "../basic/amm/libraries/AmmSwapsLensLibGenOne.sol";
+import "../base/amm/libraries/AmmSwapsLensLibBaseV1.sol";
 import "../libraries/IporContractValidator.sol";
 import "../libraries/RiskIndicatorsValidatorLib.sol";
 import "../libraries/AmmLib.sol";
@@ -88,7 +88,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         uint256 chunkSize
     ) external view returns (uint256 totalCount, IAmmSwapsLens.IporSwap[] memory swaps) {
         if (asset == _stEthAsset) {
-            return AmmSwapsLensLibGenOne.getSwaps(iporOracle, _stEthAmmStorage, asset, account, offset, chunkSize);
+            return AmmSwapsLensLibBaseV1.getSwaps(iporOracle, _stEthAmmStorage, asset, account, offset, chunkSize);
         } else {
             IAmmStorage ammStorage = IAmmStorage(_getAmmStorage(asset));
             (uint256 count, AmmStorageTypes.IporSwapId[] memory swapIds) = ammStorage.getSwapIds(
@@ -102,7 +102,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
 
     function getPnlPayFixed(address asset, uint256 swapId) external view override returns (int256) {
         if (asset == _stEthAsset) {
-            return AmmSwapsLensLibGenOne.getPnlPayFixed(iporOracle, _stEthAmmStorage, _stEthAsset, swapId);
+            return AmmSwapsLensLibBaseV1.getPnlPayFixed(iporOracle, _stEthAmmStorage, _stEthAsset, swapId);
         } else {
             uint256 accruedIbtPrice = IIporOracle(iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
             AmmTypes.Swap memory swap = IAmmStorage(_getAmmStorage(asset)).getSwap(
@@ -118,7 +118,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
 
     function getPnlReceiveFixed(address asset, uint256 swapId) external view override returns (int256) {
         if (asset == _stEthAsset) {
-            return AmmSwapsLensLibGenOne.getPnlReceiveFixed(iporOracle, _stEthAmmStorage, _stEthAsset, swapId);
+            return AmmSwapsLensLibBaseV1.getPnlReceiveFixed(iporOracle, _stEthAmmStorage, _stEthAsset, swapId);
         } else {
             uint256 accruedIbtPrice = IIporOracle(iporOracle).calculateAccruedIbtPrice(asset, block.timestamp);
             AmmTypes.Swap memory swap = IAmmStorage(_getAmmStorage(asset)).getSwap(
@@ -170,7 +170,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         );
 
         if (asset == _stEthAsset) {
-            (offeredRatePayFixed, offeredRateReceiveFixed) = AmmSwapsLensLibGenOne.getOfferedRate(
+            (offeredRatePayFixed, offeredRateReceiveFixed) = AmmSwapsLensLibBaseV1.getOfferedRate(
                 poolCfg,
                 indexValue,
                 tenor,
@@ -235,7 +235,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         address asset
     ) external view returns (IporTypes.AmmBalancesForOpenSwapMemory memory) {
         if (asset == _stEthAsset) {
-            return AmmSwapsLensLibGenOne.getBalancesForOpenSwap(_stEthAmmStorage, _stEthAmmTreasury);
+            return AmmSwapsLensLibBaseV1.getBalancesForOpenSwap(_stEthAmmStorage, _stEthAmmTreasury);
         } else {
             return IAmmStorage(_getAmmStorage(asset)).getBalancesForOpenSwap();
         }

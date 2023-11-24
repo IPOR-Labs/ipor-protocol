@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 import "./interfaces/IAmmPoolsLensStEth.sol";
 import "../interfaces/types/AmmTypes.sol";
-import "../basic/interfaces/IAmmTreasuryGenOne.sol";
+import "../base/interfaces/IAmmTreasuryBaseV1.sol";
 import "../libraries/IporContractValidator.sol";
 import "../libraries/AmmLib.sol";
 
@@ -42,7 +42,7 @@ contract AmmPoolsLensStEth is IAmmPoolsLensStEth {
             assetManagement: address(0),
             iporOracle: iporOracle
         });
-        uint256 liquidityPoolBalance = IAmmTreasuryGenOne(ammTreasuryStEth).getLiquidityPoolBalance();
+        uint256 liquidityPoolBalance = IAmmTreasuryBaseV1(ammTreasuryStEth).getLiquidityPoolBalance();
         return model.getExchangeRate(liquidityPoolBalance);
     }
 }

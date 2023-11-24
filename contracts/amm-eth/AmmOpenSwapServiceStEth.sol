@@ -7,10 +7,10 @@ import "./interfaces/IStETH.sol";
 import "./interfaces/IWETH9.sol";
 import "./interfaces/IwstEth.sol";
 import "./interfaces/IAmmPoolsServiceStEth.sol";
-import "../basic/amm/services/AmmOpenSwapServiceGenOne.sol";
+import "../base/amm/services/AmmOpenSwapServiceBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
-contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServiceStEth {
+contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServiceStEth {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using IporContractValidator for address;
 
@@ -27,13 +27,13 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
     }
 
     constructor(
-        AmmTypesGenOne.AmmOpenSwapServicePoolConfiguration memory poolCfg,
+        AmmTypesBaseV1.AmmOpenSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput,
         address messageSignerInput,
         address iporProtocolRouterInput,
         address wETHInput,
         address wstETHInput
-    ) AmmOpenSwapServiceGenOne(poolCfg, iporOracleInput, messageSignerInput) {
+    ) AmmOpenSwapServiceBaseV1(poolCfg, iporOracleInput, messageSignerInput) {
         iporProtocolRouter = iporProtocolRouterInput.checkAddress();
         wETH = wETHInput.checkAddress();
         wstETH = wstETHInput.checkAddress();

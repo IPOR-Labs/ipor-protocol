@@ -65,7 +65,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             swapId
         );
@@ -130,7 +130,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             swapId
         );
@@ -200,7 +200,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             swapId
         );
@@ -270,7 +270,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             swapId
         );
@@ -340,7 +340,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             swapId
         );
@@ -405,7 +405,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             swapId
         );
@@ -475,7 +475,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             swapId
         );
@@ -545,7 +545,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             swapId
         );
@@ -615,7 +615,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             swapId
         );
@@ -680,7 +680,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             swapId
         );
@@ -750,7 +750,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             swapId
         );
@@ -820,7 +820,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             swapId
         );
@@ -890,7 +890,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             swapId
         );
@@ -955,7 +955,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             swapId
         );
@@ -1025,7 +1025,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             swapId
         );
@@ -1095,7 +1095,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             swapId
         );
@@ -1165,7 +1165,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             swapId
         );
@@ -1230,7 +1230,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             swapId
         );
@@ -1300,7 +1300,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             swapId
         );
@@ -1370,7 +1370,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             swapId
         );
@@ -1440,7 +1440,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             swapId
         );
@@ -1505,7 +1505,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             swapId
         );
@@ -1575,7 +1575,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             swapId
         );
@@ -1645,7 +1645,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         );
 
         //then
-        AmmTypesGenOne.Swap memory swap = AmmStorageGenOne(ammStorageProxyStEth).getSwap(
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
             AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             swapId
         );

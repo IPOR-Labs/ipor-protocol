@@ -3,33 +3,33 @@ pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "../../contracts/amm/libraries/types/AmmInternalTypes.sol";
-import "../../contracts/basic/spread/SpreadGenOne.sol";
+import "../../contracts/base/spread/SpreadBaseV1.sol";
 import "../mocks/tokens/MockTestnetToken.sol";
-import "../../contracts/basic/amm/AmmStorageGenOne.sol";
+import "../../contracts/base/amm/AmmStorageBaseV1.sol";
 
-contract SpreadCloseSwapServiceGenOne is Test {
+contract SpreadCloseSwapServiceBaseV1 is Test {
     using SafeCast for uint256;
-    SpreadGenOne internal _spread;
+    SpreadBaseV1 internal _spread;
     MockTestnetToken public stEth;
-    AmmStorageGenOne internal _ammStorage;
+    AmmStorageBaseV1 internal _ammStorage;
 
     function setUp() external {
         vm.warp(1700451493);
         stEth = new MockTestnetToken("Mocked stETH", "stETH", 100_000_000 * 1e18, uint8(18));
-        _ammStorage = new AmmStorageGenOne(address(this), address(this));
+        _ammStorage = new AmmStorageBaseV1(address(this), address(this));
 
-        SpreadTypesGenOne.TimeWeightedNotionalMemory memory weightedNotional = SpreadTypesGenOne
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotional = SpreadTypesBaseV1
             .TimeWeightedNotionalMemory({
                 timeWeightedNotionalPayFixed: 0,
                 timeWeightedNotionalReceiveFixed: 0,
                 lastUpdateTimePayFixed: block.timestamp - 10 days,
                 lastUpdateTimeReceiveFixed: block.timestamp - 10 days,
-                storageId: SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional28Days
+                storageId: SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional28Days
             });
-        SpreadTypesGenOne.TimeWeightedNotionalMemory[]
-            memory weightedNotionalInput = new SpreadTypesGenOne.TimeWeightedNotionalMemory[](1);
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory[]
+            memory weightedNotionalInput = new SpreadTypesBaseV1.TimeWeightedNotionalMemory[](1);
         weightedNotionalInput[0] = weightedNotional;
-        _spread = new SpreadGenOne({
+        _spread = new SpreadBaseV1({
             iporProtocolRouterInput: address(this),
             assetInput: address(stEth),
             timeWeightedNotional: weightedNotionalInput
@@ -38,7 +38,7 @@ contract SpreadCloseSwapServiceGenOne is Test {
 
     function testShouldDecreaseTimeWeightedNotionalToZeroWhenPayFixed() external {
         // given
-        ISpreadGenOne.SpreadInputs memory spreadInputsOpen = ISpreadGenOne.SpreadInputs({
+        ISpreadBaseV1.SpreadInputs memory spreadInputsOpen = ISpreadBaseV1.SpreadInputs({
             asset: address(stEth),
             swapNotional: 10_000e18,
             baseSpreadPerLeg: 0,
@@ -59,15 +59,15 @@ contract SpreadCloseSwapServiceGenOne is Test {
         );
 
         vm.warp(openSwapTimeStamp);
-        uint256 payFixed28Open = ISpreadGenOne(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
+        uint256 payFixed28Open = ISpreadBaseV1(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
 
-        SpreadTypesGenOne.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseBefore = ISpreadGenOne(
+        SpreadTypesBaseV1.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseBefore = ISpreadBaseV1(
             _spread
         ).getTimeWeightedNotional();
 
         // when
         vm.warp(openSwapTimeStamp + 27 days);
-        ISpreadGenOne(_spread).updateTimeWeightedNotionalOnClose(
+        ISpreadBaseV1(_spread).updateTimeWeightedNotionalOnClose(
             0,
             IporTypes.SwapTenor.DAYS_28,
             spreadInputsOpen.swapNotional,
@@ -76,7 +76,7 @@ contract SpreadCloseSwapServiceGenOne is Test {
         );
 
         // then
-        SpreadTypesGenOne.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseAfter = ISpreadGenOne(
+        SpreadTypesBaseV1.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseAfter = ISpreadBaseV1(
             _spread
         ).getTimeWeightedNotional();
 
@@ -96,7 +96,7 @@ contract SpreadCloseSwapServiceGenOne is Test {
 
     function testShouldDecreaseTimeWeightedNotionalToZeroWhenReceiveFixed() external {
         // given
-        ISpreadGenOne.SpreadInputs memory spreadInputsOpen = ISpreadGenOne.SpreadInputs({
+        ISpreadBaseV1.SpreadInputs memory spreadInputsOpen = ISpreadBaseV1.SpreadInputs({
             asset: address(stEth),
             swapNotional: 10_000e18,
             baseSpreadPerLeg: 0,
@@ -117,15 +117,15 @@ contract SpreadCloseSwapServiceGenOne is Test {
         );
 
         vm.warp(openSwapTimeStamp);
-        uint256 payFixed28Open = ISpreadGenOne(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
+        uint256 payFixed28Open = ISpreadBaseV1(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
 
-        SpreadTypesGenOne.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseBefore = ISpreadGenOne(
+        SpreadTypesBaseV1.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseBefore = ISpreadBaseV1(
             _spread
         ).getTimeWeightedNotional();
 
         // when
         vm.warp(openSwapTimeStamp + 27 days);
-        ISpreadGenOne(_spread).updateTimeWeightedNotionalOnClose(
+        ISpreadBaseV1(_spread).updateTimeWeightedNotionalOnClose(
             1,
             IporTypes.SwapTenor.DAYS_28,
             spreadInputsOpen.swapNotional,
@@ -134,7 +134,7 @@ contract SpreadCloseSwapServiceGenOne is Test {
         );
 
         // then
-        SpreadTypesGenOne.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseAfter = ISpreadGenOne(
+        SpreadTypesBaseV1.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseAfter = ISpreadBaseV1(
             _spread
         ).getTimeWeightedNotional();
 
@@ -155,7 +155,7 @@ contract SpreadCloseSwapServiceGenOne is Test {
     function testShouldDecreaseTimeWeightedNotionalWhen2swapsOpensOneCloseWhenPayFixed() external {
         // given
         vm.warp(1000 days);
-        ISpreadGenOne.SpreadInputs memory spreadInputsOpen = ISpreadGenOne.SpreadInputs({
+        ISpreadBaseV1.SpreadInputs memory spreadInputsOpen = ISpreadBaseV1.SpreadInputs({
             asset: address(stEth),
             swapNotional: 10_000e18,
             baseSpreadPerLeg: 0,
@@ -174,17 +174,17 @@ contract SpreadCloseSwapServiceGenOne is Test {
             block.timestamp.toUint32()
         );
 
-        ISpreadGenOne(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
+        ISpreadBaseV1(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
 
-        ISpreadGenOne(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
+        ISpreadBaseV1(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
 
-        SpreadTypesGenOne.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseBefore = ISpreadGenOne(
+        SpreadTypesBaseV1.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseBefore = ISpreadBaseV1(
             _spread
         ).getTimeWeightedNotional();
 
         // when
         vm.warp(block.timestamp + 10 days);
-        ISpreadGenOne(_spread).updateTimeWeightedNotionalOnClose(
+        ISpreadBaseV1(_spread).updateTimeWeightedNotionalOnClose(
             0,
             IporTypes.SwapTenor.DAYS_28,
             spreadInputsOpen.swapNotional,
@@ -193,7 +193,7 @@ contract SpreadCloseSwapServiceGenOne is Test {
         );
 
         // then
-        SpreadTypesGenOne.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseAfter = ISpreadGenOne(
+        SpreadTypesBaseV1.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseAfter = ISpreadBaseV1(
             _spread
         ).getTimeWeightedNotional();
 
@@ -215,7 +215,7 @@ contract SpreadCloseSwapServiceGenOne is Test {
         function testShouldDecreaseTimeWeightedNotionalWhen2swapsOpensOneCloseWhenReceiveFixed() external {
             // given
             vm.warp(1000 days);
-            ISpreadGenOne.SpreadInputs memory spreadInputsOpen = ISpreadGenOne.SpreadInputs({
+            ISpreadBaseV1.SpreadInputs memory spreadInputsOpen = ISpreadBaseV1.SpreadInputs({
                 asset: address (stEth),
                 swapNotional: 10_000e18,
                 baseSpreadPerLeg: 0,
@@ -234,16 +234,16 @@ contract SpreadCloseSwapServiceGenOne is Test {
                 block.timestamp.toUint32()
             );
 
-            ISpreadGenOne(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
-            ISpreadGenOne(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
+            ISpreadBaseV1(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
+            ISpreadBaseV1(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
 
-            SpreadTypesGenOne.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseBefore = ISpreadGenOne(
+            SpreadTypesBaseV1.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseBefore = ISpreadBaseV1(
                 _spread
             ).getTimeWeightedNotional();
 
             // when
             vm.warp(block.timestamp + 10 days);
-            ISpreadGenOne(_spread).updateTimeWeightedNotionalOnClose(
+            ISpreadBaseV1(_spread).updateTimeWeightedNotionalOnClose(
                 1,
                 IporTypes.SwapTenor.DAYS_28,
                 spreadInputsOpen.swapNotional,
@@ -252,7 +252,7 @@ contract SpreadCloseSwapServiceGenOne is Test {
             );
 
             // then
-            SpreadTypesGenOne.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseAfter = ISpreadGenOne(
+            SpreadTypesBaseV1.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseAfter = ISpreadBaseV1(
                 _spread
             ).getTimeWeightedNotional();
 
@@ -274,7 +274,7 @@ contract SpreadCloseSwapServiceGenOne is Test {
         function testShouldResetTimeWeightedNotionalToPrevStateWhenClosedLastOpenSwapReceiveFixed() external {
             // given
             uint256 cfgIporPublicationFee = 1e18;
-            ISpreadGenOne.SpreadInputs memory spreadInputsOpen = ISpreadGenOne.SpreadInputs({
+            ISpreadBaseV1.SpreadInputs memory spreadInputsOpen = ISpreadBaseV1.SpreadInputs({
                 asset: address(stEth),
                 swapNotional: 10_000e18,
                 baseSpreadPerLeg: 0,
@@ -302,7 +302,7 @@ contract SpreadCloseSwapServiceGenOne is Test {
                 IporTypes.SwapTenor.DAYS_28
             );
             _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap1, cfgIporPublicationFee);
-            ISpreadGenOne(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
+            ISpreadBaseV1(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
 
             vm.warp(block.timestamp + 5 days);
             AmmTypes.NewSwap memory newSwap2 = AmmTypes.NewSwap(
@@ -318,11 +318,11 @@ contract SpreadCloseSwapServiceGenOne is Test {
                 IporTypes.SwapTenor.DAYS_28
             );
             _ammStorage.updateStorageWhenOpenSwapReceiveFixedInternal(newSwap2, cfgIporPublicationFee);
-            ISpreadGenOne(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
+            ISpreadBaseV1(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
 
             vm.warp(block.timestamp + 5 days);
-            SpreadTypesGenOne.TimeWeightedNotionalResponse[]
-                memory timeWeightedNotionalResponseBeforeOpenLastSwap = ISpreadGenOne(_spread)
+            SpreadTypesBaseV1.TimeWeightedNotionalResponse[]
+                memory timeWeightedNotionalResponseBeforeOpenLastSwap = ISpreadBaseV1(_spread)
                     .getTimeWeightedNotional();
 
             AmmTypes.NewSwap memory newSwap3 = AmmTypes.NewSwap(
@@ -337,10 +337,10 @@ contract SpreadCloseSwapServiceGenOne is Test {
                 1e18,
                 IporTypes.SwapTenor.DAYS_28
             );
-            ISpreadGenOne(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
+            ISpreadBaseV1(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
 
-            SpreadTypesGenOne.TimeWeightedNotionalResponse[]
-                memory timeWeightedNotionalResponseAfterOpenLastSwap = ISpreadGenOne(_spread)
+            SpreadTypesBaseV1.TimeWeightedNotionalResponse[]
+                memory timeWeightedNotionalResponseAfterOpenLastSwap = ISpreadBaseV1(_spread)
                     .getTimeWeightedNotional();
 
             AmmInternalTypes.OpenSwapItem memory closedSwap = AmmInternalTypes.OpenSwapItem(
@@ -351,7 +351,7 @@ contract SpreadCloseSwapServiceGenOne is Test {
             );
 
             // when
-            ISpreadGenOne(_spread).updateTimeWeightedNotionalOnClose(
+            ISpreadBaseV1(_spread).updateTimeWeightedNotionalOnClose(
                 1,
                 IporTypes.SwapTenor.DAYS_28,
                 spreadInputsOpen.swapNotional,
@@ -360,8 +360,8 @@ contract SpreadCloseSwapServiceGenOne is Test {
             );
 
             //then
-            SpreadTypesGenOne.TimeWeightedNotionalResponse[]
-                memory timeWeightedNotionalResponseAfterCloseLastSwap = ISpreadGenOne(_spread)
+            SpreadTypesBaseV1.TimeWeightedNotionalResponse[]
+                memory timeWeightedNotionalResponseAfterCloseLastSwap = ISpreadBaseV1(_spread)
                     .getTimeWeightedNotional();
 
             assertTrue(
@@ -399,7 +399,7 @@ contract SpreadCloseSwapServiceGenOne is Test {
         function testShouldResetTimeWeightedNotionalToPrevStateWhenClosedLastOpenSwapPayFixed() external {
             // given
             uint256 cfgIporPublicationFee = 1e18;
-            ISpreadGenOne.SpreadInputs memory spreadInputsOpen = ISpreadGenOne.SpreadInputs({
+            ISpreadBaseV1.SpreadInputs memory spreadInputsOpen = ISpreadBaseV1.SpreadInputs({
                 asset: address(stEth),
                 swapNotional: 10_000e18,
                 baseSpreadPerLeg: 0,
@@ -427,7 +427,7 @@ contract SpreadCloseSwapServiceGenOne is Test {
                 IporTypes.SwapTenor.DAYS_28
             );
             _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap1, cfgIporPublicationFee);
-            ISpreadGenOne(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
+            ISpreadBaseV1(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
 
             vm.warp(block.timestamp + 5 days);
             AmmTypes.NewSwap memory newSwap2 = AmmTypes.NewSwap(
@@ -443,11 +443,11 @@ contract SpreadCloseSwapServiceGenOne is Test {
                 IporTypes.SwapTenor.DAYS_28
             );
             _ammStorage.updateStorageWhenOpenSwapPayFixedInternal(newSwap2, cfgIporPublicationFee);
-            ISpreadGenOne(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
+            ISpreadBaseV1(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
 
             vm.warp(block.timestamp + 5 days);
-            SpreadTypesGenOne.TimeWeightedNotionalResponse[]
-                memory timeWeightedNotionalResponseBeforeOpenLastSwap = ISpreadGenOne(_spread)
+            SpreadTypesBaseV1.TimeWeightedNotionalResponse[]
+                memory timeWeightedNotionalResponseBeforeOpenLastSwap = ISpreadBaseV1(_spread)
                     .getTimeWeightedNotional();
 
             AmmTypes.NewSwap memory newSwap3 = AmmTypes.NewSwap(
@@ -462,10 +462,10 @@ contract SpreadCloseSwapServiceGenOne is Test {
                 1e18,
                 IporTypes.SwapTenor.DAYS_28
             );
-            ISpreadGenOne(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
+            ISpreadBaseV1(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
 
-            SpreadTypesGenOne.TimeWeightedNotionalResponse[]
-                memory timeWeightedNotionalResponseAfterOpenLastSwap = ISpreadGenOne(_spread)
+            SpreadTypesBaseV1.TimeWeightedNotionalResponse[]
+                memory timeWeightedNotionalResponseAfterOpenLastSwap = ISpreadBaseV1(_spread)
                     .getTimeWeightedNotional();
 
             AmmInternalTypes.OpenSwapItem memory closedSwap = AmmInternalTypes.OpenSwapItem(
@@ -477,7 +477,7 @@ contract SpreadCloseSwapServiceGenOne is Test {
 
             // when
 
-            ISpreadGenOne(_spread).updateTimeWeightedNotionalOnClose(
+            ISpreadBaseV1(_spread).updateTimeWeightedNotionalOnClose(
                 0,
                 IporTypes.SwapTenor.DAYS_28,
                 spreadInputsOpen.swapNotional,
@@ -486,8 +486,8 @@ contract SpreadCloseSwapServiceGenOne is Test {
             );
 
             //then
-            SpreadTypesGenOne.TimeWeightedNotionalResponse[]
-                memory timeWeightedNotionalResponseAfterCloseLastSwap = ISpreadGenOne(_spread)
+            SpreadTypesBaseV1.TimeWeightedNotionalResponse[]
+                memory timeWeightedNotionalResponseAfterCloseLastSwap = ISpreadBaseV1(_spread)
                     .getTimeWeightedNotional();
 
             assertTrue(

@@ -78,12 +78,12 @@ contract ItfHelper {
 //            }
 //            offset += openSwaps.length;
 //
-//            AmmTypesGenOne.sol.ClosingSwapDetails memory swapDetails;
+//            AmmTypesBaseV1.sol.ClosingSwapDetails memory swapDetails;
 //            for (uint i; i < openSwaps.length; ++i) {
 //                swapDetails = IAmmCloseSwapLens(_router).getClosingSwapDetails(
 //                    asset,
 //                    account,
-//                    AmmTypesGenOne.sol.SwapDirection(openSwaps[i].direction),
+//                    AmmTypesBaseV1.sol.SwapDirection(openSwaps[i].direction),
 //                    openSwaps[i].id,
 //                    block.timestamp
 //                );

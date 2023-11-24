@@ -3,15 +3,15 @@ pragma solidity 0.8.20;
 
 import "../interfaces/IAmmCloseSwapLensStEth.sol";
 import "../interfaces/IAmmCloseSwapServiceStEth.sol";
-import "../basic/amm/services/AmmCloseSwapServiceGenOne.sol";
+import "../base/amm/services/AmmCloseSwapServiceBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
-contract AmmCloseSwapServiceStEth is AmmCloseSwapServiceGenOne, IAmmCloseSwapServiceStEth, IAmmCloseSwapLensStEth {
+contract AmmCloseSwapServiceStEth is AmmCloseSwapServiceBaseV1, IAmmCloseSwapServiceStEth, IAmmCloseSwapLensStEth {
     constructor(
-        AmmTypesGenOne.AmmCloseSwapServicePoolConfiguration memory poolCfg,
+        AmmTypesBaseV1.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput,
         address messageSignerInput
-    ) AmmCloseSwapServiceGenOne(poolCfg, iporOracleInput, messageSignerInput) {}
+    ) AmmCloseSwapServiceBaseV1(poolCfg, iporOracleInput, messageSignerInput) {}
 
     function getClosingSwapDetailsStEth(
         address account,

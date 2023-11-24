@@ -3,42 +3,42 @@ pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
-import "../../contracts/basic/interfaces/ISpreadGenOne.sol";
-import "../../contracts/basic/amm/AmmStorageGenOne.sol";
+import "../../contracts/base/interfaces/ISpreadBaseV1.sol";
+import "../../contracts/base/amm/AmmStorageBaseV1.sol";
 import "../mocks/tokens/MockTestnetToken.sol";
-import "../../contracts/basic/spread/SpreadGenOne.sol";
+import "../../contracts/base/spread/SpreadBaseV1.sol";
 
-contract SpreadSmokeGenOne is Test {
+contract SpreadSmokeBaseV1 is Test {
     using SafeCast for uint256;
-    SpreadGenOne internal _spread;
+    SpreadBaseV1 internal _spread;
     MockTestnetToken public stEth;
-    AmmStorageGenOne internal _ammStorage;
-    ISpreadGenOne.SpreadInputs internal spreadInputsPayFixed;
-    ISpreadGenOne.SpreadInputs internal spreadInputsReceiveFixed;
+    AmmStorageBaseV1 internal _ammStorage;
+    ISpreadBaseV1.SpreadInputs internal spreadInputsPayFixed;
+    ISpreadBaseV1.SpreadInputs internal spreadInputsReceiveFixed;
 
     function setUp() external {
         vm.warp(1700451493);
         stEth = new MockTestnetToken("Mocked stETH", "stETH", 100_000_000 * 1e18, uint8(18));
-        _ammStorage = new AmmStorageGenOne(address(this), address(this));
+        _ammStorage = new AmmStorageBaseV1(address(this), address(this));
 
-        SpreadTypesGenOne.TimeWeightedNotionalMemory memory weightedNotional = SpreadTypesGenOne
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotional = SpreadTypesBaseV1
             .TimeWeightedNotionalMemory({
                 timeWeightedNotionalPayFixed: 0,
                 timeWeightedNotionalReceiveFixed: 0,
                 lastUpdateTimePayFixed: block.timestamp - 10 days,
                 lastUpdateTimeReceiveFixed: block.timestamp - 10 days,
-                storageId: SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional28Days
+                storageId: SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional28Days
             });
-        SpreadTypesGenOne.TimeWeightedNotionalMemory[]
-            memory weightedNotionalInput = new SpreadTypesGenOne.TimeWeightedNotionalMemory[](1);
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory[]
+            memory weightedNotionalInput = new SpreadTypesBaseV1.TimeWeightedNotionalMemory[](1);
         weightedNotionalInput[0] = weightedNotional;
-        _spread = new SpreadGenOne({
+        _spread = new SpreadBaseV1({
             iporProtocolRouterInput: address(this),
             assetInput: address(stEth),
             timeWeightedNotional: weightedNotionalInput
         });
 
-        spreadInputsPayFixed = ISpreadGenOne.SpreadInputs({
+        spreadInputsPayFixed = ISpreadBaseV1.SpreadInputs({
             asset: address(stEth),
             swapNotional: 0,
             baseSpreadPerLeg: 0,
@@ -50,7 +50,7 @@ contract SpreadSmokeGenOne is Test {
             demandSpreadFactor: 1000,
             tenor: IporTypes.SwapTenor.DAYS_28
         });
-        spreadInputsReceiveFixed = ISpreadGenOne.SpreadInputs({
+        spreadInputsReceiveFixed = ISpreadBaseV1.SpreadInputs({
             asset: address(stEth),
             swapNotional: 0,
             baseSpreadPerLeg: 0,
@@ -68,17 +68,17 @@ contract SpreadSmokeGenOne is Test {
         // given
 
         // then
-        uint256 payFixed28 = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed28 = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed28 = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed28 = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_60;
-        uint256 payFixed60 = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 payFixed60 = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_60;
-        uint256 receiveFixed60 = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 receiveFixed60 = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_90;
-        uint256 payFixed90 = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 payFixed90 = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_90;
-        uint256 receiveFixed90 = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 receiveFixed90 = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         assertEq(payFixed28, 1e16, "payFixed28 should be 1e16");
         assertEq(receiveFixed28, 1e16, "receiveFixed28 should be 1e16");
@@ -95,8 +95,8 @@ contract SpreadSmokeGenOne is Test {
         spreadInputsPayFixed.swapNotional = 1_000e18;
         spreadInputsReceiveFixed.swapNotional = 1_000e18;
 
-        uint256 payFixed28Before = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed28Before = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
+        uint256 payFixed28Before = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed28Before = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(
             spreadInputsReceiveFixed
         );
 
@@ -104,8 +104,8 @@ contract SpreadSmokeGenOne is Test {
         spreadInputsReceiveFixed.demandSpreadFactor = 500;
 
         // then
-        uint256 payFixed28After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed28After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed28After = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed28After = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         // then
         assertTrue(payFixed28Before < payFixed28After, "payFixed28Before should be smaller than payFixed28After");
@@ -117,7 +117,7 @@ contract SpreadSmokeGenOne is Test {
 
     function testShouldSpreadPayFixedIncreaseWhenOneSwapOpenOn28PayFixed() external {
         // given
-        ISpreadGenOne.SpreadInputs memory spreadInputsOpen = ISpreadGenOne.SpreadInputs({
+        ISpreadBaseV1.SpreadInputs memory spreadInputsOpen = ISpreadBaseV1.SpreadInputs({
             asset: address(stEth),
             swapNotional: 10_000e18,
             baseSpreadPerLeg: 0,
@@ -130,43 +130,43 @@ contract SpreadSmokeGenOne is Test {
             tenor: IporTypes.SwapTenor.DAYS_28
         });
 
-        uint256 payFixed28Before = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed28Before = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
+        uint256 payFixed28Before = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed28Before = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(
             spreadInputsReceiveFixed
         );
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_60;
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_60;
-        uint256 payFixed60Before = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed60Before = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
+        uint256 payFixed60Before = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed60Before = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(
             spreadInputsReceiveFixed
         );
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_90;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_90;
-        uint256 payFixed90Before = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed90Before = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
+        uint256 payFixed90Before = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed90Before = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(
             spreadInputsReceiveFixed
         );
 
         // when
         spreadInputsOpen.tenor = IporTypes.SwapTenor.DAYS_28;
-        uint256 payFixed28Open = ISpreadGenOne(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
+        uint256 payFixed28Open = ISpreadBaseV1(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
 
         // then
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_28;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_28;
-        uint256 payFixed28After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed28After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed28After = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed28After = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_60;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_60;
-        uint256 payFixed60After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed60After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed60After = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed60After = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_90;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_90;
-        uint256 payFixed90After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed90After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed90After = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed90After = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         assertEq(payFixed28Before, 1e16, "payFixed28Before should be 1e16");
         assertEq(receiveFixed28Before, 1e16, "receiveFixed28Before should be 1e16");
@@ -190,7 +190,7 @@ contract SpreadSmokeGenOne is Test {
 
     function testShouldUseCapWhenOneSwapOpenOn28PayFixed() external {
         // given
-        ISpreadGenOne.SpreadInputs memory spreadInputsOpen = ISpreadGenOne.SpreadInputs({
+        ISpreadBaseV1.SpreadInputs memory spreadInputsOpen = ISpreadBaseV1.SpreadInputs({
             asset: address(stEth),
             swapNotional: 10_000e18,
             baseSpreadPerLeg: 0,
@@ -204,7 +204,7 @@ contract SpreadSmokeGenOne is Test {
         });
 
         // when
-        uint256 payFixed28Open = ISpreadGenOne(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
+        uint256 payFixed28Open = ISpreadBaseV1(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
 
         // then
         assertTrue(payFixed28Open > 2e16, "payFixed28Open should be greater than 2e16");
@@ -212,7 +212,7 @@ contract SpreadSmokeGenOne is Test {
 
     function testShouldSpreadPayFixedIncreaseWhenOneSwapOpenOn60PayFixed() external {
         // given
-        ISpreadGenOne.SpreadInputs memory spreadInputsOpen = ISpreadGenOne.SpreadInputs({
+        ISpreadBaseV1.SpreadInputs memory spreadInputsOpen = ISpreadBaseV1.SpreadInputs({
             asset: address(stEth),
             swapNotional: 10_000e18,
             baseSpreadPerLeg: 0,
@@ -225,39 +225,39 @@ contract SpreadSmokeGenOne is Test {
             tenor: IporTypes.SwapTenor.DAYS_28
         });
 
-        uint256 payFixed28Before = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed28Before = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
+        uint256 payFixed28Before = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed28Before = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(
             spreadInputsReceiveFixed
         );
 
         spreadInputsOpen.tenor = IporTypes.SwapTenor.DAYS_60;
-        uint256 payFixed60Before = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed60Before = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
+        uint256 payFixed60Before = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed60Before = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(
             spreadInputsReceiveFixed
         );
 
         spreadInputsOpen.tenor = IporTypes.SwapTenor.DAYS_90;
-        uint256 payFixed90Before = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed90Before = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
+        uint256 payFixed90Before = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed90Before = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(
             spreadInputsReceiveFixed
         );
 
         // when
         spreadInputsOpen.tenor = IporTypes.SwapTenor.DAYS_60;
-        uint256 payFixed60Open = ISpreadGenOne(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
+        uint256 payFixed60Open = ISpreadBaseV1(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
 
         // then
         spreadInputsOpen.tenor = IporTypes.SwapTenor.DAYS_28;
-        uint256 payFixed28After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed28After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed28After = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed28After = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         spreadInputsOpen.tenor = IporTypes.SwapTenor.DAYS_60;
-        uint256 payFixed60After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed60After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed60After = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed60After = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         spreadInputsOpen.tenor = IporTypes.SwapTenor.DAYS_90;
-        uint256 payFixed90After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed90After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed90After = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed90After = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         assertEq(payFixed28Before, 1e16, "payFixed28Before should be 1e16");
         assertEq(receiveFixed28Before, 1e16, "receiveFixed28Before should be 1e16");
@@ -281,7 +281,7 @@ contract SpreadSmokeGenOne is Test {
 
     function testShouldUseCapWhenOneSwapOpenOn60PayFixed() external {
         // given
-        ISpreadGenOne.SpreadInputs memory spreadInputsOpen = ISpreadGenOne.SpreadInputs({
+        ISpreadBaseV1.SpreadInputs memory spreadInputsOpen = ISpreadBaseV1.SpreadInputs({
             asset: address(stEth),
             swapNotional: 10_000e18,
             baseSpreadPerLeg: 0,
@@ -295,7 +295,7 @@ contract SpreadSmokeGenOne is Test {
         });
 
         // when
-        uint256 payFixed60Open = ISpreadGenOne(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
+        uint256 payFixed60Open = ISpreadBaseV1(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
 
         // then
         assertTrue(payFixed60Open > 2e16, "payFixed28Open should be greater than 2e16");
@@ -303,7 +303,7 @@ contract SpreadSmokeGenOne is Test {
 
     function testShouldSpreadPayFixedIncreaseWhenOneSwapOpenOn90PayFixed() external {
         // given
-        ISpreadGenOne.SpreadInputs memory spreadInputsOpen = ISpreadGenOne.SpreadInputs({
+        ISpreadBaseV1.SpreadInputs memory spreadInputsOpen = ISpreadBaseV1.SpreadInputs({
             asset: address(stEth),
             swapNotional: 10_000e18,
             baseSpreadPerLeg: 0,
@@ -316,44 +316,44 @@ contract SpreadSmokeGenOne is Test {
             tenor: IporTypes.SwapTenor.DAYS_28
         });
 
-        uint256 payFixed28Before = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed28Before = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
+        uint256 payFixed28Before = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed28Before = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(
             spreadInputsReceiveFixed
         );
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_60;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_60;
-        uint256 payFixed60Before = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed60Before = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
+        uint256 payFixed60Before = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed60Before = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(
             spreadInputsReceiveFixed
         );
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_90;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_90;
-        uint256 payFixed90Before = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed90Before = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
+        uint256 payFixed90Before = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed90Before = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(
             spreadInputsReceiveFixed
         );
 
         // when
         spreadInputsOpen.tenor = IporTypes.SwapTenor.DAYS_90;
-        uint256 payFixed90Open = ISpreadGenOne(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
+        uint256 payFixed90Open = ISpreadBaseV1(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
 
         // then
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_28;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_28;
-        uint256 payFixed28After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed28After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed28After = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed28After = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_60;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_60;
-        uint256 payFixed60After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed60After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed60After = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed60After = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_90;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_90;
-        uint256 payFixed90After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed90After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed90After = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed90After = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         assertEq(payFixed28Before, 1e16, "payFixed28Before should be 1e16");
         assertEq(receiveFixed28Before, 1e16, "receiveFixed28Before should be 1e16");
@@ -377,7 +377,7 @@ contract SpreadSmokeGenOne is Test {
 
     function testUseCapWhenOneSwapOpenOn90PayFixed() external {
         // given
-        ISpreadGenOne.SpreadInputs memory spreadInputsOpen = ISpreadGenOne.SpreadInputs({
+        ISpreadBaseV1.SpreadInputs memory spreadInputsOpen = ISpreadBaseV1.SpreadInputs({
             asset: address(stEth),
             swapNotional: 10_000e18,
             baseSpreadPerLeg: 0,
@@ -391,7 +391,7 @@ contract SpreadSmokeGenOne is Test {
         });
 
         // when
-        uint256 payFixed90Open = ISpreadGenOne(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
+        uint256 payFixed90Open = ISpreadBaseV1(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
 
         // then
         assertTrue(payFixed90Open > 2e16, "payFixed28Open should be greater than 2e16");
@@ -399,7 +399,7 @@ contract SpreadSmokeGenOne is Test {
 
     function testShouldSpreadPayFixedIncreaseWhenOneSwapOpenOn28PayFixed2() external {
         // given
-        ISpreadGenOne.SpreadInputs memory spreadInputsOpen = ISpreadGenOne.SpreadInputs({
+        ISpreadBaseV1.SpreadInputs memory spreadInputsOpen = ISpreadBaseV1.SpreadInputs({
             asset: address(stEth),
             swapNotional: 10_000e18,
             baseSpreadPerLeg: 0,
@@ -414,43 +414,43 @@ contract SpreadSmokeGenOne is Test {
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_28;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_28;
-        uint256 payFixed28Before = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed28Before = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
+        uint256 payFixed28Before = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed28Before = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(
             spreadInputsReceiveFixed
         );
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_60;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_60;
-        uint256 payFixed60Before = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed60Before = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
+        uint256 payFixed60Before = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed60Before = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(
             spreadInputsReceiveFixed
         );
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_90;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_90;
-        uint256 payFixed90Before = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed90Before = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
+        uint256 payFixed90Before = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed90Before = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(
             spreadInputsReceiveFixed
         );
 
         // when
-        uint256 payFixed28Open = ISpreadGenOne(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
+        uint256 payFixed28Open = ISpreadBaseV1(_spread).calculateAndUpdateOfferedRatePayFixed(spreadInputsOpen);
 
         // then
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_90;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_90;
-        uint256 payFixed28After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed28After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed28After = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed28After = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_60;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_60;
-        uint256 payFixed60After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed60After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed60After = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed60After = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_90;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_90;
-        uint256 payFixed90After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed90After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed90After = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed90After = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         assertEq(payFixed28Before, 1e16, "payFixed28Before should be 1e16");
         assertEq(receiveFixed28Before, 1e16, "receiveFixed28Before should be 1e16");
@@ -475,7 +475,7 @@ contract SpreadSmokeGenOne is Test {
     function testShouldSpreadReceiveFixedIncreaseWhenOneSwapOpenOn28ReceiveFixed() external {
         // given
 
-        ISpreadGenOne.SpreadInputs memory spreadInputsOpen = ISpreadGenOne.SpreadInputs({
+        ISpreadBaseV1.SpreadInputs memory spreadInputsOpen = ISpreadBaseV1.SpreadInputs({
             asset: address(stEth),
             swapNotional: 10_000e18,
             baseSpreadPerLeg: 0,
@@ -488,43 +488,43 @@ contract SpreadSmokeGenOne is Test {
             tenor: IporTypes.SwapTenor.DAYS_28
         });
 
-        uint256 payFixed28Before = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed28Before = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
+        uint256 payFixed28Before = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed28Before = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(
             spreadInputsReceiveFixed
         );
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_60;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_60;
-        uint256 payFixed60Before = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed60Before = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
+        uint256 payFixed60Before = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed60Before = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(
             spreadInputsReceiveFixed
         );
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_90;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_90;
-        uint256 payFixed90Before = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed90Before = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
+        uint256 payFixed90Before = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed90Before = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(
             spreadInputsReceiveFixed
         );
 
         // when
-        uint256 receiveFixed28Open = ISpreadGenOne(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
+        uint256 receiveFixed28Open = ISpreadBaseV1(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
 
         // then
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_28;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_28;
-        uint256 payFixed28After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed28After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed28After = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed28After = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_60;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_60;
-        uint256 payFixed60After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed60After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed60After = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed60After = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_90;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_90;
-        uint256 payFixed90After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed90After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed90After = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed90After = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         assertEq(payFixed28Before, 1e16, "payFixed28Before should be 1e16");
         assertEq(receiveFixed28Before, 1e16, "receiveFixed28Before should be 1e16");
@@ -548,7 +548,7 @@ contract SpreadSmokeGenOne is Test {
 
     function testShouldUseCapWhenOneSwapOpenOn28ReceiveFixed() external {
         // given
-        ISpreadGenOne.SpreadInputs memory spreadInputsOpen = ISpreadGenOne.SpreadInputs({
+        ISpreadBaseV1.SpreadInputs memory spreadInputsOpen = ISpreadBaseV1.SpreadInputs({
             asset: address(stEth),
             swapNotional: 10_000e18,
             baseSpreadPerLeg: 0,
@@ -561,7 +561,7 @@ contract SpreadSmokeGenOne is Test {
             tenor: IporTypes.SwapTenor.DAYS_28
         });
         // when
-        uint256 receiveFixed28Open = ISpreadGenOne(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
+        uint256 receiveFixed28Open = ISpreadBaseV1(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
 
         // then
         assertTrue(receiveFixed28Open < 1e15, "receiveFixed28Open should be less than 1e15");
@@ -569,7 +569,7 @@ contract SpreadSmokeGenOne is Test {
 
     function testShouldSpreadReceiveFixedIncreaseWhenOneSwapOpenOn60ReceiveFixed() external {
         // given
-        ISpreadGenOne.SpreadInputs memory spreadInputsOpen = ISpreadGenOne.SpreadInputs({
+        ISpreadBaseV1.SpreadInputs memory spreadInputsOpen = ISpreadBaseV1.SpreadInputs({
             asset: address(stEth),
             swapNotional: 10_000e18,
             baseSpreadPerLeg: 0,
@@ -582,43 +582,43 @@ contract SpreadSmokeGenOne is Test {
             tenor: IporTypes.SwapTenor.DAYS_60
         });
 
-        uint256 payFixed28Before = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed28Before = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
+        uint256 payFixed28Before = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed28Before = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(
             spreadInputsReceiveFixed
         );
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_60;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_60;
-        uint256 payFixed60Before = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed60Before = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
+        uint256 payFixed60Before = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed60Before = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(
             spreadInputsReceiveFixed
         );
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_90;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_90;
-        uint256 payFixed90Before = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed90Before = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
+        uint256 payFixed90Before = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed90Before = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(
             spreadInputsReceiveFixed
         );
 
         // when
-        uint256 receiveFixed60Open = ISpreadGenOne(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
+        uint256 receiveFixed60Open = ISpreadBaseV1(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
 
         // then
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_28;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_28;
-        uint256 payFixed28After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed28After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed28After = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed28After = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_60;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_60;
-        uint256 payFixed60After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed60After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed60After = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed60After = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_90;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_90;
-        uint256 payFixed90After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed90After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed90After = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed90After = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         assertEq(payFixed28Before, 1e16, "payFixed28Before should be 1e16");
         assertEq(receiveFixed28Before, 1e16, "receiveFixed28Before should be 1e16");
@@ -642,7 +642,7 @@ contract SpreadSmokeGenOne is Test {
 
     function testShouldUseCapWhenOneSwapOpenOn60ReceiveFixed() external {
         // given
-        ISpreadGenOne.SpreadInputs memory spreadInputsOpen = ISpreadGenOne.SpreadInputs({
+        ISpreadBaseV1.SpreadInputs memory spreadInputsOpen = ISpreadBaseV1.SpreadInputs({
             asset: address(stEth),
             swapNotional: 10_000e18,
             baseSpreadPerLeg: 0,
@@ -656,7 +656,7 @@ contract SpreadSmokeGenOne is Test {
         });
 
         // when
-        uint256 receiveFixed60Open = ISpreadGenOne(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
+        uint256 receiveFixed60Open = ISpreadBaseV1(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
 
         // then
         assertTrue(receiveFixed60Open < 1e15, "receiveFixed60Open should be less than 1e15");
@@ -664,7 +664,7 @@ contract SpreadSmokeGenOne is Test {
 
     function testShouldSpreadReceiveFixedIncreaseWhenOneSwapOpenOn90ReceiveFixed() external {
         // given
-        ISpreadGenOne.SpreadInputs memory spreadInputsOpen = ISpreadGenOne.SpreadInputs({
+        ISpreadBaseV1.SpreadInputs memory spreadInputsOpen = ISpreadBaseV1.SpreadInputs({
             asset: address(stEth),
             swapNotional: 10_000e18,
             baseSpreadPerLeg: 0,
@@ -677,43 +677,43 @@ contract SpreadSmokeGenOne is Test {
             tenor: IporTypes.SwapTenor.DAYS_90
         });
 
-        uint256 payFixed28Before = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed28Before = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
+        uint256 payFixed28Before = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed28Before = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(
             spreadInputsReceiveFixed
         );
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_60;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_60;
-        uint256 payFixed60Before = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed60Before = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
+        uint256 payFixed60Before = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed60Before = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(
             spreadInputsReceiveFixed
         );
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_90;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_90;
-        uint256 payFixed90Before = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed90Before = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(
+        uint256 payFixed90Before = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed90Before = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(
             spreadInputsReceiveFixed
         );
 
         // when
-        uint256 receiveFixed90Open = ISpreadGenOne(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
+        uint256 receiveFixed90Open = ISpreadBaseV1(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
 
         // then
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_28;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_28;
-        uint256 payFixed28After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed28After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed28After = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed28After = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_60;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_60;
-        uint256 payFixed60After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed60After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed60After = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed60After = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         spreadInputsPayFixed.tenor = IporTypes.SwapTenor.DAYS_90;
         spreadInputsReceiveFixed.tenor = IporTypes.SwapTenor.DAYS_90;
-        uint256 payFixed90After = ISpreadGenOne(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
-        uint256 receiveFixed90After = ISpreadGenOne(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
+        uint256 payFixed90After = ISpreadBaseV1(_spread).calculateOfferedRatePayFixed(spreadInputsPayFixed);
+        uint256 receiveFixed90After = ISpreadBaseV1(_spread).calculateOfferedRateReceiveFixed(spreadInputsReceiveFixed);
 
         assertEq(payFixed28Before, 1e16, "payFixed28Before should be 1e16");
         assertEq(receiveFixed28Before, 1e16, "receiveFixed28Before should be 1e16");
@@ -737,7 +737,7 @@ contract SpreadSmokeGenOne is Test {
 
     function testShouldUseCapWhenOneSwapOpenOn90ReceiveFixed() external {
         // given
-        ISpreadGenOne.SpreadInputs memory spreadInputsOpen = ISpreadGenOne.SpreadInputs({
+        ISpreadBaseV1.SpreadInputs memory spreadInputsOpen = ISpreadBaseV1.SpreadInputs({
             asset: address(stEth),
             swapNotional: 10_000e18,
             baseSpreadPerLeg: 0,
@@ -751,7 +751,7 @@ contract SpreadSmokeGenOne is Test {
         });
 
         // when
-        uint256 receiveFixed90Open = ISpreadGenOne(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
+        uint256 receiveFixed90Open = ISpreadBaseV1(_spread).calculateAndUpdateOfferedRateReceiveFixed(spreadInputsOpen);
 
         // then
         assertTrue(receiveFixed90Open < 1e15, "receiveFixed90Open should be less than 1e15");
@@ -759,14 +759,15 @@ contract SpreadSmokeGenOne is Test {
 
     function testShouldBeAbleToOverrideTimeWaitedNotional() external {
         // given
-        SpreadTypesGenOne.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse = ISpreadGenOne(_spread)
+        SpreadTypesBaseV1.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse = ISpreadBaseV1(_spread)
             .getTimeWeightedNotional();
-        SpreadTypesGenOne.TimeWeightedNotionalMemory[] memory timeWeightedNotional = new SpreadTypesGenOne.TimeWeightedNotionalMemory[](
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory[]
+            memory timeWeightedNotional = new SpreadTypesBaseV1.TimeWeightedNotionalMemory[](
                 timeWeightedNotionalResponse.length
             );
 
         for (uint i; i < timeWeightedNotionalResponse.length; i++) {
-            timeWeightedNotional[i] = SpreadTypesGenOne.TimeWeightedNotionalMemory({
+            timeWeightedNotional[i] = SpreadTypesBaseV1.TimeWeightedNotionalMemory({
                 timeWeightedNotionalPayFixed: timeWeightedNotionalResponse[i]
                     .timeWeightedNotional
                     .timeWeightedNotionalPayFixed + 100e18,
@@ -783,10 +784,10 @@ contract SpreadSmokeGenOne is Test {
         }
 
         // when
-        ISpreadGenOne(_spread).updateTimeWeightedNotional(timeWeightedNotional);
+        ISpreadBaseV1(_spread).updateTimeWeightedNotional(timeWeightedNotional);
 
         // then
-        SpreadTypesGenOne.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseAfter = ISpreadGenOne(
+        SpreadTypesBaseV1.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseAfter = ISpreadBaseV1(
             _spread
         ).getTimeWeightedNotional();
 
@@ -819,17 +820,17 @@ contract SpreadSmokeGenOne is Test {
         }
     }
 
-
     function testShouldNotBeAbleToOverrideTimeWaitedNotionalWhenNotOwner() external {
         // given
-        SpreadTypesGenOne.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse = ISpreadGenOne(_spread)
+        SpreadTypesBaseV1.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse = ISpreadBaseV1(_spread)
             .getTimeWeightedNotional();
-        SpreadTypesGenOne.TimeWeightedNotionalMemory[] memory timeWeightedNotional = new SpreadTypesGenOne.TimeWeightedNotionalMemory[](
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory[]
+            memory timeWeightedNotional = new SpreadTypesBaseV1.TimeWeightedNotionalMemory[](
                 timeWeightedNotionalResponse.length
             );
 
         for (uint i; i < timeWeightedNotionalResponse.length; i++) {
-            timeWeightedNotional[i] = SpreadTypesGenOne.TimeWeightedNotionalMemory({
+            timeWeightedNotional[i] = SpreadTypesBaseV1.TimeWeightedNotionalMemory({
                 timeWeightedNotionalPayFixed: timeWeightedNotionalResponse[i]
                     .timeWeightedNotional
                     .timeWeightedNotionalPayFixed + 100e18,
@@ -848,6 +849,6 @@ contract SpreadSmokeGenOne is Test {
         // when
         vm.prank(address(_ammStorage));
         vm.expectRevert("Ownable: caller is not the owner");
-        ISpreadGenOne(_spread).updateTimeWeightedNotional(timeWeightedNotional);
+        ISpreadBaseV1(_spread).updateTimeWeightedNotional(timeWeightedNotional);
     }
 }

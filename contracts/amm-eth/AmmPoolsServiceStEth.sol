@@ -12,7 +12,7 @@ import "../libraries/StorageLib.sol";
 import "../libraries/IporContractValidator.sol";
 import "../libraries/AmmLib.sol";
 import "../governance/AmmConfigurationManager.sol";
-import "../basic/interfaces/IAmmTreasuryGenOne.sol";
+import "../base/interfaces/IAmmTreasuryBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
@@ -55,7 +55,7 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
     function provideLiquidityStEth(address beneficiary, uint256 stEthAmount) external payable override {
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
 
-        uint256 actualLiquidityPoolBalance = IAmmTreasuryGenOne(ammTreasuryStEth).getLiquidityPoolBalance();
+        uint256 actualLiquidityPoolBalance = IAmmTreasuryBaseV1(ammTreasuryStEth).getLiquidityPoolBalance();
         uint256 newPoolBalance = actualLiquidityPoolBalance + stEthAmount;
 
         require(
@@ -85,7 +85,7 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
         require(wEthAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
-        uint256 actualLiquidityPoolBalance = IAmmTreasuryGenOne(ammTreasuryStEth).getLiquidityPoolBalance();
+        uint256 actualLiquidityPoolBalance = IAmmTreasuryBaseV1(ammTreasuryStEth).getLiquidityPoolBalance();
         uint256 newPoolBalance = wEthAmount + actualLiquidityPoolBalance;
 
         require(
@@ -104,7 +104,7 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
         require(msg.value > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
-        uint256 actualLiquidityPoolBalance = IAmmTreasuryGenOne(ammTreasuryStEth).getLiquidityPoolBalance();
+        uint256 actualLiquidityPoolBalance = IAmmTreasuryBaseV1(ammTreasuryStEth).getLiquidityPoolBalance();
         uint256 newPoolBalance = ethAmount + actualLiquidityPoolBalance;
 
         require(
@@ -122,7 +122,7 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
         );
         require(beneficiary != address(0), IporErrors.WRONG_ADDRESS);
 
-        uint256 actualLiquidityPoolBalance = IAmmTreasuryGenOne(ammTreasuryStEth).getLiquidityPoolBalance();
+        uint256 actualLiquidityPoolBalance = IAmmTreasuryBaseV1(ammTreasuryStEth).getLiquidityPoolBalance();
 
         uint256 exchangeRate = _getExchangeRate(actualLiquidityPoolBalance);
 

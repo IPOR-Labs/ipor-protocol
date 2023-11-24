@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "../basic/amm/AmmTreasuryGenOne.sol";
+import "../base/amm/AmmTreasuryBaseV1.sol";
 
-contract AmmTreasuryStEth is AmmTreasuryGenOne {
+contract AmmTreasuryStEth is AmmTreasuryBaseV1 {
     constructor(
         address assetInput,
         address routerInput,
         address ammStorageInput
-    ) AmmTreasuryGenOne(assetInput, routerInput, ammStorageInput) {}
+    ) AmmTreasuryBaseV1(assetInput, routerInput, ammStorageInput) {}
 }

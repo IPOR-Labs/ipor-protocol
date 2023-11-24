@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "../../contracts/basic/spread/CalculateTimeWeightedNotionalLibsGenOne.sol";
+import "../../contracts/base/spread/CalculateTimeWeightedNotionalLibsBaseV1.sol";
 import "../TestCommons.sol";
 
-contract CalculateWeightedNotionalLibsGenOneTest is TestCommons {
-    SpreadStorageLibsGenOne.StorageId internal _storageIdIterationItem;
+contract CalculateWeightedNotionalLibsBaseV1Test is TestCommons {
+    SpreadStorageLibsBaseV1.StorageId internal _storageIdIterationItem;
 
-    SpreadStorageLibsGenOne.StorageId[] internal _storageIdEnums = [
-    SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional28Days,
-    SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional60Days,
-    SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional90Days
+    SpreadStorageLibsBaseV1.StorageId[] internal _storageIdEnums = [
+    SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional28Days,
+    SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional60Days,
+    SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional90Days
     ];
 
     modifier _parameterizedStorageId() {
@@ -30,7 +30,7 @@ contract CalculateWeightedNotionalLibsGenOneTest is TestCommons {
         vm.assume(totalCollateralReceiveFixed < 1_000_000);
 
         // when
-        uint256 lpDepth = CalculateTimeWeightedNotionalLibsGenOne.calculateLpDepth(
+        uint256 lpDepth = CalculateTimeWeightedNotionalLibsBaseV1.calculateLpDepth(
             lpBalance,
             totalCollateralPayFixed * 1e18,
             totalCollateralReceiveFixed * 1e18
@@ -53,7 +53,7 @@ contract CalculateWeightedNotionalLibsGenOneTest is TestCommons {
         vm.assume(timeFromLastUpdate > tenorInSeconds);
 
         // when
-        uint256 result = CalculateTimeWeightedNotionalLibsGenOne.calculateTimeWeightedNotional(
+        uint256 result = CalculateTimeWeightedNotionalLibsBaseV1.calculateTimeWeightedNotional(
             weightedNotional,
             timeFromLastUpdate,
             tenorInSeconds
@@ -76,7 +76,7 @@ contract CalculateWeightedNotionalLibsGenOneTest is TestCommons {
         vm.assume(timeFromLastUpdate < tenorInSeconds);
 
         // when
-        uint256 result = CalculateTimeWeightedNotionalLibsGenOne.calculateTimeWeightedNotional(
+        uint256 result = CalculateTimeWeightedNotionalLibsBaseV1.calculateTimeWeightedNotional(
             weightedNotional,
             timeFromLastUpdate,
             tenorInSeconds
@@ -99,13 +99,13 @@ contract CalculateWeightedNotionalLibsGenOneTest is TestCommons {
 
         newSwapNotional = newSwapNotional * 1e18;
 
-        SpreadTypesGenOne.TimeWeightedNotionalMemory memory weightedNotionalBefore = SpreadStorageLibsGenOne.getTimeWeightedNotionalForAssetAndTenor(
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotionalBefore = SpreadStorageLibsBaseV1.getTimeWeightedNotionalForAssetAndTenor(
             _storageIdIterationItem
         );
 
         // when
-        CalculateTimeWeightedNotionalLibsGenOne.updateTimeWeightedNotionalReceiveFixed(
-            SpreadTypesGenOne.TimeWeightedNotionalMemory({
+        CalculateTimeWeightedNotionalLibsBaseV1.updateTimeWeightedNotionalReceiveFixed(
+            SpreadTypesBaseV1.TimeWeightedNotionalMemory({
                 timeWeightedNotionalPayFixed: weightedNotionalBefore.timeWeightedNotionalPayFixed,
                 lastUpdateTimePayFixed: weightedNotionalBefore.lastUpdateTimePayFixed,
                 timeWeightedNotionalReceiveFixed: weightedNotionalBefore.timeWeightedNotionalReceiveFixed,
@@ -117,7 +117,7 @@ contract CalculateWeightedNotionalLibsGenOneTest is TestCommons {
         );
 
         // then
-        SpreadTypesGenOne.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibsGenOne.getTimeWeightedNotionalForAssetAndTenor(
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibsBaseV1.getTimeWeightedNotionalForAssetAndTenor(
             _storageIdIterationItem
         );
 
@@ -151,13 +151,13 @@ contract CalculateWeightedNotionalLibsGenOneTest is TestCommons {
 
         newSwapNotional = newSwapNotional * 1e18;
 
-        SpreadTypesGenOne.TimeWeightedNotionalMemory memory weightedNotionalBefore = SpreadStorageLibsGenOne.getTimeWeightedNotionalForAssetAndTenor(
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotionalBefore = SpreadStorageLibsBaseV1.getTimeWeightedNotionalForAssetAndTenor(
             _storageIdIterationItem
         );
 
         // when
-        CalculateTimeWeightedNotionalLibsGenOne.updateTimeWeightedNotionalPayFixed(
-            SpreadTypesGenOne.TimeWeightedNotionalMemory({
+        CalculateTimeWeightedNotionalLibsBaseV1.updateTimeWeightedNotionalPayFixed(
+            SpreadTypesBaseV1.TimeWeightedNotionalMemory({
                 timeWeightedNotionalPayFixed: weightedNotionalBefore.timeWeightedNotionalPayFixed,
                 lastUpdateTimePayFixed: weightedNotionalBefore.lastUpdateTimePayFixed,
                 timeWeightedNotionalReceiveFixed: weightedNotionalBefore.timeWeightedNotionalReceiveFixed,
@@ -169,7 +169,7 @@ contract CalculateWeightedNotionalLibsGenOneTest is TestCommons {
         );
 
         // then
-        SpreadTypesGenOne.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibsGenOne.getTimeWeightedNotionalForAssetAndTenor(
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibsBaseV1.getTimeWeightedNotionalForAssetAndTenor(
             _storageIdIterationItem
         );
 
@@ -198,7 +198,7 @@ contract CalculateWeightedNotionalLibsGenOneTest is TestCommons {
 
         newSwapNotional = newSwapNotional * 1e18;
 
-        SpreadTypesGenOne.TimeWeightedNotionalMemory memory weightedNotionalBefore = SpreadTypesGenOne.TimeWeightedNotionalMemory({
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotionalBefore = SpreadTypesBaseV1.TimeWeightedNotionalMemory({
             timeWeightedNotionalPayFixed: 0,
             timeWeightedNotionalReceiveFixed: 1_000_000 * 1e18,
             lastUpdateTimePayFixed: 0,
@@ -209,14 +209,14 @@ contract CalculateWeightedNotionalLibsGenOneTest is TestCommons {
         vm.warp(blockTimestamp + 6 days);
 
         // when
-        CalculateTimeWeightedNotionalLibsGenOne.updateTimeWeightedNotionalReceiveFixed(
+        CalculateTimeWeightedNotionalLibsBaseV1.updateTimeWeightedNotionalReceiveFixed(
             weightedNotionalBefore,
             newSwapNotional,
             28 days
         );
 
         // then
-        SpreadTypesGenOne.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibsGenOne.getTimeWeightedNotionalForAssetAndTenor(
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibsBaseV1.getTimeWeightedNotionalForAssetAndTenor(
             _storageIdIterationItem
         );
 
@@ -242,7 +242,7 @@ contract CalculateWeightedNotionalLibsGenOneTest is TestCommons {
 
         newSwapNotional = newSwapNotional * 1e18;
 
-        SpreadTypesGenOne.TimeWeightedNotionalMemory memory weightedNotionalBefore = SpreadTypesGenOne.TimeWeightedNotionalMemory({
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotionalBefore = SpreadTypesBaseV1.TimeWeightedNotionalMemory({
             timeWeightedNotionalPayFixed: 1_000_000 * 1e18,
             timeWeightedNotionalReceiveFixed: 0,
             lastUpdateTimePayFixed: 0,
@@ -253,10 +253,10 @@ contract CalculateWeightedNotionalLibsGenOneTest is TestCommons {
         vm.warp(blockTimestamp + 6 days);
 
         // when
-        CalculateTimeWeightedNotionalLibsGenOne.updateTimeWeightedNotionalPayFixed(weightedNotionalBefore, newSwapNotional, 28 days);
+        CalculateTimeWeightedNotionalLibsBaseV1.updateTimeWeightedNotionalPayFixed(weightedNotionalBefore, newSwapNotional, 28 days);
 
         // then
-        SpreadTypesGenOne.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibsGenOne.getTimeWeightedNotionalForAssetAndTenor(
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotionalAfter = SpreadStorageLibsBaseV1.getTimeWeightedNotionalForAssetAndTenor(
             _storageIdIterationItem
         );
     }
@@ -265,17 +265,17 @@ contract CalculateWeightedNotionalLibsGenOneTest is TestCommons {
         // given
         uint256 timestamp = 120 days;
         vm.warp(timestamp);
-        SpreadTypesGenOne.TimeWeightedNotionalMemory memory weightedNotional28Days = _getWeightedNotionalMemory(
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotional28Days = _getWeightedNotionalMemory(
             1,
-            SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional28Days
+            SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional28Days
         );
-        SpreadTypesGenOne.TimeWeightedNotionalMemory memory weightedNotional60Days = _getWeightedNotionalMemory(
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotional60Days = _getWeightedNotionalMemory(
             2,
-            SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional60Days
+            SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional60Days
         );
-        SpreadTypesGenOne.TimeWeightedNotionalMemory memory weightedNotional90Days = _getWeightedNotionalMemory(
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotional90Days = _getWeightedNotionalMemory(
             3,
-            SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional90Days
+            SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional90Days
         );
 
         weightedNotional28Days.lastUpdateTimePayFixed = timestamp - 10 days;
@@ -285,25 +285,25 @@ contract CalculateWeightedNotionalLibsGenOneTest is TestCommons {
         weightedNotional90Days.lastUpdateTimePayFixed = timestamp - 10 days;
         weightedNotional90Days.lastUpdateTimeReceiveFixed = timestamp - 10 days;
 
-        SpreadStorageLibsGenOne.saveTimeWeightedNotionalForAssetAndTenor(
-            SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional28Days,
+        SpreadStorageLibsBaseV1.saveTimeWeightedNotionalForAssetAndTenor(
+            SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional28Days,
             weightedNotional28Days
         );
 
-        SpreadStorageLibsGenOne.saveTimeWeightedNotionalForAssetAndTenor(
-            SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional60Days,
+        SpreadStorageLibsBaseV1.saveTimeWeightedNotionalForAssetAndTenor(
+            SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional60Days,
             weightedNotional60Days
         );
 
-        SpreadStorageLibsGenOne.saveTimeWeightedNotionalForAssetAndTenor(
-            SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional90Days,
+        SpreadStorageLibsBaseV1.saveTimeWeightedNotionalForAssetAndTenor(
+            SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional90Days,
             weightedNotional90Days
         );
 
-        SpreadStorageLibsGenOne.StorageId[] memory storageIds = new SpreadStorageLibsGenOne.StorageId[](3);
-        storageIds[0] = SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional28Days;
-        storageIds[1] = SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional60Days;
-        storageIds[2] = SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional90Days;
+        SpreadStorageLibsBaseV1.StorageId[] memory storageIds = new SpreadStorageLibsBaseV1.StorageId[](3);
+        storageIds[0] = SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional28Days;
+        storageIds[1] = SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional60Days;
+        storageIds[2] = SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional90Days;
 
         uint256[] memory maturities = new uint256[](3);
         maturities[0] = 28 days;
@@ -311,39 +311,39 @@ contract CalculateWeightedNotionalLibsGenOneTest is TestCommons {
         maturities[2] = 90 days;
 
         // when
-        (uint256 timeWeightedNotionalPayFixed, uint256 timeWeightedNotionalReceiveFixed) = CalculateTimeWeightedNotionalLibsGenOne
+        (uint256 timeWeightedNotionalPayFixed, uint256 timeWeightedNotionalReceiveFixed) = CalculateTimeWeightedNotionalLibsBaseV1
             .getTimeWeightedNotional(storageIds, maturities, 90 days);
 
         // then
 
-        uint256 timeWeightedNotionalPayFixed28DaysResult = CalculateTimeWeightedNotionalLibsGenOne.calculateTimeWeightedNotional(
+        uint256 timeWeightedNotionalPayFixed28DaysResult = CalculateTimeWeightedNotionalLibsBaseV1.calculateTimeWeightedNotional(
             weightedNotional28Days.timeWeightedNotionalPayFixed,
             10 days,
             28 days
         );
-        uint256 timeWeightedNotionalPayFixed60DaysResult = CalculateTimeWeightedNotionalLibsGenOne.calculateTimeWeightedNotional(
+        uint256 timeWeightedNotionalPayFixed60DaysResult = CalculateTimeWeightedNotionalLibsBaseV1.calculateTimeWeightedNotional(
             weightedNotional60Days.timeWeightedNotionalPayFixed,
             10 days,
             60 days
         );
 
-        uint256 timeWeightedNotionalPayFixed90DaysResult = CalculateTimeWeightedNotionalLibsGenOne.calculateTimeWeightedNotional(
+        uint256 timeWeightedNotionalPayFixed90DaysResult = CalculateTimeWeightedNotionalLibsBaseV1.calculateTimeWeightedNotional(
             weightedNotional90Days.timeWeightedNotionalPayFixed,
             10 days,
             90 days
         );
-        uint256 timeWeightedNotionalReceiveFixed28DaysResult = CalculateTimeWeightedNotionalLibsGenOne.calculateTimeWeightedNotional(
+        uint256 timeWeightedNotionalReceiveFixed28DaysResult = CalculateTimeWeightedNotionalLibsBaseV1.calculateTimeWeightedNotional(
             weightedNotional28Days.timeWeightedNotionalReceiveFixed,
             10 days,
             28 days
         );
-        uint256 timeWeightedNotionalReceiveFixed60DaysResult = CalculateTimeWeightedNotionalLibsGenOne.calculateTimeWeightedNotional(
+        uint256 timeWeightedNotionalReceiveFixed60DaysResult = CalculateTimeWeightedNotionalLibsBaseV1.calculateTimeWeightedNotional(
             weightedNotional60Days.timeWeightedNotionalReceiveFixed,
             10 days,
             60 days
         );
 
-        uint256 timeWeightedNotionalReceiveFixed90DaysResult = CalculateTimeWeightedNotionalLibsGenOne.calculateTimeWeightedNotional(
+        uint256 timeWeightedNotionalReceiveFixed90DaysResult = CalculateTimeWeightedNotionalLibsBaseV1.calculateTimeWeightedNotional(
             weightedNotional90Days.timeWeightedNotionalReceiveFixed,
             10 days,
             90 days
@@ -386,17 +386,17 @@ contract CalculateWeightedNotionalLibsGenOneTest is TestCommons {
         // given
         uint256 timestamp = 120 days;
         vm.warp(timestamp);
-        SpreadTypesGenOne.TimeWeightedNotionalMemory memory weightedNotional28Days = _getWeightedNotionalMemory(
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotional28Days = _getWeightedNotionalMemory(
             1,
-            SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional28Days
+            SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional28Days
         );
-        SpreadTypesGenOne.TimeWeightedNotionalMemory memory weightedNotional60Days = _getWeightedNotionalMemory(
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotional60Days = _getWeightedNotionalMemory(
             2,
-            SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional60Days
+            SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional60Days
         );
-        SpreadTypesGenOne.TimeWeightedNotionalMemory memory weightedNotional90Days = _getWeightedNotionalMemory(
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotional90Days = _getWeightedNotionalMemory(
             3,
-            SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional90Days
+            SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional90Days
         );
 
         weightedNotional28Days.lastUpdateTimePayFixed = timestamp - 10 days;
@@ -406,25 +406,25 @@ contract CalculateWeightedNotionalLibsGenOneTest is TestCommons {
         weightedNotional90Days.lastUpdateTimePayFixed = timestamp - 10 days;
         weightedNotional90Days.lastUpdateTimeReceiveFixed = timestamp - 10 days;
 
-        SpreadStorageLibsGenOne.saveTimeWeightedNotionalForAssetAndTenor(
-            SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional28Days,
+        SpreadStorageLibsBaseV1.saveTimeWeightedNotionalForAssetAndTenor(
+            SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional28Days,
             weightedNotional28Days
         );
 
-        SpreadStorageLibsGenOne.saveTimeWeightedNotionalForAssetAndTenor(
-            SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional60Days,
+        SpreadStorageLibsBaseV1.saveTimeWeightedNotionalForAssetAndTenor(
+            SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional60Days,
             weightedNotional60Days
         );
 
-        SpreadStorageLibsGenOne.saveTimeWeightedNotionalForAssetAndTenor(
-            SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional90Days,
+        SpreadStorageLibsBaseV1.saveTimeWeightedNotionalForAssetAndTenor(
+            SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional90Days,
             weightedNotional90Days
         );
 
-        SpreadStorageLibsGenOne.StorageId[] memory storageIds = new SpreadStorageLibsGenOne.StorageId[](3);
-        storageIds[0] = SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional28Days;
-        storageIds[1] = SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional60Days;
-        storageIds[2] = SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional90Days;
+        SpreadStorageLibsBaseV1.StorageId[] memory storageIds = new SpreadStorageLibsBaseV1.StorageId[](3);
+        storageIds[0] = SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional28Days;
+        storageIds[1] = SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional60Days;
+        storageIds[2] = SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional90Days;
 
         uint256[] memory maturities = new uint256[](3);
         maturities[0] = 28 days;
@@ -432,39 +432,39 @@ contract CalculateWeightedNotionalLibsGenOneTest is TestCommons {
         maturities[2] = 90 days;
 
         // when
-        (uint256 timeWeightedNotionalPayFixed, uint256 timeWeightedNotionalReceiveFixed) = CalculateTimeWeightedNotionalLibsGenOne
+        (uint256 timeWeightedNotionalPayFixed, uint256 timeWeightedNotionalReceiveFixed) = CalculateTimeWeightedNotionalLibsBaseV1
             .getTimeWeightedNotional(storageIds, maturities, 60 days);
 
         // then
 
-        uint256 timeWeightedNotionalPayFixed28DaysResult = CalculateTimeWeightedNotionalLibsGenOne.calculateTimeWeightedNotional(
+        uint256 timeWeightedNotionalPayFixed28DaysResult = CalculateTimeWeightedNotionalLibsBaseV1.calculateTimeWeightedNotional(
             weightedNotional28Days.timeWeightedNotionalPayFixed,
             10 days,
             28 days
         );
-        uint256 timeWeightedNotionalPayFixed60DaysResult = CalculateTimeWeightedNotionalLibsGenOne.calculateTimeWeightedNotional(
+        uint256 timeWeightedNotionalPayFixed60DaysResult = CalculateTimeWeightedNotionalLibsBaseV1.calculateTimeWeightedNotional(
             weightedNotional60Days.timeWeightedNotionalPayFixed,
             10 days,
             60 days
         );
 
-        uint256 timeWeightedNotionalPayFixed90DaysResult = CalculateTimeWeightedNotionalLibsGenOne.calculateTimeWeightedNotional(
+        uint256 timeWeightedNotionalPayFixed90DaysResult = CalculateTimeWeightedNotionalLibsBaseV1.calculateTimeWeightedNotional(
             weightedNotional90Days.timeWeightedNotionalPayFixed,
             10 days,
             90 days
         );
-        uint256 timeWeightedNotionalReceiveFixed28DaysResult = CalculateTimeWeightedNotionalLibsGenOne.calculateTimeWeightedNotional(
+        uint256 timeWeightedNotionalReceiveFixed28DaysResult = CalculateTimeWeightedNotionalLibsBaseV1.calculateTimeWeightedNotional(
             weightedNotional28Days.timeWeightedNotionalReceiveFixed,
             10 days,
             28 days
         );
-        uint256 timeWeightedNotionalReceiveFixed60DaysResult = CalculateTimeWeightedNotionalLibsGenOne.calculateTimeWeightedNotional(
+        uint256 timeWeightedNotionalReceiveFixed60DaysResult = CalculateTimeWeightedNotionalLibsBaseV1.calculateTimeWeightedNotional(
             weightedNotional60Days.timeWeightedNotionalReceiveFixed,
             10 days,
             60 days
         );
 
-        uint256 timeWeightedNotionalReceiveFixed90DaysResult = CalculateTimeWeightedNotionalLibsGenOne.calculateTimeWeightedNotional(
+        uint256 timeWeightedNotionalReceiveFixed90DaysResult = CalculateTimeWeightedNotionalLibsBaseV1.calculateTimeWeightedNotional(
             weightedNotional90Days.timeWeightedNotionalReceiveFixed,
             10 days,
             90 days
@@ -507,17 +507,17 @@ contract CalculateWeightedNotionalLibsGenOneTest is TestCommons {
         // given
         uint256 timestamp = 120 days;
         vm.warp(timestamp);
-        SpreadTypesGenOne.TimeWeightedNotionalMemory memory weightedNotional28Days = _getWeightedNotionalMemory(
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotional28Days = _getWeightedNotionalMemory(
             1,
-            SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional28Days
+            SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional28Days
         );
-        SpreadTypesGenOne.TimeWeightedNotionalMemory memory weightedNotional60Days = _getWeightedNotionalMemory(
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotional60Days = _getWeightedNotionalMemory(
             2,
-            SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional60Days
+            SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional60Days
         );
-        SpreadTypesGenOne.TimeWeightedNotionalMemory memory weightedNotional90Days = _getWeightedNotionalMemory(
+        SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotional90Days = _getWeightedNotionalMemory(
             3,
-            SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional90Days
+            SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional90Days
         );
 
         weightedNotional28Days.lastUpdateTimePayFixed = timestamp - 10 days;
@@ -527,25 +527,25 @@ contract CalculateWeightedNotionalLibsGenOneTest is TestCommons {
         weightedNotional90Days.lastUpdateTimePayFixed = timestamp - 10 days;
         weightedNotional90Days.lastUpdateTimeReceiveFixed = timestamp - 10 days;
 
-        SpreadStorageLibsGenOne.saveTimeWeightedNotionalForAssetAndTenor(
-            SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional28Days,
+        SpreadStorageLibsBaseV1.saveTimeWeightedNotionalForAssetAndTenor(
+            SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional28Days,
             weightedNotional28Days
         );
 
-        SpreadStorageLibsGenOne.saveTimeWeightedNotionalForAssetAndTenor(
-            SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional60Days,
+        SpreadStorageLibsBaseV1.saveTimeWeightedNotionalForAssetAndTenor(
+            SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional60Days,
             weightedNotional60Days
         );
 
-        SpreadStorageLibsGenOne.saveTimeWeightedNotionalForAssetAndTenor(
-            SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional90Days,
+        SpreadStorageLibsBaseV1.saveTimeWeightedNotionalForAssetAndTenor(
+            SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional90Days,
             weightedNotional90Days
         );
 
-        SpreadStorageLibsGenOne.StorageId[] memory storageIds = new SpreadStorageLibsGenOne.StorageId[](3);
-        storageIds[0] = SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional28Days;
-        storageIds[1] = SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional60Days;
-        storageIds[2] = SpreadStorageLibsGenOne.StorageId.TimeWeightedNotional90Days;
+        SpreadStorageLibsBaseV1.StorageId[] memory storageIds = new SpreadStorageLibsBaseV1.StorageId[](3);
+        storageIds[0] = SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional28Days;
+        storageIds[1] = SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional60Days;
+        storageIds[2] = SpreadStorageLibsBaseV1.StorageId.TimeWeightedNotional90Days;
 
         uint256[] memory maturities = new uint256[](3);
         maturities[0] = 28 days;
@@ -553,39 +553,39 @@ contract CalculateWeightedNotionalLibsGenOneTest is TestCommons {
         maturities[2] = 90 days;
 
         // when
-        (uint256 timeWeightedNotionalPayFixed, uint256 timeWeightedNotionalReceiveFixed) = CalculateTimeWeightedNotionalLibsGenOne
+        (uint256 timeWeightedNotionalPayFixed, uint256 timeWeightedNotionalReceiveFixed) = CalculateTimeWeightedNotionalLibsBaseV1
             .getTimeWeightedNotional(storageIds, maturities, 28 days);
 
         // then
 
-        uint256 timeWeightedNotionalPayFixed28DaysResult = CalculateTimeWeightedNotionalLibsGenOne.calculateTimeWeightedNotional(
+        uint256 timeWeightedNotionalPayFixed28DaysResult = CalculateTimeWeightedNotionalLibsBaseV1.calculateTimeWeightedNotional(
             weightedNotional28Days.timeWeightedNotionalPayFixed,
             10 days,
             28 days
         );
-        uint256 timeWeightedNotionalPayFixed60DaysResult = CalculateTimeWeightedNotionalLibsGenOne.calculateTimeWeightedNotional(
+        uint256 timeWeightedNotionalPayFixed60DaysResult = CalculateTimeWeightedNotionalLibsBaseV1.calculateTimeWeightedNotional(
             weightedNotional60Days.timeWeightedNotionalPayFixed,
             10 days,
             60 days
         );
 
-        uint256 timeWeightedNotionalPayFixed90DaysResult = CalculateTimeWeightedNotionalLibsGenOne.calculateTimeWeightedNotional(
+        uint256 timeWeightedNotionalPayFixed90DaysResult = CalculateTimeWeightedNotionalLibsBaseV1.calculateTimeWeightedNotional(
             weightedNotional90Days.timeWeightedNotionalPayFixed,
             10 days,
             90 days
         );
-        uint256 timeWeightedNotionalReceiveFixed28DaysResult = CalculateTimeWeightedNotionalLibsGenOne.calculateTimeWeightedNotional(
+        uint256 timeWeightedNotionalReceiveFixed28DaysResult = CalculateTimeWeightedNotionalLibsBaseV1.calculateTimeWeightedNotional(
             weightedNotional28Days.timeWeightedNotionalReceiveFixed,
             10 days,
             28 days
         );
-        uint256 timeWeightedNotionalReceiveFixed60DaysResult = CalculateTimeWeightedNotionalLibsGenOne.calculateTimeWeightedNotional(
+        uint256 timeWeightedNotionalReceiveFixed60DaysResult = CalculateTimeWeightedNotionalLibsBaseV1.calculateTimeWeightedNotional(
             weightedNotional60Days.timeWeightedNotionalReceiveFixed,
             10 days,
             60 days
         );
 
-        uint256 timeWeightedNotionalReceiveFixed90DaysResult = CalculateTimeWeightedNotionalLibsGenOne.calculateTimeWeightedNotional(
+        uint256 timeWeightedNotionalReceiveFixed90DaysResult = CalculateTimeWeightedNotionalLibsBaseV1.calculateTimeWeightedNotional(
             weightedNotional90Days.timeWeightedNotionalReceiveFixed,
             10 days,
             90 days
@@ -624,12 +624,12 @@ contract CalculateWeightedNotionalLibsGenOneTest is TestCommons {
         );
     }
 
-    function _getWeightedNotionalMemory(uint256 seed, SpreadStorageLibsGenOne.StorageId storageId)
+    function _getWeightedNotionalMemory(uint256 seed, SpreadStorageLibsBaseV1.StorageId storageId)
         private
-        returns (SpreadTypesGenOne.TimeWeightedNotionalMemory memory)
+        returns (SpreadTypesBaseV1.TimeWeightedNotionalMemory memory)
     {
         return
-            SpreadTypesGenOne.TimeWeightedNotionalMemory({
+            SpreadTypesBaseV1.TimeWeightedNotionalMemory({
                 timeWeightedNotionalPayFixed: seed * 1e18,
                 lastUpdateTimePayFixed: seed * 2000,
                 timeWeightedNotionalReceiveFixed: seed * 3e18,

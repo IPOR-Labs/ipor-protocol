@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 import "./types/AmmTypes.sol";
 import "./IAmmCloseSwapLens.sol";
-import "../basic/types/AmmTypesGenOne.sol";
+import "../base/types/AmmTypesBaseV1.sol";
 
 /// @title Interface of the CloseSwap Lens for stETH.
 interface IAmmCloseSwapLensStEth {

@@ -1496,10 +1496,10 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             swapRfIds,
             closeRiskIndicatorsInputs
         );
-        AmmTypesGenOne.Balance memory balance = AmmStorageGenOne(ammStorageProxyStEth).getBalance();
+        AmmTypesBaseV1.Balance memory balance = AmmStorageBaseV1(ammStorageProxyStEth).getBalance();
         uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
-        uint256 balancePublicationFeeBefore = AmmStorageGenOne(ammStorageProxyStEth).getBalance().iporPublicationFee;
+        uint256 balancePublicationFeeBefore = AmmStorageBaseV1(ammStorageProxyStEth).getBalance().iporPublicationFee;
 
         //when
         vm.prank(treasurer);
@@ -1507,7 +1507,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
 
         //then
         uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
-        uint256 balancePublicationFeeAfter = AmmStorageGenOne(ammStorageProxyStEth).getBalance().iporPublicationFee;
+        uint256 balancePublicationFeeAfter = AmmStorageBaseV1(ammStorageProxyStEth).getBalance().iporPublicationFee;
 
         assertEq(balancePublicationFeeAfter, 0, "iporPublicationFee after");
         assertGt(balancePublicationFeeBefore, 0, "iporPublicationFee before");
@@ -1565,10 +1565,10 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
             swapRfIds,
             closeRiskIndicatorsInputs
         );
-        AmmTypesGenOne.Balance memory balance = AmmStorageGenOne(ammStorageProxyStEth).getBalance();
+        AmmTypesBaseV1.Balance memory balance = AmmStorageBaseV1(ammStorageProxyStEth).getBalance();
         uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
 
-        uint256 balanceTreasuryBefore = AmmStorageGenOne(ammStorageProxyStEth).getBalance().treasury;
+        uint256 balanceTreasuryBefore = AmmStorageBaseV1(ammStorageProxyStEth).getBalance().treasury;
 
         //when
         vm.prank(treasurer);
@@ -1576,7 +1576,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
 
         //then
         uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
-        uint256 balanceTreasuryAfter = AmmStorageGenOne(ammStorageProxyStEth).getBalance().treasury;
+        uint256 balanceTreasuryAfter = AmmStorageBaseV1(ammStorageProxyStEth).getBalance().treasury;
 
         assertEq(balanceTreasuryAfter, 0, "iporPublicationFee after");
         assertGt(balanceTreasuryBefore, 0, "iporPublicationFee before");

@@ -11,7 +11,7 @@ import "../../contracts/amm-eth/AmmPoolsLensStEth.sol";
 import "../../contracts/interfaces/IAmmGovernanceLens.sol";
 import "../../contracts/amm-common/AmmGovernanceService.sol";
 import "../../contracts/router/IporProtocolRouter.sol";
-import "../../contracts/basic/amm/AmmStorageGenOne.sol";
+import "../../contracts/base/amm/AmmStorageBaseV1.sol";
 
 contract TestEthMarketCommons is Test {
     address internal defaultAnvilAddress = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
@@ -85,7 +85,7 @@ contract TestEthMarketCommons is Test {
 
     function _createAmmStorageStEth() private {
         vm.startPrank(owner);
-        AmmStorageGenOne impl = new AmmStorageGenOne(iporProtocolRouter, ammTreasuryStEth);
+        AmmStorageBaseV1 impl = new AmmStorageBaseV1(iporProtocolRouter, ammTreasuryStEth);
         ERC1967Proxy proxy = new ERC1967Proxy(address(impl), abi.encodeWithSignature("initialize()"));
         ammStorageStEth = address(proxy);
     }

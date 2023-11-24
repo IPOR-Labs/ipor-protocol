@@ -27,7 +27,6 @@ import "../../contracts/amm-eth/AmmCloseSwapServiceStEth.sol";
 import "../../contracts/amm/AmmPoolsService.sol";
 import "../../contracts/amm-common/AmmGovernanceService.sol";
 import "../../contracts/amm/AmmStorage.sol";
-import "../../contracts/basic/amm/AmmStorageGenOne.sol";
 import "../../contracts/amm/AmmTreasury.sol";
 import "../../contracts/amm-eth/AmmTreasuryStEth.sol";
 import "../../contracts/amm-eth/AmmPoolsServiceStEth.sol";
@@ -40,7 +39,8 @@ import "../../contracts/vault/strategies/StrategyCompound.sol";
 import "../../contracts/interfaces/IIpTokenV1.sol";
 import "../../contracts/amm-eth/interfaces/IWETH9.sol";
 import "../../contracts/amm-eth/interfaces/IStETH.sol";
-import "../../contracts/basic/spread/SpreadGenOne.sol";
+import "../../contracts/base/amm/AmmStorageBaseV1.sol";
+import "../../contracts/base/spread/SpreadBaseV1.sol";
 import "../../contracts/amm/spread/SpreadStorageService.sol";
 
 contract TestForkCommons is Test {
@@ -462,7 +462,7 @@ contract TestForkCommons is Test {
     }
 
     function _createAmmStorageStEth() private {
-        AmmStorageGenOne ammStorageImpl = new AmmStorageGenOne(iporProtocolRouterProxy, ammTreasuryProxyStEth);
+        AmmStorageBaseV1 ammStorageImpl = new AmmStorageBaseV1(iporProtocolRouterProxy, ammTreasuryProxyStEth);
 
         vm.startPrank(owner);
         ERC1967Proxy proxy = new ERC1967Proxy(address(ammStorageImpl), abi.encodeWithSignature("initialize()"));
@@ -472,7 +472,7 @@ contract TestForkCommons is Test {
     }
 
     function _createAmmOpenSwapServiceStEth() private {
-        AmmTypesGenOne.AmmOpenSwapServicePoolConfiguration memory cfg = AmmTypesGenOne
+        AmmTypesBaseV1.AmmOpenSwapServicePoolConfiguration memory cfg = AmmTypesBaseV1
             .AmmOpenSwapServicePoolConfiguration({
                 asset: stETH,
                 decimals: 18,
@@ -501,7 +501,7 @@ contract TestForkCommons is Test {
 
     /// @dev case where liquidationDepositAmount is 0 and openingFeeRate is 0
     function _createAmmOpenSwapServiceStEthCase2() internal {
-        AmmTypesGenOne.AmmOpenSwapServicePoolConfiguration memory cfg = AmmTypesGenOne
+        AmmTypesBaseV1.AmmOpenSwapServicePoolConfiguration memory cfg = AmmTypesBaseV1
             .AmmOpenSwapServicePoolConfiguration({
                 asset: stETH,
                 decimals: 18,
@@ -647,7 +647,7 @@ contract TestForkCommons is Test {
     }
 
     function _createAmmCloseSwapServiceStEth() private {
-        AmmTypesGenOne.AmmCloseSwapServicePoolConfiguration memory stEthConfig = AmmTypesGenOne
+        AmmTypesBaseV1.AmmCloseSwapServicePoolConfiguration memory stEthConfig = AmmTypesBaseV1
             .AmmCloseSwapServicePoolConfiguration({
                 spread: spreadStEth,
                 asset: stETH,
@@ -671,10 +671,10 @@ contract TestForkCommons is Test {
 
     function _createNewSpreadForStEth() private {
         vm.startPrank(owner);
-        SpreadGenOne spread = new SpreadGenOne(
+        SpreadBaseV1 spread = new SpreadBaseV1(
             iporProtocolRouterProxy,
             stETH,
-            new SpreadTypesGenOne.TimeWeightedNotionalMemory[](0)
+            new SpreadTypesBaseV1.TimeWeightedNotionalMemory[](0)
         );
         vm.stopPrank();
 

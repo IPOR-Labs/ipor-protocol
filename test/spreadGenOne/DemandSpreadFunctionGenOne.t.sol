@@ -2,10 +2,10 @@
 pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
-import "../../contracts/basic/spread/DemandSpreadLibsGenOne.sol";
+import "../../contracts/base/spread/DemandSpreadLibsBaseV1.sol";
 
 
-contract DemandSpreadFunctionGenOne is Test {
+contract DemandSpreadFunctionBaseV1 is Test {
 
     function testShouldReturn0WhenWeightedNotionalIs0() external {
         //given
@@ -13,7 +13,7 @@ contract DemandSpreadFunctionGenOne is Test {
         uint maxNotional = 10e18;
 
         //when
-        uint demandSpread = DemandSpreadLibsGenOne.calculateSpreadFunction(maxNotional, weightedNotional);
+        uint demandSpread = DemandSpreadLibsBaseV1.calculateSpreadFunction(maxNotional, weightedNotional);
 
         //then
         assertEq(demandSpread, 0, "demandSpread should be 0");
@@ -25,7 +25,7 @@ contract DemandSpreadFunctionGenOne is Test {
         uint maxNotional = 10e18;
 
         //when
-        uint demandSpread = DemandSpreadLibsGenOne.calculateSpreadFunction(maxNotional, weightedNotional);
+        uint demandSpread = DemandSpreadLibsBaseV1.calculateSpreadFunction(maxNotional, weightedNotional);
 
         //then
         assertEq(demandSpread, 5e15, "demandSpread should be 50bps");
@@ -37,7 +37,7 @@ contract DemandSpreadFunctionGenOne is Test {
         uint maxNotional = 10e18;
 
         //when
-        uint demandSpread = DemandSpreadLibsGenOne.calculateSpreadFunction(maxNotional, weightedNotional);
+        uint demandSpread = DemandSpreadLibsBaseV1.calculateSpreadFunction(maxNotional, weightedNotional);
 
         //then
         assertEq(demandSpread, 10e15, "demandSpread should be 100bps");
@@ -49,7 +49,7 @@ contract DemandSpreadFunctionGenOne is Test {
         uint maxNotional = 10e18;
 
         //when
-        uint demandSpread = DemandSpreadLibsGenOne.calculateSpreadFunction(maxNotional, weightedNotional);
+        uint demandSpread = DemandSpreadLibsBaseV1.calculateSpreadFunction(maxNotional, weightedNotional);
 
         //then
         assertEq(demandSpread, 50e15, "demandSpread should be 500bps");
@@ -62,7 +62,7 @@ contract DemandSpreadFunctionGenOne is Test {
         uint maxNotional = 10e18;
 
         //when
-        uint demandSpread = DemandSpreadLibsGenOne.calculateSpreadFunction(maxNotional, weightedNotional);
+        uint demandSpread = DemandSpreadLibsBaseV1.calculateSpreadFunction(maxNotional, weightedNotional);
 
         //then
         assertEq(demandSpread, 300e15, "demandSpread should be 3000bps");
@@ -76,7 +76,7 @@ contract DemandSpreadFunctionGenOne is Test {
         uint maxNotional = 10_000;
 
         //when
-        uint demandSpread = DemandSpreadLibsGenOne.calculateSpreadFunction(maxNotional, weightedNotional);
+        uint demandSpread = DemandSpreadLibsBaseV1.calculateSpreadFunction(maxNotional, weightedNotional);
 
         //then
         assertTrue(demandSpread <= 10e15, "demandSpread should be less than 100bps");
@@ -90,7 +90,7 @@ contract DemandSpreadFunctionGenOne is Test {
         uint maxNotional = 10_000;
 
         //when
-        uint demandSpread = DemandSpreadLibsGenOne.calculateSpreadFunction(maxNotional, weightedNotional);
+        uint demandSpread = DemandSpreadLibsBaseV1.calculateSpreadFunction(maxNotional, weightedNotional);
 
         //then
         assertTrue(demandSpread <= 50e15, "demandSpread should be less than 500bps");
@@ -104,7 +104,7 @@ contract DemandSpreadFunctionGenOne is Test {
         uint maxNotional = 10_000;
 
         //when
-        uint demandSpread = DemandSpreadLibsGenOne.calculateSpreadFunction(maxNotional, weightedNotional);
+        uint demandSpread = DemandSpreadLibsBaseV1.calculateSpreadFunction(maxNotional, weightedNotional);
 
         //then
         assertTrue(demandSpread <= 300e15, "demandSpread should be less than 3000bps");
