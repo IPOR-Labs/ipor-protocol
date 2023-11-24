@@ -12,6 +12,8 @@ import "../basic/amm/services/AmmOpenSwapServiceGenOne.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServiceStEth {
+    // TODO: REV https://forum.openzeppelin.com/t/safeerc20-vs-safeerc20upgradeable/17326
+    // TODO: REV i think we should use only one SafeERC20Upgradeable or SafeERC20
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeERC20 for IStETH;
     using SafeERC20 for IWETH9;
@@ -182,6 +184,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
 
     function _validateInputAsset(address inputAsset, uint256 inputAssetTotalAmount) internal view override {
         if (inputAssetTotalAmount <= 0) {
+            // TODO: REV why without error code?
             revert IporErrors.InputAssetTotalAmountTooLow(inputAssetTotalAmount);
         }
 
@@ -216,6 +219,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
             }
             _submitEth(inputAssetTotalAmount);
         } else if (inputAsset == asset) {
+            // TODO: REV Why in Eth case you check balance and revert and in this case you don't do it ?
             IERC20Upgradeable(inputAsset).safeTransferFrom(msg.sender, ammTreasury, inputAssetTotalAmount);
         } else if (inputAsset == wETH) {
             IWETH9(wETH).safeTransferFrom(msg.sender, iporProtocolRouter, inputAssetTotalAmount);

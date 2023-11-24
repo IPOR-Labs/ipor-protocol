@@ -62,6 +62,7 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
             AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH
         );
 
+        // TODO: REV it could be better to add 2. _getExchangeRate() with ammPoolsParamsCfg as input param,  we read it twice in this method
         uint256 exchangeRate = _getExchangeRate();
 
         IStETH(stEth).safeTransferFrom(msg.sender, ammTreasuryStEth, stEthAmount);

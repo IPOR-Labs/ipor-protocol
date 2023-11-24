@@ -13,8 +13,10 @@ library IporErrors {
 
     error UnsupportedAsset(address asset);
 
-    error UnsupportedModule(address asset, string code);
+    // TODO: REV it could be better to add message to this error
+    error UnsupportedModule(address asset, string code, string msg);
 
+    // TODO: REV what with error code ? maybe it will be good add message to this error
     error InputAssetTotalAmountTooLow(uint256 value);
 
     /// @dev Error appears if user/account doesn't have enough balance to open a swap with a specific totalAmount

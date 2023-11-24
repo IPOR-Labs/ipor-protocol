@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 
-import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 import "../interfaces/IAmmTreasury.sol";
@@ -61,6 +60,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         AmmGovernancePoolConfiguration memory stEthPoolCfg
     ) {
         _usdt = usdtPoolCfg.asset.checkAddress();
+        //TODO: REV why we don't take this value from asset? Do we need to pass this in constructor?
         _usdtDecimals = usdtPoolCfg.decimals;
         _usdtAmmStorage = usdtPoolCfg.ammStorage.checkAddress();
         _usdtAmmTreasury = usdtPoolCfg.ammTreasury.checkAddress();
@@ -104,7 +104,10 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     }
 
     function depositToAssetManagement(address asset, uint256 wadAssetAmount) external override {
+        // TODO: REV we want white list or black list of assets??
+        // TODO: REV it would be better to do it with modifier??
         if (asset == _stEth) {
+            // TODO: REV "AssetManagement" should be error code
             revert IporErrors.UnsupportedModule(asset, "AssetManagement");
         }
         IAmmTreasury(_getAmmTreasury(asset)).depositToAssetManagementInternal(wadAssetAmount);
@@ -112,6 +115,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
 
     function withdrawFromAssetManagement(address asset, uint256 wadAssetAmount) external override {
         if (asset == _stEth) {
+            // TODO: REV "AssetManagement" should be error code
             revert IporErrors.UnsupportedModule(asset, "AssetManagement");
         }
         IAmmTreasury(_getAmmTreasury(asset)).withdrawFromAssetManagementInternal(wadAssetAmount);
@@ -119,6 +123,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
 
     function withdrawAllFromAssetManagement(address asset) external override {
         if (asset == _stEth) {
+            // TODO: REV "AssetManagement" should be error code
             revert IporErrors.UnsupportedModule(asset, "AssetManagement");
         }
         IAmmTreasury(_getAmmTreasury(asset)).withdrawAllFromAssetManagementInternal();
@@ -170,14 +175,17 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         return AmmConfigurationManager.isSwapLiquidator(asset, account);
     }
 
+    // TODO: REV it would be better to do it with modifier?? this will be able to use only if assetManager is active
     function addAppointedToRebalanceInAmm(address asset, address account) external override {
         AmmConfigurationManager.addAppointedToRebalanceInAmm(asset, account);
     }
 
+    // TODO: REV it would be better to do it with modifier?? this will be able to use only if assetManager is active
     function removeAppointedToRebalanceInAmm(address asset, address account) external override {
         AmmConfigurationManager.removeAppointedToRebalanceInAmm(asset, account);
     }
 
+    // TODO: REV it would be better to do it with modifier?? this will be able to use only if assetManager is active
     function isAppointedToRebalanceInAmm(address asset, address account) external view override returns (bool) {
         return AmmConfigurationManager.isAppointedToRebalanceInAmm(asset, account);
     }
