@@ -55,14 +55,15 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
     function provideLiquidityStEth(address beneficiary, uint256 stEthAmount) external payable override {
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
 
-        uint256 newPoolBalance = stEthAmount + IAmmTreasuryGenOne(ammTreasuryStEth).getLiquidityPoolBalance();
+        uint256 actualLiquidityPoolBalance = IAmmTreasuryGenOne(ammTreasuryStEth).getLiquidityPoolBalance();
+        uint256 newPoolBalance = actualLiquidityPoolBalance + stEthAmount;
 
         require(
             newPoolBalance <= uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
             AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH
         );
 
-        uint256 exchangeRate = _getExchangeRate();
+        uint256 exchangeRate = _getExchangeRate(actualLiquidityPoolBalance);
 
         IStETH(stEth).safeTransferFrom(msg.sender, ammTreasuryStEth, stEthAmount);
 
@@ -120,7 +121,9 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
         );
         require(beneficiary != address(0), IporErrors.WRONG_ADDRESS);
 
-        uint256 exchangeRate = _getExchangeRate();
+        uint256 actualLiquidityPoolBalance = IAmmTreasuryGenOne(ammTreasuryStEth).getLiquidityPoolBalance();
+
+        uint256 exchangeRate = _getExchangeRate(actualLiquidityPoolBalance);
 
         uint256 stEthAmount = IporMath.division(ipTokenAmount * exchangeRate, 1e18);
 
@@ -174,7 +177,7 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
         }
     }
 
-    function _getExchangeRate() internal returns (uint256) {
+    function _getExchangeRate(uint256 actualLiquidityPoolBalance) internal returns (uint256) {
         AmmTypes.AmmPoolCoreModel memory model = AmmTypes.AmmPoolCoreModel({
             asset: stEth,
             assetDecimals: 18,
@@ -184,7 +187,6 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
             assetManagement: address(0),
             iporOracle: iporOracle
         });
-        uint256 liquidityPoolBalance = IAmmTreasuryGenOne(ammTreasuryStEth).getLiquidityPoolBalance();
-        return model.getExchangeRate(liquidityPoolBalance);
+        return model.getExchangeRate(actualLiquidityPoolBalance);
     }
 }

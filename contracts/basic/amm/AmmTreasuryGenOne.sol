@@ -37,14 +37,14 @@ contract AmmTreasuryGenOne is
 
     modifier onlyPauseGuardian() {
         if (!PauseManager.isPauseGuardian(msg.sender)) {
-            revert IporErrors.CallerNotPauseGuardian(msg.sender);
+            revert IporErrors.CallerNotPauseGuardian(IporErrors.CALLER_NOT_PAUSE_GUARDIAN, msg.sender);
         }
         _;
     }
 
     modifier onlyRouter() {
         if (msg.sender != router) {
-            revert IporErrors.CallerNotIporProtocolRouter(msg.sender);
+            revert IporErrors.CallerNotIporProtocolRouter(IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER, msg.sender);
         }
         _;
     }

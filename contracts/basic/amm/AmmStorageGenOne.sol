@@ -48,14 +48,14 @@ contract AmmStorageGenOne is
 
     modifier onlyRouter() {
         if (msg.sender != _iporProtocolRouter) {
-            revert IporErrors.CallerNotIporProtocolRouter(msg.sender);
+            revert IporErrors.CallerNotIporProtocolRouter(IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER, msg.sender);
         }
         _;
     }
 
     modifier onlyAmmTreasury() {
         if (msg.sender != _ammTreasury) {
-            revert IporErrors.CallerNotAmmTreasury(msg.sender);
+            revert IporErrors.CallerNotAmmTreasury(IporErrors.CALLER_NOT_AMM_TREASURY, msg.sender);
         }
         _;
     }

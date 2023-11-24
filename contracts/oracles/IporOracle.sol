@@ -48,7 +48,7 @@ contract IporOracle is
     mapping(address => IporOracleTypes.IPOR) internal _indexes;
 
     modifier onlyPauseGuardian() {
-        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
+        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_PAUSE_GUARDIAN);
         _;
     }
 

@@ -38,7 +38,7 @@ contract SpreadAccessControl is IIporContractCommonGov {
 
     /// @dev Throws and error if called by any account other than the pause guardian.
     modifier onlyPauseGuardian() {
-        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
+        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_PAUSE_GUARDIAN);
         _;
     }
 

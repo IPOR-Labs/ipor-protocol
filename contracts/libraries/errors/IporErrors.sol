@@ -3,26 +3,22 @@ pragma solidity 0.8.20;
 
 library IporErrors {
     error WrongAddress(string errorCode, address wrongAddress, string methodName);
-    error WrongAmount(string code, uint256 value);
+    error WrongAmount(string errorCode, uint256 value);
 
-    error CallerNotIporProtocolRouter(address caller);
-    error CallerNotPauseGuardian(address caller);
-    error CallerNotAmmTreasury(address caller);
+    error CallerNotIporProtocolRouter(string errorCode, address caller);
+    error CallerNotPauseGuardian(string errorCode, address caller);
+    error CallerNotAmmTreasury(string errorCode, address caller);
 
-    error UnsupportedDirection(uint256 direction);
+    error UnsupportedDirection(string errorCode, uint256 direction);
 
-    error UnsupportedAsset(address asset);
+    error UnsupportedAsset(string errorCode, address asset);
 
-    error UnsupportedModule(address asset, string code);
+    error UnsupportedModule(string errorCode, address asset);
 
-    error InputAssetTotalAmountTooLow(uint256 value);
+    error InputAssetTotalAmountTooLow(string errorCode, uint256 value);
 
     /// @dev Error appears if user/account doesn't have enough balance to open a swap with a specific totalAmount
-    error InputAssetBalanceTooLow(
-        address inputAsset,
-        uint256 inputAssetBalance,
-        uint256 totalAmount
-    );
+    error InputAssetBalanceTooLow(string errorCode, address inputAsset, uint256 inputAssetBalance, uint256 totalAmount);
 
     // 000-199 - general codes
 
@@ -59,8 +55,8 @@ library IporErrors {
     /// @notice Chunk size is too big
     string public constant CHUNK_SIZE_TOO_BIG = "IPOR_010";
 
-    /// @notice Caller is not a  guardian
-    string public constant CALLER_NOT_GUARDIAN = "IPOR_011";
+    /// @notice Caller is not a pause guardian
+    string public constant CALLER_NOT_PAUSE_GUARDIAN = "IPOR_011";
 
     /// @notice Request contains invalid method signature, which is not supported by the Ipor Protocol Router
     string public constant ROUTER_INVALID_SIGNATURE = "IPOR_012";
@@ -89,4 +85,5 @@ library IporErrors {
     /// @notice
     string public constant RISK_INDICATORS_SIGNATURE_INVALID = "IPOR_020";
 
+    string public constant INPUT_ASSET_NOT_SUPPORTED = "IPOR_020";
 }

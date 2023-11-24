@@ -166,7 +166,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
             return IwstEth(wstETH).getStETHByWstETH(inputAssetAmount);
         }
 
-        revert IporErrors.UnsupportedAsset(inputAsset);
+        revert IporErrors.UnsupportedAsset(IporErrors.INPUT_ASSET_NOT_SUPPORTED, inputAsset);
     }
 
     function _convertInputAssetAmountToWadAmount(
@@ -177,7 +177,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
             /// @dev stETH, wETH, ETH, wstETH are represented in 18 decimals so no conversion is needed
             return inputAssetAmount;
         }
-        revert IporErrors.UnsupportedAsset(inputAsset);
+        revert IporErrors.UnsupportedAsset(IporErrors.INPUT_ASSET_NOT_SUPPORTED, inputAsset);
     }
 
     function _validateInputAsset(address inputAsset, uint256 inputAssetTotalAmount) internal view override {
@@ -197,7 +197,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
                     revert IporErrors.InputAssetBalanceTooLow(inputAsset, accountBalance, inputAssetTotalAmount);
                 }
             } else {
-                revert IporErrors.UnsupportedAsset(inputAsset);
+                revert IporErrors.UnsupportedAsset(IporErrors.INPUT_ASSET_NOT_SUPPORTED, inputAsset);
             }
         }
     }
@@ -233,7 +233,8 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
                 IStETH(asset).safeTransfer(ammTreasury, stEthAmount);
             }
         } else {
-            revert IporErrors.UnsupportedAsset(inputAsset);
+            //TODO: modifier in one place
+            revert IporErrors.UnsupportedAsset(IporErrors.INPUT_ASSET_NOT_SUPPORTED, inputAsset);
         }
     }
 
