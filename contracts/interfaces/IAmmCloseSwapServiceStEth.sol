@@ -3,9 +3,9 @@ pragma solidity 0.8.20;
 
 import "./types/AmmTypes.sol";
 
-/// @title Interface of the service allowing to close swaps.
+/// @title Interface of the service allowing to close swaps in stETH AMM.
 interface IAmmCloseSwapServiceStEth {
-    /// @notice Closes batch of DAI swaps on both legs.
+    /// @notice Closes batch of stETH swaps on both legs.
     /// @param beneficiary account - receiver of liquidation deposit.
     /// @param payFixedSwapIds array of pay fixed swap IDs.
     /// @param receiveFixedSwapIds array of receive fixed swap IDs.

@@ -462,7 +462,7 @@ contract TestForkCommons is Test {
     }
 
     function _createAmmStorageStEth() private {
-        AmmStorageBaseV1 ammStorageImpl = new AmmStorageBaseV1(iporProtocolRouterProxy, ammTreasuryProxyStEth);
+        AmmStorageBaseV1 ammStorageImpl = new AmmStorageBaseV1(iporProtocolRouterProxy);
 
         vm.startPrank(owner);
         ERC1967Proxy proxy = new ERC1967Proxy(address(ammStorageImpl), abi.encodeWithSignature("initialize()"));

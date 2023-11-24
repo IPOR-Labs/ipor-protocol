@@ -22,7 +22,7 @@ contract AmmStorageBaseV1 is
     Initializable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-IAmmStorageBaseV1,
+    IAmmStorageBaseV1,
     IProxyImplementation
 {
     using IporContractValidator for address;
@@ -32,8 +32,7 @@ IAmmStorageBaseV1,
 
     int256 private constant INTEREST_THRESHOLD = -1e18;
 
-    address private immutable _iporProtocolRouter;
-    address private immutable _ammTreasury;
+    address public immutable iporProtocolRouter;
 
     uint32 private _lastSwapId;
 
@@ -47,23 +46,15 @@ IAmmStorageBaseV1,
     mapping(IporTypes.SwapTenor => AmmInternalTypes.OpenSwapList) private _openedSwapsReceiveFixed;
 
     modifier onlyRouter() {
-        if (msg.sender != _iporProtocolRouter) {
+        if (msg.sender != iporProtocolRouter) {
             revert IporErrors.CallerNotIporProtocolRouter(IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER, msg.sender);
         }
         _;
     }
 
-    modifier onlyAmmTreasury() {
-        if (msg.sender != _ammTreasury) {
-            revert IporErrors.CallerNotAmmTreasury(IporErrors.CALLER_NOT_AMM_TREASURY, msg.sender);
-        }
-        _;
-    }
-
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address iporProtocolRouterInput, address ammTreasury) {
-        _iporProtocolRouter = iporProtocolRouterInput.checkAddress();
-        _ammTreasury = ammTreasury.checkAddress();
+    constructor(address iporProtocolRouterInput) {
+        iporProtocolRouter = iporProtocolRouterInput.checkAddress();
         _disableInitializers();
     }
 
@@ -74,10 +65,6 @@ IAmmStorageBaseV1,
 
     function getVersion() external pure virtual override returns (uint256) {
         return 2_001;
-    }
-
-    function getConfiguration() external view override returns (address, address) {
-        return (_ammTreasury, _iporProtocolRouter);
     }
 
     function getLastSwapId() external view override returns (uint256) {

@@ -5,7 +5,7 @@ import "./types/AmmTypes.sol";
 import "./IAmmCloseSwapLens.sol";
 import "../base/types/AmmTypesBaseV1.sol";
 
-/// @title Interface of the CloseSwap Lens for stETH.
+/// @title Interface of the CloseSwap Lens for stETH AMM.
 interface IAmmCloseSwapLensStEth {
     /// @notice Returns the closing swap details for a given swap and closing timestamp.
     /// @param account account address for which are returned closing swap details, for example closableStatus depends on the account

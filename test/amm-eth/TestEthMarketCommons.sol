@@ -85,7 +85,7 @@ contract TestEthMarketCommons is Test {
 
     function _createAmmStorageStEth() private {
         vm.startPrank(owner);
-        AmmStorageBaseV1 impl = new AmmStorageBaseV1(iporProtocolRouter, ammTreasuryStEth);
+        AmmStorageBaseV1 impl = new AmmStorageBaseV1(iporProtocolRouter);
         ERC1967Proxy proxy = new ERC1967Proxy(address(impl), abi.encodeWithSignature("initialize()"));
         ammStorageStEth = address(proxy);
     }

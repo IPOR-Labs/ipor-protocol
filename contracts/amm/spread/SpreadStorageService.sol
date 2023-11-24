@@ -6,7 +6,7 @@ import "../../amm/spread/SpreadTypes.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
 import "./ISpreadStorageService.sol";
 
-/// @dev It is not recommended to use lens contract directly, should be used only through SpreadRouter.
+/// @dev It is not recommended to use service contract directly, should be used only through SpreadRouter.
 contract SpreadStorageService is ISpreadStorageService {
     function updateTimeWeightedNotional(
         SpreadTypes.TimeWeightedNotionalMemory[] calldata timeWeightedNotionalMemories

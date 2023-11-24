@@ -23,7 +23,7 @@ contract AmmTreasuryBaseV1 is
     ReentrancyGuardUpgradeable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-IAmmTreasuryBaseV1,
+    IAmmTreasuryBaseV1,
     IProxyImplementation
 {
     using SafeCast for uint256;
@@ -38,13 +38,6 @@ IAmmTreasuryBaseV1,
     modifier onlyPauseGuardian() {
         if (!PauseManager.isPauseGuardian(msg.sender)) {
             revert IporErrors.CallerNotPauseGuardian(IporErrors.CALLER_NOT_PAUSE_GUARDIAN, msg.sender);
-        }
-        _;
-    }
-
-    modifier onlyRouter() {
-        if (msg.sender != router) {
-            revert IporErrors.CallerNotIporProtocolRouter(IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER, msg.sender);
         }
         _;
     }

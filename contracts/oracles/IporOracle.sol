@@ -70,7 +70,7 @@ contract IporOracle is
             _;
             return;
         }
-        revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS,asset , "onlyAcceptStEth");
+        revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, asset, "onlyAcceptStEth");
     }
 
     /// @custom:oz-upgrades-unsafe-allow constructor
@@ -177,10 +177,7 @@ contract IporOracle is
         return _calculateAccruedIbtPrice(asset, _indexes[asset], calculateTimestamp);
     }
 
-    function updateIndex(
-        address asset,
-        uint256 indexValue
-    ) external override onlyUpdater whenNotPaused {
+    function updateIndex(address asset, uint256 indexValue) external override onlyUpdater whenNotPaused {
         _updateIndex(asset, indexValue, block.timestamp);
     }
 

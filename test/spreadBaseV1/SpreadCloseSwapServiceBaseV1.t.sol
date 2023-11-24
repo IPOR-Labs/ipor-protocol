@@ -16,7 +16,7 @@ contract SpreadCloseSwapServiceBaseV1 is Test {
     function setUp() external {
         vm.warp(1700451493);
         stEth = new MockTestnetToken("Mocked stETH", "stETH", 100_000_000 * 1e18, uint8(18));
-        _ammStorage = new AmmStorageBaseV1(address(this), address(this));
+        _ammStorage = new AmmStorageBaseV1(address(this));
 
         SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotional = SpreadTypesBaseV1
             .TimeWeightedNotionalMemory({

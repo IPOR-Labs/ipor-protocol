@@ -98,12 +98,19 @@ library AmmTypesBaseV1 {
         uint256 minLeverage;
     }
 
+    /// @notice Technical structure with unwinding parameters.
     struct UnwindParams {
+        /// @notice Risk Indicators Inputs signer
         address messageSigner;
+        /// @notice Moment when the swap is closing
         uint256 closeTimestamp;
+        /// @notice Swap's PnL value to moment when the swap is closing
         int256 swapPnlValueToDate;
+        /// @notice Actual IPOR index value
         uint256 indexValue;
+        /// @notice Swap data
         AmmTypesBaseV1.Swap swap;
+        /// @notice Risk indicators for both legs pay fixed and receive fixed
         AmmTypes.CloseSwapRiskIndicatorsInput riskIndicatorsInputs;
     }
 
