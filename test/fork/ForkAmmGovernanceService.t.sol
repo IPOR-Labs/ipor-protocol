@@ -65,7 +65,13 @@ contract ForkAmmGovernanceServiceTest is TestForkCommons {
 
         // when
         vm.prank(owner);
-        vm.expectRevert(abi.encodeWithSelector(IporErrors.UnsupportedModule.selector, stETH, "AssetManagement"));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IporErrors.UnsupportedModule.selector,
+                IporErrors.UNSUPPORTED_MODULE_ASSET_MANAGEMENT,
+                stETH
+            )
+        );
         IAmmGovernanceService(iporProtocolRouterProxy).depositToAssetManagement(stETH, 100 * 1e18);
     }
 
@@ -123,7 +129,13 @@ contract ForkAmmGovernanceServiceTest is TestForkCommons {
 
         // when
         vm.prank(owner);
-        vm.expectRevert(abi.encodeWithSelector(IporErrors.UnsupportedModule.selector, stETH, "AssetManagement"));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IporErrors.UnsupportedModule.selector,
+                IporErrors.UNSUPPORTED_MODULE_ASSET_MANAGEMENT,
+                stETH
+            )
+        );
         IAmmGovernanceService(iporProtocolRouterProxy).withdrawFromAssetManagement(stETH, 100 * 1e18);
     }
 
@@ -181,7 +193,13 @@ contract ForkAmmGovernanceServiceTest is TestForkCommons {
 
         // when
         vm.prank(owner);
-        vm.expectRevert(abi.encodeWithSelector(IporErrors.UnsupportedModule.selector, stETH, "AssetManagement"));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IporErrors.UnsupportedModule.selector,
+                IporErrors.UNSUPPORTED_MODULE_ASSET_MANAGEMENT,
+                stETH
+            )
+        );
         IAmmGovernanceService(iporProtocolRouterProxy).withdrawAllFromAssetManagement(stETH);
     }
 }

@@ -79,11 +79,15 @@ library IporErrors {
     /// @notice Return back ETH failed in Ipor Protocol Router
     string public constant ROUTER_RETURN_BACK_ETH_FAILED = "IPOR_018";
 
-    /// @notice
+    /// @notice Risk indicators are expired
     string public constant RISK_INDICATORS_EXPIRED = "IPOR_019";
 
-    /// @notice
+    /// @notice Signature is invalid for risk indicators
     string public constant RISK_INDICATORS_SIGNATURE_INVALID = "IPOR_020";
 
+    /// @notice Input Asset used by user is not supported
     string public constant INPUT_ASSET_NOT_SUPPORTED = "IPOR_020";
+
+    /// @notice Module Asset Management is not supported
+    string public constant UNSUPPORTED_MODULE_ASSET_MANAGEMENT = "IPOR_021";
 }

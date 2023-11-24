@@ -85,7 +85,8 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
         require(wEthAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
-        uint256 newPoolBalance = wEthAmount + IAmmTreasuryGenOne(ammTreasuryStEth).getLiquidityPoolBalance();
+        uint256 actualLiquidityPoolBalance = IAmmTreasuryGenOne(ammTreasuryStEth).getLiquidityPoolBalance();
+        uint256 newPoolBalance = wEthAmount + actualLiquidityPoolBalance;
 
         require(
             newPoolBalance <= uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
@@ -95,7 +96,7 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
         IWETH9(wEth).safeTransferFrom(msg.sender, iporProtocolRouter, wEthAmount);
         IWETH9(wEth).withdraw(wEthAmount);
 
-        _depositEth(wEthAmount, beneficiary);
+        _depositEth(wEthAmount, beneficiary, actualLiquidityPoolBalance);
     }
 
     function provideLiquidityEth(address beneficiary, uint256 ethAmount) external payable {
@@ -103,15 +104,15 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
         require(msg.value > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
-
-        uint256 newPoolBalance = ethAmount + IAmmTreasuryGenOne(ammTreasuryStEth).getLiquidityPoolBalance();
+        uint256 actualLiquidityPoolBalance = IAmmTreasuryGenOne(ammTreasuryStEth).getLiquidityPoolBalance();
+        uint256 newPoolBalance = ethAmount + actualLiquidityPoolBalance;
 
         require(
             newPoolBalance <= uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
             AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH
         );
 
-        _depositEth(ethAmount, beneficiary);
+        _depositEth(ethAmount, beneficiary, actualLiquidityPoolBalance);
     }
 
     function redeemFromAmmPoolStEth(address beneficiary, uint256 ipTokenAmount) external {
@@ -146,12 +147,12 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
         );
     }
 
-    function _depositEth(uint256 ethAmount, address beneficiary) private {
+    function _depositEth(uint256 ethAmount, address beneficiary, uint256 actualLiquidityPoolBalance) private {
         try IStETH(stEth).submit{value: ethAmount}(address(0)) {
             uint256 stEthAmount = IStETH(stEth).balanceOf(address(this));
 
             if (stEthAmount > 0) {
-                uint256 exchangeRate = _getExchangeRate();
+                uint256 exchangeRate = _getExchangeRate(actualLiquidityPoolBalance);
 
                 IStETH(stEth).safeTransfer(ammTreasuryStEth, stEthAmount);
 

@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 import "../interfaces/IAmmOpenSwapServiceStEth.sol";
@@ -13,14 +12,19 @@ import "../basic/amm/services/AmmOpenSwapServiceGenOne.sol";
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServiceStEth {
     using SafeERC20Upgradeable for IERC20Upgradeable;
-    using SafeERC20 for IStETH;
-    using SafeERC20 for IWETH9;
-    using SafeERC20 for IwstEth;
     using IporContractValidator for address;
 
     address public immutable iporProtocolRouter;
     address public immutable wETH;
     address public immutable wstETH;
+
+    modifier onlySupportedInputAsset(address inputAsset) {
+        if (inputAsset == asset || inputAsset == wETH || inputAsset == ETH_ADDRESS || inputAsset == wstETH) {
+            _;
+        } else {
+            revert IporErrors.UnsupportedAsset(IporErrors.INPUT_ASSET_NOT_SUPPORTED, inputAsset);
+        }
+    }
 
     constructor(
         AmmTypesGenOne.AmmOpenSwapServicePoolConfiguration memory poolCfg,
@@ -42,7 +46,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
         uint256 acceptableFixedInterestRate,
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
-    ) external payable override returns (uint256) {
+    ) external payable override onlySupportedInputAsset(inputAsset) returns (uint256) {
         return
             _openSwapPayFixed(
                 beneficiary,
@@ -62,7 +66,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
         uint256 acceptableFixedInterestRate,
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
-    ) external payable override returns (uint256) {
+    ) external payable override onlySupportedInputAsset(inputAsset) returns (uint256) {
         return
             _openSwapPayFixed(
                 beneficiary,
@@ -82,7 +86,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
         uint256 acceptableFixedInterestRate,
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
-    ) external payable override returns (uint256) {
+    ) external payable override onlySupportedInputAsset(inputAsset) returns (uint256) {
         return
             _openSwapPayFixed(
                 beneficiary,
@@ -102,7 +106,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
         uint256 acceptableFixedInterestRate,
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
-    ) external payable override returns (uint256) {
+    ) external payable override onlySupportedInputAsset(inputAsset) returns (uint256) {
         return
             _openSwapReceiveFixed(
                 beneficiary,
@@ -122,7 +126,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
         uint256 acceptableFixedInterestRate,
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
-    ) external payable override returns (uint256) {
+    ) external payable override onlySupportedInputAsset(inputAsset) returns (uint256) {
         return
             _openSwapReceiveFixed(
                 beneficiary,
@@ -142,7 +146,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
         uint256 acceptableFixedInterestRate,
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
-    ) external payable override returns (uint256) {
+    ) external payable override onlySupportedInputAsset(inputAsset) returns (uint256) {
         return
             _openSwapReceiveFixed(
                 beneficiary,
@@ -165,39 +169,46 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
         } else if (inputAsset == wstETH) {
             return IwstEth(wstETH).getStETHByWstETH(inputAssetAmount);
         }
-
-        revert IporErrors.UnsupportedAsset(IporErrors.INPUT_ASSET_NOT_SUPPORTED, inputAsset);
+        return 0;
     }
 
     function _convertInputAssetAmountToWadAmount(
-        address inputAsset,
+        address,
         uint256 inputAssetAmount
     ) internal view override returns (uint256) {
-        if (inputAsset == asset || inputAsset == wETH || inputAsset == ETH_ADDRESS || inputAsset == wstETH) {
-            /// @dev stETH, wETH, ETH, wstETH are represented in 18 decimals so no conversion is needed
-            return inputAssetAmount;
-        }
-        revert IporErrors.UnsupportedAsset(IporErrors.INPUT_ASSET_NOT_SUPPORTED, inputAsset);
+        /// @dev stETH, wETH, ETH, wstETH are represented in 18 decimals so no conversion is needed
+        return inputAssetAmount;
     }
 
     function _validateInputAsset(address inputAsset, uint256 inputAssetTotalAmount) internal view override {
         if (inputAssetTotalAmount <= 0) {
-            revert IporErrors.InputAssetTotalAmountTooLow(inputAssetTotalAmount);
+            revert IporErrors.InputAssetTotalAmountTooLow(
+                IporErrors.SENDER_ASSET_BALANCE_TOO_LOW,
+                inputAssetTotalAmount
+            );
         }
 
         if (inputAsset == ETH_ADDRESS) {
             if (msg.value < inputAssetTotalAmount) {
-                revert IporErrors.InputAssetBalanceTooLow(ETH_ADDRESS, msg.value, inputAssetTotalAmount);
+                revert IporErrors.InputAssetBalanceTooLow(
+                    IporErrors.SENDER_ASSET_BALANCE_TOO_LOW,
+                    ETH_ADDRESS,
+                    msg.value,
+                    inputAssetTotalAmount
+                );
             }
         } else {
             if (inputAsset == wETH || inputAsset == asset || inputAsset == wstETH) {
                 uint256 accountBalance = IERC20Upgradeable(inputAsset).balanceOf(msg.sender);
 
                 if (accountBalance < inputAssetTotalAmount) {
-                    revert IporErrors.InputAssetBalanceTooLow(inputAsset, accountBalance, inputAssetTotalAmount);
+                    revert IporErrors.InputAssetBalanceTooLow(
+                        IporErrors.SENDER_ASSET_BALANCE_TOO_LOW,
+                        inputAsset,
+                        accountBalance,
+                        inputAssetTotalAmount
+                    );
                 }
-            } else {
-                revert IporErrors.UnsupportedAsset(IporErrors.INPUT_ASSET_NOT_SUPPORTED, inputAsset);
             }
         }
     }
@@ -218,23 +229,20 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
         } else if (inputAsset == asset) {
             IERC20Upgradeable(inputAsset).safeTransferFrom(msg.sender, ammTreasury, inputAssetTotalAmount);
         } else if (inputAsset == wETH) {
-            IWETH9(wETH).safeTransferFrom(msg.sender, iporProtocolRouter, inputAssetTotalAmount);
+            IERC20Upgradeable(wETH).safeTransferFrom(msg.sender, iporProtocolRouter, inputAssetTotalAmount);
 
             /// @dev swap in relation 1:1 wETH -> ETH
             IWETH9(wETH).withdraw(inputAssetTotalAmount);
 
             _submitEth(inputAssetTotalAmount);
         } else if (inputAsset == wstETH) {
-            IwstEth(wstETH).safeTransferFrom(msg.sender, address(this), inputAssetTotalAmount);
+            IERC20Upgradeable(wstETH).safeTransferFrom(msg.sender, address(this), inputAssetTotalAmount);
 
             uint256 stEthAmount = IwstEth(wstETH).unwrap(inputAssetTotalAmount);
 
             if (stEthAmount > 0) {
-                IStETH(asset).safeTransfer(ammTreasury, stEthAmount);
+                IERC20Upgradeable(asset).safeTransfer(ammTreasury, stEthAmount);
             }
-        } else {
-            //TODO: modifier in one place
-            revert IporErrors.UnsupportedAsset(IporErrors.INPUT_ASSET_NOT_SUPPORTED, inputAsset);
         }
     }
 
@@ -245,7 +253,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceGenOne, IAmmOpenSwapServic
             uint256 stEthAmount = IStETH(asset).balanceOf(address(this));
 
             if (stEthAmount > 0) {
-                IStETH(asset).safeTransfer(ammTreasury, stEthAmount);
+                IERC20Upgradeable(asset).safeTransfer(ammTreasury, stEthAmount);
             }
         } catch {
             revert IAmmPoolsServiceStEth.StEthSubmitFailed({

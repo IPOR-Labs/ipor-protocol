@@ -54,6 +54,13 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     address internal immutable _stEthAmmCharlieTreasury;
     address internal immutable _stEthAmmCharlieTreasuryManager;
 
+    modifier onlySupportedAssetManagement(address asset) {
+        if (asset == _stEth) {
+            revert IporErrors.UnsupportedModule(IporErrors.UNSUPPORTED_MODULE_ASSET_MANAGEMENT, asset);
+        }
+        _;
+    }
+
     constructor(
         AmmGovernancePoolConfiguration memory usdtPoolCfg,
         AmmGovernancePoolConfiguration memory usdcPoolCfg,
@@ -103,24 +110,21 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         return _getPoolConfiguration(asset);
     }
 
-    function depositToAssetManagement(address asset, uint256 wadAssetAmount) external override {
-        if (asset == _stEth) {
-            revert IporErrors.UnsupportedModule(asset, "AssetManagement");
-        }
+    function depositToAssetManagement(
+        address asset,
+        uint256 wadAssetAmount
+    ) external override onlySupportedAssetManagement(asset) {
         IAmmTreasury(_getAmmTreasury(asset)).depositToAssetManagementInternal(wadAssetAmount);
     }
 
-    function withdrawFromAssetManagement(address asset, uint256 wadAssetAmount) external override {
-        if (asset == _stEth) {
-            revert IporErrors.UnsupportedModule(asset, "AssetManagement");
-        }
+    function withdrawFromAssetManagement(
+        address asset,
+        uint256 wadAssetAmount
+    ) external override onlySupportedAssetManagement(asset) {
         IAmmTreasury(_getAmmTreasury(asset)).withdrawFromAssetManagementInternal(wadAssetAmount);
     }
 
-    function withdrawAllFromAssetManagement(address asset) external override {
-        if (asset == _stEth) {
-            revert IporErrors.UnsupportedModule(asset, "AssetManagement");
-        }
+    function withdrawAllFromAssetManagement(address asset) external override onlySupportedAssetManagement(asset) {
         IAmmTreasury(_getAmmTreasury(asset)).withdrawAllFromAssetManagementInternal();
     }
 
@@ -170,11 +174,17 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         return AmmConfigurationManager.isSwapLiquidator(asset, account);
     }
 
-    function addAppointedToRebalanceInAmm(address asset, address account) external override {
+    function addAppointedToRebalanceInAmm(
+        address asset,
+        address account
+    ) external override onlySupportedAssetManagement(asset) {
         AmmConfigurationManager.addAppointedToRebalanceInAmm(asset, account);
     }
 
-    function removeAppointedToRebalanceInAmm(address asset, address account) external override {
+    function removeAppointedToRebalanceInAmm(
+        address asset,
+        address account
+    ) external override onlySupportedAssetManagement(asset) {
         AmmConfigurationManager.removeAppointedToRebalanceInAmm(asset, account);
     }
 
