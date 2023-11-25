@@ -58,6 +58,8 @@ abstract contract AmmCloseSwapServiceBaseV1 {
     uint256 public immutable minLiquidationThresholdToCloseBeforeMaturityByBuyer;
     /// @dev Minimum leverage, value represented in 18 decimals.
     uint256 public immutable minLeverage;
+    /// @dev Time after open swap when it is allowed to close swap with unwinding, represented in seconds
+    uint256 public immutable timeAfterOpenAllowedToCloseSwapWithUnwinding;
 
     constructor(
         AmmTypesBaseV1.AmmCloseSwapServicePoolConfiguration memory poolCfg,
@@ -83,6 +85,7 @@ abstract contract AmmCloseSwapServiceBaseV1 {
         minLiquidationThresholdToCloseBeforeMaturityByBuyer = poolCfg
             .minLiquidationThresholdToCloseBeforeMaturityByBuyer;
         minLeverage = poolCfg.minLeverage;
+        timeAfterOpenAllowedToCloseSwapWithUnwinding = poolCfg.timeAfterOpenAllowedToCloseSwapWithUnwinding;
     }
 
     function _getClosingSwapDetails(
@@ -106,7 +109,29 @@ abstract contract AmmCloseSwapServiceBaseV1 {
         int256 swapPnlValueToDate = swap.calculatePnl(block.timestamp, accruedIpor.ibtPrice);
 
         (closingSwapDetails.closableStatus, closingSwapDetails.swapUnwindRequired) = SwapLogicBaseV1
-            .getClosableStatusForSwap(swap, account, swapPnlValueToDate, closeTimestamp, poolCfg);
+            .getClosableStatusForSwap(
+                AmmTypesBaseV1.ClosableSwapInput({
+                    account: account,
+                    asset: poolCfg.asset,
+                    closeTimestamp: closeTimestamp,
+                    swapBuyer: swap.buyer,
+                    swapOpenTimestamp: swap.openTimestamp,
+                    swapCollateral: swap.collateral,
+                    swapTenor: swap.tenor,
+                    swapState: swap.state,
+                    swapPnlValueToDate: swapPnlValueToDate,
+                    minLiquidationThresholdToCloseBeforeMaturityByCommunity: poolCfg
+                        .minLiquidationThresholdToCloseBeforeMaturityByCommunity,
+                    minLiquidationThresholdToCloseBeforeMaturityByBuyer: poolCfg
+                        .minLiquidationThresholdToCloseBeforeMaturityByBuyer,
+                    timeBeforeMaturityAllowedToCloseSwapByCommunity: poolCfg
+                        .timeBeforeMaturityAllowedToCloseSwapByCommunity,
+                    timeBeforeMaturityAllowedToCloseSwapByBuyer: poolCfg.timeBeforeMaturityAllowedToCloseSwapByBuyer,
+                    timeAfterOpenAllowedToCloseSwapWithUnwinding: poolCfg.timeAfterOpenAllowedToCloseSwapWithUnwinding
+                })
+
+                //            swap, account, swapPnlValueToDate, closeTimestamp, poolCfg
+            );
 
         if (closingSwapDetails.swapUnwindRequired == true) {
             (
@@ -371,13 +396,28 @@ abstract contract AmmCloseSwapServiceBaseV1 {
         AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
     ) internal view returns (AmmInternalTypes.PnlValueStruct memory pnlValueStruct) {
         AmmTypes.SwapClosableStatus closableStatus;
+        AmmTypesBaseV1.AmmCloseSwapServicePoolConfiguration memory poolCfg = _getPoolConfiguration();
 
         (closableStatus, pnlValueStruct.swapUnwindRequired) = SwapLogicBaseV1.getClosableStatusForSwap(
-            swap,
-            msg.sender,
-            swapPnlValueToDate,
-            closeTimestamp,
-            _getPoolConfiguration()
+            AmmTypesBaseV1.ClosableSwapInput({
+                account: msg.sender,
+                asset: poolCfg.asset,
+                closeTimestamp: closeTimestamp,
+                swapBuyer: swap.buyer,
+                swapOpenTimestamp: swap.openTimestamp,
+                swapCollateral: swap.collateral,
+                swapTenor: swap.tenor,
+                swapState: swap.state,
+                swapPnlValueToDate: swapPnlValueToDate,
+                minLiquidationThresholdToCloseBeforeMaturityByCommunity: poolCfg
+                    .minLiquidationThresholdToCloseBeforeMaturityByCommunity,
+                minLiquidationThresholdToCloseBeforeMaturityByBuyer: poolCfg
+                    .minLiquidationThresholdToCloseBeforeMaturityByBuyer,
+                timeBeforeMaturityAllowedToCloseSwapByCommunity: poolCfg
+                    .timeBeforeMaturityAllowedToCloseSwapByCommunity,
+                timeBeforeMaturityAllowedToCloseSwapByBuyer: poolCfg.timeBeforeMaturityAllowedToCloseSwapByBuyer,
+                timeAfterOpenAllowedToCloseSwapWithUnwinding: poolCfg.timeAfterOpenAllowedToCloseSwapWithUnwinding
+            })
         );
 
         _validateAllowanceToCloseSwap(closableStatus);
@@ -424,6 +464,8 @@ abstract contract AmmCloseSwapServiceBaseV1 {
             int256 swapPnlValue
         )
     {
+        //TODO: check if can unwind
+
         AmmTypes.OpenSwapRiskIndicators memory oppositeRiskIndicators;
 
         if (unwindParams.swap.direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
@@ -609,7 +651,8 @@ abstract contract AmmCloseSwapServiceBaseV1 {
                 timeBeforeMaturityAllowedToCloseSwapByBuyer: timeBeforeMaturityAllowedToCloseSwapByBuyer,
                 minLiquidationThresholdToCloseBeforeMaturityByCommunity: minLiquidationThresholdToCloseBeforeMaturityByCommunity,
                 minLiquidationThresholdToCloseBeforeMaturityByBuyer: minLiquidationThresholdToCloseBeforeMaturityByBuyer,
-                minLeverage: minLeverage
+                minLeverage: minLeverage,
+                timeAfterOpenAllowedToCloseSwapWithUnwinding: timeAfterOpenAllowedToCloseSwapWithUnwinding
             });
     }
 }

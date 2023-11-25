@@ -598,7 +598,8 @@ contract TestForkCommons is Test {
                 1 days,
                 995 * 1e15,
                 99 * 1e16,
-                10 * 1e18
+                10 * 1e18,
+                1 days
             );
 
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory usdcConfig = IAmmCloseSwapLens
@@ -615,7 +616,8 @@ contract TestForkCommons is Test {
                 1 days,
                 995 * 1e15,
                 99 * 1e16,
-                10 * 1e6
+                10 * 1e6,
+                1 days
             );
 
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory usdtConfig = IAmmCloseSwapLens
@@ -632,7 +634,8 @@ contract TestForkCommons is Test {
                 1 days,
                 995 * 1e15,
                 99 * 1e16,
-                10 * 1e6
+                10 * 1e6,
+                1 days
             );
         ammCloseSwapService = address(
             new AmmCloseSwapService(
@@ -661,7 +664,8 @@ contract TestForkCommons is Test {
                 timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
                 minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
                 minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
-                minLeverage: 10 * 1e18
+                minLeverage: 10 * 1e18,
+                timeAfterOpenAllowedToCloseSwapWithUnwinding: 1 days
             });
 
         ammCloseSwapServiceStEth = address(

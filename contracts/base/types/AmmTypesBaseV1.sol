@@ -96,6 +96,8 @@ library AmmTypesBaseV1 {
         uint256 minLiquidationThresholdToCloseBeforeMaturityByBuyer;
         /// @notice Min leverage of the virtual swap used in unwinding, represented in 18 decimals
         uint256 minLeverage;
+        /// @notice Time after open swap when it is allowed to close swap with unwinding, represented in seconds
+        uint256 timeAfterOpenAllowedToCloseSwapWithUnwinding;
     }
 
     /// @notice Technical structure with unwinding parameters.
@@ -145,6 +147,23 @@ library AmmTypesBaseV1 {
         /// @notice The struct describing the IPOR and its params calculated for the time when it was most recently updated and the change that took place since the update.
         /// Namely, the interest that would be computed into IBT should the rebalance occur.
         IporTypes.AccruedIpor accruedIpor;
+    }
+
+    struct ClosableSwapInput {
+        address account;
+        address asset;
+        uint256 closeTimestamp;
+        address swapBuyer;
+        uint256 swapOpenTimestamp;
+        uint256 swapCollateral;
+        IporTypes.SwapTenor swapTenor;
+        IporTypes.SwapState swapState;
+        int256 swapPnlValueToDate;
+        uint256 minLiquidationThresholdToCloseBeforeMaturityByCommunity;
+        uint256 minLiquidationThresholdToCloseBeforeMaturityByBuyer;
+        uint256 timeBeforeMaturityAllowedToCloseSwapByCommunity;
+        uint256 timeBeforeMaturityAllowedToCloseSwapByBuyer;
+        uint256 timeAfterOpenAllowedToCloseSwapWithUnwinding;
     }
 
     /// @notice Struct representing amounts related to Swap that is presently being opened.

@@ -178,7 +178,7 @@ library AmmSwapsLensLibBaseV1 {
                 fixedInterestRate: swap.fixedInterestRate,
                 pnlValue: pnlValue,
                 openTimestamp: swap.openTimestamp,
-                endTimestamp: swap.getSwapEndTimestamp(),
+                endTimestamp: SwapLogicBaseV1.getSwapEndTimestamp(swap.openTimestamp, swap.tenor),
                 liquidationDepositAmount: swap.wadLiquidationDepositAmount,
                 state: uint256(swap.state)
             });

@@ -1528,7 +1528,8 @@ contract IporProtocolFactory is Test {
             timeBeforeMaturityAllowedToCloseSwapByBuyer: 0,
             minLiquidationThresholdToCloseBeforeMaturityByCommunity: 0,
             minLiquidationThresholdToCloseBeforeMaturityByBuyer: 0,
-            minLeverage: 0
+            minLeverage: 0,
+            timeAfterOpenAllowedToCloseSwapWithUnwinding: 0
         });
     }
 
@@ -1626,7 +1627,8 @@ contract IporProtocolFactory is Test {
                 timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
                 minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
                 minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
-                minLeverage: 10 * 1e18
+                minLeverage: 10 * 1e18,
+                timeAfterOpenAllowedToCloseSwapWithUnwinding: 1 days
             });
         } else if (closeSwapServiceTestCase == BuilderUtils.AmmCloseSwapServiceTestCase.CASE1) {
             poolCfg = IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration({
@@ -1642,7 +1644,8 @@ contract IporProtocolFactory is Test {
                 timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
                 minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
                 minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
-                minLeverage: 10 * 1e18
+                minLeverage: 10 * 1e18,
+                timeAfterOpenAllowedToCloseSwapWithUnwinding: 1 days
             });
         } else if (closeSwapServiceTestCase == BuilderUtils.AmmCloseSwapServiceTestCase.CASE2) {
             poolCfg = IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration({
@@ -1658,7 +1661,8 @@ contract IporProtocolFactory is Test {
                 timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
                 minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
                 minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
-                minLeverage: 10 * 1e18
+                minLeverage: 10 * 1e18,
+                timeAfterOpenAllowedToCloseSwapWithUnwinding: 1 days
             });
         }
     }

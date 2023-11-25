@@ -121,7 +121,7 @@ library SwapLogicBaseV1 {
         uint256 closingTimestamp,
         uint256 oppositeLegFixedRate
     ) internal pure returns (int256 swapUnwindPnlValue) {
-        uint256 endTimestamp = getSwapEndTimestamp(swap);
+        uint256 endTimestamp = getSwapEndTimestamp(swap.openTimestamp, swap.tenor);
 
         require(closingTimestamp <= endTimestamp, AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE);
 
@@ -148,70 +148,72 @@ library SwapLogicBaseV1 {
         }
     }
 
-    /// @notice Check closable status for Swap given as a parameter.
-    /// @param account The account which is closing the swap
-    /// @param swapPnlValueToDate The pnl of the swap on a given date
-    /// @param closeTimestamp The timestamp of closing
-    /// @param swap The swap to be checked
-    /// @param poolCfg Pool configuration
-    /// @return closableStatus Closable status for Swap.
-    /// @return swapUnwindRequired True if swap unwind is required.
     function getClosableStatusForSwap(
-        AmmTypesBaseV1.Swap memory swap,
-        address account,
-        int256 swapPnlValueToDate,
-        uint256 closeTimestamp,
-        AmmTypesBaseV1.AmmCloseSwapServicePoolConfiguration memory poolCfg
+        AmmTypesBaseV1.ClosableSwapInput memory closableSwapInput
     ) internal view returns (AmmTypes.SwapClosableStatus, bool) {
-        if (swap.state != IporTypes.SwapState.ACTIVE) {
+        if (closableSwapInput.swapState != IporTypes.SwapState.ACTIVE) {
             return (AmmTypes.SwapClosableStatus.SWAP_ALREADY_CLOSED, false);
         }
 
-        if (account != OwnerManager.getOwner()) {
-            uint256 absPnlValue = IporMath.absoluteValue(swapPnlValueToDate);
+        if (closableSwapInput.account != OwnerManager.getOwner()) {
+            uint256 absPnlValue = IporMath.absoluteValue(closableSwapInput.swapPnlValueToDate);
 
             uint256 minPnlValueToCloseBeforeMaturityByCommunity = IporMath.percentOf(
-                swap.collateral,
-                poolCfg.minLiquidationThresholdToCloseBeforeMaturityByCommunity
+                closableSwapInput.swapCollateral,
+                closableSwapInput.minLiquidationThresholdToCloseBeforeMaturityByCommunity
             );
 
-            uint256 swapEndTimestamp = getSwapEndTimestamp(swap);
+            uint256 swapEndTimestamp = getSwapEndTimestamp(
+                closableSwapInput.swapOpenTimestamp,
+                closableSwapInput.swapTenor
+            );
 
-            if (closeTimestamp >= swapEndTimestamp) {
-                if (absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity || absPnlValue == swap.collateral) {
+            if (closableSwapInput.closeTimestamp >= swapEndTimestamp) {
+                if (
+                    absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity ||
+                    absPnlValue == closableSwapInput.swapCollateral
+                ) {
                     if (
-                        AmmConfigurationManager.isSwapLiquidator(poolCfg.asset, account) != true &&
-                        account != swap.buyer
+                        AmmConfigurationManager.isSwapLiquidator(closableSwapInput.asset, closableSwapInput.account) !=
+                        true &&
+                        closableSwapInput.account != closableSwapInput.swapBuyer
                     ) {
                         return (AmmTypes.SwapClosableStatus.SWAP_REQUIRED_BUYER_OR_LIQUIDATOR_TO_CLOSE, false);
                     }
                 }
             } else {
                 uint256 minPnlValueToCloseBeforeMaturityByBuyer = IporMath.percentOf(
-                    swap.collateral,
-                    poolCfg.minLiquidationThresholdToCloseBeforeMaturityByBuyer
+                    closableSwapInput.swapCollateral,
+                    closableSwapInput.minLiquidationThresholdToCloseBeforeMaturityByBuyer
                 );
 
                 if (
                     (absPnlValue >= minPnlValueToCloseBeforeMaturityByBuyer &&
-                        absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity) || absPnlValue == swap.collateral
+                        absPnlValue < minPnlValueToCloseBeforeMaturityByCommunity) ||
+                    absPnlValue == closableSwapInput.swapCollateral
                 ) {
                     if (
-                        AmmConfigurationManager.isSwapLiquidator(poolCfg.asset, account) != true &&
-                        account != swap.buyer
+                        AmmConfigurationManager.isSwapLiquidator(closableSwapInput.asset, closableSwapInput.account) !=
+                        true &&
+                        closableSwapInput.account != closableSwapInput.swapBuyer
                     ) {
                         return (AmmTypes.SwapClosableStatus.SWAP_REQUIRED_BUYER_OR_LIQUIDATOR_TO_CLOSE, false);
                     }
                 }
 
                 if (absPnlValue < minPnlValueToCloseBeforeMaturityByBuyer) {
-                    if (account == swap.buyer) {
-                        if (swapEndTimestamp - poolCfg.timeBeforeMaturityAllowedToCloseSwapByBuyer > closeTimestamp) {
+                    if (closableSwapInput.account == closableSwapInput.swapBuyer) {
+                        if (
+                            swapEndTimestamp - closableSwapInput.timeBeforeMaturityAllowedToCloseSwapByBuyer >
+                            closableSwapInput.closeTimestamp
+                        ) {
+                            // TODO: unwind is required question if block.timestamp < openTimestamp + 24h if not then error
                             return (AmmTypes.SwapClosableStatus.SWAP_IS_CLOSABLE, true);
                         }
                     } else {
                         if (
-                            swapEndTimestamp - poolCfg.timeBeforeMaturityAllowedToCloseSwapByCommunity > closeTimestamp
+                            swapEndTimestamp - closableSwapInput.timeBeforeMaturityAllowedToCloseSwapByCommunity >
+                            closableSwapInput.closeTimestamp
                         ) {
                             return (
                                 AmmTypes.SwapClosableStatus.SWAP_CANNOT_CLOSE_CLOSING_TOO_EARLY_FOR_COMMUNITY,
@@ -243,7 +245,8 @@ library SwapLogicBaseV1 {
             swap.notional *
                 openingFeeRateCfg *
                 IporMath.division(
-                    ((getSwapEndTimestamp(swap) - swap.openTimestamp) - (closingTimestamp - swap.openTimestamp)) * 1e18,
+                    ((getSwapEndTimestamp(swap.openTimestamp, swap.tenor) - swap.openTimestamp) -
+                        (closingTimestamp - swap.openTimestamp)) * 1e18,
                     365 days
                 ),
             1e36
@@ -273,15 +276,14 @@ library SwapLogicBaseV1 {
     }
 
     /// @notice Gets swap end timestamp based on swap tenor
-    /// @param swap Swap structure
     /// @return swap end timestamp in seconds without 18 decimals
-    function getSwapEndTimestamp(AmmTypesBaseV1.Swap memory swap) internal pure returns (uint256) {
-        if (swap.tenor == IporTypes.SwapTenor.DAYS_28) {
-            return swap.openTimestamp + 28 days;
-        } else if (swap.tenor == IporTypes.SwapTenor.DAYS_60) {
-            return swap.openTimestamp + 60 days;
-        } else if (swap.tenor == IporTypes.SwapTenor.DAYS_90) {
-            return swap.openTimestamp + 90 days;
+    function getSwapEndTimestamp(uint256 openTimestamp, IporTypes.SwapTenor tenor) internal pure returns (uint256) {
+        if (tenor == IporTypes.SwapTenor.DAYS_28) {
+            return openTimestamp + 28 days;
+        } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
+            return openTimestamp + 60 days;
+        } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
+            return openTimestamp + 90 days;
         } else {
             revert(AmmErrors.UNSUPPORTED_SWAP_TENOR);
         }

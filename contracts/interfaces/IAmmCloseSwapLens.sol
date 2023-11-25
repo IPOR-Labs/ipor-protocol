@@ -33,6 +33,8 @@ interface IAmmCloseSwapLens {
         uint256 minLiquidationThresholdToCloseBeforeMaturityByBuyer;
         /// @notice Min leverage of the virtual swap used in unwinding, represented in 18 decimals
         uint256 minLeverage;
+        /// @notice Time after open swap when it is allowed to close swap with unwinding, represented in seconds
+        uint256 timeAfterOpenAllowedToCloseSwapWithUnwinding;
     }
 
     /// @notice Returns the configuration of the AmmCloseSwapService for a given pool (asset).
