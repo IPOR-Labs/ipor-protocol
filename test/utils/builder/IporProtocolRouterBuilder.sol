@@ -17,8 +17,9 @@ contract IporProtocolRouterBuilder is Test {
         address ammCloseSwapServiceUsdt;
         address ammCloseSwapServiceUsdc;
         address ammCloseSwapServiceDai;
-        address ammCloseSwapLens;
         address ammCloseSwapServiceStEth;
+        address ammCloseSwapLens;
+        address ammCloseSwapLensStEth;
         address ammPoolsService;
         address ammPoolsServiceStEth;
         address ammGovernanceService;
@@ -65,10 +66,12 @@ contract IporProtocolRouterBuilder is Test {
         builderData.ammCloseSwapServiceUsdt = ammCloseSwapService;
         return this;
     }
+
     function withAmmCloseSwapServiceUsdc(address ammCloseSwapService) public returns (IporProtocolRouterBuilder) {
         builderData.ammCloseSwapServiceUsdc = ammCloseSwapService;
         return this;
     }
+
     function withAmmCloseSwapServiceDai(address ammCloseSwapService) public returns (IporProtocolRouterBuilder) {
         builderData.ammCloseSwapServiceDai = ammCloseSwapService;
         return this;
@@ -112,6 +115,7 @@ contract IporProtocolRouterBuilder is Test {
             ammCloseSwapServiceUsdc: builderData.ammCloseSwapServiceUsdc,
             ammCloseSwapServiceDai: builderData.ammCloseSwapServiceDai,
             ammCloseSwapLens: builderData.ammCloseSwapLens,
+            ammCloseSwapLensStEth: builderData.ammCloseSwapLensStEth,
             ammCloseSwapServiceStEth: builderData.ammCloseSwapServiceStEth,
             ammPoolsService: builderData.ammPoolsService,
             ammGovernanceService: builderData.ammGovernanceService,
@@ -145,6 +149,7 @@ contract IporProtocolRouterBuilder is Test {
             ammCloseSwapServiceUsdc: builderData.ammCloseSwapServiceUsdc,
             ammCloseSwapServiceDai: builderData.ammCloseSwapServiceDai,
             ammCloseSwapLens: builderData.ammCloseSwapLens,
+            ammCloseSwapLensStEth: builderData.ammCloseSwapLensStEth,
             ammCloseSwapServiceStEth: builderData.ammCloseSwapServiceStEth,
             ammPoolsService: builderData.ammPoolsService,
             ammPoolsServiceStEth: builderData.ammPoolsServiceStEth,

@@ -136,7 +136,7 @@ contract ForkOpenCloseSwap is TestForkCommons {
         (
             AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
-        ) = IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(
+        ) = IAmmCloseSwapServiceDai(iporProtocolRouterProxy).closeSwapsDai(
                 user,
                 payFixedSwapIds,
                 receiveFixedSwapIds,

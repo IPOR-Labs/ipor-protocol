@@ -26,6 +26,7 @@ import "../../contracts/amm/AmmCloseSwapServiceUsdt.sol";
 import "../../contracts/amm/AmmCloseSwapServiceUsdc.sol";
 import "../../contracts/amm/AmmCloseSwapServiceDai.sol";
 import "../../contracts/amm-eth/AmmCloseSwapServiceStEth.sol";
+import "../../contracts/amm-eth/AmmCloseSwapLensStEth.sol";
 import "../../contracts/amm/AmmCloseSwapLens.sol";
 import "../../contracts/amm/AmmPoolsService.sol";
 import "../../contracts/amm-common/AmmGovernanceService.sol";
@@ -164,6 +165,7 @@ contract TestForkCommons is Test {
     address public newAmmCloseSwapServiceUsdc;
     address public newAmmCloseSwapServiceDai;
     address public newAmmCloseSwapLens;
+    address public newAmmCloseSwapLensStEth;
 
     function _init() internal {
         messageSignerPrivateKey = 0x12341234;
@@ -183,6 +185,7 @@ contract TestForkCommons is Test {
         _createAmmCloseSwapServiceStEth();
         _createNewAmmPoolsServiceStEth();
         _createAmmPoolsLensStEth();
+        _createNewAmmCloseSwapLensStEth();
 
         _createNewAmmGovernanceService();
 
@@ -223,6 +226,7 @@ contract TestForkCommons is Test {
                 newAmmCloseSwapServiceDai,
                 ammCloseSwapServiceStEth,
                 newAmmCloseSwapLens,
+                newAmmCloseSwapLensStEth,
                 ammPoolsService,
                 newAmmGovernanceService,
                 _getUserAddress(123),
@@ -383,6 +387,16 @@ contract TestForkCommons is Test {
     function _createAmmPoolsLensStEth() private {
         ammPoolsLensStEth = address(
             new AmmPoolsLensStEth(stETH, ipstETH, ammTreasuryProxyStEth, ammStorageProxyStEth, iporOracleProxy)
+        );
+    }
+
+    function _createNewAmmCloseSwapLensStEth() private {
+        newAmmCloseSwapLensStEth = address(
+            new AmmCloseSwapLensStEth(
+                iporOracleProxy,
+                messageSignerAddress,
+                ammCloseSwapServiceStEth
+            )
         );
     }
 

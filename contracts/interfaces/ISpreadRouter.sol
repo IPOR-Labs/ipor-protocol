@@ -5,8 +5,7 @@ import "@openzeppelin/contracts-upgradeable/interfaces/draft-IERC1822Upgradeable
 import "@openzeppelin/contracts-upgradeable/interfaces/IERC1967Upgradeable.sol";
 import "./IIporContractCommonGov.sol";
 import "./IProxyImplementation.sol";
-import "./IAmmCloseSwapService.sol";
-import "./IAmmCloseSwapLens.sol";
+import "../amm/spread/ISpreadCloseSwapService.sol";
 import "../amm/spread/ISpread28Days.sol";
 import "../amm/spread/ISpread28DaysLens.sol";
 import "../amm/spread/ISpread60Days.sol";
@@ -22,8 +21,7 @@ interface ISpreadRouter is
     IERC1967Upgradeable,
     IIporContractCommonGov,
     IProxyImplementation,
-    IAmmCloseSwapService,
-    IAmmCloseSwapLens,
+    ISpreadCloseSwapService,
     ISpread28Days,
     ISpread28DaysLens,
     ISpread60Days,

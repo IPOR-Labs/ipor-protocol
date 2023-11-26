@@ -1,27 +1,16 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 
-import "../interfaces/IAmmCloseSwapLensStEth.sol";
 import "../interfaces/IAmmCloseSwapServiceStEth.sol";
 import "../base/amm/services/AmmCloseSwapServiceBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
-contract AmmCloseSwapServiceStEth is AmmCloseSwapServiceBaseV1, IAmmCloseSwapServiceStEth, IAmmCloseSwapLensStEth {
+contract AmmCloseSwapServiceStEth is AmmCloseSwapServiceBaseV1, IAmmCloseSwapServiceStEth {
     constructor(
         AmmTypesBaseV1.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput,
         address messageSignerInput
     ) AmmCloseSwapServiceBaseV1(poolCfg, iporOracleInput, messageSignerInput) {}
-
-    function getClosingSwapDetailsStEth(
-        address account,
-        AmmTypes.SwapDirection direction,
-        uint256 swapId,
-        uint256 closeTimestamp,
-        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
-    ) external view override returns (AmmTypes.ClosingSwapDetails memory closingSwapDetails) {
-        return _getClosingSwapDetails(account, direction, swapId, closeTimestamp, riskIndicatorsInput);
-    }
 
     function closeSwapsStEth(
         address beneficiary,

@@ -5,7 +5,6 @@ import "../../contracts/interfaces/IAmmSwapsLens.sol";
 import "../../contracts/interfaces/IAmmGovernanceLens.sol";
 import "../../contracts/interfaces/IAmmOpenSwapLens.sol";
 import "../../contracts/interfaces/IAmmCloseSwapLens.sol";
-import "../../contracts/interfaces/IAmmCloseSwapService.sol";
 import "../../contracts/interfaces/IIporOracle.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
 import {console2} from "forge-std/console2.sol";

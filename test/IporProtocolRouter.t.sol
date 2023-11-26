@@ -78,13 +78,13 @@ contract IporProtocolRouterTest is TestCommons {
             IporTypes.SwapTenor.DAYS_28
         );
         vm.expectRevert("IPOR_014");
-        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsUsdt(swapIds, swapIds, riskIndicatorsInputs);
+        _iporProtocol.ammCloseSwapServiceUsdt.emergencyCloseSwapsUsdt(swapIds, swapIds, riskIndicatorsInputs);
 
         vm.expectRevert("IPOR_014");
-        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsUsdc(swapIds, swapIds, riskIndicatorsInputs);
+        _iporProtocol.ammCloseSwapServiceUsdc.emergencyCloseSwapsUsdc(swapIds, swapIds, riskIndicatorsInputs);
 
         vm.expectRevert("IPOR_014");
-        _iporProtocol.ammCloseSwapService.emergencyCloseSwapsDai(swapIds, swapIds, riskIndicatorsInputs);
+        _iporProtocol.ammCloseSwapServiceDai.emergencyCloseSwapsDai(swapIds, swapIds, riskIndicatorsInputs);
 
         vm.stopPrank();
     }
@@ -218,17 +218,17 @@ contract IporProtocolRouterTest is TestCommons {
         swapPfIds[0] = 1;
         uint256[] memory swapRfIds = new uint256[](1);
         swapRfIds[0] = 2;
-        amm.usdt.ammCloseSwapService.emergencyCloseSwapsUsdt(
+        amm.usdt.ammCloseSwapServiceUsdt.emergencyCloseSwapsUsdt(
             swapPfIds,
             swapRfIds,
             getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
         );
-        amm.usdc.ammCloseSwapService.emergencyCloseSwapsUsdc(
+        amm.usdc.ammCloseSwapServiceUsdc.emergencyCloseSwapsUsdc(
             swapPfIds,
             swapRfIds,
             getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
         );
-        amm.dai.ammCloseSwapService.emergencyCloseSwapsDai(
+        amm.dai.ammCloseSwapServiceDai.emergencyCloseSwapsDai(
             swapPfIds,
             swapRfIds,
             getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
@@ -251,6 +251,7 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
+                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: _userOne,
@@ -275,6 +276,7 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
+                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: _userOne,
@@ -298,6 +300,7 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
+                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: _userOne,
@@ -322,6 +325,7 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
+                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: _userOne,
@@ -346,6 +350,7 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
+                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: _userOne,
@@ -370,6 +375,7 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
+                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: address(0),
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: _userOne,
@@ -394,6 +400,7 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
+                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: address(0),
                 ammPoolsServiceStEth: _userOne,
@@ -418,6 +425,7 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
+                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: address(0),
@@ -442,6 +450,7 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
+                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: _userOne,
@@ -466,6 +475,7 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
+                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: _userOne,
@@ -490,6 +500,7 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
+                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: _userOne,
@@ -514,6 +525,7 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
+                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: _userOne,
@@ -538,6 +550,7 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
+                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: _userOne,

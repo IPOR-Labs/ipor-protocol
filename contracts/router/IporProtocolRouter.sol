@@ -14,9 +14,12 @@ import "../interfaces/IAmmGovernanceLens.sol";
 import "../interfaces/IAmmOpenSwapLens.sol";
 import "../interfaces/IAmmOpenSwapService.sol";
 import "../interfaces/IAmmOpenSwapServiceStEth.sol";
-import "../interfaces/IAmmCloseSwapService.sol";
+import "../interfaces/IAmmCloseSwapServiceUsdt.sol";
+import "../interfaces/IAmmCloseSwapServiceUsdc.sol";
+import "../interfaces/IAmmCloseSwapServiceDai.sol";
 import "../interfaces/IAmmCloseSwapServiceStEth.sol";
 import "../interfaces/IAmmCloseSwapLens.sol";
+import "../interfaces/IAmmCloseSwapLensStEth.sol";
 import "../interfaces/IAmmPoolsService.sol";
 import "../interfaces/IPowerTokenFlowsService.sol";
 import "../interfaces/IPowerTokenStakeService.sol";
@@ -45,6 +48,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
     address public immutable _ammCloseSwapServiceDai;
     address public immutable _ammCloseSwapServiceStEth;
     address public immutable _ammCloseSwapLens;
+    address public immutable _ammCloseSwapLensStEth;
     address public immutable _ammPoolsService;
     address public immutable _ammGovernanceService;
     address public immutable _liquidityMiningLens;
@@ -65,6 +69,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         address ammCloseSwapServiceDai;
         address ammCloseSwapServiceStEth;
         address ammCloseSwapLens;
+        address ammCloseSwapLensStEth;
         address ammPoolsService;
         address ammGovernanceService;
         address liquidityMiningLens;
@@ -86,6 +91,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         _ammCloseSwapServiceDai = deployedContracts.ammCloseSwapServiceDai.checkAddress();
         _ammCloseSwapServiceStEth = deployedContracts.ammCloseSwapServiceStEth.checkAddress();
         _ammCloseSwapLens = deployedContracts.ammCloseSwapLens.checkAddress();
+        _ammCloseSwapLensStEth = deployedContracts.ammCloseSwapLensStEth.checkAddress();
         _ammPoolsService = deployedContracts.ammPoolsService.checkAddress();
         _ammGovernanceService = deployedContracts.ammGovernanceService.checkAddress();
         _liquidityMiningLens = deployedContracts.liquidityMiningLens.checkAddress();
@@ -127,6 +133,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
                 ammCloseSwapServiceUsdc: _ammCloseSwapServiceUsdc,
                 ammCloseSwapServiceDai: _ammCloseSwapServiceDai,
                 ammCloseSwapLens: _ammCloseSwapLens,
+                ammCloseSwapLensStEth: _ammCloseSwapLensStEth,
                 ammCloseSwapServiceStEth: _ammCloseSwapServiceStEth,
                 ammPoolsService: _ammPoolsService,
                 ammGovernanceService: _ammGovernanceService,
@@ -200,17 +207,17 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
                 _nonReentrantBefore();
             }
             return _ammCloseSwapServiceStEth;
-        } else if (_checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapsUsdt.selector)) {
+        } else if (_checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapServiceUsdt.closeSwapsUsdt.selector)) {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
             return _ammCloseSwapServiceUsdt;
-        } else if (_checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapsUsdc.selector)) {
+        } else if (_checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapServiceUsdc.closeSwapsUsdc.selector)) {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
             return _ammCloseSwapServiceUsdc;
-        } else if (_checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapsDai.selector)) {
+        } else if (_checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapServiceDai.closeSwapsDai.selector)) {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
@@ -294,13 +301,13 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         } else if (sig == IAmmCloseSwapServiceStEth.emergencyCloseSwapsStEth.selector) {
             _onlyOwner();
             return _ammCloseSwapServiceStEth;
-        } else if (sig == IAmmCloseSwapService.emergencyCloseSwapsUsdt.selector) {
+        } else if (sig == IAmmCloseSwapServiceUsdt.emergencyCloseSwapsUsdt.selector) {
             _onlyOwner();
             return _ammCloseSwapServiceUsdt;
-        } else if (sig == IAmmCloseSwapService.emergencyCloseSwapsUsdc.selector) {
+        } else if (sig == IAmmCloseSwapServiceUsdc.emergencyCloseSwapsUsdc.selector) {
             _onlyOwner();
             return _ammCloseSwapServiceUsdc;
-        } else if (sig == IAmmCloseSwapService.emergencyCloseSwapsDai.selector) {
+        } else if (sig == IAmmCloseSwapServiceDai.emergencyCloseSwapsDai.selector) {
             _onlyOwner();
             return _ammCloseSwapServiceDai;
         } else if (
@@ -358,6 +365,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             sig == IAmmCloseSwapLens.getClosingSwapDetails.selector
         ) {
             return _ammCloseSwapLens;
+        } else if (sig == IAmmCloseSwapLensStEth.getClosingSwapDetailsStEth.selector) {
+            return _ammCloseSwapLensStEth;
         } else if (sig == IAmmPoolsLensStEth.getIpstEthExchangeRate.selector) {
             return _ammPoolsLensStEth;
         } else if (sig == IAmmPoolsService.getAmmPoolServiceConfiguration.selector) {
