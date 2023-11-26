@@ -26,7 +26,10 @@ import "../../../contracts/amm-common/AmmSwapsLens.sol";
 import "../../../contracts/amm/AmmPoolsLens.sol";
 import "../../../contracts/amm/AssetManagementLens.sol";
 import "../../../contracts/amm/AmmOpenSwapService.sol";
-import "../../../contracts/amm/AmmCloseSwapService.sol";
+import "../../../contracts/amm/AmmCloseSwapServiceUsdt.sol";
+import "../../../contracts/amm/AmmCloseSwapServiceUsdc.sol";
+import "../../../contracts/amm/AmmCloseSwapServiceDai.sol";
+import "../../../contracts/amm/AmmCloseSwapLens.sol";
 
 import "../../../contracts/amm/AmmPoolsService.sol";
 import "../../../contracts/amm-common/AmmGovernanceService.sol";
@@ -730,9 +733,10 @@ contract IporProtocolFactory is Test {
                 spreadRouterInput: address(amm.spreadRouter)
             })
         );
-        deployerContracts.ammCloseSwapService = address(
-            new AmmCloseSwapService({
-                usdtPoolCfg: _preparePoolCfgForCloseSwapService(
+
+        deployerContracts.ammCloseSwapServiceUsdt = address(
+            new AmmCloseSwapServiceUsdt({
+                poolCfg: _preparePoolCfgForCloseSwapService(
                     cfg.closeSwapServiceTestCase,
                     address(amm.usdt.asset),
                     address(amm.usdt.ammTreasury),
@@ -740,7 +744,15 @@ contract IporProtocolFactory is Test {
                     address(amm.usdt.assetManagement),
                     address(amm.usdt.spreadRouter)
                 ),
-                usdcPoolCfg: _preparePoolCfgForCloseSwapService(
+                iporOracleInput: address(amm.iporOracle),
+                messageSignerInput: messageSignerAddress,
+                spreadRouterInput: address(amm.spreadRouter)
+            })
+        );
+
+        deployerContracts.ammCloseSwapServiceUsdc = address(
+            new AmmCloseSwapServiceUsdc({
+                poolCfg: _preparePoolCfgForCloseSwapService(
                     cfg.closeSwapServiceTestCase,
                     address(amm.usdc.asset),
                     address(amm.usdc.ammTreasury),
@@ -748,7 +760,15 @@ contract IporProtocolFactory is Test {
                     address(amm.usdc.assetManagement),
                     address(amm.usdc.spreadRouter)
                 ),
-                daiPoolCfg: _preparePoolCfgForCloseSwapService(
+                iporOracleInput: address(amm.iporOracle),
+                messageSignerInput: messageSignerAddress,
+                spreadRouterInput: address(amm.spreadRouter)
+            })
+        );
+
+        deployerContracts.ammCloseSwapServiceDai = address(
+            new AmmCloseSwapServiceDai({
+                poolCfg: _preparePoolCfgForCloseSwapService(
                     cfg.closeSwapServiceTestCase,
                     address(amm.dai.asset),
                     address(amm.dai.ammTreasury),
@@ -759,6 +779,20 @@ contract IporProtocolFactory is Test {
                 iporOracleInput: address(amm.iporOracle),
                 messageSignerInput: messageSignerAddress,
                 spreadRouterInput: address(amm.spreadRouter)
+            })
+        );
+
+        deployerContracts.ammCloseSwapLens = address(
+            new AmmCloseSwapLens({
+                usdtInput: address(amm.usdt.asset),
+                usdcInput: address(amm.usdc.asset),
+                daiInput: address(amm.dai.asset),
+                iporOracleInput: address(amm.iporOracle),
+                messageSignerInput: messageSignerAddress,
+                spreadRouterInput: address(amm.spreadRouter),
+                closeSwapServiceUsdtInput: deployerContracts.ammCloseSwapServiceUsdt,
+                closeSwapServiceUsdcInput: deployerContracts.ammCloseSwapServiceUsdc,
+                closeSwapServiceDaiInput: deployerContracts.ammCloseSwapServiceDai
             })
         );
 
@@ -1000,9 +1034,9 @@ contract IporProtocolFactory is Test {
             })
         );
 
-        deployerContracts.ammCloseSwapService = address(
-            new AmmCloseSwapService({
-                usdtPoolCfg: _preparePoolCfgForCloseSwapService(
+        deployerContracts.ammCloseSwapServiceUsdt = address(
+            new AmmCloseSwapServiceUsdt({
+                poolCfg: _preparePoolCfgForCloseSwapService(
                     cfg.closeSwapServiceTestCase,
                     address(iporProtocol.asset),
                     address(iporProtocol.ammTreasury),
@@ -1010,11 +1044,26 @@ contract IporProtocolFactory is Test {
                     address(iporProtocol.assetManagement),
                     address(iporProtocol.spreadRouter)
                 ),
-                usdcPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
-                daiPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
                 iporOracleInput: address(iporProtocol.iporOracle),
                 messageSignerInput: messageSignerAddress,
                 spreadRouterInput: address(iporProtocol.spreadRouter)
+            })
+        );
+
+        deployerContracts.ammCloseSwapServiceUsdc = address(_fakeContract);
+        deployerContracts.ammCloseSwapServiceDai = address(_fakeContract);
+
+        deployerContracts.ammCloseSwapLens = address(
+            new AmmCloseSwapLens({
+                usdtInput: address(iporProtocol.asset),
+                usdcInput: _fakeContract,
+                daiInput: _fakeContract,
+                iporOracleInput: address(iporProtocol.iporOracle),
+                messageSignerInput: messageSignerAddress,
+                spreadRouterInput: address(iporProtocol.spreadRouter),
+                closeSwapServiceUsdtInput: deployerContracts.ammCloseSwapServiceUsdt,
+                closeSwapServiceUsdcInput: deployerContracts.ammCloseSwapServiceUsdc,
+                closeSwapServiceDaiInput: deployerContracts.ammCloseSwapServiceDai
             })
         );
 
@@ -1192,10 +1241,9 @@ contract IporProtocolFactory is Test {
             })
         );
 
-        deployerContracts.ammCloseSwapService = address(
-            new AmmCloseSwapService({
-                usdtPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
-                usdcPoolCfg: _preparePoolCfgForCloseSwapService(
+        deployerContracts.ammCloseSwapServiceUsdc = address(
+            new AmmCloseSwapServiceUsdc({
+                poolCfg: _preparePoolCfgForCloseSwapService(
                     cfg.closeSwapServiceTestCase,
                     address(iporProtocol.asset),
                     address(iporProtocol.ammTreasury),
@@ -1203,10 +1251,26 @@ contract IporProtocolFactory is Test {
                     address(iporProtocol.assetManagement),
                     address(iporProtocol.spreadRouter)
                 ),
-                daiPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
                 iporOracleInput: address(iporProtocol.iporOracle),
                 messageSignerInput: messageSignerAddress,
                 spreadRouterInput: address(iporProtocol.spreadRouter)
+            })
+        );
+
+        deployerContracts.ammCloseSwapServiceUsdt = address(_fakeContract);
+        deployerContracts.ammCloseSwapServiceDai = address(_fakeContract);
+
+        deployerContracts.ammCloseSwapLens = address(
+            new AmmCloseSwapLens({
+                usdtInput: _fakeContract,
+                usdcInput: address(iporProtocol.asset),
+                daiInput: _fakeContract,
+                iporOracleInput: address(iporProtocol.iporOracle),
+                messageSignerInput: messageSignerAddress,
+                spreadRouterInput: address(iporProtocol.spreadRouter),
+                closeSwapServiceUsdtInput: deployerContracts.ammCloseSwapServiceUsdt,
+                closeSwapServiceUsdcInput: deployerContracts.ammCloseSwapServiceUsdc,
+                closeSwapServiceDaiInput: deployerContracts.ammCloseSwapServiceDai
             })
         );
 
@@ -1387,11 +1451,9 @@ contract IporProtocolFactory is Test {
                 spreadRouterInput: address(iporProtocol.spreadRouter)
             })
         );
-        deployerContracts.ammCloseSwapService = address(
-            new AmmCloseSwapService({
-                usdtPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
-                usdcPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
-                daiPoolCfg: _preparePoolCfgForCloseSwapService(
+        deployerContracts.ammCloseSwapServiceDai = address(
+            new AmmCloseSwapServiceDai({
+                poolCfg: _preparePoolCfgForCloseSwapService(
                     cfg.closeSwapServiceTestCase,
                     address(iporProtocol.asset),
                     address(iporProtocol.ammTreasury),
@@ -1402,6 +1464,23 @@ contract IporProtocolFactory is Test {
                 iporOracleInput: address(iporProtocol.iporOracle),
                 messageSignerInput: messageSignerAddress,
                 spreadRouterInput: address(iporProtocol.spreadRouter)
+            })
+        );
+
+        deployerContracts.ammCloseSwapServiceUsdt = address(_fakeContract);
+        deployerContracts.ammCloseSwapServiceUsdc = address(_fakeContract);
+
+        deployerContracts.ammCloseSwapLens = address(
+            new AmmCloseSwapLens({
+                usdtInput: _fakeContract,
+                usdcInput: _fakeContract,
+                daiInput: address(iporProtocol.asset),
+                iporOracleInput: address(iporProtocol.iporOracle),
+                messageSignerInput: messageSignerAddress,
+                spreadRouterInput: address(iporProtocol.spreadRouter),
+                closeSwapServiceUsdtInput: deployerContracts.ammCloseSwapServiceUsdt,
+                closeSwapServiceUsdcInput: deployerContracts.ammCloseSwapServiceUsdc,
+                closeSwapServiceDaiInput: deployerContracts.ammCloseSwapServiceDai
             })
         );
 

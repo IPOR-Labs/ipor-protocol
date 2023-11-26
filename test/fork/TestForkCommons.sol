@@ -22,8 +22,11 @@ import "../../contracts/amm/spread/SpreadStorageLens.sol";
 import "../../contracts/amm/spread/SpreadRouter.sol";
 import "../../contracts/amm/AmmOpenSwapService.sol";
 import "../../contracts/amm-eth/AmmOpenSwapServiceStEth.sol";
-import "../../contracts/amm/AmmCloseSwapService.sol";
+import "../../contracts/amm/AmmCloseSwapServiceUsdt.sol";
+import "../../contracts/amm/AmmCloseSwapServiceUsdc.sol";
+import "../../contracts/amm/AmmCloseSwapServiceDai.sol";
 import "../../contracts/amm-eth/AmmCloseSwapServiceStEth.sol";
+import "../../contracts/amm/AmmCloseSwapLens.sol";
 import "../../contracts/amm/AmmPoolsService.sol";
 import "../../contracts/amm-common/AmmGovernanceService.sol";
 import "../../contracts/amm/AmmStorage.sol";
@@ -157,6 +160,11 @@ contract TestForkCommons is Test {
 
     address public spreadStEth;
 
+    address public newAmmCloseSwapServiceUsdt;
+    address public newAmmCloseSwapServiceUsdc;
+    address public newAmmCloseSwapServiceDai;
+    address public newAmmCloseSwapLens;
+
     function _init() internal {
         messageSignerPrivateKey = 0x12341234;
         messageSignerAddress = vm.addr(messageSignerPrivateKey);
@@ -167,6 +175,7 @@ contract TestForkCommons is Test {
         _createAmmSwapsLens();
         _createAmmOpenSwapService();
         _createAmmCloseSwapService();
+        _createAmmCloseSwapLens();
 
         _upgradeAmmTreasuryStEth();
 
@@ -209,8 +218,11 @@ contract TestForkCommons is Test {
                 assetManagementLens,
                 ammOpenSwapService,
                 ammOpenSwapServiceStEth,
-                ammCloseSwapService,
+                newAmmCloseSwapServiceUsdt,
+                newAmmCloseSwapServiceUsdc,
+                newAmmCloseSwapServiceDai,
                 ammCloseSwapServiceStEth,
+                newAmmCloseSwapLens,
                 ammPoolsService,
                 newAmmGovernanceService,
                 _getUserAddress(123),
@@ -637,15 +649,32 @@ contract TestForkCommons is Test {
                 10 * 1e6,
                 1 days
             );
-        ammCloseSwapService = address(
-            new AmmCloseSwapService(
-                usdtConfig,
-                usdcConfig,
-                daiConfig,
-                iporOracleProxy,
-                messageSignerAddress,
-                spreadRouter
-            )
+        newAmmCloseSwapServiceUsdt = address(
+            new AmmCloseSwapServiceUsdt(usdtConfig, iporOracleProxy, messageSignerAddress, spreadRouter)
+        );
+
+        newAmmCloseSwapServiceUsdc = address(
+            new AmmCloseSwapServiceUsdc(usdcConfig, iporOracleProxy, messageSignerAddress, spreadRouter)
+        );
+
+        newAmmCloseSwapServiceDai = address(
+            new AmmCloseSwapServiceDai(daiConfig, iporOracleProxy, messageSignerAddress, spreadRouter)
+        );
+    }
+
+    function _createAmmCloseSwapLens() private {
+        newAmmCloseSwapLens = address(
+            new AmmCloseSwapLens({
+                usdtInput: USDT,
+                usdcInput: USDC,
+                daiInput: DAI,
+                iporOracleInput: iporOracleProxy,
+                messageSignerInput: messageSignerAddress,
+                spreadRouterInput: spreadRouter,
+                closeSwapServiceUsdtInput: newAmmCloseSwapServiceUsdt,
+                closeSwapServiceUsdcInput: newAmmCloseSwapServiceUsdc,
+                closeSwapServiceDaiInput: newAmmCloseSwapServiceDai
+            })
         );
     }
 

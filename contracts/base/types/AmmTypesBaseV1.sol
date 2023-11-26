@@ -102,8 +102,12 @@ library AmmTypesBaseV1 {
 
     /// @notice Technical structure with unwinding parameters.
     struct UnwindParams {
+        address asset;
         /// @notice Risk Indicators Inputs signer
         address messageSigner;
+        address spread;
+        address ammStorage;
+        address ammTreasury;
         /// @notice Moment when the swap is closing
         uint256 closeTimestamp;
         /// @notice Swap's PnL value to moment when the swap is closing
@@ -112,6 +116,8 @@ library AmmTypesBaseV1 {
         uint256 indexValue;
         /// @notice Swap data
         AmmTypesBaseV1.Swap swap;
+        uint256 unwindingFeeRate;
+        uint256 unwindingFeeTreasuryPortionRate;
         /// @notice Risk indicators for both legs pay fixed and receive fixed
         AmmTypes.CloseSwapRiskIndicatorsInput riskIndicatorsInputs;
     }

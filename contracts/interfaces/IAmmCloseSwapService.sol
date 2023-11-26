@@ -21,7 +21,6 @@ interface IAmmCloseSwapService {
         /// @notice asset amount after closing swap that has been transferred from AmmTreasury to the Liquidator. Value represented in 18 decimals.
         uint256 transferredToLiquidator
     );
-
     /// @notice Emitted when unwind is performed during closing swap.
     event SwapUnwind(
         /// @notice underlying asset

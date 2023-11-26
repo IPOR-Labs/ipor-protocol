@@ -1,26 +1,19 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-
-import "../../interfaces/IIporContractCommonGov.sol";
-import "../../interfaces/IProxyImplementation.sol";
 import "../../interfaces/types/IporTypes.sol";
 import "../../interfaces/types/AmmTypes.sol";
 import "../../libraries/IporContractValidator.sol";
-import "../../security/PauseManager.sol";
 import "../../security/IporOwnable.sol";
 import "../../amm/libraries/types/AmmInternalTypes.sol";
-import "../../amm/libraries/IporSwapLogic.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
 import "../../amm/spread/CalculateTimeWeightedNotionalLibs.sol";
 import "../../base/interfaces/IAmmStorageBaseV1.sol";
+import "../interfaces/ISpreadBaseV1.sol";
 import "./DemandSpreadLibsBaseV1.sol";
+import "../amm/libraries/SwapLogicBaseV1.sol";
 import "./SpreadStorageLibsBaseV1.sol";
 import "./OfferedRateCalculationLibsBaseV1.sol";
-import "../interfaces/ISpreadBaseV1.sol";
 
 // @dev This contract should calculate the spread for one asset and for all tenors.
 contract SpreadBaseV1 is IporOwnable, ISpreadBaseV1 {
@@ -137,7 +130,7 @@ contract SpreadBaseV1 is IporOwnable, ISpreadBaseV1 {
         if (closedSwap.openSwapTimestamp == 0) {
             return;
         }
-        uint256 tenorInSeconds = IporSwapLogic.getTenorInSeconds(tenor);
+        uint256 tenorInSeconds = SwapLogicBaseV1.getTenorInSeconds(tenor);
         SpreadStorageLibsBaseV1.StorageId storageId = _calculateStorageId(tenor);
         SpreadTypesBaseV1.TimeWeightedNotionalMemory memory timeWeightedNotional = SpreadStorageLibsBaseV1
             .getTimeWeightedNotionalForAssetAndTenor(storageId);

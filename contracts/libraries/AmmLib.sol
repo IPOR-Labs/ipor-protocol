@@ -24,21 +24,7 @@ library AmmLib {
     /// @param model AMM model skeleton of the pool
     /// @return AMM exchange rate
     function getExchangeRate(AmmTypes.AmmPoolCoreModel memory model) internal view returns (uint256) {
-        (, , int256 soap) = getSoap(model);
-
-        uint256 liquidityPoolBalance = getAccruedBalance(model).liquidityPool;
-
-        int256 balance = liquidityPoolBalance.toInt256() - soap;
-
-        require(balance >= 0, AmmErrors.SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW);
-
-        uint256 ipTokenTotalSupply = IIpToken(model.ipToken).totalSupply();
-
-        if (ipTokenTotalSupply > 0) {
-            return IporMath.division(balance.toUint256() * 1e18, ipTokenTotalSupply);
-        } else {
-            return 1e18;
-        }
+        return getExchangeRate(model, getAccruedBalance(model).liquidityPool);
     }
 
     /// @notice Gets AMM exchange rate
@@ -103,15 +89,5 @@ library AmmLib {
         accruedBalance.liquidityPool = liquidityPool.toUint256();
         accruedBalance.vault = actualVaultBalance;
         return accruedBalance;
-    }
-
-    function _leverageInRange(uint256 leverage, uint256 cfgMinLeverage) internal pure returns (uint256) {
-        if (leverage > Constants.WAD_LEVERAGE_1000) {
-            return Constants.WAD_LEVERAGE_1000;
-        } else if (leverage < cfgMinLeverage) {
-            return cfgMinLeverage;
-        } else {
-            return leverage;
-        }
     }
 }

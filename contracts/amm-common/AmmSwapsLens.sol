@@ -6,7 +6,6 @@ import "../interfaces/IAmmSwapsLens.sol";
 import "../amm/spread/ISpread28DaysLens.sol";
 import "../amm/spread/ISpread60DaysLens.sol";
 import "../amm/spread/ISpread90DaysLens.sol";
-import "../amm/libraries/IporSwapLogic.sol";
 import "../base/amm/libraries/AmmSwapsLensLibBaseV1.sol";
 import "../libraries/IporContractValidator.sol";
 import "../libraries/RiskIndicatorsValidatorLib.sol";
@@ -16,7 +15,6 @@ import "../libraries/AmmLib.sol";
 contract AmmSwapsLens is IAmmSwapsLens {
     using Address for address;
     using IporContractValidator for address;
-    using IporSwapLogic for AmmTypes.Swap;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
     using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
 
@@ -112,7 +110,16 @@ contract AmmSwapsLens is IAmmSwapsLens {
 
             require(swap.id > 0, AmmErrors.INCORRECT_SWAP_ID);
 
-            return swap.calculatePnlPayFixed(block.timestamp, accruedIbtPrice);
+            return
+                SwapLogicBaseV1.calculatePnlPayFixed(
+                    swap.openTimestamp,
+                    swap.collateral,
+                    swap.notional,
+                    swap.fixedInterestRate,
+                    swap.ibtQuantity,
+                    block.timestamp,
+                    accruedIbtPrice
+                );
         }
     }
 
@@ -128,7 +135,16 @@ contract AmmSwapsLens is IAmmSwapsLens {
 
             require(swap.id > 0, AmmErrors.INCORRECT_SWAP_ID);
 
-            return swap.calculatePnlReceiveFixed(block.timestamp, accruedIbtPrice);
+            return
+                SwapLogicBaseV1.calculatePnlReceiveFixed(
+                    swap.openTimestamp,
+                    swap.collateral,
+                    swap.notional,
+                    swap.fixedInterestRate,
+                    swap.ibtQuantity,
+                    block.timestamp,
+                    accruedIbtPrice
+                );
         }
     }
 
@@ -259,11 +275,27 @@ contract AmmSwapsLens is IAmmSwapsLens {
 
             if (swapId.direction == 0) {
                 swap = ammStorage.getSwap(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, swapId.id);
-                swapValue = swap.calculatePnlPayFixed(block.timestamp, accruedIbtPrice);
+                swapValue = SwapLogicBaseV1.calculatePnlPayFixed(
+                    swap.openTimestamp,
+                    swap.collateral,
+                    swap.notional,
+                    swap.fixedInterestRate,
+                    swap.ibtQuantity,
+                    block.timestamp,
+                    accruedIbtPrice
+                );
                 mappedSwaps[i] = _mapSwap(asset, swap, 0, swapValue);
             } else {
                 swap = ammStorage.getSwap(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, swapId.id);
-                swapValue = swap.calculatePnlReceiveFixed(block.timestamp, accruedIbtPrice);
+                swapValue = SwapLogicBaseV1.calculatePnlReceiveFixed(
+                    swap.openTimestamp,
+                    swap.collateral,
+                    swap.notional,
+                    swap.fixedInterestRate,
+                    swap.ibtQuantity,
+                    block.timestamp,
+                    accruedIbtPrice
+                );
                 mappedSwaps[i] = _mapSwap(asset, swap, 1, swapValue);
             }
             unchecked {
@@ -292,7 +324,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
                 fixedInterestRate: swap.fixedInterestRate,
                 pnlValue: pnlValue,
                 openTimestamp: swap.openTimestamp,
-                endTimestamp: swap.getSwapEndTimestamp(),
+                endTimestamp: SwapCloseLogicLibBaseV1.getSwapEndTimestamp(swap.openTimestamp, swap.tenor),
                 liquidationDepositAmount: swap.liquidationDepositAmount,
                 state: uint256(swap.state)
             });

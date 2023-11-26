@@ -7,9 +7,9 @@ import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/errors/AmmErrors.sol";
 import "../../libraries/IporContractValidator.sol";
 import "../../amm/libraries/types/AmmInternalTypes.sol";
-import "../../amm/libraries/IporSwapLogic.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
 import "../../amm/spread/CalculateTimeWeightedNotionalLibs.sol";
+import "../../base/amm/libraries/SwapLogicBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through SpreadRouter.
 contract SpreadCloseSwapService is ISpreadCloseSwapService {
@@ -46,7 +46,7 @@ contract SpreadCloseSwapService is ISpreadCloseSwapService {
         if (closedSwap.openSwapTimestamp == 0) {
             return;
         }
-        uint256 tenorInSeconds = IporSwapLogic.getTenorInSeconds(tenor);
+        uint256 tenorInSeconds = SwapLogicBaseV1.getTenorInSeconds(tenor);
         SpreadStorageLibs.StorageId storageId = _getStorageId(asset, tenor);
         SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional = SpreadStorageLibs
             .getTimeWeightedNotionalForAssetAndTenor(storageId);

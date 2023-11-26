@@ -40,8 +40,11 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
     address public immutable _assetManagementLens;
     address public immutable _ammOpenSwapService;
     address public immutable _ammOpenSwapServiceStEth;
-    address public immutable _ammCloseSwapService;
+    address public immutable _ammCloseSwapServiceUsdt;
+    address public immutable _ammCloseSwapServiceUsdc;
+    address public immutable _ammCloseSwapServiceDai;
     address public immutable _ammCloseSwapServiceStEth;
+    address public immutable _ammCloseSwapLens;
     address public immutable _ammPoolsService;
     address public immutable _ammGovernanceService;
     address public immutable _liquidityMiningLens;
@@ -57,8 +60,11 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         address assetManagementLens;
         address ammOpenSwapService;
         address ammOpenSwapServiceStEth;
-        address ammCloseSwapService;
+        address ammCloseSwapServiceUsdt;
+        address ammCloseSwapServiceUsdc;
+        address ammCloseSwapServiceDai;
         address ammCloseSwapServiceStEth;
+        address ammCloseSwapLens;
         address ammPoolsService;
         address ammGovernanceService;
         address liquidityMiningLens;
@@ -75,8 +81,11 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         _assetManagementLens = deployedContracts.assetManagementLens.checkAddress();
         _ammOpenSwapService = deployedContracts.ammOpenSwapService.checkAddress();
         _ammOpenSwapServiceStEth = deployedContracts.ammOpenSwapServiceStEth.checkAddress();
-        _ammCloseSwapService = deployedContracts.ammCloseSwapService.checkAddress();
+        _ammCloseSwapServiceUsdt = deployedContracts.ammCloseSwapServiceUsdt.checkAddress();
+        _ammCloseSwapServiceUsdc = deployedContracts.ammCloseSwapServiceUsdc.checkAddress();
+        _ammCloseSwapServiceDai = deployedContracts.ammCloseSwapServiceDai.checkAddress();
         _ammCloseSwapServiceStEth = deployedContracts.ammCloseSwapServiceStEth.checkAddress();
+        _ammCloseSwapLens = deployedContracts.ammCloseSwapLens.checkAddress();
         _ammPoolsService = deployedContracts.ammPoolsService.checkAddress();
         _ammGovernanceService = deployedContracts.ammGovernanceService.checkAddress();
         _liquidityMiningLens = deployedContracts.liquidityMiningLens.checkAddress();
@@ -114,7 +123,10 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
                 assetManagementLens: _assetManagementLens,
                 ammOpenSwapService: _ammOpenSwapService,
                 ammOpenSwapServiceStEth: _ammOpenSwapServiceStEth,
-                ammCloseSwapService: _ammCloseSwapService,
+                ammCloseSwapServiceUsdt: _ammCloseSwapServiceUsdt,
+                ammCloseSwapServiceUsdc: _ammCloseSwapServiceUsdc,
+                ammCloseSwapServiceDai: _ammCloseSwapServiceDai,
+                ammCloseSwapLens: _ammCloseSwapLens,
                 ammCloseSwapServiceStEth: _ammCloseSwapServiceStEth,
                 ammPoolsService: _ammPoolsService,
                 ammGovernanceService: _ammGovernanceService,
@@ -188,15 +200,21 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
                 _nonReentrantBefore();
             }
             return _ammCloseSwapServiceStEth;
-        } else if (
-            _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapsUsdt.selector) ||
-            _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapsUsdc.selector) ||
-            _checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapsDai.selector)
-        ) {
+        } else if (_checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapsUsdt.selector)) {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
-            return _ammCloseSwapService;
+            return _ammCloseSwapServiceUsdt;
+        } else if (_checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapsUsdc.selector)) {
+            if (batchOperation == 0) {
+                _nonReentrantBefore();
+            }
+            return _ammCloseSwapServiceUsdc;
+        } else if (_checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapService.closeSwapsDai.selector)) {
+            if (batchOperation == 0) {
+                _nonReentrantBefore();
+            }
+            return _ammCloseSwapServiceDai;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceStEth.provideLiquidityStEth.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceStEth.provideLiquidityWEth.selector) ||
@@ -276,13 +294,15 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         } else if (sig == IAmmCloseSwapServiceStEth.emergencyCloseSwapsStEth.selector) {
             _onlyOwner();
             return _ammCloseSwapServiceStEth;
-        } else if (
-            sig == IAmmCloseSwapService.emergencyCloseSwapsUsdt.selector ||
-            sig == IAmmCloseSwapService.emergencyCloseSwapsUsdc.selector ||
-            sig == IAmmCloseSwapService.emergencyCloseSwapsDai.selector
-        ) {
+        } else if (sig == IAmmCloseSwapService.emergencyCloseSwapsUsdt.selector) {
             _onlyOwner();
-            return _ammCloseSwapService;
+            return _ammCloseSwapServiceUsdt;
+        } else if (sig == IAmmCloseSwapService.emergencyCloseSwapsUsdc.selector) {
+            _onlyOwner();
+            return _ammCloseSwapServiceUsdc;
+        } else if (sig == IAmmCloseSwapService.emergencyCloseSwapsDai.selector) {
+            _onlyOwner();
+            return _ammCloseSwapServiceDai;
         } else if (
             sig == IAmmGovernanceLens.isSwapLiquidator.selector ||
             sig == IAmmGovernanceLens.isAppointedToRebalanceInAmm.selector ||
@@ -337,7 +357,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             sig == IAmmCloseSwapLens.getAmmCloseSwapServicePoolConfiguration.selector ||
             sig == IAmmCloseSwapLens.getClosingSwapDetails.selector
         ) {
-            return _ammCloseSwapService;
+            return _ammCloseSwapLens;
         } else if (sig == IAmmPoolsLensStEth.getIpstEthExchangeRate.selector) {
             return _ammPoolsLensStEth;
         } else if (sig == IAmmPoolsService.getAmmPoolServiceConfiguration.selector) {

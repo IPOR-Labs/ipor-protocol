@@ -3,6 +3,7 @@ pragma solidity 0.8.20;
 
 import "../../contracts/interfaces/types/IporTypes.sol";
 import "../../contracts/base/amm/libraries/SwapLogicBaseV1.sol";
+import "../../contracts/base/amm/libraries/SwapCloseLogicLibBaseV1.sol";
 
 contract MockSwapLogicBaseV1 {
     function calculateSwapAmount(
@@ -29,16 +30,31 @@ contract MockSwapLogicBaseV1 {
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) public pure returns (uint256 interestFixed, uint256 interestFloating) {
-        return SwapLogicBaseV1.calculateInterest(swap, closingTimestamp, mdIbtPrice);
+        return
+            SwapLogicBaseV1.calculateInterest(
+                swap.openTimestamp,
+                swap.notional,
+                swap.fixedInterestRate,
+                swap.ibtQuantity,
+                closingTimestamp,
+                mdIbtPrice
+            );
     }
-
 
     function calculatePnlPayFixed(
         AmmTypesBaseV1.Swap memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) public pure returns (int256 swapValue) {
-        swapValue = SwapLogicBaseV1.calculatePnlPayFixed(swap, closingTimestamp, mdIbtPrice);
+        swapValue = SwapLogicBaseV1.calculatePnlPayFixed(
+            swap.openTimestamp,
+            swap.collateral,
+            swap.notional,
+            swap.fixedInterestRate,
+            swap.ibtQuantity,
+            closingTimestamp,
+            mdIbtPrice
+        );
     }
 
     function calculatePnlReceiveFixed(
@@ -46,7 +62,15 @@ contract MockSwapLogicBaseV1 {
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) public pure returns (int256 swapValue) {
-        swapValue = SwapLogicBaseV1.calculatePnlReceiveFixed(swap, closingTimestamp, mdIbtPrice);
+        swapValue = SwapLogicBaseV1.calculatePnlReceiveFixed(
+            swap.openTimestamp,
+            swap.collateral,
+            swap.notional,
+            swap.fixedInterestRate,
+            swap.ibtQuantity,
+            closingTimestamp,
+            mdIbtPrice
+        );
     }
 
     function calculateSwapUnwindPnlValue(
@@ -55,7 +79,7 @@ contract MockSwapLogicBaseV1 {
         uint256 closingTimestamp,
         uint256 oppositeLegFixedRate
     ) public pure returns (int256 swapUnwindAmount) {
-        swapUnwindAmount = SwapLogicBaseV1.calculateSwapUnwindPnlValue(
+        swapUnwindAmount = SwapCloseLogicLibBaseV1.calculateSwapUnwindPnlValue(
             swap,
             closingTimestamp,
             oppositeLegFixedRate
@@ -63,12 +87,16 @@ contract MockSwapLogicBaseV1 {
     }
 
     function calculateSwapUnwindOpeningFeeAmount(
-        AmmTypesBaseV1.Swap memory swap,
+        uint256 swapOpenTimestamp,
+        uint256 swapNotional,
+        IporTypes.SwapTenor swapTenor,
         uint256 closingTimestamp,
         uint256 openingFeeRateCfg
     ) public pure returns (uint256 swapOpeningFeeAmount) {
-        swapOpeningFeeAmount = SwapLogicBaseV1.calculateSwapUnwindOpeningFeeAmount(
-            swap,
+        swapOpeningFeeAmount = SwapCloseLogicLibBaseV1.calculateSwapUnwindOpeningFeeAmount(
+            swapOpenTimestamp,
+            swapNotional,
+            swapTenor,
             closingTimestamp,
             openingFeeRateCfg
         );
