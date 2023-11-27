@@ -9,15 +9,14 @@ contract AmmCloseSwapServiceUsdt is AmmCloseSwapServiceStable, IAmmCloseSwapServ
     constructor(
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput,
-        address messageSignerInput,
-        address spreadRouterInput
-    ) AmmCloseSwapServiceStable(poolCfg, iporOracleInput, messageSignerInput, spreadRouterInput) {}
+        address messageSignerInput
+    ) AmmCloseSwapServiceStable(poolCfg, iporOracleInput, messageSignerInput) {}
 
     function closeSwapsUsdt(
         address beneficiary,
         uint256[] memory payFixedSwapIds,
         uint256[] memory receiveFixedSwapIds,
-        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
+        AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     )
         external
         override
@@ -37,7 +36,7 @@ contract AmmCloseSwapServiceUsdt is AmmCloseSwapServiceStable, IAmmCloseSwapServ
     function emergencyCloseSwapsUsdt(
         uint256[] memory payFixedSwapIds,
         uint256[] memory receiveFixedSwapIds,
-        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
+        AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     )
         external
         override

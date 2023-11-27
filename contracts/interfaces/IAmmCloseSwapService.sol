@@ -4,7 +4,7 @@ pragma solidity 0.8.20;
 import "./types/AmmTypes.sol";
 
 /// @title Interface of the service allowing to close swaps.
-interface IAmmCloseSwapServiceStable {
+interface IAmmCloseSwapService {
     function getPoolConfiguration()
         external
         view

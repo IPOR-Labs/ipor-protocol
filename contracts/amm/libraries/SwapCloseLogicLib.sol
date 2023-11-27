@@ -117,7 +117,7 @@ library SwapCloseLogicLib {
     /// @notice Calculates the swap unwind PnL value.
     /// @param swap Swap structure
     /// @param direction swap direction
-    /// @param closingTimestamp moment when swap is closed, represented in seconds without 18 decimals
+    /// @param closingTimestamp moment when user wants to close the swap, represented in seconds without 18 decimals
     /// for particular swap at time when swap will be closed by the trader.
     /// @dev Equation for this calculation is:
     /// time - number of seconds left to swap until maturity divided by number of seconds in year

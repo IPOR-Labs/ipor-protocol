@@ -7,7 +7,7 @@ import "../base/amm/services/AmmCloseSwapServiceBaseV1.sol";
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmCloseSwapServiceStEth is AmmCloseSwapServiceBaseV1, IAmmCloseSwapServiceStEth {
     constructor(
-        AmmTypesBaseV1.AmmCloseSwapServicePoolConfiguration memory poolCfg,
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput,
         address messageSignerInput
     ) AmmCloseSwapServiceBaseV1(poolCfg, iporOracleInput, messageSignerInput) {}
@@ -16,7 +16,7 @@ contract AmmCloseSwapServiceStEth is AmmCloseSwapServiceBaseV1, IAmmCloseSwapSer
         address beneficiary,
         uint256[] memory payFixedSwapIds,
         uint256[] memory receiveFixedSwapIds,
-        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
+        AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     )
         external
         override
@@ -36,7 +36,7 @@ contract AmmCloseSwapServiceStEth is AmmCloseSwapServiceBaseV1, IAmmCloseSwapSer
     function emergencyCloseSwapsStEth(
         uint256[] memory payFixedSwapIds,
         uint256[] memory receiveFixedSwapIds,
-        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
+        AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     )
         external
         override

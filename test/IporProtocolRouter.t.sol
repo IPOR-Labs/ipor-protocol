@@ -251,7 +251,6 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
-                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: _userOne,
@@ -276,7 +275,6 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
-                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: _userOne,
@@ -300,7 +298,6 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
-                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: _userOne,
@@ -325,7 +322,6 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
-                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: _userOne,
@@ -350,7 +346,6 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
-                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: _userOne,
@@ -375,7 +370,6 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
-                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: address(0),
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: _userOne,
@@ -400,7 +394,6 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
-                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: address(0),
                 ammPoolsServiceStEth: _userOne,
@@ -425,7 +418,6 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
-                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: address(0),
@@ -450,7 +442,6 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
-                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: _userOne,
@@ -475,7 +466,6 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
-                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: _userOne,
@@ -500,7 +490,6 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
-                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: _userOne,
@@ -525,7 +514,6 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
-                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: _userOne,
@@ -550,7 +538,6 @@ contract IporProtocolRouterTest is TestCommons {
                 ammCloseSwapServiceUsdc: _userOne,
                 ammCloseSwapServiceDai: _userOne,
                 ammCloseSwapLens: _userOne,
-                ammCloseSwapLensStEth: _userOne,
                 ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: _userOne,
                 ammPoolsServiceStEth: _userOne,
@@ -562,43 +549,6 @@ contract IporProtocolRouterTest is TestCommons {
             })
         );
     }
-
-    //    function testShouldProvideLiquidityAndOpenSwapInBatch() public {
-    //        //given
-    //        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-    //
-    //        bytes memory calldataProvideLiquidity = abi.encodeWithSignature(
-    //            "provideLiquidityDai(address,uint256)",
-    //            _userOne,
-    //            TestConstants.USD_28_000_18DEC
-    //        );
-    //        bytes memory calldataOpenSwap = abi.encodeWithSignature(
-    //            "openSwapPayFixed28daysDai(address,uint256,uint256,uint256)",
-    //            _userOne,
-    //            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
-    //            9 * TestConstants.D17,
-    //            TestConstants.LEVERAGE_18DEC
-    //        );
-    //
-    //        bytes[] memory requestData = new bytes[](2);
-    //        requestData[0] = calldataProvideLiquidity;
-    //        requestData[1] = calldataOpenSwap;
-    //
-    //        // when
-    //        vm.prank(_userOne);
-    //        _iporProtocol.router.batchExecutor(requestData);
-    //
-    //        //then
-    //        (uint256 totalCount, IAmmSwapsLens.IporSwap[] memory swaps) = _iporProtocol.ammSwapsLens.getSwaps(
-    //            address(_iporProtocol.asset),
-    //            _userOne,
-    //            0,
-    //            10
-    //        );
-    //        assertEq(totalCount, 1, "totalCount");
-    //        assertEq(swaps[0].state, 1, "state");
-    //        assertEq(swaps[0].buyer, _userOne, "buyer");
-    //    }
 
     function testReentranceInBatchSimpleCase() public {
         //given

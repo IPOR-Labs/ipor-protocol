@@ -19,7 +19,6 @@ import "../interfaces/IAmmCloseSwapServiceUsdc.sol";
 import "../interfaces/IAmmCloseSwapServiceDai.sol";
 import "../interfaces/IAmmCloseSwapServiceStEth.sol";
 import "../interfaces/IAmmCloseSwapLens.sol";
-import "../interfaces/IAmmCloseSwapLensStEth.sol";
 import "../interfaces/IAmmPoolsService.sol";
 import "../interfaces/IPowerTokenFlowsService.sol";
 import "../interfaces/IPowerTokenStakeService.sol";
@@ -48,7 +47,6 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
     address public immutable _ammCloseSwapServiceDai;
     address public immutable _ammCloseSwapServiceStEth;
     address public immutable _ammCloseSwapLens;
-    address public immutable _ammCloseSwapLensStEth;
     address public immutable _ammPoolsService;
     address public immutable _ammGovernanceService;
     address public immutable _liquidityMiningLens;
@@ -69,7 +67,6 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         address ammCloseSwapServiceDai;
         address ammCloseSwapServiceStEth;
         address ammCloseSwapLens;
-        address ammCloseSwapLensStEth;
         address ammPoolsService;
         address ammGovernanceService;
         address liquidityMiningLens;
@@ -91,7 +88,6 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         _ammCloseSwapServiceDai = deployedContracts.ammCloseSwapServiceDai.checkAddress();
         _ammCloseSwapServiceStEth = deployedContracts.ammCloseSwapServiceStEth.checkAddress();
         _ammCloseSwapLens = deployedContracts.ammCloseSwapLens.checkAddress();
-        _ammCloseSwapLensStEth = deployedContracts.ammCloseSwapLensStEth.checkAddress();
         _ammPoolsService = deployedContracts.ammPoolsService.checkAddress();
         _ammGovernanceService = deployedContracts.ammGovernanceService.checkAddress();
         _liquidityMiningLens = deployedContracts.liquidityMiningLens.checkAddress();
@@ -133,7 +129,6 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
                 ammCloseSwapServiceUsdc: _ammCloseSwapServiceUsdc,
                 ammCloseSwapServiceDai: _ammCloseSwapServiceDai,
                 ammCloseSwapLens: _ammCloseSwapLens,
-                ammCloseSwapLensStEth: _ammCloseSwapLensStEth,
                 ammCloseSwapServiceStEth: _ammCloseSwapServiceStEth,
                 ammPoolsService: _ammPoolsService,
                 ammGovernanceService: _ammGovernanceService,
@@ -365,8 +360,6 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             sig == IAmmCloseSwapLens.getClosingSwapDetails.selector
         ) {
             return _ammCloseSwapLens;
-        } else if (sig == IAmmCloseSwapLensStEth.getClosingSwapDetailsStEth.selector) {
-            return _ammCloseSwapLensStEth;
         } else if (sig == IAmmPoolsLensStEth.getIpstEthExchangeRate.selector) {
             return _ammPoolsLensStEth;
         } else if (sig == IAmmPoolsService.getAmmPoolServiceConfiguration.selector) {

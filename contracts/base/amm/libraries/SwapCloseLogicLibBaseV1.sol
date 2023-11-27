@@ -223,7 +223,7 @@ library SwapCloseLogicLibBaseV1 {
 
     /// @notice Calculates the swap unwind PnL value.
     /// @param swap Swap structure
-    /// @param closingTimestamp moment when swap is closed, represented in seconds without 18 decimals
+    /// @param closingTimestamp moment when user/account/client wants to close the swap, represented in seconds without 18 decimals
     /// for particular swap at time when swap will be closed by the trader.
     /// @dev Equation for this calculation is:
     /// time - number of seconds left to swap until maturity divided by number of seconds in year
@@ -239,7 +239,7 @@ library SwapCloseLogicLibBaseV1 {
 
         require(closingTimestamp <= endTimestamp, AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE);
 
-        uint256 time = (endTimestamp - swap.openTimestamp) - (closingTimestamp - swap.openTimestamp);
+        uint256 time = endTimestamp - closingTimestamp;
 
         if (swap.direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
             swapUnwindPnlValue =

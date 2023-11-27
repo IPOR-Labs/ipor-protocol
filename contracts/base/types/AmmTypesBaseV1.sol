@@ -69,37 +69,6 @@ library AmmTypesBaseV1 {
         uint256 openingFeeTreasuryPortionRate;
     }
 
-    /// @notice Structure representing the configuration of the AmmCloseSwapService for a given pool (asset).
-    struct AmmCloseSwapServicePoolConfiguration {
-        address spread;
-        /// @notice asset address
-        address asset;
-        /// @notice asset decimals
-        uint256 decimals;
-        /// @notice Amm Storage contract address
-        address ammStorage;
-        /// @notice Amm Treasury contract address
-        address ammTreasury;
-        /// @notice Unwinding Fee Rate for unwinding the swap, represented in 18 decimals, 1e18 = 100%
-        uint256 unwindingFeeRate;
-        /// @notice Unwinding Fee Rate for unwinding the swap, part earmarked for the treasury, represented in 18 decimals, 1e18 = 100%
-        uint256 unwindingFeeTreasuryPortionRate;
-        /// @notice Max number of swaps (per leg) that can be liquidated in one call, represented without decimals
-        uint256 maxLengthOfLiquidatedSwapsPerLeg;
-        /// @notice Time before maturity when the community is allowed to close the swap, represented in seconds
-        uint256 timeBeforeMaturityAllowedToCloseSwapByCommunity;
-        /// @notice Time before maturity then the swap owner can close it, represented in seconds
-        uint256 timeBeforeMaturityAllowedToCloseSwapByBuyer;
-        /// @notice Min liquidation threshold allowing community to close the swap ahead of maturity, represented in 18 decimals
-        uint256 minLiquidationThresholdToCloseBeforeMaturityByCommunity;
-        /// @notice Min liquidation threshold allowing the owner to close the swap ahead of maturity, represented in 18 decimals
-        uint256 minLiquidationThresholdToCloseBeforeMaturityByBuyer;
-        /// @notice Min leverage of the virtual swap used in unwinding, represented in 18 decimals
-        uint256 minLeverage;
-        /// @notice Time after open swap when it is allowed to close swap with unwinding, represented in seconds
-        uint256 timeAfterOpenAllowedToCloseSwapWithUnwinding;
-    }
-
     /// @notice Technical structure with unwinding parameters.
     struct UnwindParams {
         address asset;

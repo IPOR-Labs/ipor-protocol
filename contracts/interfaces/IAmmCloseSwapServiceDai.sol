@@ -17,7 +17,7 @@ interface IAmmCloseSwapServiceDai {
         address beneficiary,
         uint256[] memory payFixedSwapIds,
         uint256[] memory receiveFixedSwapIds,
-        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
+        AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     )
         external
         returns (
@@ -34,7 +34,7 @@ interface IAmmCloseSwapServiceDai {
     function emergencyCloseSwapsDai(
         uint256[] memory payFixedSwapIds,
         uint256[] memory receiveFixedSwapIds,
-        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
+        AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     )
         external
         returns (

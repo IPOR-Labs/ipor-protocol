@@ -193,7 +193,6 @@ contract TestEthMarketCommons is Test {
                 ammCloseSwapServiceDai: _getUserAddress(123),
                 ammCloseSwapServiceStEth: _getUserAddress(123),
                 ammCloseSwapLens: _getUserAddress(123),
-                ammCloseSwapLensStEth: _getUserAddress(123),
                 ammPoolsService: _getUserAddress(123),
                 ammGovernanceService: ammGovernanceService,
                 liquidityMiningLens: _getUserAddress(123),

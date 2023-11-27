@@ -18,6 +18,6 @@ interface IAmmCloseSwapLensStEth {
         AmmTypes.SwapDirection direction,
         uint256 swapId,
         uint256 closeTimestamp,
-        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
+        AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     ) external view returns (AmmTypes.ClosingSwapDetails memory closingSwapDetails);
 }

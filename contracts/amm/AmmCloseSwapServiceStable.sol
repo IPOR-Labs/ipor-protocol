@@ -9,7 +9,7 @@ import "../interfaces/types/AmmTypes.sol";
 import "../interfaces/IIporOracle.sol";
 import "../interfaces/IAmmTreasury.sol";
 import "../interfaces/IAmmCloseSwapLens.sol";
-import "../interfaces/IAmmCloseSwapServiceStable.sol";
+import "../interfaces/IAmmCloseSwapService.sol";
 import "../base/amm/libraries/SwapEventsBaseV1.sol";
 import "../interfaces/IAmmCloseSwapServiceUsdt.sol";
 import "../libraries/errors/IporErrors.sol";
@@ -29,7 +29,7 @@ import "./spread/ISpreadCloseSwapService.sol";
 import "./libraries/SwapCloseLogicLib.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
-contract AmmCloseSwapServiceStable is IAmmCloseSwapServiceStable {
+abstract contract AmmCloseSwapServiceStable is IAmmCloseSwapService {
     using Address for address;
     using IporContractValidator for address;
     using SafeCast for uint256;
@@ -61,8 +61,7 @@ contract AmmCloseSwapServiceStable is IAmmCloseSwapServiceStable {
     constructor(
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput,
-        address messageSignerInput,
-        address spreadRouterInput
+        address messageSignerInput
     ) {
         _asset = poolCfg.asset.checkAddress();
         _decimals = poolCfg.decimals;
@@ -83,7 +82,7 @@ contract AmmCloseSwapServiceStable is IAmmCloseSwapServiceStable {
 
         iporOracle = iporOracleInput.checkAddress();
         messageSigner = messageSignerInput.checkAddress();
-        spreadRouter = spreadRouterInput.checkAddress();
+        spreadRouter = poolCfg.spread.checkAddress();
     }
 
     function getPoolConfiguration()
@@ -107,6 +106,7 @@ contract AmmCloseSwapServiceStable is IAmmCloseSwapServiceStable {
                 ammStorage: _ammStorage,
                 ammTreasury: _ammTreasury,
                 assetManagement: _assetManagement,
+                spread: spreadRouter,
                 unwindingFeeRate: _unwindingFeeRate,
                 unwindingFeeTreasuryPortionRate: _unwindingFeeTreasuryPortionRate,
                 maxLengthOfLiquidatedSwapsPerLeg: _liquidationLegLimit,
@@ -123,7 +123,7 @@ contract AmmCloseSwapServiceStable is IAmmCloseSwapServiceStable {
         address beneficiary,
         uint256[] memory payFixedSwapIds,
         uint256[] memory receiveFixedSwapIds,
-        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
+        AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     )
         internal
         returns (
@@ -171,7 +171,7 @@ contract AmmCloseSwapServiceStable is IAmmCloseSwapServiceStable {
         uint256 ibtPrice,
         AmmTypes.Swap memory swap,
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
-        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
+        AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     ) internal returns (uint256 payoutForLiquidator) {
         uint256 timestamp = block.timestamp;
         int256 swapPnlValueToDate = SwapLogicBaseV1.calculatePnlPayFixed(
@@ -247,7 +247,7 @@ contract AmmCloseSwapServiceStable is IAmmCloseSwapServiceStable {
         uint256 ibtPrice,
         AmmTypes.Swap memory swap,
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
-        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
+        AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     ) internal returns (uint256 payoutForLiquidator) {
         uint256 timestamp = block.timestamp;
         int256 swapPnlValueToDate = SwapLogicBaseV1.calculatePnlReceiveFixed(
@@ -322,7 +322,7 @@ contract AmmCloseSwapServiceStable is IAmmCloseSwapServiceStable {
         AmmTypes.SwapDirection direction,
         uint256[] memory swapIds,
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
-        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
+        AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     ) internal returns (uint256 payoutForLiquidator, AmmTypes.IporSwapClosingResult[] memory closedSwaps) {
         uint256 swapIdsLength = swapIds.length;
         require(
@@ -402,7 +402,7 @@ contract AmmCloseSwapServiceStable is IAmmCloseSwapServiceStable {
         uint256 indexValue,
         AmmTypes.Swap memory swap,
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
-        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
+        AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     ) internal view returns (AmmInternalTypes.PnlValueStruct memory pnlValueStruct) {
         AmmTypes.SwapClosableStatus closableStatus;
 

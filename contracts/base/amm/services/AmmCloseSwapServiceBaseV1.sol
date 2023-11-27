@@ -7,6 +7,7 @@ import "../../../interfaces/types/IporTypes.sol";
 import "../../../interfaces/types/AmmTypes.sol";
 import "../../../interfaces/IIporOracle.sol";
 import "../../../interfaces/IAmmTreasury.sol";
+import "../../../interfaces/IAmmCloseSwapService.sol";
 import "../../../libraries/math/IporMath.sol";
 import "../../../libraries/IporContractValidator.sol";
 import "../../../libraries/AmmLib.sol";
@@ -22,7 +23,7 @@ import "../../interfaces/ISpreadBaseV1.sol";
 
 /// @title Abstract contract for closing swap, generation one, characterized by:
 /// - no asset management, so also no auto rebalance
-abstract contract AmmCloseSwapServiceBaseV1 {
+abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
     using Address for address;
     using IporContractValidator for address;
     using SafeCast for uint256;
@@ -63,7 +64,7 @@ abstract contract AmmCloseSwapServiceBaseV1 {
     uint256 public immutable timeAfterOpenAllowedToCloseSwapWithUnwinding;
 
     constructor(
-        AmmTypesBaseV1.AmmCloseSwapServicePoolConfiguration memory poolCfg,
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput,
         address messageSignerInput
     ) {
@@ -89,14 +90,19 @@ abstract contract AmmCloseSwapServiceBaseV1 {
         timeAfterOpenAllowedToCloseSwapWithUnwinding = poolCfg.timeAfterOpenAllowedToCloseSwapWithUnwinding;
     }
 
-    function getPoolConfiguration() external view returns (AmmTypesBaseV1.AmmCloseSwapServicePoolConfiguration memory) {
+    function getPoolConfiguration()
+        external
+        view
+        override
+        returns (IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory)
+    {
         return _getPoolConfiguration();
     }
 
     function _emergencyCloseSwaps(
         uint256[] memory payFixedSwapIds,
         uint256[] memory receiveFixedSwapIds,
-        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
+        AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     )
         internal
         returns (
@@ -116,7 +122,7 @@ abstract contract AmmCloseSwapServiceBaseV1 {
         address beneficiary,
         uint256[] memory payFixedSwapIds,
         uint256[] memory receiveFixedSwapIds,
-        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
+        AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     )
         internal
         returns (
@@ -154,7 +160,7 @@ abstract contract AmmCloseSwapServiceBaseV1 {
         uint256 indexValue,
         uint256 ibtPrice,
         AmmTypesBaseV1.Swap memory swap,
-        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
+        AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     ) internal returns (uint256 payoutForLiquidator) {
         uint256 timestamp = block.timestamp;
         int256 swapPnlValueToDate = SwapLogicBaseV1.calculatePnlPayFixed(
@@ -218,7 +224,7 @@ abstract contract AmmCloseSwapServiceBaseV1 {
         uint256 indexValue,
         uint256 ibtPrice,
         AmmTypesBaseV1.Swap memory swap,
-        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
+        AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     ) internal returns (uint256 payoutForLiquidator) {
         uint256 timestamp = block.timestamp;
         int256 swapPnlValueToDate = SwapLogicBaseV1.calculatePnlReceiveFixed(
@@ -281,7 +287,7 @@ abstract contract AmmCloseSwapServiceBaseV1 {
         address beneficiary,
         AmmTypes.SwapDirection direction,
         uint256[] memory swapIds,
-        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
+        AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     ) internal returns (uint256 payoutForLiquidator, AmmTypes.IporSwapClosingResult[] memory closedSwaps) {
         uint256 swapIdsLength = swapIds.length;
         require(swapIdsLength <= liquidationLegLimit, AmmErrors.MAX_LENGTH_LIQUIDATED_SWAPS_PER_LEG_EXCEEDED);
@@ -347,10 +353,10 @@ abstract contract AmmCloseSwapServiceBaseV1 {
         int256 swapPnlValueToDate,
         uint256 indexValue,
         AmmTypesBaseV1.Swap memory swap,
-        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
+        AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     ) internal view returns (AmmInternalTypes.PnlValueStruct memory pnlValueStruct) {
         AmmTypes.SwapClosableStatus closableStatus;
-        AmmTypesBaseV1.AmmCloseSwapServicePoolConfiguration memory poolCfg = _getPoolConfiguration();
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg = _getPoolConfiguration();
 
         (closableStatus, pnlValueStruct.swapUnwindRequired) = SwapCloseLogicLibBaseV1.getClosableStatusForSwap(
             AmmTypesBaseV1.ClosableSwapInput({
@@ -472,15 +478,16 @@ abstract contract AmmCloseSwapServiceBaseV1 {
     function _getPoolConfiguration()
         internal
         view
-        returns (AmmTypesBaseV1.AmmCloseSwapServicePoolConfiguration memory)
+        returns (IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory)
     {
         return
-            AmmTypesBaseV1.AmmCloseSwapServicePoolConfiguration({
-                spread: spread,
+            IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration({
                 asset: asset,
                 decimals: decimals,
                 ammStorage: ammStorage,
                 ammTreasury: ammTreasury,
+                assetManagement: address(0),
+                spread: spread,
                 unwindingFeeRate: unwindingFeeRate,
                 unwindingFeeTreasuryPortionRate: unwindingFeeTreasuryPortionRate,
                 maxLengthOfLiquidatedSwapsPerLeg: liquidationLegLimit,

@@ -30,7 +30,7 @@ import "../../../contracts/amm/AmmOpenSwapService.sol";
 import "../../../contracts/amm/AmmCloseSwapServiceUsdt.sol";
 import "../../../contracts/amm/AmmCloseSwapServiceUsdc.sol";
 import "../../../contracts/amm/AmmCloseSwapServiceDai.sol";
-import "../../../contracts/amm/AmmCloseSwapLens.sol";
+import "../../../contracts/amm-common/AmmCloseSwapLens.sol";
 
 import "../../../contracts/amm/AmmPoolsService.sol";
 import "../../../contracts/amm-common/AmmGovernanceService.sol";
@@ -752,8 +752,7 @@ contract IporProtocolFactory is Test {
                     address(amm.usdt.spreadRouter)
                 ),
                 iporOracleInput: address(amm.iporOracle),
-                messageSignerInput: messageSignerAddress,
-                spreadRouterInput: address(amm.spreadRouter)
+                messageSignerInput: messageSignerAddress
             })
         );
 
@@ -768,8 +767,7 @@ contract IporProtocolFactory is Test {
                     address(amm.usdc.spreadRouter)
                 ),
                 iporOracleInput: address(amm.iporOracle),
-                messageSignerInput: messageSignerAddress,
-                spreadRouterInput: address(amm.spreadRouter)
+                messageSignerInput: messageSignerAddress
             })
         );
 
@@ -784,8 +782,7 @@ contract IporProtocolFactory is Test {
                     address(amm.dai.spreadRouter)
                 ),
                 iporOracleInput: address(amm.iporOracle),
-                messageSignerInput: messageSignerAddress,
-                spreadRouterInput: address(amm.spreadRouter)
+                messageSignerInput: messageSignerAddress
             })
         );
 
@@ -794,12 +791,14 @@ contract IporProtocolFactory is Test {
                 usdtInput: address(amm.usdt.asset),
                 usdcInput: address(amm.usdc.asset),
                 daiInput: address(amm.dai.asset),
+                stETHInput: _fakeContract,
                 iporOracleInput: address(amm.iporOracle),
                 messageSignerInput: messageSignerAddress,
                 spreadRouterInput: address(amm.spreadRouter),
                 closeSwapServiceUsdtInput: deployerContracts.ammCloseSwapServiceUsdt,
                 closeSwapServiceUsdcInput: deployerContracts.ammCloseSwapServiceUsdc,
-                closeSwapServiceDaiInput: deployerContracts.ammCloseSwapServiceDai
+                closeSwapServiceDaiInput: deployerContracts.ammCloseSwapServiceDai,
+                closeSwapServiceStEthInput: _fakeContract
             })
         );
 
@@ -883,8 +882,6 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammPoolsServiceStEth = _fakeContract;
         deployerContracts.ammOpenSwapServiceStEth = _fakeContract;
         deployerContracts.ammCloseSwapServiceStEth = _fakeContract;
-        deployerContracts.ammCloseSwapLensStEth = _fakeContract;
-
 
         vm.startPrank(address(_owner));
         IporProtocolRouter(amm.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
@@ -1056,8 +1053,7 @@ contract IporProtocolFactory is Test {
                     address(iporProtocol.spreadRouter)
                 ),
                 iporOracleInput: address(iporProtocol.iporOracle),
-                messageSignerInput: messageSignerAddress,
-                spreadRouterInput: address(iporProtocol.spreadRouter)
+                messageSignerInput: messageSignerAddress
             })
         );
 
@@ -1069,12 +1065,14 @@ contract IporProtocolFactory is Test {
                 usdtInput: address(iporProtocol.asset),
                 usdcInput: _fakeContract,
                 daiInput: _fakeContract,
+                stETHInput: _fakeContract,
                 iporOracleInput: address(iporProtocol.iporOracle),
                 messageSignerInput: messageSignerAddress,
                 spreadRouterInput: address(iporProtocol.spreadRouter),
                 closeSwapServiceUsdtInput: deployerContracts.ammCloseSwapServiceUsdt,
                 closeSwapServiceUsdcInput: deployerContracts.ammCloseSwapServiceUsdc,
-                closeSwapServiceDaiInput: deployerContracts.ammCloseSwapServiceDai
+                closeSwapServiceDaiInput: deployerContracts.ammCloseSwapServiceDai,
+                closeSwapServiceStEthInput: _fakeContract
             })
         );
 
@@ -1120,7 +1118,7 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammPoolsLensStEth = _fakeContract;
         deployerContracts.ammOpenSwapServiceStEth = _fakeContract;
         deployerContracts.ammCloseSwapServiceStEth = _fakeContract;
-        deployerContracts.ammCloseSwapLensStEth = _fakeContract;
+
 
         vm.startPrank(address(_owner));
         IporProtocolRouter(iporProtocol.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
@@ -1264,8 +1262,7 @@ contract IporProtocolFactory is Test {
                     address(iporProtocol.spreadRouter)
                 ),
                 iporOracleInput: address(iporProtocol.iporOracle),
-                messageSignerInput: messageSignerAddress,
-                spreadRouterInput: address(iporProtocol.spreadRouter)
+                messageSignerInput: messageSignerAddress
             })
         );
 
@@ -1277,12 +1274,14 @@ contract IporProtocolFactory is Test {
                 usdtInput: _fakeContract,
                 usdcInput: address(iporProtocol.asset),
                 daiInput: _fakeContract,
+                stETHInput: _fakeContract,
                 iporOracleInput: address(iporProtocol.iporOracle),
                 messageSignerInput: messageSignerAddress,
                 spreadRouterInput: address(iporProtocol.spreadRouter),
                 closeSwapServiceUsdtInput: deployerContracts.ammCloseSwapServiceUsdt,
                 closeSwapServiceUsdcInput: deployerContracts.ammCloseSwapServiceUsdc,
-                closeSwapServiceDaiInput: deployerContracts.ammCloseSwapServiceDai
+                closeSwapServiceDaiInput: deployerContracts.ammCloseSwapServiceDai,
+                closeSwapServiceStEthInput: _fakeContract
             })
         );
 
@@ -1326,10 +1325,9 @@ contract IporProtocolFactory is Test {
 
         //        todo fix addresses
         deployerContracts.ammPoolsLensStEth = _fakeContract;
-        deployerContracts.ammPoolsServiceStEth =_fakeContract;
+        deployerContracts.ammPoolsServiceStEth = _fakeContract;
         deployerContracts.ammOpenSwapServiceStEth = _fakeContract;
         deployerContracts.ammCloseSwapServiceStEth = _fakeContract;
-        deployerContracts.ammCloseSwapLensStEth = _fakeContract;
 
         vm.startPrank(address(_owner));
         IporProtocolRouter(iporProtocol.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
@@ -1475,8 +1473,7 @@ contract IporProtocolFactory is Test {
                     address(iporProtocol.spreadRouter)
                 ),
                 iporOracleInput: address(iporProtocol.iporOracle),
-                messageSignerInput: messageSignerAddress,
-                spreadRouterInput: address(iporProtocol.spreadRouter)
+                messageSignerInput: messageSignerAddress
             })
         );
 
@@ -1488,12 +1485,14 @@ contract IporProtocolFactory is Test {
                 usdtInput: _fakeContract,
                 usdcInput: _fakeContract,
                 daiInput: address(iporProtocol.asset),
+                stETHInput: _fakeContract,
                 iporOracleInput: address(iporProtocol.iporOracle),
                 messageSignerInput: messageSignerAddress,
                 spreadRouterInput: address(iporProtocol.spreadRouter),
                 closeSwapServiceUsdtInput: deployerContracts.ammCloseSwapServiceUsdt,
                 closeSwapServiceUsdcInput: deployerContracts.ammCloseSwapServiceUsdc,
-                closeSwapServiceDaiInput: deployerContracts.ammCloseSwapServiceDai
+                closeSwapServiceDaiInput: deployerContracts.ammCloseSwapServiceDai,
+                closeSwapServiceStEthInput: _fakeContract
             })
         );
 
@@ -1538,7 +1537,6 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammPoolsServiceStEth = address(_fakeContract);
         deployerContracts.ammOpenSwapServiceStEth = address(_fakeContract);
         deployerContracts.ammCloseSwapServiceStEth = address(_fakeContract);
-        deployerContracts.ammCloseSwapLensStEth = address(_fakeContract);
 
         vm.startPrank(address(_owner));
 
@@ -1614,6 +1612,7 @@ contract IporProtocolFactory is Test {
             ammStorage: address(_fakeContract),
             ammTreasury: address(_fakeContract),
             assetManagement: address(_fakeContract),
+            spread: address(_fakeContract),
             unwindingFeeRate: 0,
             unwindingFeeTreasuryPortionRate: 0,
             maxLengthOfLiquidatedSwapsPerLeg: 0,
@@ -1713,6 +1712,7 @@ contract IporProtocolFactory is Test {
                 ammStorage: ammStorage,
                 ammTreasury: ammTreasury,
                 assetManagement: assetManagement,
+                spread: spreadRouter,
                 unwindingFeeRate: 5 * 1e14,
                 unwindingFeeTreasuryPortionRate: 5 * 1e14,
                 maxLengthOfLiquidatedSwapsPerLeg: 10,
@@ -1730,6 +1730,7 @@ contract IporProtocolFactory is Test {
                 ammStorage: ammStorage,
                 ammTreasury: ammTreasury,
                 assetManagement: assetManagement,
+                spread: spreadRouter,
                 unwindingFeeRate: 99 * 1e16,
                 unwindingFeeTreasuryPortionRate: 5 * 1e14,
                 maxLengthOfLiquidatedSwapsPerLeg: 10,
@@ -1747,6 +1748,7 @@ contract IporProtocolFactory is Test {
                 ammStorage: ammStorage,
                 ammTreasury: ammTreasury,
                 assetManagement: assetManagement,
+                spread: spreadRouter,
                 unwindingFeeRate: 15 * 1e16,
                 unwindingFeeTreasuryPortionRate: 5 * 1e14,
                 maxLengthOfLiquidatedSwapsPerLeg: 10,
