@@ -66,7 +66,7 @@ contract MockTestnetTokenWStEth is ERC20Permit {
      * @param _stETHAmount amount of stETH
      * @return Amount of wstETH for a given stETH amount
      */
-    function getWstETHByStETH(uint256 _stETHAmount) external view returns (uint256) {
+    function getWstETHByStETH(uint256 _stETHAmount) external pure returns (uint256) {
         /// @dev in mock, for simplicity we don't take into account exchange rate stETH vs wstETH
         return _stETHAmount;
     }
@@ -76,7 +76,7 @@ contract MockTestnetTokenWStEth is ERC20Permit {
      * @param _wstETHAmount amount of wstETH
      * @return Amount of stETH for a given wstETH amount
      */
-    function getStETHByWstETH(uint256 _wstETHAmount) external view returns (uint256) {
+    function getStETHByWstETH(uint256 _wstETHAmount) external pure returns (uint256) {
         /// @dev in mock, for simplicity we don't take into account exchange rate stETH vs wstETH
         return _wstETHAmount;
     }
@@ -85,7 +85,7 @@ contract MockTestnetTokenWStEth is ERC20Permit {
      * @notice Get amount of stETH for a one wstETH
      * @return Amount of stETH for 1 wstETH
      */
-    function stEthPerToken() external view returns (uint256) {
+    function stEthPerToken() external pure returns (uint256) {
         /// @dev in mock, for simplicity we don't take into account exchange rate stETH vs wstETH
         return 1 ether;
     }
@@ -94,7 +94,7 @@ contract MockTestnetTokenWStEth is ERC20Permit {
      * @notice Get amount of wstETH for a one stETH
      * @return Amount of wstETH for a 1 stETH
      */
-    function tokensPerStEth() external view returns (uint256) {
+    function tokensPerStEth() external pure returns (uint256) {
         /// @dev in mock, for simplicity we don't take into account exchange rate stETH vs wstETH
         return 1 ether;
     }

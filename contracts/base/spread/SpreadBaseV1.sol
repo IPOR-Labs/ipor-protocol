@@ -279,7 +279,7 @@ contract SpreadBaseV1 is IporOwnable, ISpreadBaseV1 {
 
     function _getSpreadConfigForDemand(
         SpreadInputs memory spreadInputs
-    ) internal view returns (DemandSpreadLibsBaseV1.SpreadInputData memory inputData) {
+    ) internal pure returns (DemandSpreadLibsBaseV1.SpreadInputData memory inputData) {
         inputData = DemandSpreadLibsBaseV1.SpreadInputData({
             totalCollateralPayFixed: spreadInputs.totalCollateralPayFixed,
             totalCollateralReceiveFixed: spreadInputs.totalCollateralReceiveFixed,
