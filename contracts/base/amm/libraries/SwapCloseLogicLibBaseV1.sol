@@ -283,8 +283,7 @@ library SwapCloseLogicLibBaseV1 {
             swapNotional *
                 openingFeeRateCfg *
                 IporMath.division(
-                    ((getSwapEndTimestamp(swapOpenTimestamp, swapTenor) - swapOpenTimestamp) -
-                        (closingTimestamp - swapOpenTimestamp)) * 1e18,
+                    (getSwapEndTimestamp(swapOpenTimestamp, swapTenor) - closingTimestamp) * 1e18,
                     365 days
                 ),
             1e36
@@ -308,8 +307,7 @@ library SwapCloseLogicLibBaseV1 {
             swap.notional *
                 openingFeeRateCfg *
                 IporMath.division(
-                    ((getSwapEndTimestamp(swap.openTimestamp, swap.tenor) - swap.openTimestamp) -
-                        (closingTimestamp - swap.openTimestamp)) * 1e18,
+                    (getSwapEndTimestamp(swap.openTimestamp, swap.tenor) - closingTimestamp) * 1e18,
                     365 days
                 ),
             1e36
