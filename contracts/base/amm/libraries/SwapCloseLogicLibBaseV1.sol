@@ -191,7 +191,16 @@ library SwapCloseLogicLibBaseV1 {
                             swapEndTimestamp - closableSwapInput.timeBeforeMaturityAllowedToCloseSwapByBuyer >
                             closableSwapInput.closeTimestamp
                         ) {
-                            // TODO: unwind is required question if block.timestamp < openTimestamp + 24h if not then error
+                            if (
+                                block.timestamp - closableSwapInput.swapOpenTimestamp <=
+                                closableSwapInput.timeAfterOpenAllowedToCloseSwapWithUnwinding
+                            ) {
+                                return (
+                                    AmmTypes.SwapClosableStatus.SWAP_CANNOT_CLOSE_WITH_UNWIND_ACTION_IS_TOO_EARLY,
+                                    true
+                                );
+                            }
+
                             return (AmmTypes.SwapClosableStatus.SWAP_IS_CLOSABLE, true);
                         }
                     } else {
@@ -330,6 +339,9 @@ library SwapCloseLogicLibBaseV1 {
         }
         if (closableStatus == AmmTypes.SwapClosableStatus.SWAP_CANNOT_CLOSE_CLOSING_TOO_EARLY_FOR_COMMUNITY) {
             revert(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY);
+        }
+        if (closableStatus == AmmTypes.SwapClosableStatus.SWAP_CANNOT_CLOSE_WITH_UNWIND_ACTION_IS_TOO_EARLY) {
+            revert(AmmErrors.CANNOT_CLOSE_SWAP_WITH_UNWIND_ACTION_IS_TOO_EARLY);
         }
     }
 }

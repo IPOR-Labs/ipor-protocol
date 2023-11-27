@@ -1452,6 +1452,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         _setupUser(user, 1000 * 1e18);
         uint256 totalAmount = 1 * 1e17;
 
+        vm.warp(block.timestamp);
+
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
             maxCollateralRatioPerLeg: 50000000000000000,
@@ -1485,6 +1487,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         swapPfIds[0] = swapId;
         uint256[] memory swapRfIds = new uint256[](0);
 
+        vm.warp(block.timestamp + 1 days + 1);
         AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
             IporTypes.SwapTenor.DAYS_28
         );
@@ -1521,6 +1524,8 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         _setupUser(user, 1000 * 1e18);
         uint256 totalAmount = 1 * 1e17;
 
+        vm.warp(block.timestamp);
+
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
             maxCollateralRatioPerLeg: 50000000000000000,
@@ -1554,6 +1559,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         swapPfIds[0] = swapId;
         uint256[] memory swapRfIds = new uint256[](0);
 
+        vm.warp(block.timestamp + 1 days + 1);
         AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
             IporTypes.SwapTenor.DAYS_28
         );
