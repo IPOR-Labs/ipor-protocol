@@ -58,7 +58,7 @@ library AmmTypesBaseV1 {
         uint256 iporPublicationFee;
         /// @notice maximum swap collateral amount, represented in 18 decimals.
         uint256 maxSwapCollateralAmount;
-        /// @notice liquidation deposit amount, represented with 6 decimals. Example 25000000 = 25 units = 25.000000.
+        /// @notice liquidation deposit amount, represented with 6 decimals. Example 25000000 = 25 units = 25.000000, 1000 = 0.001
         uint256 liquidationDepositAmount;
         /// @notice minimum leverage, represented in 18 decimals.
         uint256 minLeverage;
