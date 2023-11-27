@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 
-import "../interfaces/IAmmCloseSwapServiceStEth.sol";
-import "../base/amm/services/AmmCloseSwapServiceBaseV1.sol";
+import "../interfaces/IAmmCloseSwapServiceUsdc.sol";
+import "./AmmCloseSwapServiceStable.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
-contract AmmCloseSwapServiceStEth is AmmCloseSwapServiceBaseV1, IAmmCloseSwapServiceStEth {
+contract AmmCloseSwapServiceUsdc is AmmCloseSwapServiceStable, IAmmCloseSwapServiceUsdc {
     constructor(
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput,
         address messageSignerInput
-    ) AmmCloseSwapServiceBaseV1(poolCfg, iporOracleInput, messageSignerInput) {}
+    ) AmmCloseSwapServiceStable(poolCfg, iporOracleInput, messageSignerInput) {}
 
-    function closeSwapsStEth(
+    function closeSwapsUsdc(
         address beneficiary,
         uint256[] memory payFixedSwapIds,
         uint256[] memory receiveFixedSwapIds,
@@ -33,7 +33,7 @@ contract AmmCloseSwapServiceStEth is AmmCloseSwapServiceBaseV1, IAmmCloseSwapSer
         );
     }
 
-    function emergencyCloseSwapsStEth(
+    function emergencyCloseSwapsUsdc(
         uint256[] memory payFixedSwapIds,
         uint256[] memory receiveFixedSwapIds,
         AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
@@ -45,7 +45,8 @@ contract AmmCloseSwapServiceStEth is AmmCloseSwapServiceBaseV1, IAmmCloseSwapSer
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
         )
     {
-        (closedPayFixedSwaps, closedReceiveFixedSwaps) = _emergencyCloseSwaps(
+        (closedPayFixedSwaps, closedReceiveFixedSwaps) = _closeSwaps(
+            msg.sender,
             payFixedSwapIds,
             receiveFixedSwapIds,
             riskIndicatorsInput

@@ -69,39 +69,14 @@ library AmmTypesBaseV1 {
         uint256 openingFeeTreasuryPortionRate;
     }
 
-    /// @notice Structure representing the configuration of the AmmCloseSwapService for a given pool (asset).
-    struct AmmCloseSwapServicePoolConfiguration {
-        address spread;
-        /// @notice asset address
-        address asset;
-        /// @notice asset decimals
-        uint256 decimals;
-        /// @notice Amm Storage contract address
-        address ammStorage;
-        /// @notice Amm Treasury contract address
-        address ammTreasury;
-        /// @notice Unwinding Fee Rate for unwinding the swap, represented in 18 decimals, 1e18 = 100%
-        uint256 unwindingFeeRate;
-        /// @notice Unwinding Fee Rate for unwinding the swap, part earmarked for the treasury, represented in 18 decimals, 1e18 = 100%
-        uint256 unwindingFeeTreasuryPortionRate;
-        /// @notice Max number of swaps (per leg) that can be liquidated in one call, represented without decimals
-        uint256 maxLengthOfLiquidatedSwapsPerLeg;
-        /// @notice Time before maturity when the community is allowed to close the swap, represented in seconds
-        uint256 timeBeforeMaturityAllowedToCloseSwapByCommunity;
-        /// @notice Time before maturity then the swap owner can close it, represented in seconds
-        uint256 timeBeforeMaturityAllowedToCloseSwapByBuyer;
-        /// @notice Min liquidation threshold allowing community to close the swap ahead of maturity, represented in 18 decimals
-        uint256 minLiquidationThresholdToCloseBeforeMaturityByCommunity;
-        /// @notice Min liquidation threshold allowing the owner to close the swap ahead of maturity, represented in 18 decimals
-        uint256 minLiquidationThresholdToCloseBeforeMaturityByBuyer;
-        /// @notice Min leverage of the virtual swap used in unwinding, represented in 18 decimals
-        uint256 minLeverage;
-    }
-
     /// @notice Technical structure with unwinding parameters.
     struct UnwindParams {
+        address asset;
         /// @notice Risk Indicators Inputs signer
         address messageSigner;
+        address spread;
+        address ammStorage;
+        address ammTreasury;
         /// @notice Moment when the swap is closing
         uint256 closeTimestamp;
         /// @notice Swap's PnL value to moment when the swap is closing
@@ -110,6 +85,8 @@ library AmmTypesBaseV1 {
         uint256 indexValue;
         /// @notice Swap data
         AmmTypesBaseV1.Swap swap;
+        uint256 unwindingFeeRate;
+        uint256 unwindingFeeTreasuryPortionRate;
         /// @notice Risk indicators for both legs pay fixed and receive fixed
         AmmTypes.CloseSwapRiskIndicatorsInput riskIndicatorsInputs;
     }
@@ -145,6 +122,23 @@ library AmmTypesBaseV1 {
         /// @notice The struct describing the IPOR and its params calculated for the time when it was most recently updated and the change that took place since the update.
         /// Namely, the interest that would be computed into IBT should the rebalance occur.
         IporTypes.AccruedIpor accruedIpor;
+    }
+
+    struct ClosableSwapInput {
+        address account;
+        address asset;
+        uint256 closeTimestamp;
+        address swapBuyer;
+        uint256 swapOpenTimestamp;
+        uint256 swapCollateral;
+        IporTypes.SwapTenor swapTenor;
+        IporTypes.SwapState swapState;
+        int256 swapPnlValueToDate;
+        uint256 minLiquidationThresholdToCloseBeforeMaturityByCommunity;
+        uint256 minLiquidationThresholdToCloseBeforeMaturityByBuyer;
+        uint256 timeBeforeMaturityAllowedToCloseSwapByCommunity;
+        uint256 timeBeforeMaturityAllowedToCloseSwapByBuyer;
+        uint256 timeAfterOpenAllowedToCloseSwapWithUnwinding;
     }
 
     /// @notice Struct representing amounts related to Swap that is presently being opened.

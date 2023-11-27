@@ -81,7 +81,7 @@ contract AmmShouldClosePositionTest is TestCommons {
         // when
         vm.startPrank(_userTwo);
         vm.warp(endTimestamp);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, pfSwapIds, rfSwapIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(_userTwo, pfSwapIds, rfSwapIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
         vm.stopPrank();
 
         // then
@@ -158,7 +158,7 @@ contract AmmShouldClosePositionTest is TestCommons {
         // when
         vm.warp(endTimestamp);
         vm.startPrank(_userTwo);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userThree, pfSwapIds, rfSwapIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(_userThree, pfSwapIds, rfSwapIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
         vm.stopPrank();
 
         // then
@@ -230,7 +230,7 @@ contract AmmShouldClosePositionTest is TestCommons {
         // when
         vm.warp(endTimestamp);
         vm.startPrank(_userTwo);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userThree, pfSwapIds, rfSwapIds,getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(_userThree, pfSwapIds, rfSwapIds,getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
         vm.stopPrank();
 
         // then

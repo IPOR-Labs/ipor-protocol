@@ -72,6 +72,8 @@ contract ForkOpenCloseSwap is TestForkCommons {
         _init();
         address user = _getUserAddress(22);
 
+        vm.warp(block.timestamp);
+
         vm.prank(user);
         ERC20(DAI).approve(iporProtocolRouterProxy, type(uint256).max);
 
@@ -84,7 +86,7 @@ contract ForkOpenCloseSwap is TestForkCommons {
             baseSpreadPerLeg: 3695000000000000,
             fixedRateCapPerLeg: 20000000000000000,
             demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
+            expiration: block.timestamp + 2 days,
             signature: bytes("0x00")
         });
 
@@ -95,7 +97,7 @@ contract ForkOpenCloseSwap is TestForkCommons {
             baseSpreadPerLeg: 3695000000000000,
             fixedRateCapPerLeg: 20000000000000000,
             demandSpreadFactor: 20,
-            expiration: block.timestamp + 1000,
+            expiration: block.timestamp + 2 days,
             signature: bytes("0x00")
         });
 
@@ -131,23 +133,25 @@ contract ForkOpenCloseSwap is TestForkCommons {
         uint256[] memory receiveFixedSwapIds = new uint256[](0);
         payFixedSwapIds[0] = openSwap.id;
 
+        vm.warp(block.timestamp + 1 days + 1);
+
         //when
         vm.prank(user);
         (
             AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
-        ) = IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(
+        ) = IAmmCloseSwapServiceDai(iporProtocolRouterProxy).closeSwapsDai(
                 user,
                 payFixedSwapIds,
                 receiveFixedSwapIds,
-            AmmTypes.CloseSwapRiskIndicatorsInput(riskIndicatorsInputsPayFixed, riskIndicatorsInputsReceiveFixed)
+                AmmTypes.CloseSwapRiskIndicatorsInput(riskIndicatorsInputsPayFixed, riskIndicatorsInputsReceiveFixed)
             );
 
         //then
         /// @dev checking swap via Router
         assertEq(331, openSwap.id, "swapId");
         assertEq(user, openSwap.buyer, "swap.buyer");
-        assertEq(block.timestamp, openSwap.openTimestamp, "swap.openTimestamp");
+        assertEq(block.timestamp - 1 days - 1, openSwap.openTimestamp, "swap.openTimestamp");
         assertEq(1964246590348907269306, openSwap.collateral, "swap.collateral");
         assertEq(19642465903489072693060, openSwap.notional, "swap.notional");
         assertEq(19001703562314131674314, openSwap.ibtQuantity, "swap.ibtQuantity");
@@ -156,7 +160,6 @@ contract ForkOpenCloseSwap is TestForkCommons {
         assertEq(1, openSwap.state, "swap.state");
         assertEq(closedPayFixedSwaps[0].swapId, openSwap.id, "closedPayFixedSwaps[0].swapId");
         assertTrue(closedPayFixedSwaps[0].closed, "closedPayFixedSwaps[0].swapId");
-
     }
 
     function testShouldOpenSwapTenor28DaiReceiveFixed() public {

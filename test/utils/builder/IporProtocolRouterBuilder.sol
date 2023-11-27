@@ -14,8 +14,12 @@ contract IporProtocolRouterBuilder is Test {
         address assetManagementLens;
         address ammOpenSwapService;
         address ammOpenSwapServiceStEth;
-        address ammCloseSwapService;
+        address ammCloseSwapServiceUsdt;
+        address ammCloseSwapServiceUsdc;
+        address ammCloseSwapServiceDai;
         address ammCloseSwapServiceStEth;
+        address ammCloseSwapLens;
+        address ammCloseSwapLensStEth;
         address ammPoolsService;
         address ammPoolsServiceStEth;
         address ammGovernanceService;
@@ -58,8 +62,23 @@ contract IporProtocolRouterBuilder is Test {
         return this;
     }
 
-    function withAmmCloseSwapService(address ammCloseSwapService) public returns (IporProtocolRouterBuilder) {
-        builderData.ammCloseSwapService = ammCloseSwapService;
+    function withAmmCloseSwapServiceUsdt(address ammCloseSwapService) public returns (IporProtocolRouterBuilder) {
+        builderData.ammCloseSwapServiceUsdt = ammCloseSwapService;
+        return this;
+    }
+
+    function withAmmCloseSwapServiceUsdc(address ammCloseSwapService) public returns (IporProtocolRouterBuilder) {
+        builderData.ammCloseSwapServiceUsdc = ammCloseSwapService;
+        return this;
+    }
+
+    function withAmmCloseSwapServiceDai(address ammCloseSwapService) public returns (IporProtocolRouterBuilder) {
+        builderData.ammCloseSwapServiceDai = ammCloseSwapService;
+        return this;
+    }
+
+    function withAmmCloseSwapLens(address ammCloseSwapLens) public returns (IporProtocolRouterBuilder) {
+        builderData.ammCloseSwapLens = ammCloseSwapLens;
         return this;
     }
 
@@ -92,7 +111,10 @@ contract IporProtocolRouterBuilder is Test {
             assetManagementLens: builderData.assetManagementLens,
             ammOpenSwapService: builderData.ammOpenSwapService,
             ammOpenSwapServiceStEth: builderData.ammOpenSwapServiceStEth,
-            ammCloseSwapService: builderData.ammCloseSwapService,
+            ammCloseSwapServiceUsdt: builderData.ammCloseSwapServiceUsdt,
+            ammCloseSwapServiceUsdc: builderData.ammCloseSwapServiceUsdc,
+            ammCloseSwapServiceDai: builderData.ammCloseSwapServiceDai,
+            ammCloseSwapLens: builderData.ammCloseSwapLens,
             ammCloseSwapServiceStEth: builderData.ammCloseSwapServiceStEth,
             ammPoolsService: builderData.ammPoolsService,
             ammGovernanceService: builderData.ammGovernanceService,
@@ -122,7 +144,10 @@ contract IporProtocolRouterBuilder is Test {
             assetManagementLens: builderData.assetManagementLens,
             ammOpenSwapService: builderData.ammOpenSwapService,
             ammOpenSwapServiceStEth: builderData.ammOpenSwapServiceStEth,
-            ammCloseSwapService: builderData.ammCloseSwapService,
+            ammCloseSwapServiceUsdt: builderData.ammCloseSwapServiceUsdt,
+            ammCloseSwapServiceUsdc: builderData.ammCloseSwapServiceUsdc,
+            ammCloseSwapServiceDai: builderData.ammCloseSwapServiceDai,
+            ammCloseSwapLens: builderData.ammCloseSwapLens,
             ammCloseSwapServiceStEth: builderData.ammCloseSwapServiceStEth,
             ammPoolsService: builderData.ammPoolsService,
             ammPoolsServiceStEth: builderData.ammPoolsServiceStEth,

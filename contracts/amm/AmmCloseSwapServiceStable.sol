@@ -1,93 +1,88 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
+
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
-import "../../../interfaces/types/IporTypes.sol";
-import "../../../interfaces/types/AmmTypes.sol";
-import "../../../interfaces/IIporOracle.sol";
-import "../../../interfaces/IAmmTreasury.sol";
-import "../../../interfaces/IAmmCloseSwapService.sol";
-import "../../../libraries/math/IporMath.sol";
-import "../../../libraries/IporContractValidator.sol";
-import "../../../libraries/AmmLib.sol";
-import "../../interfaces/IAmmStorageBaseV1.sol";
-import "../../interfaces/IAmmTreasuryBaseV1.sol";
-import "../../types/AmmTypesBaseV1.sol";
-import "../../events/AmmEventsBaseV1.sol";
-import "../../../amm/libraries/types/AmmInternalTypes.sol";
-import "../../../base/spread/SpreadBaseV1.sol";
-import "../libraries/SwapLogicBaseV1.sol";
-import "../libraries/SwapCloseLogicLibBaseV1.sol";
-import "../../interfaces/ISpreadBaseV1.sol";
+import "../interfaces/types/IporTypes.sol";
+import "../interfaces/types/AmmTypes.sol";
+import "../interfaces/IIporOracle.sol";
+import "../interfaces/IAmmTreasury.sol";
+import "../interfaces/IAmmCloseSwapLens.sol";
+import "../interfaces/IAmmCloseSwapService.sol";
+import "../base/amm/libraries/SwapEventsBaseV1.sol";
+import "../interfaces/IAmmCloseSwapServiceUsdt.sol";
+import "../libraries/errors/IporErrors.sol";
+import "../libraries/math/IporMath.sol";
+import "../libraries/IporContractValidator.sol";
+import "../libraries/AmmLib.sol";
+import "../libraries/AssetManagementLogic.sol";
+import "../libraries/RiskManagementLogic.sol";
+import "../libraries/RiskIndicatorsValidatorLib.sol";
+import "../governance/AmmConfigurationManager.sol";
+import "../security/OwnerManager.sol";
+import "../base/amm/libraries/SwapLogicBaseV1.sol";
+import "../base/types/AmmTypesBaseV1.sol";
+import "../base/amm/libraries/SwapCloseLogicLibBaseV1.sol";
+import "./libraries/types/AmmInternalTypes.sol";
+import "./spread/ISpreadCloseSwapService.sol";
+import "./libraries/SwapCloseLogicLib.sol";
 
-/// @title Abstract contract for closing swap, generation one, characterized by:
-/// - no asset management, so also no auto rebalance
-abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
+/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
+abstract contract AmmCloseSwapServiceStable is IAmmCloseSwapService {
     using Address for address;
     using IporContractValidator for address;
     using SafeCast for uint256;
     using SafeCast for int256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
-    using SwapLogicBaseV1 for AmmTypesBaseV1.Swap;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
     using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
 
-    uint256 public immutable version = 2001;
+    address internal immutable _asset;
+    uint256 internal immutable _decimals;
+    address internal immutable _ammStorage;
+    address internal immutable _ammTreasury;
+    address internal immutable _assetManagement;
 
-    address public immutable asset;
-    uint256 public immutable decimals;
+    uint256 internal immutable _unwindingFeeRate;
+    uint256 internal immutable _unwindingFeeTreasuryPortionRate;
+    uint256 internal immutable _liquidationLegLimit;
+    uint256 internal immutable _timeBeforeMaturityAllowedToCloseSwapByCommunity;
+    uint256 internal immutable _timeBeforeMaturityAllowedToCloseSwapByBuyer;
+    uint256 internal immutable _minLiquidationThresholdToCloseBeforeMaturityByCommunity;
+    uint256 internal immutable _minLiquidationThresholdToCloseBeforeMaturityByBuyer;
+    uint256 internal immutable _minLeverage;
+    uint256 internal immutable _timeAfterOpenAllowedToCloseSwapWithUnwinding;
 
-    address public immutable messageSigner;
     address public immutable iporOracle;
-    address public immutable spread;
-    address public immutable ammStorage;
-    address public immutable ammTreasury;
-
-    /// @dev Unwinding fee rate, value represented in 18 decimals. Represents percentage of swap notional.
-    uint256 public immutable unwindingFeeRate;
-    /// @dev Unwinding fee treasury portion rate, value represented in 18 decimals. Represents percentage of unwinding fee, which is transferred to treasury.
-    uint256 public immutable unwindingFeeTreasuryPortionRate;
-    /// @dev Maximum length of liquidated swaps per leg, value represented WITHOUT 18 decimals.
-    uint256 public immutable liquidationLegLimit;
-    /// @dev Time in seconds before maturity allowed to close swap by community.
-    uint256 public immutable timeBeforeMaturityAllowedToCloseSwapByCommunity;
-    /// @dev Time in seconds before maturity allowed to close swap by buyer.
-    uint256 public immutable timeBeforeMaturityAllowedToCloseSwapByBuyer;
-    /// @dev Minimum liquidation threshold to close swap before maturity by community, value represented in 18 decimals.
-    uint256 public immutable minLiquidationThresholdToCloseBeforeMaturityByCommunity;
-    /// @dev Minimum liquidation threshold to close swap before maturity by buyer, value represented in 18 decimals.
-    uint256 public immutable minLiquidationThresholdToCloseBeforeMaturityByBuyer;
-    /// @dev Minimum leverage, value represented in 18 decimals.
-    uint256 public immutable minLeverage;
-    /// @dev Time after open swap when it is allowed to close swap with unwinding, represented in seconds
-    uint256 public immutable timeAfterOpenAllowedToCloseSwapWithUnwinding;
+    address public immutable messageSigner;
+    address public immutable spreadRouter;
 
     constructor(
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput,
         address messageSignerInput
     ) {
-        asset = poolCfg.asset.checkAddress();
-        decimals = poolCfg.decimals;
-
-        messageSigner = messageSignerInput.checkAddress();
-        iporOracle = iporOracleInput.checkAddress();
-        spread = poolCfg.spread.checkAddress();
-        ammStorage = poolCfg.ammStorage.checkAddress();
-        ammTreasury = poolCfg.ammTreasury.checkAddress();
-
-        unwindingFeeRate = poolCfg.unwindingFeeRate;
-        unwindingFeeTreasuryPortionRate = poolCfg.unwindingFeeTreasuryPortionRate;
-        liquidationLegLimit = poolCfg.maxLengthOfLiquidatedSwapsPerLeg;
-        timeBeforeMaturityAllowedToCloseSwapByCommunity = poolCfg.timeBeforeMaturityAllowedToCloseSwapByCommunity;
-        timeBeforeMaturityAllowedToCloseSwapByBuyer = poolCfg.timeBeforeMaturityAllowedToCloseSwapByBuyer;
-        minLiquidationThresholdToCloseBeforeMaturityByCommunity = poolCfg
+        _asset = poolCfg.asset.checkAddress();
+        _decimals = poolCfg.decimals;
+        _ammStorage = poolCfg.ammStorage.checkAddress();
+        _ammTreasury = poolCfg.ammTreasury.checkAddress();
+        _assetManagement = poolCfg.assetManagement.checkAddress();
+        _unwindingFeeRate = poolCfg.unwindingFeeRate;
+        _unwindingFeeTreasuryPortionRate = poolCfg.unwindingFeeTreasuryPortionRate;
+        _liquidationLegLimit = poolCfg.maxLengthOfLiquidatedSwapsPerLeg;
+        _timeBeforeMaturityAllowedToCloseSwapByCommunity = poolCfg.timeBeforeMaturityAllowedToCloseSwapByCommunity;
+        _timeBeforeMaturityAllowedToCloseSwapByBuyer = poolCfg.timeBeforeMaturityAllowedToCloseSwapByBuyer;
+        _minLiquidationThresholdToCloseBeforeMaturityByCommunity = poolCfg
             .minLiquidationThresholdToCloseBeforeMaturityByCommunity;
-        minLiquidationThresholdToCloseBeforeMaturityByBuyer = poolCfg
+        _minLiquidationThresholdToCloseBeforeMaturityByBuyer = poolCfg
             .minLiquidationThresholdToCloseBeforeMaturityByBuyer;
-        minLeverage = poolCfg.minLeverage;
-        timeAfterOpenAllowedToCloseSwapWithUnwinding = poolCfg.timeAfterOpenAllowedToCloseSwapWithUnwinding;
+        _minLeverage = poolCfg.minLeverage;
+        _timeAfterOpenAllowedToCloseSwapWithUnwinding = poolCfg.timeAfterOpenAllowedToCloseSwapWithUnwinding;
+
+        iporOracle = iporOracleInput.checkAddress();
+        messageSigner = messageSignerInput.checkAddress();
+        spreadRouter = poolCfg.spread.checkAddress();
     }
 
     function getPoolConfiguration()
@@ -99,23 +94,29 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
         return _getPoolConfiguration();
     }
 
-    function _emergencyCloseSwaps(
-        uint256[] memory payFixedSwapIds,
-        uint256[] memory receiveFixedSwapIds,
-        AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
-    )
+    function _getPoolConfiguration()
         internal
-        returns (
-            AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
-            AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
-        )
+        view
+        returns (IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory)
     {
-        (closedPayFixedSwaps, closedReceiveFixedSwaps) = _closeSwaps(
-            msg.sender,
-            payFixedSwapIds,
-            receiveFixedSwapIds,
-            riskIndicatorsInput
-        );
+        return
+            IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration({
+                asset: _asset,
+                decimals: _decimals,
+                ammStorage: _ammStorage,
+                ammTreasury: _ammTreasury,
+                assetManagement: _assetManagement,
+                spread: spreadRouter,
+                unwindingFeeRate: _unwindingFeeRate,
+                unwindingFeeTreasuryPortionRate: _unwindingFeeTreasuryPortionRate,
+                maxLengthOfLiquidatedSwapsPerLeg: _liquidationLegLimit,
+                timeBeforeMaturityAllowedToCloseSwapByCommunity: _timeBeforeMaturityAllowedToCloseSwapByCommunity,
+                timeBeforeMaturityAllowedToCloseSwapByBuyer: _timeBeforeMaturityAllowedToCloseSwapByBuyer,
+                minLiquidationThresholdToCloseBeforeMaturityByCommunity: _minLiquidationThresholdToCloseBeforeMaturityByCommunity,
+                minLiquidationThresholdToCloseBeforeMaturityByBuyer: _minLiquidationThresholdToCloseBeforeMaturityByBuyer,
+                minLeverage: _minLeverage,
+                timeAfterOpenAllowedToCloseSwapWithUnwinding: _timeAfterOpenAllowedToCloseSwapWithUnwinding
+            });
     }
 
     function _closeSwaps(
@@ -130,8 +131,11 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
         )
     {
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg = _getPoolConfiguration();
+
         require(
-            payFixedSwapIds.length <= liquidationLegLimit && receiveFixedSwapIds.length <= liquidationLegLimit,
+            payFixedSwapIds.length <= poolCfg.maxLengthOfLiquidatedSwapsPerLeg &&
+                receiveFixedSwapIds.length <= poolCfg.maxLengthOfLiquidatedSwapsPerLeg,
             AmmErrors.MAX_LENGTH_LIQUIDATED_SWAPS_PER_LEG_EXCEEDED
         );
 
@@ -142,6 +146,7 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
             beneficiary,
             AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             payFixedSwapIds,
+            poolCfg,
             riskIndicatorsInput
         );
 
@@ -149,17 +154,23 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
             beneficiary,
             AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             receiveFixedSwapIds,
+            poolCfg,
             riskIndicatorsInput
         );
 
-        _transferLiquidationDepositAmount(beneficiary, payoutForLiquidatorPayFixed + payoutForLiquidatorReceiveFixed);
+        _transferLiquidationDepositAmount(
+            beneficiary,
+            payoutForLiquidatorPayFixed + payoutForLiquidatorReceiveFixed,
+            poolCfg
+        );
     }
 
     function _closeSwapPayFixed(
         address beneficiary,
         uint256 indexValue,
         uint256 ibtPrice,
-        AmmTypesBaseV1.Swap memory swap,
+        AmmTypes.Swap memory swap,
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     ) internal returns (uint256 payoutForLiquidator) {
         uint256 timestamp = block.timestamp;
@@ -174,25 +185,28 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
         );
 
         AmmInternalTypes.PnlValueStruct memory pnlValueStruct = _preparePnlValueStructForClose(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             timestamp,
             swapPnlValueToDate,
             indexValue,
             swap,
+            poolCfg,
             riskIndicatorsInput
         );
 
-        ISpreadBaseV1(spread).updateTimeWeightedNotionalOnClose(
-            uint256(swap.direction),
+        ISpreadCloseSwapService(spreadRouter).updateTimeWeightedNotionalOnClose(
+            poolCfg.asset,
+            0,
             swap.tenor,
             swap.notional,
-            IAmmStorageBaseV1(ammStorage).updateStorageWhenCloseSwapPayFixedInternal(
+            IAmmStorage(poolCfg.ammStorage).updateStorageWhenCloseSwapPayFixedInternal(
                 swap,
                 pnlValueStruct.pnlValue,
                 pnlValueStruct.swapUnwindFeeLPAmount,
                 pnlValueStruct.swapUnwindFeeTreasuryAmount,
                 timestamp
             ),
-            ammStorage
+            poolCfg.ammStorage
         );
 
         uint256 transferredToBuyer;
@@ -202,12 +216,13 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
             pnlValueStruct.pnlValue -
                 pnlValueStruct.swapUnwindFeeLPAmount.toInt256() -
                 pnlValueStruct.swapUnwindFeeTreasuryAmount.toInt256(),
-            swap
+            swap,
+            poolCfg
         );
 
         if (pnlValueStruct.swapUnwindRequired) {
-            emit AmmEventsBaseV1.SwapUnwind(
-                asset,
+            emit SwapEventsBaseV1.SwapUnwind(
+                poolCfg.asset,
                 swap.id,
                 swapPnlValueToDate,
                 pnlValueStruct.swapUnwindAmount,
@@ -216,14 +231,22 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
             );
         }
 
-        emit AmmEventsBaseV1.CloseSwap(swap.id, asset, timestamp, beneficiary, transferredToBuyer, payoutForLiquidator);
+        emit SwapEventsBaseV1.CloseSwap(
+            swap.id,
+            poolCfg.asset,
+            timestamp,
+            beneficiary,
+            transferredToBuyer,
+            payoutForLiquidator
+        );
     }
 
     function _closeSwapReceiveFixed(
         address beneficiary,
         uint256 indexValue,
         uint256 ibtPrice,
-        AmmTypesBaseV1.Swap memory swap,
+        AmmTypes.Swap memory swap,
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     ) internal returns (uint256 payoutForLiquidator) {
         uint256 timestamp = block.timestamp;
@@ -238,25 +261,28 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
         );
 
         AmmInternalTypes.PnlValueStruct memory pnlValueStruct = _preparePnlValueStructForClose(
+            AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             timestamp,
             swapPnlValueToDate,
             indexValue,
             swap,
+            poolCfg,
             riskIndicatorsInput
         );
 
-        SpreadBaseV1(spread).updateTimeWeightedNotionalOnClose(
-            uint256(swap.direction),
+        ISpreadCloseSwapService(spreadRouter).updateTimeWeightedNotionalOnClose(
+            poolCfg.asset,
+            1,
             swap.tenor,
             swap.notional,
-            IAmmStorageBaseV1(ammStorage).updateStorageWhenCloseSwapReceiveFixedInternal(
+            IAmmStorage(poolCfg.ammStorage).updateStorageWhenCloseSwapReceiveFixedInternal(
                 swap,
                 pnlValueStruct.pnlValue,
                 pnlValueStruct.swapUnwindFeeLPAmount,
                 pnlValueStruct.swapUnwindFeeTreasuryAmount,
                 timestamp
             ),
-            ammStorage
+            poolCfg.ammStorage
         );
 
         uint256 transferredToBuyer;
@@ -266,12 +292,13 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
             pnlValueStruct.pnlValue -
                 pnlValueStruct.swapUnwindFeeLPAmount.toInt256() -
                 pnlValueStruct.swapUnwindFeeTreasuryAmount.toInt256(),
-            swap
+            swap,
+            poolCfg
         );
 
         if (pnlValueStruct.swapUnwindRequired) {
-            emit AmmEventsBaseV1.SwapUnwind(
-                asset,
+            emit SwapEventsBaseV1.SwapUnwind(
+                poolCfg.asset,
                 swap.id,
                 swapPnlValueToDate,
                 pnlValueStruct.swapUnwindAmount,
@@ -280,29 +307,43 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
             );
         }
 
-        emit AmmEventsBaseV1.CloseSwap(swap.id, asset, timestamp, beneficiary, transferredToBuyer, payoutForLiquidator);
+        emit SwapEventsBaseV1.CloseSwap(
+            swap.id,
+            poolCfg.asset,
+            timestamp,
+            beneficiary,
+            transferredToBuyer,
+            payoutForLiquidator
+        );
     }
 
     function _closeSwapsPerLeg(
         address beneficiary,
         AmmTypes.SwapDirection direction,
         uint256[] memory swapIds,
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     ) internal returns (uint256 payoutForLiquidator, AmmTypes.IporSwapClosingResult[] memory closedSwaps) {
         uint256 swapIdsLength = swapIds.length;
-        require(swapIdsLength <= liquidationLegLimit, AmmErrors.MAX_LENGTH_LIQUIDATED_SWAPS_PER_LEG_EXCEEDED);
+        require(
+            swapIdsLength <= poolCfg.maxLengthOfLiquidatedSwapsPerLeg,
+            AmmErrors.MAX_LENGTH_LIQUIDATED_SWAPS_PER_LEG_EXCEEDED
+        );
 
         closedSwaps = new AmmTypes.IporSwapClosingResult[](swapIdsLength);
-        AmmTypesBaseV1.Swap memory swap;
+        AmmTypes.Swap memory swap;
 
-        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(iporOracle).getAccruedIndex(block.timestamp, asset);
+        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(iporOracle).getAccruedIndex(
+            block.timestamp,
+            poolCfg.asset
+        );
         uint256 swapId;
 
         for (uint256 i; i != swapIdsLength; ) {
             swapId = swapIds[i];
             require(swapId > 0, AmmErrors.INCORRECT_SWAP_ID);
 
-            swap = IAmmStorageBaseV1(ammStorage).getSwap(direction, swapId);
+            swap = IAmmStorage(poolCfg.ammStorage).getSwap(direction, swapId);
 
             if (swap.state == IporTypes.SwapState.ACTIVE) {
                 if (direction == AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
@@ -311,6 +352,7 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
                         accruedIpor.indexValue,
                         accruedIpor.ibtPrice,
                         swap,
+                        poolCfg,
                         riskIndicatorsInput
                     );
                 } else if (direction == AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED) {
@@ -319,6 +361,7 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
                         accruedIpor.indexValue,
                         accruedIpor.ibtPrice,
                         swap,
+                        poolCfg,
                         riskIndicatorsInput
                     );
                 } else {
@@ -338,25 +381,30 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
     /// @notice Transfer sum of all liquidation deposits to liquidator
     /// @param liquidator address of liquidator
     /// @param liquidationDepositAmount liquidation deposit amount, value represented in 18 decimals
-    function _transferLiquidationDepositAmount(address liquidator, uint256 liquidationDepositAmount) internal {
+    function _transferLiquidationDepositAmount(
+        address liquidator,
+        uint256 liquidationDepositAmount,
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg
+    ) internal {
         if (liquidationDepositAmount > 0) {
-            IERC20Upgradeable(asset).safeTransferFrom(
-                ammTreasury,
+            IERC20Upgradeable(poolCfg.asset).safeTransferFrom(
+                poolCfg.ammTreasury,
                 liquidator,
-                IporMath.convertWadToAssetDecimals(liquidationDepositAmount, decimals)
+                IporMath.convertWadToAssetDecimals(liquidationDepositAmount, poolCfg.decimals)
             );
         }
     }
 
     function _preparePnlValueStructForClose(
+        AmmTypes.SwapDirection direction,
         uint256 closeTimestamp,
         int256 swapPnlValueToDate,
         uint256 indexValue,
-        AmmTypesBaseV1.Swap memory swap,
+        AmmTypes.Swap memory swap,
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     ) internal view returns (AmmInternalTypes.PnlValueStruct memory pnlValueStruct) {
         AmmTypes.SwapClosableStatus closableStatus;
-        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg = _getPoolConfiguration();
 
         (closableStatus, pnlValueStruct.swapUnwindRequired) = SwapCloseLogicLibBaseV1.getClosableStatusForSwap(
             AmmTypesBaseV1.ClosableSwapInput({
@@ -389,19 +437,18 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
                 pnlValueStruct.swapUnwindFeeLPAmount,
                 pnlValueStruct.swapUnwindFeeTreasuryAmount,
                 pnlValueStruct.pnlValue
-            ) = SwapCloseLogicLibBaseV1.calculateSwapUnwindWhenUnwindRequired(
-                AmmTypesBaseV1.UnwindParams({
-                    asset: asset,
+            ) = SwapCloseLogicLib.calculateSwapUnwindWhenUnwindRequired(
+                AmmTypes.UnwindParams({
                     messageSigner: messageSigner,
-                    spread: spread,
-                    ammStorage: ammStorage,
-                    ammTreasury: ammTreasury,
+                    spreadRouter: spreadRouter,
+                    ammStorage: poolCfg.ammStorage,
+                    ammTreasury: poolCfg.ammTreasury,
+                    direction: direction,
                     closeTimestamp: closeTimestamp,
                     swapPnlValueToDate: swapPnlValueToDate,
                     indexValue: indexValue,
                     swap: swap,
-                    unwindingFeeRate: unwindingFeeRate,
-                    unwindingFeeTreasuryPortionRate: unwindingFeeTreasuryPortionRate,
+                    poolCfg: poolCfg,
                     riskIndicatorsInputs: riskIndicatorsInput
                 })
             );
@@ -418,11 +465,13 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
      * # should the payout be larger than the collateral then it transfers payout to the buyer
      * @param swap - Derivative struct
      * @param pnlValue - Net earnings of the derivative. Can be positive (swap has a positive earnings) or negative (swap looses), value represented in 18 decimals, value include potential unwind fee.
+     * @param poolCfg - Pool configuration
      **/
     function _transferTokensBasedOnPnlValue(
         address beneficiary,
         int256 pnlValue,
-        AmmTypesBaseV1.Swap memory swap
+        AmmTypes.Swap memory swap,
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg
     ) internal returns (uint256 transferredToBuyer, uint256 payoutForLiquidator) {
         uint256 absPnlValue = IporMath.absoluteValue(pnlValue);
 
@@ -431,16 +480,18 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
             (transferredToBuyer, payoutForLiquidator) = _transferDerivativeAmount(
                 beneficiary,
                 swap.buyer,
-                swap.wadLiquidationDepositAmount,
-                swap.collateral + absPnlValue
+                swap.liquidationDepositAmount,
+                swap.collateral + absPnlValue,
+                poolCfg
             );
         } else {
             //AmmTreasury earns, Buyer looses
             (transferredToBuyer, payoutForLiquidator) = _transferDerivativeAmount(
                 beneficiary,
                 swap.buyer,
-                swap.wadLiquidationDepositAmount,
-                swap.collateral - absPnlValue
+                swap.liquidationDepositAmount,
+                swap.collateral - absPnlValue,
+                poolCfg
             );
         }
     }
@@ -450,6 +501,7 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
     /// @param buyer Account which will receive the collateral amount including pnl value (transferAmount)
     /// @param wadLiquidationDepositAmount Amount of liquidation deposit
     /// @param wadTransferAmount Amount of collateral including pnl value
+    /// @param poolCfg Pool configuration
     /// @return wadTransferredToBuyer Final value transferred to buyer, containing collateral and pnl value and if buyer is beneficiary, liquidation deposit amount
     /// @return wadPayoutForLiquidator Final value transferred to liquidator, if liquidator is beneficiary then value is zero
     /// @dev If beneficiary is buyer, then liquidation deposit amount is added to transfer amount.
@@ -458,7 +510,8 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
         address beneficiary,
         address buyer,
         uint256 wadLiquidationDepositAmount,
-        uint256 wadTransferAmount
+        uint256 wadTransferAmount,
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg
     ) internal returns (uint256 wadTransferredToBuyer, uint256 wadPayoutForLiquidator) {
         if (beneficiary == buyer) {
             wadTransferAmount = wadTransferAmount + wadLiquidationDepositAmount;
@@ -468,35 +521,59 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
             wadPayoutForLiquidator = wadLiquidationDepositAmount;
         }
 
-        if (wadTransferAmount > 0) {
-            uint256 transferAmountAssetDecimals = IporMath.convertWadToAssetDecimals(wadTransferAmount, decimals);
-            IERC20Upgradeable(asset).safeTransferFrom(ammTreasury, buyer, transferAmountAssetDecimals);
-            wadTransferredToBuyer = IporMath.convertToWad(transferAmountAssetDecimals, decimals);
-        }
-    }
+        if (wadTransferAmount + wadPayoutForLiquidator > 0) {
+            uint256 transferAmountAssetDecimals = IporMath.convertWadToAssetDecimals(
+                wadTransferAmount,
+                poolCfg.decimals
+            );
 
-    function _getPoolConfiguration()
-        internal
-        view
-        returns (IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory)
-    {
-        return
-            IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration({
-                asset: asset,
-                decimals: decimals,
-                ammStorage: ammStorage,
-                ammTreasury: ammTreasury,
-                assetManagement: address(0),
-                spread: spread,
-                unwindingFeeRate: unwindingFeeRate,
-                unwindingFeeTreasuryPortionRate: unwindingFeeTreasuryPortionRate,
-                maxLengthOfLiquidatedSwapsPerLeg: liquidationLegLimit,
-                timeBeforeMaturityAllowedToCloseSwapByCommunity: timeBeforeMaturityAllowedToCloseSwapByCommunity,
-                timeBeforeMaturityAllowedToCloseSwapByBuyer: timeBeforeMaturityAllowedToCloseSwapByBuyer,
-                minLiquidationThresholdToCloseBeforeMaturityByCommunity: minLiquidationThresholdToCloseBeforeMaturityByCommunity,
-                minLiquidationThresholdToCloseBeforeMaturityByBuyer: minLiquidationThresholdToCloseBeforeMaturityByBuyer,
-                minLeverage: minLeverage,
-                timeAfterOpenAllowedToCloseSwapWithUnwinding: timeAfterOpenAllowedToCloseSwapWithUnwinding
-            });
+            uint256 totalTransferAmountAssetDecimals = transferAmountAssetDecimals +
+                IporMath.convertWadToAssetDecimals(wadPayoutForLiquidator, poolCfg.decimals);
+
+            uint256 ammTreasuryErc20BalanceBeforeRedeem = IERC20Upgradeable(poolCfg.asset).balanceOf(
+                poolCfg.ammTreasury
+            );
+
+            if (ammTreasuryErc20BalanceBeforeRedeem <= totalTransferAmountAssetDecimals) {
+                AmmTypes.AmmPoolCoreModel memory model;
+
+                model.ammStorage = poolCfg.ammStorage;
+                model.ammTreasury = poolCfg.ammTreasury;
+                model.assetManagement = poolCfg.assetManagement;
+
+                IporTypes.AmmBalancesMemory memory balance = model.getAccruedBalance();
+
+                StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
+                    poolCfg.asset
+                );
+
+                int256 rebalanceAmount = AssetManagementLogic.calculateRebalanceAmountBeforeWithdraw(
+                    IporMath.convertToWad(ammTreasuryErc20BalanceBeforeRedeem, poolCfg.decimals),
+                    balance.vault,
+                    wadTransferAmount + wadPayoutForLiquidator,
+                    /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals,
+                    /// example: 45% = 4500, so to achieve number in 18 decimals we need to multiply by 1e14
+                    uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) * 1e14
+                );
+
+                if (rebalanceAmount < 0) {
+                    IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagementInternal(
+                        (-rebalanceAmount).toUint256()
+                    );
+
+                    /// @dev check if withdraw from asset management is enough to cover transfer amount
+                    /// @dev possible case when strategies are paused and assets are temporary locked
+                    require(
+                        totalTransferAmountAssetDecimals <=
+                            IERC20Upgradeable(poolCfg.asset).balanceOf(poolCfg.ammTreasury),
+                        AmmErrors.ASSET_MANAGEMENT_WITHDRAW_NOT_ENOUGH
+                    );
+                }
+            }
+
+            IERC20Upgradeable(poolCfg.asset).safeTransferFrom(poolCfg.ammTreasury, buyer, transferAmountAssetDecimals);
+
+            wadTransferredToBuyer = IporMath.convertToWad(transferAmountAssetDecimals, poolCfg.decimals);
+        }
     }
 }

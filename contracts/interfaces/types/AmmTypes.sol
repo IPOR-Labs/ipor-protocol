@@ -134,6 +134,12 @@ library AmmTypes {
     }
 
     struct UnwindParams {
+        /// @notice Risk Indicators Inputs signer
+        address messageSigner;
+        /// @notice Spread Router contract address
+        address spreadRouter;
+        address ammStorage;
+        address ammTreasury;
         SwapDirection direction;
         uint256 closeTimestamp;
         int256 swapPnlValueToDate;
@@ -157,11 +163,13 @@ library AmmTypes {
     /// 1 - Swap is already closed
     /// 2 - Swap state required Buyer or Liquidator to close. Sender is not Buyer nor Liquidator.
     /// 3 - Cannot close swap, closing is too early for Community
+    /// 4 - Cannot close swap with unwind because action is too early from the moment when swap was opened, validation based on Close Service configuration
     enum SwapClosableStatus {
         SWAP_IS_CLOSABLE,
         SWAP_ALREADY_CLOSED,
         SWAP_REQUIRED_BUYER_OR_LIQUIDATOR_TO_CLOSE,
-        SWAP_CANNOT_CLOSE_CLOSING_TOO_EARLY_FOR_COMMUNITY
+        SWAP_CANNOT_CLOSE_CLOSING_TOO_EARLY_FOR_COMMUNITY,
+        SWAP_CANNOT_CLOSE_WITH_UNWIND_ACTION_IS_TOO_EARLY
     }
 
     /// @notice Collection of swap attributes connected with IPOR Index and swap itself.

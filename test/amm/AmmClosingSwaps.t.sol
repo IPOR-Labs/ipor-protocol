@@ -120,7 +120,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_admin);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _admin,
             swapPfIds,
             swapRfIds,
@@ -182,7 +182,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _buyer,
             swapPfIds,
             swapRfIds,
@@ -243,7 +243,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _buyer,
             swapPfIds,
             swapRfIds,
@@ -299,7 +299,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _community,
             swapPfIds,
             swapRfIds,
@@ -357,7 +357,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _community,
             swapPfIds,
             swapRfIds,
@@ -417,7 +417,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _liquidator,
             swapPfIds,
             swapRfIds,
@@ -481,7 +481,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.startPrank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _liquidator,
             swapPfIds,
             swapRfIds,
@@ -536,7 +536,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _buyer,
             swapPfIds,
             swapRfIds,
@@ -596,7 +596,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.startPrank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _community,
             swapPfIds,
             swapRfIds,
@@ -657,7 +657,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.startPrank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds, riskIndicatorsInputs);
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(_community, swapPfIds, swapRfIds, riskIndicatorsInputs);
         vm.stopPrank();
 
         //then
@@ -712,7 +712,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.startPrank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _liquidator,
             swapPfIds,
             swapRfIds,
@@ -767,7 +767,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_admin);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _admin,
             swapPfIds,
             swapRfIds,
@@ -822,7 +822,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _buyer,
             swapPfIds,
             swapRfIds,
@@ -877,7 +877,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _buyer,
             swapPfIds,
             swapRfIds,
@@ -933,7 +933,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _community,
             swapPfIds,
             swapRfIds,
@@ -991,7 +991,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _community,
             swapPfIds,
             swapRfIds,
@@ -1051,7 +1051,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _liquidator,
             swapPfIds,
             swapRfIds,
@@ -1115,7 +1115,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.startPrank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds, riskIndicatorsInputs);
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds, riskIndicatorsInputs);
         vm.stopPrank();
 
         //then
@@ -1165,7 +1165,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _buyer,
             swapPfIds,
             swapRfIds,
@@ -1225,7 +1225,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.startPrank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds, riskIndicatorsInputs);
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(_community, swapPfIds, swapRfIds, riskIndicatorsInputs);
         vm.stopPrank();
 
         //then
@@ -1280,7 +1280,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.startPrank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_community, swapPfIds, swapRfIds, riskIndicatorsInputs);
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(_community, swapPfIds, swapRfIds, riskIndicatorsInputs);
         vm.stopPrank();
 
         //then
@@ -1335,7 +1335,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.startPrank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds, riskIndicatorsInputs);
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds, riskIndicatorsInputs);
         vm.stopPrank();
 
         //then
@@ -1386,7 +1386,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _liquidator,
             swapPfIds,
             swapRfIds,
@@ -1464,7 +1464,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _liquidator,
             swapPfIds,
             swapRfIds,
@@ -1553,7 +1553,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _liquidator,
             swapPfIds,
             swapRfIds,
@@ -1639,7 +1639,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _buyer,
             swapPfIds,
             swapRfIds,
@@ -1725,7 +1725,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _buyer,
             swapPfIds,
             swapRfIds,
@@ -1812,7 +1812,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _liquidator,
             swapPfIds,
             swapRfIds,
@@ -1898,7 +1898,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _buyer,
             swapPfIds,
             swapRfIds,
@@ -1987,7 +1987,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _community,
             swapPfIds,
             swapRfIds,
@@ -2078,7 +2078,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _community,
             swapPfIds,
             swapRfIds,
@@ -2169,7 +2169,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _liquidator,
             swapPfIds,
             swapRfIds,
@@ -2260,7 +2260,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _liquidator,
             swapPfIds,
             swapRfIds,
@@ -2349,7 +2349,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _buyer,
             swapPfIds,
             swapRfIds,
@@ -2438,7 +2438,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _buyer,
             swapPfIds,
             swapRfIds,
@@ -2529,7 +2529,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _liquidator,
             swapPfIds,
             swapRfIds,
@@ -2618,7 +2618,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _buyer,
             swapPfIds,
             swapRfIds,
@@ -2712,7 +2712,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.startPrank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _community,
             swapPfIds,
             swapRfIds,
@@ -2806,7 +2806,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.startPrank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _community,
             swapPfIds,
             swapRfIds,
@@ -2900,7 +2900,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.startPrank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _community,
             swapPfIds,
             swapRfIds,
@@ -2989,7 +2989,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _community,
             swapPfIds,
             swapRfIds,
@@ -3075,7 +3075,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _liquidator,
             swapPfIds,
             swapRfIds,
@@ -3167,7 +3167,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _liquidator,
             swapPfIds,
             swapRfIds,
@@ -3252,7 +3252,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _buyer,
             swapPfIds,
             swapRfIds,
@@ -3338,7 +3338,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _buyer,
             swapPfIds,
             swapRfIds,
@@ -3425,7 +3425,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _liquidator,
             swapPfIds,
             swapRfIds,
@@ -3511,7 +3511,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _buyer,
             swapPfIds,
             swapRfIds,
@@ -3598,7 +3598,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _community,
             swapPfIds,
             swapRfIds,
@@ -3689,7 +3689,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _community,
             swapPfIds,
             swapRfIds,
@@ -3782,7 +3782,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _community,
             swapPfIds,
             swapRfIds,
@@ -3873,7 +3873,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _liquidator,
             swapPfIds,
             swapRfIds,
@@ -3963,7 +3963,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _liquidator,
             swapPfIds,
             swapRfIds,
@@ -4052,7 +4052,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _buyer,
             swapPfIds,
             swapRfIds,
@@ -4141,7 +4141,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _buyer,
             swapPfIds,
             swapRfIds,
@@ -4232,7 +4232,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_liquidator);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _liquidator,
             swapPfIds,
             swapRfIds,
@@ -4321,7 +4321,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_buyer);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _buyer,
             swapPfIds,
             swapRfIds,
@@ -4415,7 +4415,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.startPrank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds, riskIndicatorsInputs);
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds, riskIndicatorsInputs);
         vm.stopPrank();
 
         //then
@@ -4504,7 +4504,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.startPrank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds, riskIndicatorsInputs);
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds, riskIndicatorsInputs);
         vm.stopPrank();
 
         //then
@@ -4613,7 +4613,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         //when
         vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.startPrank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds, closeSwapRiskIndicatorsInput);
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(_liquidator, swapPfIds, swapRfIds, closeSwapRiskIndicatorsInput);
         vm.stopPrank();
 
         //then
@@ -4697,7 +4697,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
 
         //when
         vm.startPrank(_community);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
             _community,
             swapPfIds,
             swapRfIds,

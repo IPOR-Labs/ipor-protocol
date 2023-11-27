@@ -10,7 +10,6 @@ import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/errors/AmmErrors.sol";
 import "../../../libraries/IporContractValidator.sol";
 import "../../../amm/libraries/types/AmmInternalTypes.sol";
-import "../../../amm/libraries/IporSwapLogic.sol";
 import "../../../base/spread/SpreadBaseV1.sol";
 import "../libraries/SwapEventsBaseV1.sol";
 import "../libraries/SwapLogicBaseV1.sol";
@@ -370,7 +369,7 @@ abstract contract AmmOpenSwapServiceBaseV1 {
             openingFeeRate
         );
 
-        (uint256 openingFeeLPAmount, uint256 openingFeeTreasuryAmount) = IporSwapLogic.splitOpeningFeeAmount(
+        (uint256 openingFeeLPAmount, uint256 openingFeeTreasuryAmount) = SwapLogicBaseV1.splitOpeningFeeAmount(
             openingFeeAmount,
             openingFeeTreasuryPortionRate
         );
@@ -426,7 +425,7 @@ abstract contract AmmOpenSwapServiceBaseV1 {
                 liquidationDepositAmount: newSwap.liquidationDepositAmount * 1e12
             }),
             newSwap.openTimestamp,
-            newSwap.openTimestamp + IporSwapLogic.getTenorInSeconds(newSwap.tenor),
+            newSwap.openTimestamp + SwapLogicBaseV1.getTenorInSeconds(newSwap.tenor),
             indicator
         );
     }

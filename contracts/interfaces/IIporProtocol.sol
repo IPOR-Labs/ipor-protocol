@@ -11,7 +11,12 @@ import "./IAssetManagementLens.sol";
 import "./ILiquidityMiningLens.sol";
 import "./IPowerTokenLens.sol";
 import "./IAmmOpenSwapService.sol";
-import "./IAmmCloseSwapService.sol";
+import "./IAmmCloseSwapServiceUsdt.sol";
+import "./IAmmCloseSwapServiceUsdc.sol";
+import "./IAmmCloseSwapServiceDai.sol";
+import "./IAmmCloseSwapServiceStEth.sol";
+import "./IAmmCloseSwapLens.sol";
+import "./IAmmCloseSwapLensStEth.sol";
 import "./IAmmPoolsService.sol";
 import "./IAmmGovernanceService.sol";
 import "./IPowerTokenStakeService.sol";
@@ -33,7 +38,12 @@ interface IIporProtocol is
     IPowerTokenLens,
     IAmmPoolsLensStEth,
     IAmmOpenSwapService,
-    IAmmCloseSwapService,
+    IAmmCloseSwapServiceUsdt,
+    IAmmCloseSwapServiceUsdc,
+    IAmmCloseSwapServiceDai,
+    IAmmCloseSwapServiceStEth,
+    IAmmCloseSwapLens,
+    IAmmCloseSwapLensStEth,
     IAmmPoolsService,
     IAmmGovernanceService,
     IPowerTokenStakeService,

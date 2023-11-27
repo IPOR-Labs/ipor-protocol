@@ -18,8 +18,8 @@ import "../libraries/errors/AmmErrors.sol";
 import "../libraries/errors/AmmErrors.sol";
 import "../libraries/IporContractValidator.sol";
 import "./libraries/types/AmmInternalTypes.sol";
-import "./libraries/IporSwapLogic.sol";
 import "../libraries/RiskIndicatorsValidatorLib.sol";
+import "../base/amm/libraries/SwapLogicBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
@@ -801,7 +801,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, poolCfg.decimals);
         uint256 wadLiquidationDepositAmount = poolCfg.liquidationDepositAmount * 1e18;
 
-        (uint256 collateral, uint256 notional, uint256 openingFeeAmount) = IporSwapLogic.calculateSwapAmount(
+        (uint256 collateral, uint256 notional, uint256 openingFeeAmount) = SwapLogicBaseV1.calculateSwapAmount(
             tenor,
             wadTotalAmount,
             leverage,
@@ -810,7 +810,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
             poolCfg.openingFeeRate
         );
 
-        (uint256 openingFeeLPAmount, uint256 openingFeeTreasuryAmount) = IporSwapLogic.splitOpeningFeeAmount(
+        (uint256 openingFeeLPAmount, uint256 openingFeeTreasuryAmount) = SwapLogicBaseV1.splitOpeningFeeAmount(
             openingFeeAmount,
             poolCfg.openingFeeTreasuryPortionRate
         );
@@ -863,7 +863,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 newSwap.liquidationDepositAmount * 1e18
             ),
             newSwap.openTimestamp,
-            newSwap.openTimestamp + IporSwapLogic.getTenorInSeconds(newSwap.tenor),
+            newSwap.openTimestamp + SwapLogicBaseV1.getTenorInSeconds(newSwap.tenor),
             indicator
         );
     }

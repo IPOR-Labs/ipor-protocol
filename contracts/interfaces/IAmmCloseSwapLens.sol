@@ -15,8 +15,10 @@ interface IAmmCloseSwapLens {
         address ammStorage;
         /// @notice Amm Treasury contract address
         address ammTreasury;
-        /// @notice Asset Management contract address
+        /// @notice Asset Management contract address, for stETH is empty, because stETH doesn't have asset management module
         address assetManagement;
+        /// @notice Spread address, for USDT, USDC, DAI is a spread router address, for stETH is a spread address
+        address spread;
         /// @notice Unwinding Fee Rate for unwinding the swap, represented in 18 decimals, 1e18 = 100%
         uint256 unwindingFeeRate;
         /// @notice Unwinding Fee Rate for unwinding the swap, part earmarked for the treasury, represented in 18 decimals, 1e18 = 100%
@@ -33,6 +35,8 @@ interface IAmmCloseSwapLens {
         uint256 minLiquidationThresholdToCloseBeforeMaturityByBuyer;
         /// @notice Min leverage of the virtual swap used in unwinding, represented in 18 decimals
         uint256 minLeverage;
+        /// @notice Time after open swap when it is allowed to close swap with unwinding, represented in seconds
+        uint256 timeAfterOpenAllowedToCloseSwapWithUnwinding;
     }
 
     /// @notice Returns the configuration of the AmmCloseSwapService for a given pool (asset).
@@ -56,6 +60,6 @@ interface IAmmCloseSwapLens {
         AmmTypes.SwapDirection direction,
         uint256 swapId,
         uint256 closeTimestamp,
-        AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInput
+        AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     ) external view returns (AmmTypes.ClosingSwapDetails memory closingSwapDetails);
 }

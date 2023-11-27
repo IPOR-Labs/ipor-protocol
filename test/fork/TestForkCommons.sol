@@ -22,8 +22,11 @@ import "../../contracts/amm/spread/SpreadStorageLens.sol";
 import "../../contracts/amm/spread/SpreadRouter.sol";
 import "../../contracts/amm/AmmOpenSwapService.sol";
 import "../../contracts/amm-eth/AmmOpenSwapServiceStEth.sol";
-import "../../contracts/amm/AmmCloseSwapService.sol";
+import "../../contracts/amm/AmmCloseSwapServiceUsdt.sol";
+import "../../contracts/amm/AmmCloseSwapServiceUsdc.sol";
+import "../../contracts/amm/AmmCloseSwapServiceDai.sol";
 import "../../contracts/amm-eth/AmmCloseSwapServiceStEth.sol";
+import "../../contracts/amm-common/AmmCloseSwapLens.sol";
 import "../../contracts/amm/AmmPoolsService.sol";
 import "../../contracts/amm-common/AmmGovernanceService.sol";
 import "../../contracts/amm/AmmStorage.sol";
@@ -157,6 +160,11 @@ contract TestForkCommons is Test {
 
     address public spreadStEth;
 
+    address public newAmmCloseSwapServiceUsdt;
+    address public newAmmCloseSwapServiceUsdc;
+    address public newAmmCloseSwapServiceDai;
+    address public newAmmCloseSwapLens;
+
     function _init() internal {
         messageSignerPrivateKey = 0x12341234;
         messageSignerAddress = vm.addr(messageSignerPrivateKey);
@@ -174,6 +182,8 @@ contract TestForkCommons is Test {
         _createAmmCloseSwapServiceStEth();
         _createNewAmmPoolsServiceStEth();
         _createAmmPoolsLensStEth();
+
+        _createAmmCloseSwapLens();
 
         _createNewAmmGovernanceService();
 
@@ -209,8 +219,11 @@ contract TestForkCommons is Test {
                 assetManagementLens,
                 ammOpenSwapService,
                 ammOpenSwapServiceStEth,
-                ammCloseSwapService,
+                newAmmCloseSwapServiceUsdt,
+                newAmmCloseSwapServiceUsdc,
+                newAmmCloseSwapServiceDai,
                 ammCloseSwapServiceStEth,
+                newAmmCloseSwapLens,
                 ammPoolsService,
                 newAmmGovernanceService,
                 _getUserAddress(123),
@@ -585,75 +598,102 @@ contract TestForkCommons is Test {
 
     function _createAmmCloseSwapService() private {
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory daiConfig = IAmmCloseSwapLens
-            .AmmCloseSwapServicePoolConfiguration(
-                DAI,
-                18,
-                ammStorageProxyDai,
-                ammTreasuryDai,
-                stanleyProxyDai,
-                5e14,
-                5e14,
-                10,
-                1 hours,
-                1 days,
-                995 * 1e15,
-                99 * 1e16,
-                10 * 1e18
-            );
+            .AmmCloseSwapServicePoolConfiguration({
+                asset: DAI,
+                decimals: 18,
+                ammStorage: ammStorageProxyDai,
+                ammTreasury: ammTreasuryDai,
+                assetManagement: stanleyProxyDai,
+                spread: spreadRouter,
+                unwindingFeeRate: 5e14,
+                unwindingFeeTreasuryPortionRate: 5e14,
+                maxLengthOfLiquidatedSwapsPerLeg: 10,
+                timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
+                timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
+                minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
+                minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
+                minLeverage: 10 * 1e18,
+                timeAfterOpenAllowedToCloseSwapWithUnwinding: 1 days
+            });
 
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory usdcConfig = IAmmCloseSwapLens
-            .AmmCloseSwapServicePoolConfiguration(
-                USDC,
-                6,
-                ammStorageProxyUsdc,
-                ammTreasuryUsdc,
-                stanleyProxyUsdc,
-                5e11,
-                5e11,
-                10,
-                1 hours,
-                1 days,
-                995 * 1e15,
-                99 * 1e16,
-                10 * 1e6
-            );
+            .AmmCloseSwapServicePoolConfiguration({
+                asset: USDC,
+                decimals: 6,
+                ammStorage: ammStorageProxyUsdc,
+                ammTreasury: ammTreasuryUsdc,
+                assetManagement: stanleyProxyUsdc,
+                spread: spreadRouter,
+                unwindingFeeRate: 5e14,
+                unwindingFeeTreasuryPortionRate: 5e14,
+                maxLengthOfLiquidatedSwapsPerLeg: 10,
+                timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
+                timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
+                minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
+                minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
+                minLeverage: 10 * 1e18,
+                timeAfterOpenAllowedToCloseSwapWithUnwinding: 1 days
+            });
 
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory usdtConfig = IAmmCloseSwapLens
-            .AmmCloseSwapServicePoolConfiguration(
-                USDT,
-                6,
-                ammStorageProxyUsdt,
-                ammTreasuryUsdt,
-                stanleyProxyUsdt,
-                5e11,
-                5e11,
-                10,
-                1 hours,
-                1 days,
-                995 * 1e15,
-                99 * 1e16,
-                10 * 1e6
-            );
-        ammCloseSwapService = address(
-            new AmmCloseSwapService(
-                usdtConfig,
-                usdcConfig,
-                daiConfig,
-                iporOracleProxy,
-                messageSignerAddress,
-                spreadRouter
-            )
+            .AmmCloseSwapServicePoolConfiguration({
+                asset: USDT,
+                decimals: 6,
+                ammStorage: ammStorageProxyUsdt,
+                ammTreasury: ammTreasuryUsdt,
+                assetManagement: stanleyProxyUsdt,
+                spread: spreadRouter,
+                unwindingFeeRate: 5e14,
+                unwindingFeeTreasuryPortionRate: 5e14,
+                maxLengthOfLiquidatedSwapsPerLeg: 10,
+                timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
+                timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
+                minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
+                minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
+                minLeverage: 10 * 1e18,
+                timeAfterOpenAllowedToCloseSwapWithUnwinding: 1 days
+            });
+
+        newAmmCloseSwapServiceUsdt = address(
+            new AmmCloseSwapServiceUsdt(usdtConfig, iporOracleProxy, messageSignerAddress)
+        );
+
+        newAmmCloseSwapServiceUsdc = address(
+            new AmmCloseSwapServiceUsdc(usdcConfig, iporOracleProxy, messageSignerAddress)
+        );
+
+        newAmmCloseSwapServiceDai = address(
+            new AmmCloseSwapServiceDai(daiConfig, iporOracleProxy, messageSignerAddress)
+        );
+    }
+
+    function _createAmmCloseSwapLens() private {
+        newAmmCloseSwapLens = address(
+            new AmmCloseSwapLens({
+                usdtInput: USDT,
+                usdcInput: USDC,
+                daiInput: DAI,
+                stETHInput: stETH,
+                iporOracleInput: iporOracleProxy,
+                messageSignerInput: messageSignerAddress,
+                spreadRouterInput: spreadRouter,
+                closeSwapServiceUsdtInput: newAmmCloseSwapServiceUsdt,
+                closeSwapServiceUsdcInput: newAmmCloseSwapServiceUsdc,
+                closeSwapServiceDaiInput: newAmmCloseSwapServiceDai,
+                closeSwapServiceStEthInput: ammCloseSwapServiceStEth
+            })
         );
     }
 
     function _createAmmCloseSwapServiceStEth() private {
-        AmmTypesBaseV1.AmmCloseSwapServicePoolConfiguration memory stEthConfig = AmmTypesBaseV1
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory stEthConfig = IAmmCloseSwapLens
             .AmmCloseSwapServicePoolConfiguration({
-                spread: spreadStEth,
                 asset: stETH,
                 decimals: 18,
                 ammStorage: ammStorageProxyStEth,
                 ammTreasury: ammTreasuryProxyStEth,
+                assetManagement: address(0),
+                spread: spreadStEth,
                 unwindingFeeRate: 5e11,
                 unwindingFeeTreasuryPortionRate: 25e16,
                 maxLengthOfLiquidatedSwapsPerLeg: 10,
@@ -661,7 +701,8 @@ contract TestForkCommons is Test {
                 timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
                 minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
                 minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
-                minLeverage: 10 * 1e18
+                minLeverage: 10 * 1e18,
+                timeAfterOpenAllowedToCloseSwapWithUnwinding: 1 days
             });
 
         ammCloseSwapServiceStEth = address(

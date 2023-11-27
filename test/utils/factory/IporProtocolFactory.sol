@@ -17,6 +17,7 @@ import "../../utils/factory/IporOracleFactory.sol";
 import "../../../contracts/interfaces/IAmmSwapsLens.sol";
 import "../../../contracts/interfaces/IAmmPoolsLens.sol";
 import "../../../contracts/interfaces/IAmmCloseSwapLens.sol";
+import "../../../contracts/interfaces/IAmmCloseSwapLensStEth.sol";
 import "../../../contracts/interfaces/IAssetManagementLens.sol";
 import "../../../contracts/interfaces/IPowerTokenLens.sol";
 import "../../../contracts/interfaces/ILiquidityMiningLens.sol";
@@ -26,7 +27,10 @@ import "../../../contracts/amm-common/AmmSwapsLens.sol";
 import "../../../contracts/amm/AmmPoolsLens.sol";
 import "../../../contracts/amm/AssetManagementLens.sol";
 import "../../../contracts/amm/AmmOpenSwapService.sol";
-import "../../../contracts/amm/AmmCloseSwapService.sol";
+import "../../../contracts/amm/AmmCloseSwapServiceUsdt.sol";
+import "../../../contracts/amm/AmmCloseSwapServiceUsdc.sol";
+import "../../../contracts/amm/AmmCloseSwapServiceDai.sol";
+import "../../../contracts/amm-common/AmmCloseSwapLens.sol";
 
 import "../../../contracts/amm/AmmPoolsService.sol";
 import "../../../contracts/amm-common/AmmGovernanceService.sol";
@@ -389,7 +393,9 @@ contract IporProtocolFactory is Test {
         iporProtocol.ammOpenSwapService = IAmmOpenSwapService(address(iporProtocol.router));
         iporProtocol.ammOpenSwapLens = IAmmOpenSwapLens(address(iporProtocol.router));
         iporProtocol.ammCloseSwapLens = IAmmCloseSwapLens(address(iporProtocol.router));
-        iporProtocol.ammCloseSwapService = IAmmCloseSwapService(address(iporProtocol.router));
+        iporProtocol.ammCloseSwapServiceUsdt = IAmmCloseSwapServiceUsdt(address(iporProtocol.router));
+        iporProtocol.ammCloseSwapServiceUsdc = IAmmCloseSwapServiceUsdc(address(iporProtocol.router));
+        iporProtocol.ammCloseSwapServiceDai = IAmmCloseSwapServiceDai(address(iporProtocol.router));
         iporProtocol.ammGovernanceService = IAmmGovernanceService(address(iporProtocol.router));
         iporProtocol.ammGovernanceLens = IAmmGovernanceLens(address(iporProtocol.router));
 
@@ -490,7 +496,9 @@ contract IporProtocolFactory is Test {
         iporProtocol.ammOpenSwapService = IAmmOpenSwapService(address(iporProtocol.router));
         iporProtocol.ammOpenSwapLens = IAmmOpenSwapLens(address(iporProtocol.router));
         iporProtocol.ammCloseSwapLens = IAmmCloseSwapLens(address(iporProtocol.router));
-        iporProtocol.ammCloseSwapService = IAmmCloseSwapService(address(iporProtocol.router));
+        iporProtocol.ammCloseSwapServiceUsdt = IAmmCloseSwapServiceUsdt(address(iporProtocol.router));
+        iporProtocol.ammCloseSwapServiceUsdc = IAmmCloseSwapServiceUsdc(address(iporProtocol.router));
+        iporProtocol.ammCloseSwapServiceDai = IAmmCloseSwapServiceDai(address(iporProtocol.router));
         iporProtocol.ammGovernanceService = IAmmGovernanceService(address(iporProtocol.router));
         iporProtocol.ammGovernanceLens = IAmmGovernanceLens(address(iporProtocol.router));
 
@@ -587,7 +595,9 @@ contract IporProtocolFactory is Test {
         iporProtocol.ammOpenSwapService = IAmmOpenSwapService(address(iporProtocol.router));
         iporProtocol.ammOpenSwapLens = IAmmOpenSwapLens(address(iporProtocol.router));
         iporProtocol.ammCloseSwapLens = IAmmCloseSwapLens(address(iporProtocol.router));
-        iporProtocol.ammCloseSwapService = IAmmCloseSwapService(address(iporProtocol.router));
+        iporProtocol.ammCloseSwapServiceUsdt = IAmmCloseSwapServiceUsdt(address(iporProtocol.router));
+        iporProtocol.ammCloseSwapServiceUsdc = IAmmCloseSwapServiceUsdc(address(iporProtocol.router));
+        iporProtocol.ammCloseSwapServiceDai = IAmmCloseSwapServiceDai(address(iporProtocol.router));
         iporProtocol.ammGovernanceService = IAmmGovernanceService(address(iporProtocol.router));
         iporProtocol.ammGovernanceLens = IAmmGovernanceLens(address(iporProtocol.router));
 
@@ -730,9 +740,10 @@ contract IporProtocolFactory is Test {
                 spreadRouterInput: address(amm.spreadRouter)
             })
         );
-        deployerContracts.ammCloseSwapService = address(
-            new AmmCloseSwapService({
-                usdtPoolCfg: _preparePoolCfgForCloseSwapService(
+
+        deployerContracts.ammCloseSwapServiceUsdt = address(
+            new AmmCloseSwapServiceUsdt({
+                poolCfg: _preparePoolCfgForCloseSwapService(
                     cfg.closeSwapServiceTestCase,
                     address(amm.usdt.asset),
                     address(amm.usdt.ammTreasury),
@@ -740,7 +751,14 @@ contract IporProtocolFactory is Test {
                     address(amm.usdt.assetManagement),
                     address(amm.usdt.spreadRouter)
                 ),
-                usdcPoolCfg: _preparePoolCfgForCloseSwapService(
+                iporOracleInput: address(amm.iporOracle),
+                messageSignerInput: messageSignerAddress
+            })
+        );
+
+        deployerContracts.ammCloseSwapServiceUsdc = address(
+            new AmmCloseSwapServiceUsdc({
+                poolCfg: _preparePoolCfgForCloseSwapService(
                     cfg.closeSwapServiceTestCase,
                     address(amm.usdc.asset),
                     address(amm.usdc.ammTreasury),
@@ -748,7 +766,14 @@ contract IporProtocolFactory is Test {
                     address(amm.usdc.assetManagement),
                     address(amm.usdc.spreadRouter)
                 ),
-                daiPoolCfg: _preparePoolCfgForCloseSwapService(
+                iporOracleInput: address(amm.iporOracle),
+                messageSignerInput: messageSignerAddress
+            })
+        );
+
+        deployerContracts.ammCloseSwapServiceDai = address(
+            new AmmCloseSwapServiceDai({
+                poolCfg: _preparePoolCfgForCloseSwapService(
                     cfg.closeSwapServiceTestCase,
                     address(amm.dai.asset),
                     address(amm.dai.ammTreasury),
@@ -757,8 +782,23 @@ contract IporProtocolFactory is Test {
                     address(amm.dai.spreadRouter)
                 ),
                 iporOracleInput: address(amm.iporOracle),
+                messageSignerInput: messageSignerAddress
+            })
+        );
+
+        deployerContracts.ammCloseSwapLens = address(
+            new AmmCloseSwapLens({
+                usdtInput: address(amm.usdt.asset),
+                usdcInput: address(amm.usdc.asset),
+                daiInput: address(amm.dai.asset),
+                stETHInput: _fakeContract,
+                iporOracleInput: address(amm.iporOracle),
                 messageSignerInput: messageSignerAddress,
-                spreadRouterInput: address(amm.spreadRouter)
+                spreadRouterInput: address(amm.spreadRouter),
+                closeSwapServiceUsdtInput: deployerContracts.ammCloseSwapServiceUsdt,
+                closeSwapServiceUsdcInput: deployerContracts.ammCloseSwapServiceUsdc,
+                closeSwapServiceDaiInput: deployerContracts.ammCloseSwapServiceDai,
+                closeSwapServiceStEthInput: _fakeContract
             })
         );
 
@@ -838,10 +878,10 @@ contract IporProtocolFactory is Test {
         deployerContracts.flowService = address(_powerTokenFlowsServiceBuilder.build());
         deployerContracts.stakeService = address(_powerTokenStakeServiceBuilder.build());
         //      todo fix addresses
-        deployerContracts.ammPoolsLensStEth = address(123);
-        deployerContracts.ammPoolsServiceStEth = address(123);
-        deployerContracts.ammOpenSwapServiceStEth = address(123);
-        deployerContracts.ammCloseSwapServiceStEth = address(123);
+        deployerContracts.ammPoolsLensStEth = _fakeContract;
+        deployerContracts.ammPoolsServiceStEth = _fakeContract;
+        deployerContracts.ammOpenSwapServiceStEth = _fakeContract;
+        deployerContracts.ammCloseSwapServiceStEth = _fakeContract;
 
         vm.startPrank(address(_owner));
         IporProtocolRouter(amm.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
@@ -853,7 +893,9 @@ contract IporProtocolFactory is Test {
         amm.usdt.ammOpenSwapService = IAmmOpenSwapService(address(amm.router));
         amm.usdt.ammOpenSwapLens = IAmmOpenSwapLens(address(amm.router));
         amm.usdt.ammCloseSwapLens = IAmmCloseSwapLens(address(amm.router));
-        amm.usdt.ammCloseSwapService = IAmmCloseSwapService(address(amm.router));
+        amm.usdt.ammCloseSwapServiceUsdt = IAmmCloseSwapServiceUsdt(address(amm.router));
+        amm.usdt.ammCloseSwapServiceUsdc = IAmmCloseSwapServiceUsdc(address(amm.router));
+        amm.usdt.ammCloseSwapServiceDai = IAmmCloseSwapServiceDai(address(amm.router));
         amm.usdt.ammGovernanceService = IAmmGovernanceService(address(amm.router));
         amm.usdt.ammGovernanceLens = IAmmGovernanceLens(address(amm.router));
         amm.usdt.powerTokenLens = IPowerTokenLens(address(amm.router));
@@ -867,7 +909,7 @@ contract IporProtocolFactory is Test {
         amm.usdc.ammOpenSwapService = IAmmOpenSwapService(address(amm.router));
         amm.usdc.ammOpenSwapLens = IAmmOpenSwapLens(address(amm.router));
         amm.usdc.ammCloseSwapLens = IAmmCloseSwapLens(address(amm.router));
-        amm.usdc.ammCloseSwapService = IAmmCloseSwapService(address(amm.router));
+        amm.usdc.ammCloseSwapServiceUsdc = IAmmCloseSwapServiceUsdc(address(amm.router));
         amm.usdc.ammGovernanceService = IAmmGovernanceService(address(amm.router));
         amm.usdc.ammGovernanceLens = IAmmGovernanceLens(address(amm.router));
         amm.usdc.powerTokenLens = IPowerTokenLens(address(amm.router));
@@ -881,7 +923,7 @@ contract IporProtocolFactory is Test {
         amm.dai.ammOpenSwapService = IAmmOpenSwapService(address(amm.router));
         amm.dai.ammOpenSwapLens = IAmmOpenSwapLens(address(amm.router));
         amm.dai.ammCloseSwapLens = IAmmCloseSwapLens(address(amm.router));
-        amm.dai.ammCloseSwapService = IAmmCloseSwapService(address(amm.router));
+        amm.dai.ammCloseSwapServiceDai = IAmmCloseSwapServiceDai(address(amm.router));
         amm.dai.ammGovernanceService = IAmmGovernanceService(address(amm.router));
         amm.dai.ammGovernanceLens = IAmmGovernanceLens(address(amm.router));
         amm.dai.powerTokenLens = IPowerTokenLens(address(amm.router));
@@ -1000,9 +1042,9 @@ contract IporProtocolFactory is Test {
             })
         );
 
-        deployerContracts.ammCloseSwapService = address(
-            new AmmCloseSwapService({
-                usdtPoolCfg: _preparePoolCfgForCloseSwapService(
+        deployerContracts.ammCloseSwapServiceUsdt = address(
+            new AmmCloseSwapServiceUsdt({
+                poolCfg: _preparePoolCfgForCloseSwapService(
                     cfg.closeSwapServiceTestCase,
                     address(iporProtocol.asset),
                     address(iporProtocol.ammTreasury),
@@ -1010,11 +1052,27 @@ contract IporProtocolFactory is Test {
                     address(iporProtocol.assetManagement),
                     address(iporProtocol.spreadRouter)
                 ),
-                usdcPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
-                daiPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
+                iporOracleInput: address(iporProtocol.iporOracle),
+                messageSignerInput: messageSignerAddress
+            })
+        );
+
+        deployerContracts.ammCloseSwapServiceUsdc = address(_fakeContract);
+        deployerContracts.ammCloseSwapServiceDai = address(_fakeContract);
+
+        deployerContracts.ammCloseSwapLens = address(
+            new AmmCloseSwapLens({
+                usdtInput: address(iporProtocol.asset),
+                usdcInput: _fakeContract,
+                daiInput: _fakeContract,
+                stETHInput: _fakeContract,
                 iporOracleInput: address(iporProtocol.iporOracle),
                 messageSignerInput: messageSignerAddress,
-                spreadRouterInput: address(iporProtocol.spreadRouter)
+                spreadRouterInput: address(iporProtocol.spreadRouter),
+                closeSwapServiceUsdtInput: deployerContracts.ammCloseSwapServiceUsdt,
+                closeSwapServiceUsdcInput: deployerContracts.ammCloseSwapServiceUsdc,
+                closeSwapServiceDaiInput: deployerContracts.ammCloseSwapServiceDai,
+                closeSwapServiceStEthInput: _fakeContract
             })
         );
 
@@ -1056,10 +1114,11 @@ contract IporProtocolFactory is Test {
         deployerContracts.flowService = address(_powerTokenFlowsServiceBuilder.build());
         deployerContracts.stakeService = address(_powerTokenStakeServiceBuilder.build());
         //        todo fix addresses
-        deployerContracts.ammPoolsServiceStEth = address(123);
-        deployerContracts.ammPoolsLensStEth = address(123);
-        deployerContracts.ammOpenSwapServiceStEth = address(123);
-        deployerContracts.ammCloseSwapServiceStEth = address(123);
+        deployerContracts.ammPoolsServiceStEth = _fakeContract;
+        deployerContracts.ammPoolsLensStEth = _fakeContract;
+        deployerContracts.ammOpenSwapServiceStEth = _fakeContract;
+        deployerContracts.ammCloseSwapServiceStEth = _fakeContract;
+
 
         vm.startPrank(address(_owner));
         IporProtocolRouter(iporProtocol.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
@@ -1071,7 +1130,7 @@ contract IporProtocolFactory is Test {
         iporProtocol.ammOpenSwapService = IAmmOpenSwapService(address(iporProtocol.router));
         iporProtocol.ammOpenSwapLens = IAmmOpenSwapLens(address(iporProtocol.router));
         iporProtocol.ammCloseSwapLens = IAmmCloseSwapLens(address(iporProtocol.router));
-        iporProtocol.ammCloseSwapService = IAmmCloseSwapService(address(iporProtocol.router));
+        iporProtocol.ammCloseSwapServiceUsdt = IAmmCloseSwapServiceUsdt(address(iporProtocol.router));
         iporProtocol.ammGovernanceService = IAmmGovernanceService(address(iporProtocol.router));
         iporProtocol.ammGovernanceLens = IAmmGovernanceLens(address(iporProtocol.router));
         iporProtocol.powerTokenLens = IPowerTokenLens(address(iporProtocol.router));
@@ -1192,10 +1251,9 @@ contract IporProtocolFactory is Test {
             })
         );
 
-        deployerContracts.ammCloseSwapService = address(
-            new AmmCloseSwapService({
-                usdtPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
-                usdcPoolCfg: _preparePoolCfgForCloseSwapService(
+        deployerContracts.ammCloseSwapServiceUsdc = address(
+            new AmmCloseSwapServiceUsdc({
+                poolCfg: _preparePoolCfgForCloseSwapService(
                     cfg.closeSwapServiceTestCase,
                     address(iporProtocol.asset),
                     address(iporProtocol.ammTreasury),
@@ -1203,10 +1261,27 @@ contract IporProtocolFactory is Test {
                     address(iporProtocol.assetManagement),
                     address(iporProtocol.spreadRouter)
                 ),
-                daiPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
+                iporOracleInput: address(iporProtocol.iporOracle),
+                messageSignerInput: messageSignerAddress
+            })
+        );
+
+        deployerContracts.ammCloseSwapServiceUsdt = address(_fakeContract);
+        deployerContracts.ammCloseSwapServiceDai = address(_fakeContract);
+
+        deployerContracts.ammCloseSwapLens = address(
+            new AmmCloseSwapLens({
+                usdtInput: _fakeContract,
+                usdcInput: address(iporProtocol.asset),
+                daiInput: _fakeContract,
+                stETHInput: _fakeContract,
                 iporOracleInput: address(iporProtocol.iporOracle),
                 messageSignerInput: messageSignerAddress,
-                spreadRouterInput: address(iporProtocol.spreadRouter)
+                spreadRouterInput: address(iporProtocol.spreadRouter),
+                closeSwapServiceUsdtInput: deployerContracts.ammCloseSwapServiceUsdt,
+                closeSwapServiceUsdcInput: deployerContracts.ammCloseSwapServiceUsdc,
+                closeSwapServiceDaiInput: deployerContracts.ammCloseSwapServiceDai,
+                closeSwapServiceStEthInput: _fakeContract
             })
         );
 
@@ -1249,10 +1324,10 @@ contract IporProtocolFactory is Test {
         deployerContracts.stakeService = address(_powerTokenStakeServiceBuilder.build());
 
         //        todo fix addresses
-        deployerContracts.ammPoolsLensStEth = address(123);
-        deployerContracts.ammPoolsServiceStEth = address(123);
-        deployerContracts.ammOpenSwapServiceStEth = address(123);
-        deployerContracts.ammCloseSwapServiceStEth = address(123);
+        deployerContracts.ammPoolsLensStEth = _fakeContract;
+        deployerContracts.ammPoolsServiceStEth = _fakeContract;
+        deployerContracts.ammOpenSwapServiceStEth = _fakeContract;
+        deployerContracts.ammCloseSwapServiceStEth = _fakeContract;
 
         vm.startPrank(address(_owner));
         IporProtocolRouter(iporProtocol.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
@@ -1264,7 +1339,7 @@ contract IporProtocolFactory is Test {
         iporProtocol.ammOpenSwapService = IAmmOpenSwapService(address(iporProtocol.router));
         iporProtocol.ammOpenSwapLens = IAmmOpenSwapLens(address(iporProtocol.router));
         iporProtocol.ammCloseSwapLens = IAmmCloseSwapLens(address(iporProtocol.router));
-        iporProtocol.ammCloseSwapService = IAmmCloseSwapService(address(iporProtocol.router));
+        iporProtocol.ammCloseSwapServiceUsdc = IAmmCloseSwapServiceUsdc(address(iporProtocol.router));
         iporProtocol.ammGovernanceService = IAmmGovernanceService(address(iporProtocol.router));
         iporProtocol.ammGovernanceLens = IAmmGovernanceLens(address(iporProtocol.router));
         iporProtocol.powerTokenLens = IPowerTokenLens(address(iporProtocol.router));
@@ -1387,11 +1462,9 @@ contract IporProtocolFactory is Test {
                 spreadRouterInput: address(iporProtocol.spreadRouter)
             })
         );
-        deployerContracts.ammCloseSwapService = address(
-            new AmmCloseSwapService({
-                usdtPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
-                usdcPoolCfg: _prepareFakePoolCfgForCloseSwapService(),
-                daiPoolCfg: _preparePoolCfgForCloseSwapService(
+        deployerContracts.ammCloseSwapServiceDai = address(
+            new AmmCloseSwapServiceDai({
+                poolCfg: _preparePoolCfgForCloseSwapService(
                     cfg.closeSwapServiceTestCase,
                     address(iporProtocol.asset),
                     address(iporProtocol.ammTreasury),
@@ -1400,8 +1473,26 @@ contract IporProtocolFactory is Test {
                     address(iporProtocol.spreadRouter)
                 ),
                 iporOracleInput: address(iporProtocol.iporOracle),
+                messageSignerInput: messageSignerAddress
+            })
+        );
+
+        deployerContracts.ammCloseSwapServiceUsdt = address(_fakeContract);
+        deployerContracts.ammCloseSwapServiceUsdc = address(_fakeContract);
+
+        deployerContracts.ammCloseSwapLens = address(
+            new AmmCloseSwapLens({
+                usdtInput: _fakeContract,
+                usdcInput: _fakeContract,
+                daiInput: address(iporProtocol.asset),
+                stETHInput: _fakeContract,
+                iporOracleInput: address(iporProtocol.iporOracle),
                 messageSignerInput: messageSignerAddress,
-                spreadRouterInput: address(iporProtocol.spreadRouter)
+                spreadRouterInput: address(iporProtocol.spreadRouter),
+                closeSwapServiceUsdtInput: deployerContracts.ammCloseSwapServiceUsdt,
+                closeSwapServiceUsdcInput: deployerContracts.ammCloseSwapServiceUsdc,
+                closeSwapServiceDaiInput: deployerContracts.ammCloseSwapServiceDai,
+                closeSwapServiceStEthInput: _fakeContract
             })
         );
 
@@ -1468,7 +1559,7 @@ contract IporProtocolFactory is Test {
         iporProtocol.ammOpenSwapService = IAmmOpenSwapService(address(iporProtocol.router));
         iporProtocol.ammOpenSwapLens = IAmmOpenSwapLens(address(iporProtocol.router));
         iporProtocol.ammCloseSwapLens = IAmmCloseSwapLens(address(iporProtocol.router));
-        iporProtocol.ammCloseSwapService = IAmmCloseSwapService(address(iporProtocol.router));
+        iporProtocol.ammCloseSwapServiceDai = IAmmCloseSwapServiceDai(address(iporProtocol.router));
         iporProtocol.ammGovernanceService = IAmmGovernanceService(address(iporProtocol.router));
         iporProtocol.ammGovernanceLens = IAmmGovernanceLens(address(iporProtocol.router));
         iporProtocol.liquidityMiningLens = ILiquidityMiningLens(address(iporProtocol.router));
@@ -1521,6 +1612,7 @@ contract IporProtocolFactory is Test {
             ammStorage: address(_fakeContract),
             ammTreasury: address(_fakeContract),
             assetManagement: address(_fakeContract),
+            spread: address(_fakeContract),
             unwindingFeeRate: 0,
             unwindingFeeTreasuryPortionRate: 0,
             maxLengthOfLiquidatedSwapsPerLeg: 0,
@@ -1528,7 +1620,8 @@ contract IporProtocolFactory is Test {
             timeBeforeMaturityAllowedToCloseSwapByBuyer: 0,
             minLiquidationThresholdToCloseBeforeMaturityByCommunity: 0,
             minLiquidationThresholdToCloseBeforeMaturityByBuyer: 0,
-            minLeverage: 0
+            minLeverage: 0,
+            timeAfterOpenAllowedToCloseSwapWithUnwinding: 0
         });
     }
 
@@ -1619,6 +1712,7 @@ contract IporProtocolFactory is Test {
                 ammStorage: ammStorage,
                 ammTreasury: ammTreasury,
                 assetManagement: assetManagement,
+                spread: spreadRouter,
                 unwindingFeeRate: 5 * 1e14,
                 unwindingFeeTreasuryPortionRate: 5 * 1e14,
                 maxLengthOfLiquidatedSwapsPerLeg: 10,
@@ -1626,7 +1720,8 @@ contract IporProtocolFactory is Test {
                 timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
                 minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
                 minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
-                minLeverage: 10 * 1e18
+                minLeverage: 10 * 1e18,
+                timeAfterOpenAllowedToCloseSwapWithUnwinding: 1 days
             });
         } else if (closeSwapServiceTestCase == BuilderUtils.AmmCloseSwapServiceTestCase.CASE1) {
             poolCfg = IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration({
@@ -1635,6 +1730,7 @@ contract IporProtocolFactory is Test {
                 ammStorage: ammStorage,
                 ammTreasury: ammTreasury,
                 assetManagement: assetManagement,
+                spread: spreadRouter,
                 unwindingFeeRate: 99 * 1e16,
                 unwindingFeeTreasuryPortionRate: 5 * 1e14,
                 maxLengthOfLiquidatedSwapsPerLeg: 10,
@@ -1642,7 +1738,8 @@ contract IporProtocolFactory is Test {
                 timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
                 minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
                 minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
-                minLeverage: 10 * 1e18
+                minLeverage: 10 * 1e18,
+                timeAfterOpenAllowedToCloseSwapWithUnwinding: 1 days
             });
         } else if (closeSwapServiceTestCase == BuilderUtils.AmmCloseSwapServiceTestCase.CASE2) {
             poolCfg = IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration({
@@ -1651,6 +1748,7 @@ contract IporProtocolFactory is Test {
                 ammStorage: ammStorage,
                 ammTreasury: ammTreasury,
                 assetManagement: assetManagement,
+                spread: spreadRouter,
                 unwindingFeeRate: 15 * 1e16,
                 unwindingFeeTreasuryPortionRate: 5 * 1e14,
                 maxLengthOfLiquidatedSwapsPerLeg: 10,
@@ -1658,7 +1756,8 @@ contract IporProtocolFactory is Test {
                 timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
                 minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
                 minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
-                minLeverage: 10 * 1e18
+                minLeverage: 10 * 1e18,
+                timeAfterOpenAllowedToCloseSwapWithUnwinding: 1 days
             });
         }
     }

@@ -493,7 +493,7 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         vm.expectRevert("IPOR_340");
         vm.prank(_user);
         //when
-        IAmmCloseSwapService(iporProtocolRouterProxy).closeSwapsDai(
+        IAmmCloseSwapServiceDai(iporProtocolRouterProxy).closeSwapsDai(
             _user,
             swapPfIds,
             swapRfIds,

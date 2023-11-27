@@ -3,16 +3,17 @@ pragma solidity 0.8.20;
 
 import "./types/AmmTypes.sol";
 
-/// @title Interface of the service allowing to close swaps in stETH AMM.
-interface IAmmCloseSwapServiceStEth {
-    /// @notice Closes batch of stETH swaps on both legs.
+/// @title Interface of the service allowing to close swaps.
+interface IAmmCloseSwapServiceDai {
+    /// @notice Closes batch of DAI swaps on both legs.
     /// @param beneficiary account - receiver of liquidation deposit.
-    /// @param payFixedSwapIds array of pay fixed swap IDs.
-    /// @param receiveFixedSwapIds array of receive fixed swap IDs.
+    /// @param payFixedSwapIds array of pay-fixed swap IDs.
+    /// @param receiveFixedSwapIds array of receive-fixed swap IDs.
+    /// @param riskIndicatorsInput risk indicators input
     /// @dev Swap PnL is always transferred to the swaps's owner.
     /// @return closedPayFixedSwaps array of closed pay-fixed swaps.
     /// @return closedReceiveFixedSwaps array of closed receive-fixed swaps.
-    function closeSwapsStEth(
+    function closeSwapsDai(
         address beneficiary,
         uint256[] memory payFixedSwapIds,
         uint256[] memory receiveFixedSwapIds,
@@ -24,12 +25,13 @@ interface IAmmCloseSwapServiceStEth {
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
         );
 
-    /// @notice Closes batch of stETH swaps on both legs in emergency mode by Owner of Ipor Protocol Router.
+    /// @notice Closes batch of DAI swaps on both legs in emergency mode by Owner of Ipor Protocol Router.
     /// @param payFixedSwapIds array of pay-fixed swap IDs.
     /// @param receiveFixedSwapIds array of receive-fixed swap IDs.
+    /// @param riskIndicatorsInput risk indicators input
     /// @return closedPayFixedSwaps array of closed pay-fixed swaps.
     /// @return closedReceiveFixedSwaps array of closed receive-fixed swaps.
-    function emergencyCloseSwapsStEth(
+    function emergencyCloseSwapsDai(
         uint256[] memory payFixedSwapIds,
         uint256[] memory receiveFixedSwapIds,
         AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
