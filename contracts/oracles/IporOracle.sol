@@ -63,14 +63,11 @@ contract IporOracle is
     /// @param asset The address of the asset to be checked against stETH.
     /// @param accept A boolean-like unsigned integer where 1 signifies acceptance of stETH and 0 signifies otherwise.
     modifier whenAssetStEth(address asset, uint256 accept) {
-        if (asset == _stEth && accept == 1) {
+        if ((asset == _stEth && accept == 1) || (asset != _stEth && accept == 0)) {
             _;
-            return;
-        } else if (asset != _stEth && accept == 0) {
-            _;
-            return;
+        } else {
+            revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, asset, "onlyAcceptStEth");
         }
-        revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, asset, "onlyAcceptStEth");
     }
 
     /// @custom:oz-upgrades-unsafe-allow constructor
