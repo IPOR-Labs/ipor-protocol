@@ -507,7 +507,7 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         uint256[] memory swapRfIds = new uint256[](0);
 
         // when
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceDai.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         // then
         (, , int256 soapAfter56DaysAfterClose) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));

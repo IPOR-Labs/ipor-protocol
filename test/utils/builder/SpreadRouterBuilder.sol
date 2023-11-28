@@ -11,6 +11,7 @@ import "../../../contracts/amm/spread/Spread60Days.sol";
 import "../../../contracts/amm/spread/Spread90Days.sol";
 import "../../../contracts/amm/spread/SpreadStorageLens.sol";
 import "../../../contracts/amm/spread/SpreadCloseSwapService.sol";
+import "../../../contracts/amm/spread/SpreadStorageService.sol";
 import "../../mocks/MockSpreadCloseSwapService.sol";
 import "../../mocks/MockSpreadXDays.sol";
 
@@ -94,6 +95,7 @@ contract SpreadRouterBuilder is Test {
         deployedContracts.spread60Days = _buildSpread60Days();
         deployedContracts.spread90Days = _buildSpread90Days();
         deployedContracts.closeSwapService = _buildCloseSwapService();
+        deployedContracts.storageService = address(new SpreadStorageService());
 
         return address(new SpreadRouter(deployedContracts));
     }
@@ -156,7 +158,7 @@ contract SpreadRouterBuilder is Test {
         ///return address(new SpreadCloseSwapService(builderData.dai, builderData.usdc, builderData.usdt));
     }
 
-    function _constructProxy(address impl) internal returns (ERC1967Proxy proxy) {
+    function    _constructProxy(address impl) internal returns (ERC1967Proxy proxy) {
         proxy = new ERC1967Proxy(address(impl), abi.encodeWithSignature("initialize(bool)", false));
     }
 }

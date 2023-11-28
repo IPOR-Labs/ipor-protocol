@@ -18,8 +18,8 @@ import "../libraries/errors/AmmErrors.sol";
 import "../libraries/errors/AmmErrors.sol";
 import "../libraries/IporContractValidator.sol";
 import "./libraries/types/AmmInternalTypes.sol";
-import "./libraries/IporSwapLogic.sol";
 import "../libraries/RiskIndicatorsValidatorLib.sol";
+import "../base/amm/libraries/SwapLogicBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
@@ -34,6 +34,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
     address internal immutable _usdtAmmTreasury;
     uint256 internal immutable _usdtIporPublicationFee;
     uint256 internal immutable _usdtMaxSwapCollateralAmount;
+    /// @dev Liquidation deposit amount for USDT represented WITHOUT decimals. Example 25 USDT = 25
     uint256 internal immutable _usdtLiquidationDepositAmount;
     uint256 internal immutable _usdtMinLeverage;
     uint256 internal immutable _usdtOpeningFeeRate;
@@ -45,6 +46,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
     address internal immutable _usdcAmmTreasury;
     uint256 internal immutable _usdcIporPublicationFee;
     uint256 internal immutable _usdcMaxSwapCollateralAmount;
+    /// @dev Liquidation deposit amount for USDC represented WITHOUT decimals. Example 25 USDC = 25
     uint256 internal immutable _usdcLiquidationDepositAmount;
     uint256 internal immutable _usdcMinLeverage;
     uint256 internal immutable _usdcOpeningFeeRate;
@@ -56,6 +58,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
     address internal immutable _daiAmmTreasury;
     uint256 internal immutable _daiIporPublicationFee;
     uint256 internal immutable _daiMaxSwapCollateralAmount;
+    /// @dev Liquidation deposit amount for DAI represented WITHOUT decimals. Example 25 DAI = 25
     uint256 internal immutable _daiLiquidationDepositAmount;
     uint256 internal immutable _daiMinLeverage;
     uint256 internal immutable _daiOpeningFeeRate;
@@ -798,7 +801,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
         uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, poolCfg.decimals);
         uint256 wadLiquidationDepositAmount = poolCfg.liquidationDepositAmount * 1e18;
 
-        (uint256 collateral, uint256 notional, uint256 openingFeeAmount) = IporSwapLogic.calculateSwapAmount(
+        (uint256 collateral, uint256 notional, uint256 openingFeeAmount) = SwapLogicBaseV1.calculateSwapAmount(
             tenor,
             wadTotalAmount,
             leverage,
@@ -807,7 +810,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
             poolCfg.openingFeeRate
         );
 
-        (uint256 openingFeeLPAmount, uint256 openingFeeTreasuryAmount) = IporSwapLogic.splitOpeningFeeAmount(
+        (uint256 openingFeeLPAmount, uint256 openingFeeTreasuryAmount) = SwapLogicBaseV1.splitOpeningFeeAmount(
             openingFeeAmount,
             poolCfg.openingFeeTreasuryPortionRate
         );
@@ -860,7 +863,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService, IAmmOpenSwapLens {
                 newSwap.liquidationDepositAmount * 1e18
             ),
             newSwap.openTimestamp,
-            newSwap.openTimestamp + IporSwapLogic.getTenorInSeconds(newSwap.tenor),
+            newSwap.openTimestamp + SwapLogicBaseV1.getTenorInSeconds(newSwap.tenor),
             indicator
         );
     }

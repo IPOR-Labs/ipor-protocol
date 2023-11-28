@@ -5,7 +5,6 @@ import "../../contracts/interfaces/IAmmSwapsLens.sol";
 import "../../contracts/interfaces/IAmmGovernanceLens.sol";
 import "../../contracts/interfaces/IAmmOpenSwapLens.sol";
 import "../../contracts/interfaces/IAmmCloseSwapLens.sol";
-import "../../contracts/interfaces/IAmmCloseSwapService.sol";
 import "../../contracts/interfaces/IIporOracle.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
 import {console2} from "forge-std/console2.sol";
@@ -78,12 +77,12 @@ contract ItfHelper {
 //            }
 //            offset += openSwaps.length;
 //
-//            AmmTypes.ClosingSwapDetails memory swapDetails;
+//            AmmTypesBaseV1.sol.ClosingSwapDetails memory swapDetails;
 //            for (uint i; i < openSwaps.length; ++i) {
 //                swapDetails = IAmmCloseSwapLens(_router).getClosingSwapDetails(
 //                    asset,
 //                    account,
-//                    AmmTypes.SwapDirection(openSwaps[i].direction),
+//                    AmmTypesBaseV1.sol.SwapDirection(openSwaps[i].direction),
 //                    openSwaps[i].id,
 //                    block.timestamp
 //                );

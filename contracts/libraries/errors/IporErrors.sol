@@ -2,6 +2,24 @@
 pragma solidity 0.8.20;
 
 library IporErrors {
+    error WrongAddress(string errorCode, address wrongAddress, string methodName);
+    error WrongAmount(string errorCode, uint256 value);
+
+    error CallerNotIporProtocolRouter(string errorCode, address caller);
+    error CallerNotPauseGuardian(string errorCode, address caller);
+    error CallerNotAmmTreasury(string errorCode, address caller);
+
+    error UnsupportedDirection(string errorCode, uint256 direction);
+
+    error UnsupportedAsset(string errorCode, address asset);
+
+    error UnsupportedModule(string errorCode, address asset);
+
+    error InputAssetTotalAmountTooLow(string errorCode, uint256 value);
+
+    /// @dev Error appears if user/account doesn't have enough balance to open a swap with a specific totalAmount
+    error InputAssetBalanceTooLow(string errorCode, address inputAsset, uint256 inputAssetBalance, uint256 totalAmount);
+
     // 000-199 - general codes
 
     /// @notice General problem, address is wrong
@@ -37,8 +55,8 @@ library IporErrors {
     /// @notice Chunk size is too big
     string public constant CHUNK_SIZE_TOO_BIG = "IPOR_010";
 
-    /// @notice Caller is not a  guardian
-    string public constant CALLER_NOT_GUARDIAN = "IPOR_011";
+    /// @notice Caller is not a pause guardian
+    string public constant CALLER_NOT_PAUSE_GUARDIAN = "IPOR_011";
 
     /// @notice Request contains invalid method signature, which is not supported by the Ipor Protocol Router
     string public constant ROUTER_INVALID_SIGNATURE = "IPOR_012";
@@ -61,9 +79,15 @@ library IporErrors {
     /// @notice Return back ETH failed in Ipor Protocol Router
     string public constant ROUTER_RETURN_BACK_ETH_FAILED = "IPOR_018";
 
-    /// @notice
+    /// @notice Risk indicators are expired
     string public constant RISK_INDICATORS_EXPIRED = "IPOR_019";
 
-    /// @notice
+    /// @notice Signature is invalid for risk indicators
     string public constant RISK_INDICATORS_SIGNATURE_INVALID = "IPOR_020";
+
+    /// @notice Input Asset used by user is not supported
+    string public constant INPUT_ASSET_NOT_SUPPORTED = "IPOR_020";
+
+    /// @notice Module Asset Management is not supported
+    string public constant UNSUPPORTED_MODULE_ASSET_MANAGEMENT = "IPOR_021";
 }

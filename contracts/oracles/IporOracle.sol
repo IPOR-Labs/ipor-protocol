@@ -42,18 +42,32 @@ contract IporOracle is
     uint256 internal immutable _usdcInitialIbtPrice;
     address internal immutable _dai;
     uint256 internal immutable _daiInitialIbtPrice;
+    address internal immutable _stEth;
 
     mapping(address => uint256) internal _updaters;
     mapping(address => IporOracleTypes.IPOR) internal _indexes;
 
     modifier onlyPauseGuardian() {
-        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
+        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_PAUSE_GUARDIAN);
         _;
     }
 
     modifier onlyUpdater() {
         require(_updaters[msg.sender] == 1, IporOracleErrors.CALLER_NOT_UPDATER);
         _;
+    }
+
+    /// @notice Controls access to functions by checking if the given asset is stETH and if it's accepted.
+    /// @dev This modifier allows function execution only if the conditions related to stETH and acceptStEth are met.
+    /// @dev IporErrors.WrongAddress if the conditions are not met, indicating either a non-stETH asset when stETH is required, or an stETH asset when it is not accepted.
+    /// @param asset The address of the asset to be checked against stETH.
+    /// @param accept A boolean-like unsigned integer where 1 signifies acceptance of stETH and 0 signifies otherwise.
+    modifier whenAssetStEth(address asset, uint256 accept) {
+        if ((asset == _stEth && accept == 1) || (asset != _stEth && accept == 0)) {
+            _;
+        } else {
+            revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, asset, "onlyAcceptStEth");
+        }
     }
 
     /// @custom:oz-upgrades-unsafe-allow constructor
@@ -63,11 +77,21 @@ contract IporOracle is
         address usdc,
         uint256 usdcInitialIbtPrice,
         address dai,
-        uint256 daiInitialIbtPrice
+        uint256 daiInitialIbtPrice,
+        address stEth
     ) {
-        require(usdt != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT"));
-        require(usdc != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC"));
-        require(dai != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI"));
+        if (usdt == address(0)) {
+            revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, usdt, "constructor USDT");
+        }
+        if (usdc == address(0)) {
+            revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, usdc, "constructor USDC");
+        }
+        if (dai == address(0)) {
+            revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, dai, "constructor DAI");
+        }
+        if (stEth == address(0)) {
+            revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, stEth, "constructor stEth");
+        }
 
         _usdt = usdt;
         _usdtInitialIbtPrice = usdtInitialIbtPrice;
@@ -75,7 +99,7 @@ contract IporOracle is
         _usdcInitialIbtPrice = usdcInitialIbtPrice;
         _dai = dai;
         _daiInitialIbtPrice = daiInitialIbtPrice;
-
+        _stEth = stEth;
         _disableInitializers();
     }
 
@@ -98,27 +122,8 @@ contract IporOracle is
         }
     }
 
-    /// @notice Step required after IporOracle upgrade from v1 to v2 for supported assets.
-    /// @param assets List of assets.
-    function postUpgrade(address[] memory assets) public onlyOwner {
-        uint256 assetsLength = assets.length;
-
-        IporOracleTypes.IPOR memory oldIpor;
-
-        for (uint256 i; i != assetsLength; ) {
-            require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
-
-            oldIpor = _indexes[assets[i]];
-            _indexes[assets[i]] = IporOracleTypes.IPOR(0, oldIpor.indexValue, block.timestamp.toUint32());
-
-            unchecked {
-                ++i;
-            }
-        }
-    }
-
     function getVersion() external pure virtual override returns (uint256) {
-        return 2_000;
+        return 2_001;
     }
 
     function getConfiguration()
@@ -130,10 +135,11 @@ contract IporOracle is
             address usdc,
             uint256 usdcInitialIbtPrice,
             address dai,
-            uint256 daiInitialIbtPrice
+            uint256 daiInitialIbtPrice,
+            address stEth
         )
     {
-        return (_usdt, _usdtInitialIbtPrice, _usdc, _usdcInitialIbtPrice, _dai, _daiInitialIbtPrice);
+        return (_usdt, _usdtInitialIbtPrice, _usdc, _usdcInitialIbtPrice, _dai, _daiInitialIbtPrice, _stEth);
     }
 
     function getIndex(
@@ -177,6 +183,35 @@ contract IporOracle is
         uint256[] memory indexValues
     ) external override onlyUpdater whenNotPaused {
         _updateIndexes(assets, indexValues, block.timestamp);
+    }
+
+    function updateIndexAndQuasiIbtPrice(
+        address asset,
+        uint256 indexValue,
+        uint256 updateTimestamp,
+        uint256 newQuasiIbtPrice
+    ) external override onlyUpdater whenNotPaused whenAssetStEth(asset, 1) {
+        IporOracleTypes.IPOR memory oldIpor = _indexes[asset];
+        if (oldIpor.lastUpdateTimestamp == 0) {
+            revert IporOracleErrors.UpdateIndex(
+                asset,
+                IporOracleErrors.ASSET_NOT_SUPPORTED,
+                "updateIndexAndQuasiIbtPrice"
+            );
+        }
+        if (oldIpor.lastUpdateTimestamp > updateTimestamp || updateTimestamp >= block.timestamp) {
+            revert IporOracleErrors.UpdateIndex(
+                asset,
+                IporOracleErrors.WRONG_INDEX_TIMESTAMP,
+                "updateIndexAndQuasiIbtPrice"
+            );
+        }
+
+        _indexes[asset] = IporOracleTypes.IPOR(
+            newQuasiIbtPrice.toUint128(),
+            indexValue.toUint64(),
+            updateTimestamp.toUint32()
+        );
     }
 
     function addUpdater(address updater) external override onlyOwner whenNotPaused {
@@ -247,7 +282,11 @@ contract IporOracle is
         }
     }
 
-    function _updateIndex(address asset, uint256 indexValue, uint256 updateTimestamp) internal {
+    function _updateIndex(
+        address asset,
+        uint256 indexValue,
+        uint256 updateTimestamp
+    ) internal whenAssetStEth(asset, 0) {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
 
         require(ipor.lastUpdateTimestamp > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);

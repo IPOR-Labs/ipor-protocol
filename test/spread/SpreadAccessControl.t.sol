@@ -70,7 +70,7 @@ contract SpreadAccessControlTest is TestCommons {
         SpreadAccessControl(_routerAddress).addPauseGuardians(pauseGuardians);
 
         vm.prank(notPauseGuardian);
-        vm.expectRevert(bytes(IporErrors.CALLER_NOT_GUARDIAN));
+        vm.expectRevert(bytes(IporErrors.CALLER_NOT_PAUSE_GUARDIAN));
         SpreadAccessControl(_routerAddress).pause();
 
         // then

@@ -8,7 +8,6 @@ import {IporOracleUtils} from "../utils/IporOracleUtils.sol";
 import {AmmTreasuryUtils} from "../utils/AmmTreasuryUtils.sol";
 import {JosephUtils} from "../utils/JosephUtils.sol";
 import {AssetManagementUtils} from "../utils/AssetManagementUtils.sol";
-import {IporRiskManagementOracleUtils} from "../utils/IporRiskManagementOracleUtils.sol";
 import "contracts/amm/AmmStorage.sol";
 import "contracts/libraries/Constants.sol";
 import "test/mocks/tokens/MockTestnetToken.sol";
@@ -26,7 +25,6 @@ contract DataUtils is
     Test,
     TestCommons,
     IporOracleUtils,
-    IporRiskManagementOracleUtils,
     AmmTreasuryUtils,
     JosephUtils,
     AssetManagementUtils

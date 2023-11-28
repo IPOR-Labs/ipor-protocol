@@ -19,7 +19,7 @@ import "./libraries/types/AmmInternalTypes.sol";
 import "./libraries/types/StorageInternalTypes.sol";
 import "./libraries/SoapIndicatorRebalanceLogic.sol";
 
-//@dev all stored values related to tokens are in 18 decimals.
+/// @dev all stored values related to tokens are in 18 decimals.
 contract AmmStorage is
     Initializable,
     PausableUpgradeable,
@@ -61,7 +61,7 @@ contract AmmStorage is
     mapping(IporTypes.SwapTenor => AmmInternalTypes.OpenSwapList) private _openedSwapsReceiveFixed;
 
     modifier onlyPauseGuardian() {
-        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
+        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_PAUSE_GUARDIAN);
         _;
     }
 
@@ -197,7 +197,9 @@ contract AmmStorage is
         uint256 chunkSize
     ) external view override returns (uint256 totalCount, AmmTypes.Swap[] memory swaps) {
         uint32[] storage ids = _swapsPayFixed.ids[account];
-        return (ids.length, _getPositions(_swapsPayFixed.swaps, ids, offset, chunkSize));
+        return (
+            ids.length, _getPositions(_swapsPayFixed.swaps, ids, offset, chunkSize)
+        );
     }
 
     function getSwapsReceiveFixed(
@@ -206,7 +208,9 @@ contract AmmStorage is
         uint256 chunkSize
     ) external view override returns (uint256 totalCount, AmmTypes.Swap[] memory swaps) {
         uint32[] storage ids = _swapsReceiveFixed.ids[account];
-        return (ids.length, _getPositions(_swapsReceiveFixed.swaps, ids, offset, chunkSize));
+        return (
+            ids.length, _getPositions(_swapsReceiveFixed.swaps, ids, offset, chunkSize)
+        );
     }
 
     function getSwapIds(

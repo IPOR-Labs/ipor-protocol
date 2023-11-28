@@ -23,7 +23,9 @@ contract BuilderUtils {
         IAmmOpenSwapLens ammOpenSwapLens;
         IAmmCloseSwapLens ammCloseSwapLens;
         IAmmOpenSwapService ammOpenSwapService;
-        IAmmCloseSwapService ammCloseSwapService;
+        IAmmCloseSwapServiceUsdt ammCloseSwapServiceUsdt;
+        IAmmCloseSwapServiceUsdc ammCloseSwapServiceUsdc;
+        IAmmCloseSwapServiceDai ammCloseSwapServiceDai;
         IAmmGovernanceService ammGovernanceService;
         IAmmGovernanceLens ammGovernanceLens;
         MockTestnetToken asset;
@@ -155,6 +157,7 @@ contract BuilderUtils {
     enum AssetType {
         USDT,
         USDC,
-        DAI
+        DAI,
+        ST_ETH
     }
 }

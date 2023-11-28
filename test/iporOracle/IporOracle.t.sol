@@ -12,9 +12,12 @@ contract IporOracleTest is TestCommons {
     event IporIndexRemoveAsset(address asset);
 
     uint32 private _blockTimestamp = 1641701;
+
     MockTestnetToken private _daiTestnetToken;
     MockTestnetToken private _usdcTestnetToken;
     MockTestnetToken private _usdtTestnetToken;
+    MockStETH private _stEthTestnetToken;
+
     IporOracle private _iporOracle;
 
     function setUp() public {
@@ -22,23 +25,29 @@ contract IporOracleTest is TestCommons {
         vm.warp(_blockTimestamp);
         (_daiTestnetToken, _usdcTestnetToken, _usdtTestnetToken) = _getStables();
 
+        _stEthTestnetToken = new MockStETH("Mocked stETH", "stETH", 100_000_000 * 1e18, uint8(18));
+
         IporOracle iporOracleImplementation = new IporOracle(
             address(_usdcTestnetToken),
             1e18,
             address(_usdtTestnetToken),
             1e18,
             address(_daiTestnetToken),
-            1e18
+            1e18,
+            address(_stEthTestnetToken)
         );
-        address[] memory assets = new address[](3);
+
+        address[] memory assets = new address[](4);
         assets[0] = address(_daiTestnetToken);
         assets[1] = address(_usdcTestnetToken);
         assets[2] = address(_usdtTestnetToken);
+        assets[3] = address(_stEthTestnetToken);
 
-        uint32[] memory updateTimestamps = new uint32[](3);
+        uint32[] memory updateTimestamps = new uint32[](4);
         updateTimestamps[0] = uint32(_blockTimestamp);
         updateTimestamps[1] = uint32(_blockTimestamp);
         updateTimestamps[2] = uint32(_blockTimestamp);
+        updateTimestamps[3] = uint32(_blockTimestamp);
 
         ERC1967Proxy iporOracleProxy = new ERC1967Proxy(
             address(iporOracleImplementation),
@@ -116,34 +125,6 @@ contract IporOracleTest is TestCommons {
         assertEq(_iporOracle.calculateAccruedIbtPrice(address(_daiTestnetToken), block.timestamp), 1030454533953516856);
     }
 
-    function testShouldCalculateIbtPriceAfterUpgrade() public {
-        // given
-        vm.warp(_blockTimestamp);
-        uint256 ibtPrice = _iporOracle.calculateAccruedIbtPrice(address(_daiTestnetToken), _blockTimestamp);
-        assertEq(ibtPrice, 1e18);
-        _iporOracle.updateIndex(address(_daiTestnetToken), 3e16);
-        vm.warp(_blockTimestamp + 180 days);
-
-        // when
-        IporOracle newImplementation = new IporOracle(
-            address(_usdcTestnetToken),
-            1014904501167913392,
-            address(_usdtTestnetToken),
-            1014904501167913392,
-            address(_daiTestnetToken),
-            1014904501167913392
-        );
-        _iporOracle.upgradeTo(address(newImplementation));
-        address[] memory assets = new address[](1);
-        assets[0] = address(_daiTestnetToken);
-        _iporOracle.postUpgrade(assets);
-        _iporOracle.updateIndex(address(_daiTestnetToken), 3e16);
-
-        // then
-        vm.warp(block.timestamp + 185 days);
-        assertEq(_iporOracle.calculateAccruedIbtPrice(address(_daiTestnetToken), block.timestamp), 1030454533953516858); //lost precision at 18th decimal place
-    }
-
     function testShouldCalculateDifferentInterestBearingTokenPriceOneSecondPeriodSameIporIndexValue18DecimalsAsset()
         public
     {
@@ -190,7 +171,7 @@ contract IporOracleTest is TestCommons {
         // given
         uint256 version = _iporOracle.getVersion();
         // then
-        assertEq(version, 2_000);
+        assertEq(version, 2_001);
     }
 
     function testShouldPauseSCWhenSenderIsPauseGuardian() public {

@@ -5,6 +5,7 @@ import "../TestCommons.sol";
 import "../../contracts/amm/spread/SpreadRouter.sol";
 import "./MockSpreadServices.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
+import "../../contracts/amm/spread/SpreadStorageService.sol";
 
 contract SpreadRouterTest is TestCommons {
     address internal _owner;
@@ -13,6 +14,7 @@ contract SpreadRouterTest is TestCommons {
     address internal _spread60Days;
     address internal _spread90Days;
     address internal _storageLens;
+    address internal _spreadStorageService;
     address internal _closeSwapService;
     address internal _router;
     IporTypes.SpreadInputs internal _spreadInputs;
@@ -28,6 +30,7 @@ contract SpreadRouterTest is TestCommons {
         _spread90Days = address(new MockSpreadServices());
         _storageLens = address(new MockSpreadServices());
         _closeSwapService = address(new MockSpreadServices());
+        _spreadStorageService = address(new SpreadStorageService());
         vm.stopPrank();
 
         SpreadRouter.DeployedContracts memory deployedContracts = SpreadRouter.DeployedContracts(
@@ -36,7 +39,8 @@ contract SpreadRouterTest is TestCommons {
             _spread60Days,
             _spread90Days,
             _storageLens,
-            _closeSwapService
+            _closeSwapService,
+            _spreadStorageService
         );
 
         vm.startPrank(_owner);

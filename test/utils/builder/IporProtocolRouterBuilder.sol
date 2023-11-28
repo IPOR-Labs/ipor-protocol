@@ -10,12 +10,18 @@ contract IporProtocolRouterBuilder is Test {
     struct BuilderData {
         address ammSwapsLens;
         address ammPoolsLens;
-        address ammPoolsLensEth;
+        address ammPoolsLensStEth;
         address assetManagementLens;
         address ammOpenSwapService;
-        address ammCloseSwapService;
+        address ammOpenSwapServiceStEth;
+        address ammCloseSwapServiceUsdt;
+        address ammCloseSwapServiceUsdc;
+        address ammCloseSwapServiceDai;
+        address ammCloseSwapServiceStEth;
+        address ammCloseSwapLens;
+        address ammCloseSwapLensStEth;
         address ammPoolsService;
-        address ammPoolsServiceEth;
+        address ammPoolsServiceStEth;
         address ammGovernanceService;
         address liquidityMiningLens;
         address powerTokenLens;
@@ -51,8 +57,28 @@ contract IporProtocolRouterBuilder is Test {
         return this;
     }
 
-    function withAmmCloseSwapService(address ammCloseSwapService) public returns (IporProtocolRouterBuilder) {
-        builderData.ammCloseSwapService = ammCloseSwapService;
+    function withAmmOpenSwapServiceStEth(address ammOpenSwapServiceStEth) public returns (IporProtocolRouterBuilder) {
+        builderData.ammOpenSwapServiceStEth = ammOpenSwapServiceStEth;
+        return this;
+    }
+
+    function withAmmCloseSwapServiceUsdt(address ammCloseSwapService) public returns (IporProtocolRouterBuilder) {
+        builderData.ammCloseSwapServiceUsdt = ammCloseSwapService;
+        return this;
+    }
+
+    function withAmmCloseSwapServiceUsdc(address ammCloseSwapService) public returns (IporProtocolRouterBuilder) {
+        builderData.ammCloseSwapServiceUsdc = ammCloseSwapService;
+        return this;
+    }
+
+    function withAmmCloseSwapServiceDai(address ammCloseSwapService) public returns (IporProtocolRouterBuilder) {
+        builderData.ammCloseSwapServiceDai = ammCloseSwapService;
+        return this;
+    }
+
+    function withAmmCloseSwapLens(address ammCloseSwapLens) public returns (IporProtocolRouterBuilder) {
+        builderData.ammCloseSwapLens = ammCloseSwapLens;
         return this;
     }
 
@@ -84,15 +110,20 @@ contract IporProtocolRouterBuilder is Test {
             ammPoolsLens: builderData.ammPoolsLens,
             assetManagementLens: builderData.assetManagementLens,
             ammOpenSwapService: builderData.ammOpenSwapService,
-            ammCloseSwapService: builderData.ammCloseSwapService,
+            ammOpenSwapServiceStEth: builderData.ammOpenSwapServiceStEth,
+            ammCloseSwapServiceUsdt: builderData.ammCloseSwapServiceUsdt,
+            ammCloseSwapServiceUsdc: builderData.ammCloseSwapServiceUsdc,
+            ammCloseSwapServiceDai: builderData.ammCloseSwapServiceDai,
+            ammCloseSwapLens: builderData.ammCloseSwapLens,
+            ammCloseSwapServiceStEth: builderData.ammCloseSwapServiceStEth,
             ammPoolsService: builderData.ammPoolsService,
             ammGovernanceService: builderData.ammGovernanceService,
             liquidityMiningLens: builderData.liquidityMiningLens,
             powerTokenLens: builderData.powerTokenLens,
             flowService: builderData.flowService,
             stakeService: builderData.stakeService,
-            ammPoolsServiceEth: builderData.ammPoolsServiceEth,
-            ammPoolsLensEth: builderData.ammPoolsLensEth
+            ammPoolsServiceStEth: builderData.ammPoolsServiceStEth,
+            ammPoolsLensStEth: builderData.ammPoolsLensStEth
         });
 
         address payable proxy = _constructProxy(new IporProtocolRouter(deployedContracts));
@@ -109,12 +140,17 @@ contract IporProtocolRouterBuilder is Test {
         IporProtocolRouter.DeployedContracts memory deployedContracts = IporProtocolRouter.DeployedContracts({
             ammSwapsLens: builderData.ammSwapsLens,
             ammPoolsLens: builderData.ammPoolsLens,
-            ammPoolsLensEth: builderData.ammPoolsLensEth,
+            ammPoolsLensStEth: builderData.ammPoolsLensStEth,
             assetManagementLens: builderData.assetManagementLens,
             ammOpenSwapService: builderData.ammOpenSwapService,
-            ammCloseSwapService: builderData.ammCloseSwapService,
+            ammOpenSwapServiceStEth: builderData.ammOpenSwapServiceStEth,
+            ammCloseSwapServiceUsdt: builderData.ammCloseSwapServiceUsdt,
+            ammCloseSwapServiceUsdc: builderData.ammCloseSwapServiceUsdc,
+            ammCloseSwapServiceDai: builderData.ammCloseSwapServiceDai,
+            ammCloseSwapLens: builderData.ammCloseSwapLens,
+            ammCloseSwapServiceStEth: builderData.ammCloseSwapServiceStEth,
             ammPoolsService: builderData.ammPoolsService,
-            ammPoolsServiceEth: builderData.ammPoolsServiceEth,
+            ammPoolsServiceStEth: builderData.ammPoolsServiceStEth,
             ammGovernanceService: builderData.ammGovernanceService,
             liquidityMiningLens: builderData.liquidityMiningLens,
             powerTokenLens: builderData.powerTokenLens,
@@ -129,13 +165,10 @@ contract IporProtocolRouterBuilder is Test {
     }
 
     function _constructProxy(EmptyRouterImplementation impl) internal returns (address payable proxy) {
-        proxy = payable(address(
-            new ERC1967Proxy(address(impl), abi.encodeWithSignature("initialize(bool)", false))
-        ));
+        proxy = payable(address(new ERC1967Proxy(address(impl), abi.encodeWithSignature("initialize(bool)", false))));
     }
+
     function _constructProxy(IporProtocolRouter impl) internal returns (address payable proxy) {
-        proxy = payable(address(
-            new ERC1967Proxy(address(impl), abi.encodeWithSignature("initialize(bool)", false))
-        ));
+        proxy = payable(address(new ERC1967Proxy(address(impl), abi.encodeWithSignature("initialize(bool)", false))));
     }
 }
