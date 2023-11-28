@@ -48,12 +48,12 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl, IProxyImplementat
         _disableInitializers();
     }
 
-    function initialize(bool paused) public initializer {
+    function initialize(bool pausedInput) public initializer {
         __UUPSUpgradeable_init_unchained();
         SpreadStorageLibs.OwnerStorage storage ownerStorage = SpreadStorageLibs.getOwner();
         ownerStorage.owner = msg.sender;
 
-        if (paused) {
+        if (pausedInput) {
             _pause();
         }
     }

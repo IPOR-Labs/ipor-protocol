@@ -239,11 +239,11 @@ abstract contract AssetManagement is
 
     function _calculateTotalBalance(
         StrategyData[] memory sortedStrategies
-    ) internal view returns (uint256 totalBalance) {
+    ) internal view returns (uint256 totalBalanceInput) {
         for (uint256 i; i < _getNumberOfSupportedStrategies(); ++i) {
-            totalBalance += sortedStrategies[i].balance;
+            totalBalanceInput += sortedStrategies[i].balance;
         }
-        totalBalance += IporMath.convertToWad(IERC20Upgradeable(asset).balanceOf(address(this)), _getDecimals());
+        totalBalanceInput += IporMath.convertToWad(IERC20Upgradeable(asset).balanceOf(address(this)), _getDecimals());
     }
 
     function _getSortedStrategiesWithApy(

@@ -11,3 +11,8 @@ The IPOR protocol is a decentralized marketplace that serves as the credit hub o
 
 -   `npm install`
 -   `forge build`
+
+### Analyse the contracts with slither
+- Install [remixd](https://remix-ide.readthedocs.io/fr/latest/remixd.html)
+- Install [Slither](https://remix-ide.readthedocs.io/fr/latest/slither.html),  `remixd -i slither`
+- Run `slither .` to verify contract

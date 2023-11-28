@@ -103,7 +103,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         _delegate(_getRouterImplementation(msg.sig, SINGLE_OPERATION));
     }
 
-    function initialize(bool paused) external initializer {
+    function initialize(bool pausedInput) external initializer {
         __UUPSUpgradeable_init();
         OwnerManager.transferOwnership(msg.sender);
         StorageLib.getReentrancyStatus().value = _NOT_ENTERED;

@@ -6,6 +6,6 @@
     "exclude_high": false,
     "json": "slitherReport.json",
     "disable_color": false,
-    "filter_paths": "@openzeppelin/contracts|contracts/itf|contracts/mocks",
+    "filter_paths": "@openzeppelin/contracts|contracts/itf|contracts/mocks|old_test|test",
     "legacy_ast": false
 }
