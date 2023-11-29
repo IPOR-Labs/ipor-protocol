@@ -175,7 +175,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServic
     function _convertInputAssetAmountToWadAmount(
         address,
         uint256 inputAssetAmount
-    ) internal view override returns (uint256) {
+    ) internal pure override returns (uint256) {
         /// @dev stETH, wETH, ETH, wstETH are represented in 18 decimals so no conversion is needed
         return inputAssetAmount;
     }
