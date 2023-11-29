@@ -101,7 +101,6 @@ contract SpreadSmokeTest is TestCommons {
             receiveFixed28Before > receiveFixed28After,
             "receiveFixed28Before should be getter than receiveFixed28After"
         );
-
     }
 
     function testShouldSpreadPayFixedIncreaseWhenOneSwapOpenOn28PayFixed() external {
@@ -834,28 +833,29 @@ contract SpreadSmokeTest is TestCommons {
         assertTrue(receiveFixed90Open < 1e15, "receiveFixed90Open should be less than 1e15");
     }
 
-
-    function testShouldBeAbleToOverrideTimeWaitedNotional() external {
+    function testShouldBeAbleToOverrideTimeWeightedNotional() external {
         // given
-        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse = ISpreadStorageLens(_routerAddress)
-            .getTimeWeightedNotional();
-        SpreadTypes.TimeWeightedNotionalMemory[] memory timeWeightedNotional = new SpreadTypes.TimeWeightedNotionalMemory[](
-            timeWeightedNotionalResponse.length
-        );
+        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse = ISpreadStorageLens(
+            _routerAddress
+        ).getTimeWeightedNotional();
+        SpreadTypes.TimeWeightedNotionalMemory[]
+            memory timeWeightedNotional = new SpreadTypes.TimeWeightedNotionalMemory[](
+                timeWeightedNotionalResponse.length
+            );
 
         for (uint i; i < timeWeightedNotionalResponse.length; i++) {
             timeWeightedNotional[i] = SpreadTypes.TimeWeightedNotionalMemory({
                 timeWeightedNotionalPayFixed: timeWeightedNotionalResponse[i]
-            .timeWeightedNotional
-            .timeWeightedNotionalPayFixed + 100e18,
+                    .timeWeightedNotional
+                    .timeWeightedNotionalPayFixed + 100e18,
                 timeWeightedNotionalReceiveFixed: timeWeightedNotionalResponse[i]
-            .timeWeightedNotional
-            .timeWeightedNotionalReceiveFixed + 200e18,
+                    .timeWeightedNotional
+                    .timeWeightedNotionalReceiveFixed + 200e18,
                 lastUpdateTimePayFixed: timeWeightedNotionalResponse[i].timeWeightedNotional.lastUpdateTimePayFixed +
-            1000,
+                    1000,
                 lastUpdateTimeReceiveFixed: timeWeightedNotionalResponse[i]
-            .timeWeightedNotional
-            .lastUpdateTimeReceiveFixed + 2000,
+                    .timeWeightedNotional
+                    .lastUpdateTimeReceiveFixed + 2000,
                 storageId: timeWeightedNotionalResponse[i].timeWeightedNotional.storageId
             });
         }
@@ -898,28 +898,29 @@ contract SpreadSmokeTest is TestCommons {
         }
     }
 
-
-    function testShouldNotBeAbleToOverrideTimeWaitedNotionalWhenNotOwner() external {
+    function testShouldNotBeAbleToOverrideTimeWeightedNotionalWhenNotOwner() external {
         // given
-        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse = ISpreadStorageLens(_routerAddress)
-            .getTimeWeightedNotional();
-        SpreadTypes.TimeWeightedNotionalMemory[] memory timeWeightedNotional = new SpreadTypes.TimeWeightedNotionalMemory[](
-            timeWeightedNotionalResponse.length
-        );
+        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse = ISpreadStorageLens(
+            _routerAddress
+        ).getTimeWeightedNotional();
+        SpreadTypes.TimeWeightedNotionalMemory[]
+            memory timeWeightedNotional = new SpreadTypes.TimeWeightedNotionalMemory[](
+                timeWeightedNotionalResponse.length
+            );
 
         for (uint i; i < timeWeightedNotionalResponse.length; i++) {
             timeWeightedNotional[i] = SpreadTypes.TimeWeightedNotionalMemory({
                 timeWeightedNotionalPayFixed: timeWeightedNotionalResponse[i]
-            .timeWeightedNotional
-            .timeWeightedNotionalPayFixed + 100e18,
+                    .timeWeightedNotional
+                    .timeWeightedNotionalPayFixed + 100e18,
                 timeWeightedNotionalReceiveFixed: timeWeightedNotionalResponse[i]
-            .timeWeightedNotional
-            .timeWeightedNotionalReceiveFixed + 200e18,
+                    .timeWeightedNotional
+                    .timeWeightedNotionalReceiveFixed + 200e18,
                 lastUpdateTimePayFixed: timeWeightedNotionalResponse[i].timeWeightedNotional.lastUpdateTimePayFixed +
-            1000,
+                    1000,
                 lastUpdateTimeReceiveFixed: timeWeightedNotionalResponse[i]
-            .timeWeightedNotional
-            .lastUpdateTimeReceiveFixed + 2000,
+                    .timeWeightedNotional
+                    .lastUpdateTimeReceiveFixed + 2000,
                 storageId: timeWeightedNotionalResponse[i].timeWeightedNotional.storageId
             });
         }

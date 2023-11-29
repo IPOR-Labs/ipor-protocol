@@ -14,6 +14,8 @@ contract IporOracleStEth is Test {
     address public constant USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
     address public constant iporOracleProxy = 0x421C69EAa54646294Db30026aeE80D01988a6876;
 
+    event IporIndexUpdate(address asset, uint256 indexValue, uint256 quasiIbtPrice, uint256 updateTimestamp);
+
     function setUp() public {
         vm.createSelectFork(vm.envString("PROVIDER_URL"), 18562032);
         vm.startPrank(owner);
@@ -147,22 +149,15 @@ contract IporOracleStEth is Test {
             iporOracleProxy
         ).getIndex(stETH);
 
-
         vm.warp(block.timestamp + 1000);
 
         //when
         vm.prank(oracleUpdater);
-        IporOracle(iporOracleProxy).updateIndexAndQuasiIbtPrice(
-            stETH,
-            12e16,
-            block.timestamp - 100,
-            123e16
-        );
+        IporOracle(iporOracleProxy).updateIndexAndQuasiIbtPrice(stETH, 12e16, block.timestamp - 100, 123e16);
 
         //then
-        (uint256 indexValueAfter, uint256 ibtPriceAfter, uint256 lastUpdateTimestampAfter) = IporOracle(
-            iporOracleProxy
-        ).getIndex(stETH);
+        (uint256 indexValueAfter, uint256 ibtPriceAfter, uint256 lastUpdateTimestampAfter) = IporOracle(iporOracleProxy)
+            .getIndex(stETH);
 
         assertEq(indexValueAfter, 12e16);
         assertEq(ibtPriceAfter, 1000000039003044901);
@@ -172,5 +167,18 @@ contract IporOracleStEth is Test {
         assertEq(lastUpdateTimestampBefore, block.timestamp - 1000);
     }
 
+    function testShouldUpdateIndexAndQuasiIbtPriceWithEvent() external {
+        //given
+        (uint256 indexValueBefore, uint256 ibtPriceBefore, uint256 lastUpdateTimestampBefore) = IporOracle(
+            iporOracleProxy
+        ).getIndex(stETH);
 
+        vm.warp(block.timestamp + 1000);
+
+        //when
+        vm.prank(oracleUpdater);
+        vm.expectEmit(true, true, true, true);
+        emit IporIndexUpdate(stETH, 12e16, 123e16, block.timestamp - 100);
+        IporOracle(iporOracleProxy).updateIndexAndQuasiIbtPrice(stETH, 12e16, block.timestamp - 100, 123e16);
+    }
 }

@@ -33,4 +33,18 @@ library AmmEventsBaseV1 {
         /// @notice unwind fee amount, part earmarked for the treasury, represented in 18 decimals
         uint256 unwindFeeTreasuryAmount
     );
+
+    event SpreadTimeWeightedNotionalChanged(
+        /// @notice timeWeightedNotionalPayFixed with 18 decimals
+        uint256 timeWeightedNotionalPayFixed,
+        /// @notice lastUpdateTimePayFixed timestamp in seconds
+        uint256 lastUpdateTimePayFixed,
+        /// @notice timeWeightedNotionalReceiveFixed with 18 decimals
+        uint256 timeWeightedNotionalReceiveFixed,
+        /// @notice lastUpdateTimeReceiveFixed timestamp in seconds
+        uint256 lastUpdateTimeReceiveFixed,
+        /// @notice storageId from SpreadStorageLibsBaseV1.StorageId or from SpreadStorageLibs.StorageId depends on asset
+        /// @dev If asset is USDT, USDC, DAI then sender is a IporProtocolRouter, if asset is stETH sender is a SpreadStEth contract
+        uint256 storageId
+    );
 }
