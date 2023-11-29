@@ -757,7 +757,7 @@ contract SpreadSmokeBaseV1 is Test {
         assertTrue(receiveFixed90Open < 1e15, "receiveFixed90Open should be less than 1e15");
     }
 
-    function testShouldBeAbleToOverrideTimeWaitedNotional() external {
+    function testShouldBeAbleToOverrideTimeWeighteddNotional() external {
         // given
         SpreadTypesBaseV1.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse = ISpreadBaseV1(_spread)
             .getTimeWeightedNotional();
@@ -820,7 +820,7 @@ contract SpreadSmokeBaseV1 is Test {
         }
     }
 
-    function testShouldNotBeAbleToOverrideTimeWaitedNotionalWhenNotOwner() external {
+    function testShouldNotBeAbleToOverrideTimeWeighteddNotionalWhenNotOwner() external {
         // given
         SpreadTypesBaseV1.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse = ISpreadBaseV1(_spread)
             .getTimeWeightedNotional();

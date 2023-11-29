@@ -212,6 +212,8 @@ contract IporOracle is
             indexValue.toUint64(),
             updateTimestamp.toUint32()
         );
+
+        emit IporIndexUpdate(asset, indexValue, newQuasiIbtPrice, updateTimestamp);
     }
 
     function addUpdater(address updater) external override onlyOwner whenNotPaused {

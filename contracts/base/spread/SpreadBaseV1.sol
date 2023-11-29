@@ -9,6 +9,7 @@ import "../../amm/libraries/types/AmmInternalTypes.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
 import "../../amm/spread/CalculateTimeWeightedNotionalLibs.sol";
 import "../../base/interfaces/IAmmStorageBaseV1.sol";
+import "../../base/events/AmmEventsBaseV1.sol";
 import "../interfaces/ISpreadBaseV1.sol";
 import "./DemandSpreadLibsBaseV1.sol";
 import "../amm/libraries/SwapLogicBaseV1.sol";
@@ -24,6 +25,11 @@ contract SpreadBaseV1 is IporOwnable, ISpreadBaseV1 {
 
     address public immutable asset;
     address public immutable iporProtocolRouter;
+
+    modifier onlyRouter() {
+        require(msg.sender == iporProtocolRouter, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
+        _;
+    }
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
@@ -45,20 +51,33 @@ contract SpreadBaseV1 is IporOwnable, ISpreadBaseV1 {
         }
     }
 
-    modifier onlyRouter() {
-        require(msg.sender == iporProtocolRouter, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
-        _;
+    function getVersion() external pure virtual override returns (uint256) {
+        return 2_001;
     }
 
-    function calculateAndUpdateOfferedRatePayFixed(
-        SpreadInputs calldata spreadInputs
-    ) external override onlyRouter returns (uint256 offeredRate) {
-        offeredRate = OfferedRateCalculationLibsBaseV1.calculatePayFixedOfferedRate(
-            spreadInputs.iporIndexValue,
-            spreadInputs.baseSpreadPerLeg,
-            _calculateDemandPayFixedAndUpdateTimeWeightedNotional(spreadInputs),
-            spreadInputs.fixedRateCapPerLeg
-        );
+    function spreadFunctionConfig() external pure override returns (uint256[] memory) {
+        return DemandSpreadLibsBaseV1.spreadFunctionConfig();
+    }
+
+    function getTimeWeightedNotional()
+        external
+        view
+        override
+        returns (SpreadTypesBaseV1.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse)
+    {
+        (SpreadStorageLibsBaseV1.StorageId[] memory storageIds, string[] memory keys) = SpreadStorageLibsBaseV1
+            .getAllStorageId();
+        uint256 storageIdLength = storageIds.length;
+        timeWeightedNotionalResponse = new SpreadTypesBaseV1.TimeWeightedNotionalResponse[](storageIdLength);
+
+        for (uint256 i; i != storageIdLength; ) {
+            timeWeightedNotionalResponse[i].timeWeightedNotional = SpreadStorageLibsBaseV1
+                .getTimeWeightedNotionalForAssetAndTenor(storageIds[i]);
+            timeWeightedNotionalResponse[i].key = keys[i];
+            unchecked {
+                ++i;
+            }
+        }
     }
 
     function calculateOfferedRate(
@@ -97,17 +116,6 @@ contract SpreadBaseV1 is IporOwnable, ISpreadBaseV1 {
         );
     }
 
-    function calculateAndUpdateOfferedRateReceiveFixed(
-        SpreadInputs calldata spreadInputs
-    ) external override onlyRouter returns (uint256 offeredRate) {
-        offeredRate = OfferedRateCalculationLibsBaseV1.calculateReceiveFixedOfferedRate(
-            spreadInputs.iporIndexValue,
-            spreadInputs.baseSpreadPerLeg,
-            _calculateImbalanceReceiveFixedAndUpdateTimeWeightedNotional(spreadInputs),
-            spreadInputs.fixedRateCapPerLeg
-        );
-    }
-
     function calculateOfferedRateReceiveFixed(
         SpreadInputs calldata spreadInputs
     ) external view override returns (uint256 offeredRate) {
@@ -115,6 +123,28 @@ contract SpreadBaseV1 is IporOwnable, ISpreadBaseV1 {
             spreadInputs.iporIndexValue,
             spreadInputs.baseSpreadPerLeg,
             _calculateDemandReceiveFixed(spreadInputs),
+            spreadInputs.fixedRateCapPerLeg
+        );
+    }
+
+    function calculateAndUpdateOfferedRatePayFixed(
+        SpreadInputs calldata spreadInputs
+    ) external override onlyRouter returns (uint256 offeredRate) {
+        offeredRate = OfferedRateCalculationLibsBaseV1.calculatePayFixedOfferedRate(
+            spreadInputs.iporIndexValue,
+            spreadInputs.baseSpreadPerLeg,
+            _calculateDemandPayFixedAndUpdateTimeWeightedNotional(spreadInputs),
+            spreadInputs.fixedRateCapPerLeg
+        );
+    }
+
+    function calculateAndUpdateOfferedRateReceiveFixed(
+        SpreadInputs calldata spreadInputs
+    ) external override onlyRouter returns (uint256 offeredRate) {
+        offeredRate = OfferedRateCalculationLibsBaseV1.calculateReceiveFixedOfferedRate(
+            spreadInputs.iporIndexValue,
+            spreadInputs.baseSpreadPerLeg,
+            _calculateImbalanceReceiveFixedAndUpdateTimeWeightedNotional(spreadInputs),
             spreadInputs.fixedRateCapPerLeg
         );
     }
@@ -186,31 +216,6 @@ contract SpreadBaseV1 is IporOwnable, ISpreadBaseV1 {
         SpreadStorageLibsBaseV1.saveTimeWeightedNotionalForAssetAndTenor(storageId, timeWeightedNotional);
     }
 
-    function getTimeWeightedNotional()
-        external
-        view
-        override
-        returns (SpreadTypesBaseV1.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse)
-    {
-        (SpreadStorageLibsBaseV1.StorageId[] memory storageIds, string[] memory keys) = SpreadStorageLibsBaseV1
-            .getAllStorageId();
-        uint256 storageIdLength = storageIds.length;
-        timeWeightedNotionalResponse = new SpreadTypesBaseV1.TimeWeightedNotionalResponse[](storageIdLength);
-
-        for (uint256 i; i != storageIdLength; ) {
-            timeWeightedNotionalResponse[i].timeWeightedNotional = SpreadStorageLibsBaseV1
-                .getTimeWeightedNotionalForAssetAndTenor(storageIds[i]);
-            timeWeightedNotionalResponse[i].key = keys[i];
-            unchecked {
-                ++i;
-            }
-        }
-    }
-
-    function spreadFunctionConfig() external pure override returns (uint256[] memory) {
-        return DemandSpreadLibsBaseV1.spreadFunctionConfig();
-    }
-
     function updateTimeWeightedNotional(
         SpreadTypesBaseV1.TimeWeightedNotionalMemory[] calldata timeWeightedNotionalMemories
     ) external override onlyOwner {
@@ -221,14 +226,19 @@ contract SpreadBaseV1 is IporOwnable, ISpreadBaseV1 {
                 timeWeightedNotionalMemories[i].storageId,
                 timeWeightedNotionalMemories[i]
             );
+
+            emit AmmEventsBaseV1.SpreadTimeWeightedNotionalChanged({
+                timeWeightedNotionalPayFixed: timeWeightedNotionalMemories[i].timeWeightedNotionalPayFixed,
+                lastUpdateTimePayFixed: timeWeightedNotionalMemories[i].lastUpdateTimePayFixed,
+                timeWeightedNotionalReceiveFixed: timeWeightedNotionalMemories[i].timeWeightedNotionalReceiveFixed,
+                lastUpdateTimeReceiveFixed: timeWeightedNotionalMemories[i].lastUpdateTimeReceiveFixed,
+                storageId: uint256(timeWeightedNotionalMemories[i].storageId)
+            });
+
             unchecked {
                 ++i;
             }
         }
-    }
-
-    function getVersion() external pure virtual override returns (uint256) {
-        return 2_001;
     }
 
     function _calculateDemandPayFixed(SpreadInputs memory spreadInputs) internal view returns (uint256 spreadValue) {
