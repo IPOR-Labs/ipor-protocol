@@ -86,8 +86,8 @@ library IporErrors {
     string public constant RISK_INDICATORS_SIGNATURE_INVALID = "IPOR_020";
 
     /// @notice Input Asset used by user is not supported
-    string public constant INPUT_ASSET_NOT_SUPPORTED = "IPOR_020";
+    string public constant INPUT_ASSET_NOT_SUPPORTED = "IPOR_021";
 
     /// @notice Module Asset Management is not supported
-    string public constant UNSUPPORTED_MODULE_ASSET_MANAGEMENT = "IPOR_021";
+    string public constant UNSUPPORTED_MODULE_ASSET_MANAGEMENT = "IPOR_022";
 }
