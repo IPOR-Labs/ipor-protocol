@@ -18,7 +18,6 @@ contract TestCommons is Test {
 
     IporProtocolFactory internal _iporProtocolFactory = new IporProtocolFactory(address(this));
 
-
     function _getUserAddress(uint256 number) internal returns (address) {
         return vm.rememberKey(number);
     }
@@ -91,7 +90,10 @@ contract TestCommons is Test {
         return abi.encodePacked(r, s, v);
     }
 
-    function getRiskIndicatorsInputs(address asset, uint direction) internal returns (AmmTypes.RiskIndicatorsInputs memory) {
+    function getRiskIndicatorsInputs(
+        address asset,
+        uint direction
+    ) internal returns (AmmTypes.RiskIndicatorsInputs memory) {
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 900000000000000000,
             maxCollateralRatioPerLeg: 480000000000000000,
@@ -113,7 +115,10 @@ contract TestCommons is Test {
         return riskIndicatorsInputs;
     }
 
-    function getCloseRiskIndicatorsInputs(address asset, IporTypes.SwapTenor tenor) internal returns (AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInputs) {
+    function getCloseRiskIndicatorsInputs(
+        address asset,
+        IporTypes.SwapTenor tenor
+    ) internal returns (AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInputs) {
         riskIndicatorsInputs.payFixed = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 900000000000000000,
             maxCollateralRatioPerLeg: 480000000000000000,
@@ -150,6 +155,35 @@ contract TestCommons is Test {
             1,
             _iporProtocolFactory.messageSignerPrivateKey()
         );
+    }
 
+    function getIndexToUpdate(
+        address asset,
+        uint indexValue
+    ) internal returns (IIporOracle.UpdateIndexParams[] memory) {
+        IIporOracle.UpdateIndexParams[] memory updateIndexParams = new IIporOracle.UpdateIndexParams[](1);
+        updateIndexParams[0] = IIporOracle.UpdateIndexParams({
+            asset: asset,
+            indexValue: indexValue,
+            updateTimestamp: 0,
+            quasiIbtPrice: 0
+        });
+        return updateIndexParams;
+    }
+
+    function getIndexToUpdateAndQuasiIbtPrice(
+        address asset,
+        uint indexValue,
+        uint updateTimestamp,
+        uint quasiIbtPrice
+    ) internal returns (IIporOracle.UpdateIndexParams[] memory) {
+        IIporOracle.UpdateIndexParams[] memory updateIndexParams = new IIporOracle.UpdateIndexParams[](1);
+        updateIndexParams[0] = IIporOracle.UpdateIndexParams({
+            asset: asset,
+            indexValue: indexValue,
+            updateTimestamp: updateTimestamp,
+            quasiIbtPrice: quasiIbtPrice
+        });
+        return updateIndexParams;
     }
 }

@@ -127,7 +127,7 @@ contract AmmGovernanceServiceTest is TestCommons {
 
         uint256 expectedPublicationFeeBalanceAmmTreasury = TestConstants.USD_10_18DEC - transferredAmount;
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
@@ -200,7 +200,7 @@ contract AmmGovernanceServiceTest is TestCommons {
         uint256 expectedTreasuryBalance = 114696891674244800;
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);

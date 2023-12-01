@@ -450,8 +450,9 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
         vm.prank(owner);
         IIporOracle(iporOracleProxy).addUpdater(_user);
 
-        vm.prank(_user);
-        IIporOracle(iporOracleProxy).updateIndex(address(DAI), 5e17);
+        vm.startPrank(_user);
+        IIporOracle(iporOracleProxy).updateIndexes(getIndexToUpdate(address(DAI), 5e17));
+        vm.stopPrank();
 
         vm.warp(block.timestamp + 25 days);
 
@@ -566,7 +567,7 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
 //        IIporOracle(iporOracleProxy).addUpdater(_user);
 //
 //        vm.prank(_user);
-//        IIporOracle(iporOracleProxy).updateIndex(address(DAI), 5e17);
+//        IIporOracle(iporOracleProxy).updateIndexes(getIndexToUpdate(address(DAI), 5e17));
 //
 //        vm.warp(block.timestamp + 25 days);
 //
@@ -680,7 +681,7 @@ contract ForkAssetManagementDaiTest is TestForkCommons {
     //        IIporOracle(iporOracleProxy).addUpdater(_user);
     //
     //        vm.prank(_user);
-    //        IIporOracle(iporOracleProxy).updateIndex(address(DAI), 5e17);
+    //        IIporOracle(iporOracleProxy).updateIndexes(getIndexToUpdate(address(DAI), 5e17));
     //
     //        /// @dev Start - prepare strategies in this way that there part of cash in DSR and Aave
     //        vm.startPrank(owner);

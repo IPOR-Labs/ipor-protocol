@@ -33,7 +33,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
 
         /// @dev for this particular case fixedInterestRate is higher than 0 (is equal 1)
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), 1111516737937797);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), 1111516737937797));
 
         vm.startPrank(_userTwo);
         uint256 swap1 = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
@@ -60,7 +60,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, 2 * TestConstants.USD_28_000_6DEC);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.startPrank(_userTwo);
         uint256 swap1 = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
@@ -73,7 +73,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), 0);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), 0));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
@@ -109,7 +109,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, 2 * TestConstants.USD_28_000_6DEC);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.startPrank(_userTwo);
         uint256 swap1 = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
@@ -122,7 +122,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), 1424808299999999);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), 1424808299999999));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
@@ -158,7 +158,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, 2 * TestConstants.USD_28_000_6DEC);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.startPrank(_userTwo);
         uint256 swap1 = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
@@ -171,7 +171,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), 1424808195385802);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), 1424808195385802));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
@@ -207,7 +207,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, 2 * TestConstants.USD_28_000_6DEC);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.startPrank(_userTwo);
         uint256 swap1 = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
@@ -220,7 +220,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), 1424808295385802);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), 1424808295385802));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
@@ -256,7 +256,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, 2 * TestConstants.USD_28_000_18DEC);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.startPrank(_userTwo);
         uint256 swap1 = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
@@ -269,7 +269,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), 1424808295385802);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), 1424808295385802));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
@@ -305,7 +305,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, 2 * TestConstants.USD_28_000_6DEC);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_1_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_1_18DEC));
 
         vm.startPrank(_userTwo);
         uint256 swap1 = _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
@@ -318,7 +318,7 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), 0);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), 0));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(

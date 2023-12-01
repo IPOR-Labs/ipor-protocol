@@ -206,7 +206,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
@@ -242,7 +242,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_28_000_6DEC);
@@ -278,7 +278,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
@@ -315,7 +315,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
@@ -337,7 +337,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
@@ -361,7 +361,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
@@ -383,7 +383,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
@@ -417,7 +417,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
@@ -451,7 +451,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
@@ -485,7 +485,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
@@ -519,7 +519,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
@@ -544,7 +544,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
@@ -568,7 +568,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
@@ -590,7 +590,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
@@ -624,7 +624,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
@@ -658,7 +658,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
@@ -692,7 +692,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
@@ -726,7 +726,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
@@ -750,7 +750,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
@@ -772,7 +772,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
@@ -796,7 +796,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
@@ -832,7 +832,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
@@ -868,7 +868,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
@@ -915,7 +915,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
@@ -960,7 +960,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_50_000_6DEC);
@@ -1121,7 +1121,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
@@ -1174,7 +1174,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_28_000_6DEC);
@@ -1229,7 +1229,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
@@ -1284,7 +1284,7 @@ contract AmmStorageTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_28_000_6DEC);

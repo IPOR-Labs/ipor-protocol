@@ -186,6 +186,7 @@ contract TestForkCommons is Test {
         _createAmmCloseSwapLens();
 
         _createNewAmmGovernanceService();
+        _createIporOracle();
 
         _setupIporOracleStEth();
         _updateIporRouterImplementation();
@@ -722,6 +723,28 @@ contract TestForkCommons is Test {
         spreadStEth = address(spread);
     }
 
+    function _createIporOracle() private {
+        vm.startPrank(owner);
+        address[] memory assets = new address[](3);
+        assets[0] = address(DAI);
+        assets[1] = address(USDT);
+        assets[2] = address(USDC);
+
+        address iporOracleImpl = address(
+            new IporOracle(
+                address(USDT),
+                1042679339957585866,
+                address(USDC),
+                1031576042312020683,
+                address(DAI),
+                1030077612745992745,
+                stETH
+            )
+        );
+        IporOracle(iporOracleProxy).upgradeTo(iporOracleImpl);
+        vm.stopPrank();
+    }
+
     function _setupIporOracleStEth() private {
         IporOracle iporOracle = IporOracle(iporOracleProxy);
         vm.startPrank(owner);
@@ -805,5 +828,19 @@ contract TestForkCommons is Test {
             payFixed: riskIndicatorsInputsPayFixed,
             receiveFixed: riskIndicatorsInputsReceiveFixed
         });
+    }
+
+    function getIndexToUpdate(
+        address asset,
+        uint indexValue
+    ) internal returns (IIporOracle.UpdateIndexParams[] memory) {
+        IIporOracle.UpdateIndexParams[] memory updateIndexParams = new IIporOracle.UpdateIndexParams[](1);
+        updateIndexParams[0] = IIporOracle.UpdateIndexParams({
+            asset: asset,
+            indexValue: indexValue,
+            updateTimestamp: 0,
+            quasiIbtPrice: 0
+        });
+        return updateIndexParams;
     }
 }
