@@ -61,9 +61,9 @@ interface IIporOracle {
     ///      requires the caller to be an authorized updater.
     /// @param indexesToUpdate Array of 'UpdateIndexParams' containing asset address, new index value, update timestamp,
     ///        and quasiIbtPrice (for '_stEth' asset).
-    /// @throws INPUT_ARRAYS_LENGTH_MISMATCH if 'indexesToUpdate' array is empty.
-    /// @throws ASSET_NOT_SUPPORTED if an asset in 'indexesToUpdate' is not supported.
-    /// @throws WRONG_INDEX_TIMESTAMP if the provided timestamp is either older than the last update timestamp or greater
+    /// @dev INPUT_ARRAYS_LENGTH_MISMATCH if 'indexesToUpdate' array is empty.
+    /// @dev ASSET_NOT_SUPPORTED if an asset in 'indexesToUpdate' is not supported.
+    /// @dev WRONG_INDEX_TIMESTAMP if the provided timestamp is either older than the last update timestamp or greater
     ///         than the current block timestamp.
     function updateIndexes(UpdateIndexParams[] calldata indexesToUpdate) external;
 
