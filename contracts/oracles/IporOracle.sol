@@ -57,19 +57,6 @@ contract IporOracle is
         _;
     }
 
-    /// @notice Controls access to functions by checking if the given asset is stETH and if it's accepted.
-    /// @dev This modifier allows function execution only if the conditions related to stETH and acceptStEth are met.
-    /// @dev IporErrors.WrongAddress if the conditions are not met, indicating either a non-stETH asset when stETH is required, or an stETH asset when it is not accepted.
-    /// @param asset The address of the asset to be checked against stETH.
-    /// @param accept A boolean-like unsigned integer where 1 signifies acceptance of stETH and 0 signifies otherwise.
-    modifier whenAssetStEth(address asset, uint256 accept) {
-        if ((asset == _stEth && accept == 1) || (asset != _stEth && accept == 0)) {
-            _;
-        } else {
-            revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, asset, "onlyAcceptStEth");
-        }
-    }
-
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address usdt,
@@ -174,23 +161,32 @@ contract IporOracle is
         return _calculateAccruedIbtPrice(asset, _indexes[asset], calculateTimestamp);
     }
 
-    function updateIndex(address asset, uint256 indexValue) external override onlyUpdater whenNotPaused {
-        _updateIndex(asset, indexValue, block.timestamp);
+    function updateIndexes(IIporOracle.UpdateIndexParams[] calldata indexesToUpdate) external override onlyUpdater whenNotPaused {
+        uint256 length = indexesToUpdate.length;
+        require(length > 0, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
+        for (uint256 i; i < length; ) {
+            if (indexesToUpdate[i].asset == _stEth) {
+                _updateIndexAndQuasiIbtPrice(
+                    indexesToUpdate[i].asset,
+                    indexesToUpdate[i].indexValue,
+                    indexesToUpdate[i].updateTimestamp,
+                    indexesToUpdate[i].quasiIbtPrice
+                );
+            } else {
+                _updateIndex(indexesToUpdate[i].asset, indexesToUpdate[i].indexValue, block.timestamp);
+            }
+            unchecked {
+                ++i;
+            }
+        }
     }
 
-    function updateIndexes(
-        address[] memory assets,
-        uint256[] memory indexValues
-    ) external override onlyUpdater whenNotPaused {
-        _updateIndexes(assets, indexValues, block.timestamp);
-    }
-
-    function updateIndexAndQuasiIbtPrice(
+    function _updateIndexAndQuasiIbtPrice(
         address asset,
         uint256 indexValue,
         uint256 updateTimestamp,
         uint256 newQuasiIbtPrice
-    ) external override onlyUpdater whenNotPaused whenAssetStEth(asset, 1) {
+    ) internal {
         IporOracleTypes.IPOR memory oldIpor = _indexes[asset];
         if (oldIpor.lastUpdateTimestamp == 0) {
             revert IporOracleErrors.UpdateIndex(
@@ -288,7 +284,7 @@ contract IporOracle is
         address asset,
         uint256 indexValue,
         uint256 updateTimestamp
-    ) internal whenAssetStEth(asset, 0) {
+    ) internal {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
 
         require(ipor.lastUpdateTimestamp > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);

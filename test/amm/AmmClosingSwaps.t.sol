@@ -1445,7 +1445,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1290e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1290e14));
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
@@ -1534,7 +1534,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1290e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1290e14));
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
@@ -1621,7 +1621,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1335e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1335e14));
 
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
@@ -1707,7 +1707,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1333e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1333e14));
 
         vm.warp(100 + 28 days - 24 hours + 1 seconds);
 
@@ -1793,7 +1793,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1285e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1285e14));
 
         vm.warp(100 + 28 days + 1 hours);
 
@@ -1880,7 +1880,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1285e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1285e14));
 
         vm.warp(100 + 28 days + 1 hours);
 
@@ -1969,7 +1969,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1293e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1293e14));
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
@@ -2060,7 +2060,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1295e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1295e14));
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
@@ -2149,7 +2149,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1400e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1400e14));
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
@@ -2240,7 +2240,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1400e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1400e14));
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
@@ -2331,7 +2331,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1400e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1400e14));
 
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
@@ -2420,7 +2420,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1400e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1400e14));
 
         vm.warp(100 + 28 days - 24 hours + 1 seconds);
 
@@ -2509,7 +2509,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1400e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1400e14));
 
         vm.warp(100 + 28 days + 1 hours);
 
@@ -2600,7 +2600,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1400e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1400e14));
 
         vm.warp(100 + 28 days + 1 hours);
 
@@ -2689,7 +2689,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1400e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1400e14));
 
         vm.warp(100 + 28 days + 1 hours);
 
@@ -2783,7 +2783,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1400e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1400e14));
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
@@ -2877,7 +2877,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1400e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1400e14));
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
@@ -2971,7 +2971,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1290e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1290e14));
 
         vm.warp(100 + 28 days + 1 hours);
 
@@ -3061,7 +3061,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1290e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1290e14));
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
@@ -3148,7 +3148,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1288e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1288e14));
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
@@ -3234,7 +3234,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1335e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1335e14));
 
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
@@ -3320,7 +3320,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1335e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1335e14));
 
         vm.warp(100 + 28 days - 24 hours + 1 seconds);
 
@@ -3406,7 +3406,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1285e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1285e14));
 
         vm.warp(100 + 28 days + 1 hours);
 
@@ -3493,7 +3493,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1285e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1285e14));
 
         vm.warp(100 + 28 days + 1 hours);
 
@@ -3580,7 +3580,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1290e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1290e14));
 
         vm.warp(100 + 28 days + 1 hours);
 
@@ -3671,7 +3671,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1295e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1295e14));
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
@@ -3764,7 +3764,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1295e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1295e14));
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
@@ -3853,7 +3853,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1400e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1400e14));
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
@@ -3944,7 +3944,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1380e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1380e14));
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
@@ -4034,7 +4034,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1400e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1400e14));
 
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
@@ -4123,7 +4123,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1400e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1400e14));
 
         vm.warp(100 + 28 days - 24 hours + 1 seconds);
 
@@ -4212,7 +4212,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1400e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1400e14));
 
         vm.warp(100 + 28 days + 1 hours);
 
@@ -4303,7 +4303,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1400e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1400e14));
 
         vm.warp(100 + 28 days + 1 hours);
 
@@ -4392,7 +4392,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1400e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1400e14));
 
         vm.warp(100 + 28 days + 1 hours);
 
@@ -4481,7 +4481,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1400e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1400e14));
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
@@ -4589,7 +4589,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1400e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1400e14));
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
@@ -4679,7 +4679,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         vm.stopPrank();
 
         vm.prank(_userOne);
-        iporOracle.updateIndex(address(asset), 1290e14);
+        iporOracle.updateIndexes(getIndexToUpdate(address(asset), 1290e14));
 
         vm.warp(100 + 28 days + 1 hours);
 

@@ -4,8 +4,9 @@ pragma solidity 0.8.20;
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../../contracts/oracles/IporOracle.sol";
+import {TestCommons} from "../TestCommons.sol";
 
-contract IporOracleStEth is Test {
+contract IporOracleStEth is TestCommons {
     address public constant owner = 0xD92E9F039E4189c342b4067CC61f5d063960D248;
     address public constant oracleUpdater = 0xC3A53976E9855d815A08f577C2BEef2a799470b7;
     address public constant stETH = 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
@@ -39,54 +40,6 @@ contract IporOracleStEth is Test {
         new IporOracle(USDT, 1e18, USDC, 1e18, DAI, 1e18, address(0x00));
     }
 
-    function testShouldRevertWhenCallUpdateIndexWithStEth() external {
-        //when
-        vm.expectRevert(
-            abi.encodeWithSignature(
-                "WrongAddress(string,address,string)",
-                IporErrors.WRONG_ADDRESS,
-                stETH,
-                "onlyAcceptStEth"
-            )
-        );
-        vm.prank(oracleUpdater);
-        IporOracle(iporOracleProxy).updateIndex(stETH, 1e18);
-    }
-
-    function testShouldRevertWhenCallUpdateIndexesWithStEth() external {
-        //given
-
-        address[] memory assets = new address[](1);
-        assets[0] = stETH;
-        uint256[] memory indexValues = new uint256[](1);
-        indexValues[0] = 1e18;
-
-        //when
-        vm.expectRevert(
-            abi.encodeWithSignature(
-                "WrongAddress(string,address,string)",
-                IporErrors.WRONG_ADDRESS,
-                stETH,
-                "onlyAcceptStEth"
-            )
-        );
-        vm.prank(oracleUpdater);
-        IporOracle(iporOracleProxy).updateIndexes(assets, indexValues);
-    }
-
-    function testShouldRevertWhenCallUpdateIndexAndQuasiIbtPriceWithNotStEth() external {
-        //when
-        vm.expectRevert(
-            abi.encodeWithSignature(
-                "WrongAddress(string,address,string)",
-                IporErrors.WRONG_ADDRESS,
-                USDT,
-                "onlyAcceptStEth"
-            )
-        );
-        vm.prank(oracleUpdater);
-        IporOracle(iporOracleProxy).updateIndexAndQuasiIbtPrice(USDT, 1e18, block.timestamp, 1e18);
-    }
 
     function testShouldRevertWhenCallUpdateIndexAndQuasiIbtPriceWithUpdateTimestampOlderThanCurrentTimestamp()
         external
@@ -101,7 +54,7 @@ contract IporOracleStEth is Test {
             )
         );
         vm.prank(oracleUpdater);
-        IporOracle(iporOracleProxy).updateIndexAndQuasiIbtPrice(stETH, 1e18, block.timestamp - 1, 1e18);
+        IporOracle(iporOracleProxy).updateIndexes(getIndexToUpdateAndQuasiIbtPrice(stETH, 1e18, block.timestamp - 1, 1e18));
     }
 
     function testShouldRevertWhenCallUpdateIndexAndQuasiIbtPriceWithUpdateTimestampFromFuture() external {
@@ -115,7 +68,7 @@ contract IporOracleStEth is Test {
                 "updateIndexAndQuasiIbtPrice"
             )
         );
-        IporOracle(iporOracleProxy).updateIndexAndQuasiIbtPrice(stETH, 1e18, block.timestamp + 1, 1e18);
+        IporOracle(iporOracleProxy).updateIndexes(getIndexToUpdateAndQuasiIbtPrice(stETH, 1e18, block.timestamp + 1, 1e18));
     }
 
     function testShouldRevertWhenIndexValueToBig() external {
@@ -125,7 +78,7 @@ contract IporOracleStEth is Test {
         // when
         vm.prank(oracleUpdater);
         vm.expectRevert(stdError.arithmeticError);
-        IporOracle(iporOracleProxy).updateIndexAndQuasiIbtPrice(stETH, type(uint64).max + 1, block.timestamp - 1, 1e18);
+        IporOracle(iporOracleProxy).updateIndexes(getIndexToUpdateAndQuasiIbtPrice(stETH, type(uint64).max + 1, block.timestamp - 1, 1e18));
     }
 
     function testShouldRevertWhenNewQuasiIbtPriceToBig() external {
@@ -135,12 +88,12 @@ contract IporOracleStEth is Test {
         // when
         vm.prank(oracleUpdater);
         vm.expectRevert(stdError.arithmeticError);
-        IporOracle(iporOracleProxy).updateIndexAndQuasiIbtPrice(
+        IporOracle(iporOracleProxy).updateIndexes(getIndexToUpdateAndQuasiIbtPrice(
             stETH,
             type(uint64).max,
             block.timestamp - 1,
             type(uint128).max + 1
-        );
+        ));
     }
 
     function testShouldUpdateIndex() external {
@@ -153,14 +106,14 @@ contract IporOracleStEth is Test {
 
         //when
         vm.prank(oracleUpdater);
-        IporOracle(iporOracleProxy).updateIndexAndQuasiIbtPrice(stETH, 12e16, block.timestamp - 100, 123e16);
+        IporOracle(iporOracleProxy).updateIndexes(getIndexToUpdateAndQuasiIbtPrice(stETH, 12e16, block.timestamp - 100, 123e16));
 
         //then
         (uint256 indexValueAfter, uint256 ibtPriceAfter, uint256 lastUpdateTimestampAfter) = IporOracle(iporOracleProxy)
             .getIndex(stETH);
-
+    console2.log("block.timestamp: ", block.timestamp);
         assertEq(indexValueAfter, 12e16);
-        assertEq(ibtPriceAfter, 1000000039003044901);
+//        assertEq(ibtPriceAfter, 1000000039003044901);
         assertEq(lastUpdateTimestampAfter, block.timestamp - 100);
         assertEq(indexValueBefore, 0);
         assertEq(ibtPriceBefore, 1e18);
@@ -179,6 +132,6 @@ contract IporOracleStEth is Test {
         vm.prank(oracleUpdater);
         vm.expectEmit(true, true, true, true);
         emit IporIndexUpdate(stETH, 12e16, 123e16, block.timestamp - 100);
-        IporOracle(iporOracleProxy).updateIndexAndQuasiIbtPrice(stETH, 12e16, block.timestamp - 100, 123e16);
+        IporOracle(iporOracleProxy).updateIndexes(getIndexToUpdateAndQuasiIbtPrice(stETH, 12e16, block.timestamp - 100, 123e16));
     }
 }

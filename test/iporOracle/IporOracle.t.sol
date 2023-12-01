@@ -61,7 +61,7 @@ contract IporOracleTest is TestCommons {
     function testShouldCalculateIbtPriceForFixedRate() public {
         uint256 ibtPrice = _iporOracle.calculateAccruedIbtPrice(address(_daiTestnetToken), _blockTimestamp);
         assertEq(ibtPrice, 1e18);
-        _iporOracle.updateIndex(address(_daiTestnetToken), 3e16);
+        _iporOracle.updateIndexes(getIndexToUpdate(address(_daiTestnetToken), 3e16));
 
         assertEq(
             _iporOracle.calculateAccruedIbtPrice(address(_daiTestnetToken), block.timestamp + 1 days),
@@ -94,12 +94,12 @@ contract IporOracleTest is TestCommons {
         vm.warp(_blockTimestamp);
         uint256 ibtPrice = _iporOracle.calculateAccruedIbtPrice(address(_daiTestnetToken), _blockTimestamp);
         assertEq(ibtPrice, 1e18);
-        _iporOracle.updateIndex(address(_daiTestnetToken), 3e16);
+        _iporOracle.updateIndexes(getIndexToUpdate(address(_daiTestnetToken), 3e16));
 
         // when
         for (uint256 i; i < 365; ++i) {
             vm.warp(block.timestamp + 1 days);
-            _iporOracle.updateIndex(address(_daiTestnetToken), 3e16);
+            _iporOracle.updateIndexes(getIndexToUpdate(address(_daiTestnetToken), 3e16));
         }
 
         // then
@@ -111,15 +111,15 @@ contract IporOracleTest is TestCommons {
         vm.warp(_blockTimestamp);
         uint256 ibtPrice = _iporOracle.calculateAccruedIbtPrice(address(_daiTestnetToken), _blockTimestamp);
         assertEq(ibtPrice, 1e18);
-        _iporOracle.updateIndex(address(_daiTestnetToken), 3e16);
+        _iporOracle.updateIndexes(getIndexToUpdate(address(_daiTestnetToken), 3e16));
 
         // when
         for (uint256 i; i < 52; ++i) {
             vm.warp(block.timestamp + 7 days);
-            _iporOracle.updateIndex(address(_daiTestnetToken), 3e16);
+            _iporOracle.updateIndexes(getIndexToUpdate(address(_daiTestnetToken), 3e16));
         }
         vm.warp(block.timestamp + 1 days);
-        _iporOracle.updateIndex(address(_daiTestnetToken), 3e16);
+        _iporOracle.updateIndexes(getIndexToUpdate(address(_daiTestnetToken), 3e16));
 
         // then
         assertEq(_iporOracle.calculateAccruedIbtPrice(address(_daiTestnetToken), block.timestamp), 1030454533953516856);
@@ -134,13 +134,13 @@ contract IporOracleTest is TestCommons {
 
         vm.warp(_blockTimestamp + 60 * 60);
 
-        _iporOracle.updateIndex(address(_daiTestnetToken), indexValueOne);
+        _iporOracle.updateIndexes(getIndexToUpdate(address(_daiTestnetToken), indexValueOne));
 
         vm.warp(_blockTimestamp + 60 * 60 + 1);
 
         (uint256 iporIndexBefore, uint256 ibtPriceBefore, ) = _iporOracle.getIndex(address(_daiTestnetToken));
         // when
-        _iporOracle.updateIndex(address(_daiTestnetToken), indexValueTwo);
+        _iporOracle.updateIndexes(getIndexToUpdate(address(_daiTestnetToken), indexValueTwo));
 
         // then
         (uint256 iporIndexAfter, uint256 ibtPriceAfter, ) = _iporOracle.getIndex(address(_daiTestnetToken));
@@ -218,10 +218,7 @@ contract IporOracleTest is TestCommons {
 
         // when
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        _iporOracle.updateIndex(assets[0], indexValues[1]);
-
-        vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        _iporOracle.updateIndexes(assets, indexValues);
+        _iporOracle.updateIndexes(getIndexToUpdate(assets[0], indexValues[1]));
 
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
         _iporOracle.addAsset(address(randomStable), 0);
@@ -445,7 +442,7 @@ contract IporOracleTest is TestCommons {
         vm.prank(_getUserAddress(1));
         vm.expectRevert(abi.encodePacked(IporOracleErrors.CALLER_NOT_UPDATER));
         vm.warp(_blockTimestamp + 60 * 60);
-        _iporOracle.updateIndex(address(_daiTestnetToken), 1000);
+        _iporOracle.updateIndexes(getIndexToUpdate(address(_daiTestnetToken), 1000));
         // then
         (uint256 iporIndexAfter, , ) = _iporOracle.getIndex(address(_daiTestnetToken));
 
@@ -461,7 +458,7 @@ contract IporOracleTest is TestCommons {
         // when
         vm.expectRevert(abi.encodePacked(IporOracleErrors.CALLER_NOT_UPDATER));
         vm.warp(_blockTimestamp + 60 * 60);
-        _iporOracle.updateIndex(address(_daiTestnetToken), 1000);
+        _iporOracle.updateIndexes(getIndexToUpdate(address(_daiTestnetToken), 1000));
 
         // then
         (uint256 iporIndexAfter, , ) = _iporOracle.getIndex(address(_daiTestnetToken));
@@ -475,7 +472,7 @@ contract IporOracleTest is TestCommons {
         uint256 expectedIndexValue = 5e16;
         (uint256 iporIndexBefore, uint256 ibtPriceBefore, ) = _iporOracle.getIndex(address(_daiTestnetToken));
         // when
-        _iporOracle.updateIndex(address(_daiTestnetToken), expectedIndexValue);
+        _iporOracle.updateIndexes(getIndexToUpdate(address(_daiTestnetToken), expectedIndexValue));
         // then
         (uint256 iporIndexAfter, uint256 ibtPriceAfter, ) = _iporOracle.getIndex(address(_daiTestnetToken));
 
@@ -488,14 +485,27 @@ contract IporOracleTest is TestCommons {
     function testShouldUpdateIndexes() public {
         // given
         uint256 expectedIndexValue = 7e16;
-        address[] memory assets = new address[](3);
-        assets[0] = address(_daiTestnetToken);
-        assets[1] = address(_usdcTestnetToken);
-        assets[2] = address(_usdtTestnetToken);
-        uint256[] memory indexValues = new uint256[](3);
-        indexValues[0] = expectedIndexValue;
-        indexValues[1] = expectedIndexValue;
-        indexValues[2] = expectedIndexValue;
+        IIporOracle.UpdateIndexParams[] memory updateIndexParams = new IIporOracle.UpdateIndexParams[](3);
+        updateIndexParams[0] = IIporOracle.UpdateIndexParams({
+            asset: address(_daiTestnetToken),
+            indexValue: expectedIndexValue,
+            updateTimestamp: 0,
+            quasiIbtPrice: 0
+        });
+        updateIndexParams[1] = IIporOracle.UpdateIndexParams({
+            asset: address(_usdcTestnetToken),
+            indexValue: expectedIndexValue,
+            updateTimestamp: 0,
+            quasiIbtPrice: 0
+        });
+        updateIndexParams[2] = IIporOracle.UpdateIndexParams({
+            asset: address(_usdtTestnetToken),
+            indexValue: expectedIndexValue,
+            updateTimestamp: 0,
+            quasiIbtPrice: 0
+        });
+
+
 
         (uint256 iporIndexDaiBefore, , ) = _iporOracle.getIndex(address(_daiTestnetToken));
         (uint256 iporIndexUsdcBefore, , ) = _iporOracle.getIndex(address(_usdcTestnetToken));
@@ -503,7 +513,7 @@ contract IporOracleTest is TestCommons {
 
         // when
         vm.warp(_blockTimestamp + 60 * 60);
-        _iporOracle.updateIndexes(assets, indexValues);
+        _iporOracle.updateIndexes(updateIndexParams);
 
         // then
 
@@ -517,6 +527,50 @@ contract IporOracleTest is TestCommons {
         assertEq(iporIndexUsdcAfter, expectedIndexValue);
         assertEq(iporIndexUsdtBefore, 0);
         assertEq(iporIndexUsdtAfter, expectedIndexValue);
+    }
+
+    function testShouldUpdateIndexesAndIgnorParametersWhenUpdateTimestampAndIbtPassInParameters() public {
+        // given
+        uint256 expectedIndexValue = 7e16;
+        IIporOracle.UpdateIndexParams[] memory updateIndexParams = new IIporOracle.UpdateIndexParams[](3);
+        updateIndexParams[0] = IIporOracle.UpdateIndexParams({
+            asset: address(_daiTestnetToken),
+            indexValue: expectedIndexValue,
+            updateTimestamp: block.timestamp+100+60 * 60,
+            quasiIbtPrice: 1e16
+        });
+        updateIndexParams[1] = IIporOracle.UpdateIndexParams({
+            asset: address(_usdcTestnetToken),
+            indexValue: expectedIndexValue,
+            updateTimestamp: block.timestamp+100+60 * 60,
+            quasiIbtPrice: 1e16
+        });
+        updateIndexParams[2] = IIporOracle.UpdateIndexParams({
+            asset: address(_usdtTestnetToken),
+            indexValue: expectedIndexValue,
+            updateTimestamp: block.timestamp+100 + 60 * 60,
+            quasiIbtPrice: 1e16
+        });
+
+        // when
+        vm.warp(_blockTimestamp + 60 * 60);
+        _iporOracle.updateIndexes(updateIndexParams);
+
+        // then
+
+        (uint256 iporIndexDaiAfter ,uint256 ibtPriceDaiAfter, uint256 lastUpdateTimestampDaiAfter) = _iporOracle.getIndex(address(_daiTestnetToken));
+        (uint256 iporIndexUsdcAfter,uint256 ibtPriceUsdcAfter, uint256 lastUpdateTimestampUsdcAfter) = _iporOracle.getIndex(address(_usdcTestnetToken));
+        (uint256 iporIndexUsdtAfter,uint256 ibtPriceUsdtAfter, uint256 lastUpdateTimestampUsdtAfter) = _iporOracle.getIndex(address(_usdtTestnetToken));
+
+        assertEq(lastUpdateTimestampDaiAfter, block.timestamp);
+        assertEq(lastUpdateTimestampUsdcAfter, block.timestamp);
+        assertEq(lastUpdateTimestampUsdtAfter, block.timestamp);
+        assertEq(iporIndexDaiAfter, expectedIndexValue);
+        assertEq(iporIndexUsdcAfter, expectedIndexValue);
+        assertEq(iporIndexUsdtAfter, expectedIndexValue);
+        assertEq(ibtPriceDaiAfter, 1e18);
+        assertEq(ibtPriceUsdcAfter, 1e18);
+        assertEq(ibtPriceUsdtAfter, 1e18);
     }
 
     function testShouldNotAddIporIndexUpdaterWhenNotOwner() public {
@@ -550,7 +604,7 @@ contract IporOracleTest is TestCommons {
         _iporOracle.removeUpdater(address(this));
         // when
         vm.expectRevert(abi.encodePacked(IporOracleErrors.CALLER_NOT_UPDATER));
-        _iporOracle.updateIndex(address(_daiTestnetToken), 5e16);
+        _iporOracle.updateIndexes(getIndexToUpdate(address(_daiTestnetToken), 5e16));
         // then
         (uint256 iporIndexAfter, , ) = _iporOracle.getIndex(address(_daiTestnetToken));
         assertEq(iporIndexAfter, 0);
@@ -574,9 +628,9 @@ contract IporOracleTest is TestCommons {
         uint256 expectedIndexValueTwo = 321e15;
 
         // when
-        _iporOracle.updateIndex(address(_daiTestnetToken), expectedIndexValueOne);
+        _iporOracle.updateIndexes(getIndexToUpdate(address(_daiTestnetToken), expectedIndexValueOne));
         (uint256 iporIndexBefore, , ) = _iporOracle.getIndex(address(_daiTestnetToken));
-        _iporOracle.updateIndex(address(_daiTestnetToken), expectedIndexValueTwo);
+        _iporOracle.updateIndexes(getIndexToUpdate(address(_daiTestnetToken), expectedIndexValueTwo));
 
         // then
         (uint256 iporIndexAfter, , ) = _iporOracle.getIndex(address(_daiTestnetToken));
@@ -585,82 +639,53 @@ contract IporOracleTest is TestCommons {
         assertEq(iporIndexAfter, expectedIndexValueTwo);
     }
 
-    function testShouldNotUpdateIporIndexWhenWrongInputArrays() public {
-        // given
-        address[] memory assets = new address[](2);
-        assets[0] = address(_daiTestnetToken);
-        assets[1] = address(_usdcTestnetToken);
-
-        uint256[] memory indexValues = new uint256[](1);
-        indexValues[0] = 7e16;
-
-        // when
-        vm.expectRevert(abi.encodePacked(IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH));
-        vm.warp(block.timestamp + 60 * 60);
-        _iporOracle.updateIndexes(assets, indexValues);
-    }
-
-    function testShouldNotUpdateIporIndexWhenAssetNotSupported() public {
-        // given
-        MockTestnetToken notSupportedAsset = new MockTestnetToken(
-            "Not supported",
-            "Not",
-            100_000_000 * 1e18,
-            uint8(18)
-        );
-        address[] memory assets = new address[](1);
-        assets[0] = address(notSupportedAsset);
-
-        uint256[] memory indexValues = new uint256[](1);
-        indexValues[0] = 7e16;
-
-        // when
-        vm.expectRevert(abi.encodePacked(IporOracleErrors.ASSET_NOT_SUPPORTED));
-        vm.warp(block.timestamp + 60 * 60);
-        _iporOracle.updateIndexes(assets, indexValues);
-    }
 
     function testShouldNotUpdateIporIndexWhenAccrueTimestampLowerThanCurrentIporIndexTimestamp() public {
         // given
-        address[] memory assets = new address[](1);
-        assets[0] = address(_daiTestnetToken);
-
-        uint256[] memory indexValues = new uint256[](1);
-        indexValues[0] = 7e16;
 
         vm.warp(block.timestamp + 100);
-        _iporOracle.updateIndexes(assets, indexValues);
+        _iporOracle.updateIndexes(getIndexToUpdate(address(_daiTestnetToken), 7e16));
         vm.warp(block.timestamp - 1);
 
         // when
         vm.expectRevert(abi.encodePacked(IporOracleErrors.INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP));
-        _iporOracle.updateIndexes(assets, indexValues);
+        _iporOracle.updateIndexes(getIndexToUpdate(address(_daiTestnetToken), 7e16));
     }
 
     function testShouldUpdateIporIndexWhenCorrectInputArrays() public {
         // given
-        address[] memory assets = new address[](3);
-        assets[0] = address(_daiTestnetToken);
-        assets[1] = address(_usdcTestnetToken);
-        assets[2] = address(_usdtTestnetToken);
-
-        uint256[] memory indexValues = new uint256[](3);
-        indexValues[0] = 8e16;
-        indexValues[1] = 7e16;
-        indexValues[2] = 6e16;
+        IIporOracle.UpdateIndexParams[] memory updateIndexParams = new IIporOracle.UpdateIndexParams[](3);
+        updateIndexParams[0] = IIporOracle.UpdateIndexParams({
+            asset: address(_daiTestnetToken),
+            indexValue: 8e16,
+            updateTimestamp: 0,
+            quasiIbtPrice: 0
+        });
+        updateIndexParams[1] = IIporOracle.UpdateIndexParams({
+            asset: address(_usdcTestnetToken),
+            indexValue: 7e16,
+            updateTimestamp: 0,
+            quasiIbtPrice: 0
+        });
+        updateIndexParams[2] = IIporOracle.UpdateIndexParams({
+            asset: address(_usdtTestnetToken),
+            indexValue: 6e16,
+            updateTimestamp: 0,
+            quasiIbtPrice: 0
+        });
 
         vm.warp(_blockTimestamp + 60 * 60);
         // when
-        _iporOracle.updateIndexes(assets, indexValues);
+        _iporOracle.updateIndexes(updateIndexParams);
 
         // then
         (uint256 iporIndexDaiAfter, , ) = _iporOracle.getIndex(address(_daiTestnetToken));
         (uint256 iporIndexUsdcAfter, , ) = _iporOracle.getIndex(address(_usdcTestnetToken));
         (uint256 iporIndexUsdtAfter, , ) = _iporOracle.getIndex(address(_usdtTestnetToken));
 
-        assertEq(iporIndexDaiAfter, indexValues[0]);
-        assertEq(iporIndexUsdcAfter, indexValues[1]);
-        assertEq(iporIndexUsdtAfter, indexValues[2]);
+        assertEq(iporIndexDaiAfter, updateIndexParams[0].indexValue);
+        assertEq(iporIndexUsdcAfter, updateIndexParams[1].indexValue);
+        assertEq(iporIndexUsdtAfter, updateIndexParams[2].indexValue);
     }
 
     function testShouldNotSendEthToIporOracle() public payable {
@@ -683,7 +708,7 @@ contract IporOracleTest is TestCommons {
         uint256 updateDate = _blockTimestamp + 60 * 60;
 
         vm.warp(updateDate);
-        _iporOracle.updateIndex(address(_usdcTestnetToken), 5e16);
+        _iporOracle.updateIndexes(getIndexToUpdate(address(_usdcTestnetToken), 5e16));
 
         updateDate++;
 
@@ -692,7 +717,7 @@ contract IporOracleTest is TestCommons {
         vm.warp(updateDate);
 
         // when
-        _iporOracle.updateIndex(address(_usdcTestnetToken), 5e16);
+        _iporOracle.updateIndexes(getIndexToUpdate(address(_usdcTestnetToken), 5e16));
 
         // then
         (uint256 iporIndexAfter, uint256 ibtPriceAfter, ) = _iporOracle.getIndex(address(_usdcTestnetToken));
@@ -714,17 +739,17 @@ contract IporOracleTest is TestCommons {
 
         uint256 updateDate = _blockTimestamp + 60 * 60;
         vm.warp(updateDate);
-        _iporOracle.updateIndex(address(_usdtTestnetToken), indexValueOne);
+        _iporOracle.updateIndexes(getIndexToUpdate(address(_usdtTestnetToken), indexValueOne));
 
         updateDate += (365 * 24 * 60 * 60) / 2;
         vm.warp(updateDate);
-        _iporOracle.updateIndex(address(_usdtTestnetToken), indexValueTwo);
+        _iporOracle.updateIndexes(getIndexToUpdate(address(_usdtTestnetToken), indexValueTwo));
 
         updateDate += (365 * 24 * 60 * 60) / 4;
         vm.warp(updateDate);
 
         // when
-        _iporOracle.updateIndex(address(_usdtTestnetToken), iporIndexThirdValue);
+        _iporOracle.updateIndexes(getIndexToUpdate(address(_usdtTestnetToken), iporIndexThirdValue));
 
         // then
         (uint256 iporIndexAfter, uint256 ibtPriceAfter, ) = _iporOracle.getIndex(address(_usdtTestnetToken));

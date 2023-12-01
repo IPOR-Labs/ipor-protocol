@@ -132,7 +132,7 @@ contract AmmUnwindSwap is TestCommons {
         _iporProtocol.asset.approve(address(_iporProtocol.router), 2 * 10_000 * 1e18);
 
         vm.prank(_admin);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_2_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_2_5_18DEC));
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 900000000000000000,
@@ -255,7 +255,7 @@ contract AmmUnwindSwap is TestCommons {
         _iporProtocol.asset.approve(address(_iporProtocol.router), 2 * 10_000 * 1e18);
 
         vm.prank(_admin);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_2_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_2_5_18DEC));
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 900000000000000000,
