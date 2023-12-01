@@ -529,6 +529,50 @@ contract IporOracleTest is TestCommons {
         assertEq(iporIndexUsdtAfter, expectedIndexValue);
     }
 
+    function testShouldUpdateIndexesAndIgnorParametersWhenUpdateTimestampAndIbtPassInParameters() public {
+        // given
+        uint256 expectedIndexValue = 7e16;
+        IIporOracle.UpdateIndexParams[] memory updateIndexParams = new IIporOracle.UpdateIndexParams[](3);
+        updateIndexParams[0] = IIporOracle.UpdateIndexParams({
+            asset: address(_daiTestnetToken),
+            indexValue: expectedIndexValue,
+            updateTimestamp: block.timestamp+100+60 * 60,
+            quasiIbtPrice: 1e16
+        });
+        updateIndexParams[1] = IIporOracle.UpdateIndexParams({
+            asset: address(_usdcTestnetToken),
+            indexValue: expectedIndexValue,
+            updateTimestamp: block.timestamp+100+60 * 60,
+            quasiIbtPrice: 1e16
+        });
+        updateIndexParams[2] = IIporOracle.UpdateIndexParams({
+            asset: address(_usdtTestnetToken),
+            indexValue: expectedIndexValue,
+            updateTimestamp: block.timestamp+100 + 60 * 60,
+            quasiIbtPrice: 1e16
+        });
+
+        // when
+        vm.warp(_blockTimestamp + 60 * 60);
+        _iporOracle.updateIndexes(updateIndexParams);
+
+        // then
+
+        (uint256 iporIndexDaiAfter ,uint256 ibtPriceDaiAfter, uint256 lastUpdateTimestampDaiAfter) = _iporOracle.getIndex(address(_daiTestnetToken));
+        (uint256 iporIndexUsdcAfter,uint256 ibtPriceUsdcAfter, uint256 lastUpdateTimestampUsdcAfter) = _iporOracle.getIndex(address(_usdcTestnetToken));
+        (uint256 iporIndexUsdtAfter,uint256 ibtPriceUsdtAfter, uint256 lastUpdateTimestampUsdtAfter) = _iporOracle.getIndex(address(_usdtTestnetToken));
+
+        assertEq(lastUpdateTimestampDaiAfter, block.timestamp);
+        assertEq(lastUpdateTimestampUsdcAfter, block.timestamp);
+        assertEq(lastUpdateTimestampUsdtAfter, block.timestamp);
+        assertEq(iporIndexDaiAfter, expectedIndexValue);
+        assertEq(iporIndexUsdcAfter, expectedIndexValue);
+        assertEq(iporIndexUsdtAfter, expectedIndexValue);
+        assertEq(ibtPriceDaiAfter, 1e18);
+        assertEq(ibtPriceUsdcAfter, 1e18);
+        assertEq(ibtPriceUsdtAfter, 1e18);
+    }
+
     function testShouldNotAddIporIndexUpdaterWhenNotOwner() public {
         // given
         address updater = _getUserAddress(1);
