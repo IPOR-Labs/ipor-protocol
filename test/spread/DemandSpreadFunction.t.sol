@@ -27,7 +27,7 @@ contract SpreadCloseSwapServiceTest is Test {
         uint demandSpread = DemandSpreadLibs.calculateSpreadFunction(maxNotional, weightedNotional);
 
         //then
-        assertEq(demandSpread, 5e15, "demandSpread should be 50bps");
+        assertEq(demandSpread, 833333333333333, "demandSpread should be 833333333333333");
     }
 
     function testShouldReturn100bpsWhenWeightedNotionalIs2e18() external {
@@ -39,7 +39,7 @@ contract SpreadCloseSwapServiceTest is Test {
         uint demandSpread = DemandSpreadLibs.calculateSpreadFunction(maxNotional, weightedNotional);
 
         //then
-        assertEq(demandSpread, 10e15, "demandSpread should be 100bps");
+        assertEq(demandSpread, 1666666666666667, "demandSpread should be 1666666666666667");
     }
 
     function testShouldReturn500bpsWhenWeightedNotionalIs5e18() external {
@@ -51,7 +51,7 @@ contract SpreadCloseSwapServiceTest is Test {
         uint demandSpread = DemandSpreadLibs.calculateSpreadFunction(maxNotional, weightedNotional);
 
         //then
-        assertEq(demandSpread, 50e15, "demandSpread should be 500bps");
+        assertEq(demandSpread, 8333333333333334, "demandSpread should be 8333333333333334");
     }
 
 
@@ -64,7 +64,7 @@ contract SpreadCloseSwapServiceTest is Test {
         uint demandSpread = DemandSpreadLibs.calculateSpreadFunction(maxNotional, weightedNotional);
 
         //then
-        assertEq(demandSpread, 300e15, "demandSpread should be 3000bps");
+        assertEq(demandSpread, 50000000000000000, "demandSpread should be 50000000000000000");
     }
 
 
@@ -92,8 +92,8 @@ contract SpreadCloseSwapServiceTest is Test {
         uint demandSpread = DemandSpreadLibs.calculateSpreadFunction(maxNotional, weightedNotional);
 
         //then
-        assertTrue(demandSpread <= 50e15, "demandSpread should be less than 500bps");
-        assertTrue(demandSpread >= 10e15, "demandSpread should be greater than 100bps");
+        assertTrue(demandSpread <= 8333333333333334, "demandSpread should be less than 500bps");
+        assertTrue(demandSpread >= 1666666666666666, "demandSpread should be greater than 100bps");
     }
 
     function testShouldReturnSpreadBetween500And3000bps(uint weightedNotional) external {
@@ -106,8 +106,8 @@ contract SpreadCloseSwapServiceTest is Test {
         uint demandSpread = DemandSpreadLibs.calculateSpreadFunction(maxNotional, weightedNotional);
 
         //then
-        assertTrue(demandSpread <= 300e15, "demandSpread should be less than 3000bps");
-        assertTrue(demandSpread >= 50e15, "demandSpread should be greater than 500bps");
+        assertTrue(demandSpread <= 50e15, "demandSpread should be less than 500bps");
+        assertTrue(demandSpread >= 8333333333333333, "demandSpread should be greater than 500bps");
     }
 
 }

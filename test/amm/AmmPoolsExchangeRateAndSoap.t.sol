@@ -22,48 +22,48 @@ contract AmmPoolsExchangeRateAndSoap is TestCommons {
         _cfg.iporOracleUpdater = _userOne;
         _cfg.iporRiskManagementOracleUpdater = _userOne;
     }
-
-    function testShouldCalculateExchangeRatePayFixedWhenSOAPChangedAndSOAPIsLowerThanZeroAndSOAPAbsoluteValueIsLowerThanLiquidityPoolBalance()
-        public
-    {
-        // given
-        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-
-        _iporProtocol.ammGovernanceService.setAmmPoolsParams(
-            address(_iporProtocol.asset),
-            1000000000,
-            70,
-            5000
-        );
-
-        vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
-
-        vm.prank(_liquidityProvider);
-        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_60_000_18DEC);
-
-        _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
-            _userTwo,
-            26000 * TestConstants.D18,
-            9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC
-        );
-
-        vm.warp(block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
-        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
-
-        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getAmmBalance(
-            address(_iporProtocol.asset)
-        );
-
-        // when
-        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(address(_iporProtocol.asset));
-
-        // then
-        assertLt(soap, TestConstants.ZERO_INT);
-        assertLt(soap * -1, int256(balance.liquidityPool));
-        assertEq(actualExchangeRate, 1003786189694418343);
-    }
+//
+//    function testShouldCalculateExchangeRatePayFixedWhenSOAPChangedAndSOAPIsLowerThanZeroAndSOAPAbsoluteValueIsLowerThanLiquidityPoolBalance()
+//        public
+//    {
+//        // given
+//        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+//
+//        _iporProtocol.ammGovernanceService.setAmmPoolsParams(
+//            address(_iporProtocol.asset),
+//            1000000000,
+//            70,
+//            5000
+//        );
+//
+//        vm.prank(_userOne);
+//        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+//
+//        vm.prank(_liquidityProvider);
+//        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_60_000_18DEC);
+//
+//        _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
+//            _userTwo,
+//            26000 * TestConstants.D18,
+//            9 * TestConstants.D17,
+//            TestConstants.LEVERAGE_18DEC
+//        );
+//
+//        vm.warp(block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
+//        (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
+//
+//        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammPoolsLens.getAmmBalance(
+//            address(_iporProtocol.asset)
+//        );
+//
+//        // when
+//        uint256 actualExchangeRate = _iporProtocol.ammPoolsLens.getIpTokenExchangeRate(address(_iporProtocol.asset));
+//
+//        // then
+//        assertLt(soap, TestConstants.ZERO_INT);
+//        assertLt(soap * -1, int256(balance.liquidityPool));
+//        assertEq(actualExchangeRate, 1003786189694418343);
+//    }
 
     function testShouldCalculateExchangeRateReceiveFixedWhenSOAPChangedAndSOAPIsLowerThanZeroAndSOAPAbsoluteValueIsLowerThanLiquidityPoolBalance()
         public

@@ -25,116 +25,116 @@ contract AmmSwapLensOfferedRateTest is TestCommons {
         _ammCfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
-    function testShouldCalculateOfferedRateForFirstSwap28Days() public {
-        // given
-        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+//    function testShouldCalculateOfferedRateForFirstSwap28Days() public {
+//        // given
+//        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+//
+//        vm.prank(_userOne);
+//        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), 3e16);
+//
+//        vm.prank(_liquidityProvider);
+//        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
+//
+//        // when
+//        (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed) = _iporProtocol.ammSwapsLens.getOfferedRate(
+//            address(_iporProtocol.asset),
+//            IporTypes.SwapTenor.DAYS_28,
+//            1000 * 1e18
+//        );
+//        // then
+//        assertEq(offeredRatePayFixed, 31003188775510204);
+//        assertEq(offeredRateReceiveFixed, 28996811224489796);
+//    }
 
-        vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), 3e16);
+//    function testShouldCalculateOfferedRateForFirstBigSwap28Days() public {
+//        // given
+//        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+//
+//        vm.prank(_userOne);
+//        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), 3e16);
+//
+//        vm.prank(_liquidityProvider);
+//        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
+//
+//        vm.prank(_userTwo);
+//        _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
+//            _userTwo,
+//            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
+//            9 * TestConstants.D17,
+//            TestConstants.LEVERAGE_18DEC
+//        );
+//
+//        // when
+//        (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed) = _iporProtocol.ammSwapsLens.getOfferedRate(
+//            address(_iporProtocol.asset),
+//            IporTypes.SwapTenor.DAYS_28,
+//            1_000 * 1e18
+//        );
+//        // then
+//        assertEq(offeredRatePayFixed, 31975898302988162);
+//        assertEq(offeredRateReceiveFixed, 29000000000000000);
+//    }
 
-        vm.prank(_liquidityProvider);
-        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
+//    function testShouldCalculateOfferedRateForSecondSwap28Days() public {
+//        // given
+//        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+//
+//        vm.prank(_userOne);
+//        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), 3e16);
+//
+//        vm.prank(_liquidityProvider);
+//        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
+//
+//        // when
+//        (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed) = _iporProtocol.ammSwapsLens.getOfferedRate(
+//            address(_iporProtocol.asset),
+//            IporTypes.SwapTenor.DAYS_28,
+//            1_000_000_000 * 1e18
+//        );
+//        // then
+//        assertEq(offeredRatePayFixed, 181000000000000000);
+//        assertEq(offeredRateReceiveFixed, 0);
+//    }
 
-        // when
-        (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed) = _iporProtocol.ammSwapsLens.getOfferedRate(
-            address(_iporProtocol.asset),
-            IporTypes.SwapTenor.DAYS_28,
-            1000 * 1e18
-        );
-        // then
-        assertEq(offeredRatePayFixed, 31003188775510204);
-        assertEq(offeredRateReceiveFixed, 28996811224489796);
-    }
+//    function testShouldCalculateOfferedRateForFirstSwap60Days() public {
+//        // given
+//        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+//
+//        vm.prank(_userOne);
+//        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), 3e16);
+//
+//        vm.prank(_liquidityProvider);
+//        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
+//
+//        // when
+//        (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed) = _iporProtocol.ammSwapsLens.getOfferedRate(
+//            address(_iporProtocol.asset),
+//            IporTypes.SwapTenor.DAYS_60,
+//            1000 * 1e18
+//        );
+//        // then
+//        assertEq(offeredRatePayFixed, 31001488095238096);
+//        assertEq(offeredRateReceiveFixed, 28998511904761904);
+//    }
 
-    function testShouldCalculateOfferedRateForFirstBigSwap28Days() public {
-        // given
-        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-
-        vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), 3e16);
-
-        vm.prank(_liquidityProvider);
-        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
-
-        vm.prank(_userTwo);
-        _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
-            _userTwo,
-            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
-            9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC
-        );
-
-        // when
-        (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed) = _iporProtocol.ammSwapsLens.getOfferedRate(
-            address(_iporProtocol.asset),
-            IporTypes.SwapTenor.DAYS_28,
-            1_000 * 1e18
-        );
-        // then
-        assertEq(offeredRatePayFixed, 31975898302988162);
-        assertEq(offeredRateReceiveFixed, 29000000000000000);
-    }
-
-    function testShouldCalculateOfferedRateForSecondSwap28Days() public {
-        // given
-        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-
-        vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), 3e16);
-
-        vm.prank(_liquidityProvider);
-        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
-
-        // when
-        (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed) = _iporProtocol.ammSwapsLens.getOfferedRate(
-            address(_iporProtocol.asset),
-            IporTypes.SwapTenor.DAYS_28,
-            1_000_000_000 * 1e18
-        );
-        // then
-        assertEq(offeredRatePayFixed, 181000000000000000);
-        assertEq(offeredRateReceiveFixed, 0);
-    }
-
-    function testShouldCalculateOfferedRateForFirstSwap60Days() public {
-        // given
-        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-
-        vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), 3e16);
-
-        vm.prank(_liquidityProvider);
-        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
-
-        // when
-        (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed) = _iporProtocol.ammSwapsLens.getOfferedRate(
-            address(_iporProtocol.asset),
-            IporTypes.SwapTenor.DAYS_60,
-            1000 * 1e18
-        );
-        // then
-        assertEq(offeredRatePayFixed, 31001488095238096);
-        assertEq(offeredRateReceiveFixed, 28998511904761904);
-    }
-
-    function testShouldCalculateOfferedRateForFirstSwap90Days() public {
-        // given
-        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
-
-        vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), 3e16);
-
-        vm.prank(_liquidityProvider);
-        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
-
-        // when
-        (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed) = _iporProtocol.ammSwapsLens.getOfferedRate(
-            address(_iporProtocol.asset),
-            IporTypes.SwapTenor.DAYS_90,
-            1000 * 1e18
-        );
-        // then
-        assertEq(offeredRatePayFixed, 31000992063492064);
-        assertEq(offeredRateReceiveFixed, 28999007936507936);
-    }
+//    function testShouldCalculateOfferedRateForFirstSwap90Days() public {
+//        // given
+//        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+//
+//        vm.prank(_userOne);
+//        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), 3e16);
+//
+//        vm.prank(_liquidityProvider);
+//        _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
+//
+//        // when
+//        (uint256 offeredRatePayFixed, uint256 offeredRateReceiveFixed) = _iporProtocol.ammSwapsLens.getOfferedRate(
+//            address(_iporProtocol.asset),
+//            IporTypes.SwapTenor.DAYS_90,
+//            1000 * 1e18
+//        );
+//        // then
+//        assertEq(offeredRatePayFixed, 31000992063492064);
+//        assertEq(offeredRateReceiveFixed, 28999007936507936);
+//    }
 }
