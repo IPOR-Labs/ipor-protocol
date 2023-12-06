@@ -105,7 +105,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
                 iporIndexValue: 0,
                 ibtPrice: 1000000000000000000,
                 ibtQuantity: 889658761023169200,
-                fixedInterestRate: 20000691543764546
+                fixedInterestRate: 20000115257294091
             })
         });
         //when
@@ -169,7 +169,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
                 iporIndexValue: 0,
                 ibtPrice: 1000000000000000000,
                 ibtQuantity: 889658761023169200,
-                fixedInterestRate: 20000691543764546
+                fixedInterestRate: 20000115257294091
             })
         });
         //when
@@ -238,7 +238,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
                 iporIndexValue: 0,
                 ibtPrice: 1000000000000000000,
                 ibtQuantity: 889658761023169200,
-                fixedInterestRate: 20000691543764546
+                fixedInterestRate: 20000115257294091
             })
         });
         //when
@@ -307,7 +307,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
                 iporIndexValue: 0,
                 ibtPrice: 1000000000000000000,
                 ibtQuantity: 889658761023169190,
-                fixedInterestRate: 20000691543764546
+                fixedInterestRate: 20000115257294091
             })
         });
         //when
@@ -376,7 +376,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
                 iporIndexValue: 0,
                 ibtPrice: 1000000000000000000,
                 ibtQuantity: 889658761023169200,
-                fixedInterestRate: 3694308456235454
+                fixedInterestRate: 3694884742705909
             })
         });
         //when
@@ -440,7 +440,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
                 iporIndexValue: 0,
                 ibtPrice: 1000000000000000000,
                 ibtQuantity: 889658761023169200,
-                fixedInterestRate: 3694308456235454
+                fixedInterestRate: 3694884742705909
             })
         });
         //when
@@ -509,7 +509,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
                 iporIndexValue: 0,
                 ibtPrice: 1000000000000000000,
                 ibtQuantity: 889658761023169200,
-                fixedInterestRate: 3694308456235454
+                fixedInterestRate: 3694884742705909
             })
         });
         //when
@@ -578,7 +578,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
                 iporIndexValue: 0,
                 ibtPrice: 1000000000000000000,
                 ibtQuantity: 889658761023169190,
-                fixedInterestRate: 3694308456235454
+                fixedInterestRate: 3694884742705909
             })
         });
         //when
@@ -650,7 +650,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
             asset: stETH,
             closeTimestamp: 1705051019,
             liquidator: liquidator,
-            transferredToBuyer: 85998372362982978,
+            transferredToBuyer: 85998456845642692,
             transferredToLiquidator: 1000000000000000
         });
 
@@ -720,7 +720,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
             asset: stETH,
             closeTimestamp: 1705051019,
             liquidator: liquidator,
-            transferredToBuyer: 89467111965879705,
+            transferredToBuyer: 89467196222394761,
             transferredToLiquidator: 1000000000000000
         });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
@@ -789,7 +789,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
             asset: stETH,
             closeTimestamp: 1705051019,
             liquidator: liquidator,
-            transferredToBuyer: 85998372362982978,
+            transferredToBuyer: 85998456845642692,
             transferredToLiquidator: 1000000000000000
         });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
@@ -858,7 +858,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
             asset: stETH,
             closeTimestamp: 1705051019,
             liquidator: liquidator,
-            transferredToBuyer: 89467111965879705,
+            transferredToBuyer: 89467196222394761,
             transferredToLiquidator: 1000000000000000
         });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
@@ -922,7 +922,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
             asset: stETH,
             closeTimestamp: 1705051019,
             liquidator: liquidator,
-            transferredToBuyer: 85998372362982978,
+            transferredToBuyer: 85998456845642692,
             transferredToLiquidator: 1000000000000000
         });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
@@ -986,7 +986,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
             asset: stETH,
             closeTimestamp: 1705051019,
             liquidator: liquidator,
-            transferredToBuyer: 89467111965879705,
+            transferredToBuyer: 89467196222394761,
             transferredToLiquidator: 1000000000000000
         });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
@@ -1055,7 +1055,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
             asset: stETH,
             closeTimestamp: 1705051019,
             liquidator: liquidator,
-            transferredToBuyer: 85998372362982977,
+            transferredToBuyer: 85998456845642691,
             transferredToLiquidator: 1000000000000000
         });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
@@ -1124,7 +1124,7 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
             asset: stETH,
             closeTimestamp: 1705051019,
             liquidator: liquidator,
-            transferredToBuyer: 89467111965879704,
+            transferredToBuyer: 89467196222394760,
             transferredToLiquidator: 1000000000000000
         });
         IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
