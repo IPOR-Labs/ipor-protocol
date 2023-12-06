@@ -7,7 +7,9 @@ import "../libraries/errors/IporErrors.sol";
 import "../libraries/IporContractValidator.sol";
 import "../libraries/AmmLib.sol";
 
+/// @title Lens contract only for pools: USDT, USDC, DAI.
 /// @dev It is not recommended to use lens contract directly, should be used only through IporProtocolRouter.
+/// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
 contract AmmPoolsLens is IAmmPoolsLens {
     using IporContractValidator for address;
     using AmmLib for AmmTypes.AmmPoolCoreModel;

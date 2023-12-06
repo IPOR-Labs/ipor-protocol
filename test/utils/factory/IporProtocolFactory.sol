@@ -17,7 +17,6 @@ import "../../utils/factory/IporOracleFactory.sol";
 import "../../../contracts/interfaces/IAmmSwapsLens.sol";
 import "../../../contracts/interfaces/IAmmPoolsLens.sol";
 import "../../../contracts/interfaces/IAmmCloseSwapLens.sol";
-import "../../../contracts/interfaces/IAmmCloseSwapLensStEth.sol";
 import "../../../contracts/interfaces/IAssetManagementLens.sol";
 import "../../../contracts/interfaces/IPowerTokenLens.sol";
 import "../../../contracts/interfaces/ILiquidityMiningLens.sol";

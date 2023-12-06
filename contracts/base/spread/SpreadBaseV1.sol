@@ -221,7 +221,7 @@ contract SpreadBaseV1 is IporOwnable, ISpreadBaseV1 {
     ) external override onlyOwner {
         uint256 length = timeWeightedNotionalMemories.length;
         for (uint256 i; i < length; ) {
-            SpreadStorageLibsBaseV1._checkTimeWeightedNotional(timeWeightedNotionalMemories[i].storageId);
+            SpreadStorageLibsBaseV1.checkTimeWeightedNotional(timeWeightedNotionalMemories[i].storageId);
             SpreadStorageLibsBaseV1.saveTimeWeightedNotionalForAssetAndTenor(
                 timeWeightedNotionalMemories[i].storageId,
                 timeWeightedNotionalMemories[i]

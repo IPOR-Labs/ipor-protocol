@@ -6,13 +6,11 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import "../../../interfaces/types/IporTypes.sol";
 import "../../../interfaces/types/AmmTypes.sol";
 import "../../../interfaces/IIporOracle.sol";
-import "../../../interfaces/IAmmTreasury.sol";
 import "../../../interfaces/IAmmCloseSwapService.sol";
 import "../../../libraries/math/IporMath.sol";
 import "../../../libraries/IporContractValidator.sol";
 import "../../../libraries/AmmLib.sol";
 import "../../interfaces/IAmmStorageBaseV1.sol";
-import "../../interfaces/IAmmTreasuryBaseV1.sol";
 import "../../types/AmmTypesBaseV1.sol";
 import "../../events/AmmEventsBaseV1.sol";
 import "../../../amm/libraries/types/AmmInternalTypes.sol";
@@ -356,12 +354,11 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
         AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     ) internal view returns (AmmInternalTypes.PnlValueStruct memory pnlValueStruct) {
         AmmTypes.SwapClosableStatus closableStatus;
-        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg = _getPoolConfiguration();
 
         (closableStatus, pnlValueStruct.swapUnwindRequired) = SwapCloseLogicLibBaseV1.getClosableStatusForSwap(
             AmmTypesBaseV1.ClosableSwapInput({
                 account: msg.sender,
-                asset: poolCfg.asset,
+                asset: asset,
                 closeTimestamp: closeTimestamp,
                 swapBuyer: swap.buyer,
                 swapOpenTimestamp: swap.openTimestamp,
@@ -369,14 +366,11 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
                 swapTenor: swap.tenor,
                 swapState: swap.state,
                 swapPnlValueToDate: swapPnlValueToDate,
-                minLiquidationThresholdToCloseBeforeMaturityByCommunity: poolCfg
-                    .minLiquidationThresholdToCloseBeforeMaturityByCommunity,
-                minLiquidationThresholdToCloseBeforeMaturityByBuyer: poolCfg
-                    .minLiquidationThresholdToCloseBeforeMaturityByBuyer,
-                timeBeforeMaturityAllowedToCloseSwapByCommunity: poolCfg
-                    .timeBeforeMaturityAllowedToCloseSwapByCommunity,
-                timeBeforeMaturityAllowedToCloseSwapByBuyer: poolCfg.timeBeforeMaturityAllowedToCloseSwapByBuyer,
-                timeAfterOpenAllowedToCloseSwapWithUnwinding: poolCfg.timeAfterOpenAllowedToCloseSwapWithUnwinding
+                minLiquidationThresholdToCloseBeforeMaturityByCommunity: minLiquidationThresholdToCloseBeforeMaturityByCommunity,
+                minLiquidationThresholdToCloseBeforeMaturityByBuyer: minLiquidationThresholdToCloseBeforeMaturityByBuyer,
+                timeBeforeMaturityAllowedToCloseSwapByCommunity: timeBeforeMaturityAllowedToCloseSwapByCommunity,
+                timeBeforeMaturityAllowedToCloseSwapByBuyer: timeBeforeMaturityAllowedToCloseSwapByBuyer,
+                timeAfterOpenAllowedToCloseSwapWithUnwinding: timeAfterOpenAllowedToCloseSwapWithUnwinding
             })
         );
 

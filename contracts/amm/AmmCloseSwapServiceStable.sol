@@ -12,7 +12,6 @@ import "../interfaces/IAmmCloseSwapLens.sol";
 import "../interfaces/IAmmCloseSwapService.sol";
 import "../base/amm/libraries/SwapEventsBaseV1.sol";
 import "../interfaces/IAmmCloseSwapServiceUsdt.sol";
-import "../libraries/errors/IporErrors.sol";
 import "../libraries/math/IporMath.sol";
 import "../libraries/IporContractValidator.sol";
 import "../libraries/AmmLib.sol";

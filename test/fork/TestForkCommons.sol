@@ -31,7 +31,7 @@ import "../../contracts/amm/AmmPoolsService.sol";
 import "../../contracts/amm-common/AmmGovernanceService.sol";
 import "../../contracts/amm/AmmStorage.sol";
 import "../../contracts/amm/AmmTreasury.sol";
-import "../../contracts/amm-eth/AmmTreasuryStEth.sol";
+
 import "../../contracts/amm-eth/AmmPoolsServiceStEth.sol";
 import "../../contracts/vault/strategies/StrategyDsrDai.sol";
 import "../../contracts/vault/AssetManagementDai.sol";
@@ -43,6 +43,7 @@ import "../../contracts/interfaces/IIpTokenV1.sol";
 import "../../contracts/amm-eth/interfaces/IWETH9.sol";
 import "../../contracts/amm-eth/interfaces/IStETH.sol";
 import "../../contracts/base/amm/AmmStorageBaseV1.sol";
+import "../../contracts/base/amm/AmmTreasuryBaseV1.sol";
 import "../../contracts/base/spread/SpreadBaseV1.sol";
 import "../../contracts/amm/spread/SpreadStorageService.sol";
 
@@ -469,10 +470,10 @@ contract TestForkCommons is Test {
     }
 
     function _upgradeAmmTreasuryStEth() private {
-        AmmTreasuryStEth newImplementation = new AmmTreasuryStEth(stETH, iporProtocolRouterProxy, ammStorageProxyStEth);
+        AmmTreasuryBaseV1 newImplementation = new AmmTreasuryBaseV1(stETH, iporProtocolRouterProxy, ammStorageProxyStEth);
 
         vm.prank(owner);
-        AmmTreasuryStEth(ammTreasuryProxyStEth).upgradeTo(address(newImplementation));
+        AmmTreasuryBaseV1(ammTreasuryProxyStEth).upgradeTo(address(newImplementation));
     }
 
     function _createAmmStorageStEth() private {
@@ -502,14 +503,7 @@ contract TestForkCommons is Test {
             });
 
         ammOpenSwapServiceStEth = address(
-            new AmmOpenSwapServiceStEth(
-                cfg,
-                iporOracleProxy,
-                messageSignerAddress,
-                iporProtocolRouterProxy,
-                wETH,
-                wstETH
-            )
+            new AmmOpenSwapServiceStEth(cfg, iporOracleProxy, messageSignerAddress, wETH, wstETH)
         );
     }
 
@@ -531,14 +525,7 @@ contract TestForkCommons is Test {
             });
 
         ammOpenSwapServiceStEth = address(
-            new AmmOpenSwapServiceStEth(
-                cfg,
-                iporOracleProxy,
-                messageSignerAddress,
-                iporProtocolRouterProxy,
-                wETH,
-                wstETH
-            )
+            new AmmOpenSwapServiceStEth(cfg, iporOracleProxy, messageSignerAddress, wETH, wstETH)
         );
     }
 

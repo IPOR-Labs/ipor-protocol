@@ -5,13 +5,13 @@ import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "forge-std/Test.sol";
 import "../mocks/EmptyRouterImplementation.sol";
 import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/amm-eth/AmmTreasuryStEth.sol";
 import "../../contracts/amm-eth/AmmPoolsServiceStEth.sol";
 import "../../contracts/amm-eth/AmmPoolsLensStEth.sol";
 import "../../contracts/interfaces/IAmmGovernanceLens.sol";
 import "../../contracts/amm-common/AmmGovernanceService.sol";
 import "../../contracts/router/IporProtocolRouter.sol";
 import "../../contracts/base/amm/AmmStorageBaseV1.sol";
+import "../../contracts/base/amm/AmmTreasuryBaseV1.sol";
 
 contract TestEthMarketCommons is Test {
     address internal defaultAnvilAddress = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
@@ -78,7 +78,7 @@ contract TestEthMarketCommons is Test {
 
     function _createDummyAmmTreasuryStEth() private {
         vm.prank(owner);
-        AmmTreasuryStEth impl = new AmmTreasuryStEth(stEth, iporProtocolRouter, defaultAnvilAddress);
+        AmmTreasuryBaseV1 impl = new AmmTreasuryBaseV1(stEth, iporProtocolRouter, defaultAnvilAddress);
         ERC1967Proxy proxy = _constructProxy(address(impl));
         ammTreasuryStEth = address(proxy);
     }
@@ -91,13 +91,13 @@ contract TestEthMarketCommons is Test {
     }
 
     function _upgradeAmmTreasuryStEth() private {
-        address impl = address(new AmmTreasuryStEth(stEth, iporProtocolRouter, ammStorageStEth));
-        AmmTreasuryStEth(ammTreasuryStEth).upgradeTo(impl);
+        address impl = address(new AmmTreasuryBaseV1(stEth, iporProtocolRouter, ammStorageStEth));
+        AmmTreasuryBaseV1(ammTreasuryStEth).upgradeTo(impl);
     }
 
     function _createAmmTreasuryStEth() private {
         vm.prank(owner);
-        AmmTreasuryStEth impl = new AmmTreasuryStEth(stEth, iporProtocolRouter, userOne);
+        AmmTreasuryBaseV1 impl = new AmmTreasuryBaseV1(stEth, iporProtocolRouter, userOne);
         ERC1967Proxy proxy = _constructProxy(address(impl));
         ammTreasuryStEth = address(proxy);
     }
