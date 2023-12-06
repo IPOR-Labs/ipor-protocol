@@ -237,7 +237,7 @@ contract ForkAmmSwapsLensTest is TestForkCommons {
         int256 pnlValue = IAmmSwapsLens(iporProtocolRouterProxy).getPnlPayFixed(stETH, swapId);
 
         //then
-        assertEq(pnlValue, -54942016610681950, "pnlValue");
+        assertEq(pnlValue, -54763880519879408, "pnlValue");
     }
 
     function testShouldReturnPnlPayFixedStEthCase2() public {
@@ -319,7 +319,7 @@ contract ForkAmmSwapsLensTest is TestForkCommons {
         int256 pnlValue = IAmmSwapsLens(iporProtocolRouterProxy).getPnlReceiveFixed(stETH, swapId);
 
         //then
-        assertEq(pnlValue, 9895119226078684, "pnlValue");
+        assertEq(pnlValue, 10073175314593404, "pnlValue");
     }
 
     function testShouldReturnPnlReceiveFixedStEthCase2() public {

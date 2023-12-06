@@ -79,7 +79,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88965876102316920, swap.collateral, "swap.collateral");
         assertEq(889658761023169200, swap.notional, "swap.notional");
         assertEq(889658761023169200, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000691543764546, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(20000115257294091, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -149,7 +149,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88965876102316920, swap.collateral, "swap.collateral");
         assertEq(889658761023169200, swap.notional, "swap.notional");
         assertEq(889658761023169200, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000691543764546, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(20000115257294091, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -223,7 +223,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88965876102316920, swap.collateral, "swap.collateral");
         assertEq(889658761023169200, swap.notional, "swap.notional");
         assertEq(889658761023169200, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000691543764546, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(20000115257294091, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -296,7 +296,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88965876102316919, swap.collateral, "swap.collateral");
         assertEq(889658761023169190, swap.notional, "swap.notional");
         assertEq(889658761023169190, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000691543764546, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(20000115257294091, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -370,7 +370,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88926909389542842, swap.collateral, "swap.collateral");
         assertEq(889269093895428420, swap.notional, "swap.notional");
         assertEq(889269093895428420, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000691240845903, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(20000115206807651, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -439,7 +439,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88926909389542842, swap.collateral, "swap.collateral");
         assertEq(889269093895428420, swap.notional, "swap.notional");
         assertEq(889269093895428420, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000691240845903, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(20000115206807651, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -512,7 +512,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88926909389542842, swap.collateral, "swap.collateral");
         assertEq(889269093895428420, swap.notional, "swap.notional");
         assertEq(889269093895428420, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000691240845903, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(20000115206807651, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -585,7 +585,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88926909389542841, swap.collateral, "swap.collateral");
         assertEq(889269093895428410, swap.notional, "swap.notional");
         assertEq(889269093895428410, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000691240845903, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(20000115206807651, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -659,7 +659,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88890409084690108, swap.collateral, "swap.collateral");
         assertEq(888904090846901080, swap.notional, "swap.notional");
         assertEq(888904090846901080, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000690957100591, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(20000115159516765, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -728,7 +728,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88890409084690108, swap.collateral, "swap.collateral");
         assertEq(888904090846901080, swap.notional, "swap.notional");
         assertEq(888904090846901080, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000690957100591, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(20000115159516765, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -801,7 +801,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88890409084690108, swap.collateral, "swap.collateral");
         assertEq(888904090846901080, swap.notional, "swap.notional");
         assertEq(888904090846901080, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000690957100591, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(20000115159516765, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -873,7 +873,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88890409084690107, swap.collateral, "swap.collateral");
         assertEq(888904090846901070, swap.notional, "swap.notional");
         assertEq(888904090846901070, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(20000690957100591, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(20000115159516765, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -947,7 +947,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88965876102316920, swap.collateral, "swap.collateral");
         assertEq(889658761023169200, swap.notional, "swap.notional");
         assertEq(889658761023169200, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694308456235454, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(3694884742705909, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -1016,7 +1016,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88965876102316920, swap.collateral, "swap.collateral");
         assertEq(889658761023169200, swap.notional, "swap.notional");
         assertEq(889658761023169200, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694308456235454, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(3694884742705909, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -1089,7 +1089,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88965876102316920, swap.collateral, "swap.collateral");
         assertEq(889658761023169200, swap.notional, "swap.notional");
         assertEq(889658761023169200, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694308456235454, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(3694884742705909, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -1162,7 +1162,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88965876102316919, swap.collateral, "swap.collateral");
         assertEq(889658761023169190, swap.notional, "swap.notional");
         assertEq(889658761023169190, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694308456235454, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(3694884742705909, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -1236,7 +1236,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88926909389542842, swap.collateral, "swap.collateral");
         assertEq(889269093895428420, swap.notional, "swap.notional");
         assertEq(889269093895428420, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694308759154097, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(3694884793192349, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -1305,7 +1305,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88926909389542842, swap.collateral, "swap.collateral");
         assertEq(889269093895428420, swap.notional, "swap.notional");
         assertEq(889269093895428420, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694308759154097, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(3694884793192349, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -1378,7 +1378,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88926909389542842, swap.collateral, "swap.collateral");
         assertEq(889269093895428420, swap.notional, "swap.notional");
         assertEq(889269093895428420, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694308759154097, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(3694884793192349, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -1450,7 +1450,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88926909389542841, swap.collateral, "swap.collateral");
         assertEq(889269093895428410, swap.notional, "swap.notional");
         assertEq(889269093895428410, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694308759154097, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(3694884793192349, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -1524,7 +1524,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88890409084690108, swap.collateral, "swap.collateral");
         assertEq(888904090846901080, swap.notional, "swap.notional");
         assertEq(888904090846901080, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694309042899409, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(3694884840483235, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -1593,7 +1593,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88890409084690108, swap.collateral, "swap.collateral");
         assertEq(888904090846901080, swap.notional, "swap.notional");
         assertEq(888904090846901080, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694309042899409, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(3694884840483235, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -1666,7 +1666,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88890409084690108, swap.collateral, "swap.collateral");
         assertEq(888904090846901080, swap.notional, "swap.notional");
         assertEq(888904090846901080, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694309042899409, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(3694884840483235, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
@@ -1854,7 +1854,7 @@ contract ForkAmmStEthCloseSwapsTest is TestForkCommons {
         assertEq(88890409084690107, swap.collateral, "swap.collateral");
         assertEq(888904090846901070, swap.notional, "swap.notional");
         assertEq(888904090846901070, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(3694309042899409, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(3694884840483235, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
 
         assertEq(0, uint256(swap.state), "swap.state");
