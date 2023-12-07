@@ -2700,7 +2700,13 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         //when
         vm.prank(user);
         vm.expectRevert(
-            abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector,IporErrors.SENDER_ASSET_BALANCE_TOO_LOW, wstETH, totalAmount / 2, totalAmount)
+            abi.encodeWithSelector(
+                IporErrors.InputAssetBalanceTooLow.selector,
+                IporErrors.SENDER_ASSET_BALANCE_TOO_LOW,
+                wstETH,
+                totalAmount / 2,
+                totalAmount
+            )
         );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
             user,
@@ -3324,5 +3330,73 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         );
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "exchangeRate should not change");
+    }
+
+    function testShouldOpenPositionStEthForStEth28daysPayFixedWhenRouterHasEth() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+
+        uint256 totalAmount = 1e17;
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            messageSignerPrivateKey
+        );
+
+        uint256 ammTreasuryStEthErc20BalanceBefore = ERC20(stETH).balanceOf(ammTreasuryProxyStEth);
+
+        uint256 userEthBalanceBefore = user.balance;
+
+        //send eth to router:
+        vm.prank(user);
+        (bool success, ) = iporProtocolRouterProxy.call{value: 1e18}("");
+
+        //when
+        vm.prank(user);
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
+            user,
+            stETH,
+            totalAmount,
+            1e18,
+            10e18,
+            riskIndicatorsInputs
+        );
+
+        //then
+        uint256 userEthBalanceAfter = user.balance;
+
+        AmmTypesBaseV1.Swap memory swap = AmmStorageBaseV1(ammStorageProxyStEth).getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            swapId
+        );
+        /// @dev checking swap via Router
+        assertEq(swapId, swap.id, "swapId");
+        assertEq(user, swap.buyer, "swap.buyer");
+        assertEq(1, uint256(swap.state), "swap.state");
+
+        assertEq(block.timestamp, swap.openTimestamp, "swap.openTimestamp");
+        assertEq(88965876102316920, swap.collateral, "swap.collateral");
+        assertEq(889658761023169200, swap.notional, "swap.notional");
+        assertEq(889658761023169200, swap.ibtQuantity, "swap.ibtQuantity");
+        assertEq(20000115257294091, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(1000000000000000, swap.wadLiquidationDepositAmount, "swap.wadLiquidationDepositAmount");
+
+        assertEq(userEthBalanceBefore, userEthBalanceAfter, "user balance of Eth should be the same");
     }
 }

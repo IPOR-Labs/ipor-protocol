@@ -373,6 +373,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
     /// This function does not return to its internal call site, it will return directly to the external caller.
     function _delegate(address implementation) private {
         bytes memory result;
+
+        uint256 originalReturnDataSize;
         // solhint-disable-next-line no-inline-assembly
         assembly {
             // Copy msg.data. We take full control of memory in this inline assembly
@@ -383,22 +385,24 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
             // Call the implementation.
             // out and outsize are 0 because we don't know the size yet.
             result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)
+
+            originalReturnDataSize := returndatasize()
+
+            // Copy the returned data.
+            returndatacopy(0, 0, originalReturnDataSize)
         }
 
         _returnBackRemainingEth();
         _nonReentrantAfter();
 
         assembly {
-            // Copy the returned data.
-            returndatacopy(0, 0, returndatasize())
-
             switch result
             // delegatecall returns 0 on error.
             case 0 {
-                revert(0, returndatasize())
+                revert(0, originalReturnDataSize)
             }
             default {
-                return(0, returndatasize())
+                return(0, originalReturnDataSize)
             }
         }
     }
