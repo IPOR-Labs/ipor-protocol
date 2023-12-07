@@ -12,8 +12,6 @@ import "../interfaces/IProxyImplementation.sol";
 import "../interfaces/IIporContractCommonGov.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/IporOracleErrors.sol";
-import "../libraries/Constants.sol";
-import "../libraries/math/IporMath.sol";
 import "../libraries/math/InterestRates.sol";
 import "../security/PauseManager.sol";
 import "../security/IporOwnableUpgradeable.sol";

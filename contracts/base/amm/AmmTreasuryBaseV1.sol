@@ -15,7 +15,6 @@ import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/IporContractValidator.sol";
 import "../../security/PauseManager.sol";
 import "../../security/IporOwnableUpgradeable.sol";
-import "../types/StorageTypesBaseV1.sol";
 
 contract AmmTreasuryBaseV1 is
     Initializable,

@@ -14,7 +14,7 @@ contract SpreadStorageService is ISpreadStorageService {
     ) external override {
         uint256 length = timeWeightedNotionalMemories.length;
         for (uint256 i; i < length; ) {
-            SpreadStorageLibs._checkTimeWeightedNotional(timeWeightedNotionalMemories[i].storageId);
+            SpreadStorageLibs.checkTimeWeightedNotional(timeWeightedNotionalMemories[i].storageId);
             SpreadStorageLibs.saveTimeWeightedNotionalForAssetAndTenor(
                 timeWeightedNotionalMemories[i].storageId,
                 timeWeightedNotionalMemories[i]

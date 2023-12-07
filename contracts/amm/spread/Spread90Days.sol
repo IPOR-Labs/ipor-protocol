@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "../../amm/spread/ISpread90Days.sol";
 import "../../amm/spread/ISpread90DaysLens.sol";
 import "../../libraries/errors/IporOracleErrors.sol";
-import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/IporContractValidator.sol";
 import "../../amm/spread/DemandSpreadLibs.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";

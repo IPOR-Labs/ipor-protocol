@@ -10,7 +10,6 @@ import "../interfaces/IAmmStorage.sol";
 import "../interfaces/IAssetManagement.sol";
 import "./errors/IporErrors.sol";
 import "./errors/AmmErrors.sol";
-import "./Constants.sol";
 import "./math/IporMath.sol";
 import "../amm/libraries/SoapIndicatorLogic.sol";
 

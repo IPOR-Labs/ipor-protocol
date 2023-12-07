@@ -2,7 +2,6 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 import "../interfaces/types/IporTypes.sol";
 import "../interfaces/types/AmmTypes.sol";
@@ -21,7 +20,7 @@ import "../base/amm/services/AmmCloseSwapServiceBaseV1.sol";
 contract AmmCloseSwapLens is IAmmCloseSwapLens {
     using Address for address;
     using IporContractValidator for address;
-using SwapLogicBaseV1 for AmmTypesBaseV1.Swap;
+    using SwapLogicBaseV1 for AmmTypesBaseV1.Swap;
 
     address public immutable usdt;
     address public immutable usdc;
@@ -32,9 +31,13 @@ using SwapLogicBaseV1 for AmmTypesBaseV1.Swap;
     address public immutable messageSigner;
     address public immutable spreadRouter;
 
+    /// @dev Notice! Don't use following service to get data from storage, use only to get configuration stored in immutable fields.
     address public immutable closeSwapServiceUsdt;
+    /// @dev Notice! Don't use following service to get data from storage, use only to get configuration stored in immutable fields.
     address public immutable closeSwapServiceUsdc;
+    /// @dev Notice! Don't use following service to get data from storage, use only to get configuration stored in immutable fields.
     address public immutable closeSwapServiceDai;
+    /// @dev Notice! Don't use following service to get data from storage, use only to get configuration stored in immutable fields.
     address public immutable closeSwapServiceStEth;
 
     constructor(

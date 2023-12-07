@@ -25,7 +25,7 @@ library SpreadStorageLibsBaseV1 {
         StorageId timeWeightedNotionalStorageId,
         SpreadTypesBaseV1.TimeWeightedNotionalMemory memory timeWeightedNotional
     ) internal {
-        _checkTimeWeightedNotional(timeWeightedNotionalStorageId);
+        checkTimeWeightedNotional(timeWeightedNotionalStorageId);
 
         uint256 timeWeightedNotionalPayFixedTemp;
         uint256 timeWeightedNotionalReceiveFixedTemp;
@@ -59,7 +59,7 @@ library SpreadStorageLibsBaseV1 {
     function getTimeWeightedNotionalForAssetAndTenor(
         StorageId timeWeightedNotionalStorageId
     ) internal view returns (SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotional28Days) {
-        _checkTimeWeightedNotional(timeWeightedNotionalStorageId);
+        checkTimeWeightedNotional(timeWeightedNotionalStorageId);
 
         uint256 timeWeightedNotionalPayFixed;
         uint256 lastUpdateTimePayFixed;
@@ -100,16 +100,16 @@ library SpreadStorageLibsBaseV1 {
         keys[2] = "TimeWeightedNotional90Days";
     }
 
-    function _getStorageSlot(StorageId storageId) internal pure returns (uint256 slot) {
-        slot = uint256(storageId) + STORAGE_SLOT_BASE;
-    }
-
-    function _checkTimeWeightedNotional(StorageId storageId) internal pure {
+    function checkTimeWeightedNotional(StorageId storageId) internal pure {
         require(
             storageId == StorageId.TimeWeightedNotional28Days ||
                 storageId == StorageId.TimeWeightedNotional60Days ||
                 storageId == StorageId.TimeWeightedNotional90Days,
             AmmErrors.STORAGE_ID_IS_NOT_TIME_WEIGHTED_NOTIONAL
         );
+    }
+
+    function _getStorageSlot(StorageId storageId) private pure returns (uint256 slot) {
+        slot = uint256(storageId) + STORAGE_SLOT_BASE;
     }
 }

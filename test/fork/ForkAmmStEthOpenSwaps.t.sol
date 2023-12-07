@@ -2700,7 +2700,13 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         //when
         vm.prank(user);
         vm.expectRevert(
-            abi.encodeWithSelector(IporErrors.InputAssetBalanceTooLow.selector,IporErrors.SENDER_ASSET_BALANCE_TOO_LOW, wstETH, totalAmount / 2, totalAmount)
+            abi.encodeWithSelector(
+                IporErrors.InputAssetBalanceTooLow.selector,
+                IporErrors.SENDER_ASSET_BALANCE_TOO_LOW,
+                wstETH,
+                totalAmount / 2,
+                totalAmount
+            )
         );
         IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed28daysStEth(
             user,
@@ -3325,4 +3331,5 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "exchangeRate should not change");
     }
+
 }

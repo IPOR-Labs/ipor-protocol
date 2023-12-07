@@ -10,11 +10,11 @@ import "./interfaces/IAmmPoolsServiceStEth.sol";
 import "../base/amm/services/AmmOpenSwapServiceBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
+/// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
 contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServiceStEth {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using IporContractValidator for address;
 
-    address public immutable iporProtocolRouter;
     address public immutable wETH;
     address public immutable wstETH;
 
@@ -30,11 +30,9 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServic
         AmmTypesBaseV1.AmmOpenSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput,
         address messageSignerInput,
-        address iporProtocolRouterInput,
         address wETHInput,
         address wstETHInput
     ) AmmOpenSwapServiceBaseV1(poolCfg, iporOracleInput, messageSignerInput) {
-        iporProtocolRouter = iporProtocolRouterInput.checkAddress();
         wETH = wETHInput.checkAddress();
         wstETH = wstETHInput.checkAddress();
     }
@@ -181,7 +179,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServic
     }
 
     function _validateInputAsset(address inputAsset, uint256 inputAssetTotalAmount) internal view override {
-        if (inputAssetTotalAmount <= 0) {
+        if (inputAssetTotalAmount == 0) {
             revert IporErrors.InputAssetTotalAmountTooLow(
                 IporErrors.SENDER_ASSET_BALANCE_TOO_LOW,
                 inputAssetTotalAmount
@@ -222,14 +220,11 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServic
         uint256 assetTotalAmount
     ) internal override {
         if (inputAsset == ETH_ADDRESS) {
-            if (msg.value < inputAssetTotalAmount) {
-                revert IporErrors.WrongAmount("msg.value", msg.value);
-            }
             _submitEth(inputAssetTotalAmount);
         } else if (inputAsset == asset) {
             IERC20Upgradeable(inputAsset).safeTransferFrom(msg.sender, ammTreasury, inputAssetTotalAmount);
         } else if (inputAsset == wETH) {
-            IERC20Upgradeable(wETH).safeTransferFrom(msg.sender, iporProtocolRouter, inputAssetTotalAmount);
+            IERC20Upgradeable(wETH).safeTransferFrom(msg.sender, address(this), inputAssetTotalAmount);
 
             /// @dev swap in relation 1:1 wETH -> ETH
             IWETH9(wETH).withdraw(inputAssetTotalAmount);
@@ -246,10 +241,10 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServic
         }
     }
 
-    function _submitEth(uint256 totalAmount) internal {
+    function _submitEth(uint256 totalAmountEth) internal {
         /// @dev _asset = stETH
         /// @dev ETH -> stETH
-        try IStETH(asset).submit{value: totalAmount}(address(0)) {
+        try IStETH(asset).submit{value: totalAmountEth}(address(0)) {
             uint256 stEthAmount = IStETH(asset).balanceOf(address(this));
 
             if (stEthAmount > 0) {
@@ -257,7 +252,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServic
             }
         } catch {
             revert IAmmPoolsServiceStEth.StEthSubmitFailed({
-                amount: totalAmount,
+                amount: totalAmountEth,
                 errorCode: AmmErrors.STETH_SUBMIT_FAILED
             });
         }

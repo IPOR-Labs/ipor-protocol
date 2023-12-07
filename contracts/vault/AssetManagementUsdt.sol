@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "../libraries/errors/AssetManagementErrors.sol";
-
 import "./AssetManagement.sol";
 
 contract AssetManagementUsdt is AssetManagement {

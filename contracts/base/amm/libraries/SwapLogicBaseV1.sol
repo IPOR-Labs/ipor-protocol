@@ -6,8 +6,6 @@ import "../../../libraries/math/IporMath.sol";
 import "../../../libraries/math/InterestRates.sol";
 import "../../../libraries/errors/AmmErrors.sol";
 import "../../../interfaces/types/AmmTypes.sol";
-import "../../../security/OwnerManager.sol";
-import "../../../governance/AmmConfigurationManager.sol";
 import "../../../libraries/RiskManagementLogic.sol";
 import "../../types/AmmTypesBaseV1.sol";
 
