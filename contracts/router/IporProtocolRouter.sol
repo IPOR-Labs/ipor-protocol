@@ -372,9 +372,9 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
     /// @dev Delegates the current call to `implementation`.
     /// This function does not return to its internal call site, it will return directly to the external caller.
     function _delegate(address implementation) private {
-        bytes memory result;
+        bytes memory delegateCallResult;
+        uint256 delegateCallReturnDataSize;
 
-        uint256 originalReturnDataSize;
         // solhint-disable-next-line no-inline-assembly
         assembly {
             // Copy msg.data. We take full control of memory in this inline assembly
@@ -384,25 +384,25 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
 
             // Call the implementation.
             // out and outsize are 0 because we don't know the size yet.
-            result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)
+            delegateCallResult := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)
 
-            originalReturnDataSize := returndatasize()
+            delegateCallReturnDataSize := returndatasize()
 
-            // Copy the returned data.
-            returndatacopy(0, 0, originalReturnDataSize)
+            /// @dev Copy the returned data from delegatecall.
+            returndatacopy(0, 0, delegateCallReturnDataSize)
         }
 
         _returnBackRemainingEth();
         _nonReentrantAfter();
 
         assembly {
-            switch result
-            // delegatecall returns 0 on error.
+            switch delegateCallResult
+            ///m @dev delegatecall returns 0 on error.
             case 0 {
-                revert(0, originalReturnDataSize)
+                revert(0, delegateCallReturnDataSize)
             }
             default {
-                return(0, originalReturnDataSize)
+                return(0, delegateCallReturnDataSize)
             }
         }
     }
@@ -411,10 +411,13 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         uint256 routerEthBalance = address(this).balance;
 
         if (routerEthBalance > 0) {
-            (bool success, ) = msg.sender.call{value: routerEthBalance}("");
+            /// @dev if view method then return back ETH is skipped
+            if (StorageLib.getReentrancyStatus().value == _ENTERED) {
+                (bool success, ) = msg.sender.call{value: routerEthBalance}("");
 
-            if (!success) {
-                revert(IporErrors.ROUTER_RETURN_BACK_ETH_FAILED);
+                if (!success) {
+                    revert(IporErrors.ROUTER_RETURN_BACK_ETH_FAILED);
+                }
             }
         }
     }

@@ -745,7 +745,7 @@ contract TestForkCommons is Test {
         uint256 tenor,
         uint256 direction,
         uint256 privateKey
-    ) internal view returns (bytes memory) {
+    ) internal pure returns (bytes memory) {
         // create digest: keccak256 gives us the first 32bytes after doing the hash
         // so this is always 32 bytes.
         bytes32 digest = keccak256(
@@ -773,7 +773,7 @@ contract TestForkCommons is Test {
 
     function _prepareCloseSwapRiskIndicators(
         IporTypes.SwapTenor tenor
-    ) internal returns (AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs) {
+    ) internal view returns (AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs) {
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputsPayFixed = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
             maxCollateralRatioPerLeg: 25000000000000000,
@@ -820,7 +820,7 @@ contract TestForkCommons is Test {
     function getIndexToUpdate(
         address asset,
         uint indexValue
-    ) internal returns (IIporOracle.UpdateIndexParams[] memory) {
+    ) internal pure returns (IIporOracle.UpdateIndexParams[] memory) {
         IIporOracle.UpdateIndexParams[] memory updateIndexParams = new IIporOracle.UpdateIndexParams[](1);
         updateIndexParams[0] = IIporOracle.UpdateIndexParams({
             asset: asset,

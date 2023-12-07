@@ -160,7 +160,7 @@ contract TestCommons is Test {
     function getIndexToUpdate(
         address asset,
         uint indexValue
-    ) internal returns (IIporOracle.UpdateIndexParams[] memory) {
+    ) internal pure returns (IIporOracle.UpdateIndexParams[] memory) {
         IIporOracle.UpdateIndexParams[] memory updateIndexParams = new IIporOracle.UpdateIndexParams[](1);
         updateIndexParams[0] = IIporOracle.UpdateIndexParams({
             asset: asset,
