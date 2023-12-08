@@ -186,5 +186,8 @@ library AmmTypesBaseV1 {
         /// this ballance is fed by part of the opening fee appointed by the DAO. For more information refer to the documentation:
         /// https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/ipor-swaps#fees
         uint256 treasury;
+        /// @notice Sum of all liquidation deposits for all opened swaps.
+        /// @dev Value represented in 18 decimals.
+        uint256 totalLiquidationDepositBalance;
     }
 }

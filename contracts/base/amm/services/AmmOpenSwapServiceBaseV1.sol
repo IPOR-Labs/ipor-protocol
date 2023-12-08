@@ -48,7 +48,7 @@ abstract contract AmmOpenSwapServiceBaseV1 {
     /// @dev Opening fee treasury portion rate, represented in 18 decimals
     uint256 public immutable openingFeeTreasuryPortionRate;
 
-    struct Context {
+    struct ContextStruct {
         /// @dev asset which user enters to open swap, can be different than underlying asset but have to be in 1:1 price relation with underlying asset
         address inputAsset;
         address beneficiary;
@@ -92,7 +92,7 @@ abstract contract AmmOpenSwapServiceBaseV1 {
         _validateInputAsset(inputAsset, inputAssetTotalAmount);
         return
             _openSwapPayFixedInternal(
-                Context({inputAsset: inputAsset, beneficiary: beneficiary, tenor: tenor}),
+                ContextStruct({inputAsset: inputAsset, beneficiary: beneficiary, tenor: tenor}),
                 inputAssetTotalAmount,
                 acceptableFixedInterestRate,
                 leverage,
@@ -118,7 +118,7 @@ abstract contract AmmOpenSwapServiceBaseV1 {
         _validateInputAsset(inputAsset, inputAssetTotalAmount);
         return
             _openSwapReceiveFixedInternal(
-                Context({inputAsset: inputAsset, beneficiary: beneficiary, tenor: tenor}),
+                ContextStruct({inputAsset: inputAsset, beneficiary: beneficiary, tenor: tenor}),
                 inputAssetTotalAmount,
                 acceptableFixedInterestRate,
                 leverage,
@@ -132,7 +132,7 @@ abstract contract AmmOpenSwapServiceBaseV1 {
     }
 
     function _openSwapPayFixedInternal(
-        Context memory ctx,
+        ContextStruct memory ctx,
         uint256 inputAssetTotalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage,
@@ -224,7 +224,7 @@ abstract contract AmmOpenSwapServiceBaseV1 {
     }
 
     function _openSwapReceiveFixedInternal(
-        Context memory ctx,
+        ContextStruct memory ctx,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage,
@@ -345,7 +345,7 @@ abstract contract AmmOpenSwapServiceBaseV1 {
     ) internal view virtual returns (uint256);
 
     function _beforeOpenSwap(
-        Context memory ctx,
+        ContextStruct memory ctx,
         uint256 openTimestamp,
         uint256 inputAssetTotalAmount,
         uint256 leverage

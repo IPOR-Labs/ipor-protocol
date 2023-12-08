@@ -30,7 +30,9 @@ contract AmmStorageBaseV1 is
     using SafeCast for int256;
     using SoapIndicatorRebalanceLogic for AmmStorageTypes.SoapIndicators;
 
-    int256 private constant INTEREST_THRESHOLD = -1e18;
+    /// @dev to achieve 18 decimals precision we multiply by 1e12 because for stETH pool liquidationDepositAmount is represented in 6 decimals in storage.
+    /// @dev in structure AmmTypes.NewSwap liquidationDepositAmount is represented in 6 decimals for stETH swaps.
+    uint256 private constant _DECIMALS_OFFSET_LIQUIDATION_DEPOSIT = 1e12;
 
     address public immutable iporProtocolRouter;
 
@@ -44,6 +46,8 @@ contract AmmStorageBaseV1 is
 
     mapping(IporTypes.SwapTenor => AmmInternalTypes.OpenSwapList) private _openedSwapsPayFixed;
     mapping(IporTypes.SwapTenor => AmmInternalTypes.OpenSwapList) private _openedSwapsReceiveFixed;
+
+    uint128 internal totalLiquidationDepositBalance;
 
     modifier onlyRouter() {
         if (msg.sender != iporProtocolRouter) {
@@ -88,7 +92,8 @@ contract AmmStorageBaseV1 is
                 totalCollateralPayFixed: balance.totalCollateralPayFixed,
                 totalCollateralReceiveFixed: balance.totalCollateralReceiveFixed,
                 iporPublicationFee: balance.iporPublicationFee,
-                treasury: balance.treasury
+                treasury: balance.treasury,
+                totalLiquidationDepositBalance: totalLiquidationDepositBalance
             });
     }
 
@@ -129,8 +134,8 @@ contract AmmStorageBaseV1 is
                 notional: swap.notional,
                 ibtQuantity: swap.ibtQuantity,
                 fixedInterestRate: swap.fixedInterestRate,
-                /// @dev to achieve 18 decimals precision we multiply by 1e12 because for stETH pool liquidationDepositAmount is represented in 6 decimals in storage.
-                wadLiquidationDepositAmount: uint256(swap.liquidationDepositAmount) * 1e12,
+                wadLiquidationDepositAmount: uint256(swap.liquidationDepositAmount) *
+                    _DECIMALS_OFFSET_LIQUIDATION_DEPOSIT,
                 state: swap.state
             });
     }
@@ -208,12 +213,7 @@ contract AmmStorageBaseV1 is
         uint256 cfgIporPublicationFee
     ) external override onlyRouter returns (uint256) {
         uint256 id = _updateSwapsWhenOpen(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, newSwap);
-        _updateBalancesWhenOpenSwapPayFixed(
-            newSwap.collateral,
-            newSwap.openingFeeLPAmount,
-            newSwap.openingFeeTreasuryAmount,
-            cfgIporPublicationFee
-        );
+        _updateBalancesWhenOpenSwapPayFixed(newSwap, cfgIporPublicationFee);
 
         _updateSoapIndicatorsWhenOpenSwapPayFixed(
             newSwap.openTimestamp,
@@ -230,12 +230,7 @@ contract AmmStorageBaseV1 is
         uint256 cfgIporPublicationFee
     ) external override onlyRouter returns (uint256) {
         uint256 id = _updateSwapsWhenOpen(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, newSwap);
-        _updateBalancesWhenOpenSwapReceiveFixed(
-            newSwap.collateral,
-            newSwap.openingFeeLPAmount,
-            newSwap.openingFeeTreasuryAmount,
-            cfgIporPublicationFee
-        );
+        _updateBalancesWhenOpenSwapReceiveFixed(newSwap, cfgIporPublicationFee);
         _updateSoapIndicatorsWhenOpenSwapReceiveFixed(
             newSwap.openTimestamp,
             newSwap.notional,
@@ -359,8 +354,7 @@ contract AmmStorageBaseV1 is
                 swap.notional,
                 swap.ibtQuantity,
                 swap.fixedInterestRate,
-                /// @dev to achieve 18 decimals precision we multiply by 1e12 because for stETH pool liquidationDepositAmount is represented in 6 decimals in storage.
-                uint256(swap.liquidationDepositAmount) * 1e12,
+                uint256(swap.liquidationDepositAmount) * _DECIMALS_OFFSET_LIQUIDATION_DEPOSIT,
                 swaps[id].state
             );
             unchecked {
@@ -371,25 +365,27 @@ contract AmmStorageBaseV1 is
     }
 
     function _updateBalancesWhenOpenSwapPayFixed(
-        uint256 collateral,
-        uint256 openingFeeLPAmount,
-        uint256 openingFeeTreasuryAmount,
+        AmmTypes.NewSwap memory newSwap,
         uint256 cfgIporPublicationFee
     ) internal {
-        _balance.totalCollateralPayFixed = _balance.totalCollateralPayFixed + collateral.toUint128();
+        _balance.totalCollateralPayFixed = _balance.totalCollateralPayFixed + newSwap.collateral.toUint128();
         _balance.iporPublicationFee = _balance.iporPublicationFee + cfgIporPublicationFee.toUint128();
-        _balance.treasury = _balance.treasury + openingFeeTreasuryAmount.toUint128();
+        _balance.treasury = _balance.treasury + newSwap.openingFeeTreasuryAmount.toUint128();
+        totalLiquidationDepositBalance =
+            totalLiquidationDepositBalance +
+            (newSwap.liquidationDepositAmount * _DECIMALS_OFFSET_LIQUIDATION_DEPOSIT).toUint128();
     }
 
     function _updateBalancesWhenOpenSwapReceiveFixed(
-        uint256 collateral,
-        uint256 openingFeeLPAmount,
-        uint256 openingFeeTreasuryAmount,
+        AmmTypes.NewSwap memory newSwap,
         uint256 cfgIporPublicationFee
     ) internal {
-        _balance.totalCollateralReceiveFixed = _balance.totalCollateralReceiveFixed + collateral.toUint128();
+        _balance.totalCollateralReceiveFixed = _balance.totalCollateralReceiveFixed + newSwap.collateral.toUint128();
         _balance.iporPublicationFee = _balance.iporPublicationFee + cfgIporPublicationFee.toUint128();
-        _balance.treasury = _balance.treasury + openingFeeTreasuryAmount.toUint128();
+        _balance.treasury = _balance.treasury + newSwap.openingFeeTreasuryAmount.toUint128();
+        totalLiquidationDepositBalance =
+            totalLiquidationDepositBalance +
+            (newSwap.liquidationDepositAmount * _DECIMALS_OFFSET_LIQUIDATION_DEPOSIT).toUint128();
     }
 
     function _updateBalancesWhenCloseSwapPayFixed(
@@ -400,6 +396,7 @@ contract AmmStorageBaseV1 is
     ) internal {
         _balance.totalCollateralPayFixed = _balance.totalCollateralPayFixed - swap.collateral.toUint128();
         _balance.treasury = _balance.treasury + swapUnwindFeeTreasuryAmount.toUint128();
+        totalLiquidationDepositBalance = totalLiquidationDepositBalance - swap.wadLiquidationDepositAmount.toUint128();
     }
 
     function _updateBalancesWhenCloseSwapReceiveFixed(
@@ -410,6 +407,7 @@ contract AmmStorageBaseV1 is
     ) internal {
         _balance.totalCollateralReceiveFixed = _balance.totalCollateralReceiveFixed - swap.collateral.toUint128();
         _balance.treasury = _balance.treasury + swapUnwindFeeTreasuryAmount.toUint128();
+        totalLiquidationDepositBalance = totalLiquidationDepositBalance - swap.wadLiquidationDepositAmount.toUint128();
     }
 
     function _updateSwapsWhenOpen(
