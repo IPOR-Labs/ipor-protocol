@@ -70,7 +70,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: -487620645187861,
-            swapUnwindAmount: -715786983022513,
+            swapUnwindAmount: -715786983025659,
             unwindFeeLPAmount: 16452593526,
             unwindFeeTreasuryAmount: 5484197842
         });
@@ -137,7 +137,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: -487620645187861,
-            swapUnwindAmount: -715786983022513,
+            swapUnwindAmount: -715786983025659,
             unwindFeeLPAmount: 16452593526,
             unwindFeeTreasuryAmount: 5484197842
         });
@@ -204,7 +204,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: -487620645187861,
-            swapUnwindAmount: -715786983022513,
+            swapUnwindAmount: -715786983025659,
             unwindFeeLPAmount: 16452593526,
             unwindFeeTreasuryAmount: 5484197842
         });
@@ -271,7 +271,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: -487620645187861,
-            swapUnwindAmount: -715786983022513,
+            swapUnwindAmount: -715786983025659,
             unwindFeeLPAmount: 16452593526,
             unwindFeeTreasuryAmount: 5484197842
         });
@@ -333,7 +333,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: -1951231740240361,
-            swapUnwindAmount: -795022132927816,
+            swapUnwindAmount: -795022132931308,
             unwindFeeLPAmount: 18272652614,
             unwindFeeTreasuryAmount: 6090884205
         });
@@ -400,7 +400,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: -1951231740240361,
-            swapUnwindAmount: -795022132927816,
+            swapUnwindAmount: -795022132931308,
             unwindFeeLPAmount: 18272652614,
             unwindFeeTreasuryAmount: 6090884205
         });
@@ -467,7 +467,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: -1951231740240361,
-            swapUnwindAmount: -795022132927816,
+            swapUnwindAmount: -795022132931308,
             unwindFeeLPAmount: 18272652614,
             unwindFeeTreasuryAmount: 6090884205
         });
@@ -533,8 +533,8 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
         emit SwapUnwind({
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
-            swapPnlValueToDate:-1951231740240361,
-            swapUnwindAmount: -795022132927816,
+            swapPnlValueToDate: -1951231740240361,
+            swapUnwindAmount: -795022132931308,
             unwindFeeLPAmount: 18272652614,
             unwindFeeTreasuryAmount: 6090884205
         });
@@ -596,7 +596,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: -1950430846962798,
-            swapUnwindAmount: -1988675434131497,
+            swapUnwindAmount: -1988675434140222,
             unwindFeeLPAmount: 45662881379,
             unwindFeeTreasuryAmount: 15220960460
         });
@@ -663,7 +663,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: -1950430846962798,
-            swapUnwindAmount: -1988675434131497,
+            swapUnwindAmount: -1988675434140222,
             unwindFeeLPAmount: 45662881379,
             unwindFeeTreasuryAmount: 15220960460
         });
@@ -730,7 +730,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: -1950430846962798,
-            swapUnwindAmount: -1988675434131497,
+            swapUnwindAmount: -1988675434140222,
             unwindFeeLPAmount: 45662881379,
             unwindFeeTreasuryAmount: 15220960460
         });
@@ -797,7 +797,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: -1950430846962798,
-            swapUnwindAmount: -1988675434131497,
+            swapUnwindAmount: -1988675434140222,
             unwindFeeLPAmount: 45662881379,
             unwindFeeTreasuryAmount: 15220960460
         });
@@ -859,7 +859,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: 90064464888234,
-            swapUnwindAmount: -715786983022512,
+            swapUnwindAmount: -715786983025659,
             unwindFeeLPAmount: 16452593526,
             unwindFeeTreasuryAmount: 5484197842
         });
@@ -926,7 +926,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: 90064464888234,
-            swapUnwindAmount: -715786983022512,
+            swapUnwindAmount: -715786983025659,
             unwindFeeLPAmount: 16452593526,
             unwindFeeTreasuryAmount: 5484197842
         });
@@ -993,7 +993,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: 90064464888234,
-            swapUnwindAmount: -715786983022512,
+            swapUnwindAmount: -715786983025659,
             unwindFeeLPAmount: 16452593526,
             unwindFeeTreasuryAmount: 5484197842
         });
@@ -1060,7 +1060,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: 90064464888234,
-            swapUnwindAmount: -715786983022512,
+            swapUnwindAmount: -715786983025659,
             unwindFeeLPAmount: 16452593526,
             unwindFeeTreasuryAmount: 5484197842
         });
@@ -1122,7 +1122,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: 360154758614512,
-            swapUnwindAmount: -795022132927814,
+            swapUnwindAmount: -795022132931308,
             unwindFeeLPAmount: 18272652614,
             unwindFeeTreasuryAmount: 6090884205
         });
@@ -1189,7 +1189,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: 360154758614512,
-            swapUnwindAmount: -795022132927814,
+            swapUnwindAmount: -795022132931308,
             unwindFeeLPAmount: 18272652614,
             unwindFeeTreasuryAmount: 6090884205
         });
@@ -1256,7 +1256,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: 360154758614512,
-            swapUnwindAmount: -795022132927814,
+            swapUnwindAmount: -795022132931308,
             unwindFeeLPAmount: 18272652614,
             unwindFeeTreasuryAmount: 6090884205
         });
@@ -1323,7 +1323,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: 360154758614512,
-            swapUnwindAmount: -795022132927814,
+            swapUnwindAmount: -795022132931308,
             unwindFeeLPAmount: 18272652614,
             unwindFeeTreasuryAmount: 6090884205
         });
@@ -1385,7 +1385,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: 360006936670183,
-            swapUnwindAmount: -1988675434131479,
+            swapUnwindAmount: -1988675434140222,
             unwindFeeLPAmount: 45662881379,
             unwindFeeTreasuryAmount: 15220960460
         });
@@ -1452,7 +1452,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: 360006936670183,
-            swapUnwindAmount: -1988675434131479,
+            swapUnwindAmount: -1988675434140222,
             unwindFeeLPAmount: 45662881379,
             unwindFeeTreasuryAmount: 15220960460
         });
@@ -1519,7 +1519,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: 360006936670183,
-            swapUnwindAmount: -1988675434131479,
+            swapUnwindAmount: -1988675434140222,
             unwindFeeLPAmount: 45662881379,
             unwindFeeTreasuryAmount: 15220960460
         });
@@ -1586,7 +1586,7 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
             asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
             swapId: 1,
             swapPnlValueToDate: 360006936670183,
-            swapUnwindAmount: -1988675434131479,
+            swapUnwindAmount: -1988675434140222,
             unwindFeeLPAmount: 45662881379,
             unwindFeeTreasuryAmount: 15220960460
         });
