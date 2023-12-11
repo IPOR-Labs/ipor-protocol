@@ -8,9 +8,7 @@ import "../interfaces/IAmmStorage.sol";
 import "../amm/spread/ISpread28DaysLens.sol";
 import "../amm/spread/ISpread60DaysLens.sol";
 import "../amm/spread/ISpread90DaysLens.sol";
-import "./Constants.sol";
 import "./errors/AmmErrors.sol";
-import "../libraries/RiskIndicatorsValidatorLib.sol";
 
 library RiskManagementLogic {
     using Address for address;
@@ -92,16 +90,6 @@ library RiskManagementLogic {
             }
         } else {
             revert(AmmErrors.UNSUPPORTED_DIRECTION);
-        }
-    }
-
-    function _leverageInRange(uint256 leverage, uint256 cfgMinLeverage) private pure returns (uint256) {
-        if (leverage > Constants.WAD_LEVERAGE_1000) {
-            return Constants.WAD_LEVERAGE_1000;
-        } else if (leverage < cfgMinLeverage) {
-            return cfgMinLeverage;
-        } else {
-            return leverage;
         }
     }
 }
