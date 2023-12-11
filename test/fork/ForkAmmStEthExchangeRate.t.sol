@@ -1588,4 +1588,201 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         assertGt(balanceTreasuryBefore, 0, "iporPublicationFee before");
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
+
+    function testShouldNotChangeExchangeRateWhenOpeningFeeZeroAndOpenSwapInputAssetStEth() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+        uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
+
+        /// @dev setup opening fee to zero
+        _createAmmOpenSwapServiceStEthCase3();
+        _updateIporRouterImplementation();
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            messageSignerPrivateKey
+        );
+
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+
+        //when
+        vm.prank(user);
+
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
+            user,
+            stETH,
+            totalAmount,
+            1e18,
+            10e18,
+            riskIndicatorsInputs
+        );
+
+        //then
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
+    }
+
+    function testShouldNotChangeExchangeRateWhenOpeningFeeZeroAndOpenSwapInputAssetWEth() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+        uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
+
+        /// @dev setup opening fee to zero
+        _createAmmOpenSwapServiceStEthCase3();
+        _updateIporRouterImplementation();
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            messageSignerPrivateKey
+        );
+
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+
+        //when
+        vm.prank(user);
+
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
+            user,
+            wETH,
+            totalAmount,
+            1e18,
+            10e18,
+            riskIndicatorsInputs
+        );
+
+        //then
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
+    }
+
+    function testShouldNotChangeExchangeRateWhenOpeningFeeZeroAndOpenSwapInputAssetWstEth() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+        uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
+
+        /// @dev setup opening fee to zero
+        _createAmmOpenSwapServiceStEthCase3();
+        _updateIporRouterImplementation();
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            messageSignerPrivateKey
+        );
+
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+
+        //when
+        vm.prank(user);
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
+            user,
+            wstETH,
+            totalAmount,
+            1e18,
+            10e18,
+            riskIndicatorsInputs
+        );
+
+        //then
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
+    }
+
+    function testShouldNotChangeExchangeRateWhenOpeningFeeZeroAndOpenSwapInputAssetETH() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+        uint256 totalAmount = 1 * 1e18;
+
+        vm.warp(block.timestamp);
+
+        /// @dev setup opening fee to zero
+        _createAmmOpenSwapServiceStEthCase3();
+        _updateIporRouterImplementation();
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            messageSignerPrivateKey
+        );
+
+        uint256 exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+
+        //when
+        vm.prank(user);
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth{
+            value: totalAmount
+        }(user, ETH, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
+
+        //then
+        uint256 exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
+    }
 }

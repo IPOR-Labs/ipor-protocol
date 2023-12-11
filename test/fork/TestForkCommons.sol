@@ -529,6 +529,28 @@ contract TestForkCommons is Test {
         );
     }
 
+    /// @dev case where liquidationDepositAmount openingFeeRate is 0
+    function _createAmmOpenSwapServiceStEthCase3() internal {
+        AmmTypesBaseV1.AmmOpenSwapServicePoolConfiguration memory cfg = AmmTypesBaseV1
+            .AmmOpenSwapServicePoolConfiguration({
+            asset: stETH,
+            decimals: 18,
+            ammStorage: ammStorageProxyStEth,
+            ammTreasury: ammTreasuryProxyStEth,
+            spread: spreadStEth,
+            iporPublicationFee: 9 * 1e15,
+            maxSwapCollateralAmount: 100_000 * 1e18,
+            liquidationDepositAmount: 1000,
+            minLeverage: 10 * 1e18,
+            openingFeeRate: 0,
+            openingFeeTreasuryPortionRate: 5e17
+        });
+
+        ammOpenSwapServiceStEth = address(
+            new AmmOpenSwapServiceStEth(cfg, iporOracleProxy, messageSignerAddress, wETH, wstETH)
+        );
+    }
+
     function _createAmmOpenSwapService() private {
         IAmmOpenSwapLens.AmmOpenSwapServicePoolConfiguration memory daiConfig = IAmmOpenSwapLens
             .AmmOpenSwapServicePoolConfiguration(

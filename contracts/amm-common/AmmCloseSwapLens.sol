@@ -285,42 +285,4 @@ contract AmmCloseSwapLens is IAmmCloseSwapLens {
             closingSwapDetails.pnlValue = swapPnlValueToDate;
         }
     }
-
-    function _getClosableStatus(
-        address account,
-        uint256 closeTimestamp,
-        AmmCloseSwapServicePoolConfiguration memory poolCfg,
-        AmmTypesBaseV1.Swap memory swap
-    ) internal view returns (AmmTypes.SwapClosableStatus closableStatus, bool swapUnwindRequired) {
-        require(swap.id > 0, AmmErrors.INCORRECT_SWAP_ID);
-
-        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(iporOracle).getAccruedIndex(
-            block.timestamp,
-            poolCfg.asset
-        );
-
-        int256 swapPnlValueToDate = swap.calculatePnl(block.timestamp, accruedIpor.ibtPrice);
-
-        (closableStatus, swapUnwindRequired) = SwapCloseLogicLibBaseV1.getClosableStatusForSwap(
-            AmmTypesBaseV1.ClosableSwapInput({
-                account: account,
-                asset: poolCfg.asset,
-                closeTimestamp: closeTimestamp,
-                swapBuyer: swap.buyer,
-                swapOpenTimestamp: swap.openTimestamp,
-                swapCollateral: swap.collateral,
-                swapTenor: swap.tenor,
-                swapState: swap.state,
-                swapPnlValueToDate: swapPnlValueToDate,
-                minLiquidationThresholdToCloseBeforeMaturityByCommunity: poolCfg
-                    .minLiquidationThresholdToCloseBeforeMaturityByCommunity,
-                minLiquidationThresholdToCloseBeforeMaturityByBuyer: poolCfg
-                    .minLiquidationThresholdToCloseBeforeMaturityByBuyer,
-                timeBeforeMaturityAllowedToCloseSwapByCommunity: poolCfg
-                    .timeBeforeMaturityAllowedToCloseSwapByCommunity,
-                timeBeforeMaturityAllowedToCloseSwapByBuyer: poolCfg.timeBeforeMaturityAllowedToCloseSwapByBuyer,
-                timeAfterOpenAllowedToCloseSwapWithUnwinding: poolCfg.timeAfterOpenAllowedToCloseSwapWithUnwinding
-            })
-        );
-    }
 }
