@@ -99,8 +99,8 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         _disableInitializers();
     }
 
-    fallback() external payable {
-        _delegate(_getRouterImplementation(msg.sig, SINGLE_OPERATION));
+    fallback(bytes calldata input) external payable returns (bytes memory) {
+        return _delegate(_getRouterImplementation(msg.sig, SINGLE_OPERATION));
     }
 
     function initialize(bool pausedInput) external initializer {
@@ -143,19 +143,22 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
 
     /// @notice Allows to execute batch of calls in one transaction using IPOR protocol business methods
     /// @param calls array of encoded calls
-    function batchExecutor(bytes[] calldata calls) external payable nonReentrant {
+    function batchExecutor(bytes[] calldata calls) external payable nonReentrant returns (bytes[] memory) {
         uint256 length = calls.length;
         address implementation;
+        bytes[] memory returnData = new bytes[](length);
 
         for (uint256 i; i != length; ) {
             implementation = _getRouterImplementation(bytes4(calls[i][:4]), BATCH_OPERATION);
-            implementation.functionDelegateCall(calls[i]);
+            returnData[i] = implementation.functionDelegateCall(calls[i]);
             unchecked {
                 ++i;
             }
         }
 
         _returnBackRemainingEth();
+
+        return returnData;
     }
 
     receive() external payable {}
@@ -369,42 +372,11 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         revert(IporErrors.ROUTER_INVALID_SIGNATURE);
     }
 
-    /// @dev Delegates the current call to `implementation`.
-    /// This function does not return to its internal call site, it will return directly to the external caller.
-    function _delegate(address implementation) private {
-        bytes memory delegateCallResult;
-        uint256 delegateCallReturnDataSize;
-
-        // solhint-disable-next-line no-inline-assembly
-        assembly {
-            // Copy msg.data. We take full control of memory in this inline assembly
-            // block because it will not return to Solidity code. We overwrite the
-            // Solidity scratch pad at memory position 0.
-            calldatacopy(0, 0, calldatasize())
-
-            // Call the implementation.
-            // out and outsize are 0 because we don't know the size yet.
-            delegateCallResult := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)
-
-            delegateCallReturnDataSize := returndatasize()
-
-            /// @dev Copy the returned data from delegatecall.
-            returndatacopy(0, 0, delegateCallReturnDataSize)
-        }
-
+    function _delegate(address implementation) private returns (bytes memory) {
+        bytes memory returnData = implementation.functionDelegateCall(msg.data);
         _returnBackRemainingEth();
         _nonReentrantAfter();
-
-        assembly {
-            switch delegateCallResult
-            ///m @dev delegatecall returns 0 on error.
-            case 0 {
-                revert(0, delegateCallReturnDataSize)
-            }
-            default {
-                return(0, delegateCallReturnDataSize)
-            }
-        }
+        return returnData;
     }
 
     function _returnBackRemainingEth() private {
