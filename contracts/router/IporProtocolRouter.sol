@@ -372,8 +372,6 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
         revert(IporErrors.ROUTER_INVALID_SIGNATURE);
     }
 
-    /// @dev Delegates the current call to `implementation`.
-    /// This function does not return to its internal call site, it will return directly to the external caller.
     function _delegate(address implementation) private returns (bytes memory) {
         bytes memory returnData = implementation.functionDelegateCall(msg.data);
         _returnBackRemainingEth();
