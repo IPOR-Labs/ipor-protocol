@@ -5,10 +5,50 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./TestForkCommons.sol";
 import "../../contracts/interfaces/IAmmCloseSwapServiceStEth.sol";
 import "../../contracts/interfaces/types/AmmTypes.sol";
+import "../contracts/IporClient.sol";
 
 contract ForkIporProtocolRouterCases is TestForkCommons {
     function setUp() public {
         vm.createSelectFork(vm.envString("PROVIDER_URL"), 18562032);
+    }
+
+    function testShouldNotFailWhenClientIntegrateWithIporProtocolAndReturnBackEthWhenOpenSwap() public {
+        // given
+        _init();
+
+        address user = _getUserAddress(1);
+
+        IporClient iporClient = new IporClient(iporProtocolRouterProxy);
+
+        deal(user, 1e18);
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            messageSignerPrivateKey
+        );
+
+        (bool success, ) = iporProtocolRouterProxy.call{value: 1}("");
+
+        //when
+        vm.prank(user);
+        uint256 swapId = iporClient.openIporSwapPayFixed28DaysEth{value: user.balance}(riskIndicatorsInputs);
+
+        //then
+        assertEq(swapId, 1);
     }
 
     function testShouldReturnBalanceForOpenSwapUsdcWhenRouterHasEth() public {
