@@ -15,7 +15,6 @@ import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/IporContractValidator.sol";
 import "../../security/PauseManager.sol";
 import "../../security/IporOwnableUpgradeable.sol";
-import "../types/StorageTypesBaseV1.sol";
 
 contract AmmTreasuryBaseV1 is
     Initializable,
@@ -69,7 +68,8 @@ contract AmmTreasuryBaseV1 is
             balance.totalCollateralPayFixed.toInt256() -
             balance.totalCollateralReceiveFixed.toInt256() -
             balance.iporPublicationFee.toInt256() -
-            balance.treasury.toInt256()).toUint256();
+            balance.treasury.toInt256() -
+            balance.totalLiquidationDepositBalance.toInt256()).toUint256();
 
         return liquidityPool;
     }

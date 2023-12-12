@@ -2,7 +2,6 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 import "../interfaces/types/IporTypes.sol";
 import "../interfaces/types/AmmTypes.sol";
@@ -21,7 +20,7 @@ import "../base/amm/services/AmmCloseSwapServiceBaseV1.sol";
 contract AmmCloseSwapLens is IAmmCloseSwapLens {
     using Address for address;
     using IporContractValidator for address;
-using SwapLogicBaseV1 for AmmTypesBaseV1.Swap;
+    using SwapLogicBaseV1 for AmmTypesBaseV1.Swap;
 
     address public immutable usdt;
     address public immutable usdc;
@@ -32,9 +31,13 @@ using SwapLogicBaseV1 for AmmTypesBaseV1.Swap;
     address public immutable messageSigner;
     address public immutable spreadRouter;
 
+    /// @dev Notice! Don't use following service to get data from storage, use only to get configuration stored in immutable fields.
     address public immutable closeSwapServiceUsdt;
+    /// @dev Notice! Don't use following service to get data from storage, use only to get configuration stored in immutable fields.
     address public immutable closeSwapServiceUsdc;
+    /// @dev Notice! Don't use following service to get data from storage, use only to get configuration stored in immutable fields.
     address public immutable closeSwapServiceDai;
+    /// @dev Notice! Don't use following service to get data from storage, use only to get configuration stored in immutable fields.
     address public immutable closeSwapServiceStEth;
 
     constructor(
@@ -281,43 +284,5 @@ using SwapLogicBaseV1 for AmmTypesBaseV1.Swap;
         } else {
             closingSwapDetails.pnlValue = swapPnlValueToDate;
         }
-    }
-
-    function _getClosableStatus(
-        address account,
-        uint256 closeTimestamp,
-        AmmCloseSwapServicePoolConfiguration memory poolCfg,
-        AmmTypesBaseV1.Swap memory swap
-    ) internal view returns (AmmTypes.SwapClosableStatus closableStatus, bool swapUnwindRequired) {
-        require(swap.id > 0, AmmErrors.INCORRECT_SWAP_ID);
-
-        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(iporOracle).getAccruedIndex(
-            block.timestamp,
-            poolCfg.asset
-        );
-
-        int256 swapPnlValueToDate = swap.calculatePnl(block.timestamp, accruedIpor.ibtPrice);
-
-        (closableStatus, swapUnwindRequired) = SwapCloseLogicLibBaseV1.getClosableStatusForSwap(
-            AmmTypesBaseV1.ClosableSwapInput({
-                account: account,
-                asset: poolCfg.asset,
-                closeTimestamp: closeTimestamp,
-                swapBuyer: swap.buyer,
-                swapOpenTimestamp: swap.openTimestamp,
-                swapCollateral: swap.collateral,
-                swapTenor: swap.tenor,
-                swapState: swap.state,
-                swapPnlValueToDate: swapPnlValueToDate,
-                minLiquidationThresholdToCloseBeforeMaturityByCommunity: poolCfg
-                    .minLiquidationThresholdToCloseBeforeMaturityByCommunity,
-                minLiquidationThresholdToCloseBeforeMaturityByBuyer: poolCfg
-                    .minLiquidationThresholdToCloseBeforeMaturityByBuyer,
-                timeBeforeMaturityAllowedToCloseSwapByCommunity: poolCfg
-                    .timeBeforeMaturityAllowedToCloseSwapByCommunity,
-                timeBeforeMaturityAllowedToCloseSwapByBuyer: poolCfg.timeBeforeMaturityAllowedToCloseSwapByBuyer,
-                timeAfterOpenAllowedToCloseSwapWithUnwinding: poolCfg.timeAfterOpenAllowedToCloseSwapWithUnwinding
-            })
-        );
     }
 }

@@ -13,6 +13,7 @@ import "../amm/spread/ISpread60DaysLens.sol";
 import "../amm/spread/ISpread90Days.sol";
 import "../amm/spread/ISpread90DaysLens.sol";
 import "../amm/spread/ISpreadStorageLens.sol";
+import "../amm/spread/ISpreadStorageService.sol";
 
 /// @title Interface for interaction with IPOR SpreadRouter.
 /// Interface combines all IPOR SpreadRouter interfaces and supported services and lenses by router.
@@ -28,7 +29,7 @@ interface ISpreadRouter is
     ISpread60DaysLens,
     ISpread90Days,
     ISpread90DaysLens,
-    ISpreadStorageLens
+    ISpreadStorageLens,
+    ISpreadStorageService
 {
-
 }

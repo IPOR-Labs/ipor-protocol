@@ -2,19 +2,31 @@
 pragma solidity 0.8.20;
 
 library IporErrors {
-    error WrongAddress(string errorCode, address wrongAddress, string methodName);
+    /// @notice Error when address is wrong
+    error WrongAddress(string errorCode, address wrongAddress, string message);
+
+    /// @notice Error when amount is wrong
     error WrongAmount(string errorCode, uint256 value);
 
+    /// @notice Error when caller is not an ipor protocol router
     error CallerNotIporProtocolRouter(string errorCode, address caller);
+
+    /// @notice Error when caller is not a pause guardian
     error CallerNotPauseGuardian(string errorCode, address caller);
+
+    /// @notice Error when caller is not a AmmTreasury contract
     error CallerNotAmmTreasury(string errorCode, address caller);
 
+    /// @notice Error when given direction is not supported
     error UnsupportedDirection(string errorCode, uint256 direction);
 
+    /// @notice Error when given asset is not supported
     error UnsupportedAsset(string errorCode, address asset);
 
+    /// @notice Error when given module is not supported
     error UnsupportedModule(string errorCode, address asset);
 
+    /// @notice Error when Input Asset total amount is too low
     error InputAssetTotalAmountTooLow(string errorCode, uint256 value);
 
     /// @dev Error appears if user/account doesn't have enough balance to open a swap with a specific totalAmount

@@ -181,21 +181,24 @@ contract ForkAmmSwapsLensTest is TestForkCommons {
             messageSignerPrivateKey
         );
 
+        IporTypes.AmmBalancesForOpenSwapMemory memory balancesBefore = IAmmSwapsLens(iporProtocolRouterProxy)
+            .getBalancesForOpenSwap(stETH);
+
         vm.prank(user);
         uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth{
             value: totalAmount
         }(user, ETH, totalAmount, 1e18, 10e18, riskIndicatorsInputs);
 
         //when
-        IporTypes.AmmBalancesForOpenSwapMemory memory balances = IAmmSwapsLens(iporProtocolRouterProxy)
+        IporTypes.AmmBalancesForOpenSwapMemory memory balancesAfter = IAmmSwapsLens(iporProtocolRouterProxy)
             .getBalancesForOpenSwap(stETH);
 
         //then
-        assertEq(balances.totalCollateralPayFixed, 9985170071753300108, "totalCollateralPayFixed");
-        assertEq(balances.totalCollateralReceiveFixed, 0, "totalCollateralReceiveFixed");
-        assertEq(balances.liquidityPool, 1608194645255092506635, "liquidityPoolBalance");
-        assertEq(balances.totalNotionalPayFixed, 99851700717533001080, "totalNotionalPayFixed");
-        assertEq(balances.totalNotionalReceiveFixed, 0, "totalNotionalReceiveFixed");
+        assertEq(balancesAfter.totalCollateralPayFixed, 9985170071753300108, "totalCollateralPayFixed");
+        assertEq(balancesAfter.totalCollateralReceiveFixed, 0, "totalCollateralReceiveFixed");
+        assertEq(balancesAfter.liquidityPool, 1608193645255092506635, "liquidityPoolBalance");
+        assertEq(balancesAfter.totalNotionalPayFixed, 99851700717533001080, "totalNotionalPayFixed");
+        assertEq(balancesAfter.totalNotionalReceiveFixed, 0, "totalNotionalReceiveFixed");
     }
 
     function testShouldReturnPnlPayFixedStEthCase1() public {
@@ -237,7 +240,7 @@ contract ForkAmmSwapsLensTest is TestForkCommons {
         int256 pnlValue = IAmmSwapsLens(iporProtocolRouterProxy).getPnlPayFixed(stETH, swapId);
 
         //then
-        assertEq(pnlValue, -54942016610681950, "pnlValue");
+        assertEq(pnlValue, -54763880519879408, "pnlValue");
     }
 
     function testShouldReturnPnlPayFixedStEthCase2() public {
@@ -319,7 +322,7 @@ contract ForkAmmSwapsLensTest is TestForkCommons {
         int256 pnlValue = IAmmSwapsLens(iporProtocolRouterProxy).getPnlReceiveFixed(stETH, swapId);
 
         //then
-        assertEq(pnlValue, 9895119226078684, "pnlValue");
+        assertEq(pnlValue, 10073175314593404, "pnlValue");
     }
 
     function testShouldReturnPnlReceiveFixedStEthCase2() public {
@@ -527,7 +530,7 @@ contract ForkAmmSwapsLensTest is TestForkCommons {
         uint direction,
         IporTypes.SwapTenor tenor,
         uint demandSpreadFactor
-    ) internal returns (AmmTypes.RiskIndicatorsInputs memory) {
+    ) internal view returns (AmmTypes.RiskIndicatorsInputs memory) {
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 900000000000000000,
             maxCollateralRatioPerLeg: 480000000000000000,

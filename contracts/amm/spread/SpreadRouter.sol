@@ -65,6 +65,7 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl, IProxyImplementat
         deployedContracts.spread90Days = _spread90Days;
         deployedContracts.storageLens = _storageLens;
         deployedContracts.closeSwapService = _closeSwapService;
+        deployedContracts.storageService = _storageService;
     }
 
     /// @notice Gets the implementation address for a given function signature.

@@ -3,7 +3,6 @@ pragma solidity 0.8.20;
 
 import "../interfaces/IAssetManagementLens.sol";
 import "../interfaces/IAssetManagement.sol";
-import "../interfaces/IStrategy.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/IporContractValidator.sol";
 

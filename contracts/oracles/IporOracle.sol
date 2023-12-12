@@ -12,8 +12,6 @@ import "../interfaces/IProxyImplementation.sol";
 import "../interfaces/IIporContractCommonGov.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/IporOracleErrors.sol";
-import "../libraries/Constants.sol";
-import "../libraries/math/IporMath.sol";
 import "../libraries/math/InterestRates.sol";
 import "../security/PauseManager.sol";
 import "../security/IporOwnableUpgradeable.sol";
@@ -161,7 +159,9 @@ contract IporOracle is
         return _calculateAccruedIbtPrice(asset, _indexes[asset], calculateTimestamp);
     }
 
-    function updateIndexes(IIporOracle.UpdateIndexParams[] calldata indexesToUpdate) external override onlyUpdater whenNotPaused {
+    function updateIndexes(
+        IIporOracle.UpdateIndexParams[] calldata indexesToUpdate
+    ) external override onlyUpdater whenNotPaused {
         uint256 length = indexesToUpdate.length;
         require(length > 0, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
         for (uint256 i; i < length; ) {
@@ -268,23 +268,7 @@ contract IporOracle is
         return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
 
-    function _updateIndexes(address[] memory assets, uint256[] memory indexValues, uint256 updateTimestamp) internal {
-        uint256 assetsLength = assets.length;
-        require(assetsLength == indexValues.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
-
-        for (uint256 i; i != assetsLength; ) {
-            _updateIndex(assets[i], indexValues[i], updateTimestamp);
-            unchecked {
-                ++i;
-            }
-        }
-    }
-
-    function _updateIndex(
-        address asset,
-        uint256 indexValue,
-        uint256 updateTimestamp
-    ) internal {
+    function _updateIndex(address asset, uint256 indexValue, uint256 updateTimestamp) internal {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
 
         require(ipor.lastUpdateTimestamp > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);

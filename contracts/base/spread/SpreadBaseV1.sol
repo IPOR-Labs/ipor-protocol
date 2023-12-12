@@ -11,7 +11,7 @@ import "../../amm/spread/CalculateTimeWeightedNotionalLibs.sol";
 import "../../base/interfaces/IAmmStorageBaseV1.sol";
 import "../../base/events/AmmEventsBaseV1.sol";
 import "../interfaces/ISpreadBaseV1.sol";
-import "./DemandSpreadLibsBaseV1.sol";
+import "./DemandSpreadStEthLibsBaseV1.sol";
 import "../amm/libraries/SwapLogicBaseV1.sol";
 import "./SpreadStorageLibsBaseV1.sol";
 import "./OfferedRateCalculationLibsBaseV1.sol";
@@ -56,7 +56,7 @@ contract SpreadBaseV1 is IporOwnable, ISpreadBaseV1 {
     }
 
     function spreadFunctionConfig() external pure override returns (uint256[] memory) {
-        return DemandSpreadLibsBaseV1.spreadFunctionConfig();
+        return DemandSpreadStEthLibsBaseV1.spreadFunctionConfig();
     }
 
     function getTimeWeightedNotional()
@@ -221,7 +221,7 @@ contract SpreadBaseV1 is IporOwnable, ISpreadBaseV1 {
     ) external override onlyOwner {
         uint256 length = timeWeightedNotionalMemories.length;
         for (uint256 i; i < length; ) {
-            SpreadStorageLibsBaseV1._checkTimeWeightedNotional(timeWeightedNotionalMemories[i].storageId);
+            SpreadStorageLibsBaseV1.checkTimeWeightedNotional(timeWeightedNotionalMemories[i].storageId);
             SpreadStorageLibsBaseV1.saveTimeWeightedNotionalForAssetAndTenor(
                 timeWeightedNotionalMemories[i].storageId,
                 timeWeightedNotionalMemories[i]
@@ -242,16 +242,16 @@ contract SpreadBaseV1 is IporOwnable, ISpreadBaseV1 {
     }
 
     function _calculateDemandPayFixed(SpreadInputs memory spreadInputs) internal view returns (uint256 spreadValue) {
-        DemandSpreadLibsBaseV1.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
+        DemandSpreadStEthLibsBaseV1.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
 
-        spreadValue = DemandSpreadLibsBaseV1.calculatePayFixedSpread(inputData);
+        spreadValue = DemandSpreadStEthLibsBaseV1.calculatePayFixedSpread(inputData);
     }
 
     function _calculateDemandPayFixedAndUpdateTimeWeightedNotional(
         SpreadInputs memory spreadInputs
     ) internal returns (uint256 spreadValue) {
-        DemandSpreadLibsBaseV1.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
-        spreadValue = DemandSpreadLibsBaseV1.calculatePayFixedSpread(inputData);
+        DemandSpreadStEthLibsBaseV1.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
+        spreadValue = DemandSpreadStEthLibsBaseV1.calculatePayFixedSpread(inputData);
 
         SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibsBaseV1
             .getTimeWeightedNotionalForAssetAndTenor(inputData.timeWeightedNotionalStorageId);
@@ -266,17 +266,17 @@ contract SpreadBaseV1 is IporOwnable, ISpreadBaseV1 {
     function _calculateDemandReceiveFixed(
         SpreadInputs calldata spreadInputs
     ) internal view returns (uint256 spreadValue) {
-        DemandSpreadLibsBaseV1.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
+        DemandSpreadStEthLibsBaseV1.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
 
-        spreadValue = DemandSpreadLibsBaseV1.calculateReceiveFixedSpread(inputData);
+        spreadValue = DemandSpreadStEthLibsBaseV1.calculateReceiveFixedSpread(inputData);
     }
 
     function _calculateImbalanceReceiveFixedAndUpdateTimeWeightedNotional(
         SpreadInputs calldata spreadInputs
     ) internal returns (uint256 spreadValue) {
-        DemandSpreadLibsBaseV1.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
+        DemandSpreadStEthLibsBaseV1.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
 
-        spreadValue = DemandSpreadLibsBaseV1.calculateReceiveFixedSpread(inputData);
+        spreadValue = DemandSpreadStEthLibsBaseV1.calculateReceiveFixedSpread(inputData);
         SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibsBaseV1
             .getTimeWeightedNotionalForAssetAndTenor(inputData.timeWeightedNotionalStorageId);
 
@@ -289,8 +289,8 @@ contract SpreadBaseV1 is IporOwnable, ISpreadBaseV1 {
 
     function _getSpreadConfigForDemand(
         SpreadInputs memory spreadInputs
-    ) internal pure returns (DemandSpreadLibsBaseV1.SpreadInputData memory inputData) {
-        inputData = DemandSpreadLibsBaseV1.SpreadInputData({
+    ) internal pure returns (DemandSpreadStEthLibsBaseV1.SpreadInputData memory inputData) {
+        inputData = DemandSpreadStEthLibsBaseV1.SpreadInputData({
             totalCollateralPayFixed: spreadInputs.totalCollateralPayFixed,
             totalCollateralReceiveFixed: spreadInputs.totalCollateralReceiveFixed,
             liquidityPoolBalance: spreadInputs.liquidityPoolBalance,

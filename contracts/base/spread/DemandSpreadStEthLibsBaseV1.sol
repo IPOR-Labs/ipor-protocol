@@ -5,19 +5,19 @@ import "../../libraries/math/IporMath.sol";
 import "./SpreadStorageLibsBaseV1.sol";
 import "./CalculateTimeWeightedNotionalLibsBaseV1.sol";
 
-library DemandSpreadLibsBaseV1 {
+library DemandSpreadStEthLibsBaseV1 {
     uint256 internal constant INTERVAL_ONE = 2e17;
     uint256 internal constant INTERVAL_TWO = 5e17;
     uint256 internal constant INTERVAL_THREE = 1e18;
 
-    uint256 internal constant SLOPE_ONE = 5e16;
+    uint256 internal constant SLOPE_ONE = 8333333333333333;
     uint256 internal constant BASE_ONE = 0;
 
-    uint256 internal constant SLOPE_TWO = 133333333333333333;
-    uint256 internal constant BASE_TWO = 16666666666666667;
+    uint256 internal constant SLOPE_TWO = 22222222222222222;
+    uint256 internal constant BASE_TWO = 2777777777777778;
 
-    uint256 internal constant SLOPE_THREE = 5e17;
-    uint256 internal constant BASE_THREE = 2e17;
+    uint256 internal constant SLOPE_THREE = 83333333333333333;
+    uint256 internal constant BASE_THREE = 33333333333333333;
 
     /// @notice DTO for the Weighted Notional
     struct SpreadInputData {
@@ -166,7 +166,7 @@ library DemandSpreadLibsBaseV1 {
             spreadValue = IporMath.division(SLOPE_THREE * ratio, 1e18) - BASE_THREE;
             /// @dev spreadValue in range < 5%, 30% )
         } else {
-            spreadValue = 3 * 1e17;
+            spreadValue = 5 * 1e16;
             /// @dev spreadValue is equal to 30%
         }
     }

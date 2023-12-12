@@ -31,7 +31,7 @@ import "../../contracts/amm/AmmPoolsService.sol";
 import "../../contracts/amm-common/AmmGovernanceService.sol";
 import "../../contracts/amm/AmmStorage.sol";
 import "../../contracts/amm/AmmTreasury.sol";
-import "../../contracts/amm-eth/AmmTreasuryStEth.sol";
+
 import "../../contracts/amm-eth/AmmPoolsServiceStEth.sol";
 import "../../contracts/vault/strategies/StrategyDsrDai.sol";
 import "../../contracts/vault/AssetManagementDai.sol";
@@ -43,6 +43,7 @@ import "../../contracts/interfaces/IIpTokenV1.sol";
 import "../../contracts/amm-eth/interfaces/IWETH9.sol";
 import "../../contracts/amm-eth/interfaces/IStETH.sol";
 import "../../contracts/base/amm/AmmStorageBaseV1.sol";
+import "../../contracts/base/amm/AmmTreasuryBaseV1.sol";
 import "../../contracts/base/spread/SpreadBaseV1.sol";
 import "../../contracts/amm/spread/SpreadStorageService.sol";
 
@@ -469,10 +470,10 @@ contract TestForkCommons is Test {
     }
 
     function _upgradeAmmTreasuryStEth() private {
-        AmmTreasuryStEth newImplementation = new AmmTreasuryStEth(stETH, iporProtocolRouterProxy, ammStorageProxyStEth);
+        AmmTreasuryBaseV1 newImplementation = new AmmTreasuryBaseV1(stETH, iporProtocolRouterProxy, ammStorageProxyStEth);
 
         vm.prank(owner);
-        AmmTreasuryStEth(ammTreasuryProxyStEth).upgradeTo(address(newImplementation));
+        AmmTreasuryBaseV1(ammTreasuryProxyStEth).upgradeTo(address(newImplementation));
     }
 
     function _createAmmStorageStEth() private {
@@ -502,14 +503,7 @@ contract TestForkCommons is Test {
             });
 
         ammOpenSwapServiceStEth = address(
-            new AmmOpenSwapServiceStEth(
-                cfg,
-                iporOracleProxy,
-                messageSignerAddress,
-                iporProtocolRouterProxy,
-                wETH,
-                wstETH
-            )
+            new AmmOpenSwapServiceStEth(cfg, iporOracleProxy, messageSignerAddress, wETH, wstETH)
         );
     }
 
@@ -531,14 +525,29 @@ contract TestForkCommons is Test {
             });
 
         ammOpenSwapServiceStEth = address(
-            new AmmOpenSwapServiceStEth(
-                cfg,
-                iporOracleProxy,
-                messageSignerAddress,
-                iporProtocolRouterProxy,
-                wETH,
-                wstETH
-            )
+            new AmmOpenSwapServiceStEth(cfg, iporOracleProxy, messageSignerAddress, wETH, wstETH)
+        );
+    }
+
+    /// @dev case where liquidationDepositAmount openingFeeRate is 0
+    function _createAmmOpenSwapServiceStEthCase3() internal {
+        AmmTypesBaseV1.AmmOpenSwapServicePoolConfiguration memory cfg = AmmTypesBaseV1
+            .AmmOpenSwapServicePoolConfiguration({
+            asset: stETH,
+            decimals: 18,
+            ammStorage: ammStorageProxyStEth,
+            ammTreasury: ammTreasuryProxyStEth,
+            spread: spreadStEth,
+            iporPublicationFee: 9 * 1e15,
+            maxSwapCollateralAmount: 100_000 * 1e18,
+            liquidationDepositAmount: 1000,
+            minLeverage: 10 * 1e18,
+            openingFeeRate: 0,
+            openingFeeTreasuryPortionRate: 5e17
+        });
+
+        ammOpenSwapServiceStEth = address(
+            new AmmOpenSwapServiceStEth(cfg, iporOracleProxy, messageSignerAddress, wETH, wstETH)
         );
     }
 
@@ -758,7 +767,7 @@ contract TestForkCommons is Test {
         uint256 tenor,
         uint256 direction,
         uint256 privateKey
-    ) internal view returns (bytes memory) {
+    ) internal pure returns (bytes memory) {
         // create digest: keccak256 gives us the first 32bytes after doing the hash
         // so this is always 32 bytes.
         bytes32 digest = keccak256(
@@ -786,7 +795,7 @@ contract TestForkCommons is Test {
 
     function _prepareCloseSwapRiskIndicators(
         IporTypes.SwapTenor tenor
-    ) internal returns (AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs) {
+    ) internal view returns (AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs) {
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputsPayFixed = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
             maxCollateralRatioPerLeg: 25000000000000000,
@@ -833,7 +842,7 @@ contract TestForkCommons is Test {
     function getIndexToUpdate(
         address asset,
         uint indexValue
-    ) internal returns (IIporOracle.UpdateIndexParams[] memory) {
+    ) internal pure returns (IIporOracle.UpdateIndexParams[] memory) {
         IIporOracle.UpdateIndexParams[] memory updateIndexParams = new IIporOracle.UpdateIndexParams[](1);
         updateIndexParams[0] = IIporOracle.UpdateIndexParams({
             asset: asset,

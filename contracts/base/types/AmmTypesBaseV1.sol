@@ -149,18 +149,18 @@ library AmmTypesBaseV1 {
         uint256 inputAssetTotalAmount;
         /// @notice Total Amount of underlying asset that is used as a collateral.
         uint256 assetTotalAmount;
-        /// @notice Swap's collateral, represented in underlying asset.
+        /// @notice Swap's collateral, represented in underlying asset, represented in 18 decimals.
         uint256 collateral;
-        /// @notice Swap's notional, represented in underlying asset.
+        /// @notice Swap's notional, represented in underlying asset, represented in 18 decimals.
         uint256 notional;
-        /// @notice Opening Fee - part allocated as a profit of the Liquidity Pool, represented in underlying asset.
+        /// @notice Opening Fee - part allocated as a profit of the Liquidity Pool, represented in underlying asset, represented in 18 decimals.
         uint256 openingFeeLPAmount;
-        /// @notice  Part of the fee set aside for subsidizing the oracle that publishes IPOR rate. Flat fee set by the DAO. Represented in underlying asset.
+        /// @notice  Part of the fee set aside for subsidizing the oracle that publishes IPOR rate. Flat fee set by the DAO. Represented in underlying asset, represented in 18 decimals.
         /// @notice Opening Fee - part allocated in Treasury balance. Part of the fee set asside for subsidising the oracle that publishes IPOR rate. Flat fee set by the DAO.
         uint256 openingFeeTreasuryAmount;
-        /// @notice Fee set aside for subsidizing the oracle that publishes IPOR rate. Flat fee set by the DAO. Represented in underlying asset.
+        /// @notice Fee set aside for subsidizing the oracle that publishes IPOR rate. Flat fee set by the DAO. Represented in underlying asset, represented in 18 decimals.
         uint256 iporPublicationFee;
-        /// @notice Liquidation deposit is retained when the swap is opened. Notice! Value represented in 18 decimals. Represents in underlying asset.
+        /// @notice Liquidation deposit is retained when the swap is opened. Notice! Value represented in 18 decimals. Represents in underlying asset, represented in 18 decimals.
         uint256 liquidationDepositAmount;
     }
 
@@ -186,5 +186,8 @@ library AmmTypesBaseV1 {
         /// this ballance is fed by part of the opening fee appointed by the DAO. For more information refer to the documentation:
         /// https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/ipor-swaps#fees
         uint256 treasury;
+        /// @notice Sum of all liquidation deposits for all opened swaps.
+        /// @dev Value represented in 18 decimals.
+        uint256 totalLiquidationDepositBalance;
     }
 }

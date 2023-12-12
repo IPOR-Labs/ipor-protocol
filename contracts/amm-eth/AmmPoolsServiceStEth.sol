@@ -178,7 +178,7 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
         }
     }
 
-    function _getExchangeRate(uint256 actualLiquidityPoolBalance) internal returns (uint256) {
+    function _getExchangeRate(uint256 actualLiquidityPoolBalance) internal view returns (uint256) {
         AmmTypes.AmmPoolCoreModel memory model = AmmTypes.AmmPoolCoreModel({
             asset: stEth,
             assetDecimals: 18,
