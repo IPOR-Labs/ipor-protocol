@@ -60,7 +60,7 @@ contract AmmShouldClosePositionTest is TestCommons {
         );
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_160_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_160_18DEC));
 
         uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
 
@@ -81,7 +81,7 @@ contract AmmShouldClosePositionTest is TestCommons {
         // when
         vm.startPrank(_userTwo);
         vm.warp(endTimestamp);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, pfSwapIds, rfSwapIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(_userTwo, pfSwapIds, rfSwapIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
         vm.stopPrank();
 
         // then
@@ -133,7 +133,7 @@ contract AmmShouldClosePositionTest is TestCommons {
         );
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_160_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_160_18DEC));
 
         uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
 
@@ -158,7 +158,7 @@ contract AmmShouldClosePositionTest is TestCommons {
         // when
         vm.warp(endTimestamp);
         vm.startPrank(_userTwo);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userThree, pfSwapIds, rfSwapIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(_userThree, pfSwapIds, rfSwapIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
         vm.stopPrank();
 
         // then
@@ -211,7 +211,7 @@ contract AmmShouldClosePositionTest is TestCommons {
 
         vm.prank(_userOne);
         /// @dev force 100% loss for Buyer
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_160_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_160_18DEC));
 
         uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
 
@@ -230,7 +230,7 @@ contract AmmShouldClosePositionTest is TestCommons {
         // when
         vm.warp(endTimestamp);
         vm.startPrank(_userTwo);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userThree, pfSwapIds, rfSwapIds,getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(_userThree, pfSwapIds, rfSwapIds,getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
         vm.stopPrank();
 
         // then

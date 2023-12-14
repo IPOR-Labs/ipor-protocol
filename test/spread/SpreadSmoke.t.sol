@@ -101,7 +101,6 @@ contract SpreadSmokeTest is TestCommons {
             receiveFixed28Before > receiveFixed28After,
             "receiveFixed28Before should be getter than receiveFixed28After"
         );
-
     }
 
     function testShouldSpreadPayFixedIncreaseWhenOneSwapOpenOn28PayFixed() external {
@@ -832,5 +831,102 @@ contract SpreadSmokeTest is TestCommons {
 
         // then
         assertTrue(receiveFixed90Open < 1e15, "receiveFixed90Open should be less than 1e15");
+    }
+
+    function testShouldBeAbleToOverrideTimeWeightedNotional() external {
+        // given
+        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse = ISpreadStorageLens(
+            _routerAddress
+        ).getTimeWeightedNotional();
+        SpreadTypes.TimeWeightedNotionalMemory[]
+            memory timeWeightedNotional = new SpreadTypes.TimeWeightedNotionalMemory[](
+                timeWeightedNotionalResponse.length
+            );
+
+        for (uint i; i < timeWeightedNotionalResponse.length; i++) {
+            timeWeightedNotional[i] = SpreadTypes.TimeWeightedNotionalMemory({
+                timeWeightedNotionalPayFixed: timeWeightedNotionalResponse[i]
+                    .timeWeightedNotional
+                    .timeWeightedNotionalPayFixed + 100e18,
+                timeWeightedNotionalReceiveFixed: timeWeightedNotionalResponse[i]
+                    .timeWeightedNotional
+                    .timeWeightedNotionalReceiveFixed + 200e18,
+                lastUpdateTimePayFixed: timeWeightedNotionalResponse[i].timeWeightedNotional.lastUpdateTimePayFixed +
+                    1000,
+                lastUpdateTimeReceiveFixed: timeWeightedNotionalResponse[i]
+                    .timeWeightedNotional
+                    .lastUpdateTimeReceiveFixed + 2000,
+                storageId: timeWeightedNotionalResponse[i].timeWeightedNotional.storageId
+            });
+        }
+
+        // when
+        vm.prank(_owner);
+        ISpreadStorageService(_routerAddress).updateTimeWeightedNotional(timeWeightedNotional);
+
+        // then
+        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponseAfter = ISpreadStorageLens(
+            _routerAddress
+        ).getTimeWeightedNotional();
+
+        for (uint i; i < timeWeightedNotionalResponseAfter.length; i++) {
+            assertEq(
+                timeWeightedNotionalResponse[i].key,
+                timeWeightedNotionalResponseAfter[i].key,
+                "key should be equal"
+            );
+            assertEq(
+                timeWeightedNotionalResponse[i].timeWeightedNotional.timeWeightedNotionalPayFixed + 100e18,
+                timeWeightedNotionalResponseAfter[i].timeWeightedNotional.timeWeightedNotionalPayFixed,
+                "timeWeightedNotionalPayFixed should be equal"
+            );
+            assertEq(
+                timeWeightedNotionalResponse[i].timeWeightedNotional.timeWeightedNotionalReceiveFixed + 200e18,
+                timeWeightedNotionalResponseAfter[i].timeWeightedNotional.timeWeightedNotionalReceiveFixed,
+                "timeWeightedNotionalReceiveFixed should be equal"
+            );
+            assertEq(
+                timeWeightedNotionalResponse[i].timeWeightedNotional.lastUpdateTimePayFixed + 1000,
+                timeWeightedNotionalResponseAfter[i].timeWeightedNotional.lastUpdateTimePayFixed,
+                "lastUpdateTimePayFixed should be equal"
+            );
+            assertEq(
+                timeWeightedNotionalResponse[i].timeWeightedNotional.lastUpdateTimeReceiveFixed + 2000,
+                timeWeightedNotionalResponseAfter[i].timeWeightedNotional.lastUpdateTimeReceiveFixed,
+                "lastUpdateTimeReceiveFixed should be equal"
+            );
+        }
+    }
+
+    function testShouldNotBeAbleToOverrideTimeWeightedNotionalWhenNotOwner() external {
+        // given
+        SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse = ISpreadStorageLens(
+            _routerAddress
+        ).getTimeWeightedNotional();
+        SpreadTypes.TimeWeightedNotionalMemory[]
+            memory timeWeightedNotional = new SpreadTypes.TimeWeightedNotionalMemory[](
+                timeWeightedNotionalResponse.length
+            );
+
+        for (uint i; i < timeWeightedNotionalResponse.length; i++) {
+            timeWeightedNotional[i] = SpreadTypes.TimeWeightedNotionalMemory({
+                timeWeightedNotionalPayFixed: timeWeightedNotionalResponse[i]
+                    .timeWeightedNotional
+                    .timeWeightedNotionalPayFixed + 100e18,
+                timeWeightedNotionalReceiveFixed: timeWeightedNotionalResponse[i]
+                    .timeWeightedNotional
+                    .timeWeightedNotionalReceiveFixed + 200e18,
+                lastUpdateTimePayFixed: timeWeightedNotionalResponse[i].timeWeightedNotional.lastUpdateTimePayFixed +
+                    1000,
+                lastUpdateTimeReceiveFixed: timeWeightedNotionalResponse[i]
+                    .timeWeightedNotional
+                    .lastUpdateTimeReceiveFixed + 2000,
+                storageId: timeWeightedNotionalResponse[i].timeWeightedNotional.storageId
+            });
+        }
+
+        // when
+        vm.expectRevert(bytes(IporErrors.CALLER_NOT_OWNER));
+        ISpreadStorageService(_routerAddress).updateTimeWeightedNotional(timeWeightedNotional);
     }
 }

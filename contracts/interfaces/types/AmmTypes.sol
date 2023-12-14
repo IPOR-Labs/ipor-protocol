@@ -45,7 +45,8 @@ library AmmTypes {
         uint256 fixedInterestRate;
         /// @notice Liquidation deposit is retained when the swap is opened. It is then paid back to agent who closes the derivative at maturity.
         /// It can be both trader or community member. Trader receives the deposit back when he chooses to close the derivative before maturity.
-        /// @dev value represented WITHOUT 18 decimals
+        /// @dev value represented WITHOUT 18 decimals for USDT, USDC, DAI pool. Notice! Value represented in 6 decimals for stETH pool.
+        /// @dev Example value in 6 decimals: 25000000 (in 6 decimals) = 25 stETH = 25.000000
         uint256 liquidationDepositAmount;
         /// @notice Opening fee amount part which is allocated in Liquidity Pool Balance. This fee is calculated as a rate of the swap's collateral.
         /// @dev value represented in 18 decimals
@@ -133,6 +134,12 @@ library AmmTypes {
     }
 
     struct UnwindParams {
+        /// @notice Risk Indicators Inputs signer
+        address messageSigner;
+        /// @notice Spread Router contract address
+        address spreadRouter;
+        address ammStorage;
+        address ammTreasury;
         SwapDirection direction;
         uint256 closeTimestamp;
         int256 swapPnlValueToDate;
@@ -156,11 +163,13 @@ library AmmTypes {
     /// 1 - Swap is already closed
     /// 2 - Swap state required Buyer or Liquidator to close. Sender is not Buyer nor Liquidator.
     /// 3 - Cannot close swap, closing is too early for Community
+    /// 4 - Cannot close swap with unwind because action is too early from the moment when swap was opened, validation based on Close Service configuration
     enum SwapClosableStatus {
         SWAP_IS_CLOSABLE,
         SWAP_ALREADY_CLOSED,
         SWAP_REQUIRED_BUYER_OR_LIQUIDATOR_TO_CLOSE,
-        SWAP_CANNOT_CLOSE_CLOSING_TOO_EARLY_FOR_COMMUNITY
+        SWAP_CANNOT_CLOSE_CLOSING_TOO_EARLY_FOR_COMMUNITY,
+        SWAP_CANNOT_CLOSE_WITH_UNWIND_ACTION_IS_TOO_EARLY
     }
 
     /// @notice Collection of swap attributes connected with IPOR Index and swap itself.
@@ -196,7 +205,7 @@ library AmmTypes {
     /// @notice Risk indicators calculated for swap opening
     struct RiskIndicatorsInputs {
         /// @notice Maximum collateral ratio in general
-                uint256 maxCollateralRatio;
+        uint256 maxCollateralRatio;
         /// @notice Maximum collateral ratio for a given leg
         uint256 maxCollateralRatioPerLeg;
         /// @notice Maximum leverage for a given leg
@@ -213,7 +222,7 @@ library AmmTypes {
         /// asset - address
         /// tenor - uint256
         /// direction - uint256
-        bytes  signature;
+        bytes signature;
     }
 
     struct CloseSwapRiskIndicatorsInput {

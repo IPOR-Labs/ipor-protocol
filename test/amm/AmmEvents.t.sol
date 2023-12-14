@@ -65,7 +65,7 @@ contract AmmEventsTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
         vm.prank(_liquidityProvider);
 
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
@@ -132,7 +132,7 @@ contract AmmEventsTest is TestCommons {
 
         // when
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
@@ -179,7 +179,7 @@ contract AmmEventsTest is TestCommons {
 
         // when
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_28_000_6DEC);
@@ -245,7 +245,7 @@ contract AmmEventsTest is TestCommons {
 
         // when
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_28_000_6DEC);
@@ -312,7 +312,7 @@ contract AmmEventsTest is TestCommons {
 
         // when
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
@@ -346,7 +346,7 @@ contract AmmEventsTest is TestCommons {
         );
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_160_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_160_18DEC));
 
         vm.prank(_userTwo);
         vm.expectEmit(true, true, true, true);
@@ -364,7 +364,7 @@ contract AmmEventsTest is TestCommons {
         uint256[] memory swapRfIds = new uint256[](0);
 
         vm.warp(block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS);
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceDai.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
     }
 
     function testShouldEmitEventWhenClosePayFixedSwap6DecimalsAndTakerClosedSwap() public {
@@ -374,7 +374,7 @@ contract AmmEventsTest is TestCommons {
 
         // when
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_28_000_6DEC);
@@ -408,7 +408,7 @@ contract AmmEventsTest is TestCommons {
         );
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_160_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_160_18DEC));
 
         vm.prank(_userTwo);
         vm.expectEmit(true, true, true, true);
@@ -426,7 +426,7 @@ contract AmmEventsTest is TestCommons {
         uint256[] memory swapRfIds = new uint256[](0);
 
         vm.warp(block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
     }
 
     function testShouldEmitEventWhenClosePayFixedSwap6DecimalsAndNotTakerClosedSwap() public {
@@ -438,7 +438,7 @@ contract AmmEventsTest is TestCommons {
 
         // when
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_28_000_6DEC);
@@ -472,7 +472,7 @@ contract AmmEventsTest is TestCommons {
         );
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_160_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_160_18DEC));
 
         vm.prank(_userThree);
         vm.expectEmit(true, true, true, true);
@@ -491,6 +491,6 @@ contract AmmEventsTest is TestCommons {
         uint256[] memory swapRfIds = new uint256[](0);
 
         vm.warp(block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS);
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userThree, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(_userThree, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
     }
 }

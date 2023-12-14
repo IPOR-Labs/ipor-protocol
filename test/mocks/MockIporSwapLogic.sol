@@ -2,7 +2,8 @@
 pragma solidity 0.8.20;
 
 import "../../contracts/interfaces/types/IporTypes.sol";
-import "../../contracts/amm/libraries/IporSwapLogic.sol";
+import "../../contracts/amm/libraries/SwapCloseLogicLib.sol";
+import "../../contracts/base/amm/libraries/SwapLogicBaseV1.sol";
 
 contract MockIporSwapLogic {
     function calculateSwapAmount(
@@ -14,7 +15,7 @@ contract MockIporSwapLogic {
         uint256 openingFeeRate
     ) public view returns (uint256 collateral, uint256 notional, uint256 openingFee) {
         return
-            IporSwapLogic.calculateSwapAmount(
+            SwapLogicBaseV1.calculateSwapAmount(
                 tenor,
                 totalAmount,
                 leverage,
@@ -29,7 +30,15 @@ contract MockIporSwapLogic {
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) public pure returns (uint256 interestFixed, uint256 interestFloating) {
-        return IporSwapLogic.calculateInterest(swap, closingTimestamp, mdIbtPrice);
+        return
+            SwapLogicBaseV1.calculateInterest(
+                swap.openTimestamp,
+                swap.notional,
+                swap.fixedInterestRate,
+                swap.ibtQuantity,
+                closingTimestamp,
+                mdIbtPrice
+            );
     }
 
     function calculateInterestFixed(
@@ -37,11 +46,11 @@ contract MockIporSwapLogic {
         uint256 swapFixedInterestRate,
         uint256 swapPeriodInSeconds
     ) public pure returns (uint256) {
-        return IporSwapLogic.calculateInterestFixed(notional, swapFixedInterestRate, swapPeriodInSeconds);
+        return SwapLogicBaseV1.calculateInterestFixed(notional, swapFixedInterestRate, swapPeriodInSeconds);
     }
 
     function calculateInterestFloating(uint256 ibtQuantity, uint256 ibtCurrentPrice) public pure returns (uint256) {
-        return IporSwapLogic.calculateInterestFloating(ibtQuantity, ibtCurrentPrice);
+        return SwapLogicBaseV1.calculateInterestFloating(ibtQuantity, ibtCurrentPrice);
     }
 
     function calculatePnlPayFixed(
@@ -49,7 +58,15 @@ contract MockIporSwapLogic {
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) public pure returns (int256 swapValue) {
-        swapValue = IporSwapLogic.calculatePnlPayFixed(swap, closingTimestamp, mdIbtPrice);
+        swapValue = SwapLogicBaseV1.calculatePnlPayFixed(
+            swap.openTimestamp,
+            swap.collateral,
+            swap.notional,
+            swap.fixedInterestRate,
+            swap.ibtQuantity,
+            closingTimestamp,
+            mdIbtPrice
+        );
     }
 
     function calculatePnlReceiveFixed(
@@ -57,7 +74,15 @@ contract MockIporSwapLogic {
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) public pure returns (int256 swapValue) {
-        swapValue = IporSwapLogic.calculatePnlReceiveFixed(swap, closingTimestamp, mdIbtPrice);
+        swapValue = SwapLogicBaseV1.calculatePnlReceiveFixed(
+            swap.openTimestamp,
+            swap.collateral,
+            swap.notional,
+            swap.fixedInterestRate,
+            swap.ibtQuantity,
+            closingTimestamp,
+            mdIbtPrice
+        );
     }
 
     function calculateSwapUnwindPnlValue(
@@ -66,7 +91,7 @@ contract MockIporSwapLogic {
         uint256 closingTimestamp,
         uint256 oppositeLegFixedRate
     ) public pure returns (int256 swapUnwindAmount) {
-        swapUnwindAmount = IporSwapLogic.calculateSwapUnwindPnlValue(
+        swapUnwindAmount = SwapCloseLogicLib.calculateSwapUnwindPnlValue(
             swap,
             direction,
             closingTimestamp,
@@ -79,8 +104,10 @@ contract MockIporSwapLogic {
         uint256 closingTimestamp,
         uint256 openingFeeRateCfg
     ) public pure returns (uint256 swapOpeningFeeAmount) {
-        swapOpeningFeeAmount = IporSwapLogic.calculateSwapUnwindOpeningFeeAmount(
-            swap,
+        swapOpeningFeeAmount = SwapCloseLogicLibBaseV1.calculateSwapUnwindOpeningFeeAmount(
+            swap.openTimestamp,
+            swap.notional,
+            swap.tenor,
             closingTimestamp,
             openingFeeRateCfg
         );

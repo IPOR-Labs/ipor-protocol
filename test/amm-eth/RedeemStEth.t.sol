@@ -11,7 +11,7 @@ contract RedeemStEth is TestEthMarketCommons {
         _init();
 
         vm.prank(userOne);
-        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth(userOne, 1_000e18);
+        IAmmPoolsServiceStEth(iporProtocolRouter).provideLiquidityStEth(userOne, 1_000e18);
     }
 
     function testShouldRevertWhen0Amount() external {
@@ -22,7 +22,7 @@ contract RedeemStEth is TestEthMarketCommons {
         // when
         vm.prank(userOne);
         vm.expectRevert(bytes(AmmPoolsErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW));
-        IAmmPoolsServiceEth(iporProtocolRouter).redeemFromAmmPoolStEth(userOne, 0);
+        IAmmPoolsServiceStEth(iporProtocolRouter).redeemFromAmmPoolStEth(userOne, 0);
 
         // then
         uint userStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
@@ -41,7 +41,7 @@ contract RedeemStEth is TestEthMarketCommons {
         // when
         vm.prank(userOne);
         vm.expectRevert(bytes(IporErrors.WRONG_ADDRESS));
-        IAmmPoolsServiceEth(iporProtocolRouter).redeemFromAmmPoolStEth(address(0), redeemAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouter).redeemFromAmmPoolStEth(address(0), redeemAmount);
 
         // then
         uint userStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
@@ -59,7 +59,7 @@ contract RedeemStEth is TestEthMarketCommons {
         // when
         vm.prank(userOne);
         vm.expectRevert(bytes(AmmPoolsErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW));
-        IAmmPoolsServiceEth(iporProtocolRouter).redeemFromAmmPoolStEth(userOne, 10_000e18);
+        IAmmPoolsServiceStEth(iporProtocolRouter).redeemFromAmmPoolStEth(userOne, 10_000e18);
 
         // then
         uint userStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
@@ -73,17 +73,17 @@ contract RedeemStEth is TestEthMarketCommons {
         // given
         uint userStEthBalanceBefore = IStETH(stEth).balanceOf(userOne);
         uint userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
-        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
         uint redeemAmount = 100e18;
 
         // when
         vm.prank(userOne);
-        IAmmPoolsServiceEth(iporProtocolRouter).redeemFromAmmPoolStEth(userOne, redeemAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouter).redeemFromAmmPoolStEth(userOne, redeemAmount);
 
         // then
         uint userStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
         uint userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
-        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
 
         assertTrue(userStEthBalanceBefore < userStEthBalanceAfter, "user balance of stEth should increase");
         assertTrue(userIpstEthBalanceBefore > userIpstEthBalanceAfter, "user ipstEth balance should decrease");
@@ -95,18 +95,18 @@ contract RedeemStEth is TestEthMarketCommons {
         uint userStEthBalanceBefore = IStETH(stEth).balanceOf(userOne);
         uint userTwoStEthBalanceBefore = IStETH(stEth).balanceOf(userTwo);
         uint userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
-        uint exchangeRateBefore = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
         uint redeemAmount = 100e18;
 
         // when
         vm.prank(userOne);
-        IAmmPoolsServiceEth(iporProtocolRouter).redeemFromAmmPoolStEth(userTwo, redeemAmount);
+        IAmmPoolsServiceStEth(iporProtocolRouter).redeemFromAmmPoolStEth(userTwo, redeemAmount);
 
         // then
         uint userStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
         uint userTwoStEthBalanceAfter = IStETH(stEth).balanceOf(userTwo);
         uint userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
-        uint exchangeRateAfter = IAmmPoolsLensEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
 
         assertEq(userStEthBalanceBefore, userStEthBalanceAfter, "user balance of stEth should not change");
         assertTrue(userTwoStEthBalanceBefore < userTwoStEthBalanceAfter, "user balance of stEth should increase");
@@ -117,11 +117,11 @@ contract RedeemStEth is TestEthMarketCommons {
     function testShouldUserThirdEarnWhenUserOneAndTwoRedeem() public {
         //given
         vm.prank(userTwo);
-        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth(userTwo, 1_000e18);
+        IAmmPoolsServiceStEth(iporProtocolRouter).provideLiquidityStEth(userTwo, 1_000e18);
 
         uint256 stEthUserThreeBalanceBefore = IStETH(stEth).balanceOf(userThree);
         vm.prank(userThree);
-        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth(userThree, 1_000e18);
+        IAmmPoolsServiceStEth(iporProtocolRouter).provideLiquidityStEth(userThree, 1_000e18);
 
         uint256 ipTokenUserOne = IERC20(ipstEth).balanceOf(userOne);
         uint256 ipTokenUserTwo = IERC20(ipstEth).balanceOf(userTwo);
@@ -129,11 +129,11 @@ contract RedeemStEth is TestEthMarketCommons {
 
         //when
         vm.prank(userOne);
-        IAmmPoolsServiceEth(iporProtocolRouter).redeemFromAmmPoolStEth(userOne, ipTokenUserOne);
+        IAmmPoolsServiceStEth(iporProtocolRouter).redeemFromAmmPoolStEth(userOne, ipTokenUserOne);
         vm.prank(userTwo);
-        IAmmPoolsServiceEth(iporProtocolRouter).redeemFromAmmPoolStEth(userTwo, ipTokenUserTwo);
+        IAmmPoolsServiceStEth(iporProtocolRouter).redeemFromAmmPoolStEth(userTwo, ipTokenUserTwo);
         vm.prank(userThree);
-        IAmmPoolsServiceEth(iporProtocolRouter).redeemFromAmmPoolStEth(userThree, ipTokenUserThree);
+        IAmmPoolsServiceStEth(iporProtocolRouter).redeemFromAmmPoolStEth(userThree, ipTokenUserThree);
 
         //then
         uint256 stEthUserThreeBalanceAfter = IStETH(stEth).balanceOf(userThree);
@@ -143,10 +143,10 @@ contract RedeemStEth is TestEthMarketCommons {
     function testShouldStayRedeemFeeWhenLastUserRedeem() public {
         //given
         vm.prank(userTwo);
-        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth(userTwo, 1_000e18);
+        IAmmPoolsServiceStEth(iporProtocolRouter).provideLiquidityStEth(userTwo, 1_000e18);
 
         vm.prank(userThree);
-        IAmmPoolsServiceEth(iporProtocolRouter).provideLiquidityStEth(userThree, 1_000e18);
+        IAmmPoolsServiceStEth(iporProtocolRouter).provideLiquidityStEth(userThree, 1_000e18);
 
         uint256 ipTokenUserOne = IERC20(ipstEth).balanceOf(userOne);
         uint256 ipTokenUserTwo = IERC20(ipstEth).balanceOf(userTwo);
@@ -154,14 +154,14 @@ contract RedeemStEth is TestEthMarketCommons {
 
         //when
         vm.prank(userOne);
-        IAmmPoolsServiceEth(iporProtocolRouter).redeemFromAmmPoolStEth(userOne, ipTokenUserOne);
+        IAmmPoolsServiceStEth(iporProtocolRouter).redeemFromAmmPoolStEth(userOne, ipTokenUserOne);
         vm.prank(userTwo);
-        IAmmPoolsServiceEth(iporProtocolRouter).redeemFromAmmPoolStEth(userTwo, ipTokenUserTwo);
+        IAmmPoolsServiceStEth(iporProtocolRouter).redeemFromAmmPoolStEth(userTwo, ipTokenUserTwo);
         vm.prank(userThree);
-        IAmmPoolsServiceEth(iporProtocolRouter).redeemFromAmmPoolStEth(userThree, ipTokenUserThree);
+        IAmmPoolsServiceStEth(iporProtocolRouter).redeemFromAmmPoolStEth(userThree, ipTokenUserThree);
 
         //then
-        uint256 stEthAmmTreasuryBalance = IStETH(stEth).balanceOf(ammTreasuryEth);
+        uint256 stEthAmmTreasuryBalance = IStETH(stEth).balanceOf(ammTreasuryStEth);
         assertGt(stEthAmmTreasuryBalance, 5e18);
         assertEq(stEthAmmTreasuryBalance, 5037562500000000000);
     }

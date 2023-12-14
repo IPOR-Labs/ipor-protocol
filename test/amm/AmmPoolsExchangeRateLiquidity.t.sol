@@ -92,10 +92,10 @@ contract AmmPoolsExchangeRateLiquidityTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(
             address(_iporProtocol.asset),
             TestConstants.PERCENTAGE_3_18DEC
-        );
+        ));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, 40 * TestConstants.D18);
@@ -124,10 +124,10 @@ contract AmmPoolsExchangeRateLiquidityTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(
             address(_iporProtocol.asset),
             TestConstants.PERCENTAGE_3_18DEC
-        );
+        ));
 
         //BEGIN HACK - provide liquidity without mint ipToken
         vm.startPrank(address(_iporProtocol.router));
@@ -160,10 +160,10 @@ contract AmmPoolsExchangeRateLiquidityTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(
             address(_iporProtocol.asset),
             TestConstants.PERCENTAGE_3_18DEC
-        );
+        ));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, 40 * TestConstants.N1__0_6DEC);

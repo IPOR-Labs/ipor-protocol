@@ -40,7 +40,7 @@ contract AmmSoapTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
@@ -73,7 +73,7 @@ contract AmmSoapTest is TestCommons {
 
         vm.warp(100);
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
@@ -106,7 +106,7 @@ contract AmmSoapTest is TestCommons {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
@@ -144,7 +144,7 @@ contract AmmSoapTest is TestCommons {
         vm.warp(currentTimestamp);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
@@ -178,7 +178,7 @@ contract AmmSoapTest is TestCommons {
         uint256 currentTimestamp = block.timestamp;
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
@@ -197,7 +197,7 @@ contract AmmSoapTest is TestCommons {
         uint256[] memory swapRfIds = new uint256[](0);
 
         // when
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceDai.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
@@ -219,7 +219,7 @@ contract AmmSoapTest is TestCommons {
         uint256 currentTimestamp = block.timestamp;
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
@@ -244,7 +244,7 @@ contract AmmSoapTest is TestCommons {
         swapRfIds[0] = 1;
 
         // when
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceDai.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
@@ -265,7 +265,7 @@ contract AmmSoapTest is TestCommons {
         uint256 currentTimestamp = block.timestamp;
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         // when
         vm.startPrank(_userTwo);
@@ -308,7 +308,7 @@ contract AmmSoapTest is TestCommons {
         uint256 currentTimestamp = block.timestamp;
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
@@ -357,8 +357,8 @@ contract AmmSoapTest is TestCommons {
         vm.stopPrank();
 
         vm.startPrank(_userOne);
-        amm.iporOracle.updateIndex(address(ammUsdt.asset), TestConstants.PERCENTAGE_3_18DEC);
-        amm.iporOracle.updateIndex(address(ammDai.asset), TestConstants.PERCENTAGE_3_18DEC);
+        amm.iporOracle.updateIndexes(getIndexToUpdate(address(ammUsdt.asset), TestConstants.PERCENTAGE_3_18DEC));
+        amm.iporOracle.updateIndexes(getIndexToUpdate(address(ammDai.asset), TestConstants.PERCENTAGE_3_18DEC));
         vm.stopPrank();
 
         // when
@@ -405,7 +405,7 @@ contract AmmSoapTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, 2 * TestConstants.USD_28_000_18DEC);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
@@ -434,7 +434,7 @@ contract AmmSoapTest is TestCommons {
         uint256[] memory swapRfIds = new uint256[](0);
 
         // when
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceDai.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
         (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         // then
@@ -456,7 +456,7 @@ contract AmmSoapTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, 2 * TestConstants.USD_28_000_18DEC);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
@@ -485,7 +485,7 @@ contract AmmSoapTest is TestCommons {
         swapRfIds[0] = 2;
 
         // when
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceDai.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         // then
         (, , int256 soap) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
@@ -517,8 +517,8 @@ contract AmmSoapTest is TestCommons {
         vm.stopPrank();
 
         vm.startPrank(_userOne);
-        amm.iporOracle.updateIndex(address(ammUsdt.asset), TestConstants.PERCENTAGE_3_18DEC);
-        amm.iporOracle.updateIndex(address(ammDai.asset), TestConstants.PERCENTAGE_3_18DEC);
+        amm.iporOracle.updateIndexes(getIndexToUpdate(address(ammUsdt.asset), TestConstants.PERCENTAGE_3_18DEC));
+        amm.iporOracle.updateIndexes(getIndexToUpdate(address(ammDai.asset), TestConstants.PERCENTAGE_3_18DEC));
         vm.stopPrank();
 
         vm.startPrank(_userTwo);
@@ -549,7 +549,7 @@ contract AmmSoapTest is TestCommons {
         swapRfIds[0] = 1;
 
         // when
-        ammUsdt.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        ammUsdt.ammCloseSwapServiceUsdt.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         // then
         (, , int256 soapUsdt) = ammUsdt.ammSwapsLens.getSoap(address(ammUsdt.asset));
@@ -575,7 +575,7 @@ contract AmmSoapTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
@@ -588,11 +588,11 @@ contract AmmSoapTest is TestCommons {
         vm.stopPrank();
 
         vm.startPrank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_120_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_120_18DEC));
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
 
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_6_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_6_18DEC));
         vm.stopPrank();
 
         // when
@@ -615,7 +615,7 @@ contract AmmSoapTest is TestCommons {
         uint256 currentTimestamp = block.timestamp;
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.prank(_liquidityProvider);
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_liquidityProvider, TestConstants.USD_28_000_6DEC);
@@ -631,11 +631,11 @@ contract AmmSoapTest is TestCommons {
         vm.stopPrank();
 
         vm.startPrank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_120_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_120_18DEC));
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
 
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_6_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_6_18DEC));
         vm.stopPrank();
 
         // when
@@ -663,7 +663,7 @@ contract AmmSoapTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityDai(_liquidityProvider, TestConstants.USD_28_000_18DEC);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
@@ -676,11 +676,11 @@ contract AmmSoapTest is TestCommons {
         vm.stopPrank();
 
         vm.startPrank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_120_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_120_18DEC));
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
 
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_6_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_6_18DEC));
         vm.stopPrank();
 
         // when
@@ -712,7 +712,7 @@ contract AmmSoapTest is TestCommons {
 
         // when
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
@@ -759,7 +759,7 @@ contract AmmSoapTest is TestCommons {
 
         // when
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
@@ -773,7 +773,7 @@ contract AmmSoapTest is TestCommons {
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
@@ -787,7 +787,7 @@ contract AmmSoapTest is TestCommons {
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         // then
         (, , int256 soap50Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
@@ -810,7 +810,7 @@ contract AmmSoapTest is TestCommons {
 
         // when
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
@@ -827,13 +827,13 @@ contract AmmSoapTest is TestCommons {
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
         (, , int256 soapAfterUpdateIndex25Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         (, , int256 soapAfterUpdateIndex50Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
@@ -859,7 +859,7 @@ contract AmmSoapTest is TestCommons {
         uint256 currentTimestamp = block.timestamp;
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_1_DAY_IN_SECONDS);
         vm.startPrank(_userTwo);
@@ -876,7 +876,7 @@ contract AmmSoapTest is TestCommons {
 
         // when
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_1_DAY_IN_SECONDS + 100);
 
@@ -904,7 +904,7 @@ contract AmmSoapTest is TestCommons {
 
         // when
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
@@ -918,7 +918,7 @@ contract AmmSoapTest is TestCommons {
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
@@ -932,7 +932,7 @@ contract AmmSoapTest is TestCommons {
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         (, , int256 soap50Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
 
@@ -957,7 +957,7 @@ contract AmmSoapTest is TestCommons {
         uint256 currentTimestamp = block.timestamp;
         // when
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
@@ -971,7 +971,7 @@ contract AmmSoapTest is TestCommons {
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
@@ -985,7 +985,7 @@ contract AmmSoapTest is TestCommons {
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
         vm.startPrank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_6_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_6_18DEC));
         vm.stopPrank();
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
@@ -995,7 +995,7 @@ contract AmmSoapTest is TestCommons {
         swapPfIds[1] = 2;
         uint256[] memory swapRfIds = new uint256[](0);
 
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceDai.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
@@ -1018,7 +1018,7 @@ contract AmmSoapTest is TestCommons {
 
         // when
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         uint256 currentTimestamp = block.timestamp;
         vm.startPrank(_userTwo);
@@ -1034,7 +1034,7 @@ contract AmmSoapTest is TestCommons {
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
@@ -1049,7 +1049,7 @@ contract AmmSoapTest is TestCommons {
         vm.warp(currentTimestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
 
         vm.startPrank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_6_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_6_18DEC));
         vm.stopPrank();
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
@@ -1059,7 +1059,7 @@ contract AmmSoapTest is TestCommons {
         swapPfIds[1] = 2;
         uint256[] memory swapRfIds = new uint256[](0);
 
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceDai.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
@@ -1085,7 +1085,7 @@ contract AmmSoapTest is TestCommons {
 
         // when
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_6_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_6_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
@@ -1100,7 +1100,7 @@ contract AmmSoapTest is TestCommons {
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
@@ -1115,7 +1115,7 @@ contract AmmSoapTest is TestCommons {
         vm.warp(currentTimestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
 
         vm.startPrank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
         vm.stopPrank();
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
@@ -1125,7 +1125,7 @@ contract AmmSoapTest is TestCommons {
         swapPfIds[1] = 2;
         uint256[] memory swapRfIds = new uint256[](0);
 
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceDai.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
@@ -1149,7 +1149,7 @@ contract AmmSoapTest is TestCommons {
         uint256 currentTimestamp = block.timestamp;
         // when
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
@@ -1164,7 +1164,7 @@ contract AmmSoapTest is TestCommons {
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
@@ -1179,7 +1179,7 @@ contract AmmSoapTest is TestCommons {
         vm.warp(currentTimestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
 
         vm.startPrank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_6_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_6_18DEC));
         vm.stopPrank();
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
@@ -1189,7 +1189,7 @@ contract AmmSoapTest is TestCommons {
         swapRfIds[0] = 1;
         swapRfIds[1] = 2;
 
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceDai.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
@@ -1214,7 +1214,7 @@ contract AmmSoapTest is TestCommons {
 
         // when
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_6_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_6_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
@@ -1229,7 +1229,7 @@ contract AmmSoapTest is TestCommons {
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysDai(
@@ -1244,7 +1244,7 @@ contract AmmSoapTest is TestCommons {
         vm.warp(currentTimestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
 
         vm.startPrank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
         vm.stopPrank();
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
@@ -1254,7 +1254,7 @@ contract AmmSoapTest is TestCommons {
         swapRfIds[0] = 1;
         swapRfIds[1] = 2;
 
-        _iporProtocol.ammCloseSwapService.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceDai.closeSwapsDai(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
@@ -1280,7 +1280,7 @@ contract AmmSoapTest is TestCommons {
 
         // when
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
@@ -1295,7 +1295,7 @@ contract AmmSoapTest is TestCommons {
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
@@ -1310,7 +1310,7 @@ contract AmmSoapTest is TestCommons {
         vm.warp(currentTimestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
 
         vm.startPrank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_6_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_6_18DEC));
         vm.stopPrank();
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
@@ -1320,7 +1320,7 @@ contract AmmSoapTest is TestCommons {
         swapPfIds[1] = 2;
         uint256[] memory swapRfIds = new uint256[](0);
 
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
@@ -1345,7 +1345,7 @@ contract AmmSoapTest is TestCommons {
 
         // when
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
@@ -1360,7 +1360,7 @@ contract AmmSoapTest is TestCommons {
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
@@ -1375,7 +1375,7 @@ contract AmmSoapTest is TestCommons {
         vm.warp(currentTimestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
 
         vm.startPrank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_6_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_6_18DEC));
         vm.stopPrank();
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
@@ -1385,7 +1385,7 @@ contract AmmSoapTest is TestCommons {
         swapPfIds[1] = 2;
         uint256[] memory swapRfIds = new uint256[](0);
 
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));
@@ -1412,7 +1412,7 @@ contract AmmSoapTest is TestCommons {
 
         // when
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_3_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
@@ -1427,7 +1427,7 @@ contract AmmSoapTest is TestCommons {
         vm.warp(currentTimestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
 
         vm.prank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_5_18DEC));
 
         vm.startPrank(_userTwo);
         _iporProtocol.ammOpenSwapService.openSwapReceiveFixed28daysUsdt(
@@ -1442,7 +1442,7 @@ contract AmmSoapTest is TestCommons {
         vm.warp(currentTimestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
 
         vm.startPrank(_userOne);
-        _iporProtocol.iporOracle.updateIndex(address(_iporProtocol.asset), TestConstants.PERCENTAGE_6_18DEC);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_6_18DEC));
         vm.stopPrank();
 
         vm.warp(currentTimestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
@@ -1452,7 +1452,7 @@ contract AmmSoapTest is TestCommons {
         swapRfIds[0] = 1;
         swapRfIds[1] = 2;
 
-        _iporProtocol.ammCloseSwapService.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(_userTwo, swapPfIds, swapRfIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
 
         // then
         (, , int256 soap75Days) = _iporProtocol.ammSwapsLens.getSoap(address(_iporProtocol.asset));

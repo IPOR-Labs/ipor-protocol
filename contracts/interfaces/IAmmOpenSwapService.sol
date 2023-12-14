@@ -263,7 +263,7 @@ interface IAmmOpenSwapService {
         uint256 acceptableFixedInterestRate,
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
-) external returns (uint256);
+    ) external returns (uint256);
 
     /// @notice It opens a swap for DAI receive-fixed pay-floating with a tenor of 28 days.
     /// @param beneficiary address of the owner of the swap.

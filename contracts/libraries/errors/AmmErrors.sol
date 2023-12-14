@@ -127,4 +127,7 @@ library AmmErrors {
 
     /// @notice Error when withdraw from asset management is not enough to cover transfer amount to buyer and/or beneficiary
     string public constant ASSET_MANAGEMENT_WITHDRAW_NOT_ENOUGH = "IPOR_340";
+
+    /// @notice Swap cannot be closed with unwind because action is too early, depends on value of configuration parameter `timeAfterOpenAllowedToCloseSwapWithUnwinding`
+    string public constant CANNOT_CLOSE_SWAP_WITH_UNWIND_ACTION_IS_TOO_EARLY = "IPOR_341";
 }

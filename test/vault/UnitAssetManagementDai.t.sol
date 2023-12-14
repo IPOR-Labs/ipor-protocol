@@ -592,4 +592,20 @@ contract UnitAssetManagementDaiTest is TestCommons {
         (uint256 vaultBalance, uint256 depositedAmount) = _assetManagementDai.deposit(100);
         vm.stopPrank();
     }
+
+    function testShouldNotSendETH() public {
+        //given
+
+        //when
+        vm.expectRevert(
+            abi.encodePacked(
+                "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
+            )
+        );
+        (bool statusDai, ) = address(_assetManagementDai).call{value: 1e18}("");
+
+        //then
+        assertTrue(!statusDai);
+
+    }
 }

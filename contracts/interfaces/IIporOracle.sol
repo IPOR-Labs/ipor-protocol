@@ -5,6 +5,22 @@ import "./types/IporTypes.sol";
 
 /// @title Interface for interaction with IporOracle, smart contract responsible for managing IPOR Index.
 interface IIporOracle {
+
+    /// @notice Structure representing parameters required to update an IPOR index for a given asset.
+    /// @dev This structure is used in the `updateIndexes` method to provide necessary details for updating IPOR indexes.
+    ///      For assets other than '_stEth', the 'quasiIbtPrice' field is not utilized in the update process.
+    /// @param asset The address of the underlying asset/stablecoin supported by the IPOR Protocol.
+    /// @param indexValue The new value of the IPOR index to be set for the specified asset.
+    /// @param updateTimestamp The timestamp at which the index value is updated, used to calculate accrued interest.
+    /// @param quasiIbtPrice The quasi interest-bearing token (IBT) price, applicable only for the '_stEth' asset.
+    ///                      Represents a specialized value used in calculations for staked Ethereum.
+    struct UpdateIndexParams {
+        address asset;
+        uint256 indexValue;
+        uint256 updateTimestamp;
+        uint256 quasiIbtPrice;
+    }
+
     /// @notice Returns current version of IporOracle's
     /// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
     /// @return current IporOracle version
@@ -39,17 +55,17 @@ interface IIporOracle {
     /// @return accrued IBT price, represented in 18 decimals
     function calculateAccruedIbtPrice(address asset, uint256 calculateTimestamp) external view returns (uint256);
 
-    /// @notice Updates IPOR Index for a given asset. Function available only for Updater
-    /// @dev Emmits {IporIndexUpdate} event.
-    /// @param asset underlying / stablecoin address supported by IPOR Protocol
-    /// @param indexValue new IPOR Index value represented in 18 decimals
-    function updateIndex(address asset, uint256 indexValue) external;
-
-    /// @notice Updates IPOR indexes for a given assets. Function available only for Updater
-    /// @dev Emmits {IporIndexUpdate} event.
-    /// @param assets underlying / stablecoin addresses supported by IPOR Protocol
-    /// @param indexValues new IPOR Index values
-    function updateIndexes(address[] memory assets, uint256[] memory indexValues) external;
+    /// @notice Updates IPOR indexes for specified assets, accessible only by authorized updaters.
+    /// @dev Iterates through the 'indexesToUpdate' array, updating each asset's index and emitting {IporIndexUpdate} event.
+    ///      Special handling is applied for the '_stEth' asset. Function execution is restricted during pause state and
+    ///      requires the caller to be an authorized updater.
+    /// @param indexesToUpdate Array of 'UpdateIndexParams' containing asset address, new index value, update timestamp,
+    ///        and quasiIbtPrice (for '_stEth' asset).
+    /// @dev INPUT_ARRAYS_LENGTH_MISMATCH if 'indexesToUpdate' array is empty.
+    /// @dev ASSET_NOT_SUPPORTED if an asset in 'indexesToUpdate' is not supported.
+    /// @dev WRONG_INDEX_TIMESTAMP if the provided timestamp is either older than the last update timestamp or greater
+    ///         than the current block timestamp.
+    function updateIndexes(UpdateIndexParams[] calldata indexesToUpdate) external;
 
     /// @notice Adds new Updater. Updater has right to update IPOR Index. Function available only for Owner.
     /// @param newUpdater new updater address

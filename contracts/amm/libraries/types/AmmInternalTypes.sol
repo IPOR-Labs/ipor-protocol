@@ -7,7 +7,7 @@ import "../../../interfaces/types/AmmTypes.sol";
 /// @notice The types used in the AmmTreasury's interface.
 /// @dev All values, where applicable, are represented in 18 decimals.
 library AmmInternalTypes {
-    struct PnlValueStruct    {
+    struct PnlValueStruct {
         /// @notice PnL Value of the swap.
         int256 pnlValue;
         /// @notice flag indicating if unwind is required when closing swap.
@@ -21,7 +21,7 @@ library AmmInternalTypes {
     }
 
     struct BeforeOpenSwapStruct {
-        /// @notice Sum of all asset transfered when opening swap. It includes the collateral, fees and desposits.
+        /// @notice Sum of all asset transferred when opening swap. It includes the collateral, fees and deposits.
         /// @dev The amount is represented in 18 decimals regardless of the decimals of the asset.
         uint256 wadTotalAmount;
         /// @notice Swap's collateral.
@@ -37,7 +37,7 @@ library AmmInternalTypes {
         /// @notice Refundable deposit blocked for the entity that will close the swap.
         /// For more information on how the liquidations work refer to the documentation.
         /// https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/liquidations
-        /// @dev value represented without decimals, as an integer
+        /// @dev value represented without decimals for USDT, USDC, DAI, with 6 decimals for stETH, as an integer.
         uint256 liquidationDepositAmount;
         /// @notice The struct describing the IPOR and its params calculated for the time when it was most recently updated and the change that took place since the update.
         /// Namely, the interest that would be computed into IBT should the rebalance occur.

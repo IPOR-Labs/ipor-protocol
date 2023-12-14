@@ -10,8 +10,9 @@ import "../../contracts/router/IporProtocolRouter.sol";
 import "../../contracts/interfaces/IAmmSwapsLens.sol";
 import "../../contracts/interfaces/IAmmOpenSwapLens.sol";
 import "../../contracts/interfaces/IAmmCloseSwapLens.sol";
-import "../../contracts/amm/AmmSwapsLens.sol";
+import "../../contracts/amm-common/AmmSwapsLens.sol";
 import "../../contracts/amm/AmmPoolsLens.sol";
+import "../../contracts/amm-eth/AmmPoolsLensStEth.sol";
 import "../../contracts/amm/AssetManagementLens.sol";
 import "../../contracts/amm/spread/Spread28Days.sol";
 import "../../contracts/amm/spread/Spread60Days.sol";
@@ -20,11 +21,18 @@ import "../../contracts/amm/spread/SpreadCloseSwapService.sol";
 import "../../contracts/amm/spread/SpreadStorageLens.sol";
 import "../../contracts/amm/spread/SpreadRouter.sol";
 import "../../contracts/amm/AmmOpenSwapService.sol";
-import "../../contracts/amm/AmmCloseSwapService.sol";
+import "../../contracts/amm-eth/AmmOpenSwapServiceStEth.sol";
+import "../../contracts/amm/AmmCloseSwapServiceUsdt.sol";
+import "../../contracts/amm/AmmCloseSwapServiceUsdc.sol";
+import "../../contracts/amm/AmmCloseSwapServiceDai.sol";
+import "../../contracts/amm-eth/AmmCloseSwapServiceStEth.sol";
+import "../../contracts/amm-common/AmmCloseSwapLens.sol";
 import "../../contracts/amm/AmmPoolsService.sol";
-import "../../contracts/amm/AmmGovernanceService.sol";
+import "../../contracts/amm-common/AmmGovernanceService.sol";
 import "../../contracts/amm/AmmStorage.sol";
 import "../../contracts/amm/AmmTreasury.sol";
+
+import "../../contracts/amm-eth/AmmPoolsServiceStEth.sol";
 import "../../contracts/vault/strategies/StrategyDsrDai.sol";
 import "../../contracts/vault/AssetManagementDai.sol";
 import "../../contracts/vault/AssetManagementUsdt.sol";
@@ -32,9 +40,17 @@ import "../../contracts/vault/AssetManagementUsdc.sol";
 import "../../contracts/vault/strategies/StrategyAave.sol";
 import "../../contracts/vault/strategies/StrategyCompound.sol";
 import "../../contracts/interfaces/IIpTokenV1.sol";
+import "../../contracts/amm-eth/interfaces/IWETH9.sol";
+import "../../contracts/amm-eth/interfaces/IStETH.sol";
+import "../../contracts/base/amm/AmmStorageBaseV1.sol";
+import "../../contracts/base/amm/AmmTreasuryBaseV1.sol";
+import "../../contracts/base/spread/SpreadBaseV1.sol";
+import "../../contracts/amm/spread/SpreadStorageService.sol";
 
 contract TestForkCommons is Test {
     address public constant owner = 0xD92E9F039E4189c342b4067CC61f5d063960D248;
+    address public treasurer = _getUserAddress(555);
+
     address public constant IPOR = 0x1e4746dC744503b53b4A082cB3607B169a289090;
 
     address public constant DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
@@ -54,6 +70,12 @@ contract TestForkCommons is Test {
     address public constant ipDAI = 0x8537b194BFf354c4738E9F3C81d67E3371DaDAf8;
     address public constant ipUSDC = 0x7c0e72f431FD69560D951e4C04A4de3657621a88;
     address public constant ipUSDT = 0x9Bd2177027edEE300DC9F1fb88F24DB6e5e1edC6;
+    address public constant ipstETH = 0xc40431b6C510AeB45Fbb5e21E40D49F12b0c1F0c;
+
+    address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+    address public constant stETH = 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
+    address public constant wETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    address public constant wstETH = 0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0;
 
     address public constant iporOracleProxy = 0x421C69EAa54646294Db30026aeE80D01988a6876;
 
@@ -118,18 +140,77 @@ contract TestForkCommons is Test {
     address public ammOpenSwapService = 0x78034b17f80c6209400B26AB7B217C31F87AE119;
     address public ammCloseSwapService = 0x6650DE6837839DFCb05D188C50b927b008825ee3;
 
+    address public ammTreasuryProxyStEth = 0x63395EDAF74a80aa1155dB7Cd9BBA976a88DeE4E;
+
     uint256 public messageSignerPrivateKey;
     address public messageSignerAddress;
+
+    address public ammStorageProxyStEth;
+    address public ammOpenSwapServiceStEth;
+    address public ammCloseSwapServiceStEth;
+    address public ammPoolsLensStEth;
+    address public ammPoolsServiceStEth;
+
+    address public newAmmGovernanceService;
+
+    address public newSpread28Days;
+    address public newSpread60Days;
+    address public newSpread90Days;
+    address public newSpreadCloseSwapService;
+    address public newSpreadStorageService;
+
+    address public spreadStEth;
+
+    address public newAmmCloseSwapServiceUsdt;
+    address public newAmmCloseSwapServiceUsdc;
+    address public newAmmCloseSwapServiceDai;
+    address public newAmmCloseSwapLens;
 
     function _init() internal {
         messageSignerPrivateKey = 0x12341234;
         messageSignerAddress = vm.addr(messageSignerPrivateKey);
 
+        _createAmmStorageStEth();
+        _createNewSpreadForStEth();
+
         _createAmmSwapsLens();
         _createAmmOpenSwapService();
         _createAmmCloseSwapService();
 
+        _upgradeAmmTreasuryStEth();
+
+        _createAmmOpenSwapServiceStEth();
+        _createAmmCloseSwapServiceStEth();
+        _createNewAmmPoolsServiceStEth();
+        _createAmmPoolsLensStEth();
+
+        _createAmmCloseSwapLens();
+
+        _createNewAmmGovernanceService();
+        _createIporOracle();
+
+        _setupIporOracleStEth();
         _updateIporRouterImplementation();
+    }
+
+    function _setupUser(address user, uint256 value) internal {
+        deal(user, 1_000_000e18);
+        vm.startPrank(user);
+
+        IStETH(stETH).submit{value: value}(address(0));
+        IStETH(stETH).approve(iporProtocolRouterProxy, type(uint256).max);
+
+        IWETH9(wETH).deposit{value: value}();
+        IWETH9(wETH).approve(iporProtocolRouterProxy, type(uint256).max);
+
+        IStETH(stETH).submit{value: value}(address(0));
+
+        IWETH9(stETH).approve(wstETH, type(uint256).max);
+        IwstEth(wstETH).wrap(value);
+
+        IWETH9(wstETH).approve(iporProtocolRouterProxy, type(uint256).max);
+
+        vm.stopPrank();
     }
 
     function _updateIporRouterImplementation() internal {
@@ -139,15 +220,20 @@ contract TestForkCommons is Test {
                 ammPoolsLens,
                 assetManagementLens,
                 ammOpenSwapService,
-                ammCloseSwapService,
+                ammOpenSwapServiceStEth,
+                newAmmCloseSwapServiceUsdt,
+                newAmmCloseSwapServiceUsdc,
+                newAmmCloseSwapServiceDai,
+                ammCloseSwapServiceStEth,
+                newAmmCloseSwapLens,
                 ammPoolsService,
-                ammGovernanceService,
+                newAmmGovernanceService,
                 _getUserAddress(123),
                 _getUserAddress(123),
                 _getUserAddress(123),
                 _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123)
+                ammPoolsServiceStEth,
+                ammPoolsLensStEth
             )
         );
         vm.prank(owner);
@@ -242,47 +328,236 @@ contract TestForkCommons is Test {
         strategyCompoundUsdtProxy = address(proxy);
     }
 
+    function _upgradeSpreadRouter() internal {
+        newSpread28Days = address(new Spread28Days(DAI, USDC, USDT));
+        newSpread60Days = address(new Spread60Days(DAI, USDC, USDT));
+        newSpread90Days = address(new Spread90Days(DAI, USDC, USDT));
+        newSpreadCloseSwapService = address(new SpreadCloseSwapService(DAI, USDC, USDT));
+        newSpreadStorageService = address(new SpreadStorageService());
+
+        SpreadRouter newImplementation = new SpreadRouter(
+            SpreadRouter.DeployedContracts(
+                iporProtocolRouterProxy,
+                newSpread28Days,
+                newSpread60Days,
+                newSpread90Days,
+                spreadStorageLens,
+                newSpreadCloseSwapService,
+                newSpreadStorageService
+            )
+        );
+
+        vm.prank(owner);
+        SpreadRouter(spreadRouter).upgradeTo(address(newImplementation));
+    }
 
     function _createAmmSwapsLens() private {
         IAmmSwapsLens.SwapLensPoolConfiguration memory daiConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             DAI,
             ammStorageProxyDai,
             ammTreasuryDai,
-            10 * 1e18
+            spreadRouter
         );
         IAmmSwapsLens.SwapLensPoolConfiguration memory usdcConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             USDC,
             ammStorageProxyUsdc,
             ammTreasuryUsdc,
-            10 * 1e18
+            spreadRouter
         );
         IAmmSwapsLens.SwapLensPoolConfiguration memory usdtConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
             USDT,
             ammStorageProxyUsdt,
             ammTreasuryUsdt,
-            10 * 1e18
+            spreadRouter
+        );
+
+        IAmmSwapsLens.SwapLensPoolConfiguration memory stEthConfig = IAmmSwapsLens.SwapLensPoolConfiguration(
+            stETH,
+            ammStorageProxyStEth,
+            ammTreasuryProxyStEth,
+            spreadStEth
         );
 
         ammSwapsLens = address(
-            new AmmSwapsLens(
-                usdtConfig,
-                usdcConfig,
-                daiConfig,
+            new AmmSwapsLens(usdtConfig, usdcConfig, daiConfig, stEthConfig, iporOracleProxy, messageSignerAddress)
+        );
+    }
+
+    function _createAmmPoolsLensStEth() private {
+        ammPoolsLensStEth = address(
+            new AmmPoolsLensStEth(stETH, ipstETH, ammTreasuryProxyStEth, ammStorageProxyStEth, iporOracleProxy)
+        );
+    }
+
+    function _createNewAmmPoolsServiceStEth() private {
+        ammPoolsServiceStEth = address(
+            new AmmPoolsServiceStEth(
+                stETH,
+                wETH,
+                ipstETH,
+                ammTreasuryProxyStEth,
+                ammStorageProxyStEth,
                 iporOracleProxy,
-                messageSignerAddress,
-                spreadRouter
+                iporProtocolRouterProxy,
+                5000000000000000
             )
         );
     }
 
+    function _createNewAmmPoolsServiceStEthWithZEROFee() internal {
+        ammPoolsServiceStEth = address(
+            new AmmPoolsServiceStEth(
+                stETH,
+                wETH,
+                ipstETH,
+                ammTreasuryProxyStEth,
+                ammStorageProxyStEth,
+                iporOracleProxy,
+                iporProtocolRouterProxy,
+                0
+            )
+        );
+    }
+
+    function _createNewAmmGovernanceService() private {
+        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory usdtPoolCfg = IAmmGovernanceLens
+            .AmmGovernancePoolConfiguration({
+                asset: USDT,
+                decimals: 6,
+                ammStorage: ammStorageProxyUsdt,
+                ammTreasury: ammTreasuryUsdt,
+                ammPoolsTreasury: treasurer,
+                ammPoolsTreasuryManager: treasurer,
+                ammCharlieTreasury: treasurer,
+                ammCharlieTreasuryManager: treasurer
+            });
+        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory usdcPoolCfg = IAmmGovernanceLens
+            .AmmGovernancePoolConfiguration({
+                asset: USDC,
+                decimals: 6,
+                ammStorage: ammStorageProxyUsdc,
+                ammTreasury: ammTreasuryUsdc,
+                ammPoolsTreasury: treasurer,
+                ammPoolsTreasuryManager: treasurer,
+                ammCharlieTreasury: treasurer,
+                ammCharlieTreasuryManager: treasurer
+            });
+        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory daiPoolCfg = IAmmGovernanceLens
+            .AmmGovernancePoolConfiguration({
+                asset: DAI,
+                decimals: 18,
+                ammStorage: ammStorageProxyDai,
+                ammTreasury: ammTreasuryDai,
+                ammPoolsTreasury: treasurer,
+                ammPoolsTreasuryManager: treasurer,
+                ammCharlieTreasury: treasurer,
+                ammCharlieTreasuryManager: treasurer
+            });
+
+        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory stEthPoolCfg = IAmmGovernanceLens
+            .AmmGovernancePoolConfiguration({
+                asset: stETH,
+                decimals: 18,
+                ammStorage: ammStorageProxyStEth,
+                ammTreasury: ammTreasuryProxyStEth,
+                ammPoolsTreasury: treasurer,
+                ammPoolsTreasuryManager: treasurer,
+                ammCharlieTreasury: treasurer,
+                ammCharlieTreasuryManager: treasurer
+            });
+
+        newAmmGovernanceService = address(new AmmGovernanceService(usdtPoolCfg, usdcPoolCfg, daiPoolCfg, stEthPoolCfg));
+    }
+
+    function _upgradeAmmTreasuryStEth() private {
+        AmmTreasuryBaseV1 newImplementation = new AmmTreasuryBaseV1(stETH, iporProtocolRouterProxy, ammStorageProxyStEth);
+
+        vm.prank(owner);
+        AmmTreasuryBaseV1(ammTreasuryProxyStEth).upgradeTo(address(newImplementation));
+    }
+
+    function _createAmmStorageStEth() private {
+        AmmStorageBaseV1 ammStorageImpl = new AmmStorageBaseV1(iporProtocolRouterProxy);
+
+        vm.startPrank(owner);
+        ERC1967Proxy proxy = new ERC1967Proxy(address(ammStorageImpl), abi.encodeWithSignature("initialize()"));
+        vm.stopPrank();
+
+        ammStorageProxyStEth = address(proxy);
+    }
+
+    function _createAmmOpenSwapServiceStEth() private {
+        AmmTypesBaseV1.AmmOpenSwapServicePoolConfiguration memory cfg = AmmTypesBaseV1
+            .AmmOpenSwapServicePoolConfiguration({
+                asset: stETH,
+                decimals: 18,
+                ammStorage: ammStorageProxyStEth,
+                ammTreasury: ammTreasuryProxyStEth,
+                spread: spreadStEth,
+                iporPublicationFee: 10 * 1e15,
+                maxSwapCollateralAmount: 100_000 * 1e18,
+                liquidationDepositAmount: 1000, /// @dev 0.001 ETH
+                minLeverage: 10 * 1e18,
+                openingFeeRate: 5e14,
+                openingFeeTreasuryPortionRate: 5e17
+            });
+
+        ammOpenSwapServiceStEth = address(
+            new AmmOpenSwapServiceStEth(cfg, iporOracleProxy, messageSignerAddress, wETH, wstETH)
+        );
+    }
+
+    /// @dev case where liquidationDepositAmount is 0 and openingFeeRate is 0
+    function _createAmmOpenSwapServiceStEthCase2() internal {
+        AmmTypesBaseV1.AmmOpenSwapServicePoolConfiguration memory cfg = AmmTypesBaseV1
+            .AmmOpenSwapServicePoolConfiguration({
+                asset: stETH,
+                decimals: 18,
+                ammStorage: ammStorageProxyStEth,
+                ammTreasury: ammTreasuryProxyStEth,
+                spread: spreadStEth,
+                iporPublicationFee: 9 * 1e15,
+                maxSwapCollateralAmount: 100_000 * 1e18,
+                liquidationDepositAmount: 0,
+                minLeverage: 10 * 1e18,
+                openingFeeRate: 0,
+                openingFeeTreasuryPortionRate: 5e17
+            });
+
+        ammOpenSwapServiceStEth = address(
+            new AmmOpenSwapServiceStEth(cfg, iporOracleProxy, messageSignerAddress, wETH, wstETH)
+        );
+    }
+
+    /// @dev case where liquidationDepositAmount openingFeeRate is 0
+    function _createAmmOpenSwapServiceStEthCase3() internal {
+        AmmTypesBaseV1.AmmOpenSwapServicePoolConfiguration memory cfg = AmmTypesBaseV1
+            .AmmOpenSwapServicePoolConfiguration({
+            asset: stETH,
+            decimals: 18,
+            ammStorage: ammStorageProxyStEth,
+            ammTreasury: ammTreasuryProxyStEth,
+            spread: spreadStEth,
+            iporPublicationFee: 9 * 1e15,
+            maxSwapCollateralAmount: 100_000 * 1e18,
+            liquidationDepositAmount: 1000,
+            minLeverage: 10 * 1e18,
+            openingFeeRate: 0,
+            openingFeeTreasuryPortionRate: 5e17
+        });
+
+        ammOpenSwapServiceStEth = address(
+            new AmmOpenSwapServiceStEth(cfg, iporOracleProxy, messageSignerAddress, wETH, wstETH)
+        );
+    }
 
     function _createAmmOpenSwapService() private {
         IAmmOpenSwapLens.AmmOpenSwapServicePoolConfiguration memory daiConfig = IAmmOpenSwapLens
             .AmmOpenSwapServicePoolConfiguration(
                 DAI,
                 18,
-            ammStorageProxyDai,
-            ammTreasuryDai,
+                ammStorageProxyDai,
+                ammTreasuryDai,
                 10 * 1e18,
                 100_000 * 1e18,
                 25,
@@ -295,8 +570,8 @@ contract TestForkCommons is Test {
             .AmmOpenSwapServicePoolConfiguration(
                 USDC,
                 6,
-            ammStorageProxyUsdc,
-            ammTreasuryUsdc,
+                ammStorageProxyUsdc,
+                ammTreasuryUsdc,
                 10 * 1e18,
                 100_000 * 1e18,
                 25,
@@ -309,8 +584,8 @@ contract TestForkCommons is Test {
             .AmmOpenSwapServicePoolConfiguration(
                 USDT,
                 6,
-            ammStorageProxyUsdt,
-            ammTreasuryUsdt,
+                ammStorageProxyUsdt,
+                ammTreasuryUsdt,
                 10 * 1e18,
                 100_000 * 1e18,
                 25,
@@ -329,70 +604,161 @@ contract TestForkCommons is Test {
                 spreadRouter
             )
         );
-
     }
 
     function _createAmmCloseSwapService() private {
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory daiConfig = IAmmCloseSwapLens
-            .AmmCloseSwapServicePoolConfiguration(
-                DAI,
-                18,
-            ammStorageProxyDai,
-            ammTreasuryDai,
-                stanleyProxyDai,
-                5e14,
-                5e14,
-                10,
-                1 hours,
-                1 days,
-                995 * 1e15,
-                99 * 1e16,
-                10 * 1e18
-            );
+            .AmmCloseSwapServicePoolConfiguration({
+                asset: DAI,
+                decimals: 18,
+                ammStorage: ammStorageProxyDai,
+                ammTreasury: ammTreasuryDai,
+                assetManagement: stanleyProxyDai,
+                spread: spreadRouter,
+                unwindingFeeRate: 5e14,
+                unwindingFeeTreasuryPortionRate: 5e14,
+                maxLengthOfLiquidatedSwapsPerLeg: 10,
+                timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
+                timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
+                minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
+                minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
+                minLeverage: 10 * 1e18,
+                timeAfterOpenAllowedToCloseSwapWithUnwinding: 1 days
+            });
 
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory usdcConfig = IAmmCloseSwapLens
-            .AmmCloseSwapServicePoolConfiguration(
-                USDC,
-                6,
-            ammStorageProxyUsdc,
-            ammTreasuryUsdc,
-                stanleyProxyUsdc,
-                5e11,
-                5e11,
-                10,
-                1 hours,
-                1 days,
-                995 * 1e15,
-                99 * 1e16,
-                10 * 1e6
-            );
+            .AmmCloseSwapServicePoolConfiguration({
+                asset: USDC,
+                decimals: 6,
+                ammStorage: ammStorageProxyUsdc,
+                ammTreasury: ammTreasuryUsdc,
+                assetManagement: stanleyProxyUsdc,
+                spread: spreadRouter,
+                unwindingFeeRate: 5e14,
+                unwindingFeeTreasuryPortionRate: 5e14,
+                maxLengthOfLiquidatedSwapsPerLeg: 10,
+                timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
+                timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
+                minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
+                minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
+                minLeverage: 10 * 1e18,
+                timeAfterOpenAllowedToCloseSwapWithUnwinding: 1 days
+            });
 
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory usdtConfig = IAmmCloseSwapLens
-            .AmmCloseSwapServicePoolConfiguration(
-                USDT,
-                6,
-            ammStorageProxyUsdt,
-            ammTreasuryUsdt,
-                stanleyProxyUsdt,
-                5e11,
-                5e11,
-                10,
-                1 hours,
-                1 days,
-                995 * 1e15,
-                99 * 1e16,
-                10 * 1e6
-            );
-        ammCloseSwapService = address(
-            new AmmCloseSwapService(
-                usdtConfig,
-                usdcConfig,
-                daiConfig,
-                iporOracleProxy,
-                messageSignerAddress,
-                spreadRouter
+            .AmmCloseSwapServicePoolConfiguration({
+                asset: USDT,
+                decimals: 6,
+                ammStorage: ammStorageProxyUsdt,
+                ammTreasury: ammTreasuryUsdt,
+                assetManagement: stanleyProxyUsdt,
+                spread: spreadRouter,
+                unwindingFeeRate: 5e14,
+                unwindingFeeTreasuryPortionRate: 5e14,
+                maxLengthOfLiquidatedSwapsPerLeg: 10,
+                timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
+                timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
+                minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
+                minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
+                minLeverage: 10 * 1e18,
+                timeAfterOpenAllowedToCloseSwapWithUnwinding: 1 days
+            });
+
+        newAmmCloseSwapServiceUsdt = address(
+            new AmmCloseSwapServiceUsdt(usdtConfig, iporOracleProxy, messageSignerAddress)
+        );
+
+        newAmmCloseSwapServiceUsdc = address(
+            new AmmCloseSwapServiceUsdc(usdcConfig, iporOracleProxy, messageSignerAddress)
+        );
+
+        newAmmCloseSwapServiceDai = address(
+            new AmmCloseSwapServiceDai(daiConfig, iporOracleProxy, messageSignerAddress)
+        );
+    }
+
+    function _createAmmCloseSwapLens() private {
+        newAmmCloseSwapLens = address(
+            new AmmCloseSwapLens({
+                usdtInput: USDT,
+                usdcInput: USDC,
+                daiInput: DAI,
+                stETHInput: stETH,
+                iporOracleInput: iporOracleProxy,
+                messageSignerInput: messageSignerAddress,
+                spreadRouterInput: spreadRouter,
+                closeSwapServiceUsdtInput: newAmmCloseSwapServiceUsdt,
+                closeSwapServiceUsdcInput: newAmmCloseSwapServiceUsdc,
+                closeSwapServiceDaiInput: newAmmCloseSwapServiceDai,
+                closeSwapServiceStEthInput: ammCloseSwapServiceStEth
+            })
+        );
+    }
+
+    function _createAmmCloseSwapServiceStEth() private {
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory stEthConfig = IAmmCloseSwapLens
+            .AmmCloseSwapServicePoolConfiguration({
+                asset: stETH,
+                decimals: 18,
+                ammStorage: ammStorageProxyStEth,
+                ammTreasury: ammTreasuryProxyStEth,
+                assetManagement: address(0),
+                spread: spreadStEth,
+                unwindingFeeRate: 5e11,
+                unwindingFeeTreasuryPortionRate: 25e16,
+                maxLengthOfLiquidatedSwapsPerLeg: 10,
+                timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
+                timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
+                minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
+                minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
+                minLeverage: 10 * 1e18,
+                timeAfterOpenAllowedToCloseSwapWithUnwinding: 1 days
+            });
+
+        ammCloseSwapServiceStEth = address(
+            new AmmCloseSwapServiceStEth(stEthConfig, iporOracleProxy, messageSignerAddress)
+        );
+    }
+
+    function _createNewSpreadForStEth() private {
+        vm.startPrank(owner);
+        SpreadBaseV1 spread = new SpreadBaseV1(
+            iporProtocolRouterProxy,
+            stETH,
+            new SpreadTypesBaseV1.TimeWeightedNotionalMemory[](0)
+        );
+        vm.stopPrank();
+
+        spreadStEth = address(spread);
+    }
+
+    function _createIporOracle() private {
+        vm.startPrank(owner);
+        address[] memory assets = new address[](3);
+        assets[0] = address(DAI);
+        assets[1] = address(USDT);
+        assets[2] = address(USDC);
+
+        address iporOracleImpl = address(
+            new IporOracle(
+                address(USDT),
+                1042679339957585866,
+                address(USDC),
+                1031576042312020683,
+                address(DAI),
+                1030077612745992745,
+                stETH
             )
         );
+        IporOracle(iporOracleProxy).upgradeTo(iporOracleImpl);
+        vm.stopPrank();
+    }
+
+    function _setupIporOracleStEth() private {
+        IporOracle iporOracle = IporOracle(iporOracleProxy);
+        vm.startPrank(owner);
+        iporOracle.addAsset(stETH, block.timestamp);
+        vm.stopPrank();
     }
 
     function signRiskParams(
@@ -401,7 +767,7 @@ contract TestForkCommons is Test {
         uint256 tenor,
         uint256 direction,
         uint256 privateKey
-    ) internal view returns (bytes memory) {
+    ) internal pure returns (bytes memory) {
         // create digest: keccak256 gives us the first 32bytes after doing the hash
         // so this is always 32 bytes.
         bytes32 digest = keccak256(
@@ -425,5 +791,65 @@ contract TestForkCommons is Test {
         // pack v, r, s into 65bytes signature
         // bytes memory signature = abi.encodePacked(r, s, v);
         return abi.encodePacked(r, s, v);
+    }
+
+    function _prepareCloseSwapRiskIndicators(
+        IporTypes.SwapTenor tenor
+    ) internal view returns (AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs) {
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputsPayFixed = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 25000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputsReceiveFixed = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 25000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputsPayFixed.signature = signRiskParams(
+            riskIndicatorsInputsPayFixed,
+            address(stETH),
+            uint256(tenor),
+            0,
+            messageSignerPrivateKey
+        );
+        riskIndicatorsInputsReceiveFixed.signature = signRiskParams(
+            riskIndicatorsInputsReceiveFixed,
+            address(stETH),
+            uint256(tenor),
+            1,
+            messageSignerPrivateKey
+        );
+
+        closeRiskIndicatorsInputs = AmmTypes.CloseSwapRiskIndicatorsInput({
+            payFixed: riskIndicatorsInputsPayFixed,
+            receiveFixed: riskIndicatorsInputsReceiveFixed
+        });
+    }
+
+    function getIndexToUpdate(
+        address asset,
+        uint indexValue
+    ) internal pure returns (IIporOracle.UpdateIndexParams[] memory) {
+        IIporOracle.UpdateIndexParams[] memory updateIndexParams = new IIporOracle.UpdateIndexParams[](1);
+        updateIndexParams[0] = IIporOracle.UpdateIndexParams({
+            asset: asset,
+            indexValue: indexValue,
+            updateTimestamp: 0,
+            quasiIbtPrice: 0
+        });
+        return updateIndexParams;
     }
 }

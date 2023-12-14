@@ -29,7 +29,8 @@ library StorageInternalTypes {
         /// @dev value represented in 18 decimals
         uint64 fixedInterestRate;
         /// @notice Liquidation deposit amount
-        /// @dev value represented WITHOUT decimals
+        /// @dev value represented WITHOUT decimals for USDT, USDC, DAI pool. Notice! Value represented in 6 decimals for stETH pool.
+        /// @dev Value in 6 decimals example: 25000000 (in 6 decimals) = 25.000000 = 25 stETH
         uint32 liquidationDepositAmount;
         /// @notice State of the swap
         /// @dev 0 - INACTIVE, 1 - ACTIVE
@@ -60,6 +61,7 @@ library StorageInternalTypes {
         /// @dev Amount of opening fee accounted in this balance is defined by _OPENING_FEE_FOR_TREASURY_PORTION_RATE param.
         uint128 liquidityPool;
         /// @notice AssetManagement's current balance. It includes interest accrued until AssetManagement's most recent state change.
+        /// @dev If asset not required dedicated smart contracts in IPOR Protocol to manage accrued interest in external markets, this balance is ALWAYS equal to zero.
         uint128 vault;
         /// @notice This balance is used to track the funds accounted for IporOracle subsidization.
         uint128 iporPublicationFee;

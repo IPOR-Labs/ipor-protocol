@@ -5,8 +5,8 @@ import "forge-std/Script.sol";
 import "../contracts/router/IporProtocolRouter.sol";
 import "../contracts/amm/AmmPoolsLens.sol";
 import "../contracts/amm/AmmOpenSwapService.sol";
-import "../contracts/amm/AmmGovernanceService.sol";
-import "../contracts/amm/AmmSwapsLens.sol";
+import "../contracts/amm-common/AmmGovernanceService.sol";
+import "../contracts/amm-common/AmmSwapsLens.sol";
 import "../contracts/amm/AssetManagementLens.sol";
 import "../contracts/amm/AmmCloseSwapService.sol";
 import "../contracts/amm/AmmPoolsService.sol";
@@ -32,6 +32,7 @@ import "../test/mocks/TestnetFaucet.sol";
 import "../contracts/tokens/IporToken.sol";
 
 import "../test/mocks/assetManagement/MockTestnetStrategy.sol";
+import "../contracts/amm/spread/SpreadStorageService.sol";
 
 // run:
 // $ anvil
@@ -431,6 +432,7 @@ contract LocalDeployment is Script {
             )
         );
 
+        deployedContracts.storageService = address(new SpreadStorageService());
         system.spreadRouterImpl = address(new SpreadRouter(deployedContracts));
         system.spreadRouterProxy = address(
             new ERC1967Proxy(system.spreadRouterImpl, abi.encodeWithSignature("initialize(bool)", false))

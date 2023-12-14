@@ -74,14 +74,36 @@ contract AssetBuilder is Test {
         return this;
     }
 
+    function withStEth() public returns (AssetBuilder) {
+        builderData.assetType = BuilderUtils.AssetType.ST_ETH;
+        builderData.name = "Mocked stETH";
+        builderData.symbol = "stETH";
+        builderData.decimals = 18;
+        builderData.initialSupply = TestConstants.TOTAL_SUPPLY_18_DECIMALS;
+        return this;
+    }
+
     function build() public returns (MockTestnetToken) {
         vm.startPrank(_owner);
-        MockTestnetToken token = new MockTestnetToken(
-            builderData.name,
-            builderData.symbol,
-            builderData.initialSupply,
-            builderData.decimals
-        );
+
+        MockTestnetToken token;
+
+        if (builderData.assetType == BuilderUtils.AssetType.ST_ETH) {
+            token = new MockStETH(
+                builderData.name,
+                builderData.symbol,
+                builderData.initialSupply,
+                builderData.decimals
+            );
+        } else {
+            token = new MockTestnetToken(
+                builderData.name,
+                builderData.symbol,
+                builderData.initialSupply,
+                builderData.decimals
+            );
+        }
+
         vm.stopPrank();
 
         delete builderData;
