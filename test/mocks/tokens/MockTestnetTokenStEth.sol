@@ -23,8 +23,9 @@ contract MockTestnetTokenStEth is MockTestnetToken {
         return _submit();
     }
 
-    function withdrawEth(uint256 ethAmount) public payable {
-        require(balanceOfStEth[msg.sender] >= ethAmount);
+    /// @notice Withdraws ETH from stETH contract in relation 1:1.
+    function redeem(uint256 ethAmount) public payable {
+        require(balanceOfStEth[msg.sender] >= ethAmount, "NOT_ENOUGH_BALANCE");
         balanceOfStEth[msg.sender] -= ethAmount;
         payable(msg.sender).transfer(ethAmount);
     }
