@@ -35,7 +35,7 @@ contract MockTestnetTokenStEth is MockTestnetToken {
 
     function _submit() internal returns (uint256) {
         require(msg.value != 0, "ZERO_DEPOSIT");
-        balanceOfStEth[msg.sender] += msg.value;
+        balanceOfEth[msg.sender] += msg.value;
         _mint(msg.sender, msg.value);
         return msg.value;
     }
