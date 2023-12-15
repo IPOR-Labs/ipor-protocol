@@ -4,7 +4,8 @@ pragma solidity 0.8.20;
 import "./MockTestnetToken.sol";
 
 contract MockTestnetTokenStEth is MockTestnetToken {
-    mapping(address => uint256) public balanceOfStEth;
+    /// @dev Collected ETH in stETH by user.
+    mapping(address => uint256) public balanceOfEth;
 
     constructor(
         string memory name,
@@ -24,9 +25,11 @@ contract MockTestnetTokenStEth is MockTestnetToken {
     }
 
     /// @notice Withdraws ETH from stETH contract in relation 1:1.
-    function redeem(uint256 ethAmount) public payable {
-        require(balanceOfStEth[msg.sender] >= ethAmount, "NOT_ENOUGH_BALANCE");
-        balanceOfStEth[msg.sender] -= ethAmount;
+    /// @dev Notice! Not every stETH can be exchange to ETH, only stETH that was submitted or received as a ETH to stETH contract.
+    /// @dev stETH minted by Faucet contract can't be redeemed.
+    function redeemEth(uint256 ethAmount) public payable {
+        require(balanceOfEth[msg.sender] >= ethAmount, "NOT_ENOUGH_BALANCE");
+        balanceOfEth[msg.sender] -= ethAmount;
         payable(msg.sender).transfer(ethAmount);
     }
 
