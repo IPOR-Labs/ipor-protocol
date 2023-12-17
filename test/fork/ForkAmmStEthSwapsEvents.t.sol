@@ -50,6 +50,69 @@ contract ForkAmmStEthSwapsEventsTest is TestForkCommons {
         vm.createSelectFork(vm.envString("PROVIDER_URL"), 18562032);
     }
 
+    function testShouldOpenPositionStEthForStEth28daysPayFixedRounding() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+
+        uint256 totalAmount = 1024589041095890410;
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            messageSignerPrivateKey
+        );
+
+        address expectedInputAsset = stETH;
+        uint256 expectedInputAssetAmount = 1024589041095890410;
+
+        vm.prank(user);
+        //then
+        vm.expectEmit(true, true, true, true);
+        emit OpenSwap({
+            swapId: 1,
+            buyer: 0x37dA28C050E3c0A1c0aC3BE97913EC038783dA4C,
+            inputAsset: expectedInputAsset,
+            asset: 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84,
+            direction: AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            amounts: OpenSwapAmount({
+            inputAssetTotalAmount: expectedInputAssetAmount,
+            assetTotalAmount: 100000000000000000,
+            collateral: 88965876102316920,
+            notional: 889658761023169200,
+            openingFeeLPAmount: 17061948841540,
+            openingFeeTreasuryAmount: 17061948841540,
+            iporPublicationFee: 10000000000000000,
+            liquidationDepositAmount: 1000000000000000
+        }),
+            openTimestamp: 1699867019,
+            endTimestamp: 1702286219,
+            indicator: IporSwapIndicator({
+            iporIndexValue: 0,
+            ibtPrice: 1000000000000000000,
+            ibtQuantity: 889658761023169200,
+            fixedInterestRate: 20000115257294091
+        })
+        });
+
+        //when
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(user, stETH, totalAmount, 1e18, 250e18, riskIndicatorsInputs);
+    }
+
     function testShouldContainInputAssetInEventWhenOpenPositionStEthForEth28daysPayFixed() public {
         //given
         _init();
