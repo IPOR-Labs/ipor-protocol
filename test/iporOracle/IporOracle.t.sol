@@ -34,9 +34,7 @@ contract IporOracleTest is TestCommons {
             address(_usdtTestnetToken),
             1e18,
             address(_daiTestnetToken),
-            1e18,
-            address(_stEthTestnetToken)
-        );
+            1e18);
 
         address[] memory assets = new address[](4);
         assets[0] = address(_daiTestnetToken);
