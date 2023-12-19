@@ -57,16 +57,14 @@ interface IIporOracle {
     /// @notice Updates the Indexes based on the provided parameters.
     /// @dev This function is external and can be called from other contracts.
     /// The function accepts an array of the custom structure `UpdateIndexParams`.
-    /// The specifics of what this parameter actually does depends on how the function is implemented inside the contract.
     /// The calldata specifies that the data should be stored in the calldata area which is read-only and cheaper to use than memory.
-    /// @param indexesToUpdate An array of `UpdateIndexParams` to be updated.
+    /// @param indexesToUpdate An array of `UpdateIndexParams` to be updated, in this function updateTimestamp and quasiIbtPrice are ignored.
     function updateIndexes(UpdateIndexParams[] calldata indexesToUpdate) external;
 
     /// @notice Updates the Index and Quasi IBT price based on the provided parameters.
     /// @dev This function is external and can be called from other contracts.
     /// The function accepts an array of the custom struct `IIporOracle.UpdateIndexParams`.
     /// The specifics of what this parameter actually does depends on how the function is implemented inside the contract.
-    /// The calldata specifies that the data should be stored in the calldata area which is read-only and cheaper to use than memory.
     /// @param indexesToUpdate An array of `IIporOracle.UpdateIndexParams` to be updated.
     function updateIndexesAndQuasiIbtPrice(IIporOracle.UpdateIndexParams[] calldata indexesToUpdate) external;
 

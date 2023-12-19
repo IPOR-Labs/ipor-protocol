@@ -102,7 +102,7 @@ contract IporOracle is
     }
 
     function getVersion() external pure virtual override returns (uint256) {
-        return 2_001;
+        return 2_002;
     }
 
     function getConfiguration()
@@ -156,7 +156,6 @@ contract IporOracle is
         IIporOracle.UpdateIndexParams[] calldata indexesToUpdate
     ) external override onlyUpdater whenNotPaused {
         uint256 length = indexesToUpdate.length;
-        require(length > 0, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
         for (uint256 i; i < length; ) {
             _updateIndex(indexesToUpdate[i].asset, indexesToUpdate[i].indexValue, block.timestamp);
             unchecked {
@@ -169,7 +168,6 @@ contract IporOracle is
         IIporOracle.UpdateIndexParams[] calldata indexesToUpdate
     ) external override onlyUpdater whenNotPaused {
         uint256 length = indexesToUpdate.length;
-        require(length > 0, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
         for (uint256 i; i < length; ) {
             _updateIndexAndQuasiIbtPrice(
                 indexesToUpdate[i].asset,
