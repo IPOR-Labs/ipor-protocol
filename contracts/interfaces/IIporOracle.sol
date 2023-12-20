@@ -55,17 +55,15 @@ interface IIporOracle {
     function calculateAccruedIbtPrice(address asset, uint256 calculateTimestamp) external view returns (uint256);
 
     /// @notice Updates the Indexes based on the provided parameters.
-    /// @dev This function is external and can be called from other contracts.
-    /// The function accepts an array of the custom structure `UpdateIndexParams`.
-    /// The calldata specifies that the data should be stored in the calldata area which is read-only and cheaper to use than memory.
-    /// @param indexesToUpdate An array of `UpdateIndexParams` to be updated, in this function updateTimestamp and quasiIbtPrice are ignored.
+    /// It is marked as 'onlyUpdater' meaning it has restricted access, and 'whenNotPaused' indicating it only operates when the contract is not paused.
+    /// @param indexesToUpdate An array of `IIporOracle.UpdateIndexParams` to be updated.
+    /// The structure typically contains fields like 'asset', 'indexValue', 'updateTimestamp', and 'quasiIbtPrice'.
+    /// However, 'updateTimestamp' and 'quasiIbtPrice' are not used in this function.
     function updateIndexes(UpdateIndexParams[] calldata indexesToUpdate) external;
 
-    /// @notice Updates the Index and Quasi IBT price based on the provided parameters.
-    /// @dev This function is external and can be called from other contracts.
-    /// The function accepts an array of the custom struct `IIporOracle.UpdateIndexParams`.
-    /// The specifics of what this parameter actually does depends on how the function is implemented inside the contract.
+    /// @notice Updates both the Indexes and the Quasi IBT (Interest Bearing Token) Price based on the provided parameters.
     /// @param indexesToUpdate An array of `IIporOracle.UpdateIndexParams` to be updated.
+    /// The structure contains fields such as 'asset', 'indexValue', 'updateTimestamp', and 'quasiIbtPrice', all of which are utilized in this update process.
     function updateIndexesAndQuasiIbtPrice(IIporOracle.UpdateIndexParams[] calldata indexesToUpdate) external;
 
     /// @notice Adds new Updater. Updater has right to update IPOR Index. Function available only for Owner.
