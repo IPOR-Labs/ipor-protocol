@@ -5,7 +5,6 @@ import "./types/IporTypes.sol";
 
 /// @title Interface for interaction with IporOracle, smart contract responsible for managing IPOR Index.
 interface IIporOracle {
-
     /// @notice Structure representing parameters required to update an IPOR index for a given asset.
     /// @dev This structure is used in the `updateIndexes` method to provide necessary details for updating IPOR indexes.
     ///      For assets other than '_stEth', the 'quasiIbtPrice' field is not utilized in the update process.
@@ -55,17 +54,17 @@ interface IIporOracle {
     /// @return accrued IBT price, represented in 18 decimals
     function calculateAccruedIbtPrice(address asset, uint256 calculateTimestamp) external view returns (uint256);
 
-    /// @notice Updates IPOR indexes for specified assets, accessible only by authorized updaters.
-    /// @dev Iterates through the 'indexesToUpdate' array, updating each asset's index and emitting {IporIndexUpdate} event.
-    ///      Special handling is applied for the '_stEth' asset. Function execution is restricted during pause state and
-    ///      requires the caller to be an authorized updater.
-    /// @param indexesToUpdate Array of 'UpdateIndexParams' containing asset address, new index value, update timestamp,
-    ///        and quasiIbtPrice (for '_stEth' asset).
-    /// @dev INPUT_ARRAYS_LENGTH_MISMATCH if 'indexesToUpdate' array is empty.
-    /// @dev ASSET_NOT_SUPPORTED if an asset in 'indexesToUpdate' is not supported.
-    /// @dev WRONG_INDEX_TIMESTAMP if the provided timestamp is either older than the last update timestamp or greater
-    ///         than the current block timestamp.
+    /// @notice Updates the Indexes based on the provided parameters.
+    /// It is marked as 'onlyUpdater' meaning it has restricted access, and 'whenNotPaused' indicating it only operates when the contract is not paused.
+    /// @param indexesToUpdate An array of `IIporOracle.UpdateIndexParams` to be updated.
+    /// The structure typically contains fields like 'asset', 'indexValue', 'updateTimestamp', and 'quasiIbtPrice'.
+    /// However, 'updateTimestamp' and 'quasiIbtPrice' are not used in this function.
     function updateIndexes(UpdateIndexParams[] calldata indexesToUpdate) external;
+
+    /// @notice Updates both the Indexes and the Quasi IBT (Interest Bearing Token) Price based on the provided parameters.
+    /// @param indexesToUpdate An array of `IIporOracle.UpdateIndexParams` to be updated.
+    /// The structure contains fields such as 'asset', 'indexValue', 'updateTimestamp', and 'quasiIbtPrice', all of which are utilized in this update process.
+    function updateIndexesAndQuasiIbtPrice(IIporOracle.UpdateIndexParams[] calldata indexesToUpdate) external;
 
     /// @notice Adds new Updater. Updater has right to update IPOR Index. Function available only for Owner.
     /// @param newUpdater new updater address

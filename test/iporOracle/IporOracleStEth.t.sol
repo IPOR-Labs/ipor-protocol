@@ -21,25 +21,11 @@ contract IporOracleStEth is TestCommons {
         vm.createSelectFork(vm.envString("PROVIDER_URL"), 18562032);
         vm.startPrank(owner);
         // random value for USDT/USDC/DAI
-        IporOracle newImplementation = new IporOracle(USDT, 1e18, USDC, 1e18, DAI, 1e18, stETH);
+        IporOracle newImplementation = new IporOracle(USDT, 1e18, USDC, 1e18, DAI, 1e18);
         IporOracle(iporOracleProxy).upgradeTo(address(newImplementation));
         IporOracle(iporOracleProxy).addAsset(stETH, block.timestamp);
         vm.stopPrank();
     }
-
-    function testShouldRevertWhenZeroAddressPassToConstructor() external {
-        //when
-        vm.expectRevert(
-            abi.encodeWithSignature(
-                "WrongAddress(string,address,string)",
-                IporErrors.WRONG_ADDRESS,
-                address(0x00),
-                "constructor stEth"
-            )
-        );
-        new IporOracle(USDT, 1e18, USDC, 1e18, DAI, 1e18, address(0x00));
-    }
-
 
     function testShouldRevertWhenCallUpdateIndexAndQuasiIbtPriceWithUpdateTimestampOlderThanCurrentTimestamp()
         external
@@ -54,7 +40,7 @@ contract IporOracleStEth is TestCommons {
             )
         );
         vm.prank(oracleUpdater);
-        IporOracle(iporOracleProxy).updateIndexes(getIndexToUpdateAndQuasiIbtPrice(stETH, 1e18, block.timestamp - 1, 1e18));
+        IporOracle(iporOracleProxy).updateIndexesAndQuasiIbtPrice(getIndexToUpdateAndQuasiIbtPrice(stETH, 1e18, block.timestamp - 1, 1e18));
     }
 
     function testShouldRevertWhenCallUpdateIndexAndQuasiIbtPriceWithUpdateTimestampFromFuture() external {
@@ -68,7 +54,7 @@ contract IporOracleStEth is TestCommons {
                 "updateIndexAndQuasiIbtPrice"
             )
         );
-        IporOracle(iporOracleProxy).updateIndexes(getIndexToUpdateAndQuasiIbtPrice(stETH, 1e18, block.timestamp + 1, 1e18));
+        IporOracle(iporOracleProxy).updateIndexesAndQuasiIbtPrice(getIndexToUpdateAndQuasiIbtPrice(stETH, 1e18, block.timestamp + 1, 1e18));
     }
 
     function testShouldRevertWhenIndexValueToBig() external {
@@ -106,7 +92,7 @@ contract IporOracleStEth is TestCommons {
 
         //when
         vm.prank(oracleUpdater);
-        IporOracle(iporOracleProxy).updateIndexes(getIndexToUpdateAndQuasiIbtPrice(stETH, 12e16, block.timestamp - 100, 123e16));
+        IporOracle(iporOracleProxy).updateIndexesAndQuasiIbtPrice(getIndexToUpdateAndQuasiIbtPrice(stETH, 12e16, block.timestamp - 100, 123e16));
 
         //then
         (uint256 indexValueAfter, uint256 ibtPriceAfter, uint256 lastUpdateTimestampAfter) = IporOracle(iporOracleProxy)
@@ -132,6 +118,6 @@ contract IporOracleStEth is TestCommons {
         vm.prank(oracleUpdater);
         vm.expectEmit(true, true, true, true);
         emit IporIndexUpdate(stETH, 12e16, 123e16, block.timestamp - 100);
-        IporOracle(iporOracleProxy).updateIndexes(getIndexToUpdateAndQuasiIbtPrice(stETH, 12e16, block.timestamp - 100, 123e16));
+        IporOracle(iporOracleProxy).updateIndexesAndQuasiIbtPrice(getIndexToUpdateAndQuasiIbtPrice(stETH, 12e16, block.timestamp - 100, 123e16));
     }
 }

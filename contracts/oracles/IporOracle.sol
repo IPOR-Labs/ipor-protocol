@@ -40,7 +40,6 @@ contract IporOracle is
     uint256 internal immutable _usdcInitialIbtPrice;
     address internal immutable _dai;
     uint256 internal immutable _daiInitialIbtPrice;
-    address internal immutable _stEth;
 
     mapping(address => uint256) internal _updaters;
     mapping(address => IporOracleTypes.IPOR) internal _indexes;
@@ -62,8 +61,7 @@ contract IporOracle is
         address usdc,
         uint256 usdcInitialIbtPrice,
         address dai,
-        uint256 daiInitialIbtPrice,
-        address stEth
+        uint256 daiInitialIbtPrice
     ) {
         if (usdt == address(0)) {
             revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, usdt, "constructor USDT");
@@ -74,9 +72,6 @@ contract IporOracle is
         if (dai == address(0)) {
             revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, dai, "constructor DAI");
         }
-        if (stEth == address(0)) {
-            revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, stEth, "constructor stEth");
-        }
 
         _usdt = usdt;
         _usdtInitialIbtPrice = usdtInitialIbtPrice;
@@ -84,7 +79,6 @@ contract IporOracle is
         _usdcInitialIbtPrice = usdcInitialIbtPrice;
         _dai = dai;
         _daiInitialIbtPrice = daiInitialIbtPrice;
-        _stEth = stEth;
         _disableInitializers();
     }
 
@@ -108,7 +102,7 @@ contract IporOracle is
     }
 
     function getVersion() external pure virtual override returns (uint256) {
-        return 2_001;
+        return 2_002;
     }
 
     function getConfiguration()
@@ -120,11 +114,10 @@ contract IporOracle is
             address usdc,
             uint256 usdcInitialIbtPrice,
             address dai,
-            uint256 daiInitialIbtPrice,
-            address stEth
+            uint256 daiInitialIbtPrice
         )
     {
-        return (_usdt, _usdtInitialIbtPrice, _usdc, _usdcInitialIbtPrice, _dai, _daiInitialIbtPrice, _stEth);
+        return (_usdt, _usdtInitialIbtPrice, _usdc, _usdcInitialIbtPrice, _dai, _daiInitialIbtPrice);
     }
 
     function getIndex(
@@ -163,18 +156,25 @@ contract IporOracle is
         IIporOracle.UpdateIndexParams[] calldata indexesToUpdate
     ) external override onlyUpdater whenNotPaused {
         uint256 length = indexesToUpdate.length;
-        require(length > 0, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
         for (uint256 i; i < length; ) {
-            if (indexesToUpdate[i].asset == _stEth) {
-                _updateIndexAndQuasiIbtPrice(
-                    indexesToUpdate[i].asset,
-                    indexesToUpdate[i].indexValue,
-                    indexesToUpdate[i].updateTimestamp,
-                    indexesToUpdate[i].quasiIbtPrice
-                );
-            } else {
-                _updateIndex(indexesToUpdate[i].asset, indexesToUpdate[i].indexValue, block.timestamp);
+            _updateIndex(indexesToUpdate[i].asset, indexesToUpdate[i].indexValue, block.timestamp);
+            unchecked {
+                ++i;
             }
+        }
+    }
+
+    function updateIndexesAndQuasiIbtPrice(
+        IIporOracle.UpdateIndexParams[] calldata indexesToUpdate
+    ) external override onlyUpdater whenNotPaused {
+        uint256 length = indexesToUpdate.length;
+        for (uint256 i; i < length; ) {
+            _updateIndexAndQuasiIbtPrice(
+                indexesToUpdate[i].asset,
+                indexesToUpdate[i].indexValue,
+                indexesToUpdate[i].updateTimestamp,
+                indexesToUpdate[i].quasiIbtPrice
+            );
             unchecked {
                 ++i;
             }

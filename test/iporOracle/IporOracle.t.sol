@@ -34,9 +34,7 @@ contract IporOracleTest is TestCommons {
             address(_usdtTestnetToken),
             1e18,
             address(_daiTestnetToken),
-            1e18,
-            address(_stEthTestnetToken)
-        );
+            1e18);
 
         address[] memory assets = new address[](4);
         assets[0] = address(_daiTestnetToken);
@@ -172,7 +170,7 @@ contract IporOracleTest is TestCommons {
         // given
         uint256 version = _iporOracle.getVersion();
         // then
-        assertEq(version, 2_001);
+        assertEq(version, 2_002);
     }
 
     function testShouldPauseSCWhenSenderIsPauseGuardian() public {
