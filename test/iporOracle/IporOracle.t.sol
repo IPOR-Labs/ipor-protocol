@@ -170,7 +170,7 @@ contract IporOracleTest is TestCommons {
         // given
         uint256 version = _iporOracle.getVersion();
         // then
-        assertEq(version, 2_001);
+        assertEq(version, 2_002);
     }
 
     function testShouldPauseSCWhenSenderIsPauseGuardian() public {
