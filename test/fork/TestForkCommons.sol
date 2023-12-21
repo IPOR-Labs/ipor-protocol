@@ -470,7 +470,11 @@ contract TestForkCommons is Test {
     }
 
     function _upgradeAmmTreasuryStEth() private {
-        AmmTreasuryBaseV1 newImplementation = new AmmTreasuryBaseV1(stETH, iporProtocolRouterProxy, ammStorageProxyStEth);
+        AmmTreasuryBaseV1 newImplementation = new AmmTreasuryBaseV1(
+            stETH,
+            iporProtocolRouterProxy,
+            ammStorageProxyStEth
+        );
 
         vm.prank(owner);
         AmmTreasuryBaseV1(ammTreasuryProxyStEth).upgradeTo(address(newImplementation));
@@ -533,18 +537,18 @@ contract TestForkCommons is Test {
     function _createAmmOpenSwapServiceStEthCase3() internal {
         AmmTypesBaseV1.AmmOpenSwapServicePoolConfiguration memory cfg = AmmTypesBaseV1
             .AmmOpenSwapServicePoolConfiguration({
-            asset: stETH,
-            decimals: 18,
-            ammStorage: ammStorageProxyStEth,
-            ammTreasury: ammTreasuryProxyStEth,
-            spread: spreadStEth,
-            iporPublicationFee: 9 * 1e15,
-            maxSwapCollateralAmount: 100_000 * 1e18,
-            liquidationDepositAmount: 1000,
-            minLeverage: 10 * 1e18,
-            openingFeeRate: 0,
-            openingFeeTreasuryPortionRate: 5e17
-        });
+                asset: stETH,
+                decimals: 18,
+                ammStorage: ammStorageProxyStEth,
+                ammTreasury: ammTreasuryProxyStEth,
+                spread: spreadStEth,
+                iporPublicationFee: 9 * 1e15,
+                maxSwapCollateralAmount: 100_000 * 1e18,
+                liquidationDepositAmount: 1000,
+                minLeverage: 10 * 1e18,
+                openingFeeRate: 0,
+                openingFeeTreasuryPortionRate: 5e17
+            });
 
         ammOpenSwapServiceStEth = address(
             new AmmOpenSwapServiceStEth(cfg, iporOracleProxy, messageSignerAddress, wETH, wstETH)
@@ -746,8 +750,7 @@ contract TestForkCommons is Test {
                 address(USDC),
                 1031576042312020683,
                 address(DAI),
-                1030077612745992745,
-                stETH
+                1030077612745992745
             )
         );
         IporOracle(iporOracleProxy).upgradeTo(iporOracleImpl);

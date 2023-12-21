@@ -5,6 +5,7 @@ import "../TestCommons.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../../contracts/oracles/IporOracle.sol";
 import "../mocks/tokens/MockTestnetToken.sol";
+import "../mocks/tokens/MockTestnetTokenStEth.sol";
 
 contract IporOracleTest is TestCommons {
     using stdStorage for StdStorage;
@@ -16,7 +17,7 @@ contract IporOracleTest is TestCommons {
     MockTestnetToken private _daiTestnetToken;
     MockTestnetToken private _usdcTestnetToken;
     MockTestnetToken private _usdtTestnetToken;
-    MockStETH private _stEthTestnetToken;
+    MockTestnetTokenStEth private _stEthTestnetToken;
 
     IporOracle private _iporOracle;
 
@@ -25,7 +26,7 @@ contract IporOracleTest is TestCommons {
         vm.warp(_blockTimestamp);
         (_daiTestnetToken, _usdcTestnetToken, _usdtTestnetToken) = _getStables();
 
-        _stEthTestnetToken = new MockStETH("Mocked stETH", "stETH", 100_000_000 * 1e18, uint8(18));
+        _stEthTestnetToken = new MockTestnetTokenStEth("Mocked stETH", "stETH", 100_000_000 * 1e18, uint8(18));
 
         IporOracle iporOracleImplementation = new IporOracle(
             address(_usdcTestnetToken),
@@ -33,9 +34,7 @@ contract IporOracleTest is TestCommons {
             address(_usdtTestnetToken),
             1e18,
             address(_daiTestnetToken),
-            1e18,
-            address(_stEthTestnetToken)
-        );
+            1e18);
 
         address[] memory assets = new address[](4);
         assets[0] = address(_daiTestnetToken);
@@ -171,7 +170,7 @@ contract IporOracleTest is TestCommons {
         // given
         uint256 version = _iporOracle.getVersion();
         // then
-        assertEq(version, 2_001);
+        assertEq(version, 2_002);
     }
 
     function testShouldPauseSCWhenSenderIsPauseGuardian() public {

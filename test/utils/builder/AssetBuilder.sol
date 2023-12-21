@@ -2,6 +2,7 @@
 pragma solidity 0.8.20;
 import "./BuilderUtils.sol";
 import "../../mocks/tokens/MockTestnetToken.sol";
+import "../../mocks/tokens/MockTestnetTokenStEth.sol";
 import "../../utils/TestConstants.sol";
 import "forge-std/Test.sol";
 
@@ -89,7 +90,7 @@ contract AssetBuilder is Test {
         MockTestnetToken token;
 
         if (builderData.assetType == BuilderUtils.AssetType.ST_ETH) {
-            token = new MockStETH(
+            token = new MockTestnetTokenStEth(
                 builderData.name,
                 builderData.symbol,
                 builderData.initialSupply,
