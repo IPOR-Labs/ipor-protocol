@@ -132,7 +132,9 @@ contract AmmUnwindSwap is TestCommons {
         _iporProtocol.asset.approve(address(_iporProtocol.router), 2 * 10_000 * 1e18);
 
         vm.prank(_admin);
-        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_2_5_18DEC));
+        _iporProtocol.iporOracle.updateIndexes(
+            getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_2_5_18DEC)
+        );
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 900000000000000000,
@@ -255,7 +257,9 @@ contract AmmUnwindSwap is TestCommons {
         _iporProtocol.asset.approve(address(_iporProtocol.router), 2 * 10_000 * 1e18);
 
         vm.prank(_admin);
-        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_2_5_18DEC));
+        _iporProtocol.iporOracle.updateIndexes(
+            getIndexToUpdate(address(_iporProtocol.asset), TestConstants.PERCENTAGE_2_5_18DEC)
+        );
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 900000000000000000,
@@ -840,6 +844,88 @@ contract AmmUnwindSwap is TestCommons {
             closeSwapRiskIndicatorsInput
         );
         vm.stopPrank();
+    }
+
+    function testShouldGetClosingSwapDetailsPayFixedDaiWithUnwindPnlValueNotHigherThanCollateral() public {
+        //given
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
+        uint256 liquidityAmount = 1_000_000 * 1e18;
+        uint256 totalAmount = 10_000 * 1e18;
+        uint256 acceptableFixedInterestRate = 50 * 10 ** 16;
+        uint256 leverage = 1000 * 10 ** 18;
+
+        _iporProtocol.asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityDai(_admin, liquidityAmount);
+        _iporProtocol.asset.transfer(_buyer, totalAmount);
+
+        vm.prank(_buyer);
+        _iporProtocol.asset.approve(address(_iporProtocol.router), totalAmount);
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 40000000000000000,
+            demandSpreadFactor: 280,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(_iporProtocol.asset),
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            _iporProtocolFactory.messageSignerPrivateKey()
+        );
+
+        vm.prank(_admin);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), 4 * 1e16));
+
+        vm.startPrank(_buyer);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysDai(
+            _buyer,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage,
+            riskIndicatorsInputs
+        );
+        vm.stopPrank();
+
+        vm.prank(_admin);
+        _iporProtocol.iporOracle.updateIndexes(getIndexToUpdate(address(_iporProtocol.asset), 7 * 1e16));
+
+        /// @dev move time but still unwind required for buyer
+        vm.warp(20 hours);
+
+        AmmTypes.Swap memory swap = _iporProtocol.ammStorage.getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            swapId
+        );
+
+        AmmTypes.CloseSwapRiskIndicatorsInput
+            memory closeSwapRiskIndicatorsInput = getCloseRiskIndicatorsInputsHighFixedRateCaps(
+                address(_iporProtocol.asset),
+                IporTypes.SwapTenor.DAYS_28
+            );
+
+        uint256 closeTimestamp = block.timestamp;
+
+        //when
+        AmmTypes.ClosingSwapDetails memory closingSwapDetails = _iporProtocol.ammCloseSwapLens.getClosingSwapDetails(
+            address(_iporProtocol.asset),
+            _buyer,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            swapId,
+            closeTimestamp,
+            closeSwapRiskIndicatorsInput
+        );
+
+        //then
+        /// @dev Invariant - pnlValue never higher than collateral
+        assertLe(closingSwapDetails.pnlValue, int256(swap.collateral));
     }
 
     function getCostumeCloseRiskIndicatorsInputs(

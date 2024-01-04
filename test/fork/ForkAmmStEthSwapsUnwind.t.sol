@@ -20,6 +20,81 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
         vm.createSelectFork(vm.envString("PROVIDER_URL"), 18562032);
     }
 
+    function testShouldGetClosingSwapDetailsPayFixedStEthWithUnwindPnlValueNotHigherThanCollateral() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+        uint256 totalAmount = 1 * 1e17;
+
+        vm.warp(block.timestamp);
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 10 days + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            stETH,
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            messageSignerPrivateKey
+        );
+
+        vm.prank(user);
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapPayFixed28daysStEth(
+            user,
+            stETH,
+            totalAmount,
+            1e18,
+            1000e18,
+            riskIndicatorsInputs
+        );
+
+        vm.prank(owner);
+        IporOracle(iporOracleProxy).addUpdater(owner);
+
+        vm.prank(owner);
+        IIporOracle(iporOracleProxy).updateIndexes(getIndexToUpdate(stETH, 10 * 1e16));
+
+        /// @dev move time but still unwind required for buyer
+        vm.warp(block.timestamp + 20 hours);
+
+        AmmTypesBaseV1.Swap memory swap = IAmmStorageBaseV1(ammStorageProxyStEth).getSwap(
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            swapId
+        );
+
+        AmmTypes.CloseSwapRiskIndicatorsInput
+            memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicatorsHighFixedRateCaps(
+                IporTypes.SwapTenor.DAYS_28
+            );
+
+        uint256 closeTimestamp = block.timestamp;
+
+        //when
+        AmmTypes.ClosingSwapDetails memory closingSwapDetails = IAmmCloseSwapLens(iporProtocolRouterProxy)
+            .getClosingSwapDetails(
+                stETH,
+                user,
+                AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+                swapId,
+                closeTimestamp,
+                closeRiskIndicatorsInputs
+            );
+
+        //then
+        /// @dev Invariant - pnlValue never higher than collateral
+        assertLe(closingSwapDetails.pnlValue, int256(swap.collateral));
+    }
+
     function testShouldUnwindWithCorrectEventEth28daysPayFixed() public {
         //given
         _init();

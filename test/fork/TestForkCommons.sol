@@ -842,6 +842,52 @@ contract TestForkCommons is Test {
         });
     }
 
+    function _prepareCloseSwapRiskIndicatorsHighFixedRateCaps(
+        IporTypes.SwapTenor tenor
+    ) internal view returns (AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs) {
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputsPayFixed = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 25000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 300000000000000000, /// @dev 30%
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputsReceiveFixed = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 25000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 300000000000000000, /// @dev 30%
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputsPayFixed.signature = signRiskParams(
+            riskIndicatorsInputsPayFixed,
+            address(stETH),
+            uint256(tenor),
+            0,
+            messageSignerPrivateKey
+        );
+        riskIndicatorsInputsReceiveFixed.signature = signRiskParams(
+            riskIndicatorsInputsReceiveFixed,
+            address(stETH),
+            uint256(tenor),
+            1,
+            messageSignerPrivateKey
+        );
+
+        closeRiskIndicatorsInputs = AmmTypes.CloseSwapRiskIndicatorsInput({
+            payFixed: riskIndicatorsInputsPayFixed,
+            receiveFixed: riskIndicatorsInputsReceiveFixed
+        });
+    }
+
     function getIndexToUpdate(
         address asset,
         uint indexValue
@@ -855,4 +901,6 @@ contract TestForkCommons is Test {
         });
         return updateIndexParams;
     }
+
+
 }
