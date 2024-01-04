@@ -740,6 +740,35 @@ contract TestForkCommons is Test {
         );
     }
 
+    function _createAmmCloseSwapServiceStEthUnwindCase1() internal {
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory stEthConfig = IAmmCloseSwapLens
+            .AmmCloseSwapServicePoolConfiguration({
+            asset: stETH,
+            decimals: 18,
+            ammStorage: ammStorageProxyStEth,
+            ammTreasury: ammTreasuryProxyStEth,
+            assetManagement: address(0),
+            spread: spreadStEth,
+            unwindingFeeRate: 5e11,
+            unwindingFeeTreasuryPortionRate: 25e16,
+            maxLengthOfLiquidatedSwapsPerLeg: 10,
+            timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
+            timeBeforeMaturityAllowedToCloseSwapByBuyerTenor28days: 1 days,
+            timeBeforeMaturityAllowedToCloseSwapByBuyerTenor60days: 2 days,
+            timeBeforeMaturityAllowedToCloseSwapByBuyerTenor90days: 3 days,
+            minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
+            minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
+            minLeverage: 10 * 1e18,
+            timeAfterOpenAllowedToCloseSwapWithUnwindingTenor28days: 1 days,
+            timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days: 60 days,
+            timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days: 90 days
+        });
+
+        ammCloseSwapServiceStEth = address(
+            new AmmCloseSwapServiceStEth(stEthConfig, iporOracleProxy, messageSignerAddress)
+        );
+    }
+
     function _createNewSpreadForStEth() private {
         vm.startPrank(owner);
         SpreadBaseV1 spread = new SpreadBaseV1(
