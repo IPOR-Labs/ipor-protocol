@@ -10,6 +10,7 @@ import "../interfaces/IAmmCloseSwapLens.sol";
 import "../interfaces/IAmmCloseSwapService.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/IporContractValidator.sol";
+import "../libraries/AmmCloseSwapServicePoolConfigurationLib.sol";
 import "../amm/libraries/SwapCloseLogicLib.sol";
 import "../base/types/AmmTypesBaseV1.sol";
 import "../base/amm/libraries/SwapLogicBaseV1.sol";
@@ -21,6 +22,7 @@ contract AmmCloseSwapLens is IAmmCloseSwapLens {
     using Address for address;
     using IporContractValidator for address;
     using SwapLogicBaseV1 for AmmTypesBaseV1.Swap;
+    using AmmCloseSwapServicePoolConfigurationLib for IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration;
 
     address public immutable usdt;
     address public immutable usdc;
@@ -181,8 +183,11 @@ contract AmmCloseSwapLens is IAmmCloseSwapLens {
                         .minLiquidationThresholdToCloseBeforeMaturityByBuyer,
                     timeBeforeMaturityAllowedToCloseSwapByCommunity: poolCfg
                         .timeBeforeMaturityAllowedToCloseSwapByCommunity,
-                    timeBeforeMaturityAllowedToCloseSwapByBuyer: poolCfg.timeBeforeMaturityAllowedToCloseSwapByBuyer,
-                    timeAfterOpenAllowedToCloseSwapWithUnwinding: poolCfg.timeAfterOpenAllowedToCloseSwapWithUnwinding
+                    timeBeforeMaturityAllowedToCloseSwapByBuyer: poolCfg.getTimeBeforeMaturityAllowedToCloseSwapByBuyer(
+                        swap.tenor
+                    ),
+                    timeAfterOpenAllowedToCloseSwapWithUnwinding: poolCfg
+                        .getTimeAfterOpenAllowedToCloseSwapWithUnwinding(swap.tenor)
                 })
             );
 
@@ -253,8 +258,11 @@ contract AmmCloseSwapLens is IAmmCloseSwapLens {
                         .minLiquidationThresholdToCloseBeforeMaturityByBuyer,
                     timeBeforeMaturityAllowedToCloseSwapByCommunity: poolCfg
                         .timeBeforeMaturityAllowedToCloseSwapByCommunity,
-                    timeBeforeMaturityAllowedToCloseSwapByBuyer: poolCfg.timeBeforeMaturityAllowedToCloseSwapByBuyer,
-                    timeAfterOpenAllowedToCloseSwapWithUnwinding: poolCfg.timeAfterOpenAllowedToCloseSwapWithUnwinding
+                    timeBeforeMaturityAllowedToCloseSwapByBuyer: poolCfg.getTimeBeforeMaturityAllowedToCloseSwapByBuyer(
+                        swap.tenor
+                    ),
+                    timeAfterOpenAllowedToCloseSwapWithUnwinding: poolCfg
+                        .getTimeAfterOpenAllowedToCloseSwapWithUnwinding(swap.tenor)
                 })
             );
 

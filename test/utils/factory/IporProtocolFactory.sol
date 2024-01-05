@@ -1616,11 +1616,15 @@ contract IporProtocolFactory is Test {
             unwindingFeeTreasuryPortionRate: 0,
             maxLengthOfLiquidatedSwapsPerLeg: 0,
             timeBeforeMaturityAllowedToCloseSwapByCommunity: 0,
-            timeBeforeMaturityAllowedToCloseSwapByBuyer: 0,
+            timeBeforeMaturityAllowedToCloseSwapByBuyerTenor28days: 0,
+            timeBeforeMaturityAllowedToCloseSwapByBuyerTenor60days: 0,
+            timeBeforeMaturityAllowedToCloseSwapByBuyerTenor90days: 0,
             minLiquidationThresholdToCloseBeforeMaturityByCommunity: 0,
             minLiquidationThresholdToCloseBeforeMaturityByBuyer: 0,
             minLeverage: 0,
-            timeAfterOpenAllowedToCloseSwapWithUnwinding: 0
+            timeAfterOpenAllowedToCloseSwapWithUnwindingTenor28days: 0,
+            timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days: 0,
+            timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days: 0
         });
     }
 
@@ -1716,11 +1720,15 @@ contract IporProtocolFactory is Test {
                 unwindingFeeTreasuryPortionRate: 5 * 1e14,
                 maxLengthOfLiquidatedSwapsPerLeg: 10,
                 timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
-                timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor28days: 1 days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor60days: 1 days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor90days: 1 days,
                 minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
                 minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
                 minLeverage: 10 * 1e18,
-                timeAfterOpenAllowedToCloseSwapWithUnwinding: 1 days
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor28days: 1 days,
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days: 1 days,
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days: 1 days
             });
         } else if (closeSwapServiceTestCase == BuilderUtils.AmmCloseSwapServiceTestCase.CASE1) {
             poolCfg = IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration({
@@ -1734,11 +1742,15 @@ contract IporProtocolFactory is Test {
                 unwindingFeeTreasuryPortionRate: 5 * 1e14,
                 maxLengthOfLiquidatedSwapsPerLeg: 10,
                 timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
-                timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor28days: 1 days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor60days: 1 days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor90days: 1 days,
                 minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
                 minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
                 minLeverage: 10 * 1e18,
-                timeAfterOpenAllowedToCloseSwapWithUnwinding: 1 days
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor28days: 1 days,
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days: 1 days,
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days: 1 days
             });
         } else if (closeSwapServiceTestCase == BuilderUtils.AmmCloseSwapServiceTestCase.CASE2) {
             poolCfg = IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration({
@@ -1752,11 +1764,15 @@ contract IporProtocolFactory is Test {
                 unwindingFeeTreasuryPortionRate: 5 * 1e14,
                 maxLengthOfLiquidatedSwapsPerLeg: 10,
                 timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
-                timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor28days: 1 days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor60days: 1 days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor90days: 1 days,
                 minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
                 minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
                 minLeverage: 10 * 1e18,
-                timeAfterOpenAllowedToCloseSwapWithUnwinding: 1 days
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor28days: 1 days,
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days: 1 days,
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days: 1 days
             });
         }
     }

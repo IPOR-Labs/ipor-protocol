@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
+
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
@@ -50,16 +51,24 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
     uint256 public immutable liquidationLegLimit;
     /// @dev Time in seconds before maturity allowed to close swap by community.
     uint256 public immutable timeBeforeMaturityAllowedToCloseSwapByCommunity;
-    /// @dev Time in seconds before maturity allowed to close swap by buyer.
-    uint256 public immutable timeBeforeMaturityAllowedToCloseSwapByBuyer;
+    /// @dev Time in seconds before maturity allowed to close swap by buyer, for tenor 28 days.
+    uint256 public immutable timeBeforeMaturityAllowedToCloseSwapByBuyerTenor28days;
+    /// @dev Time in seconds before maturity allowed to close swap by buyer, for tenor 60 days.
+    uint256 public immutable timeBeforeMaturityAllowedToCloseSwapByBuyerTenor60days;
+    /// @dev Time in seconds before maturity allowed to close swap by buyer, for tenor 90 days.
+    uint256 public immutable timeBeforeMaturityAllowedToCloseSwapByBuyerTenor90days;
     /// @dev Minimum liquidation threshold to close swap before maturity by community, value represented in 18 decimals.
     uint256 public immutable minLiquidationThresholdToCloseBeforeMaturityByCommunity;
     /// @dev Minimum liquidation threshold to close swap before maturity by buyer, value represented in 18 decimals.
     uint256 public immutable minLiquidationThresholdToCloseBeforeMaturityByBuyer;
     /// @dev Minimum leverage, value represented in 18 decimals.
     uint256 public immutable minLeverage;
-    /// @dev Time after open swap when it is allowed to close swap with unwinding, represented in seconds
-    uint256 public immutable timeAfterOpenAllowedToCloseSwapWithUnwinding;
+    /// @dev Time after open swap when it is allowed to close swap with unwinding, for tenor 28 days, represented in seconds
+    uint256 public immutable timeAfterOpenAllowedToCloseSwapWithUnwindingTenor28days;
+    /// @dev Time after open swap when it is allowed to close swap with unwinding, for tenor 60 days, represented in seconds
+    uint256 public immutable timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days;
+    /// @dev Time after open swap when it is allowed to close swap with unwinding, for tenor 90 days, represented in seconds
+    uint256 public immutable timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days;
 
     constructor(
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
@@ -79,13 +88,23 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
         unwindingFeeTreasuryPortionRate = poolCfg.unwindingFeeTreasuryPortionRate;
         liquidationLegLimit = poolCfg.maxLengthOfLiquidatedSwapsPerLeg;
         timeBeforeMaturityAllowedToCloseSwapByCommunity = poolCfg.timeBeforeMaturityAllowedToCloseSwapByCommunity;
-        timeBeforeMaturityAllowedToCloseSwapByBuyer = poolCfg.timeBeforeMaturityAllowedToCloseSwapByBuyer;
+        timeBeforeMaturityAllowedToCloseSwapByBuyerTenor28days = poolCfg
+            .timeBeforeMaturityAllowedToCloseSwapByBuyerTenor28days;
+        timeBeforeMaturityAllowedToCloseSwapByBuyerTenor60days = poolCfg
+            .timeBeforeMaturityAllowedToCloseSwapByBuyerTenor60days;
+        timeBeforeMaturityAllowedToCloseSwapByBuyerTenor90days = poolCfg
+            .timeBeforeMaturityAllowedToCloseSwapByBuyerTenor90days;
         minLiquidationThresholdToCloseBeforeMaturityByCommunity = poolCfg
             .minLiquidationThresholdToCloseBeforeMaturityByCommunity;
         minLiquidationThresholdToCloseBeforeMaturityByBuyer = poolCfg
             .minLiquidationThresholdToCloseBeforeMaturityByBuyer;
         minLeverage = poolCfg.minLeverage;
-        timeAfterOpenAllowedToCloseSwapWithUnwinding = poolCfg.timeAfterOpenAllowedToCloseSwapWithUnwinding;
+        timeAfterOpenAllowedToCloseSwapWithUnwindingTenor28days = poolCfg
+            .timeAfterOpenAllowedToCloseSwapWithUnwindingTenor28days;
+        timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days = poolCfg
+            .timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days;
+        timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days = poolCfg
+            .timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days;
     }
 
     function getPoolConfiguration()
@@ -369,8 +388,12 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
                 minLiquidationThresholdToCloseBeforeMaturityByCommunity: minLiquidationThresholdToCloseBeforeMaturityByCommunity,
                 minLiquidationThresholdToCloseBeforeMaturityByBuyer: minLiquidationThresholdToCloseBeforeMaturityByBuyer,
                 timeBeforeMaturityAllowedToCloseSwapByCommunity: timeBeforeMaturityAllowedToCloseSwapByCommunity,
-                timeBeforeMaturityAllowedToCloseSwapByBuyer: timeBeforeMaturityAllowedToCloseSwapByBuyer,
-                timeAfterOpenAllowedToCloseSwapWithUnwinding: timeAfterOpenAllowedToCloseSwapWithUnwinding
+                timeBeforeMaturityAllowedToCloseSwapByBuyer: _getTimeBeforeMaturityAllowedToCloseSwapByBuyer(
+                    swap.tenor
+                ),
+                timeAfterOpenAllowedToCloseSwapWithUnwinding: _getTimeAfterOpenAllowedToCloseSwapWithUnwinding(
+                    swap.tenor
+                )
             })
         );
 
@@ -486,11 +509,41 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
                 unwindingFeeTreasuryPortionRate: unwindingFeeTreasuryPortionRate,
                 maxLengthOfLiquidatedSwapsPerLeg: liquidationLegLimit,
                 timeBeforeMaturityAllowedToCloseSwapByCommunity: timeBeforeMaturityAllowedToCloseSwapByCommunity,
-                timeBeforeMaturityAllowedToCloseSwapByBuyer: timeBeforeMaturityAllowedToCloseSwapByBuyer,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor28days: timeBeforeMaturityAllowedToCloseSwapByBuyerTenor28days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor60days: timeBeforeMaturityAllowedToCloseSwapByBuyerTenor60days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor90days: timeBeforeMaturityAllowedToCloseSwapByBuyerTenor90days,
                 minLiquidationThresholdToCloseBeforeMaturityByCommunity: minLiquidationThresholdToCloseBeforeMaturityByCommunity,
                 minLiquidationThresholdToCloseBeforeMaturityByBuyer: minLiquidationThresholdToCloseBeforeMaturityByBuyer,
                 minLeverage: minLeverage,
-                timeAfterOpenAllowedToCloseSwapWithUnwinding: timeAfterOpenAllowedToCloseSwapWithUnwinding
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor28days: timeAfterOpenAllowedToCloseSwapWithUnwindingTenor28days,
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days: timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days,
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days: timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days
             });
+    }
+
+    function _getTimeAfterOpenAllowedToCloseSwapWithUnwinding(
+        IporTypes.SwapTenor tenor
+    ) internal view returns (uint256) {
+        if (tenor == IporTypes.SwapTenor.DAYS_28) {
+            return timeAfterOpenAllowedToCloseSwapWithUnwindingTenor28days;
+        } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
+            return timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days;
+        } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
+            return timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days;
+        } else {
+            revert(AmmErrors.UNSUPPORTED_SWAP_TENOR);
+        }
+    }
+
+    function _getTimeBeforeMaturityAllowedToCloseSwapByBuyer(IporTypes.SwapTenor tenor) internal view returns (uint256) {
+        if (tenor == IporTypes.SwapTenor.DAYS_28) {
+            return timeBeforeMaturityAllowedToCloseSwapByBuyerTenor28days;
+        } else if (tenor == IporTypes.SwapTenor.DAYS_60) {
+            return timeBeforeMaturityAllowedToCloseSwapByBuyerTenor60days;
+        } else if (tenor == IporTypes.SwapTenor.DAYS_90) {
+            return timeBeforeMaturityAllowedToCloseSwapByBuyerTenor90days;
+        } else {
+            revert(AmmErrors.UNSUPPORTED_SWAP_TENOR);
+        }
     }
 }
