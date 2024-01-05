@@ -157,6 +157,48 @@ contract TestCommons is Test {
         );
     }
 
+    function getCloseRiskIndicatorsInputsHighFixedRateCaps(
+        address asset,
+        IporTypes.SwapTenor tenor
+    ) internal returns (AmmTypes.CloseSwapRiskIndicatorsInput memory riskIndicatorsInputs) {
+        riskIndicatorsInputs.payFixed = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 1000000000000000,
+            fixedRateCapPerLeg: 300000000000000000, /// @dev 30%
+            demandSpreadFactor: 280,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.receiveFixed = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 900000000000000000,
+            maxCollateralRatioPerLeg: 480000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: -1000000000000000,
+            fixedRateCapPerLeg: 300000000000000000, /// @dev 30%
+            demandSpreadFactor: 280,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.payFixed.signature = signRiskParams(
+            riskIndicatorsInputs.payFixed,
+            address(asset),
+            uint256(tenor),
+            0,
+            _iporProtocolFactory.messageSignerPrivateKey()
+        );
+        riskIndicatorsInputs.receiveFixed.signature = signRiskParams(
+            riskIndicatorsInputs.receiveFixed,
+            address(asset),
+            uint256(tenor),
+            1,
+            _iporProtocolFactory.messageSignerPrivateKey()
+        );
+    }
+
     function getIndexToUpdate(
         address asset,
         uint indexValue
