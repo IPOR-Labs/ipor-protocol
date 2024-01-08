@@ -1744,6 +1744,128 @@ contract ForkAmmStEthSwapsUnwindTest is TestForkCommons {
         );
     }
 
+    function testShouldCloseSwapTenor60DaysUnwindAfter60DaysCloseAfterMaturityMinusOne() public {
+        //given
+        _init();
+        _createAmmCloseSwapServiceStEthUnwindCase1();
+        _updateIporRouterImplementation();
+
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
+
+        vm.warp(block.timestamp);
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 40 days + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_60),
+            1,
+            messageSignerPrivateKey
+        );
+
+        vm.prank(user);
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth(
+            user,
+            wstETH,
+            totalAmount,
+            0,
+            1000e18,
+            riskIndicatorsInputs
+        );
+
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = swapId;
+
+        vm.warp(block.timestamp + 60 days - 1);
+
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
+            IporTypes.SwapTenor.DAYS_60
+        );
+
+        //when
+        vm.prank(user);
+        IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
+            user,
+            swapPfIds,
+            swapRfIds,
+            closeRiskIndicatorsInputs
+        );
+    }
+
+    function testShouldCloseSwapTenor60DaysUnwindAfter60DaysCloseAfterMaturityPlusOne() public {
+        //given
+        _init();
+        _createAmmCloseSwapServiceStEthUnwindCase1();
+        _updateIporRouterImplementation();
+
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * 1e18);
+        uint256 totalAmount = IwstEth(wstETH).getWstETHByStETH(1 * 1e17);
+
+        vm.warp(block.timestamp);
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 50000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 40 days + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            address(stETH),
+            uint256(IporTypes.SwapTenor.DAYS_60),
+            1,
+            messageSignerPrivateKey
+        );
+
+        vm.prank(user);
+        uint256 swapId = IAmmOpenSwapServiceStEth(iporProtocolRouterProxy).openSwapReceiveFixed60daysStEth(
+            user,
+            wstETH,
+            totalAmount,
+            0,
+            1000e18,
+            riskIndicatorsInputs
+        );
+
+        uint256[] memory swapPfIds = new uint256[](0);
+        uint256[] memory swapRfIds = new uint256[](1);
+        swapRfIds[0] = swapId;
+
+        vm.warp(block.timestamp + 60 days + 1);
+
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
+            IporTypes.SwapTenor.DAYS_60
+        );
+
+        //when
+        vm.prank(user);
+        IAmmCloseSwapServiceStEth(iporProtocolRouterProxy).closeSwapsStEth(
+            user,
+            swapPfIds,
+            swapRfIds,
+            closeRiskIndicatorsInputs
+        );
+    }
+
     function testShouldCloseSwapTenor90DaysUnwindAfter90Days() public {
         //given
         _init();
