@@ -27,16 +27,24 @@ interface IAmmCloseSwapLens {
         uint256 maxLengthOfLiquidatedSwapsPerLeg;
         /// @notice Time before maturity when the community is allowed to close the swap, represented in seconds
         uint256 timeBeforeMaturityAllowedToCloseSwapByCommunity;
-        /// @notice Time before maturity then the swap owner can close it, represented in seconds
-        uint256 timeBeforeMaturityAllowedToCloseSwapByBuyer;
+        /// @notice Time before maturity then the swap owner can close it, for tenor 28 days, represented in seconds
+        uint256 timeBeforeMaturityAllowedToCloseSwapByBuyerTenor28days;
+        /// @notice Time before maturity then the swap owner can close it, for tenor 60 days, represented in seconds
+        uint256 timeBeforeMaturityAllowedToCloseSwapByBuyerTenor60days;
+        /// @notice Time before maturity then the swap owner can close it, for tenor 90 days, represented in seconds
+        uint256 timeBeforeMaturityAllowedToCloseSwapByBuyerTenor90days;
         /// @notice Min liquidation threshold allowing community to close the swap ahead of maturity, represented in 18 decimals
         uint256 minLiquidationThresholdToCloseBeforeMaturityByCommunity;
         /// @notice Min liquidation threshold allowing the owner to close the swap ahead of maturity, represented in 18 decimals
         uint256 minLiquidationThresholdToCloseBeforeMaturityByBuyer;
         /// @notice Min leverage of the virtual swap used in unwinding, represented in 18 decimals
         uint256 minLeverage;
-        /// @notice Time after open swap when it is allowed to close swap with unwinding, represented in seconds
-        uint256 timeAfterOpenAllowedToCloseSwapWithUnwinding;
+        /// @notice Time after open swap when it is allowed to close swap with unwinding, for tenor 28 days, represented in seconds
+        uint256 timeAfterOpenAllowedToCloseSwapWithUnwindingTenor28days;
+        /// @notice Time after open swap when it is allowed to close swap with unwinding, for tenor 60 days, represented in seconds
+        uint256 timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days;
+        /// @notice Time after open swap when it is allowed to close swap with unwinding, for tenor 90 days, represented in seconds
+        uint256 timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days;
     }
 
     /// @notice Returns the configuration of the AmmCloseSwapService for a given pool (asset).

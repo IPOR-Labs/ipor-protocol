@@ -81,8 +81,6 @@ library SwapCloseLogicLib {
             swapUnwindFeeAmount,
             unwindParams.poolCfg.unwindingFeeTreasuryPortionRate
         );
-
-        swapPnlValue = unwindParams.swapPnlValueToDate + swapUnwindPnlValue;
     }
 
     function calculateSwapUnwindPnlValueNormalized(

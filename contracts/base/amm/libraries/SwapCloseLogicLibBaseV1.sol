@@ -128,8 +128,6 @@ library SwapCloseLogicLibBaseV1 {
             swapUnwindFeeAmount,
             unwindParams.unwindingFeeTreasuryPortionRate
         );
-
-        swapPnlValue = unwindParams.swapPnlValueToDate + swapUnwindPnlValue;
     }
 
     function getClosableStatusForSwap(

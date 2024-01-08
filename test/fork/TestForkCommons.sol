@@ -623,11 +623,15 @@ contract TestForkCommons is Test {
                 unwindingFeeTreasuryPortionRate: 5e14,
                 maxLengthOfLiquidatedSwapsPerLeg: 10,
                 timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
-                timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor28days: 1 days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor60days: 1 days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor90days: 1 days,
                 minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
                 minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
                 minLeverage: 10 * 1e18,
-                timeAfterOpenAllowedToCloseSwapWithUnwinding: 1 days
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor28days: 1 days,
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days: 1 days,
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days: 1 days
             });
 
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory usdcConfig = IAmmCloseSwapLens
@@ -642,11 +646,15 @@ contract TestForkCommons is Test {
                 unwindingFeeTreasuryPortionRate: 5e14,
                 maxLengthOfLiquidatedSwapsPerLeg: 10,
                 timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
-                timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor28days: 1 days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor60days: 1 days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor90days: 1 days,
                 minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
                 minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
                 minLeverage: 10 * 1e18,
-                timeAfterOpenAllowedToCloseSwapWithUnwinding: 1 days
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor28days: 1 days,
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days: 1 days,
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days: 1 days
             });
 
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory usdtConfig = IAmmCloseSwapLens
@@ -661,11 +669,15 @@ contract TestForkCommons is Test {
                 unwindingFeeTreasuryPortionRate: 5e14,
                 maxLengthOfLiquidatedSwapsPerLeg: 10,
                 timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
-                timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor28days: 1 days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor60days: 1 days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor90days: 1 days,
                 minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
                 minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
                 minLeverage: 10 * 1e18,
-                timeAfterOpenAllowedToCloseSwapWithUnwinding: 1 days
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor28days: 1 days,
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days: 1 days,
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days: 1 days
             });
 
         newAmmCloseSwapServiceUsdt = address(
@@ -712,12 +724,45 @@ contract TestForkCommons is Test {
                 unwindingFeeTreasuryPortionRate: 25e16,
                 maxLengthOfLiquidatedSwapsPerLeg: 10,
                 timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
-                timeBeforeMaturityAllowedToCloseSwapByBuyer: 1 days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor28days: 1 days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor60days: 2 days,
+                timeBeforeMaturityAllowedToCloseSwapByBuyerTenor90days: 3 days,
                 minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
                 minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
                 minLeverage: 10 * 1e18,
-                timeAfterOpenAllowedToCloseSwapWithUnwinding: 1 days
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor28days: 1 days,
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days: 2 days,
+                timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days: 3 days
             });
+
+        ammCloseSwapServiceStEth = address(
+            new AmmCloseSwapServiceStEth(stEthConfig, iporOracleProxy, messageSignerAddress)
+        );
+    }
+
+    function _createAmmCloseSwapServiceStEthUnwindCase1() internal {
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory stEthConfig = IAmmCloseSwapLens
+            .AmmCloseSwapServicePoolConfiguration({
+            asset: stETH,
+            decimals: 18,
+            ammStorage: ammStorageProxyStEth,
+            ammTreasury: ammTreasuryProxyStEth,
+            assetManagement: address(0),
+            spread: spreadStEth,
+            unwindingFeeRate: 5e11,
+            unwindingFeeTreasuryPortionRate: 25e16,
+            maxLengthOfLiquidatedSwapsPerLeg: 10,
+            timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
+            timeBeforeMaturityAllowedToCloseSwapByBuyerTenor28days: 1 days,
+            timeBeforeMaturityAllowedToCloseSwapByBuyerTenor60days: 2 days,
+            timeBeforeMaturityAllowedToCloseSwapByBuyerTenor90days: 3 days,
+            minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
+            minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
+            minLeverage: 10 * 1e18,
+            timeAfterOpenAllowedToCloseSwapWithUnwindingTenor28days: 1 days,
+            timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days: 60 days,
+            timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days: 90 days
+        });
 
         ammCloseSwapServiceStEth = address(
             new AmmCloseSwapServiceStEth(stEthConfig, iporOracleProxy, messageSignerAddress)
@@ -842,6 +887,52 @@ contract TestForkCommons is Test {
         });
     }
 
+    function _prepareCloseSwapRiskIndicatorsHighFixedRateCaps(
+        IporTypes.SwapTenor tenor
+    ) internal view returns (AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs) {
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputsPayFixed = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 25000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 300000000000000000, /// @dev 30%
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputsReceiveFixed = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 50000000000000000,
+            maxCollateralRatioPerLeg: 25000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 300000000000000000, /// @dev 30%
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputsPayFixed.signature = signRiskParams(
+            riskIndicatorsInputsPayFixed,
+            address(stETH),
+            uint256(tenor),
+            0,
+            messageSignerPrivateKey
+        );
+        riskIndicatorsInputsReceiveFixed.signature = signRiskParams(
+            riskIndicatorsInputsReceiveFixed,
+            address(stETH),
+            uint256(tenor),
+            1,
+            messageSignerPrivateKey
+        );
+
+        closeRiskIndicatorsInputs = AmmTypes.CloseSwapRiskIndicatorsInput({
+            payFixed: riskIndicatorsInputsPayFixed,
+            receiveFixed: riskIndicatorsInputsReceiveFixed
+        });
+    }
+
     function getIndexToUpdate(
         address asset,
         uint indexValue
@@ -855,4 +946,6 @@ contract TestForkCommons is Test {
         });
         return updateIndexParams;
     }
+
+
 }

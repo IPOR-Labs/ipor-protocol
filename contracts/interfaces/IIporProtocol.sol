@@ -20,6 +20,7 @@ import "./IAmmPoolsService.sol";
 import "./IAmmGovernanceService.sol";
 import "./IPowerTokenStakeService.sol";
 import "./IPowerTokenFlowsService.sol";
+import "./ISwapEventsBaseV1.sol";
 import "../amm-eth/interfaces/IAmmPoolsLensStEth.sol";
 import "../amm-eth/interfaces/IAmmPoolsServiceStEth.sol";
 import "../interfaces/IAmmOpenSwapServiceStEth.sol";
@@ -48,7 +49,8 @@ interface IIporProtocol is
     IAmmGovernanceService,
     IPowerTokenStakeService,
     IPowerTokenFlowsService,
-    IAmmPoolsServiceStEth
+    IAmmPoolsServiceStEth,
+    ISwapEventsBaseV1
 {
 
 }

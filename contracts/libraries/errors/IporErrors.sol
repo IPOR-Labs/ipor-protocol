@@ -26,6 +26,9 @@ library IporErrors {
     /// @notice Error when given module is not supported
     error UnsupportedModule(string errorCode, address asset);
 
+    /// @notice Error when given tenor is not supported
+    error UnsupportedTenor(string errorCode, uint256 tenor);
+
     /// @notice Error when Input Asset total amount is too low
     error InputAssetTotalAmountTooLow(string errorCode, uint256 value);
 
