@@ -3,22 +3,22 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 
-import "../interfaces/types/IporTypes.sol";
-import "../interfaces/types/AmmTypes.sol";
-import "../interfaces/IIporOracle.sol";
-import "../interfaces/IAmmCloseSwapLens.sol";
-import "../interfaces/IAmmCloseSwapService.sol";
-import "../libraries/errors/IporErrors.sol";
-import "../libraries/IporContractValidator.sol";
-import "../libraries/AmmCloseSwapServicePoolConfigurationLib.sol";
-import "../amm/libraries/SwapCloseLogicLib.sol";
-import "../base/types/AmmTypesBaseV1.sol";
-import "../base/amm/libraries/SwapLogicBaseV1.sol";
-import "../base/amm/libraries/SwapCloseLogicLibBaseV1.sol";
-import "../base/amm/services/AmmCloseSwapServiceBaseV1.sol";
+import "../../../interfaces/types/IporTypes.sol";
+import "../../../interfaces/types/AmmTypes.sol";
+import "../../../interfaces/IIporOracle.sol";
+import "../../../interfaces/IAmmCloseSwapLens.sol";
+import "../../../interfaces/IAmmCloseSwapService.sol";
+import "../../../libraries/errors/IporErrors.sol";
+import "../../../libraries/IporContractValidator.sol";
+import "../../../libraries/AmmCloseSwapServicePoolConfigurationLib.sol";
+import "../../../amm/libraries/SwapCloseLogicLib.sol";
+import "../../../base/types/AmmTypesBaseV1.sol";
+import "../../../base/amm/libraries/SwapLogicBaseV1.sol";
+import "../../../base/amm/libraries/SwapCloseLogicLibBaseV1.sol";
+import "../../../base/amm/services/AmmCloseSwapServiceBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
-contract AmmCloseSwapLens is IAmmCloseSwapLens {
+    contract AmmCloseSwapLens is IAmmCloseSwapLens {
     using Address for address;
     using IporContractValidator for address;
     using SwapLogicBaseV1 for AmmTypesBaseV1.Swap;
