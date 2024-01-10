@@ -22,7 +22,7 @@ import "../../../contracts/interfaces/IPowerTokenLens.sol";
 import "../../../contracts/interfaces/ILiquidityMiningLens.sol";
 import "../../../contracts/interfaces/IPowerTokenFlowsService.sol";
 import "../../../contracts/interfaces/IPowerTokenStakeService.sol";
-import "../../../contracts/amm-common/AmmSwapsLens.sol";
+import "../../../contracts/chains/ethereum/amm-commons/AmmSwapsLens.sol";
 import "../../../contracts/amm/AmmPoolsLens.sol";
 import "../../../contracts/amm/AssetManagementLens.sol";
 import "../../../contracts/amm/AmmOpenSwapService.sol";

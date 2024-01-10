@@ -10,7 +10,7 @@ import "../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
 import "../../contracts/interfaces/IAmmSwapsLens.sol";
 import "../../contracts/interfaces/IAmmOpenSwapLens.sol";
 import "../../contracts/interfaces/IAmmCloseSwapLens.sol";
-import "../../contracts/amm-common/AmmSwapsLens.sol";
+import "../../contracts/chains/ethereum/amm-commons/AmmSwapsLens.sol";
 import "../../contracts/amm/AmmPoolsLens.sol";
 import "../../contracts/amm-eth/AmmPoolsLensStEth.sol";
 import "../../contracts/amm/AssetManagementLens.sol";

@@ -2,14 +2,14 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/utils/Address.sol";
-import "../interfaces/IAmmSwapsLens.sol";
-import "../amm/spread/ISpread28DaysLens.sol";
-import "../amm/spread/ISpread60DaysLens.sol";
-import "../amm/spread/ISpread90DaysLens.sol";
-import "../base/amm/libraries/AmmSwapsLensLibBaseV1.sol";
-import "../libraries/IporContractValidator.sol";
-import "../libraries/RiskIndicatorsValidatorLib.sol";
-import "../libraries/AmmLib.sol";
+import "../../../interfaces/IAmmSwapsLens.sol";
+import "../../../amm/spread/ISpread28DaysLens.sol";
+import "../../../amm/spread/ISpread60DaysLens.sol";
+import "../../../amm/spread/ISpread90DaysLens.sol";
+import "../../../base/amm/libraries/AmmSwapsLensLibBaseV1.sol";
+import "../../../libraries/IporContractValidator.sol";
+import "../../../libraries/RiskIndicatorsValidatorLib.sol";
+import "../../../libraries/AmmLib.sol";
 
 /// @dev It is not recommended to use lens contract directly, should be used only through IporProtocolRouter.
 contract AmmSwapsLens is IAmmSwapsLens {
