@@ -32,7 +32,7 @@ import "../../../contracts/amm/AmmCloseSwapServiceDai.sol";
 import "../../../contracts/amm-common/AmmCloseSwapLens.sol";
 
 import "../../../contracts/amm/AmmPoolsService.sol";
-import "../../../contracts/amm-common/AmmGovernanceService.sol";
+import "../../../contracts/chains/ethereum/amm-commons/AmmGovernanceService.sol";
 import "../../mocks/EmptyImplementation.sol";
 import "../builder/PowerTokenLensBuilder.sol";
 import "../builder/LiquidityMiningLensBuilder.sol";

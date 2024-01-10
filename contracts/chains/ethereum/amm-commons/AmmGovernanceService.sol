@@ -3,14 +3,14 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
-import "../interfaces/IAmmTreasury.sol";
-import "../interfaces/IAmmStorage.sol";
-import "../interfaces/IAmmGovernanceService.sol";
-import "../interfaces/IAmmGovernanceLens.sol";
-import "../libraries/math/IporMath.sol";
-import "../libraries/errors/AmmPoolsErrors.sol";
-import "../libraries/IporContractValidator.sol";
-import "../governance/AmmConfigurationManager.sol";
+import "../../../interfaces/IAmmTreasury.sol";
+import "../../../interfaces/IAmmStorage.sol";
+import "../../../interfaces/IAmmGovernanceService.sol";
+import "../../../interfaces/IAmmGovernanceLens.sol";
+import "../../../libraries/math/IporMath.sol";
+import "../../../libraries/errors/AmmPoolsErrors.sol";
+import "../../../libraries/IporContractValidator.sol";
+import "../../../governance/AmmConfigurationManager.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
