@@ -4,30 +4,30 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
-import "../interfaces/IAmmSwapsLens.sol";
-import "../interfaces/IAmmPoolsLens.sol";
-import "../interfaces/IAssetManagementLens.sol";
-import "../interfaces/IPowerTokenLens.sol";
-import "../interfaces/ILiquidityMiningLens.sol";
-import "../interfaces/IAmmGovernanceService.sol";
-import "../interfaces/IAmmGovernanceLens.sol";
-import "../interfaces/IAmmOpenSwapLens.sol";
-import "../interfaces/IAmmOpenSwapService.sol";
-import "../interfaces/IAmmOpenSwapServiceStEth.sol";
-import "../interfaces/IAmmCloseSwapServiceUsdt.sol";
-import "../interfaces/IAmmCloseSwapServiceUsdc.sol";
-import "../interfaces/IAmmCloseSwapServiceDai.sol";
-import "../interfaces/IAmmCloseSwapServiceStEth.sol";
-import "../interfaces/IAmmCloseSwapLens.sol";
-import "../interfaces/IAmmPoolsService.sol";
-import "../interfaces/IPowerTokenFlowsService.sol";
-import "../interfaces/IPowerTokenStakeService.sol";
-import "../interfaces/IProxyImplementation.sol";
-import "../amm-eth/interfaces/IAmmPoolsServiceStEth.sol";
-import "../amm-eth/interfaces/IAmmPoolsLensStEth.sol";
-import "../libraries/errors/IporErrors.sol";
-import "../libraries/IporContractValidator.sol";
-import "./AccessControl.sol";
+import "../../../interfaces/IAmmSwapsLens.sol";
+import "../../../interfaces/IAmmPoolsLens.sol";
+import "../../../interfaces/IAssetManagementLens.sol";
+import "../../../interfaces/IPowerTokenLens.sol";
+import "../../../interfaces/ILiquidityMiningLens.sol";
+import "../../../interfaces/IAmmGovernanceService.sol";
+import "../../../interfaces/IAmmGovernanceLens.sol";
+import "../../../interfaces/IAmmOpenSwapLens.sol";
+import "../../../interfaces/IAmmOpenSwapService.sol";
+import "../../../interfaces/IAmmOpenSwapServiceStEth.sol";
+import "../../../interfaces/IAmmCloseSwapServiceUsdt.sol";
+import "../../../interfaces/IAmmCloseSwapServiceUsdc.sol";
+import "../../../interfaces/IAmmCloseSwapServiceDai.sol";
+import "../../../interfaces/IAmmCloseSwapServiceStEth.sol";
+import "../../../interfaces/IAmmCloseSwapLens.sol";
+import "../../../interfaces/IAmmPoolsService.sol";
+import "../../../interfaces/IPowerTokenFlowsService.sol";
+import "../../../interfaces/IPowerTokenStakeService.sol";
+import "../../../interfaces/IProxyImplementation.sol";
+import "../../../amm-eth/interfaces/IAmmPoolsServiceStEth.sol";
+import "../../../amm-eth/interfaces/IAmmPoolsLensStEth.sol";
+import "../../../libraries/errors/IporErrors.sol";
+import "../../../libraries/IporContractValidator.sol";
+import "../../../router/AccessControl.sol";
 
 /// @title Entry point for IPOR protocol
 contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementation {
@@ -120,25 +120,25 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl, IProxyImplementat
     function getConfiguration() external view returns (DeployedContracts memory) {
         return
             DeployedContracts({
-                ammSwapsLens: _ammSwapsLens,
-                ammPoolsLens: _ammPoolsLens,
-                assetManagementLens: _assetManagementLens,
-                ammOpenSwapService: _ammOpenSwapService,
-                ammOpenSwapServiceStEth: _ammOpenSwapServiceStEth,
-                ammCloseSwapServiceUsdt: _ammCloseSwapServiceUsdt,
-                ammCloseSwapServiceUsdc: _ammCloseSwapServiceUsdc,
-                ammCloseSwapServiceDai: _ammCloseSwapServiceDai,
-                ammCloseSwapLens: _ammCloseSwapLens,
-                ammCloseSwapServiceStEth: _ammCloseSwapServiceStEth,
-                ammPoolsService: _ammPoolsService,
-                ammGovernanceService: _ammGovernanceService,
-                liquidityMiningLens: _liquidityMiningLens,
-                powerTokenLens: _powerTokenLens,
-                flowService: _flowService,
-                stakeService: _stakeService,
-                ammPoolsServiceStEth: _ammPoolsServiceStEth,
-                ammPoolsLensStEth: _ammPoolsLensStEth
-            });
+            ammSwapsLens: _ammSwapsLens,
+            ammPoolsLens: _ammPoolsLens,
+            assetManagementLens: _assetManagementLens,
+            ammOpenSwapService: _ammOpenSwapService,
+            ammOpenSwapServiceStEth: _ammOpenSwapServiceStEth,
+            ammCloseSwapServiceUsdt: _ammCloseSwapServiceUsdt,
+            ammCloseSwapServiceUsdc: _ammCloseSwapServiceUsdc,
+            ammCloseSwapServiceDai: _ammCloseSwapServiceDai,
+            ammCloseSwapLens: _ammCloseSwapLens,
+            ammCloseSwapServiceStEth: _ammCloseSwapServiceStEth,
+            ammPoolsService: _ammPoolsService,
+            ammGovernanceService: _ammGovernanceService,
+            liquidityMiningLens: _liquidityMiningLens,
+            powerTokenLens: _powerTokenLens,
+            flowService: _flowService,
+            stakeService: _stakeService,
+            ammPoolsServiceStEth: _ammPoolsServiceStEth,
+            ammPoolsLensStEth: _ammPoolsLensStEth
+        });
     }
 
     /// @notice Allows to execute batch of calls in one transaction using IPOR protocol business methods

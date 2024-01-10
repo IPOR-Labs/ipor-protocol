@@ -4,7 +4,7 @@ pragma solidity 0.8.20;
 import "forge-std/Test.sol";
 import "./TestEthMarketCommons.sol";
 import "../../contracts/libraries/errors/AmmErrors.sol";
-import "../../contracts/router/IporProtocolRouter.sol";
+import "../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
 
 contract ProvideBatchExecutor is TestEthMarketCommons {
     function setUp() public {

@@ -6,7 +6,7 @@ import "forge-std/console2.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../../contracts/oracles/IporOracle.sol";
 import "../mocks/EmptyRouterImplementation.sol";
-import "../../contracts/router/IporProtocolRouter.sol";
+import "../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
 import "../../contracts/interfaces/IAmmSwapsLens.sol";
 import "../../contracts/interfaces/IAmmOpenSwapLens.sol";
 import "../../contracts/interfaces/IAmmCloseSwapLens.sol";
