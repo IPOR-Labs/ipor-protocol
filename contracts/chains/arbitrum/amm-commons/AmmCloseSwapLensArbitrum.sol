@@ -28,7 +28,6 @@ contract AmmCloseSwapLensArbitrum is IAmmCloseSwapLens {
 
     address public immutable iporOracle;
     address public immutable messageSigner;
-    address public immutable spreadRouter;
 
     /// @dev Notice! Don't use following service to get data from storage, use only to get configuration stored in immutable fields.
     address public immutable closeSwapServiceWstEth;
@@ -37,14 +36,12 @@ contract AmmCloseSwapLensArbitrum is IAmmCloseSwapLens {
         address wstETHInput,
         address iporOracleInput,
         address messageSignerInput,
-        address spreadRouterInput,
         address closeSwapServiceWstEthInput
     ) {
         wstETH = wstETHInput.checkAddress();
 
         iporOracle = iporOracleInput.checkAddress();
         messageSigner = messageSignerInput.checkAddress();
-        spreadRouter = spreadRouterInput.checkAddress();
 
         closeSwapServiceWstEth = closeSwapServiceWstEthInput.checkAddress();
     }
