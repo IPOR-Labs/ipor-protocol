@@ -27,11 +27,9 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
     using IporContractValidator for address;
 
     address public immutable ammSwapsLens;
-    address public immutable ammOpenSwapService;
     address public immutable ammOpenSwapServiceWstEth;
     address public immutable ammCloseSwapServiceWstEth;
     address public immutable ammCloseSwapLens;
-    address public immutable ammPoolsService;
     address public immutable ammGovernanceService;
     address public immutable liquidityMiningLens;
     address public immutable powerTokenLens;
@@ -42,11 +40,9 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
 
     struct DeployedContractsArbitrum {
         address ammSwapsLens;
-        address ammOpenSwapService;
         address ammOpenSwapServiceWstEth;
         address ammCloseSwapServiceWstEth;
         address ammCloseSwapLens;
-        address ammPoolsService;
         address ammGovernanceService;
         address liquidityMiningLens;
         address powerTokenLens;
@@ -58,11 +54,9 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
 
     constructor(DeployedContractsArbitrum memory deployedContracts) {
         ammSwapsLens = deployedContracts.ammSwapsLens.checkAddress();
-        ammOpenSwapService = deployedContracts.ammOpenSwapService.checkAddress();
         ammOpenSwapServiceWstEth = deployedContracts.ammOpenSwapServiceWstEth.checkAddress();
         ammCloseSwapServiceWstEth = deployedContracts.ammCloseSwapServiceWstEth.checkAddress();
         ammCloseSwapLens = deployedContracts.ammCloseSwapLens.checkAddress();
-        ammPoolsService = deployedContracts.ammPoolsService.checkAddress();
         ammGovernanceService = deployedContracts.ammGovernanceService.checkAddress();
         liquidityMiningLens = deployedContracts.liquidityMiningLens.checkAddress();
         powerTokenLens = deployedContracts.powerTokenLens.checkAddress();
@@ -80,11 +74,9 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
         return
             DeployedContractsArbitrum({
                 ammSwapsLens: ammSwapsLens,
-                ammOpenSwapService: ammOpenSwapService,
                 ammOpenSwapServiceWstEth: ammOpenSwapServiceWstEth,
                 ammCloseSwapLens: ammCloseSwapLens,
                 ammCloseSwapServiceWstEth: ammCloseSwapServiceWstEth,
-                ammPoolsService: ammPoolsService,
                 ammGovernanceService: ammGovernanceService,
                 liquidityMiningLens: liquidityMiningLens,
                 powerTokenLens: powerTokenLens,
@@ -184,8 +176,6 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
             sig == IAmmGovernanceLens.getAmmGovernancePoolConfiguration.selector
         ) {
             return ammGovernanceService;
-        } else if (sig == IAmmOpenSwapLens.getAmmOpenSwapServicePoolConfiguration.selector) {
-            return ammOpenSwapService;
         } else if (
             sig == IAmmSwapsLens.getSwaps.selector ||
             sig == IAmmSwapsLens.getPnlPayFixed.selector ||
