@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
 import "../../../interfaces/IAmmSwapsLens.sol";
@@ -16,39 +15,33 @@ import "../../../interfaces/IAmmCloseSwapServiceWstEth.sol";
 import "../../../interfaces/IAmmCloseSwapLens.sol";
 import "../../../interfaces/IPowerTokenFlowsService.sol";
 import "../../../interfaces/IPowerTokenStakeService.sol";
-import "../../../interfaces/IProxyImplementation.sol";
 import "../../../amm-eth/interfaces/IAmmPoolsServiceWstEth.sol";
-import "../../../amm-eth/interfaces/IAmmPoolsLensStEth.sol";
+import "../../../amm-eth/interfaces/IAmmPoolsLensWstEth.sol";
 import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/IporContractValidator.sol";
-import "../../../router/AccessControl.sol";
+import "../../../router/IporProtocolRouterAbstract.sol";
 
 /// @title Entry point for IPOR protocol
-contract IporProtocolRouterArbitrum is UUPSUpgradeable, AccessControl, IProxyImplementation {
+contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
     using Address for address;
     using IporContractValidator for address;
 
-    uint256 private constant SINGLE_OPERATION = 0;
-    uint256 private constant BATCH_OPERATION = 1;
-
-    address public immutable _ammSwapsLens;
-    address public immutable _ammPoolsLens;
-    address public immutable _ammOpenSwapService;
-    address public immutable _ammOpenSwapServiceWstEth;
-    address public immutable _ammCloseSwapServiceWstEth;
-    address public immutable _ammCloseSwapLens;
-    address public immutable _ammPoolsService;
-    address public immutable _ammGovernanceService;
-    address public immutable _liquidityMiningLens;
-    address public immutable _powerTokenLens;
-    address public immutable _flowService;
-    address public immutable _stakeService;
-    address public immutable _ammPoolsServiceWstEth;
-    address public immutable _ammPoolsLensWstEth;
+    address public immutable ammSwapsLens;
+    address public immutable ammOpenSwapService;
+    address public immutable ammOpenSwapServiceWstEth;
+    address public immutable ammCloseSwapServiceWstEth;
+    address public immutable ammCloseSwapLens;
+    address public immutable ammPoolsService;
+    address public immutable ammGovernanceService;
+    address public immutable liquidityMiningLens;
+    address public immutable powerTokenLens;
+    address public immutable flowService;
+    address public immutable stakeService;
+    address public immutable ammPoolsServiceWstEth;
+    address public immutable ammPoolsLensWstEth;
 
     struct DeployedContractsArbitrum {
         address ammSwapsLens;
-        address ammPoolsLens;
         address ammOpenSwapService;
         address ammOpenSwapServiceWstEth;
         address ammCloseSwapServiceWstEth;
@@ -64,37 +57,21 @@ contract IporProtocolRouterArbitrum is UUPSUpgradeable, AccessControl, IProxyImp
     }
 
     constructor(DeployedContractsArbitrum memory deployedContracts) {
-        _ammSwapsLens = deployedContracts.ammSwapsLens.checkAddress();
-        _ammPoolsLens = deployedContracts.ammPoolsLens.checkAddress();
-        _ammOpenSwapService = deployedContracts.ammOpenSwapService.checkAddress();
-        _ammOpenSwapServiceWstEth = deployedContracts.ammOpenSwapServiceWstEth.checkAddress();
-        _ammCloseSwapServiceWstEth = deployedContracts.ammCloseSwapServiceWstEth.checkAddress();
-        _ammCloseSwapLens = deployedContracts.ammCloseSwapLens.checkAddress();
-        _ammPoolsService = deployedContracts.ammPoolsService.checkAddress();
-        _ammGovernanceService = deployedContracts.ammGovernanceService.checkAddress();
-        _liquidityMiningLens = deployedContracts.liquidityMiningLens.checkAddress();
-        _powerTokenLens = deployedContracts.powerTokenLens.checkAddress();
-        _flowService = deployedContracts.flowService.checkAddress();
-        _stakeService = deployedContracts.stakeService.checkAddress();
-        _ammPoolsServiceWstEth = deployedContracts.ammPoolsServiceWstEth.checkAddress();
-        _ammPoolsLensWstEth = deployedContracts.ammPoolsLensWstEth.checkAddress();
+        ammSwapsLens = deployedContracts.ammSwapsLens.checkAddress();
+        ammOpenSwapService = deployedContracts.ammOpenSwapService.checkAddress();
+        ammOpenSwapServiceWstEth = deployedContracts.ammOpenSwapServiceWstEth.checkAddress();
+        ammCloseSwapServiceWstEth = deployedContracts.ammCloseSwapServiceWstEth.checkAddress();
+        ammCloseSwapLens = deployedContracts.ammCloseSwapLens.checkAddress();
+        ammPoolsService = deployedContracts.ammPoolsService.checkAddress();
+        ammGovernanceService = deployedContracts.ammGovernanceService.checkAddress();
+        liquidityMiningLens = deployedContracts.liquidityMiningLens.checkAddress();
+        powerTokenLens = deployedContracts.powerTokenLens.checkAddress();
+        flowService = deployedContracts.flowService.checkAddress();
+        stakeService = deployedContracts.stakeService.checkAddress();
+        ammPoolsServiceWstEth = deployedContracts.ammPoolsServiceWstEth.checkAddress();
+        ammPoolsLensWstEth = deployedContracts.ammPoolsLensWstEth.checkAddress();
+
         _disableInitializers();
-    }
-
-    fallback(bytes calldata input) external payable returns (bytes memory) {
-        return _delegate(_getRouterImplementation(msg.sig, SINGLE_OPERATION));
-    }
-
-    function initialize(bool pausedInput) external initializer {
-        __UUPSUpgradeable_init();
-        OwnerManager.transferOwnership(msg.sender);
-        StorageLib.getReentrancyStatus().value = _NOT_ENTERED;
-    }
-
-    /// @notice Gets the implementation of the router
-    /// @return implementation address
-    function getImplementation() external view override returns (address) {
-        return StorageSlotUpgradeable.getAddressSlot(_IMPLEMENTATION_SLOT).value;
     }
 
     /// @notice Gets the Router configuration
@@ -102,46 +79,23 @@ contract IporProtocolRouterArbitrum is UUPSUpgradeable, AccessControl, IProxyImp
     function getConfiguration() external view returns (DeployedContractsArbitrum memory) {
         return
             DeployedContractsArbitrum({
-                ammSwapsLens: _ammSwapsLens,
-                ammPoolsLens: _ammPoolsLens,
-                ammOpenSwapService: _ammOpenSwapService,
-                ammOpenSwapServiceWstEth: _ammOpenSwapServiceWstEth,
-                ammCloseSwapLens: _ammCloseSwapLens,
-                ammCloseSwapServiceWstEth: _ammCloseSwapServiceWstEth,
-                ammPoolsService: _ammPoolsService,
-                ammGovernanceService: _ammGovernanceService,
-                liquidityMiningLens: _liquidityMiningLens,
-                powerTokenLens: _powerTokenLens,
-                flowService: _flowService,
-                stakeService: _stakeService,
-                ammPoolsServiceWstEth: _ammPoolsServiceWstEth,
-                ammPoolsLensWstEth: _ammPoolsLensWstEth
+                ammSwapsLens: ammSwapsLens,
+                ammOpenSwapService: ammOpenSwapService,
+                ammOpenSwapServiceWstEth: ammOpenSwapServiceWstEth,
+                ammCloseSwapLens: ammCloseSwapLens,
+                ammCloseSwapServiceWstEth: ammCloseSwapServiceWstEth,
+                ammPoolsService: ammPoolsService,
+                ammGovernanceService: ammGovernanceService,
+                liquidityMiningLens: liquidityMiningLens,
+                powerTokenLens: powerTokenLens,
+                flowService: flowService,
+                stakeService: stakeService,
+                ammPoolsServiceWstEth: ammPoolsServiceWstEth,
+                ammPoolsLensWstEth: ammPoolsLensWstEth
             });
     }
 
-    /// @notice Allows to execute batch of calls in one transaction using IPOR protocol business methods
-    /// @param calls array of encoded calls
-    function batchExecutor(bytes[] calldata calls) external payable nonReentrant returns (bytes[] memory) {
-        uint256 length = calls.length;
-        address implementation;
-        bytes[] memory returnData = new bytes[](length);
-
-        for (uint256 i; i != length; ) {
-            implementation = _getRouterImplementation(bytes4(calls[i][:4]), BATCH_OPERATION);
-            returnData[i] = implementation.functionDelegateCall(calls[i]);
-            unchecked {
-                ++i;
-            }
-        }
-
-        _returnBackRemainingEth();
-
-        return returnData;
-    }
-
-    receive() external payable {}
-
-    function _getRouterImplementation(bytes4 sig, uint256 batchOperation) internal returns (address) {
+    function _getRouterImplementation(bytes4 sig, uint256 batchOperation) internal override returns (address) {
         if (
             _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapServiceWstEth.openSwapPayFixed28daysWstEth.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapServiceWstEth.openSwapPayFixed60daysWstEth.selector) ||
@@ -153,20 +107,20 @@ contract IporProtocolRouterArbitrum is UUPSUpgradeable, AccessControl, IProxyImp
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
-            return _ammOpenSwapServiceWstEth;
+            return ammOpenSwapServiceWstEth;
         } else if (_checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapServiceWstEth.closeSwapsWstEth.selector)) {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
-            return _ammCloseSwapServiceWstEth;
-        }  else if (
+            return ammCloseSwapServiceWstEth;
+        } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceWstEth.provideLiquidityWstEth.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceWstEth.redeemFromAmmPoolWstEth.selector)
         ) {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
-            return _ammPoolsServiceWstEth;
+            return ammPoolsServiceWstEth;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenStakeService.stakeLpTokensToLiquidityMining.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenStakeService.unstakeLpTokensFromLiquidityMining.selector) ||
@@ -186,7 +140,7 @@ contract IporProtocolRouterArbitrum is UUPSUpgradeable, AccessControl, IProxyImp
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
-            return _stakeService;
+            return stakeService;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenFlowsService.delegatePwTokensToLiquidityMining.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenFlowsService.updateIndicatorsInLiquidityMining.selector) ||
@@ -199,7 +153,7 @@ contract IporProtocolRouterArbitrum is UUPSUpgradeable, AccessControl, IProxyImp
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
-            return _flowService;
+            return flowService;
         } else if (
             sig == IAmmGovernanceService.transferToTreasury.selector ||
             sig == IAmmGovernanceService.transferToCharlieTreasury.selector
@@ -207,7 +161,7 @@ contract IporProtocolRouterArbitrum is UUPSUpgradeable, AccessControl, IProxyImp
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
-            return _ammGovernanceService;
+            return ammGovernanceService;
         } else if (
             sig == IAmmGovernanceService.addSwapLiquidator.selector ||
             sig == IAmmGovernanceService.removeSwapLiquidator.selector ||
@@ -219,21 +173,20 @@ contract IporProtocolRouterArbitrum is UUPSUpgradeable, AccessControl, IProxyImp
             sig == IAmmGovernanceService.setAmmPoolsParams.selector
         ) {
             _onlyOwner();
-            return _ammGovernanceService;
+            return ammGovernanceService;
         } else if (sig == IAmmCloseSwapServiceWstEth.emergencyCloseSwapsWstEth.selector) {
             _onlyOwner();
-            return _ammCloseSwapServiceWstEth;
-        }  else if (
+            return ammCloseSwapServiceWstEth;
+        } else if (
             sig == IAmmGovernanceLens.isSwapLiquidator.selector ||
             sig == IAmmGovernanceLens.isAppointedToRebalanceInAmm.selector ||
             sig == IAmmGovernanceLens.getAmmPoolsParams.selector ||
             sig == IAmmGovernanceLens.getAmmGovernancePoolConfiguration.selector
         ) {
-            return _ammGovernanceService;
+            return ammGovernanceService;
         } else if (sig == IAmmOpenSwapLens.getAmmOpenSwapServicePoolConfiguration.selector) {
-            return _ammOpenSwapService;
+            return ammOpenSwapService;
         } else if (
-        // TODO: Simplifying the code for the arbitrator
             sig == IAmmSwapsLens.getSwaps.selector ||
             sig == IAmmSwapsLens.getPnlPayFixed.selector ||
             sig == IAmmSwapsLens.getPnlReceiveFixed.selector ||
@@ -242,15 +195,7 @@ contract IporProtocolRouterArbitrum is UUPSUpgradeable, AccessControl, IProxyImp
             sig == IAmmSwapsLens.getOfferedRate.selector ||
             sig == IAmmSwapsLens.getSwapLensPoolConfiguration.selector
         ) {
-            return _ammSwapsLens;
-        } else if (
-        // TODO: This could be removed
-            sig == IAmmPoolsLens.getAmmPoolsLensConfiguration.selector ||
-            sig == IAmmPoolsLens.getIpTokenExchangeRate.selector ||
-        // TODO: Do we need this ?
-            sig == IAmmPoolsLens.getAmmBalance.selector
-        ) {
-            return _ammPoolsLens;
+            return ammSwapsLens;
         } else if (
             sig == ILiquidityMiningLens.balanceOfLpTokensStakedInLiquidityMining.selector ||
             sig == ILiquidityMiningLens.balanceOfPowerTokensDelegatedToLiquidityMining.selector ||
@@ -259,7 +204,7 @@ contract IporProtocolRouterArbitrum is UUPSUpgradeable, AccessControl, IProxyImp
             sig == ILiquidityMiningLens.getGlobalIndicatorsFromLiquidityMining.selector ||
             sig == ILiquidityMiningLens.getAccountRewardsInLiquidityMining.selector
         ) {
-            return _liquidityMiningLens;
+            return liquidityMiningLens;
         } else if (
             sig == IPowerTokenLens.totalSupplyOfPwToken.selector ||
             sig == IPowerTokenLens.balanceOfPwToken.selector ||
@@ -270,43 +215,16 @@ contract IporProtocolRouterArbitrum is UUPSUpgradeable, AccessControl, IProxyImp
             sig == IPowerTokenLens.getPwTokenExchangeRate.selector ||
             sig == IPowerTokenLens.getPwTokenTotalSupplyBase.selector
         ) {
-            return _powerTokenLens;
+            return powerTokenLens;
         } else if (
-        // TODO: remove or convert to wstEth
             sig == IAmmCloseSwapLens.getAmmCloseSwapServicePoolConfiguration.selector ||
             sig == IAmmCloseSwapLens.getClosingSwapDetails.selector
         ) {
-            return _ammCloseSwapLens;
-        } else if (sig == IAmmPoolsLensStEth.getIpstEthExchangeRate.selector) {
-        // TODO: remove or convert to wstEth
-            return _ammPoolsLensWstEth;
+            return ammCloseSwapLens;
+        } else if (sig == IAmmPoolsLensWstEth.getIpwstEthExchangeRate.selector) {
+            return ammPoolsLensWstEth;
         }
 
         revert(IporErrors.ROUTER_INVALID_SIGNATURE);
     }
-
-    function _delegate(address implementation) private returns (bytes memory) {
-        bytes memory returnData = implementation.functionDelegateCall(msg.data);
-        _returnBackRemainingEth();
-        _nonReentrantAfter();
-        return returnData;
-    }
-
-    function _returnBackRemainingEth() private {
-        uint256 routerEthBalance = address(this).balance;
-
-        if (routerEthBalance > 0) {
-            /// @dev if view method then return back ETH is skipped
-            if (StorageLib.getReentrancyStatus().value == _ENTERED) {
-                (bool success, ) = msg.sender.call{value: routerEthBalance}("");
-
-                if (!success) {
-                    revert(IporErrors.ROUTER_RETURN_BACK_ETH_FAILED);
-                }
-            }
-        }
-    }
-
-    //solhint-disable no-empty-blocks
-    function _authorizeUpgrade(address) internal view override onlyOwner {}
 }
