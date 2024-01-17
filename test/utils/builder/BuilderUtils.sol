@@ -8,7 +8,7 @@ import "../../../contracts/amm/AmmStorage.sol";
 import "../../../contracts/amm/AmmTreasury.sol";
 import "../../../contracts/amm/spread/SpreadRouter.sol";
 import "../../../contracts/vault/AssetManagement.sol";
-import "../../../contracts/router/IporProtocolRouter.sol";
+import "../../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
 import "../../../contracts/interfaces/IAmmOpenSwapLens.sol";
 import "../../../contracts/interfaces/IAmmCloseSwapLens.sol";
 import "../../mocks/tokens/MockTestnetToken.sol";

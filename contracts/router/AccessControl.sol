@@ -5,7 +5,7 @@ import "../libraries/StorageLib.sol";
 import "../security/PauseManager.sol";
 import "../security/OwnerManager.sol";
 
-/// @title Smart contract reponsible for managing access to administative functions in IporProtocolRouter
+/// @title Smart contract responsible for managing access to administrative functions in IporProtocolRouter
 contract AccessControl {
     /// @dev Reentrancy - flag when thread is left method
     uint256 internal constant _NOT_ENTERED = 1;

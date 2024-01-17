@@ -2,11 +2,11 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "forge-std/Script.sol";
-import "../contracts/router/IporProtocolRouter.sol";
+import "../contracts/chains/ethereum/router/IporProtocolRouter.sol";
 import "../contracts/amm/AmmPoolsLens.sol";
 import "../contracts/amm/AmmOpenSwapService.sol";
-import "../contracts/amm-common/AmmGovernanceService.sol";
-import "../contracts/amm-common/AmmSwapsLens.sol";
+import "../contracts/chains/ethereum/amm-commons/AmmGovernanceService.sol";
+import "../contracts/chains/ethereum/amm-commons/AmmSwapsLens.sol";
 import "../contracts/amm/AssetManagementLens.sol";
 import "../contracts/amm/AmmCloseSwapService.sol";
 import "../contracts/amm/AmmPoolsService.sol";
