@@ -8,8 +8,8 @@ import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/amm-eth/AmmPoolsServiceStEth.sol";
 import "../../contracts/amm-eth/AmmPoolsLensStEth.sol";
 import "../../contracts/interfaces/IAmmGovernanceLens.sol";
-import "../../contracts/amm-common/AmmGovernanceService.sol";
-import "../../contracts/router/IporProtocolRouter.sol";
+import "../../contracts/chains/ethereum/amm-commons/AmmGovernanceService.sol";
+import "../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
 import "../../contracts/base/amm/AmmStorageBaseV1.sol";
 import "../../contracts/base/amm/AmmTreasuryBaseV1.sol";
 
