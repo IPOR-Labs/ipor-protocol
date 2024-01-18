@@ -363,14 +363,14 @@ contract ArbitrumTestForkCommons is Test {
                     maxLengthOfLiquidatedSwapsPerLeg: 10,
                     timeBeforeMaturityAllowedToCloseSwapByCommunity: 1 hours,
                     timeBeforeMaturityAllowedToCloseSwapByBuyerTenor28days: 1 days,
-                    timeBeforeMaturityAllowedToCloseSwapByBuyerTenor60days: 3 days,
+                    timeBeforeMaturityAllowedToCloseSwapByBuyerTenor60days: 2 days,
                     timeBeforeMaturityAllowedToCloseSwapByBuyerTenor90days: 3 days,
                     minLiquidationThresholdToCloseBeforeMaturityByCommunity: 995 * 1e15,
                     minLiquidationThresholdToCloseBeforeMaturityByBuyer: 99 * 1e16,
                     minLeverage: 10 * 1e18,
                     timeAfterOpenAllowedToCloseSwapWithUnwindingTenor28days: 1 days,
-                    timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days: 1 days,
-                    timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days: 1 days
+                    timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days: 2 days,
+                    timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days: 3 days
                 }),
                 iporOracleInput: iporOracleProxy,
                 messageSignerInput: messageSignerAddress
