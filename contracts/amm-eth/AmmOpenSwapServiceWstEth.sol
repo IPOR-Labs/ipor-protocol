@@ -41,7 +41,7 @@ contract AmmOpenSwapServiceWstEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServi
         uint256 acceptableFixedInterestRate,
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
-    ) external payable override onlySupportedInputAsset(inputAsset) returns (uint256) {
+    ) external override onlySupportedInputAsset(inputAsset) returns (uint256) {
         return
             _openSwapPayFixed(
                 beneficiary,
@@ -61,7 +61,7 @@ contract AmmOpenSwapServiceWstEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServi
         uint256 acceptableFixedInterestRate,
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
-    ) external payable override onlySupportedInputAsset(inputAsset) returns (uint256) {
+    ) external override onlySupportedInputAsset(inputAsset) returns (uint256) {
         return
             _openSwapPayFixed(
                 beneficiary,
@@ -81,7 +81,7 @@ contract AmmOpenSwapServiceWstEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServi
         uint256 acceptableFixedInterestRate,
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
-    ) external payable override onlySupportedInputAsset(inputAsset) returns (uint256) {
+    ) external override onlySupportedInputAsset(inputAsset) returns (uint256) {
         return
             _openSwapPayFixed(
                 beneficiary,
@@ -101,7 +101,7 @@ contract AmmOpenSwapServiceWstEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServi
         uint256 acceptableFixedInterestRate,
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
-    ) external payable override onlySupportedInputAsset(inputAsset) returns (uint256) {
+    ) external override onlySupportedInputAsset(inputAsset) returns (uint256) {
         return
             _openSwapReceiveFixed(
                 beneficiary,
@@ -121,7 +121,7 @@ contract AmmOpenSwapServiceWstEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServi
         uint256 acceptableFixedInterestRate,
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
-    ) external payable override onlySupportedInputAsset(inputAsset) returns (uint256) {
+    ) external override onlySupportedInputAsset(inputAsset) returns (uint256) {
         return
             _openSwapReceiveFixed(
                 beneficiary,
@@ -141,7 +141,7 @@ contract AmmOpenSwapServiceWstEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServi
         uint256 acceptableFixedInterestRate,
         uint256 leverage,
         AmmTypes.RiskIndicatorsInputs calldata riskIndicatorsInputs
-    ) external payable override onlySupportedInputAsset(inputAsset) returns (uint256) {
+    ) external override onlySupportedInputAsset(inputAsset) returns (uint256) {
         return
             _openSwapReceiveFixed(
                 beneficiary,
