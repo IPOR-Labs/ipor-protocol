@@ -3,8 +3,10 @@ name: Tests in foundry
 on:
   workflow_call:
     secrets:
-      FORK_URL:
-        required: false
+      ETHEREUM_PROVIDER_URL:
+        required: true
+      ARBITRUM_PROVIDER_URL:
+        required: true
 
     inputs:
 
@@ -81,8 +83,8 @@ jobs:
       - name: Run Forge tests
         if: inputs.test-enabled
         env:
-          FORK_URL: ${{ secrets.FORK_URL }}
-          PROVIDER_URL: ${{ secrets.FORK_URL }}
+          ETHEREUM_PROVIDER_URL: ${{ secrets.ETHEREUM_PROVIDER_URL }}
+          ARBITRUM_PROVIDER_URL: ${{ secrets.ARBITRUM_PROVIDER_URL }}
         run: |
           forge test ${{ inputs.test-options }} -vvv
         id: test
@@ -90,8 +92,8 @@ jobs:
       - name: Run Forge fork tests
         if: inputs.fork-test-enabled
         env:
-          FORK_URL: ${{ secrets.FORK_URL }}
-          PROVIDER_URL: ${{ secrets.FORK_URL }}
+          ETHEREUM_PROVIDER_URL: ${{ secrets.ETHEREUM_PROVIDER_URL }}
+          ARBITRUM_PROVIDER_URL: ${{ secrets.ARBITRUM_PROVIDER_URL }}
         run: |
           forge test ${{ inputs.fork-test-options }} --fork-url ${{ secrets.FORK_URL }} -vvv
         id: fork-test
