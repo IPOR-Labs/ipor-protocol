@@ -48,7 +48,7 @@ contract AmmPoolsServiceWstEth is IAmmPoolsServiceWstEth {
         require(redeemFeeRateWstEthInput <= 1e18, AmmPoolsErrors.CFG_INVALID_REDEEM_FEE_RATE);
     }
 
-    function provideLiquidityWstEth(address beneficiary, uint256 wstEthAmount) external override {
+    function provideLiquidityWstEth(address beneficiary, uint256 wstEthAmount) external payable override {
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(wstEth);
 
         uint256 actualLiquidityPoolBalance = IAmmTreasuryBaseV1(ammTreasuryWstEth).getLiquidityPoolBalance();

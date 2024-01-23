@@ -18,7 +18,7 @@ contract IporOracleStEth is TestCommons {
     event IporIndexUpdate(address asset, uint256 indexValue, uint256 quasiIbtPrice, uint256 updateTimestamp);
 
     function setUp() public {
-        vm.createSelectFork(vm.envString("PROVIDER_URL"), 18562032);
+        vm.createSelectFork(vm.envString("ETHEREUM_PROVIDER_URL"), 18562032);
         vm.startPrank(owner);
         // random value for USDT/USDC/DAI
         IporOracle newImplementation = new IporOracle(USDT, 1e18, USDC, 1e18, DAI, 1e18);
