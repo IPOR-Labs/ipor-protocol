@@ -95,5 +95,5 @@ jobs:
           ETHEREUM_PROVIDER_URL: ${{ secrets.ETHEREUM_PROVIDER_URL }}
           ARBITRUM_PROVIDER_URL: ${{ secrets.ARBITRUM_PROVIDER_URL }}
         run: |
-          forge test ${{ inputs.fork-test-options }} --fork-url ${{ secrets.FORK_URL }} -vvv
+          forge test ${{ inputs.fork-test-options }} -vvv
         id: fork-test
