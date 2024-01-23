@@ -6,7 +6,7 @@ import "./TestForkCommons.sol";
 
 contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
     function setUp() public {
-        vm.createSelectFork(vm.envString("PROVIDER_URL"), 18562032);
+        vm.createSelectFork(vm.envString("ETHEREUM_PROVIDER_URL"), 18562032);
     }
 
     function testShouldOpenPositionStEthForStEth28daysPayFixed() public {

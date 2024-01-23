@@ -8,7 +8,7 @@ import "../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
 
 contract ProvideBatchExecutor is TestEthMarketCommons {
     function setUp() public {
-        vm.createSelectFork(vm.envString("PROVIDER_URL"), 17810000);
+        vm.createSelectFork(vm.envString("ETHEREUM_PROVIDER_URL"), 17810000);
         _init();
     }
 

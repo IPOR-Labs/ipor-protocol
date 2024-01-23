@@ -13,7 +13,7 @@ contract ForkStrategyAaveGovernanceTest is TestForkCommons {
 
     function setUp() public {
         /// @dev state of the blockchain: after deploy DSR, before upgrade to V2
-        uint256 forkId = vm.createSelectFork(vm.envString("PROVIDER_URL"), 18560825);
+        uint256 forkId = vm.createSelectFork(vm.envString("ETHEREUM_PROVIDER_URL"), 18560825);
         _user = vm.rememberKey(2);
     }
 
