@@ -414,8 +414,7 @@ contract AmmStorageBaseV1 is
         AmmTypes.SwapDirection direction,
         AmmTypes.NewSwap memory newSwap
     ) internal returns (uint256) {
-        _lastSwapId++;
-        uint32 id = _lastSwapId;
+        uint32 id = _lastSwapId + 1;
 
         StorageInternalTypes.Swap storage swap;
         uint32 idsIndexLocal;
