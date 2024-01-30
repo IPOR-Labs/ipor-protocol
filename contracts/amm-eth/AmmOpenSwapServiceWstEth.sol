@@ -157,7 +157,7 @@ contract AmmOpenSwapServiceWstEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServi
     function _convertToAssetAmount(
         address inputAsset,
         uint256 inputAssetAmount
-    ) internal view override returns (uint256) {
+    ) internal pure override returns (uint256) {
         /// @dev we supported only wstETH
         return inputAssetAmount;
     }
