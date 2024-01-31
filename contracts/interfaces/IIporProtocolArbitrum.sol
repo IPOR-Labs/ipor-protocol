@@ -10,11 +10,7 @@ import "./IAmmPoolsLens.sol";
 import "./IAssetManagementLens.sol";
 import "./ILiquidityMiningLens.sol";
 import "./IPowerTokenLens.sol";
-import "./IAmmOpenSwapService.sol";
-import "./IAmmCloseSwapServiceUsdt.sol";
-import "./IAmmCloseSwapServiceUsdc.sol";
-import "./IAmmCloseSwapServiceDai.sol";
-import "./IAmmCloseSwapServiceStEth.sol";
+import "./IAmmCloseSwapServiceWstEth.sol";
 import "./IAmmCloseSwapLens.sol";
 import "./IAmmPoolsService.sol";
 import "./IAmmGovernanceService.sol";
@@ -27,31 +23,24 @@ import "../interfaces/IAmmOpenSwapServiceStEth.sol";
 
 /// @title Interface for interaction with IPOR protocol.
 /// Interface combines all IporProtocolRouter interfaces and supported services and lenses by router.
-interface IIporProtocol is
+interface IIporProtocolArbitrum is
     IERC1822ProxiableUpgradeable,
     IERC1967Upgradeable,
     IIporContractCommonGov,
     IProxyImplementation,
     IAmmSwapsLens,
-    IAmmPoolsLens,
-    IAssetManagementLens,
-    ILiquidityMiningLens,
-    IPowerTokenLens,
-    IAmmPoolsLensStEth,
-    IAmmOpenSwapService,
-    IAmmOpenSwapServiceStEth,
-    IAmmCloseSwapServiceUsdt,
-    IAmmCloseSwapServiceUsdc,
-    IAmmCloseSwapServiceDai,
-    IAmmCloseSwapServiceStEth,
     IAmmCloseSwapLens,
-    IAmmPoolsService,
     IAmmGovernanceService,
     IAmmGovernanceLens,
+    ISwapEventsBaseV1,
+    ILiquidityMiningLens,
+    IPowerTokenLens,
     IPowerTokenStakeService,
     IPowerTokenFlowsService,
-    IAmmPoolsServiceStEth,
-    ISwapEventsBaseV1
+    IAmmPoolsServiceWstEth,
+    IAmmPoolsLensWstEth,
+    IAmmOpenSwapServiceWstEth
+
 {
 
 }
