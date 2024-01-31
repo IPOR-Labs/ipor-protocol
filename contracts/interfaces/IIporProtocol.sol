@@ -18,6 +18,7 @@ import "./IAmmCloseSwapServiceStEth.sol";
 import "./IAmmCloseSwapLens.sol";
 import "./IAmmPoolsService.sol";
 import "./IAmmGovernanceService.sol";
+import "./IAmmGovernanceLens.sol";
 import "./IPowerTokenStakeService.sol";
 import "./IPowerTokenFlowsService.sol";
 import "./ISwapEventsBaseV1.sol";
