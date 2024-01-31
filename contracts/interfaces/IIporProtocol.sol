@@ -54,5 +54,4 @@ interface IIporProtocol is
     IAmmPoolsServiceStEth,
     ISwapEventsBaseV1
 {
-
 }

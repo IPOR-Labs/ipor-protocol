@@ -40,7 +40,7 @@ interface IIporProtocolArbitrum is
     IPowerTokenFlowsService,
     IAmmPoolsServiceWstEth,
     IAmmPoolsLensWstEth,
-    IAmmOpenSwapServiceWstEth
+    IAmmOpenSwapServiceWstEth,
+    IAmmCloseSwapServiceWstEth
 {
-
 }
