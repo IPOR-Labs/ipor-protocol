@@ -200,7 +200,9 @@ contract TestEthMarketCommons is Test {
                 flowService: _getUserAddress(123),
                 stakeService: _getUserAddress(123),
                 ammPoolsServiceStEth: ammPoolsServiceStEth,
-                ammPoolsLensStEth: ammPoolsLensStEth
+                ammPoolsLensStEth: ammPoolsLensStEth,
+                ammPoolsServiceUsdm: _getUserAddress(123),
+                ammPoolsLensUsdm: _getUserAddress(123)
             })
         );
 
