@@ -67,9 +67,6 @@ contract UsdmTestForkCommon is Test {
     }
 
     function _createTreasuryUsdm() private {
-        //        console2.log("USDM: ", USDM);
-        //        console2.log("IporProtocolRouterProxy: ", IporProtocolRouterProxy);
-        //        console2.log("ammStorageUsdmProxy: ", ammStorageUsdmProxy);
         AmmTreasuryBaseV1 emptyImpl = new AmmTreasuryBaseV1(USDM, IporProtocolRouterProxy, ammStorageUsdmProxy);
 
         ammTreasuryUsdmProxy = address(
