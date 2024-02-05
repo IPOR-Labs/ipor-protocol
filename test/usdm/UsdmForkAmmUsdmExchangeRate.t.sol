@@ -8,7 +8,7 @@ import "../../contracts/interfaces/types/AmmTypes.sol";
 
 contract UsdmForkAmmWstEthExchangeRateTest is UsdmTestForkCommon {
 
-    function testShouldNotChangeExchangeRateWhenProvideLiquidityUsdmForUsdm() public {
+    function testShouldNotChangeExchangeRateWhenprovideLiquidityUsdmToAmmPoolUsdmForUsdm() public {
         // given
         _init();
         address user = _getUserAddress(22);
@@ -20,7 +20,7 @@ contract UsdmForkAmmWstEthExchangeRateTest is UsdmTestForkCommon {
 
         // when
         vm.prank(user);
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdm(user, provideAmount);
+        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(user, provideAmount);
 
         //then
         uint256 exchangeRateAfter = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
@@ -40,7 +40,7 @@ contract UsdmForkAmmWstEthExchangeRateTest is UsdmTestForkCommon {
 
         // when
         vm.startPrank(user);
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdm(user, provideAmount);
+        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(user, provideAmount);
         uint256 ipUsdmAmount = IERC20(ipusdm).balanceOf(user);
         IAmmPoolsServiceUsdm(IporProtocolRouterProxy).redeemFromAmmPoolUsdm(user, ipUsdmAmount);
         vm.stopPrank();
@@ -70,7 +70,7 @@ contract UsdmForkAmmWstEthExchangeRateTest is UsdmTestForkCommon {
 
         // when
         vm.startPrank(user);
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdm(user, provideAmount);
+        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(user, provideAmount);
 
         uint256 ipUsdmAmount = IERC20(ipusdm).balanceOf(user);
         IAmmPoolsServiceUsdm(IporProtocolRouterProxy).redeemFromAmmPoolUsdm(user, ipUsdmAmount);

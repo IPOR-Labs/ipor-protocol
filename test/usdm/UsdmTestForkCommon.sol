@@ -153,6 +153,6 @@ contract UsdmTestForkCommon is Test {
         vm.prank(HolderUsdm);
         IUSDM(USDM).approve(IporProtocolRouterProxy, 10e18);
         vm.prank(HolderUsdm);
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdm(HolderUsdm, 10e18);
+        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(HolderUsdm, 10e18);
     }
 }

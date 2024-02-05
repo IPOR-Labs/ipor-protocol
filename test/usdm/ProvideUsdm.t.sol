@@ -50,7 +50,7 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
 
         // when
         vm.expectRevert(bytes(AmmPoolsErrors.IP_TOKEN_MINT_AMOUNT_TOO_LOW));
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdm(userOne, 0);
+        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(userOne, 0);
 
         // then
         uint userUsdmBalanceAfter = IERC20(USDM).balanceOf(userOne);
@@ -69,7 +69,7 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
         // when
         vm.prank(userOne);
         vm.expectRevert(bytes("ERC20: mint to the zero address"));
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdm(address(0), provideAmount);
+        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(address(0), provideAmount);
 
         // then
         uint userUsdmBalanceAfter = IERC20(USDM).balanceOf(userOne);
@@ -89,7 +89,7 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
 
         // when
         vm.prank(userOne);
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdm(userOne, provideAmount);
+        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(userOne, provideAmount);
 
         // then
         uint userUsdmBalanceAfter = IERC20(USDM).balanceOf(userOne);
@@ -134,7 +134,7 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
 
         // when
         vm.prank(userOne);
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdm(userTwo, provideAmount);
+        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(userTwo, provideAmount);
 
         // then
         uint userOneUsdmBalanceAfter = IERC20(USDM).balanceOf(userOne);
@@ -188,9 +188,9 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
         // when
         for (uint i; i < 10; ++i) {
             vm.prank(userOne);
-            IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdm(userOne, provideAmount);
+            IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(userOne, provideAmount);
             vm.prank(userTwo);
-            IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdm(userTwo, provideAmount);
+            IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(userTwo, provideAmount);
         }
 
         // then
@@ -254,10 +254,10 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
         // when other user provides liquidity
         vm.prank(userOne);
         vm.expectRevert(bytes(AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH));
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdm(userOne, provideAmount);
+        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(userOne, provideAmount);
     }
 
-    function testShouldEmitProvideLiquidityUsdmBeneficiaryIsNotSender() public {
+    function testShouldEmitprovideLiquidityUsdmToAmmPoolUsdmBeneficiaryIsNotSender() public {
         // given
         address userTwo = _getUserAddress(33);
 
@@ -278,7 +278,7 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
         );
 
         // when
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdm(userTwo, provideAmount);
+        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(userTwo, provideAmount);
     }
 
     function testShouldEmitRedeemUsdmBeneficiaryIsNotSender() public {
@@ -290,7 +290,7 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
         uint256 ipTokenAmount = 99999999999999999999;
 
         vm.prank(userOne);
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdm(userTwo, provideAmount);
+        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(userTwo, provideAmount);
 
         uint exchangeRate = 1000000000000000000;
 
@@ -319,7 +319,7 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
             uint256 amountUsdm = 99999999999999999999;
 
             vm.prank(userOne);
-            IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdm(userTwo, provideAmount);
+            IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(userTwo, provideAmount);
 
             /// @dev userOne provide liquidity on behalf of userTwo
             vm.prank(userOne);
@@ -339,7 +339,7 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
             //then
             vm.expectRevert(bytes(AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH));
             //when
-            IAmmPoolsServiceUsdm(ammPoolsServiceUsdm).provideLiquidityUsdm(userTwo, provideAmount);
+            IAmmPoolsServiceUsdm(ammPoolsServiceUsdm).provideLiquidityUsdmToAmmPoolUsdm(userTwo, provideAmount);
         }
 
 }

@@ -199,7 +199,7 @@ contract IporProtocolRouter is IporProtocolRouterAbstract {
             }
             return ammPoolsServiceStEth;
         } else if (
-            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdm.provideLiquidityUsdm.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdm.provideLiquidityUsdmToAmmPoolUsdm.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdm.redeemFromAmmPoolUsdm.selector)
         ) {
             if (batchOperation == 0) {

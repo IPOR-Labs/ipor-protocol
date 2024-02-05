@@ -48,7 +48,7 @@ contract AmmPoolsServiceUsdm is IAmmPoolsServiceUsdm {
         require(redeemFeeRateUsdmInput <= 1e18, AmmPoolsErrors.CFG_INVALID_REDEEM_FEE_RATE);
     }
 
-    function provideLiquidityUsdm(address beneficiary, uint256 usdmAmount) external payable override {
+    function provideLiquidityUsdmToAmmPoolUsdm(address beneficiary, uint256 usdmAmount) external payable override {
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(usdm);
 
         uint256 actualLiquidityPoolBalance = IAmmTreasuryBaseV1(ammTreasuryUsdm).getLiquidityPoolBalance();
