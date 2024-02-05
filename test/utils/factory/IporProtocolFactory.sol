@@ -879,6 +879,8 @@ contract IporProtocolFactory is Test {
         //      todo fix addresses
         deployerContracts.ammPoolsLensStEth = _fakeContract;
         deployerContracts.ammPoolsServiceStEth = _fakeContract;
+        deployerContracts.ammPoolsLensUsdm = _fakeContract;
+        deployerContracts.ammPoolsServiceUsdm = _fakeContract;
         deployerContracts.ammOpenSwapServiceStEth = _fakeContract;
         deployerContracts.ammCloseSwapServiceStEth = _fakeContract;
 
@@ -1117,6 +1119,8 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammPoolsLensStEth = _fakeContract;
         deployerContracts.ammOpenSwapServiceStEth = _fakeContract;
         deployerContracts.ammCloseSwapServiceStEth = _fakeContract;
+        deployerContracts.ammPoolsServiceUsdm = _fakeContract;
+        deployerContracts.ammPoolsLensUsdm = _fakeContract;
 
 
         vm.startPrank(address(_owner));
@@ -1325,6 +1329,8 @@ contract IporProtocolFactory is Test {
         //        todo fix addresses
         deployerContracts.ammPoolsLensStEth = _fakeContract;
         deployerContracts.ammPoolsServiceStEth = _fakeContract;
+        deployerContracts.ammPoolsLensUsdm = _fakeContract;
+        deployerContracts.ammPoolsServiceUsdm = _fakeContract;
         deployerContracts.ammOpenSwapServiceStEth = _fakeContract;
         deployerContracts.ammCloseSwapServiceStEth = _fakeContract;
 
@@ -1362,6 +1368,8 @@ contract IporProtocolFactory is Test {
         //todo Fix
         deployerContracts.ammPoolsLensStEth = address(123);
         deployerContracts.ammPoolsServiceStEth = address(123);
+        deployerContracts.ammPoolsLensUsdm = address(123);
+        deployerContracts.ammPoolsServiceUsdm = address(123);
 
         deployerContracts.ammSwapsLens = address(
             new AmmSwapsLens(

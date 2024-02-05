@@ -233,7 +233,9 @@ contract TestForkCommons is Test {
                 _getUserAddress(123),
                 _getUserAddress(123),
                 ammPoolsServiceStEth,
-                ammPoolsLensStEth
+                ammPoolsLensStEth,
+                _getUserAddress(123),
+                _getUserAddress(123)
             )
         );
         vm.prank(owner);
