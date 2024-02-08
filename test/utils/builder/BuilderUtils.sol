@@ -157,6 +157,7 @@ contract BuilderUtils {
         USDT,
         USDC,
         DAI,
-        ST_ETH
+        ST_ETH,
+        USDM
     }
 }

@@ -84,6 +84,15 @@ contract AssetBuilder is Test {
         return this;
     }
 
+    function withUSDM() public returns (AssetBuilder) {
+        builderData.assetType = BuilderUtils.AssetType.USDM;
+        builderData.name = "Mocked USDM";
+        builderData.symbol = "USDM";
+        builderData.decimals = 18;
+        builderData.initialSupply = TestConstants.TOTAL_SUPPLY_18_DECIMALS;
+        return this;
+    }
+
     function build() public returns (MockTestnetToken) {
         vm.startPrank(_owner);
 
