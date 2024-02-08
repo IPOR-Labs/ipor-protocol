@@ -260,7 +260,9 @@ contract IporProtocolRouterTest is TestCommons {
                 flowService: _userOne,
                 stakeService: _userOne,
                 ammPoolsLensUsdm: _userOne,
-                ammPoolsServiceUsdm: _userOne
+                ammPoolsServiceUsdm: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
 
@@ -286,7 +288,9 @@ contract IporProtocolRouterTest is TestCommons {
                 flowService: _userOne,
                 stakeService: _userOne,
                 ammPoolsLensUsdm: _userOne,
-                ammPoolsServiceUsdm: _userOne
+                ammPoolsServiceUsdm: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
         vm.expectRevert("IPOR_000");
@@ -311,7 +315,9 @@ contract IporProtocolRouterTest is TestCommons {
                 flowService: _userOne,
                 stakeService: _userOne,
                 ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne
+                ammPoolsLensUsdm: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
 
@@ -337,7 +343,9 @@ contract IporProtocolRouterTest is TestCommons {
                 flowService: _userOne,
                 stakeService: _userOne,
                 ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne
+                ammPoolsLensUsdm: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
 
@@ -363,7 +371,9 @@ contract IporProtocolRouterTest is TestCommons {
                 flowService: _userOne,
                 stakeService: _userOne,
                 ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne
+                ammPoolsLensUsdm: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
 
@@ -389,7 +399,9 @@ contract IporProtocolRouterTest is TestCommons {
                 flowService: _userOne,
                 stakeService: _userOne,
                 ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne
+                ammPoolsLensUsdm: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
 
@@ -415,7 +427,9 @@ contract IporProtocolRouterTest is TestCommons {
                 flowService: _userOne,
                 stakeService: _userOne,
                 ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne
+                ammPoolsLensUsdm: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
 
@@ -441,7 +455,9 @@ contract IporProtocolRouterTest is TestCommons {
                 flowService: _userOne,
                 stakeService: _userOne,
                 ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne
+                ammPoolsLensUsdm: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
 
@@ -467,7 +483,9 @@ contract IporProtocolRouterTest is TestCommons {
                 flowService: _userOne,
                 stakeService: _userOne,
                 ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne
+                ammPoolsLensUsdm: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
 
@@ -493,7 +511,9 @@ contract IporProtocolRouterTest is TestCommons {
                 flowService: _userOne,
                 stakeService: _userOne,
                 ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne
+                ammPoolsLensUsdm: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
 
@@ -519,7 +539,9 @@ contract IporProtocolRouterTest is TestCommons {
                 flowService: _userOne,
                 stakeService: _userOne,
                 ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne
+                ammPoolsLensUsdm: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
 
@@ -545,7 +567,9 @@ contract IporProtocolRouterTest is TestCommons {
                 flowService: address(0),
                 stakeService: _userOne,
                 ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne
+                ammPoolsLensUsdm: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
 
@@ -571,7 +595,9 @@ contract IporProtocolRouterTest is TestCommons {
                 flowService: _userOne,
                 stakeService: address(0),
                 ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne
+                ammPoolsLensUsdm: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
     }

@@ -868,6 +868,15 @@ contract IporProtocolFactory is Test {
                     cfg.ammPoolsTreasuryManager,
                     cfg.ammCharlieTreasury,
                     cfg.ammCharlieTreasuryManager
+                ),
+                weEthPoolCfg: _preparePoolCfgForGovernanceService(
+                    address(amm.stEth.asset), // mock todo: fix if needed
+                    address(amm.stEth.ammTreasury),
+                    address(amm.stEth.ammStorage),
+                    cfg.ammPoolsTreasury,
+                    cfg.ammPoolsTreasuryManager,
+                    cfg.ammCharlieTreasury,
+                    cfg.ammCharlieTreasuryManager
                 )
             })
         );
@@ -881,6 +890,8 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammPoolsServiceStEth = _fakeContract;
         deployerContracts.ammPoolsLensUsdm = _fakeContract;
         deployerContracts.ammPoolsServiceUsdm = _fakeContract;
+        deployerContracts.ammPoolsLensWeEth = _fakeContract;
+        deployerContracts.ammPoolsServiceWeEth = _fakeContract;
         deployerContracts.ammOpenSwapServiceStEth = _fakeContract;
         deployerContracts.ammCloseSwapServiceStEth = _fakeContract;
 
@@ -1106,7 +1117,8 @@ contract IporProtocolFactory is Test {
                 ),
                 usdcPoolCfg: _prepareFakePoolCfgForGovernanceService(),
                 daiPoolCfg: _prepareFakePoolCfgForGovernanceService(),
-                stEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
+                stEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
+                weEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
 
@@ -1121,6 +1133,8 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammCloseSwapServiceStEth = _fakeContract;
         deployerContracts.ammPoolsServiceUsdm = _fakeContract;
         deployerContracts.ammPoolsLensUsdm = _fakeContract;
+        deployerContracts.ammPoolsServiceWeEth = _fakeContract;
+        deployerContracts.ammPoolsLensWeEth = _fakeContract;
 
 
         vm.startPrank(address(_owner));
@@ -1317,7 +1331,8 @@ contract IporProtocolFactory is Test {
                     cfg.ammCharlieTreasuryManager
                 ),
                 daiPoolCfg: _prepareFakePoolCfgForGovernanceService(),
-                stEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
+                stEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
+                weEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
 
@@ -1331,6 +1346,8 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammPoolsServiceStEth = _fakeContract;
         deployerContracts.ammPoolsLensUsdm = _fakeContract;
         deployerContracts.ammPoolsServiceUsdm = _fakeContract;
+        deployerContracts.ammPoolsLensWeEth = _fakeContract;
+        deployerContracts.ammPoolsServiceWeEth = _fakeContract;
         deployerContracts.ammOpenSwapServiceStEth = _fakeContract;
         deployerContracts.ammCloseSwapServiceStEth = _fakeContract;
 
@@ -1370,6 +1387,8 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammPoolsServiceStEth = address(123);
         deployerContracts.ammPoolsLensUsdm = address(123);
         deployerContracts.ammPoolsServiceUsdm = address(123);
+        deployerContracts.ammPoolsLensWeEth = address(123);
+        deployerContracts.ammPoolsServiceWeEth = address(123);
 
         deployerContracts.ammSwapsLens = address(
             new AmmSwapsLens(
@@ -1532,7 +1551,8 @@ contract IporProtocolFactory is Test {
                     cfg.ammCharlieTreasury,
                     cfg.ammCharlieTreasuryManager
                 ),
-                stEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
+                stEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
+                weEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
         deployerContracts.powerTokenLens = address(_powerTokenLensBuilder.build());

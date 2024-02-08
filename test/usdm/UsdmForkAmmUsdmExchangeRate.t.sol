@@ -8,7 +8,7 @@ import "../../contracts/interfaces/types/AmmTypes.sol";
 
 contract UsdmForkAmmWstEthExchangeRateTest is UsdmTestForkCommon {
 
-    function testShouldNotChangeExchangeRateWhenprovideLiquidityUsdmToAmmPoolUsdmForUsdm() public {
+    function testShouldNotChangeExchangeRateWhenProvideLiquidityUsdmToAmmPoolUsdmForUsdm() public {
         // given
         _init();
         address user = _getUserAddress(22);
