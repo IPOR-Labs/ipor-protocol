@@ -49,6 +49,7 @@ contract IporProtocolFactory is Test {
         BuilderUtils.IporProtocol usdc;
         BuilderUtils.IporProtocol dai;
         BuilderUtils.IporProtocol stEth;
+        BuilderUtils.IporProtocol usdm;
     }
 
     struct AmmConfig {
@@ -868,6 +869,15 @@ contract IporProtocolFactory is Test {
                     cfg.ammPoolsTreasuryManager,
                     cfg.ammCharlieTreasury,
                     cfg.ammCharlieTreasuryManager
+                ),
+                usdmPoolCfg: _preparePoolCfgForGovernanceService(
+                    address(amm.usdm.asset),
+                    address(amm.usdm.ammTreasury),
+                    address(amm.usdm.ammStorage),
+                    cfg.ammPoolsTreasury,
+                    cfg.ammPoolsTreasuryManager,
+                    cfg.ammCharlieTreasury,
+                    cfg.ammCharlieTreasuryManager
                 )
             })
         );
@@ -1106,7 +1116,8 @@ contract IporProtocolFactory is Test {
                 ),
                 usdcPoolCfg: _prepareFakePoolCfgForGovernanceService(),
                 daiPoolCfg: _prepareFakePoolCfgForGovernanceService(),
-                stEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
+                stEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
+                usdmPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
 
@@ -1317,7 +1328,8 @@ contract IporProtocolFactory is Test {
                     cfg.ammCharlieTreasuryManager
                 ),
                 daiPoolCfg: _prepareFakePoolCfgForGovernanceService(),
-                stEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
+                stEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
+                usdmPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
 
@@ -1532,7 +1544,8 @@ contract IporProtocolFactory is Test {
                     cfg.ammCharlieTreasury,
                     cfg.ammCharlieTreasuryManager
                 ),
-                stEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
+                stEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
+                usdmPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
         deployerContracts.powerTokenLens = address(_powerTokenLensBuilder.build());
