@@ -49,6 +49,7 @@ contract IporProtocolFactory is Test {
         BuilderUtils.IporProtocol usdc;
         BuilderUtils.IporProtocol dai;
         BuilderUtils.IporProtocol stEth;
+        BuilderUtils.IporProtocol usdm;
     }
 
     struct AmmConfig {
@@ -136,15 +137,18 @@ contract IporProtocolFactory is Test {
         amm.usdc.assetManagement = _assetManagementBuilder.buildEmptyProxy();
         amm.dai.assetManagement = _assetManagementBuilder.buildEmptyProxy();
 
+
         amm.usdt.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
         amm.usdc.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
         amm.dai.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
         amm.stEth.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
+        amm.usdm.ammTreasury = _ammTreasuryBuilder.buildEmptyProxy();
 
         amm.usdt.router = amm.router;
         amm.usdc.router = amm.router;
         amm.dai.router = amm.router;
         amm.stEth.router = amm.router;
+        amm.usdm.router = amm.router;
 
         _assetBuilder.withUSDT();
         amm.usdt.asset = _assetBuilder.build();
@@ -158,11 +162,15 @@ contract IporProtocolFactory is Test {
         _assetBuilder.withStEth();
         amm.stEth.asset = _assetBuilder.build();
 
-        address[] memory assets = new address[](4);
+        _assetBuilder.withUSDM();
+        amm.usdm.asset = _assetBuilder.build();
+
+        address[] memory assets = new address[](5);
         assets[0] = address(amm.dai.asset);
         assets[1] = address(amm.usdt.asset);
         assets[2] = address(amm.usdc.asset);
         assets[3] = address(amm.stEth.asset);
+        assets[4] = address(amm.usdm.asset);
 
         amm.iporOracle = _iporOracleFactory.getEmptyInstance(assets, cfg.iporOracleInitialParamsTestCase);
 
@@ -170,12 +178,14 @@ contract IporProtocolFactory is Test {
         amm.usdc.iporOracle = amm.iporOracle;
         amm.dai.iporOracle = amm.iporOracle;
         amm.stEth.iporOracle = amm.iporOracle;
+        amm.usdm.iporOracle = amm.iporOracle;
 
         amm.iporWeighted = _iporWeightedBuilder.withIporOracle(address(amm.iporOracle)).build();
         amm.usdt.iporWeighted = amm.iporWeighted;
         amm.usdc.iporWeighted = amm.iporWeighted;
         amm.dai.iporWeighted = amm.iporWeighted;
         amm.stEth.iporWeighted = amm.iporWeighted;
+        amm.usdm.iporWeighted = amm.iporWeighted;
 
         _iporOracleFactory.upgrade(
             address(amm.iporOracle),
@@ -214,6 +224,12 @@ contract IporProtocolFactory is Test {
             .withAsset(address(amm.stEth.asset))
             .build();
 
+        amm.usdm.ipToken = _ipTokenBuilder
+            .withName("IP USDM")
+            .withSymbol("ipUSDM")
+            .withAsset(address(amm.usdm.asset))
+            .build();
+
         _ammStorageBuilder.withIporProtocolRouter(address(amm.router));
         _ammStorageBuilder.withAmmTreasury(address(amm.usdt.ammTreasury));
         amm.usdt.ammStorage = _ammStorageBuilder.build();
@@ -226,6 +242,9 @@ contract IporProtocolFactory is Test {
 
         _ammStorageBuilder.withAmmTreasury(address(amm.stEth.ammTreasury));
         amm.stEth.ammStorage = _ammStorageBuilder.build();
+
+        _ammStorageBuilder.withAmmTreasury(address(amm.usdm.ammTreasury));
+        amm.usdm.ammStorage = _ammStorageBuilder.build();
 
         _spreadRouterBuilder.withIporRouter(address(amm.router));
         _spreadRouterBuilder.withUsdt(address(amm.usdt.asset));
@@ -242,6 +261,7 @@ contract IporProtocolFactory is Test {
         amm.usdc.spreadRouter = amm.spreadRouter;
         amm.dai.spreadRouter = amm.spreadRouter;
         amm.stEth.spreadRouter = amm.spreadRouter;
+        amm.usdm.spreadRouter = amm.spreadRouter;
 
         _assetManagementBuilder
             .withAssetType(BuilderUtils.AssetType.USDT)
@@ -296,6 +316,7 @@ contract IporProtocolFactory is Test {
         amm.usdc.ipToken.setTokenManager(address(amm.router));
         amm.dai.ipToken.setTokenManager(address(amm.router));
         amm.stEth.ipToken.setTokenManager(address(amm.router));
+        amm.usdm.ipToken.setTokenManager(address(amm.router));
 
         amm.usdt.ammTreasury.grantMaxAllowanceForSpender(address(amm.usdt.assetManagement));
         amm.usdc.ammTreasury.grantMaxAllowanceForSpender(address(amm.usdc.assetManagement));
@@ -313,6 +334,8 @@ contract IporProtocolFactory is Test {
         IAmmGovernanceService(address(amm.router)).setAmmPoolsParams(address(amm.dai.asset), 1000000000, 50, 8500);
 
         IAmmGovernanceService(address(amm.router)).setAmmPoolsParams(address(amm.stEth.asset), 1000000000, 50, 8500);
+
+        IAmmGovernanceService(address(amm.router)).setAmmPoolsParams(address(amm.usdm.asset), 1000000000, 50, 8500);
 
         vm.stopPrank();
     }
@@ -868,6 +891,15 @@ contract IporProtocolFactory is Test {
                     cfg.ammPoolsTreasuryManager,
                     cfg.ammCharlieTreasury,
                     cfg.ammCharlieTreasuryManager
+                ),
+                usdmPoolCfg: _preparePoolCfgForGovernanceService(
+                    address(amm.usdm.asset),
+                    address(amm.usdm.ammTreasury),
+                    address(amm.usdm.ammStorage),
+                    cfg.ammPoolsTreasury,
+                    cfg.ammPoolsTreasuryManager,
+                    cfg.ammCharlieTreasury,
+                    cfg.ammCharlieTreasuryManager
                 )
             })
         );
@@ -1106,7 +1138,8 @@ contract IporProtocolFactory is Test {
                 ),
                 usdcPoolCfg: _prepareFakePoolCfgForGovernanceService(),
                 daiPoolCfg: _prepareFakePoolCfgForGovernanceService(),
-                stEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
+                stEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
+                usdmPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
 
@@ -1317,7 +1350,8 @@ contract IporProtocolFactory is Test {
                     cfg.ammCharlieTreasuryManager
                 ),
                 daiPoolCfg: _prepareFakePoolCfgForGovernanceService(),
-                stEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
+                stEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
+                usdmPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
 
@@ -1532,7 +1566,8 @@ contract IporProtocolFactory is Test {
                     cfg.ammCharlieTreasury,
                     cfg.ammCharlieTreasuryManager
                 ),
-                stEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
+                stEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
+                usdmPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
         deployerContracts.powerTokenLens = address(_powerTokenLensBuilder.build());
