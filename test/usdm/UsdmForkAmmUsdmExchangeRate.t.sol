@@ -8,7 +8,7 @@ import "../../contracts/interfaces/types/AmmTypes.sol";
 
 contract UsdmForkAmmWstEthExchangeRateTest is UsdmTestForkCommon {
 
-    function testShouldNotChangeExchangeRateWhenprovideLiquidityUsdmToAmmPoolUsdmForUsdm() public {
+    function testShouldNotChangeExchangeRateWhenprovideLiquidityWusdmToAmmPoolWusdmForUsdm() public {
         // given
         _init();
         address user = _getUserAddress(22);
@@ -16,14 +16,14 @@ contract UsdmForkAmmWstEthExchangeRateTest is UsdmTestForkCommon {
 
         uint256 provideAmount = 10_000 *1e18;
 
-        uint256 exchangeRateBefore = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensWusdm(IporProtocolRouterProxy).getIpWusdmExchangeRate();
 
         // when
         vm.prank(user);
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(user, provideAmount);
+        IAmmPoolsServiceWusdm(IporProtocolRouterProxy).provideLiquidityWusdmToAmmPoolWusdm(user, provideAmount);
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensWusdm(IporProtocolRouterProxy).getIpWusdmExchangeRate();
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -36,17 +36,17 @@ contract UsdmForkAmmWstEthExchangeRateTest is UsdmTestForkCommon {
 
         uint256 provideAmount = 1 ether;
 
-        uint256 exchangeRateBefore = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensWusdm(IporProtocolRouterProxy).getIpWusdmExchangeRate();
 
         // when
         vm.startPrank(user);
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(user, provideAmount);
-        uint256 ipUsdmAmount = IERC20(ipusdm).balanceOf(user);
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).redeemFromAmmPoolUsdm(user, ipUsdmAmount);
+        IAmmPoolsServiceWusdm(IporProtocolRouterProxy).provideLiquidityWusdmToAmmPoolWusdm(user, provideAmount);
+        uint256 ipUsdmAmount = IERC20(ipWusdm).balanceOf(user);
+        IAmmPoolsServiceWusdm(IporProtocolRouterProxy).redeemFromAmmPoolWusdm(user, ipUsdmAmount);
         vm.stopPrank();
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensWusdm(IporProtocolRouterProxy).getIpWusdmExchangeRate();
 
         assertLt(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -57,7 +57,7 @@ contract UsdmForkAmmWstEthExchangeRateTest is UsdmTestForkCommon {
         // given
         _init();
         vm.startPrank(IporProtocolOwner);
-        _createAmmPoolsServiceUsdm(0);
+        _createAmmPoolsServiceWusdm(0);
         _updateIporRouterImplementation();
         vm.stopPrank();
 
@@ -66,18 +66,18 @@ contract UsdmForkAmmWstEthExchangeRateTest is UsdmTestForkCommon {
 
         uint256 provideAmount = 100e18;
 
-        uint256 exchangeRateBefore = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensWusdm(IporProtocolRouterProxy).getIpWusdmExchangeRate();
 
         // when
         vm.startPrank(user);
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(user, provideAmount);
+        IAmmPoolsServiceWusdm(IporProtocolRouterProxy).provideLiquidityWusdmToAmmPoolWusdm(user, provideAmount);
 
-        uint256 ipUsdmAmount = IERC20(ipusdm).balanceOf(user);
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).redeemFromAmmPoolUsdm(user, ipUsdmAmount);
+        uint256 ipUsdmAmount = IERC20(ipWusdm).balanceOf(user);
+        IAmmPoolsServiceWusdm(IporProtocolRouterProxy).redeemFromAmmPoolWusdm(user, ipUsdmAmount);
         vm.stopPrank();
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensWusdm(IporProtocolRouterProxy).getIpWusdmExchangeRate();
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }

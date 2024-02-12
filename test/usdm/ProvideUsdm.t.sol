@@ -6,7 +6,7 @@ import "../../contracts/libraries/errors/AmmErrors.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract ProvideUsdmTest is UsdmTestForkCommon {
-    event ProvideLiquidityUsdm(
+    event ProvideLiquidityWusdm(
         address indexed from,
         address indexed beneficiary,
         address indexed to,
@@ -15,7 +15,7 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
         uint256 ipTokenAmount
     );
 
-    event RedeemUsdm(
+    event RedeemWusdm(
         address indexed ammTreasuryEth,
         address indexed from,
         address indexed beneficiary,
@@ -37,7 +37,7 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
         //given
 
         //when
-        uint exchangeRate = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint exchangeRate = IAmmPoolsLensWusdm(IporProtocolRouterProxy).getIpWusdmExchangeRate();
         //then
         assertEq(exchangeRate, 1e18, "exchangeRate should be 1");
     }
@@ -45,16 +45,16 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
     function testShouldRevertWhen0Amount() external {
         // given
 
-        uint userUsdmBalanceBefore = IERC20(USDM).balanceOf(userOne);
-        uint userIpUsdmBalanceBefore = IERC20(ipusdm).balanceOf(userOne);
+        uint userUsdmBalanceBefore = IERC20(WUSDM).balanceOf(userOne);
+        uint userIpUsdmBalanceBefore = IERC20(ipWusdm).balanceOf(userOne);
 
         // when
         vm.expectRevert(bytes(AmmPoolsErrors.IP_TOKEN_MINT_AMOUNT_TOO_LOW));
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(userOne, 0);
+        IAmmPoolsServiceWusdm(IporProtocolRouterProxy).provideLiquidityWusdmToAmmPoolWusdm(userOne, 0);
 
         // then
-        uint userUsdmBalanceAfter = IERC20(USDM).balanceOf(userOne);
-        uint userIpUsdmBalanceAfter = IERC20(ipusdm).balanceOf(userOne);
+        uint userUsdmBalanceAfter = IERC20(WUSDM).balanceOf(userOne);
+        uint userIpUsdmBalanceAfter = IERC20(ipWusdm).balanceOf(userOne);
 
         assertEq(userUsdmBalanceBefore, userUsdmBalanceAfter, "user balance of usdm should not change");
         assertEq(userIpUsdmBalanceBefore, userIpUsdmBalanceAfter, "user ipusdm balance should not change");
@@ -62,18 +62,18 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
 
     function testShouldRevertWhenBeneficiaryIs0Address() external {
         // given
-        uint userUsdmBalanceBefore = IERC20(USDM).balanceOf(userOne);
-        uint userIpUsdmBalanceBefore = IERC20(ipusdm).balanceOf(userOne);
+        uint userUsdmBalanceBefore = IERC20(WUSDM).balanceOf(userOne);
+        uint userIpUsdmBalanceBefore = IERC20(ipWusdm).balanceOf(userOne);
         uint provideAmount = 100e18;
 
         // when
         vm.prank(userOne);
         vm.expectRevert(bytes("ERC20: mint to the zero address"));
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(address(0), provideAmount);
+        IAmmPoolsServiceWusdm(IporProtocolRouterProxy).provideLiquidityWusdmToAmmPoolWusdm(address(0), provideAmount);
 
         // then
-        uint userUsdmBalanceAfter = IERC20(USDM).balanceOf(userOne);
-        uint userIpUsdmBalanceAfter = IERC20(ipusdm).balanceOf(userOne);
+        uint userUsdmBalanceAfter = IERC20(WUSDM).balanceOf(userOne);
+        uint userIpUsdmBalanceAfter = IERC20(ipWusdm).balanceOf(userOne);
 
         assertEq(userUsdmBalanceBefore, userUsdmBalanceAfter, "user balance of stEth should not change");
         assertEq(userIpUsdmBalanceBefore, userIpUsdmBalanceAfter, "user ipstEth balance should not change");
@@ -81,24 +81,24 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
 
     function testShouldProvideStEthToOwnAddressWhenBeneficiaryIsSender() external {
         // given
-        uint userUsdmBalanceBefore = IERC20(USDM).balanceOf(userOne);
-        uint userIpUsdmBalanceBefore = IERC20(ipusdm).balanceOf(userOne);
-        uint ammTreasuryUsdmBalanceBefore = IERC20(USDM).balanceOf(ammTreasuryUsdmProxy);
+        uint userUsdmBalanceBefore = IERC20(WUSDM).balanceOf(userOne);
+        uint userIpUsdmBalanceBefore = IERC20(ipWusdm).balanceOf(userOne);
+        uint ammTreasuryUsdmBalanceBefore = IERC20(WUSDM).balanceOf(ammTreasuryWusdmProxy);
         uint provideAmount = 100e18;
-        uint exchangeRateBefore = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensWusdm(IporProtocolRouterProxy).getIpWusdmExchangeRate();
 
         // when
         vm.prank(userOne);
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(userOne, provideAmount);
+        IAmmPoolsServiceWusdm(IporProtocolRouterProxy).provideLiquidityWusdmToAmmPoolWusdm(userOne, provideAmount);
 
         // then
-        uint userUsdmBalanceAfter = IERC20(USDM).balanceOf(userOne);
-        uint userIpUsdmBalanceAfter = IERC20(ipusdm).balanceOf(userOne);
-        uint ammTreasuryUsdmBalanceAfter = IERC20(USDM).balanceOf(ammTreasuryUsdmProxy);
+        uint userUsdmBalanceAfter = IERC20(WUSDM).balanceOf(userOne);
+        uint userIpUsdmBalanceAfter = IERC20(ipWusdm).balanceOf(userOne);
+        uint ammTreasuryUsdmBalanceAfter = IERC20(WUSDM).balanceOf(ammTreasuryWusdmProxy);
 
-        uint exchangeRateAfter = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint exchangeRateAfter = IAmmPoolsLensWusdm(IporProtocolRouterProxy).getIpWusdmExchangeRate();
 
-        assertLt(userUsdmBalanceBefore - provideAmount, userUsdmBalanceAfter, "user balance of usdm should decrease");
+        assertEq(userUsdmBalanceBefore - provideAmount, userUsdmBalanceAfter, "user balance of usdm should decrease");
         assertEq(
             userIpUsdmBalanceBefore + provideAmount,
             userIpUsdmBalanceAfter,
@@ -107,13 +107,13 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
         assertEq(userIpUsdmBalanceAfter, provideAmount, "user ipUsdm balance should be equal to provideAmount");
         assertEq(
             ammTreasuryUsdmBalanceBefore,
-            9999999999999999999,
-            "amm treasury balance should be 9999999999999999999"
+            10000000000000000000,
+            "amm treasury balance should be 10000000000000000000"
         );
         assertEq(
             ammTreasuryUsdmBalanceAfter,
-            109999999999999999998,
-            "amm treasury balance should be 109999999999999999998"
+            110000000000000000000,
+            "amm treasury balance should be 110000000000000000000"
         );
         assertEq(exchangeRateBefore, exchangeRateAfter, "exchangeRate should not change");
     }
@@ -123,28 +123,28 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
         address userTwo = _getUserAddress(33);
         _setupUser(userTwo, 100_000 * 1e18);
 
-        uint userOneUsdmBalanceBefore = IERC20(USDM).balanceOf(userOne);
-        uint userOneIpUsdmBalanceBefore = IERC20(ipusdm).balanceOf(userOne);
-        uint userTwoUsdmBalanceBefore = IERC20(USDM).balanceOf(userTwo);
-        uint userTwoIpUsdmBalanceBefore = IERC20(ipusdm).balanceOf(userTwo);
-        uint ammTreasuryUsdmBalanceBefore = IERC20(USDM).balanceOf(ammTreasuryUsdmProxy);
+        uint userOneUsdmBalanceBefore = IERC20(WUSDM).balanceOf(userOne);
+        uint userOneIpUsdmBalanceBefore = IERC20(ipWusdm).balanceOf(userOne);
+        uint userTwoUsdmBalanceBefore = IERC20(WUSDM).balanceOf(userTwo);
+        uint userTwoIpUsdmBalanceBefore = IERC20(ipWusdm).balanceOf(userTwo);
+        uint ammTreasuryUsdmBalanceBefore = IERC20(WUSDM).balanceOf(ammTreasuryWusdmProxy);
 
         uint provideAmount = 100e18;
-        uint exchangeRateBefore = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensWusdm(IporProtocolRouterProxy).getIpWusdmExchangeRate();
 
         // when
         vm.prank(userOne);
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(userTwo, provideAmount);
+        IAmmPoolsServiceWusdm(IporProtocolRouterProxy).provideLiquidityWusdmToAmmPoolWusdm(userTwo, provideAmount);
 
         // then
-        uint userOneUsdmBalanceAfter = IERC20(USDM).balanceOf(userOne);
-        uint userOneIpUsdmBalanceAfter = IERC20(ipusdm).balanceOf(userOne);
-        uint userTwoUsdmBalanceAfter = IERC20(USDM).balanceOf(userTwo);
-        uint userTwoIpUsdmBalanceAfter = IERC20(ipusdm).balanceOf(userTwo);
-        uint ammTreasuryUsdmBalanceAfter = IERC20(USDM).balanceOf(ammTreasuryUsdmProxy);
-        uint exchangeRateAfter = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint userOneUsdmBalanceAfter = IERC20(WUSDM).balanceOf(userOne);
+        uint userOneIpUsdmBalanceAfter = IERC20(ipWusdm).balanceOf(userOne);
+        uint userTwoUsdmBalanceAfter = IERC20(WUSDM).balanceOf(userTwo);
+        uint userTwoIpUsdmBalanceAfter = IERC20(ipWusdm).balanceOf(userTwo);
+        uint ammTreasuryUsdmBalanceAfter = IERC20(WUSDM).balanceOf(ammTreasuryWusdmProxy);
+        uint exchangeRateAfter = IAmmPoolsLensWusdm(IporProtocolRouterProxy).getIpWusdmExchangeRate();
 
-        assertLt(
+        assertEq(
             userOneUsdmBalanceBefore - provideAmount,
             userOneUsdmBalanceAfter,
             "user balance of usdm should decrease"
@@ -159,13 +159,13 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
         assertEq(userTwoIpUsdmBalanceAfter, provideAmount, "user ipusdm balance should be equal to provideAmount");
         assertEq(
             ammTreasuryUsdmBalanceBefore,
-            9999999999999999999,
-            "amm treasury balance should be 99999999999999999999"
+            10000000000000000000,
+            "amm treasury balance should be 10000000000000000000"
         );
         assertEq(
             ammTreasuryUsdmBalanceAfter,
-            109999999999999999998,
-            "amm treasury balance should be 109999999999999999998"
+            110000000000000000000,
+            "amm treasury balance should be 110000000000000000000"
         );
         assertEq(exchangeRateBefore, exchangeRateAfter, "exchangeRate should not change");
     }
@@ -176,40 +176,40 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
         address userTwo = _getUserAddress(33);
         _setupUser(userTwo, 100_000 * 1e18);
 
-        uint userOneUsdmBalanceBefore = IERC20(USDM).balanceOf(userOne);
-        uint userOneIpUsdmBalanceBefore = IERC20(ipusdm).balanceOf(userOne);
-        uint userTwoUsdmBalanceBefore = IERC20(USDM).balanceOf(userTwo);
-        uint userTwoIpUsdmBalanceBefore = IERC20(ipusdm).balanceOf(userTwo);
-        uint ammTreasuryUsdmBalanceBefore = IERC20(USDM).balanceOf(ammTreasuryUsdmProxy);
+        uint userOneUsdmBalanceBefore = IERC20(WUSDM).balanceOf(userOne);
+        uint userOneIpUsdmBalanceBefore = IERC20(ipWusdm).balanceOf(userOne);
+        uint userTwoUsdmBalanceBefore = IERC20(WUSDM).balanceOf(userTwo);
+        uint userTwoIpUsdmBalanceBefore = IERC20(ipWusdm).balanceOf(userTwo);
+        uint ammTreasuryUsdmBalanceBefore = IERC20(WUSDM).balanceOf(ammTreasuryWusdmProxy);
 
         uint provideAmount = 10e18;
-        uint exchangeRateBefore = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensWusdm(IporProtocolRouterProxy).getIpWusdmExchangeRate();
 
         // when
         for (uint i; i < 10; ++i) {
             vm.prank(userOne);
-            IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(userOne, provideAmount);
+            IAmmPoolsServiceWusdm(IporProtocolRouterProxy).provideLiquidityWusdmToAmmPoolWusdm(userOne, provideAmount);
             vm.prank(userTwo);
-            IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(userTwo, provideAmount);
+            IAmmPoolsServiceWusdm(IporProtocolRouterProxy).provideLiquidityWusdmToAmmPoolWusdm(userTwo, provideAmount);
         }
 
         // then
-        uint userOneUsdmBalanceAfter = IERC20(USDM).balanceOf(userOne);
-        uint userOneIpUsdmBalanceAfter = IERC20(ipusdm).balanceOf(userOne);
-        uint userTwoUsdmBalanceAfter = IERC20(USDM).balanceOf(userTwo);
-        uint userTwoIpUsdmBalanceAfter = IERC20(ipusdm).balanceOf(userTwo);
-        uint ammTreasuryUsdmBalanceAfter = IERC20(USDM).balanceOf(ammTreasuryUsdmProxy);
-        uint exchangeRateAfter = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint userOneUsdmBalanceAfter = IERC20(WUSDM).balanceOf(userOne);
+        uint userOneIpUsdmBalanceAfter = IERC20(ipWusdm).balanceOf(userOne);
+        uint userTwoUsdmBalanceAfter = IERC20(WUSDM).balanceOf(userTwo);
+        uint userTwoIpUsdmBalanceAfter = IERC20(ipWusdm).balanceOf(userTwo);
+        uint ammTreasuryUsdmBalanceAfter = IERC20(WUSDM).balanceOf(ammTreasuryWusdmProxy);
+        uint exchangeRateAfter = IAmmPoolsLensWusdm(IporProtocolRouterProxy).getIpWusdmExchangeRate();
 
         assertEq(
             userOneUsdmBalanceBefore,
-            99999999999999999999999,
-            "user balance of Usdm should be 99999999999999999999999"
+            98450085452308585847783,
+            "user balance of Usdm should be 98450085452308585847783"
         );
         assertEq(
             userOneUsdmBalanceAfter,
-            99900000000000000000007,
-            "user balance of Usdm should be 99900000000000000000007"
+            98350085452308585847783,
+            "user balance of Usdm should be 98350085452308585847783"
         );
         assertEq(
             userOneIpUsdmBalanceBefore + provideAmount * 10,
@@ -218,13 +218,13 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
         );
         assertEq(
             userTwoUsdmBalanceBefore,
-            99999999999999999999999,
-            "user balance of Usdm should be 99999999999999999999999"
+            98450085452308585847783,
+            "user balance of Usdm should be 98450085452308585847783"
         );
         assertEq(
             userTwoUsdmBalanceAfter,
-            99900000000000000000007,
-            "user balance of Usdm should be 99900000000000000000007"
+            98350085452308585847783,
+            "user balance of Usdm should be 98350085452308585847783"
         );
         assertEq(
             userTwoIpUsdmBalanceBefore + provideAmount * 10,
@@ -234,13 +234,13 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
         assertEq(exchangeRateBefore, exchangeRateAfter, "exchangeRate should not change");
         assertEq(
             ammTreasuryUsdmBalanceBefore,
-            9999999999999999999,
-            "amm treasury balance should be 9999999999999999999"
+            10000000000000000000,
+            "amm treasury balance should be 10000000000000000000"
         );
         assertEq(
             ammTreasuryUsdmBalanceAfter,
-            209999999999999999983,
-            "amm treasury balance should be 209999999999999999983"
+            210000000000000000000,
+            "amm treasury balance should be 210000000000000000000"
         );
     }
 
@@ -248,67 +248,67 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
         // given
         uint provideAmount = 20_001e18;
         vm.startPrank(IporProtocolOwner);
-        IAmmGovernanceService(IporProtocolRouterProxy).setAmmPoolsParams(USDM, 20_000, 0, 5000);
+        IAmmGovernanceService(IporProtocolRouterProxy).setAmmPoolsParams(WUSDM, 20_000, 0, 5000);
         vm.stopPrank();
 
         // when other user provides liquidity
         vm.prank(userOne);
         vm.expectRevert(bytes(AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH));
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(userOne, provideAmount);
+        IAmmPoolsServiceWusdm(IporProtocolRouterProxy).provideLiquidityWusdmToAmmPoolWusdm(userOne, provideAmount);
     }
 
-    function testShouldEmitprovideLiquidityUsdmToAmmPoolUsdmBeneficiaryIsNotSender() public {
+    function testShouldEmitprovideLiquidityWusdmToAmmPoolWusdmBeneficiaryIsNotSender() public {
         // given
         address userTwo = _getUserAddress(33);
 
         uint provideAmount = 100e18;
-        uint exchangeRateBefore = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensWusdm(IporProtocolRouterProxy).getIpWusdmExchangeRate();
         uint256 ipTokenAmount = IporMath.division(provideAmount * 1e18, exchangeRateBefore);
 
         vm.prank(userOne);
         vm.expectEmit(true, true, true, true);
         //then
-        emit ProvideLiquidityUsdm(
+        emit ProvideLiquidityWusdm(
             userOne,
             userTwo,
-            ammTreasuryUsdmProxy,
+            ammTreasuryWusdmProxy,
             exchangeRateBefore,
             provideAmount,
             ipTokenAmount
         );
 
         // when
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(userTwo, provideAmount);
+        IAmmPoolsServiceWusdm(IporProtocolRouterProxy).provideLiquidityWusdmToAmmPoolWusdm(userTwo, provideAmount);
     }
 
     function testShouldEmitRedeemUsdmBeneficiaryIsNotSender() public {
         // given
         address userTwo = _getUserAddress(33);
         uint provideAmount = 100e18;
-        uint256 amountUsdm = 99999999999999999999;
+        uint256 amountWusdm = 99999999999999999999;
         uint256 redeemedAmountUsdm = 99499999999999999999;
         uint256 ipTokenAmount = 99999999999999999999;
 
         vm.prank(userOne);
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(userTwo, provideAmount);
+        IAmmPoolsServiceWusdm(IporProtocolRouterProxy).provideLiquidityWusdmToAmmPoolWusdm(userTwo, provideAmount);
 
         uint exchangeRate = 1000000000000000000;
 
         vm.prank(userTwo);
         vm.expectEmit(true, true, true, true);
         //then
-        emit RedeemUsdm(
-            ammTreasuryUsdmProxy,
+        emit RedeemWusdm(
+            ammTreasuryWusdmProxy,
             userTwo,
             userOne,
             exchangeRate,
-            amountUsdm,
+           amountWusdm,
             redeemedAmountUsdm,
             ipTokenAmount
         );
 
         //when
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).redeemFromAmmPoolUsdm(userOne, amountUsdm);
+        IAmmPoolsServiceWusdm(IporProtocolRouterProxy).redeemFromAmmPoolWusdm(userOne,amountWusdm);
     }
 
         function testShouldRevertBecauseUserOneDoesntHaveIpUsdmTokensToRedeem() public {
@@ -316,10 +316,10 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
             _setupUser(userTwo, 100_000 * 1e18);
 
         uint provideAmount = 100e18;
-            uint256 amountUsdm = 99999999999999999999;
+            uint256 amountWusdm = 99999999999999999999;
 
             vm.prank(userOne);
-            IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(userTwo, provideAmount);
+            IAmmPoolsServiceWusdm(IporProtocolRouterProxy).provideLiquidityWusdmToAmmPoolWusdm(userTwo, provideAmount);
 
             /// @dev userOne provide liquidity on behalf of userTwo
             vm.prank(userOne);
@@ -327,7 +327,7 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
             vm.expectRevert(bytes(AmmPoolsErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW));
 
             //when
-            IAmmPoolsServiceUsdm(IporProtocolRouterProxy).redeemFromAmmPoolUsdm(userTwo, amountUsdm);
+            IAmmPoolsServiceWusdm(IporProtocolRouterProxy).redeemFromAmmPoolWusdm(userTwo,amountWusdm);
         }
 
         function testShouldRevertWhenProvideLiquidityDirectlyOnService() public {
@@ -339,7 +339,7 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
             //then
             vm.expectRevert(bytes(AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH));
             //when
-            IAmmPoolsServiceUsdm(ammPoolsServiceUsdm).provideLiquidityUsdmToAmmPoolUsdm(userTwo, provideAmount);
+            IAmmPoolsServiceWusdm(ammPoolsServiceWusdm).provideLiquidityWusdmToAmmPoolWusdm(userTwo, provideAmount);
         }
 
 }
