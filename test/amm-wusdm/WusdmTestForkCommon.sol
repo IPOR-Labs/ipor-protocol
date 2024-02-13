@@ -14,7 +14,7 @@ import "../../contracts/amm-wusdm/AmmPoolsLensWusdm.sol";
 import "../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
 import "./IUSDM.sol";
 
-contract UsdmTestForkCommon is Test {
+contract WusdmTestForkCommon is Test {
     address constant USDM = 0x59D9356E565Ab3A36dD77763Fc0d87fEaf85508C;
     address constant WUSDM = 0x57F5E098CaD7A3D1Eed53991D4d66C45C9AF7812;
     address constant HolderUsdm = 0xDBF5E9c5206d0dB70a90108bf936DA60221dC080;

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "./UsdmTestForkCommon.sol";
+import "./WusdmTestForkCommon.sol";
 import "../../contracts/libraries/errors/AmmErrors.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract ProvideUsdmTest is UsdmTestForkCommon {
+contract ProvideWusdmTest is WusdmTestForkCommon {
 
     address userOne;
 

@@ -74,7 +74,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         AmmGovernancePoolConfiguration memory usdcPoolCfg,
         AmmGovernancePoolConfiguration memory daiPoolCfg,
         AmmGovernancePoolConfiguration memory stEthPoolCfg,
-        AmmGovernancePoolConfiguration memory usdmPoolCfg
+        AmmGovernancePoolConfiguration memory wusdmPoolCfg
     ) {
         _usdt = usdtPoolCfg.asset.checkAddress();
         _usdtDecimals = usdtPoolCfg.decimals;
@@ -112,14 +112,14 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         _stEthAmmCharlieTreasury = stEthPoolCfg.ammCharlieTreasury.checkAddress();
         _stEthAmmCharlieTreasuryManager = stEthPoolCfg.ammCharlieTreasuryManager.checkAddress();
 
-        _wusdm = usdmPoolCfg.asset.checkAddress();
-        _wusdmDecimals = usdmPoolCfg.decimals;
-        _wusdmAmmStorage = usdmPoolCfg.ammStorage.checkAddress();
-        _wusdmAmmTreasury = usdmPoolCfg.ammTreasury.checkAddress();
-        _wusdmAmmPoolsTreasury = usdmPoolCfg.ammPoolsTreasury.checkAddress();
-        _wusdmAmmPoolsTreasuryManager = usdmPoolCfg.ammPoolsTreasuryManager.checkAddress();
-        _wusdmAmmCharlieTreasury = usdmPoolCfg.ammCharlieTreasury.checkAddress();
-        _wusdmAmmCharlieTreasuryManager = usdmPoolCfg.ammCharlieTreasuryManager.checkAddress();
+        _wusdm = wusdmPoolCfg.asset.checkAddress();
+        _wusdmDecimals = wusdmPoolCfg.decimals;
+        _wusdmAmmStorage = wusdmPoolCfg.ammStorage.checkAddress();
+        _wusdmAmmTreasury = wusdmPoolCfg.ammTreasury.checkAddress();
+        _wusdmAmmPoolsTreasury = wusdmPoolCfg.ammPoolsTreasury.checkAddress();
+        _wusdmAmmPoolsTreasuryManager = wusdmPoolCfg.ammPoolsTreasuryManager.checkAddress();
+        _wusdmAmmCharlieTreasury = wusdmPoolCfg.ammCharlieTreasury.checkAddress();
+        _wusdmAmmCharlieTreasuryManager = wusdmPoolCfg.ammCharlieTreasuryManager.checkAddress();
     }
 
     function getAmmGovernancePoolConfiguration(

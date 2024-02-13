@@ -2,11 +2,11 @@
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import "./UsdmTestForkCommon.sol";
+import "./WusdmTestForkCommon.sol";
 import "../../contracts/interfaces/IAmmCloseSwapServiceWstEth.sol";
 import "../../contracts/interfaces/types/AmmTypes.sol";
 
-contract UsdmForkAmmWstEthExchangeRateTest is UsdmTestForkCommon {
+contract WusdmForkAmmWstEthExchangeRateTest is WusdmTestForkCommon {
 
     function testShouldNotChangeExchangeRateWhenprovideLiquidityWusdmToAmmPoolWusdmForUsdm() public {
         // given

@@ -892,7 +892,7 @@ contract IporProtocolFactory is Test {
                     cfg.ammCharlieTreasury,
                     cfg.ammCharlieTreasuryManager
                 ),
-                usdmPoolCfg: _preparePoolCfgForGovernanceService(
+                wusdmPoolCfg: _preparePoolCfgForGovernanceService(
                     address(amm.usdm.asset),
                     address(amm.usdm.ammTreasury),
                     address(amm.usdm.ammStorage),
@@ -1139,7 +1139,7 @@ contract IporProtocolFactory is Test {
                 usdcPoolCfg: _prepareFakePoolCfgForGovernanceService(),
                 daiPoolCfg: _prepareFakePoolCfgForGovernanceService(),
                 stEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
-                usdmPoolCfg: _prepareFakePoolCfgForGovernanceService()
+                wusdmPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
 
@@ -1351,7 +1351,7 @@ contract IporProtocolFactory is Test {
                 ),
                 daiPoolCfg: _prepareFakePoolCfgForGovernanceService(),
                 stEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
-                usdmPoolCfg: _prepareFakePoolCfgForGovernanceService()
+                wusdmPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
 
@@ -1567,7 +1567,7 @@ contract IporProtocolFactory is Test {
                     cfg.ammCharlieTreasuryManager
                 ),
                 stEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
-                usdmPoolCfg: _prepareFakePoolCfgForGovernanceService()
+                wusdmPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
         deployerContracts.powerTokenLens = address(_powerTokenLensBuilder.build());
