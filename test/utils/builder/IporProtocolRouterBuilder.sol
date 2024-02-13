@@ -125,7 +125,9 @@ contract IporProtocolRouterBuilder is Test {
             ammPoolsServiceStEth: builderData.ammPoolsServiceStEth,
             ammPoolsLensStEth: builderData.ammPoolsLensStEth,
             ammPoolsServiceWusdm: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, // TODO: fix address if needed
-            ammPoolsLensWusdm: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 // TODO: fix address if needed
+            ammPoolsLensWusdm: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, // TODO: fix address if needed
+            ammPoolsServiceWeEth: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, // TODO: fix address if needed
+            ammPoolsLensWeEth: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 // TODO: fix address if needed
 
         });
 
@@ -160,7 +162,9 @@ contract IporProtocolRouterBuilder is Test {
             flowService: builderData.flowService,
             stakeService: builderData.stakeService,
             ammPoolsServiceWusdm: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, // TODO: fix address if needed
-            ammPoolsLensWusdm: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 // TODO: fix address if needed
+            ammPoolsLensWusdm: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, // TODO: fix address if needed
+            ammPoolsServiceWeEth: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, // TODO: fix address if needed
+            ammPoolsLensWeEth: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 // TODO: fix address if needed
         });
 
         IporProtocolRouter router = IporProtocolRouter(routerAddress);

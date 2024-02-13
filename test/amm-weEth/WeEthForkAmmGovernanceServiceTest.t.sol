@@ -2,10 +2,11 @@
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import "./WusdmTestForkCommon.sol";
 import "../../contracts/interfaces/IAmmGovernanceService.sol";
+import "../../contracts/interfaces/IAmmGovernanceService.sol";
+import "./WeEthTestForkCommon.sol";
 
-contract WusdmForkAmmGovernanceServiceTest is WusdmTestForkCommon {
+contract WeEthForkAmmGovernanceServiceTest is WeEthTestForkCommon {
     function setUp() public {
         _init();
     }
@@ -17,7 +18,7 @@ contract WusdmForkAmmGovernanceServiceTest is WusdmTestForkCommon {
         // when
         vm.expectRevert(bytes(IporErrors.ASSET_NOT_SUPPORTED));
         vm.prank(IporProtocolOwner);
-        IAmmGovernanceService(IporProtocolRouterProxy).withdrawFromAssetManagement(USDM, 100 * 1e18);
+        IAmmGovernanceService(IporProtocolRouterProxy).withdrawFromAssetManagement(weETH, 100 * 1e18);
     }
 
     function testShouldNotWithdrawAllFromAssetManagementUsdm() public {
@@ -27,6 +28,6 @@ contract WusdmForkAmmGovernanceServiceTest is WusdmTestForkCommon {
         // when
         vm.expectRevert(bytes(IporErrors.ASSET_NOT_SUPPORTED));
         vm.prank(IporProtocolOwner);
-        IAmmGovernanceService(IporProtocolRouterProxy).withdrawAllFromAssetManagement(USDM);
+        IAmmGovernanceService(IporProtocolRouterProxy).withdrawAllFromAssetManagement(weETH);
     }
 }

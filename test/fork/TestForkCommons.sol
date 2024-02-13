@@ -77,6 +77,8 @@ contract TestForkCommons is Test {
     address public constant stETH = 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
     address public constant wETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address public constant wstETH = 0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0;
+    address public constant weETH = 0xCd5fE23C85820F7B72D0926FC9b05b43E359b7ee;
+
 
     address public constant iporOracleProxy = 0x421C69EAa54646294Db30026aeE80D01988a6876;
 
@@ -242,6 +244,8 @@ contract TestForkCommons is Test {
                 _getUserAddress(123),
                 ammPoolsServiceStEth,
                 ammPoolsLensStEth,
+                _getUserAddress(123),
+                _getUserAddress(123),
                 _getUserAddress(123),
                 _getUserAddress(123)
             )
@@ -488,7 +492,19 @@ contract TestForkCommons is Test {
             ammCharlieTreasuryManager: treasurer
         });
 
-        newAmmGovernanceService = address(new AmmGovernanceService(usdtPoolCfg, usdcPoolCfg, daiPoolCfg, stEthPoolCfg, usdmPoolCfg));
+        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory weETHPoolCfg = IAmmGovernanceLens
+            .AmmGovernancePoolConfiguration({
+                asset: weETH,
+                decimals: 18,
+                ammStorage: ammStorageProxyStEth,
+                ammTreasury: ammTreasuryProxyStEth,
+                ammPoolsTreasury: treasurer,
+                ammPoolsTreasuryManager: treasurer,
+                ammCharlieTreasury: treasurer,
+                ammCharlieTreasuryManager: treasurer
+            });
+
+        newAmmGovernanceService = address(new AmmGovernanceService(usdtPoolCfg, usdcPoolCfg, daiPoolCfg, stEthPoolCfg, usdmPoolCfg, weETHPoolCfg));
     }
 
     function _upgradeAmmTreasuryStEth() private {

@@ -24,6 +24,7 @@ contract TestEthMarketCommons is Test {
     address public constant IPOR = 0x1e4746dC744503b53b4A082cB3607B169a289090;
     address public constant stEth = 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
     address public constant wEth = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    address public constant weETH = 0xCd5fE23C85820F7B72D0926FC9b05b43E359b7ee;
     address public constant iporOracle = 0x421C69EAa54646294Db30026aeE80D01988a6876;
 
     // new contracts for v2 ethMarket
@@ -176,6 +177,18 @@ contract TestEthMarketCommons is Test {
                 _getUserAddress(123)
             );
 
+        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory weEthConfig = IAmmGovernanceLens
+            .AmmGovernancePoolConfiguration(
+            weETH,
+                18,
+                _getUserAddress(123),
+                _getUserAddress(123),
+                _getUserAddress(123),
+                _getUserAddress(123),
+                _getUserAddress(123),
+                _getUserAddress(123)
+            );
+
         IAmmGovernanceLens.AmmGovernancePoolConfiguration memory usdmConfig = IAmmGovernanceLens
             .AmmGovernancePoolConfiguration(
             USDM,
@@ -188,7 +201,7 @@ contract TestEthMarketCommons is Test {
             _getUserAddress(123)
         );
 
-        ammGovernanceService = address(new AmmGovernanceService(usdtConfig, usdcConfig, daiConfig, stEthConfig, usdmConfig));
+        ammGovernanceService = address(new AmmGovernanceService(usdtConfig, usdcConfig, daiConfig, stEthConfig, usdmConfig,weEthConfig));
         vm.stopPrank();
     }
 
@@ -215,7 +228,9 @@ contract TestEthMarketCommons is Test {
                 ammPoolsServiceStEth: ammPoolsServiceStEth,
                 ammPoolsLensStEth: ammPoolsLensStEth,
                 ammPoolsServiceWusdm: _getUserAddress(123),
-                ammPoolsLensWusdm: _getUserAddress(123)
+                ammPoolsLensWusdm: _getUserAddress(123),
+                ammPoolsServiceWeEth: _getUserAddress(123),
+                ammPoolsLensWeEth: _getUserAddress(123)
             })
         );
 

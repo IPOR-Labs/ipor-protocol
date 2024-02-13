@@ -4,20 +4,16 @@ pragma solidity 0.8.20;
 import "forge-std/Test.sol";
 
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC4626Upgradeable.sol";
 
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/base/amm/AmmTreasuryBaseV1.sol";
 import "../../contracts/base/amm/AmmStorageBaseV1.sol";
-import "../../contracts/amm-wusdm/AmmPoolsServiceWusdm.sol";
-import "../../contracts/amm-wusdm/AmmPoolsLensWusdm.sol";
+import "../../contracts/amm-weEth/AmmPoolsServiceWeEth.sol";
+import "../../contracts/amm-weEth/AmmPoolsLensWeEth.sol";
 import "../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
-import "./IUSDM.sol";
 
-contract WusdmTestForkCommon is Test {
-    address constant USDM = 0x59D9356E565Ab3A36dD77763Fc0d87fEaf85508C;
-    address constant WUSDM = 0x57F5E098CaD7A3D1Eed53991D4d66C45C9AF7812;
-    address constant HolderUsdm = 0xDBF5E9c5206d0dB70a90108bf936DA60221dC080;
+contract WeEthTestForkCommon is Test {
+
 
     address constant IporProtocolOwner = 0xD92E9F039E4189c342b4067CC61f5d063960D248;
     address payable constant IporProtocolRouterProxy = payable(0x16d104009964e694761C0bf09d7Be49B7E3C26fd);
@@ -41,66 +37,86 @@ contract WusdmTestForkCommon is Test {
     address constant AmmPoolsServiceEth = 0x406812AC6f106f7d53b4181d42342e2565428Be1;
     address constant AmmPoolsLensEth = 0xb0a4855134F63Bf81F3dC6DA38De8894FB24904a;
 
-    address ipWusdm;
-    address ammTreasuryWusdmProxy;
-    address ammStorageWusdmProxy;
+    address constant ammTreasuryUsdmProxy = IporProtocolRouterProxy;
+    address constant ammStorageUsdmProxy = IporProtocolRouterProxy;
 
-    address ammPoolsServiceWusdm;
-    address ammPoolsLensWusdm;
+    address constant ammPoolsServiceUsdm = IporProtocolRouterProxy;
+    address constant ammPoolsLensUsdm = IporProtocolRouterProxy;
+
+
+    address constant eETH = 0x35fA164735182de50811E8e2E824cFb9B6118ac2;
+    address constant weETH = 0xCd5fE23C85820F7B72D0926FC9b05b43E359b7ee;
+    address constant wETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    address constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+    address constant eEthLiquidityPool = 0x308861A430be4cce5502d0A12724771Fc6DaF216;
+    address constant referral = 0x558c8eb91F6fd83FC5C995572c3515E2DAF7b7e0;
+
+    address ipWeEth;
+    address ammTreasuryWeEthProxy;
+    address ammStorageWeEthProxy;
+    address ammPoolsLensWeEth;
+    address ammPoolsServiceWeEth;
+
 
     function _init() internal {
         vm.createSelectFork(vm.envString("ETHEREUM_PROVIDER_URL"), 19132375);
 
         vm.startPrank(IporProtocolOwner);
-        _createIpWusdm();
-        _createAmmStorageWusdm();
-        _createTreasuryWusdm();
-        _createAmmPoolsServiceWusdm(5 * 1e15);
-        _createAmmPoolsLensWusdm();
+        _createIpWeEth();
+        _createAmmStorageWeEth();
+        _createTreasuryWeEth();
+        _createAmmPoolsServiceWeEth(5 * 1e15);
+        _createAmmPoolsLensWeEth();
         _updateIporRouterImplementation();
         _setupPools();
         vm.stopPrank();
-        _provideInitialLiquidity();
     }
 
-    function _createIpWusdm() private {
-        ipWusdm = address(new IpToken("IP USDM", "ipUSDM", WUSDM));
-        IpToken(ipWusdm).setTokenManager(IporProtocolRouterProxy);
+    function _createIpWeEth() private {
+        ipWeEth = address(new IpToken("IP ", "ipWeEth", weETH));
+        IpToken(ipWeEth).setTokenManager(IporProtocolRouterProxy);
     }
 
-    function _createTreasuryWusdm() private {
-        AmmTreasuryBaseV1 emptyImpl = new AmmTreasuryBaseV1(WUSDM, IporProtocolRouterProxy, ammStorageWusdmProxy);
+    function _createTreasuryWeEth() private {
+        AmmTreasuryBaseV1 emptyImpl = new AmmTreasuryBaseV1(weETH, IporProtocolRouterProxy, ammStorageWeEthProxy);
 
-        ammTreasuryWusdmProxy = address(
+        ammTreasuryWeEthProxy = address(
             new ERC1967Proxy(address(emptyImpl), abi.encodeWithSignature("initialize(bool)", false))
         );
     }
 
-    function _createAmmStorageWusdm() private {
-        address ammStorageWusdmImpl = address(new AmmStorageBaseV1(IporProtocolRouterProxy));
+    function _createAmmStorageWeEth() private {
+        address ammStorageWeEthImpl = address(new AmmStorageBaseV1(IporProtocolRouterProxy));
 
-        ammStorageWusdmProxy = address(
-            new ERC1967Proxy(ammStorageWusdmImpl, abi.encodeWithSignature("initialize()", ""))
+        ammStorageWeEthProxy = address(
+            new ERC1967Proxy(ammStorageWeEthImpl, abi.encodeWithSignature("initialize()", ""))
         );
     }
 
-    function _createAmmPoolsServiceWusdm(uint redeemFeeRateWusdmInput) internal {
-        ammPoolsServiceWusdm = address(
-            new AmmPoolsServiceWusdm(
-                WUSDM,
-                ipWusdm,
-                ammTreasuryWusdmProxy,
-                ammStorageWusdmProxy,
-                IporOracleProxy,
-                IporProtocolRouterProxy,
-                redeemFeeRateWusdmInput
+    function _createAmmPoolsServiceWeEth(uint redeemFeeRateWeEthInput) internal {
+        ammPoolsServiceWeEth = address(
+            new AmmPoolsServiceWeEth(
+                AmmPoolsServiceWeEth.DeployedContracts({
+                    ethInput: ETH,
+                    wEthInput: wETH,
+                    eEthInput: eETH,
+                    weEthInput: weETH,
+                    ipWeEthInput: ipWeEth,
+                    ammTreasuryWeEthInput: ammTreasuryWeEthProxy,
+                    ammStorageWeEthInput: ammStorageWeEthProxy,
+                    iporOracleInput: IporOracleProxy,
+                    iporProtocolRouterInput: IporProtocolRouterProxy,
+                    redeemFeeRateWeEthInput: redeemFeeRateWeEthInput,
+                    eEthLiquidityPoolExternalInput: eEthLiquidityPool,
+                    referralInput: referral
+                })
             )
         );
     }
 
-    function _createAmmPoolsLensWusdm() private {
-        ammPoolsLensWusdm = address(
-            new AmmPoolsLensWusdm(WUSDM, ipWusdm, ammTreasuryWusdmProxy, ammStorageWusdmProxy, IporOracleProxy)
+    function _createAmmPoolsLensWeEth() private {
+        ammPoolsLensWeEth = address(
+            new AmmPoolsLensWeEth(weETH, ipWeEth, ammTreasuryWeEthProxy, ammStorageWeEthProxy, IporOracleProxy)
         );
     }
 
@@ -125,10 +141,10 @@ contract WusdmTestForkCommon is Test {
                 stakeService: StakeService,
                 ammPoolsServiceStEth: AmmPoolsServiceEth,
                 ammPoolsLensStEth: AmmPoolsLensEth,
-                ammPoolsServiceWusdm: ammPoolsServiceWusdm,
-                ammPoolsLensWusdm: ammPoolsLensWusdm,
-                ammPoolsServiceWeEth: IporProtocolOwner,
-                ammPoolsLensWeEth: IporProtocolOwner
+                ammPoolsServiceWusdm: ammPoolsServiceUsdm,
+                ammPoolsLensWusdm: ammPoolsLensUsdm,
+                ammPoolsServiceWeEth: ammPoolsServiceWeEth,
+                ammPoolsLensWeEth: ammPoolsLensWeEth
             })
         );
 
@@ -136,40 +152,24 @@ contract WusdmTestForkCommon is Test {
     }
 
     function _setupPools() internal {
-        IAmmGovernanceService(IporProtocolRouterProxy).setAmmPoolsParams(WUSDM, type(uint32).max, 0, 5000);
+        IAmmGovernanceService(IporProtocolRouterProxy).setAmmPoolsParams(weETH, type(uint32).max, 0, 5000);
     }
 
     function _setupUser(address user, uint256 value) internal {
         deal(user, 1_000_000e18);
+        vm.startPrank(user);
+        IWETH(wETH).deposit{value: 100_000e18}();
+        IEEthLiquidityPool(eEthLiquidityPool).deposit{value: 200_000e18}(referral);
+        IERC20(eETH).approve(weETH, 1_000_000e18);
+        IWeEth(weETH).wrap(100_000e18);
 
-        vm.prank(HolderUsdm);
-        IUSDM(USDM).transfer(user, value);
-
-        vm.prank(user);
-        IUSDM(USDM).approve(WUSDM, value);
-
-        vm.prank(user);
-        ERC4626Upgradeable(WUSDM).deposit(value, user);
-
-        vm.prank(user);
-        IUSDM(WUSDM).approve(IporProtocolRouterProxy, value);
+        IWeEth(weETH).approve(IporProtocolRouterProxy, 10_000_000e18);
+        IERC20(eETH).approve(IporProtocolRouterProxy, 10_000_000e18);
+        IERC20(wETH).approve(IporProtocolRouterProxy, 10_000_000e18);
+        vm.stopPrank();
     }
 
     function _getUserAddress(uint256 number) internal returns (address) {
         return vm.rememberKey(number);
-    }
-
-    function _provideInitialLiquidity() private {
-        vm.prank(HolderUsdm);
-        IUSDM(WUSDM).approve(IporProtocolRouterProxy, 10e18);
-
-        vm.prank(HolderUsdm);
-        IUSDM(USDM).approve(WUSDM, 100e18);
-
-        vm.prank(HolderUsdm);
-        ERC4626Upgradeable(WUSDM).deposit(100e18, HolderUsdm);
-
-        vm.prank(HolderUsdm);
-        IAmmPoolsServiceWusdm(IporProtocolRouterProxy).provideLiquidityWusdmToAmmPoolWusdm(HolderUsdm, 10e18);
     }
 }

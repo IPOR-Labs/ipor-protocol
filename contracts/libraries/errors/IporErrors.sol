@@ -23,6 +23,9 @@ library IporErrors {
     /// @notice Error when given asset is not supported
     error UnsupportedAsset(string errorCode, address asset);
 
+    /// @notice Error when given asset is not supported
+    error UnsupportedAssetPair(string errorCode, address poolAsset, address inputAsset);
+
     /// @notice Error when given module is not supported
     error UnsupportedModule(string errorCode, address asset);
 
