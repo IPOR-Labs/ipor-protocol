@@ -2,11 +2,11 @@
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import "./UsdmTestForkCommon.sol";
+import "./WusdmTestForkCommon.sol";
 import "../../contracts/interfaces/IAmmGovernanceService.sol";
 import "../../contracts/interfaces/IAmmGovernanceService.sol";
 
-contract UsdmForkAmmGovernanceServiceTest is UsdmTestForkCommon {
+contract WusdmForkAmmGovernanceServiceTest is WusdmTestForkCommon {
     function setUp() public {
         _init();
     }

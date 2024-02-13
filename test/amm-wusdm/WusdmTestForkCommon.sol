@@ -4,17 +4,19 @@ pragma solidity 0.8.20;
 import "forge-std/Test.sol";
 
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC4626Upgradeable.sol";
 
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/base/amm/AmmTreasuryBaseV1.sol";
 import "../../contracts/base/amm/AmmStorageBaseV1.sol";
-import "../../contracts/usdm/AmmPoolsServiceUsdm.sol";
-import "../../contracts/usdm/AmmPoolsLensUsdm.sol";
+import "../../contracts/amm-wusdm/AmmPoolsServiceWusdm.sol";
+import "../../contracts/amm-wusdm/AmmPoolsLensWusdm.sol";
 import "../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
 import "./IUSDM.sol";
 
-contract UsdmTestForkCommon is Test {
+contract WusdmTestForkCommon is Test {
     address constant USDM = 0x59D9356E565Ab3A36dD77763Fc0d87fEaf85508C;
+    address constant WUSDM = 0x57F5E098CaD7A3D1Eed53991D4d66C45C9AF7812;
     address constant HolderUsdm = 0xDBF5E9c5206d0dB70a90108bf936DA60221dC080;
 
     address constant IporProtocolOwner = 0xD92E9F039E4189c342b4067CC61f5d063960D248;
@@ -39,66 +41,66 @@ contract UsdmTestForkCommon is Test {
     address constant AmmPoolsServiceEth = 0x406812AC6f106f7d53b4181d42342e2565428Be1;
     address constant AmmPoolsLensEth = 0xb0a4855134F63Bf81F3dC6DA38De8894FB24904a;
 
-    address ipusdm;
-    address ammTreasuryUsdmProxy;
-    address ammStorageUsdmProxy;
+    address ipWusdm;
+    address ammTreasuryWusdmProxy;
+    address ammStorageWusdmProxy;
 
-    address ammPoolsServiceUsdm;
-    address ammPoolsLensUsdm;
+    address ammPoolsServiceWusdm;
+    address ammPoolsLensWusdm;
 
     function _init() internal {
         vm.createSelectFork(vm.envString("ETHEREUM_PROVIDER_URL"), 19132375);
 
         vm.startPrank(IporProtocolOwner);
-        _createIpUsdm();
-        _createAmmStorageUsdm();
-        _createTreasuryUsdm();
-        _createAmmPoolsServiceUsdm(5 * 1e15);
-        _createAmmPoolsLensUsdm();
+        _createIpWusdm();
+        _createAmmStorageWusdm();
+        _createTreasuryWusdm();
+        _createAmmPoolsServiceWusdm(5 * 1e15);
+        _createAmmPoolsLensWusdm();
         _updateIporRouterImplementation();
         _setupPools();
         vm.stopPrank();
         _provideInitialLiquidity();
     }
 
-    function _createIpUsdm() private {
-        ipusdm = address(new IpToken("IP USDM", "ipUSDM", USDM));
-        IpToken(ipusdm).setTokenManager(IporProtocolRouterProxy);
+    function _createIpWusdm() private {
+        ipWusdm = address(new IpToken("IP USDM", "ipUSDM", WUSDM));
+        IpToken(ipWusdm).setTokenManager(IporProtocolRouterProxy);
     }
 
-    function _createTreasuryUsdm() private {
-        AmmTreasuryBaseV1 emptyImpl = new AmmTreasuryBaseV1(USDM, IporProtocolRouterProxy, ammStorageUsdmProxy);
+    function _createTreasuryWusdm() private {
+        AmmTreasuryBaseV1 emptyImpl = new AmmTreasuryBaseV1(WUSDM, IporProtocolRouterProxy, ammStorageWusdmProxy);
 
-        ammTreasuryUsdmProxy = address(
+        ammTreasuryWusdmProxy = address(
             new ERC1967Proxy(address(emptyImpl), abi.encodeWithSignature("initialize(bool)", false))
         );
     }
 
-    function _createAmmStorageUsdm() private {
-        address ammStorageUsdmImpl = address(new AmmStorageBaseV1(IporProtocolRouterProxy));
+    function _createAmmStorageWusdm() private {
+        address ammStorageWusdmImpl = address(new AmmStorageBaseV1(IporProtocolRouterProxy));
 
-        ammStorageUsdmProxy = address(
-            new ERC1967Proxy(ammStorageUsdmImpl, abi.encodeWithSignature("initialize()", ""))
+        ammStorageWusdmProxy = address(
+            new ERC1967Proxy(ammStorageWusdmImpl, abi.encodeWithSignature("initialize()", ""))
         );
     }
 
-    function _createAmmPoolsServiceUsdm(uint redeemFeeRateUsdmInput) internal {
-        ammPoolsServiceUsdm = address(
-            new AmmPoolsServiceUsdm(
-                USDM,
-                ipusdm,
-                ammTreasuryUsdmProxy,
-                ammStorageUsdmProxy,
+    function _createAmmPoolsServiceWusdm(uint redeemFeeRateWusdmInput) internal {
+        ammPoolsServiceWusdm = address(
+            new AmmPoolsServiceWusdm(
+                WUSDM,
+                ipWusdm,
+                ammTreasuryWusdmProxy,
+                ammStorageWusdmProxy,
                 IporOracleProxy,
                 IporProtocolRouterProxy,
-                redeemFeeRateUsdmInput
+                redeemFeeRateWusdmInput
             )
         );
     }
 
-    function _createAmmPoolsLensUsdm() private {
-        ammPoolsLensUsdm = address(
-            new AmmPoolsLensUsdm(USDM, ipusdm, ammTreasuryUsdmProxy, ammStorageUsdmProxy, IporOracleProxy)
+    function _createAmmPoolsLensWusdm() private {
+        ammPoolsLensWusdm = address(
+            new AmmPoolsLensWusdm(WUSDM, ipWusdm, ammTreasuryWusdmProxy, ammStorageWusdmProxy, IporOracleProxy)
         );
     }
 
@@ -123,8 +125,8 @@ contract UsdmTestForkCommon is Test {
                 stakeService: StakeService,
                 ammPoolsServiceStEth: AmmPoolsServiceEth,
                 ammPoolsLensStEth: AmmPoolsLensEth,
-                ammPoolsServiceUsdm: ammPoolsServiceUsdm,
-                ammPoolsLensUsdm: ammPoolsLensUsdm
+                ammPoolsServiceWusdm: ammPoolsServiceWusdm,
+                ammPoolsLensWusdm: ammPoolsLensWusdm
             })
         );
 
@@ -132,7 +134,7 @@ contract UsdmTestForkCommon is Test {
     }
 
     function _setupPools() internal {
-        IAmmGovernanceService(IporProtocolRouterProxy).setAmmPoolsParams(USDM, type(uint32).max, 0, 5000);
+        IAmmGovernanceService(IporProtocolRouterProxy).setAmmPoolsParams(WUSDM, type(uint32).max, 0, 5000);
     }
 
     function _setupUser(address user, uint256 value) internal {
@@ -142,7 +144,13 @@ contract UsdmTestForkCommon is Test {
         IUSDM(USDM).transfer(user, value);
 
         vm.prank(user);
-        IUSDM(USDM).approve(IporProtocolRouterProxy, value);
+        IUSDM(USDM).approve(WUSDM, value);
+
+        vm.prank(user);
+        ERC4626Upgradeable(WUSDM).deposit(value, user);
+
+        vm.prank(user);
+        IUSDM(WUSDM).approve(IporProtocolRouterProxy, value);
     }
 
     function _getUserAddress(uint256 number) internal returns (address) {
@@ -151,8 +159,15 @@ contract UsdmTestForkCommon is Test {
 
     function _provideInitialLiquidity() private {
         vm.prank(HolderUsdm);
-        IUSDM(USDM).approve(IporProtocolRouterProxy, 10e18);
+        IUSDM(WUSDM).approve(IporProtocolRouterProxy, 10e18);
+
         vm.prank(HolderUsdm);
-        IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(HolderUsdm, 10e18);
+        IUSDM(USDM).approve(WUSDM, 100e18);
+
+        vm.prank(HolderUsdm);
+        ERC4626Upgradeable(WUSDM).deposit(100e18, HolderUsdm);
+
+        vm.prank(HolderUsdm);
+        IAmmPoolsServiceWusdm(IporProtocolRouterProxy).provideLiquidityWusdmToAmmPoolWusdm(HolderUsdm, 10e18);
     }
 }

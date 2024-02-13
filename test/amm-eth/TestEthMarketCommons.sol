@@ -214,8 +214,8 @@ contract TestEthMarketCommons is Test {
                 stakeService: _getUserAddress(123),
                 ammPoolsServiceStEth: ammPoolsServiceStEth,
                 ammPoolsLensStEth: ammPoolsLensStEth,
-                ammPoolsServiceUsdm: _getUserAddress(123),
-                ammPoolsLensUsdm: _getUserAddress(123)
+                ammPoolsServiceWusdm: _getUserAddress(123),
+                ammPoolsLensWusdm: _getUserAddress(123)
             })
         );
 
