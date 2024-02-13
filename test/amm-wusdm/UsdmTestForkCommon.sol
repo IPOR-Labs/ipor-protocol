@@ -9,8 +9,8 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC4626Upgrad
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/base/amm/AmmTreasuryBaseV1.sol";
 import "../../contracts/base/amm/AmmStorageBaseV1.sol";
-import "../../contracts/usdm/AmmPoolsServiceWusdm.sol";
-import "../../contracts/usdm/AmmPoolsLensWusdm.sol";
+import "../../contracts/amm-wusdm/AmmPoolsServiceWusdm.sol";
+import "../../contracts/amm-wusdm/AmmPoolsLensWusdm.sol";
 import "../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
 import "./IUSDM.sol";
 
