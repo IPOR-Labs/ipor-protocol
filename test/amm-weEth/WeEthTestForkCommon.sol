@@ -107,7 +107,7 @@ contract WeEthTestForkCommon is Test {
                     iporOracleInput: IporOracleProxy,
                     iporProtocolRouterInput: IporProtocolRouterProxy,
                     redeemFeeRateWeEthInput: redeemFeeRateWeEthInput,
-                    eEthLiquidityPoolInput: eEthLiquidityPool,
+                    eEthLiquidityPoolExternalInput: eEthLiquidityPool,
                     referralInput: referral
                 })
             )

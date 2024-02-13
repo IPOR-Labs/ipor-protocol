@@ -29,7 +29,7 @@ contract AmmPoolsServiceWeEth is IAmmPoolsServiceWeEth {
     address public immutable eEth;
     address public immutable weEth;
     address public immutable ipWeEth;
-    address public immutable eEthLiquidityPool; // NOT IporPool address from mainnet 0x308861A430be4cce5502d0A12724771Fc6DaF216
+    address public immutable eEthLiquidityPoolExternal; // NOT IporPool address from mainnet 0x308861A430be4cce5502d0A12724771Fc6DaF216
     address public immutable ammTreasuryWeEth;
     address public immutable ammStorageWeEth;
     address public immutable iporOracle;
@@ -48,7 +48,7 @@ contract AmmPoolsServiceWeEth is IAmmPoolsServiceWeEth {
         address iporOracleInput;
         address iporProtocolRouterInput;
         uint256 redeemFeeRateWeEthInput;
-        address eEthLiquidityPoolInput;
+        address eEthLiquidityPoolExternalInput;
         address referralInput;
     }
 
@@ -62,7 +62,7 @@ contract AmmPoolsServiceWeEth is IAmmPoolsServiceWeEth {
         ammStorageWeEth = deployedContracts.ammStorageWeEthInput.checkAddress();
         iporOracle = deployedContracts.iporOracleInput.checkAddress();
         iporProtocolRouter = deployedContracts.iporProtocolRouterInput.checkAddress();
-        eEthLiquidityPool = deployedContracts.eEthLiquidityPoolInput.checkAddress();
+        eEthLiquidityPoolExternal = deployedContracts.eEthLiquidityPoolExternalInput.checkAddress();
         redeemFeeRateWeEth = deployedContracts.redeemFeeRateWeEthInput;
         referral = deployedContracts.referralInput.checkAddress();
 
@@ -93,18 +93,18 @@ contract AmmPoolsServiceWeEth is IAmmPoolsServiceWeEth {
                 revert IporErrors.WrongAmount(IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER, msg.value);
             }
 
-            uint256 eEthAmount = _depositEthToEethLiquidityPool(inputAssetAmount);
+            uint256 eEthAmount = _depositEthToEethLiquidityPoolExternal(inputAssetAmount);
             uint256 weEthAmount = _wrapEethToWeEth(eEthAmount, iporProtocolRouter);
             return _provideLiquidityWeEthToAmmPoolWeEth(beneficiary, weEthAmount, iporProtocolRouter);
         }
 
         if (poolAsset == weEth && inputAsset == wEth) {
             _unwrapWethToEth(inputAssetAmount);
-            uint256 eEthAmount = _depositEthToEethLiquidityPool(inputAssetAmount);
+            uint256 eEthAmount = _depositEthToEethLiquidityPoolExternal(inputAssetAmount);
             uint256 weEthAmount = _wrapEethToWeEth(eEthAmount, iporProtocolRouter);
             return _provideLiquidityWeEthToAmmPoolWeEth(beneficiary, weEthAmount, iporProtocolRouter);
         }
-        revert IporErrors.UnsupportedAsset(IporErrors.ASSET_NOT_SUPPORTED, poolAsset);
+        revert IporErrors.UnsupportedAssetPair(IporErrors.ASSET_NOT_SUPPORTED, poolAsset, inputAsset);
     }
 
     function provideLiquidityWeEthToAmmPoolWeEth(address beneficiary, uint256 weEthAmount) external override {
@@ -148,9 +148,9 @@ contract AmmPoolsServiceWeEth is IAmmPoolsServiceWeEth {
         IWETH(wEth).withdraw(wEthAmount);
     }
 
-    function _depositEthToEethLiquidityPool(uint256 ethAmount) internal returns (uint256 eEthAmount) {
-        IEEthLiquidityPool(eEthLiquidityPool).deposit{value: ethAmount}(referral);
-        eEthAmount = IEEthLiquidityPool(eEthLiquidityPool).getTotalEtherClaimOf(iporProtocolRouter);
+    function _depositEthToEethLiquidityPoolExternal(uint256 ethAmount) internal returns (uint256 eEthAmount) {
+        IEEthLiquidityPool(eEthLiquidityPoolExternal).deposit{value: ethAmount}(referral);
+        eEthAmount = IEEthLiquidityPool(eEthLiquidityPoolExternal).getTotalEtherClaimOf(iporProtocolRouter);
         if (eEthAmount == 0) {
             revert IporErrors.WrongAmount(IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER, eEthAmount);
         }
