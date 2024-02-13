@@ -10,6 +10,7 @@ import "../libraries/math/IporMath.sol";
 import "../libraries/StorageLib.sol";
 import "../libraries/IporContractValidator.sol";
 import "../libraries/AmmLib.sol";
+import "../libraries/ProvideLiquidityEvents.sol";
 import "../governance/AmmConfigurationManager.sol";
 import "../base/interfaces/IAmmTreasuryBaseV1.sol";
 import {IAmmPoolsServiceWeEth} from "./interfaces/IAmmPoolsServiceWeEth.sol";
@@ -132,7 +133,8 @@ contract AmmPoolsServiceWeEth is IAmmPoolsServiceWeEth {
 
         IERC20(weEth).safeTransferFrom(ammTreasuryWeEth, beneficiary, amountToRedeem);
 
-        emit RedeemWeEth(
+        emit ProvideLiquidityEvents.Redeem(
+            weEth,
             ammTreasuryWeEth,
             msg.sender,
             beneficiary,
@@ -194,7 +196,8 @@ contract AmmPoolsServiceWeEth is IAmmPoolsServiceWeEth {
 
         IIpToken(ipWeEth).mint(beneficiary, ipTokenAmount);
 
-        emit IAmmPoolsServiceWeEth.ProvideLiquidityWeEth(
+        emit ProvideLiquidityEvents.ProvideLiquidity(
+            weEth,
             msg.sender,
             beneficiary,
             ammTreasuryWeEth,

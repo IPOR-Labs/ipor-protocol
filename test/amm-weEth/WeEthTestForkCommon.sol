@@ -141,8 +141,8 @@ contract WeEthTestForkCommon is Test {
                 stakeService: StakeService,
                 ammPoolsServiceStEth: AmmPoolsServiceEth,
                 ammPoolsLensStEth: AmmPoolsLensEth,
-                ammPoolsServiceUsdm: ammPoolsServiceUsdm,
-                ammPoolsLensUsdm: ammPoolsLensUsdm,
+                ammPoolsServiceWusdm: ammPoolsServiceUsdm,
+                ammPoolsLensWusdm: ammPoolsLensUsdm,
                 ammPoolsServiceWeEth: ammPoolsServiceWeEth,
                 ammPoolsLensWeEth: ammPoolsLensWeEth
             })

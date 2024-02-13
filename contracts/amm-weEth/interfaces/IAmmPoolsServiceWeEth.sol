@@ -19,23 +19,4 @@ interface IAmmPoolsServiceWeEth {
         string errorCode,
         string errorMessage
     );
-
-    event ProvideLiquidityWeEth(
-        address indexed from,
-        address indexed beneficiary,
-        address indexed to,
-        uint256 exchangeRate,
-        uint256 assetAmount,
-        uint256 ipTokenAmount
-    );
-
-    event RedeemWeEth(
-        address indexed ammTreasuryWeEth,
-        address indexed from,
-        address indexed beneficiary,
-        uint256 exchangeRate,
-        uint256 amountWeEth,
-        uint256 redeemedAmountWeEth,
-        uint256 ipTokenAmount
-    );
 }

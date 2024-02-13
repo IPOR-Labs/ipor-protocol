@@ -6,25 +6,6 @@ import "../../contracts/libraries/errors/AmmErrors.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract ProvideWeEthTest is WeEthTestForkCommon {
-    event ProvideLiquidityWeEth(
-        address indexed from,
-        address indexed beneficiary,
-        address indexed to,
-        uint256 exchangeRate,
-        uint256 assetAmount,
-        uint256 ipTokenAmount
-    );
-
-    event RedeemWeEth(
-        address indexed ammTreasuryWeEth,
-        address indexed from,
-        address indexed beneficiary,
-        uint256 exchangeRate,
-        uint256 amountWeEth,
-        uint256 redeemedAmountWeEth,
-        uint256 ipTokenAmount
-    );
-
     address userOne;
 
     function setUp() public {
@@ -98,18 +79,18 @@ contract ProvideWeEthTest is WeEthTestForkCommon {
 
         uint exchangeRateAfter = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
 
-        assertEq(userWeEthBalanceBefore - provideAmount, userWeEthBalanceAfter, "user balance of weEth should decrease");
+        assertEq(
+            userWeEthBalanceBefore - provideAmount,
+            userWeEthBalanceAfter,
+            "user balance of weEth should decrease"
+        );
         assertEq(
             userIpWeEthBalanceBefore + provideAmount,
             userIpWeEthBalanceAfter,
             "user ipstEth balance should increase"
         );
         assertEq(userIpWeEthBalanceAfter, provideAmount, "user ipWeEth balance should be equal to provideAmount");
-        assertEq(
-            ammTreasuryWeEthBalanceBefore,
-            0,
-            "amm treasury balance should be 0"
-        );
+        assertEq(ammTreasuryWeEthBalanceBefore, 0, "amm treasury balance should be 0");
         assertEq(
             ammTreasuryWeEthBalanceAfter,
             100000000000000000000,
@@ -157,11 +138,7 @@ contract ProvideWeEthTest is WeEthTestForkCommon {
             "user ipWeEth balance should increase"
         );
         assertEq(userTwoIpWeEthBalanceAfter, provideAmount, "user ipWeEth balance should be equal to provideAmount");
-        assertEq(
-            ammTreasuryWeEthBalanceBefore,
-            0,
-            "amm treasury balance should be 0"
-        );
+        assertEq(ammTreasuryWeEthBalanceBefore, 0, "amm treasury balance should be 0");
         assertEq(
             ammTreasuryWeEthBalanceAfter,
             100000000000000000000,
@@ -232,11 +209,7 @@ contract ProvideWeEthTest is WeEthTestForkCommon {
             "user ipWeEth balance should increase"
         );
         assertEq(exchangeRateBefore, exchangeRateAfter, "exchangeRate should not change");
-        assertEq(
-            ammTreasuryWeEthBalanceBefore,
-            0,
-            "amm treasury balance should be 0"
-        );
+        assertEq(ammTreasuryWeEthBalanceBefore, 0, "amm treasury balance should be 0");
         assertEq(
             ammTreasuryWeEthBalanceAfter,
             200000000000000000000,
@@ -268,7 +241,8 @@ contract ProvideWeEthTest is WeEthTestForkCommon {
         vm.prank(userOne);
         vm.expectEmit(true, true, true, true);
         //then
-        emit ProvideLiquidityWeEth(
+        emit ProvideLiquidityEvents.ProvideLiquidity(
+            weETH,
             userOne,
             userTwo,
             ammTreasuryWeEthProxy,
@@ -297,7 +271,8 @@ contract ProvideWeEthTest is WeEthTestForkCommon {
         vm.prank(userTwo);
         vm.expectEmit(true, true, true, true);
         //then
-        emit RedeemWeEth(
+        emit ProvideLiquidityEvents.Redeem(
+            weETH,
             ammTreasuryWeEthProxy,
             userTwo,
             userOne,
@@ -311,35 +286,34 @@ contract ProvideWeEthTest is WeEthTestForkCommon {
         IAmmPoolsServiceWeEth(IporProtocolRouterProxy).redeemFromAmmPoolWeEth(userOne, amountWeEth);
     }
 
-        function testShouldRevertBecauseUserOneDoesntHaveIpWeEthTokensToRedeem() public {
-            address userTwo = _getUserAddress(33);
-            _setupUser(userTwo, 100_000 * 1e18);
+    function testShouldRevertBecauseUserOneDoesntHaveIpWeEthTokensToRedeem() public {
+        address userTwo = _getUserAddress(33);
+        _setupUser(userTwo, 100_000 * 1e18);
 
         uint provideAmount = 100e18;
-            uint256 amountWeEth = 99999999999999999999;
+        uint256 amountWeEth = 99999999999999999999;
 
-            vm.prank(userOne);
-            IAmmPoolsServiceWeEth(IporProtocolRouterProxy).provideLiquidityWeEthToAmmPoolWeEth(userTwo, provideAmount);
+        vm.prank(userOne);
+        IAmmPoolsServiceWeEth(IporProtocolRouterProxy).provideLiquidityWeEthToAmmPoolWeEth(userTwo, provideAmount);
 
-            /// @dev userOne provide liquidity on behalf of userTwo
-            vm.prank(userOne);
-            //then
-            vm.expectRevert(bytes(AmmPoolsErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW));
+        /// @dev userOne provide liquidity on behalf of userTwo
+        vm.prank(userOne);
+        //then
+        vm.expectRevert(bytes(AmmPoolsErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW));
 
-            //when
-            IAmmPoolsServiceWeEth(IporProtocolRouterProxy).redeemFromAmmPoolWeEth(userTwo, amountWeEth);
-        }
+        //when
+        IAmmPoolsServiceWeEth(IporProtocolRouterProxy).redeemFromAmmPoolWeEth(userTwo, amountWeEth);
+    }
 
-        function testShouldRevertWhenProvideLiquidityDirectlyOnService() public {
-            //given
-            address userTwo = _getUserAddress(33);
-            uint provideAmount = 100e18;
+    function testShouldRevertWhenProvideLiquidityDirectlyOnService() public {
+        //given
+        address userTwo = _getUserAddress(33);
+        uint provideAmount = 100e18;
 
-            vm.prank(userOne);
-            //then
-            vm.expectRevert(bytes(AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH));
-            //when
-            IAmmPoolsServiceWeEth(ammPoolsServiceWeEth).provideLiquidityWeEthToAmmPoolWeEth(userTwo, provideAmount);
-        }
-
+        vm.prank(userOne);
+        //then
+        vm.expectRevert(bytes(AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH));
+        //when
+        IAmmPoolsServiceWeEth(ammPoolsServiceWeEth).provideLiquidityWeEthToAmmPoolWeEth(userTwo, provideAmount);
+    }
 }

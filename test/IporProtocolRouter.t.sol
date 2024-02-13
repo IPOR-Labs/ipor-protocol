@@ -259,8 +259,8 @@ contract IporProtocolRouterTest is TestCommons {
                 powerTokenLens: _userOne,
                 flowService: _userOne,
                 stakeService: _userOne,
-                ammPoolsLensUsdm: _userOne,
-                ammPoolsServiceUsdm: _userOne,
+                ammPoolsLensWusdm: _userOne,
+                ammPoolsServiceWusdm: _userOne,
                 ammPoolsServiceWeEth: _userOne,
                 ammPoolsLensWeEth: _userOne
             })
@@ -287,8 +287,8 @@ contract IporProtocolRouterTest is TestCommons {
                 powerTokenLens: _userOne,
                 flowService: _userOne,
                 stakeService: _userOne,
-                ammPoolsLensUsdm: _userOne,
-                ammPoolsServiceUsdm: _userOne,
+                ammPoolsLensWusdm: _userOne,
+                ammPoolsServiceWusdm: _userOne,
                 ammPoolsServiceWeEth: _userOne,
                 ammPoolsLensWeEth: _userOne
             })
@@ -314,8 +314,8 @@ contract IporProtocolRouterTest is TestCommons {
                 powerTokenLens: _userOne,
                 flowService: _userOne,
                 stakeService: _userOne,
-                ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne,
+                ammPoolsServiceWusdm: _userOne,
+                ammPoolsLensWusdm: _userOne,
                 ammPoolsServiceWeEth: _userOne,
                 ammPoolsLensWeEth: _userOne
             })
@@ -342,8 +342,8 @@ contract IporProtocolRouterTest is TestCommons {
                 powerTokenLens: _userOne,
                 flowService: _userOne,
                 stakeService: _userOne,
-                ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne,
+                ammPoolsServiceWusdm: _userOne,
+                ammPoolsLensWusdm: _userOne,
                 ammPoolsServiceWeEth: _userOne,
                 ammPoolsLensWeEth: _userOne
             })
@@ -370,8 +370,8 @@ contract IporProtocolRouterTest is TestCommons {
                 powerTokenLens: _userOne,
                 flowService: _userOne,
                 stakeService: _userOne,
-                ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne,
+                ammPoolsServiceWusdm: _userOne,
+                ammPoolsLensWusdm: _userOne,
                 ammPoolsServiceWeEth: _userOne,
                 ammPoolsLensWeEth: _userOne
             })
@@ -398,8 +398,8 @@ contract IporProtocolRouterTest is TestCommons {
                 powerTokenLens: _userOne,
                 flowService: _userOne,
                 stakeService: _userOne,
-                ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne,
+                ammPoolsServiceWusdm: _userOne,
+                ammPoolsLensWusdm: _userOne,
                 ammPoolsServiceWeEth: _userOne,
                 ammPoolsLensWeEth: _userOne
             })
@@ -426,8 +426,8 @@ contract IporProtocolRouterTest is TestCommons {
                 powerTokenLens: _userOne,
                 flowService: _userOne,
                 stakeService: _userOne,
-                ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne,
+                ammPoolsServiceWusdm: _userOne,
+                ammPoolsLensWusdm: _userOne,
                 ammPoolsServiceWeEth: _userOne,
                 ammPoolsLensWeEth: _userOne
             })
@@ -454,8 +454,8 @@ contract IporProtocolRouterTest is TestCommons {
                 powerTokenLens: _userOne,
                 flowService: _userOne,
                 stakeService: _userOne,
-                ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne,
+                ammPoolsServiceWusdm: _userOne,
+                ammPoolsLensWusdm: _userOne,
                 ammPoolsServiceWeEth: _userOne,
                 ammPoolsLensWeEth: _userOne
             })
@@ -482,8 +482,8 @@ contract IporProtocolRouterTest is TestCommons {
                 powerTokenLens: _userOne,
                 flowService: _userOne,
                 stakeService: _userOne,
-                ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne,
+                ammPoolsServiceWusdm: _userOne,
+                ammPoolsLensWusdm: _userOne,
                 ammPoolsServiceWeEth: _userOne,
                 ammPoolsLensWeEth: _userOne
             })
@@ -510,8 +510,8 @@ contract IporProtocolRouterTest is TestCommons {
                 powerTokenLens: _userOne,
                 flowService: _userOne,
                 stakeService: _userOne,
-                ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne,
+                ammPoolsServiceWusdm: _userOne,
+                ammPoolsLensWusdm: _userOne,
                 ammPoolsServiceWeEth: _userOne,
                 ammPoolsLensWeEth: _userOne
             })
@@ -538,8 +538,8 @@ contract IporProtocolRouterTest is TestCommons {
                 powerTokenLens: address(0),
                 flowService: _userOne,
                 stakeService: _userOne,
-                ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne,
+                ammPoolsServiceWusdm: _userOne,
+                ammPoolsLensWusdm: _userOne,
                 ammPoolsServiceWeEth: _userOne,
                 ammPoolsLensWeEth: _userOne
             })
@@ -566,8 +566,8 @@ contract IporProtocolRouterTest is TestCommons {
                 powerTokenLens: _userOne,
                 flowService: address(0),
                 stakeService: _userOne,
-                ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne,
+                ammPoolsServiceWusdm: _userOne,
+                ammPoolsLensWusdm: _userOne,
                 ammPoolsServiceWeEth: _userOne,
                 ammPoolsLensWeEth: _userOne
             })
@@ -594,8 +594,8 @@ contract IporProtocolRouterTest is TestCommons {
                 powerTokenLens: _userOne,
                 flowService: _userOne,
                 stakeService: address(0),
-                ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne,
+                ammPoolsServiceWusdm: _userOne,
+                ammPoolsLensWusdm: _userOne,
                 ammPoolsServiceWeEth: _userOne,
                 ammPoolsLensWeEth: _userOne
             })

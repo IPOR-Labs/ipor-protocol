@@ -22,11 +22,11 @@ import "../../../interfaces/IAmmPoolsService.sol";
 import "../../../interfaces/IPowerTokenFlowsService.sol";
 import "../../../interfaces/IPowerTokenStakeService.sol";
 import "../../../amm-eth/interfaces/IAmmPoolsServiceStEth.sol";
-import "../../../usdm/interfaces/IAmmPoolsServiceUsdm.sol";
 import "../../../amm-weEth/interfaces/IAmmPoolsServiceWeEth.sol";
 import "../../../amm-eth/interfaces/IAmmPoolsLensStEth.sol";
-import "../../../usdm/interfaces/IAmmPoolsLensUsdm.sol";
 import "../../../amm-weEth/interfaces/IAmmPoolsLensWeEth.sol";
+import "../../../amm-wusdm/interfaces/IAmmPoolsServiceWusdm.sol";
+import "../../../amm-wusdm/interfaces/IAmmPoolsLensWusdm.sol";
 import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/IporContractValidator.sol";
 import "../../../router/IporProtocolRouterAbstract.sol";
@@ -54,10 +54,10 @@ contract IporProtocolRouter is IporProtocolRouterAbstract {
     address public immutable stakeService;
     address public immutable ammPoolsServiceStEth;
     address public immutable ammPoolsLensStEth;
-    address public immutable ammPoolsServiceUsdm;
-    address public immutable ammPoolsLensUsdm;
     address public immutable ammPoolsServiceWeEth;
     address public immutable ammPoolsLensWeEth;
+    address public immutable ammPoolsServiceWusdm;
+    address public immutable ammPoolsLensWusdm;
 
     struct DeployedContracts {
         address ammSwapsLens;
@@ -78,8 +78,8 @@ contract IporProtocolRouter is IporProtocolRouterAbstract {
         address stakeService;
         address ammPoolsServiceStEth;
         address ammPoolsLensStEth;
-        address ammPoolsServiceUsdm;
-        address ammPoolsLensUsdm;
+        address ammPoolsServiceWusdm;
+        address ammPoolsLensWusdm;
         address ammPoolsServiceWeEth;
         address ammPoolsLensWeEth;
     }
@@ -103,8 +103,8 @@ contract IporProtocolRouter is IporProtocolRouterAbstract {
         stakeService = deployedContracts.stakeService.checkAddress();
         ammPoolsServiceStEth = deployedContracts.ammPoolsServiceStEth.checkAddress();
         ammPoolsLensStEth = deployedContracts.ammPoolsLensStEth.checkAddress();
-        ammPoolsServiceUsdm = deployedContracts.ammPoolsServiceUsdm.checkAddress();
-        ammPoolsLensUsdm = deployedContracts.ammPoolsLensUsdm.checkAddress();
+        ammPoolsServiceWusdm = deployedContracts.ammPoolsServiceWusdm.checkAddress();
+        ammPoolsLensWusdm = deployedContracts.ammPoolsLensWusdm.checkAddress();
         ammPoolsServiceWeEth = deployedContracts.ammPoolsServiceWeEth.checkAddress();
         ammPoolsLensWeEth = deployedContracts.ammPoolsLensWeEth.checkAddress();
 
@@ -134,8 +134,8 @@ contract IporProtocolRouter is IporProtocolRouterAbstract {
                 stakeService: stakeService,
                 ammPoolsServiceStEth: ammPoolsServiceStEth,
                 ammPoolsLensStEth: ammPoolsLensStEth,
-                ammPoolsServiceUsdm: ammPoolsServiceUsdm,
-                ammPoolsLensUsdm: ammPoolsLensUsdm,
+                ammPoolsServiceWusdm: ammPoolsServiceWusdm,
+                ammPoolsLensWusdm: ammPoolsLensWusdm,
                 ammPoolsServiceWeEth: ammPoolsServiceWeEth,
                 ammPoolsLensWeEth: ammPoolsLensWeEth
             });
@@ -209,13 +209,13 @@ contract IporProtocolRouter is IporProtocolRouterAbstract {
             }
             return ammPoolsServiceStEth;
         } else if (
-            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdm.provideLiquidityUsdmToAmmPoolUsdm.selector) ||
-            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdm.redeemFromAmmPoolUsdm.selector)
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceWusdm.provideLiquidityWusdmToAmmPoolWusdm.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceWusdm.redeemFromAmmPoolWusdm.selector)
         ) {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
-            return ammPoolsServiceUsdm;
+            return ammPoolsServiceWusdm;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceWeEth.provideLiquidityWeEthToAmmPoolWeEth.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceWeEth.provideLiquidity.selector) ||
@@ -360,8 +360,8 @@ contract IporProtocolRouter is IporProtocolRouterAbstract {
             return ammCloseSwapLens;
         } else if (sig == IAmmPoolsLensStEth.getIpstEthExchangeRate.selector) {
             return ammPoolsLensStEth;
-        } else if (sig == IAmmPoolsLensUsdm.getIpUsdmExchangeRate.selector) {
-            return ammPoolsLensUsdm;
+        } else if (sig == IAmmPoolsLensWusdm.getIpWusdmExchangeRate.selector) {
+            return ammPoolsLensWusdm;
         } else if (sig == IAmmPoolsLensWeEth.getIpWeEthExchangeRate.selector) {
             return ammPoolsLensWeEth;
         } else if (sig == IAmmPoolsService.getAmmPoolServiceConfiguration.selector) {
