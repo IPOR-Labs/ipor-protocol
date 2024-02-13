@@ -19,13 +19,13 @@ contract AmmPoolsLensWeEth is IAmmPoolsLensWeEth {
     address public immutable iporOracle;
 
     constructor(
-        address usdmInput,
+        address weEthInput,
         address ipWeEthInput,
         address ammTreasuryWeEthInput,
         address ammStorageWeEthInput,
         address iporOracleInput
     ) {
-        weEth = usdmInput.checkAddress();
+        weEth = weEthInput.checkAddress();
         ipWeEth = ipWeEthInput.checkAddress();
         ammTreasuryWeEth = ammTreasuryWeEthInput.checkAddress();
         ammStorageWeEth = ammStorageWeEthInput.checkAddress();
