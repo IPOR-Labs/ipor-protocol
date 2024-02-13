@@ -20,6 +20,7 @@ contract TestEthMarketCommons is Test {
     address public constant DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
     address public constant USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
     address public constant USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
+    address public constant USDM = 0x59D9356E565Ab3A36dD77763Fc0d87fEaf85508C;
     address public constant IPOR = 0x1e4746dC744503b53b4A082cB3607B169a289090;
     address public constant stEth = 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
     address public constant wEth = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
@@ -188,7 +189,19 @@ contract TestEthMarketCommons is Test {
                 _getUserAddress(123)
             );
 
-        ammGovernanceService = address(new AmmGovernanceService(usdtConfig, usdcConfig, daiConfig, stEthConfig, weEthConfig));
+        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory usdmConfig = IAmmGovernanceLens
+            .AmmGovernancePoolConfiguration(
+            USDM,
+            18,
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123)
+        );
+
+        ammGovernanceService = address(new AmmGovernanceService(usdtConfig, usdcConfig, daiConfig, stEthConfig, usdmConfig,weEthConfig));
         vm.stopPrank();
     }
 
