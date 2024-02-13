@@ -6,24 +6,6 @@ import "../../contracts/libraries/errors/AmmErrors.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract ProvideUsdmTest is UsdmTestForkCommon {
-    event ProvideLiquidityWusdm(
-        address indexed from,
-        address indexed beneficiary,
-        address indexed to,
-        uint256 exchangeRate,
-        uint256 assetAmount,
-        uint256 ipTokenAmount
-    );
-
-    event RedeemWusdm(
-        address indexed ammTreasuryEth,
-        address indexed from,
-        address indexed beneficiary,
-        uint256 exchangeRate,
-        uint256 amountStEth,
-        uint256 redeemedAmountStEth,
-        uint256 ipTokenAmount
-    );
 
     address userOne;
 
@@ -257,7 +239,7 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
         IAmmPoolsServiceWusdm(IporProtocolRouterProxy).provideLiquidityWusdmToAmmPoolWusdm(userOne, provideAmount);
     }
 
-    function testShouldEmitprovideLiquidityWusdmToAmmPoolWusdmBeneficiaryIsNotSender() public {
+    function testShouldEmitProvideLiquidityWusdmToAmmPoolWusdmBeneficiaryIsNotSender() public {
         // given
         address userTwo = _getUserAddress(33);
 
@@ -268,7 +250,8 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
         vm.prank(userOne);
         vm.expectEmit(true, true, true, true);
         //then
-        emit ProvideLiquidityWusdm(
+        emit ProvideLiquidityEvents.ProvideLiquidity(
+            WUSDM,
             userOne,
             userTwo,
             ammTreasuryWusdmProxy,
@@ -297,7 +280,8 @@ contract ProvideUsdmTest is UsdmTestForkCommon {
         vm.prank(userTwo);
         vm.expectEmit(true, true, true, true);
         //then
-        emit RedeemWusdm(
+        emit ProvideLiquidityEvents.Redeem(
+            WUSDM,
             ammTreasuryWusdmProxy,
             userTwo,
             userOne,

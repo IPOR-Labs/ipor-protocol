@@ -7,23 +7,4 @@ interface IAmmPoolsServiceWusdm {
     function provideLiquidityWusdmToAmmPoolWusdm(address beneficiary, uint256 usdmAmount) external payable;
 
     function redeemFromAmmPoolWusdm(address beneficiary, uint256 ipTokenAmount) external;
-
-    event ProvideLiquidityWusdm(
-        address indexed from,
-        address indexed beneficiary,
-        address indexed to,
-        uint256 exchangeRate,
-        uint256 assetAmount,
-        uint256 ipTokenAmount
-    );
-
-    event RedeemWusdm(
-        address indexed ammTreasuryUsdm,
-        address indexed from,
-        address indexed beneficiary,
-        uint256 exchangeRate,
-        uint256 amountUsdm,
-        uint256 redeemedAmountUsdm,
-        uint256 ipTokenAmount
-    );
 }

@@ -10,6 +10,7 @@ import "../libraries/errors/AmmErrors.sol";
 import "../libraries/math/IporMath.sol";
 import "../libraries/StorageLib.sol";
 import "../libraries/IporContractValidator.sol";
+import "../libraries/ProvideLiquidityEvents.sol";
 import "../libraries/AmmLib.sol";
 import "../governance/AmmConfigurationManager.sol";
 import "../base/interfaces/IAmmTreasuryBaseV1.sol";
@@ -67,8 +68,8 @@ contract AmmPoolsServiceWusdm is IAmmPoolsServiceWusdm {
 
         IIpToken(ipWusdm).mint(beneficiary, ipTokenAmount);
 
-
-        emit IAmmPoolsServiceWusdm.ProvideLiquidityWusdm(
+        emit ProvideLiquidityEvents.ProvideLiquidity(
+            wusdm,
             msg.sender,
             beneficiary,
             ammTreasuryWusdm,
@@ -99,7 +100,8 @@ contract AmmPoolsServiceWusdm is IAmmPoolsServiceWusdm {
 
         IERC20(wusdm).safeTransferFrom(ammTreasuryWusdm, beneficiary, amountToRedeem);
 
-        emit RedeemWusdm(
+        emit ProvideLiquidityEvents.Redeem(
+            wusdm,
             ammTreasuryWusdm,
             msg.sender,
             beneficiary,
@@ -109,7 +111,6 @@ contract AmmPoolsServiceWusdm is IAmmPoolsServiceWusdm {
             ipTokenAmount
         );
     }
-
 
     function _getExchangeRate(uint256 actualLiquidityPoolBalance) internal view returns (uint256) {
         AmmTypes.AmmPoolCoreModel memory model = AmmTypes.AmmPoolCoreModel({
