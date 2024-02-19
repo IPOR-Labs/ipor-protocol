@@ -122,6 +122,16 @@ contract ArbitrumTestForkCommons is Test {
                     ammPoolsTreasuryManager: treasurer,
                     ammCharlieTreasury: treasurer,
                     ammCharlieTreasuryManager: treasurer
+                }),
+                wUsdmPoolCfg: IAmmGovernanceLens.AmmGovernancePoolConfiguration({
+                    asset: _defaultAddress,
+                    decimals: 18,
+                    ammStorage: _defaultAddress,
+                    ammTreasury: _defaultAddress,
+                    ammPoolsTreasury: _defaultAddress,
+                    ammPoolsTreasuryManager: _defaultAddress,
+                    ammCharlieTreasury: _defaultAddress,
+                    ammCharlieTreasuryManager: _defaultAddress
                 })
             })
         );
