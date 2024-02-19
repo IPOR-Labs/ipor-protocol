@@ -12,7 +12,6 @@ contract WusdmForkAmmGovernanceServiceArbitrumTest is WusdmTestForkCommonArbitru
 
     function testShouldNotWithdrawFromAssetManagementUsdm() public {
         //given
-        _init();
 
         // when
         vm.expectRevert(bytes(IporErrors.ASSET_NOT_SUPPORTED));
@@ -22,7 +21,6 @@ contract WusdmForkAmmGovernanceServiceArbitrumTest is WusdmTestForkCommonArbitru
 
     function testShouldNotWithdrawAllFromAssetManagementUsdm() public {
         //given
-        _init();
 
         // when
         vm.expectRevert(bytes(IporErrors.ASSET_NOT_SUPPORTED));

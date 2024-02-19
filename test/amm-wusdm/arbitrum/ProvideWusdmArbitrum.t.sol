@@ -15,10 +15,6 @@ contract ProvideWusdmArbitrumTest is WusdmTestForkCommonArbitrum {
         _setupUser(userOne, 100_000 * 1e18);
     }
 
-    function testtt() public {
-        assertTrue(true);
-    }
-
     function testShouldExchangeRateBe1WhenNoProvideStEth() external {
         //given
 
