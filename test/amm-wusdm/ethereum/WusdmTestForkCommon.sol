@@ -6,13 +6,13 @@ import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC4626Upgradeable.sol";
 
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/base/amm/AmmTreasuryBaseV1.sol";
-import "../../contracts/base/amm/AmmStorageBaseV1.sol";
-import "../../contracts/amm-wusdm/AmmPoolsServiceWusdm.sol";
-import "../../contracts/amm-wusdm/AmmPoolsLensWusdm.sol";
-import "../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
-import "./IUSDM.sol";
+import "../../../contracts/tokens/IpToken.sol";
+import "../../../contracts/base/amm/AmmTreasuryBaseV1.sol";
+import "../../../contracts/base/amm/AmmStorageBaseV1.sol";
+import "../../../contracts/amm-wusdm/AmmPoolsServiceWusdm.sol";
+import "../../../contracts/amm-wusdm/AmmPoolsLensWusdm.sol";
+import "../../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
+import "../IUSDM.sol";
 
 contract WusdmTestForkCommon is Test {
     address constant USDM = 0x59D9356E565Ab3A36dD77763Fc0d87fEaf85508C;

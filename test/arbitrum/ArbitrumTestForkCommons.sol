@@ -140,7 +140,9 @@ contract ArbitrumTestForkCommons is Test {
                 flowService: _defaultAddress,
                 stakeService: _defaultAddress,
                 ammPoolsServiceWstEth: _defaultAddress,
-                ammPoolsLensWstEth: _defaultAddress
+                ammPoolsLensWstEth: _defaultAddress,
+                ammPoolsServiceWusdm: _defaultAddress,
+                ammPoolsLensWusdm: _defaultAddress
             });
 
         iporProtocolRouterImpl = address(new IporProtocolRouterArbitrum(deployedContracts));
@@ -185,7 +187,9 @@ contract ArbitrumTestForkCommons is Test {
                 flowService: _defaultAddress,
                 stakeService: _defaultAddress,
                 ammPoolsServiceWstEth: ammPoolsServiceWstEth,
-                ammPoolsLensWstEth: ammPoolsLensWstEth
+                ammPoolsLensWstEth: ammPoolsLensWstEth,
+                ammPoolsServiceWusdm: _defaultAddress,
+                ammPoolsLensWusdm: _defaultAddress
             });
 
         iporProtocolRouterImpl = address(new IporProtocolRouterArbitrum(deployedContracts));
