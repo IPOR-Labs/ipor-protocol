@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "./WusdmTestForkCommon.sol";
-import "../../contracts/libraries/errors/AmmErrors.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "./WusdmTestForkCommonArbitrum.sol";
+import "../../../contracts/libraries/errors/AmmErrors.sol";
 
-contract ProvideWusdmTest is WusdmTestForkCommon {
+contract ProvideWusdmArbitrumTest is WusdmTestForkCommonArbitrum {
 
     address userOne;
 
@@ -13,6 +13,10 @@ contract ProvideWusdmTest is WusdmTestForkCommon {
         _init();
         userOne = _getUserAddress(22);
         _setupUser(userOne, 100_000 * 1e18);
+    }
+
+    function testtt() public {
+        assertTrue(true);
     }
 
     function testShouldExchangeRateBe1WhenNoProvideStEth() external {
@@ -27,7 +31,7 @@ contract ProvideWusdmTest is WusdmTestForkCommon {
     function testShouldRevertWhen0Amount() external {
         // given
 
-        uint userUsdmBalanceBefore = IERC20(WUSDM).balanceOf(userOne);
+        uint userUsdmBalanceBefore = IERC20(wUSDM).balanceOf(userOne);
         uint userIpUsdmBalanceBefore = IERC20(ipWusdm).balanceOf(userOne);
 
         // when
@@ -35,7 +39,7 @@ contract ProvideWusdmTest is WusdmTestForkCommon {
         IAmmPoolsServiceWusdm(IporProtocolRouterProxy).provideLiquidityWusdmToAmmPoolWusdm(userOne, 0);
 
         // then
-        uint userUsdmBalanceAfter = IERC20(WUSDM).balanceOf(userOne);
+        uint userUsdmBalanceAfter = IERC20(wUSDM).balanceOf(userOne);
         uint userIpUsdmBalanceAfter = IERC20(ipWusdm).balanceOf(userOne);
 
         assertEq(userUsdmBalanceBefore, userUsdmBalanceAfter, "user balance of usdm should not change");
@@ -44,7 +48,7 @@ contract ProvideWusdmTest is WusdmTestForkCommon {
 
     function testShouldRevertWhenBeneficiaryIs0Address() external {
         // given
-        uint userUsdmBalanceBefore = IERC20(WUSDM).balanceOf(userOne);
+        uint userUsdmBalanceBefore = IERC20(wUSDM).balanceOf(userOne);
         uint userIpUsdmBalanceBefore = IERC20(ipWusdm).balanceOf(userOne);
         uint provideAmount = 100e18;
 
@@ -54,7 +58,7 @@ contract ProvideWusdmTest is WusdmTestForkCommon {
         IAmmPoolsServiceWusdm(IporProtocolRouterProxy).provideLiquidityWusdmToAmmPoolWusdm(address(0), provideAmount);
 
         // then
-        uint userUsdmBalanceAfter = IERC20(WUSDM).balanceOf(userOne);
+        uint userUsdmBalanceAfter = IERC20(wUSDM).balanceOf(userOne);
         uint userIpUsdmBalanceAfter = IERC20(ipWusdm).balanceOf(userOne);
 
         assertEq(userUsdmBalanceBefore, userUsdmBalanceAfter, "user balance of stEth should not change");
@@ -63,9 +67,9 @@ contract ProvideWusdmTest is WusdmTestForkCommon {
 
     function testShouldProvideStEthToOwnAddressWhenBeneficiaryIsSender() external {
         // given
-        uint userUsdmBalanceBefore = IERC20(WUSDM).balanceOf(userOne);
+        uint userUsdmBalanceBefore = IERC20(wUSDM).balanceOf(userOne);
         uint userIpUsdmBalanceBefore = IERC20(ipWusdm).balanceOf(userOne);
-        uint ammTreasuryUsdmBalanceBefore = IERC20(WUSDM).balanceOf(ammTreasuryWusdmProxy);
+        uint ammTreasuryUsdmBalanceBefore = IERC20(wUSDM).balanceOf(ammTreasuryWusdmProxy);
         uint provideAmount = 100e18;
         uint exchangeRateBefore = IAmmPoolsLensWusdm(IporProtocolRouterProxy).getIpWusdmExchangeRate();
 
@@ -74,9 +78,9 @@ contract ProvideWusdmTest is WusdmTestForkCommon {
         IAmmPoolsServiceWusdm(IporProtocolRouterProxy).provideLiquidityWusdmToAmmPoolWusdm(userOne, provideAmount);
 
         // then
-        uint userUsdmBalanceAfter = IERC20(WUSDM).balanceOf(userOne);
+        uint userUsdmBalanceAfter = IERC20(wUSDM).balanceOf(userOne);
         uint userIpUsdmBalanceAfter = IERC20(ipWusdm).balanceOf(userOne);
-        uint ammTreasuryUsdmBalanceAfter = IERC20(WUSDM).balanceOf(ammTreasuryWusdmProxy);
+        uint ammTreasuryUsdmBalanceAfter = IERC20(wUSDM).balanceOf(ammTreasuryWusdmProxy);
 
         uint exchangeRateAfter = IAmmPoolsLensWusdm(IporProtocolRouterProxy).getIpWusdmExchangeRate();
 
@@ -105,11 +109,11 @@ contract ProvideWusdmTest is WusdmTestForkCommon {
         address userTwo = _getUserAddress(33);
         _setupUser(userTwo, 100_000 * 1e18);
 
-        uint userOneUsdmBalanceBefore = IERC20(WUSDM).balanceOf(userOne);
+        uint userOneUsdmBalanceBefore = IERC20(wUSDM).balanceOf(userOne);
         uint userOneIpUsdmBalanceBefore = IERC20(ipWusdm).balanceOf(userOne);
-        uint userTwoUsdmBalanceBefore = IERC20(WUSDM).balanceOf(userTwo);
+        uint userTwoUsdmBalanceBefore = IERC20(wUSDM).balanceOf(userTwo);
         uint userTwoIpUsdmBalanceBefore = IERC20(ipWusdm).balanceOf(userTwo);
-        uint ammTreasuryUsdmBalanceBefore = IERC20(WUSDM).balanceOf(ammTreasuryWusdmProxy);
+        uint ammTreasuryUsdmBalanceBefore = IERC20(wUSDM).balanceOf(ammTreasuryWusdmProxy);
 
         uint provideAmount = 100e18;
         uint exchangeRateBefore = IAmmPoolsLensWusdm(IporProtocolRouterProxy).getIpWusdmExchangeRate();
@@ -119,11 +123,11 @@ contract ProvideWusdmTest is WusdmTestForkCommon {
         IAmmPoolsServiceWusdm(IporProtocolRouterProxy).provideLiquidityWusdmToAmmPoolWusdm(userTwo, provideAmount);
 
         // then
-        uint userOneUsdmBalanceAfter = IERC20(WUSDM).balanceOf(userOne);
+        uint userOneUsdmBalanceAfter = IERC20(wUSDM).balanceOf(userOne);
         uint userOneIpUsdmBalanceAfter = IERC20(ipWusdm).balanceOf(userOne);
-        uint userTwoUsdmBalanceAfter = IERC20(WUSDM).balanceOf(userTwo);
+        uint userTwoUsdmBalanceAfter = IERC20(wUSDM).balanceOf(userTwo);
         uint userTwoIpUsdmBalanceAfter = IERC20(ipWusdm).balanceOf(userTwo);
-        uint ammTreasuryUsdmBalanceAfter = IERC20(WUSDM).balanceOf(ammTreasuryWusdmProxy);
+        uint ammTreasuryUsdmBalanceAfter = IERC20(wUSDM).balanceOf(ammTreasuryWusdmProxy);
         uint exchangeRateAfter = IAmmPoolsLensWusdm(IporProtocolRouterProxy).getIpWusdmExchangeRate();
 
         assertEq(
@@ -158,11 +162,11 @@ contract ProvideWusdmTest is WusdmTestForkCommon {
         address userTwo = _getUserAddress(33);
         _setupUser(userTwo, 100_000 * 1e18);
 
-        uint userOneUsdmBalanceBefore = IERC20(WUSDM).balanceOf(userOne);
+        uint userOneUsdmBalanceBefore = IERC20(wUSDM).balanceOf(userOne);
         uint userOneIpUsdmBalanceBefore = IERC20(ipWusdm).balanceOf(userOne);
-        uint userTwoUsdmBalanceBefore = IERC20(WUSDM).balanceOf(userTwo);
+        uint userTwoUsdmBalanceBefore = IERC20(wUSDM).balanceOf(userTwo);
         uint userTwoIpUsdmBalanceBefore = IERC20(ipWusdm).balanceOf(userTwo);
-        uint ammTreasuryUsdmBalanceBefore = IERC20(WUSDM).balanceOf(ammTreasuryWusdmProxy);
+        uint ammTreasuryUsdmBalanceBefore = IERC20(wUSDM).balanceOf(ammTreasuryWusdmProxy);
 
         uint provideAmount = 10e18;
         uint exchangeRateBefore = IAmmPoolsLensWusdm(IporProtocolRouterProxy).getIpWusdmExchangeRate();
@@ -176,22 +180,22 @@ contract ProvideWusdmTest is WusdmTestForkCommon {
         }
 
         // then
-        uint userOneUsdmBalanceAfter = IERC20(WUSDM).balanceOf(userOne);
+        uint userOneUsdmBalanceAfter = IERC20(wUSDM).balanceOf(userOne);
         uint userOneIpUsdmBalanceAfter = IERC20(ipWusdm).balanceOf(userOne);
-        uint userTwoUsdmBalanceAfter = IERC20(WUSDM).balanceOf(userTwo);
+        uint userTwoUsdmBalanceAfter = IERC20(wUSDM).balanceOf(userTwo);
         uint userTwoIpUsdmBalanceAfter = IERC20(ipWusdm).balanceOf(userTwo);
-        uint ammTreasuryUsdmBalanceAfter = IERC20(WUSDM).balanceOf(ammTreasuryWusdmProxy);
+        uint ammTreasuryUsdmBalanceAfter = IERC20(wUSDM).balanceOf(ammTreasuryWusdmProxy);
         uint exchangeRateAfter = IAmmPoolsLensWusdm(IporProtocolRouterProxy).getIpWusdmExchangeRate();
 
         assertEq(
             userOneUsdmBalanceBefore,
-            98450085452308585847783,
-            "user balance of Usdm should be 98450085452308585847783"
+            100000000000000000001000,
+            "user balance of Usdm should be 100000000000000000001000"
         );
         assertEq(
             userOneUsdmBalanceAfter,
-            98350085452308585847783,
-            "user balance of Usdm should be 98350085452308585847783"
+            99900000000000000001000,
+            "user balance of Usdm should be 99900000000000000001000"
         );
         assertEq(
             userOneIpUsdmBalanceBefore + provideAmount * 10,
@@ -200,13 +204,13 @@ contract ProvideWusdmTest is WusdmTestForkCommon {
         );
         assertEq(
             userTwoUsdmBalanceBefore,
-            98450085452308585847783,
-            "user balance of Usdm should be 98450085452308585847783"
+            100000000000000000001000,
+            "user balance of Usdm should be 100000000000000000001000"
         );
         assertEq(
             userTwoUsdmBalanceAfter,
-            98350085452308585847783,
-            "user balance of Usdm should be 98350085452308585847783"
+            99900000000000000001000,
+            "user balance of Usdm should be 99900000000000000001000"
         );
         assertEq(
             userTwoIpUsdmBalanceBefore + provideAmount * 10,
@@ -230,7 +234,7 @@ contract ProvideWusdmTest is WusdmTestForkCommon {
         // given
         uint provideAmount = 20_001e18;
         vm.startPrank(IporProtocolOwner);
-        IAmmGovernanceService(IporProtocolRouterProxy).setAmmPoolsParams(WUSDM, 20_000, 0, 5000);
+        IAmmGovernanceService(IporProtocolRouterProxy).setAmmPoolsParams(wUSDM, 20_000, 0, 5000);
         vm.stopPrank();
 
         // when other user provides liquidity
@@ -251,7 +255,7 @@ contract ProvideWusdmTest is WusdmTestForkCommon {
         vm.expectEmit(true, true, true, true);
         //then
         emit ProvideLiquidityEvents.ProvideLiquidity(
-            WUSDM,
+            wUSDM,
             userOne,
             userTwo,
             ammTreasuryWusdmProxy,
@@ -281,7 +285,7 @@ contract ProvideWusdmTest is WusdmTestForkCommon {
         vm.expectEmit(true, true, true, true);
         //then
         emit ProvideLiquidityEvents.Redeem(
-            WUSDM,
+            wUSDM,
             ammTreasuryWusdmProxy,
             userTwo,
             userOne,

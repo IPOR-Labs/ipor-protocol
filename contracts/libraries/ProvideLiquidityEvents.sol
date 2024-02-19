@@ -14,12 +14,12 @@ library ProvideLiquidityEvents {
 
     event Redeem(
         address poolAsset,
-        address indexed ammTreasuryUsdm,
+        address indexed ammTreasury,
         address indexed from,
         address indexed beneficiary,
         uint256 exchangeRate,
-        uint256 amountUsdm,
-        uint256 redeemedAmountUsdm,
+        uint256 amount,
+        uint256 redeemedAmount,
         uint256 ipTokenAmount
     );
 }
