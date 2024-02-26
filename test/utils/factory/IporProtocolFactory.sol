@@ -892,15 +892,6 @@ contract IporProtocolFactory is Test {
                     cfg.ammCharlieTreasury,
                     cfg.ammCharlieTreasuryManager
                 ),
-                wusdmPoolCfg: _preparePoolCfgForGovernanceService(
-                    address(amm.usdm.asset),
-                    address(amm.usdm.ammTreasury),
-                    address(amm.usdm.ammStorage),
-                    cfg.ammPoolsTreasury,
-                    cfg.ammPoolsTreasuryManager,
-                    cfg.ammCharlieTreasury,
-                    cfg.ammCharlieTreasuryManager
-                ),
                 weEthPoolCfg: _preparePoolCfgForGovernanceService(
                     address(amm.stEth.asset), // mock todo: fix if needed
                     address(amm.stEth.ammTreasury),
@@ -920,8 +911,6 @@ contract IporProtocolFactory is Test {
         //      todo fix addresses
         deployerContracts.ammPoolsLensStEth = _fakeContract;
         deployerContracts.ammPoolsServiceStEth = _fakeContract;
-        deployerContracts.ammPoolsLensWusdm = _fakeContract;
-        deployerContracts.ammPoolsServiceWusdm = _fakeContract;
         deployerContracts.ammPoolsLensWeEth = _fakeContract;
         deployerContracts.ammPoolsServiceWeEth = _fakeContract;
         deployerContracts.ammOpenSwapServiceStEth = _fakeContract;
@@ -1150,7 +1139,6 @@ contract IporProtocolFactory is Test {
                 usdcPoolCfg: _prepareFakePoolCfgForGovernanceService(),
                 daiPoolCfg: _prepareFakePoolCfgForGovernanceService(),
                 stEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
-                wusdmPoolCfg: _prepareFakePoolCfgForGovernanceService(),
                 weEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
@@ -1164,8 +1152,6 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammPoolsLensStEth = _fakeContract;
         deployerContracts.ammOpenSwapServiceStEth = _fakeContract;
         deployerContracts.ammCloseSwapServiceStEth = _fakeContract;
-        deployerContracts.ammPoolsServiceWusdm = _fakeContract;
-        deployerContracts.ammPoolsLensWusdm = _fakeContract;
         deployerContracts.ammPoolsServiceWeEth = _fakeContract;
         deployerContracts.ammPoolsLensWeEth = _fakeContract;
 
@@ -1365,7 +1351,6 @@ contract IporProtocolFactory is Test {
                 ),
                 daiPoolCfg: _prepareFakePoolCfgForGovernanceService(),
                 stEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
-                wusdmPoolCfg: _prepareFakePoolCfgForGovernanceService(),
                 weEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
@@ -1378,8 +1363,6 @@ contract IporProtocolFactory is Test {
         //        todo fix addresses
         deployerContracts.ammPoolsLensStEth = _fakeContract;
         deployerContracts.ammPoolsServiceStEth = _fakeContract;
-        deployerContracts.ammPoolsLensWusdm = _fakeContract;
-        deployerContracts.ammPoolsServiceWusdm = _fakeContract;
         deployerContracts.ammPoolsLensWeEth = _fakeContract;
         deployerContracts.ammPoolsServiceWeEth = _fakeContract;
         deployerContracts.ammOpenSwapServiceStEth = _fakeContract;
@@ -1419,8 +1402,6 @@ contract IporProtocolFactory is Test {
         //todo Fix
         deployerContracts.ammPoolsLensStEth = address(123);
         deployerContracts.ammPoolsServiceStEth = address(123);
-        deployerContracts.ammPoolsLensWusdm = address(123);
-        deployerContracts.ammPoolsServiceWusdm = address(123);
         deployerContracts.ammPoolsLensWeEth = address(123);
         deployerContracts.ammPoolsServiceWeEth = address(123);
 
@@ -1586,7 +1567,6 @@ contract IporProtocolFactory is Test {
                     cfg.ammCharlieTreasuryManager
                 ),
                 stEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
-                wusdmPoolCfg: _prepareFakePoolCfgForGovernanceService(),
                 weEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
