@@ -245,8 +245,6 @@ contract TestForkCommons is Test {
                 ammPoolsServiceStEth,
                 ammPoolsLensStEth,
                 _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123),
                 _getUserAddress(123)
             )
         );

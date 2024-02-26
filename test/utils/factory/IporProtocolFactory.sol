@@ -920,8 +920,6 @@ contract IporProtocolFactory is Test {
         //      todo fix addresses
         deployerContracts.ammPoolsLensStEth = _fakeContract;
         deployerContracts.ammPoolsServiceStEth = _fakeContract;
-        deployerContracts.ammPoolsLensWusdm = _fakeContract;
-        deployerContracts.ammPoolsServiceWusdm = _fakeContract;
         deployerContracts.ammPoolsLensWeEth = _fakeContract;
         deployerContracts.ammPoolsServiceWeEth = _fakeContract;
         deployerContracts.ammOpenSwapServiceStEth = _fakeContract;
@@ -1164,8 +1162,6 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammPoolsLensStEth = _fakeContract;
         deployerContracts.ammOpenSwapServiceStEth = _fakeContract;
         deployerContracts.ammCloseSwapServiceStEth = _fakeContract;
-        deployerContracts.ammPoolsServiceWusdm = _fakeContract;
-        deployerContracts.ammPoolsLensWusdm = _fakeContract;
         deployerContracts.ammPoolsServiceWeEth = _fakeContract;
         deployerContracts.ammPoolsLensWeEth = _fakeContract;
 
@@ -1378,8 +1374,6 @@ contract IporProtocolFactory is Test {
         //        todo fix addresses
         deployerContracts.ammPoolsLensStEth = _fakeContract;
         deployerContracts.ammPoolsServiceStEth = _fakeContract;
-        deployerContracts.ammPoolsLensWusdm = _fakeContract;
-        deployerContracts.ammPoolsServiceWusdm = _fakeContract;
         deployerContracts.ammPoolsLensWeEth = _fakeContract;
         deployerContracts.ammPoolsServiceWeEth = _fakeContract;
         deployerContracts.ammOpenSwapServiceStEth = _fakeContract;
@@ -1419,8 +1413,6 @@ contract IporProtocolFactory is Test {
         //todo Fix
         deployerContracts.ammPoolsLensStEth = address(123);
         deployerContracts.ammPoolsServiceStEth = address(123);
-        deployerContracts.ammPoolsLensWusdm = address(123);
-        deployerContracts.ammPoolsServiceWusdm = address(123);
         deployerContracts.ammPoolsLensWeEth = address(123);
         deployerContracts.ammPoolsServiceWeEth = address(123);
 
