@@ -478,18 +478,6 @@ contract TestForkCommons is Test {
                 ammCharlieTreasuryManager: treasurer
             });
 
-        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory usdmPoolCfg = IAmmGovernanceLens
-            .AmmGovernancePoolConfiguration({
-            asset: USDM,
-            decimals: 18,
-            ammStorage: ammStorageProxyUsdm,
-            ammTreasury: ammTreasuryProxyUsdm,
-            ammPoolsTreasury: treasurer,
-            ammPoolsTreasuryManager: treasurer,
-            ammCharlieTreasury: treasurer,
-            ammCharlieTreasuryManager: treasurer
-        });
-
         IAmmGovernanceLens.AmmGovernancePoolConfiguration memory weETHPoolCfg = IAmmGovernanceLens
             .AmmGovernancePoolConfiguration({
                 asset: weETH,
@@ -502,7 +490,7 @@ contract TestForkCommons is Test {
                 ammCharlieTreasuryManager: treasurer
             });
 
-        newAmmGovernanceService = address(new AmmGovernanceService(usdtPoolCfg, usdcPoolCfg, daiPoolCfg, stEthPoolCfg, usdmPoolCfg, weETHPoolCfg));
+        newAmmGovernanceService = address(new AmmGovernanceService(usdtPoolCfg, usdcPoolCfg, daiPoolCfg, stEthPoolCfg, weETHPoolCfg));
     }
 
     function _upgradeAmmTreasuryStEth() private {

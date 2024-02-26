@@ -131,67 +131,7 @@ contract TestEthMarketCommons is Test {
         vm.startPrank(owner);
         IAmmGovernanceLens.AmmGovernancePoolConfiguration memory daiConfig = IAmmGovernanceLens
             .AmmGovernancePoolConfiguration(
-                DAI,
-                18,
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123)
-            );
-
-        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory usdcConfig = IAmmGovernanceLens
-            .AmmGovernancePoolConfiguration(
-                USDC,
-                6,
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123)
-            );
-
-        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory usdtConfig = IAmmGovernanceLens
-            .AmmGovernancePoolConfiguration(
-                USDT,
-                6,
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123)
-            );
-
-        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory stEthConfig = IAmmGovernanceLens
-            .AmmGovernancePoolConfiguration(
-                stEth,
-                18,
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123)
-            );
-
-        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory weEthConfig = IAmmGovernanceLens
-            .AmmGovernancePoolConfiguration(
-            weETH,
-                18,
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123)
-            );
-
-        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory usdmConfig = IAmmGovernanceLens
-            .AmmGovernancePoolConfiguration(
-            USDM,
+            DAI,
             18,
             _getUserAddress(123),
             _getUserAddress(123),
@@ -201,7 +141,55 @@ contract TestEthMarketCommons is Test {
             _getUserAddress(123)
         );
 
-        ammGovernanceService = address(new AmmGovernanceService(usdtConfig, usdcConfig, daiConfig, stEthConfig, usdmConfig,weEthConfig));
+        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory usdcConfig = IAmmGovernanceLens
+            .AmmGovernancePoolConfiguration(
+            USDC,
+            6,
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123)
+        );
+
+        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory usdtConfig = IAmmGovernanceLens
+            .AmmGovernancePoolConfiguration(
+            USDT,
+            6,
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123)
+        );
+
+        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory stEthConfig = IAmmGovernanceLens
+            .AmmGovernancePoolConfiguration(
+            stEth,
+            18,
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123)
+        );
+
+        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory weEthConfig = IAmmGovernanceLens
+            .AmmGovernancePoolConfiguration(
+            weETH,
+            18,
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123)
+        );
+
+        ammGovernanceService = address(new AmmGovernanceService(usdtConfig, usdcConfig, daiConfig, stEthConfig, weEthConfig));
         vm.stopPrank();
     }
 

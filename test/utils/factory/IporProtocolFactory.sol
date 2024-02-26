@@ -892,15 +892,6 @@ contract IporProtocolFactory is Test {
                     cfg.ammCharlieTreasury,
                     cfg.ammCharlieTreasuryManager
                 ),
-                wusdmPoolCfg: _preparePoolCfgForGovernanceService(
-                    address(amm.usdm.asset),
-                    address(amm.usdm.ammTreasury),
-                    address(amm.usdm.ammStorage),
-                    cfg.ammPoolsTreasury,
-                    cfg.ammPoolsTreasuryManager,
-                    cfg.ammCharlieTreasury,
-                    cfg.ammCharlieTreasuryManager
-                ),
                 weEthPoolCfg: _preparePoolCfgForGovernanceService(
                     address(amm.stEth.asset), // mock todo: fix if needed
                     address(amm.stEth.ammTreasury),
@@ -1148,7 +1139,6 @@ contract IporProtocolFactory is Test {
                 usdcPoolCfg: _prepareFakePoolCfgForGovernanceService(),
                 daiPoolCfg: _prepareFakePoolCfgForGovernanceService(),
                 stEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
-                wusdmPoolCfg: _prepareFakePoolCfgForGovernanceService(),
                 weEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
@@ -1361,7 +1351,6 @@ contract IporProtocolFactory is Test {
                 ),
                 daiPoolCfg: _prepareFakePoolCfgForGovernanceService(),
                 stEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
-                wusdmPoolCfg: _prepareFakePoolCfgForGovernanceService(),
                 weEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
@@ -1578,7 +1567,6 @@ contract IporProtocolFactory is Test {
                     cfg.ammCharlieTreasuryManager
                 ),
                 stEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
-                wusdmPoolCfg: _prepareFakePoolCfgForGovernanceService(),
                 weEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
