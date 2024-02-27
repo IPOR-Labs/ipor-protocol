@@ -258,7 +258,9 @@ contract IporProtocolRouterTest is TestCommons {
                 liquidityMiningLens: _userOne,
                 powerTokenLens: _userOne,
                 flowService: _userOne,
-                stakeService: _userOne
+                stakeService: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
 
@@ -282,7 +284,9 @@ contract IporProtocolRouterTest is TestCommons {
                 liquidityMiningLens: _userOne,
                 powerTokenLens: _userOne,
                 flowService: _userOne,
-                stakeService: _userOne
+                stakeService: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
         vm.expectRevert("IPOR_000");
@@ -305,7 +309,9 @@ contract IporProtocolRouterTest is TestCommons {
                 liquidityMiningLens: _userOne,
                 powerTokenLens: _userOne,
                 flowService: _userOne,
-                stakeService: _userOne
+                stakeService: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
 
@@ -329,7 +335,9 @@ contract IporProtocolRouterTest is TestCommons {
                 liquidityMiningLens: _userOne,
                 powerTokenLens: _userOne,
                 flowService: _userOne,
-                stakeService: _userOne
+                stakeService: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
 
@@ -353,7 +361,9 @@ contract IporProtocolRouterTest is TestCommons {
                 liquidityMiningLens: _userOne,
                 powerTokenLens: _userOne,
                 flowService: _userOne,
-                stakeService: _userOne
+                stakeService: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
 
@@ -377,7 +387,9 @@ contract IporProtocolRouterTest is TestCommons {
                 liquidityMiningLens: _userOne,
                 powerTokenLens: _userOne,
                 flowService: _userOne,
-                stakeService: _userOne
+                stakeService: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
 
@@ -401,7 +413,9 @@ contract IporProtocolRouterTest is TestCommons {
                 liquidityMiningLens: _userOne,
                 powerTokenLens: _userOne,
                 flowService: _userOne,
-                stakeService: _userOne
+                stakeService: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
 
@@ -425,7 +439,9 @@ contract IporProtocolRouterTest is TestCommons {
                 liquidityMiningLens: _userOne,
                 powerTokenLens: _userOne,
                 flowService: _userOne,
-                stakeService: _userOne
+                stakeService: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
 
@@ -449,7 +465,9 @@ contract IporProtocolRouterTest is TestCommons {
                 liquidityMiningLens: _userOne,
                 powerTokenLens: _userOne,
                 flowService: _userOne,
-                stakeService: _userOne
+                stakeService: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
 
@@ -473,7 +491,9 @@ contract IporProtocolRouterTest is TestCommons {
                 liquidityMiningLens: address(0),
                 powerTokenLens: _userOne,
                 flowService: _userOne,
-                stakeService: _userOne
+                stakeService: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
 
@@ -497,7 +517,9 @@ contract IporProtocolRouterTest is TestCommons {
                 liquidityMiningLens: _userOne,
                 powerTokenLens: address(0),
                 flowService: _userOne,
-                stakeService: _userOne
+                stakeService: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
 
@@ -521,7 +543,9 @@ contract IporProtocolRouterTest is TestCommons {
                 liquidityMiningLens: _userOne,
                 powerTokenLens: _userOne,
                 flowService: address(0),
-                stakeService: _userOne
+                stakeService: _userOne,
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
 
@@ -545,7 +569,9 @@ contract IporProtocolRouterTest is TestCommons {
                 liquidityMiningLens: _userOne,
                 powerTokenLens: _userOne,
                 flowService: _userOne,
-                stakeService: address(0)
+                stakeService: address(0),
+                ammPoolsServiceWeEth: _userOne,
+                ammPoolsLensWeEth: _userOne
             })
         );
     }

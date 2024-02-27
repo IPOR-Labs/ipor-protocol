@@ -56,6 +56,7 @@ contract TestForkCommons is Test {
     address public constant DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
     address public constant USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
     address public constant USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
+    address public constant USDM = 0x59D9356E565Ab3A36dD77763Fc0d87fEaf85508C;
 
     address public constant aDAI = 0x028171bCA77440897B824Ca71D1c56caC55b68A3;
     address public constant aUSDC = 0xBcca60bB61934080951369a648Fb03DF4F96263C;
@@ -76,6 +77,8 @@ contract TestForkCommons is Test {
     address public constant stETH = 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
     address public constant wETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address public constant wstETH = 0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0;
+    address public constant weETH = 0xCd5fE23C85820F7B72D0926FC9b05b43E359b7ee;
+
 
     address public constant iporOracleProxy = 0x421C69EAa54646294Db30026aeE80D01988a6876;
 
@@ -151,6 +154,10 @@ contract TestForkCommons is Test {
     address public ammPoolsLensStEth;
     address public ammPoolsServiceStEth;
 
+
+    address public ammStorageProxyUsdm;
+    address public ammTreasuryProxyUsdm;
+
     address public newAmmGovernanceService;
 
     address public newSpread28Days;
@@ -172,6 +179,9 @@ contract TestForkCommons is Test {
 
         _createAmmStorageStEth();
         _createNewSpreadForStEth();
+
+        _createAmmStorageUsdm();
+        _createAmmTreasuryUsdm();
 
         _createAmmSwapsLens();
         _createAmmOpenSwapService();
@@ -233,7 +243,9 @@ contract TestForkCommons is Test {
                 _getUserAddress(123),
                 _getUserAddress(123),
                 ammPoolsServiceStEth,
-                ammPoolsLensStEth
+                ammPoolsLensStEth,
+                _getUserAddress(123),
+                _getUserAddress(123)
             )
         );
         vm.prank(owner);
@@ -466,7 +478,19 @@ contract TestForkCommons is Test {
                 ammCharlieTreasuryManager: treasurer
             });
 
-        newAmmGovernanceService = address(new AmmGovernanceService(usdtPoolCfg, usdcPoolCfg, daiPoolCfg, stEthPoolCfg));
+        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory weETHPoolCfg = IAmmGovernanceLens
+            .AmmGovernancePoolConfiguration({
+                asset: weETH,
+                decimals: 18,
+                ammStorage: ammStorageProxyStEth,
+                ammTreasury: ammTreasuryProxyStEth,
+                ammPoolsTreasury: treasurer,
+                ammPoolsTreasuryManager: treasurer,
+                ammCharlieTreasury: treasurer,
+                ammCharlieTreasuryManager: treasurer
+            });
+
+        newAmmGovernanceService = address(new AmmGovernanceService(usdtPoolCfg, usdcPoolCfg, daiPoolCfg, stEthPoolCfg, weETHPoolCfg));
     }
 
     function _upgradeAmmTreasuryStEth() private {
@@ -488,6 +512,30 @@ contract TestForkCommons is Test {
         vm.stopPrank();
 
         ammStorageProxyStEth = address(proxy);
+    }
+
+    function _createAmmStorageUsdm() private {
+        AmmStorageBaseV1 ammStorageImpl = new AmmStorageBaseV1(iporProtocolRouterProxy);
+
+        vm.startPrank(owner);
+        ERC1967Proxy proxy = new ERC1967Proxy(address(ammStorageImpl), abi.encodeWithSignature("initialize()"));
+        vm.stopPrank();
+
+        ammStorageProxyUsdm = address(proxy);
+    }
+
+    function _createAmmTreasuryUsdm() private {
+        AmmTreasuryBaseV1 ammTreasuryImpl = new AmmTreasuryBaseV1(
+            USDM,
+            iporProtocolRouterProxy,
+            ammStorageProxyUsdm
+        );
+
+        vm.startPrank(owner);
+        ERC1967Proxy proxy = new ERC1967Proxy(address(ammTreasuryImpl), abi.encodeWithSignature("initialize(bool)", false));
+        vm.stopPrank();
+
+        ammTreasuryProxyUsdm = address(proxy);
     }
 
     function _createAmmOpenSwapServiceStEth() private {
