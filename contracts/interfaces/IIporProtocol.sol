@@ -24,7 +24,10 @@ import "./IPowerTokenFlowsService.sol";
 import "./ISwapEventsBaseV1.sol";
 import "../amm-eth/interfaces/IAmmPoolsLensStEth.sol";
 import "../amm-eth/interfaces/IAmmPoolsServiceStEth.sol";
+import "../amm-weEth/interfaces/IAmmPoolsServiceWeEth.sol";
+import "../amm-weEth/interfaces/IAmmPoolsLensWeEth.sol";
 import "../interfaces/IAmmOpenSwapServiceStEth.sol";
+
 
 /// @title Interface for interaction with IPOR protocol.
 /// Interface combines all IporProtocolRouter interfaces and supported services and lenses by router.
@@ -39,6 +42,7 @@ interface IIporProtocol is
     ILiquidityMiningLens,
     IPowerTokenLens,
     IAmmPoolsLensStEth,
+    IAmmPoolsLensWeEth,
     IAmmOpenSwapService,
     IAmmOpenSwapServiceStEth,
     IAmmCloseSwapServiceUsdt,
@@ -47,6 +51,7 @@ interface IIporProtocol is
     IAmmCloseSwapServiceStEth,
     IAmmCloseSwapLens,
     IAmmPoolsService,
+    IAmmPoolsServiceWeEth,
     IAmmGovernanceService,
     IAmmGovernanceLens,
     IPowerTokenStakeService,
