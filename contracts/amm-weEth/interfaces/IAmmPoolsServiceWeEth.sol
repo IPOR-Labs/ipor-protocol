@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 /// @title Interface of the AmmPoolsServiceWstEth contract.
 interface IAmmPoolsServiceWeEth {
-    function provideLiquidityWeEthToAmmPoolWeEth(address beneficiary, uint256 usdmAmount) external;
+    function provideLiquidityWeEthToAmmPoolWeEth(address beneficiary, uint256 weEthAmount) external;
 
     function provideLiquidity(
         address poolAsset,
