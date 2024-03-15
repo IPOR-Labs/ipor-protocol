@@ -26,7 +26,8 @@ import "../amm-eth/interfaces/IAmmPoolsLensStEth.sol";
 import "../amm-eth/interfaces/IAmmPoolsServiceStEth.sol";
 import "../amm-weEth/interfaces/IAmmPoolsServiceWeEth.sol";
 import "../amm-weEth/interfaces/IAmmPoolsLensWeEth.sol";
-import "../interfaces/IAmmOpenSwapServiceStEth.sol";
+import "./IAmmOpenSwapServiceStEth.sol";
+import "./IProvideLiquidityEvents.sol";
 
 
 /// @title Interface for interaction with IPOR protocol.
@@ -57,6 +58,7 @@ interface IIporProtocol is
     IPowerTokenStakeService,
     IPowerTokenFlowsService,
     IAmmPoolsServiceStEth,
-    ISwapEventsBaseV1
+    ISwapEventsBaseV1,
+    IProvideLiquidityEvents
 {
 }
