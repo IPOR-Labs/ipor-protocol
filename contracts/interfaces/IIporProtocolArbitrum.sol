@@ -20,7 +20,10 @@ import "./IPowerTokenFlowsService.sol";
 import "./ISwapEventsBaseV1.sol";
 import "../amm-eth/interfaces/IAmmPoolsLensWstEth.sol";
 import "../amm-eth/interfaces/IAmmPoolsServiceWstEth.sol";
+import "../amm-wusdm/interfaces/IAmmPoolsLensWusdm.sol";
+import "../amm-wusdm/interfaces/IAmmPoolsServiceWusdm.sol";
 import "../interfaces/IAmmOpenSwapServiceWstEth.sol";
+import "./IProvideLiquidityEvents.sol";
 
 /// @title Interface for interaction with IPOR protocol.
 /// Interface combines all IporProtocolRouter interfaces and supported services and lenses by router.
@@ -41,6 +44,9 @@ interface IIporProtocolArbitrum is
     IAmmPoolsServiceWstEth,
     IAmmPoolsLensWstEth,
     IAmmOpenSwapServiceWstEth,
-    IAmmCloseSwapServiceWstEth
+    IAmmCloseSwapServiceWstEth,
+    IAmmPoolsServiceWusdm,
+    IAmmPoolsLensWusdm,
+    IProvideLiquidityEvents
 {
 }
