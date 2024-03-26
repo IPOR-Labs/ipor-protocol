@@ -189,7 +189,19 @@ contract TestEthMarketCommons is Test {
             _getUserAddress(123)
         );
 
-        ammGovernanceService = address(new AmmGovernanceService(usdtConfig, usdcConfig, daiConfig, stEthConfig, weEthConfig));
+        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory usdmConfig = IAmmGovernanceLens
+            .AmmGovernancePoolConfiguration(
+            USDM,
+            18,
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123),
+            _getUserAddress(123)
+        );
+
+        ammGovernanceService = address(new AmmGovernanceService(usdtConfig, usdcConfig, daiConfig, stEthConfig, weEthConfig, usdmConfig));
         vm.stopPrank();
     }
 
@@ -216,7 +228,9 @@ contract TestEthMarketCommons is Test {
                 ammPoolsServiceStEth: ammPoolsServiceStEth,
                 ammPoolsLensStEth: ammPoolsLensStEth,
                 ammPoolsServiceWeEth: _getUserAddress(123),
-                ammPoolsLensWeEth: _getUserAddress(123)
+                ammPoolsLensWeEth: _getUserAddress(123),
+                ammPoolsServiceUsdm: _getUserAddress(123),
+                ammPoolsLensUsdm: _getUserAddress(123)
             })
         );
 

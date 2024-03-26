@@ -62,8 +62,17 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     address internal immutable _weEthAmmCharlieTreasury;
     address internal immutable _weEthAmmCharlieTreasuryManager;
 
+    address internal immutable _usdm;
+    uint256 internal immutable _usdmDecimals;
+    address internal immutable _usdmAmmStorage;
+    address internal immutable _usdmAmmTreasury;
+    address internal immutable _usdmAmmPoolsTreasury;
+    address internal immutable _usdmAmmPoolsTreasuryManager;
+    address internal immutable _usdmAmmCharlieTreasury;
+    address internal immutable _usdmAmmCharlieTreasuryManager;
+
     modifier onlySupportedAssetManagement(address asset) {
-        if (asset == _stEth ||  asset == _weEth) {
+        if (asset == _stEth || asset == _weEth || asset == _usdm) {
             revert IporErrors.UnsupportedModule(IporErrors.UNSUPPORTED_MODULE_ASSET_MANAGEMENT, asset);
         }
         _;
@@ -74,7 +83,8 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         AmmGovernancePoolConfiguration memory usdcPoolCfg,
         AmmGovernancePoolConfiguration memory daiPoolCfg,
         AmmGovernancePoolConfiguration memory stEthPoolCfg,
-        AmmGovernancePoolConfiguration memory weEthPoolCfg
+        AmmGovernancePoolConfiguration memory weEthPoolCfg,
+        AmmGovernancePoolConfiguration memory usdmPoolCfg
     ) {
         _usdt = usdtPoolCfg.asset.checkAddress();
         _usdtDecimals = usdtPoolCfg.decimals;
@@ -121,7 +131,16 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         _weEthAmmCharlieTreasury = weEthPoolCfg.ammCharlieTreasury.checkAddress();
         _weEthAmmCharlieTreasuryManager = weEthPoolCfg.ammCharlieTreasuryManager.checkAddress();
 
-        }
+        _usdm = usdmPoolCfg.asset.checkAddress();
+        _usdmDecimals = usdmPoolCfg.decimals;
+        _usdmAmmStorage = usdmPoolCfg.ammStorage.checkAddress();
+        _usdmAmmTreasury = usdmPoolCfg.ammTreasury.checkAddress();
+        _usdmAmmPoolsTreasury = usdmPoolCfg.ammPoolsTreasury.checkAddress();
+        _usdmAmmPoolsTreasuryManager = usdmPoolCfg.ammPoolsTreasuryManager.checkAddress();
+        _usdmAmmCharlieTreasury = usdmPoolCfg.ammCharlieTreasury.checkAddress();
+        _usdmAmmCharlieTreasuryManager = usdmPoolCfg.ammCharlieTreasuryManager.checkAddress();
+
+    }
 
     function getAmmGovernancePoolConfiguration(
         address asset
@@ -295,10 +314,23 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
                 ammCharlieTreasury: _weEthAmmCharlieTreasury,
                 ammCharlieTreasuryManager: _weEthAmmCharlieTreasuryManager
             });
+        } else if (asset == _usdm) {
+            return
+                AmmGovernancePoolConfiguration({
+                asset: _usdm,
+                decimals: _usdmDecimals,
+                ammStorage: _usdmAmmStorage,
+                ammTreasury: _usdmAmmTreasury,
+                ammPoolsTreasury: _usdmAmmPoolsTreasury,
+                ammPoolsTreasuryManager: _usdmAmmPoolsTreasuryManager,
+                ammCharlieTreasury: _usdmAmmCharlieTreasury,
+                ammCharlieTreasuryManager: _usdmAmmCharlieTreasuryManager
+            });
         } else {
             revert(IporErrors.ASSET_NOT_SUPPORTED);
         }
     }
+
 
     function _getAmmTreasury(address asset) internal view returns (address) {
         if (asset == _usdt) {
@@ -309,8 +341,10 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
             return _daiAmmTreasury;
         } else if (asset == _stEth) {
             return _stEthAmmTreasury;
-        } else  if (asset == _weEth) {
+        } else if (asset == _weEth) {
             return _weEthAmmTreasury;
+        } else if (asset == _usdm) {
+            return _usdmAmmTreasury;
         } else {
             revert(IporErrors.ASSET_NOT_SUPPORTED);
         }

@@ -1,4 +1,5 @@
 [profile.default]
+evm_version = 'shanghai'
 solc = "0.8.20"
 src = 'contracts'
 out = 'out'

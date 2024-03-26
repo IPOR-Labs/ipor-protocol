@@ -20,8 +20,6 @@ import "../../../amm-eth/interfaces/IAmmPoolsLensWstEth.sol";
 import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/IporContractValidator.sol";
 import "../../../router/IporProtocolRouterAbstract.sol";
-import "../../../amm-wusdm/interfaces/IAmmPoolsServiceWusdm.sol";
-import "../../../amm-wusdm/interfaces/IAmmPoolsLensWusdm.sol";
 
 /// @title Entry point for IPOR protocol
 contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
@@ -39,8 +37,6 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
     address public immutable stakeService;
     address public immutable ammPoolsServiceWstEth;
     address public immutable ammPoolsLensWstEth;
-    address public immutable ammPoolsServiceWusdm;
-    address public immutable ammPoolsLensWusdm;
 
     struct DeployedContractsArbitrum {
         address ammSwapsLens;
@@ -54,8 +50,6 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
         address stakeService;
         address ammPoolsServiceWstEth;
         address ammPoolsLensWstEth;
-        address ammPoolsServiceWusdm;
-        address ammPoolsLensWusdm;
     }
 
     constructor(DeployedContractsArbitrum memory deployedContracts) {
@@ -70,8 +64,6 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
         stakeService = deployedContracts.stakeService.checkAddress();
         ammPoolsServiceWstEth = deployedContracts.ammPoolsServiceWstEth.checkAddress();
         ammPoolsLensWstEth = deployedContracts.ammPoolsLensWstEth.checkAddress();
-        ammPoolsServiceWusdm = deployedContracts.ammPoolsServiceWusdm.checkAddress();
-        ammPoolsLensWusdm = deployedContracts.ammPoolsLensWusdm.checkAddress();
 
         _disableInitializers();
     }
@@ -91,9 +83,7 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
                 flowService: flowService,
                 stakeService: stakeService,
                 ammPoolsServiceWstEth: ammPoolsServiceWstEth,
-                ammPoolsLensWstEth: ammPoolsLensWstEth,
-                ammPoolsServiceWusdm: ammPoolsServiceWusdm,
-                ammPoolsLensWusdm: ammPoolsLensWusdm
+                ammPoolsLensWstEth: ammPoolsLensWstEth
             });
     }
 
@@ -187,14 +177,6 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
         ) {
             return ammGovernanceService;
         } else if (
-            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceWusdm.provideLiquidityWusdmToAmmPoolWusdm.selector) ||
-            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceWusdm.redeemFromAmmPoolWusdm.selector)
-        ) {
-            if (batchOperation == 0) {
-                _nonReentrantBefore();
-            }
-            return ammPoolsServiceWusdm;
-        } else if (
             sig == IAmmSwapsLens.getSwaps.selector ||
             sig == IAmmSwapsLens.getPnlPayFixed.selector ||
             sig == IAmmSwapsLens.getPnlReceiveFixed.selector ||
@@ -231,8 +213,6 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
             return ammCloseSwapLens;
         } else if (sig == IAmmPoolsLensWstEth.getIpwstEthExchangeRate.selector) {
             return ammPoolsLensWstEth;
-        } else if (sig == IAmmPoolsLensWusdm.getIpWusdmExchangeRate.selector) {
-            return ammPoolsLensWusdm;
         }
 
         revert(IporErrors.ROUTER_INVALID_SIGNATURE);
