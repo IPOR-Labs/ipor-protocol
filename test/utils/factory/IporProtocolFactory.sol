@@ -900,6 +900,15 @@ contract IporProtocolFactory is Test {
                     cfg.ammPoolsTreasuryManager,
                     cfg.ammCharlieTreasury,
                     cfg.ammCharlieTreasuryManager
+                ),
+                usdmPoolCfg: _preparePoolCfgForGovernanceService(
+                    address(amm.usdm.asset), // mock todo: fix if needed
+                    address(amm.usdm.ammTreasury),
+                    address(amm.usdm.ammStorage),
+                    cfg.ammPoolsTreasury,
+                    cfg.ammPoolsTreasuryManager,
+                    cfg.ammCharlieTreasury,
+                    cfg.ammCharlieTreasuryManager
                 )
             })
         );
@@ -911,10 +920,12 @@ contract IporProtocolFactory is Test {
         //      todo fix addresses
         deployerContracts.ammPoolsLensStEth = _fakeContract;
         deployerContracts.ammPoolsServiceStEth = _fakeContract;
-        deployerContracts.ammPoolsLensWeEth = _fakeContract;
-        deployerContracts.ammPoolsServiceWeEth = _fakeContract;
         deployerContracts.ammOpenSwapServiceStEth = _fakeContract;
         deployerContracts.ammCloseSwapServiceStEth = _fakeContract;
+        deployerContracts.ammPoolsLensWeEth = _fakeContract;
+        deployerContracts.ammPoolsServiceWeEth = _fakeContract;
+        deployerContracts.ammPoolsLensUsdm = _fakeContract;
+        deployerContracts.ammPoolsServiceUsdm = _fakeContract;
 
         vm.startPrank(address(_owner));
         IporProtocolRouter(amm.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
@@ -1139,7 +1150,8 @@ contract IporProtocolFactory is Test {
                 usdcPoolCfg: _prepareFakePoolCfgForGovernanceService(),
                 daiPoolCfg: _prepareFakePoolCfgForGovernanceService(),
                 stEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
-                weEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
+                weEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
+                usdmPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
 
@@ -1154,6 +1166,8 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammCloseSwapServiceStEth = _fakeContract;
         deployerContracts.ammPoolsServiceWeEth = _fakeContract;
         deployerContracts.ammPoolsLensWeEth = _fakeContract;
+        deployerContracts.ammPoolsLensUsdm = _fakeContract;
+        deployerContracts.ammPoolsServiceUsdm = _fakeContract;
 
 
         vm.startPrank(address(_owner));
@@ -1351,7 +1365,8 @@ contract IporProtocolFactory is Test {
                 ),
                 daiPoolCfg: _prepareFakePoolCfgForGovernanceService(),
                 stEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
-                weEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
+                weEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
+                usdmPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
 
@@ -1363,10 +1378,12 @@ contract IporProtocolFactory is Test {
         //        todo fix addresses
         deployerContracts.ammPoolsLensStEth = _fakeContract;
         deployerContracts.ammPoolsServiceStEth = _fakeContract;
-        deployerContracts.ammPoolsLensWeEth = _fakeContract;
-        deployerContracts.ammPoolsServiceWeEth = _fakeContract;
         deployerContracts.ammOpenSwapServiceStEth = _fakeContract;
         deployerContracts.ammCloseSwapServiceStEth = _fakeContract;
+        deployerContracts.ammPoolsLensWeEth = _fakeContract;
+        deployerContracts.ammPoolsServiceWeEth = _fakeContract;
+        deployerContracts.ammPoolsLensUsdm = _fakeContract;
+        deployerContracts.ammPoolsServiceUsdm = _fakeContract;
 
         vm.startPrank(address(_owner));
         IporProtocolRouter(iporProtocol.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
@@ -1404,6 +1421,8 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammPoolsServiceStEth = address(123);
         deployerContracts.ammPoolsLensWeEth = address(123);
         deployerContracts.ammPoolsServiceWeEth = address(123);
+        deployerContracts.ammPoolsLensUsdm = _fakeContract;
+        deployerContracts.ammPoolsServiceUsdm = _fakeContract;
 
         deployerContracts.ammSwapsLens = address(
             new AmmSwapsLens(
@@ -1567,7 +1586,8 @@ contract IporProtocolFactory is Test {
                     cfg.ammCharlieTreasuryManager
                 ),
                 stEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
-                weEthPoolCfg: _prepareFakePoolCfgForGovernanceService()
+                weEthPoolCfg: _prepareFakePoolCfgForGovernanceService(),
+                usdmPoolCfg: _prepareFakePoolCfgForGovernanceService()
             })
         );
         deployerContracts.powerTokenLens = address(_powerTokenLensBuilder.build());
@@ -1582,16 +1602,6 @@ contract IporProtocolFactory is Test {
 
         vm.startPrank(address(_owner));
 
-        address ammOpenSwapServiceStEth;
-        address ammCloseSwapService;
-        address ammPoolsService;
-        address ammGovernanceService;
-        address liquidityMiningLens;
-        address powerTokenLens;
-        address flowService;
-        address stakeService;
-        address ammPoolsServiceStEth;
-        address ammPoolsLensStEth;
         IporProtocolRouter(iporProtocol.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
         vm.stopPrank();
 

@@ -20,8 +20,6 @@ import "./IPowerTokenFlowsService.sol";
 import "./ISwapEventsBaseV1.sol";
 import "../amm-eth/interfaces/IAmmPoolsLensWstEth.sol";
 import "../amm-eth/interfaces/IAmmPoolsServiceWstEth.sol";
-import "../amm-wusdm/interfaces/IAmmPoolsLensWusdm.sol";
-import "../amm-wusdm/interfaces/IAmmPoolsServiceWusdm.sol";
 import "../interfaces/IAmmOpenSwapServiceWstEth.sol";
 import "./IProvideLiquidityEvents.sol";
 
@@ -45,8 +43,6 @@ interface IIporProtocolArbitrum is
     IAmmPoolsLensWstEth,
     IAmmOpenSwapServiceWstEth,
     IAmmCloseSwapServiceWstEth,
-    IAmmPoolsServiceWusdm,
-    IAmmPoolsLensWusdm,
     IProvideLiquidityEvents
 {
 }

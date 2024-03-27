@@ -122,16 +122,6 @@ contract ArbitrumTestForkCommons is Test {
                     ammPoolsTreasuryManager: treasurer,
                     ammCharlieTreasury: treasurer,
                     ammCharlieTreasuryManager: treasurer
-                }),
-                wUsdmPoolCfg: IAmmGovernanceLens.AmmGovernancePoolConfiguration({
-                    asset: _defaultAddress,
-                    decimals: 18,
-                    ammStorage: _defaultAddress,
-                    ammTreasury: _defaultAddress,
-                    ammPoolsTreasury: _defaultAddress,
-                    ammPoolsTreasuryManager: _defaultAddress,
-                    ammCharlieTreasury: _defaultAddress,
-                    ammCharlieTreasuryManager: _defaultAddress
                 })
             })
         );
@@ -150,9 +140,7 @@ contract ArbitrumTestForkCommons is Test {
                 flowService: _defaultAddress,
                 stakeService: _defaultAddress,
                 ammPoolsServiceWstEth: _defaultAddress,
-                ammPoolsLensWstEth: _defaultAddress,
-                ammPoolsServiceWusdm: _defaultAddress,
-                ammPoolsLensWusdm: _defaultAddress
+                ammPoolsLensWstEth: _defaultAddress
             });
 
         iporProtocolRouterImpl = address(new IporProtocolRouterArbitrum(deployedContracts));
@@ -197,9 +185,7 @@ contract ArbitrumTestForkCommons is Test {
                 flowService: _defaultAddress,
                 stakeService: _defaultAddress,
                 ammPoolsServiceWstEth: ammPoolsServiceWstEth,
-                ammPoolsLensWstEth: ammPoolsLensWstEth,
-                ammPoolsServiceWusdm: _defaultAddress,
-                ammPoolsLensWusdm: _defaultAddress
+                ammPoolsLensWstEth: ammPoolsLensWstEth
             });
 
         iporProtocolRouterImpl = address(new IporProtocolRouterArbitrum(deployedContracts));

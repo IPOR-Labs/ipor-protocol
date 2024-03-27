@@ -37,9 +37,6 @@ contract WeEthTestForkCommon is Test {
     address constant AmmPoolsServiceEth = 0x406812AC6f106f7d53b4181d42342e2565428Be1;
     address constant AmmPoolsLensEth = 0xb0a4855134F63Bf81F3dC6DA38De8894FB24904a;
 
-    address constant ammTreasuryUsdmProxy = IporProtocolRouterProxy;
-    address constant ammStorageUsdmProxy = IporProtocolRouterProxy;
-
     address constant ammPoolsServiceUsdm = IporProtocolRouterProxy;
     address constant ammPoolsLensUsdm = IporProtocolRouterProxy;
 
@@ -142,7 +139,9 @@ contract WeEthTestForkCommon is Test {
                 ammPoolsServiceStEth: AmmPoolsServiceEth,
                 ammPoolsLensStEth: AmmPoolsLensEth,
                 ammPoolsServiceWeEth: ammPoolsServiceWeEth,
-                ammPoolsLensWeEth: ammPoolsLensWeEth
+                ammPoolsLensWeEth: ammPoolsLensWeEth,
+                ammPoolsServiceUsdm: ammPoolsServiceUsdm,
+                ammPoolsLensUsdm: ammPoolsLensUsdm
             })
         );
 

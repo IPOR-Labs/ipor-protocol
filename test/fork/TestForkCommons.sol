@@ -245,6 +245,8 @@ contract TestForkCommons is Test {
                 ammPoolsServiceStEth,
                 ammPoolsLensStEth,
                 _getUserAddress(123),
+                _getUserAddress(123),
+                _getUserAddress(123),
                 _getUserAddress(123)
             )
         );
@@ -490,7 +492,19 @@ contract TestForkCommons is Test {
                 ammCharlieTreasuryManager: treasurer
             });
 
-        newAmmGovernanceService = address(new AmmGovernanceService(usdtPoolCfg, usdcPoolCfg, daiPoolCfg, stEthPoolCfg, weETHPoolCfg));
+        IAmmGovernanceLens.AmmGovernancePoolConfiguration memory usdmPoolCfg = IAmmGovernanceLens
+            .AmmGovernancePoolConfiguration({
+            asset: USDM,
+            decimals: 18,
+            ammStorage: ammStorageProxyUsdm,
+            ammTreasury: ammTreasuryProxyUsdm,
+            ammPoolsTreasury: treasurer,
+            ammPoolsTreasuryManager: treasurer,
+            ammCharlieTreasury: treasurer,
+            ammCharlieTreasuryManager: treasurer
+        });
+
+        newAmmGovernanceService = address(new AmmGovernanceService(usdtPoolCfg, usdcPoolCfg, daiPoolCfg, stEthPoolCfg, weETHPoolCfg, usdmPoolCfg));
     }
 
     function _upgradeAmmTreasuryStEth() private {

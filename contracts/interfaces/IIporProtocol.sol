@@ -26,6 +26,8 @@ import "../amm-eth/interfaces/IAmmPoolsLensStEth.sol";
 import "../amm-eth/interfaces/IAmmPoolsServiceStEth.sol";
 import "../amm-weEth/interfaces/IAmmPoolsServiceWeEth.sol";
 import "../amm-weEth/interfaces/IAmmPoolsLensWeEth.sol";
+import "../amm-usdm/interfaces/IAmmPoolsLensUsdm.sol";
+import "../amm-usdm/interfaces/IAmmPoolsServiceUsdm.sol";
 import "./IAmmOpenSwapServiceStEth.sol";
 import "./IProvideLiquidityEvents.sol";
 
@@ -59,6 +61,8 @@ interface IIporProtocol is
     IPowerTokenFlowsService,
     IAmmPoolsServiceStEth,
     ISwapEventsBaseV1,
+    IAmmPoolsServiceUsdm,
+    IAmmPoolsLensUsdm,
     IProvideLiquidityEvents
 {
 }
