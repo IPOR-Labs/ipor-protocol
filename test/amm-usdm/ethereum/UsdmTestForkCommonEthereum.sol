@@ -50,7 +50,6 @@ contract UsdmTestForkCommonEthereum is Test {
     address ammPoolsLensUsdm;
 
     function _init() internal {
-//        vm.createSelectFork(vm.envString("ARBITRUM_PROVIDER_URL"), 182272749);
         vm.createSelectFork(vm.envString("ETHEREUM_PROVIDER_URL"), 19520045);
 
         vm.startPrank(IporProtocolOwner);
@@ -149,12 +148,6 @@ contract UsdmTestForkCommonEthereum is Test {
         IUSDM(USDM).mint(user, value);
 
         vm.prank(user);
-        IUSDM(USDM).approve(USDM, value);
-
-//        vm.prank(user);
-//        ERC4626Upgradeable(USDM).deposit(value, user);
-
-        vm.prank(user);
         IUSDM(USDM).approve(IporProtocolRouterProxy, value);
     }
 
@@ -170,12 +163,6 @@ contract UsdmTestForkCommonEthereum is Test {
 
         vm.prank(user);
         IUSDM(USDM).approve(IporProtocolRouterProxy, 10e18);
-
-        vm.prank(user);
-        IUSDM(USDM).approve(USDM, 100e18);
-
-//        vm.prank(user);
-//        ERC4626Upgradeable(USDM).deposit(100e18, user);
 
         vm.prank(user);
         IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(user, 10e18);
