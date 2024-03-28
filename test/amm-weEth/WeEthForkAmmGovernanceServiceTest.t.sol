@@ -11,7 +11,7 @@ contract WeEthForkAmmGovernanceServiceTest is WeEthTestForkCommon {
         _init();
     }
 
-    function testShouldNotWithdrawFromAssetManagementUsdm() public {
+    function testShouldNotWithdrawFromAssetManagementWeEth() public {
         //given
         _init();
 
@@ -21,7 +21,7 @@ contract WeEthForkAmmGovernanceServiceTest is WeEthTestForkCommon {
         IAmmGovernanceService(IporProtocolRouterProxy).withdrawFromAssetManagement(weETH, 100 * 1e18);
     }
 
-    function testShouldNotWithdrawAllFromAssetManagementUsdm() public {
+    function testShouldNotWithdrawAllFromAssetManagementWeEth() public {
         //given
         _init();
 
