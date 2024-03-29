@@ -26,23 +26,14 @@ contract AmmGovernanceServiceArbitrum is IAmmGovernanceService, IAmmGovernanceLe
     address internal immutable _wstEthAmmCharlieTreasury;
     address internal immutable _wstEthAmmCharlieTreasuryManager;
 
-    address internal immutable _wUsdm;
-    uint256 internal immutable _wUsdmDecimals;
-    address internal immutable _wUsdmAmmStorage;
-    address internal immutable _wUsdmAmmTreasury;
-    address internal immutable _wUsdmAmmPoolsTreasury;
-    address internal immutable _wUsdmAmmPoolsTreasuryManager;
-    address internal immutable _wUsdmAmmCharlieTreasury;
-    address internal immutable _wUsdmAmmCharlieTreasuryManager;
-
     modifier onlySupportedAssetManagement(address asset) {
-        if (asset == _wstEth || asset == _wUsdm) {
+        if (asset == _wstEth) {
             revert IporErrors.UnsupportedModule(IporErrors.UNSUPPORTED_MODULE_ASSET_MANAGEMENT, asset);
         }
         _;
     }
 
-    constructor(AmmGovernancePoolConfiguration memory wstEthPoolCfg, AmmGovernancePoolConfiguration memory wUsdmPoolCfg) {
+    constructor(AmmGovernancePoolConfiguration memory wstEthPoolCfg) {
         _wstEth = wstEthPoolCfg.asset.checkAddress();
         _wstEthDecimals = wstEthPoolCfg.decimals;
         _wstEthAmmStorage = wstEthPoolCfg.ammStorage.checkAddress();
@@ -51,15 +42,6 @@ contract AmmGovernanceServiceArbitrum is IAmmGovernanceService, IAmmGovernanceLe
         _wstEthAmmPoolsTreasuryManager = wstEthPoolCfg.ammPoolsTreasuryManager.checkAddress();
         _wstEthAmmCharlieTreasury = wstEthPoolCfg.ammCharlieTreasury.checkAddress();
         _wstEthAmmCharlieTreasuryManager = wstEthPoolCfg.ammCharlieTreasuryManager.checkAddress();
-
-        _wUsdm = wUsdmPoolCfg.asset.checkAddress();
-        _wUsdmDecimals = wUsdmPoolCfg.decimals;
-        _wUsdmAmmStorage = wUsdmPoolCfg.ammStorage.checkAddress();
-        _wUsdmAmmTreasury = wUsdmPoolCfg.ammTreasury.checkAddress();
-        _wUsdmAmmPoolsTreasury = wUsdmPoolCfg.ammPoolsTreasury.checkAddress();
-        _wUsdmAmmPoolsTreasuryManager = wUsdmPoolCfg.ammPoolsTreasuryManager.checkAddress();
-        _wUsdmAmmCharlieTreasury = wUsdmPoolCfg.ammCharlieTreasury.checkAddress();
-        _wUsdmAmmCharlieTreasuryManager = wUsdmPoolCfg.ammCharlieTreasuryManager.checkAddress();
 
     }
 
@@ -178,29 +160,16 @@ contract AmmGovernanceServiceArbitrum is IAmmGovernanceService, IAmmGovernanceLe
         if (asset == _wstEth) {
             return
                 AmmGovernancePoolConfiguration({
-                    asset: _wstEth,
-                    decimals: _wstEthDecimals,
-                    ammStorage: _wstEthAmmStorage,
-                    ammTreasury: _wstEthAmmTreasury,
-                    ammPoolsTreasury: _wstEthAmmPoolsTreasury,
-                    ammPoolsTreasuryManager: _wstEthAmmPoolsTreasuryManager,
-                    ammCharlieTreasury: _wstEthAmmCharlieTreasury,
-                    ammCharlieTreasuryManager: _wstEthAmmCharlieTreasuryManager
-                });
-        } else if (asset == _wUsdm) {
-        return
-            AmmGovernancePoolConfiguration({
-            asset: _wUsdm,
-            decimals: _wUsdmDecimals,
-            ammStorage: _wUsdmAmmStorage,
-            ammTreasury: _wUsdmAmmTreasury,
-            ammPoolsTreasury: _wUsdmAmmPoolsTreasury,
-            ammPoolsTreasuryManager: _wUsdmAmmPoolsTreasuryManager,
-            ammCharlieTreasury: _wUsdmAmmCharlieTreasury,
-            ammCharlieTreasuryManager: _wUsdmAmmCharlieTreasuryManager
-        });
-    }
-        else {
+                asset: _wstEth,
+                decimals: _wstEthDecimals,
+                ammStorage: _wstEthAmmStorage,
+                ammTreasury: _wstEthAmmTreasury,
+                ammPoolsTreasury: _wstEthAmmPoolsTreasury,
+                ammPoolsTreasuryManager: _wstEthAmmPoolsTreasuryManager,
+                ammCharlieTreasury: _wstEthAmmCharlieTreasury,
+                ammCharlieTreasuryManager: _wstEthAmmCharlieTreasuryManager
+            });
+        } else {
             revert(IporErrors.ASSET_NOT_SUPPORTED);
         }
     }

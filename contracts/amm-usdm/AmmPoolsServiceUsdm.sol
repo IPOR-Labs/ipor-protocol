@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "../interfaces/IIpToken.sol";
 import "../interfaces/types/AmmTypes.sol";
-import "./interfaces/IAmmPoolsServiceWusdm.sol";
+import "./interfaces/IAmmPoolsServiceUsdm.sol";
 import "../libraries/errors/AmmErrors.sol";
 import "../libraries/math/IporMath.sol";
 import "../libraries/StorageLib.sol";
@@ -16,44 +16,44 @@ import "../governance/AmmConfigurationManager.sol";
 import "../base/interfaces/IAmmTreasuryBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
-contract AmmPoolsServiceWusdm is IAmmPoolsServiceWusdm {
+contract AmmPoolsServiceUsdm is IAmmPoolsServiceUsdm {
     using IporContractValidator for address;
     using SafeERC20 for IERC20;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
 
-    address public immutable wusdm;
-    address public immutable ipWusdm;
-    address public immutable ammTreasuryWusdm;
-    address public immutable ammStorageWusdm;
+    address public immutable usdm;
+    address public immutable ipUsdm;
+    address public immutable ammTreasuryUsdm;
+    address public immutable ammStorageUsdm;
     address public immutable iporOracle;
     address public immutable iporProtocolRouter;
-    uint256 public immutable redeemFeeRateWusdm;
+    uint256 public immutable redeemFeeRateUsdm;
 
     constructor(
-        address wusdmInput,
-        address ipWusdmInput,
-        address ammTreasuryWusdmInput,
-        address ammStorageWusdmInput,
+        address usdmInput,
+        address ipUsdmInput,
+        address ammTreasuryUsdmInput,
+        address ammStorageUsdmInput,
         address iporOracleInput,
         address iporProtocolRouterInput,
-        uint256 redeemFeeRateWusdmInput
+        uint256 redeemFeeRateUsdmInput
     ) {
-        wusdm = wusdmInput.checkAddress();
-        ipWusdm = ipWusdmInput.checkAddress();
-        ammTreasuryWusdm = ammTreasuryWusdmInput.checkAddress();
-        ammStorageWusdm = ammStorageWusdmInput.checkAddress();
+        usdm = usdmInput.checkAddress();
+        ipUsdm = ipUsdmInput.checkAddress();
+        ammTreasuryUsdm = ammTreasuryUsdmInput.checkAddress();
+        ammStorageUsdm = ammStorageUsdmInput.checkAddress();
         iporOracle = iporOracleInput.checkAddress();
         iporProtocolRouter = iporProtocolRouterInput.checkAddress();
-        redeemFeeRateWusdm = redeemFeeRateWusdmInput;
+        redeemFeeRateUsdm = redeemFeeRateUsdmInput;
 
-        require(redeemFeeRateWusdmInput <= 1e18, AmmPoolsErrors.CFG_INVALID_REDEEM_FEE_RATE);
+        require(redeemFeeRateUsdmInput <= 1e18, AmmPoolsErrors.CFG_INVALID_REDEEM_FEE_RATE);
     }
 
-    function provideLiquidityWusdmToAmmPoolWusdm(address beneficiary, uint256 wusdmAmount) external payable override {
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(wusdm);
+    function provideLiquidityUsdmToAmmPoolUsdm(address beneficiary, uint256 usdmAmount) external payable override {
+        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(usdm);
 
-        uint256 actualLiquidityPoolBalance = IAmmTreasuryBaseV1(ammTreasuryWusdm).getLiquidityPoolBalance();
-        uint256 newPoolBalance = actualLiquidityPoolBalance + wusdmAmount;
+        uint256 actualLiquidityPoolBalance = IAmmTreasuryBaseV1(ammTreasuryUsdm).getLiquidityPoolBalance();
+        uint256 newPoolBalance = actualLiquidityPoolBalance + usdmAmount;
 
         require(
             newPoolBalance <= uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
@@ -62,51 +62,51 @@ contract AmmPoolsServiceWusdm is IAmmPoolsServiceWusdm {
 
         uint256 exchangeRate = _getExchangeRate(actualLiquidityPoolBalance);
 
-        IERC20(wusdm).safeTransferFrom(msg.sender, ammTreasuryWusdm, wusdmAmount);
+        IERC20(usdm).safeTransferFrom(msg.sender, ammTreasuryUsdm, usdmAmount);
 
-        uint256 ipTokenAmount = IporMath.division(wusdmAmount * 1e18, exchangeRate);
+        uint256 ipTokenAmount = IporMath.division(usdmAmount * 1e18, exchangeRate);
 
-        IIpToken(ipWusdm).mint(beneficiary, ipTokenAmount);
+        IIpToken(ipUsdm).mint(beneficiary, ipTokenAmount);
 
         emit ProvideLiquidityEvents.ProvideLiquidity(
-            wusdm,
+            usdm,
             msg.sender,
             beneficiary,
-            ammTreasuryWusdm,
+            ammTreasuryUsdm,
             exchangeRate,
-            wusdmAmount,
+            usdmAmount,
             ipTokenAmount
         );
     }
 
-    function redeemFromAmmPoolWusdm(address beneficiary, uint256 ipTokenAmount) external {
+    function redeemFromAmmPoolUsdm(address beneficiary, uint256 ipTokenAmount) external {
         require(
-            ipTokenAmount > 0 && ipTokenAmount <= IIpToken(ipWusdm).balanceOf(msg.sender),
+            ipTokenAmount > 0 && ipTokenAmount <= IIpToken(ipUsdm).balanceOf(msg.sender),
             AmmPoolsErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW
         );
         require(beneficiary != address(0), IporErrors.WRONG_ADDRESS);
 
-        uint256 actualLiquidityPoolBalance = IAmmTreasuryBaseV1(ammTreasuryWusdm).getLiquidityPoolBalance();
+        uint256 actualLiquidityPoolBalance = IAmmTreasuryBaseV1(ammTreasuryUsdm).getLiquidityPoolBalance();
 
         uint256 exchangeRate = _getExchangeRate(actualLiquidityPoolBalance);
 
-        uint256 wusdmAmount = IporMath.division(ipTokenAmount * exchangeRate, 1e18);
+        uint256 usdmAmount = IporMath.division(ipTokenAmount * exchangeRate, 1e18);
 
-        uint256 amountToRedeem = IporMath.division(wusdmAmount * (1e18 - redeemFeeRateWusdm), 1e18);
+        uint256 amountToRedeem = IporMath.division(usdmAmount * (1e18 - redeemFeeRateUsdm), 1e18);
 
         require(amountToRedeem > 0, AmmPoolsErrors.CANNOT_REDEEM_ASSET_AMOUNT_TOO_LOW);
 
-        IIpToken(ipWusdm).burn(msg.sender, ipTokenAmount);
+        IIpToken(ipUsdm).burn(msg.sender, ipTokenAmount);
 
-        IERC20(wusdm).safeTransferFrom(ammTreasuryWusdm, beneficiary, amountToRedeem);
+        IERC20(usdm).safeTransferFrom(ammTreasuryUsdm, beneficiary, amountToRedeem);
 
         emit ProvideLiquidityEvents.Redeem(
-            wusdm,
-            ammTreasuryWusdm,
+            usdm,
+            ammTreasuryUsdm,
             msg.sender,
             beneficiary,
             exchangeRate,
-            wusdmAmount,
+            usdmAmount,
             amountToRedeem,
             ipTokenAmount
         );
@@ -114,11 +114,11 @@ contract AmmPoolsServiceWusdm is IAmmPoolsServiceWusdm {
 
     function _getExchangeRate(uint256 actualLiquidityPoolBalance) internal view returns (uint256) {
         AmmTypes.AmmPoolCoreModel memory model = AmmTypes.AmmPoolCoreModel({
-            asset: wusdm,
+            asset: usdm,
             assetDecimals: 18,
-            ipToken: ipWusdm,
-            ammStorage: ammStorageWusdm,
-            ammTreasury: ammTreasuryWusdm,
+            ipToken: ipUsdm,
+            ammStorage: ammStorageUsdm,
+            ammTreasury: ammTreasuryUsdm,
             assetManagement: address(0),
             iporOracle: iporOracle
         });
