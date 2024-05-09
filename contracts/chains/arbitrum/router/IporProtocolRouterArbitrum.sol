@@ -20,6 +20,8 @@ import "../../../amm-eth/interfaces/IAmmPoolsLensWstEth.sol";
 import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/IporContractValidator.sol";
 import "../../../router/IporProtocolRouterAbstract.sol";
+import "../../../amm-usdm/interfaces/IAmmPoolsServiceUsdm.sol";
+import "../../../amm-usdm/interfaces/IAmmPoolsLensUsdm.sol";
 
 /// @title Entry point for IPOR protocol
 contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
@@ -37,6 +39,8 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
     address public immutable stakeService;
     address public immutable ammPoolsServiceWstEth;
     address public immutable ammPoolsLensWstEth;
+    address public immutable ammPoolsServiceUsdm;
+    address public immutable ammPoolsLensUsdm;
 
     struct DeployedContractsArbitrum {
         address ammSwapsLens;
@@ -50,6 +54,8 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
         address stakeService;
         address ammPoolsServiceWstEth;
         address ammPoolsLensWstEth;
+        address ammPoolsServiceUsdm;
+        address ammPoolsLensUsdm;
     }
 
     constructor(DeployedContractsArbitrum memory deployedContracts) {
@@ -64,6 +70,8 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
         stakeService = deployedContracts.stakeService.checkAddress();
         ammPoolsServiceWstEth = deployedContracts.ammPoolsServiceWstEth.checkAddress();
         ammPoolsLensWstEth = deployedContracts.ammPoolsLensWstEth.checkAddress();
+        ammPoolsServiceUsdm = deployedContracts.ammPoolsServiceUsdm.checkAddress();
+        ammPoolsLensUsdm = deployedContracts.ammPoolsLensUsdm.checkAddress();
 
         _disableInitializers();
     }
@@ -83,7 +91,9 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
                 flowService: flowService,
                 stakeService: stakeService,
                 ammPoolsServiceWstEth: ammPoolsServiceWstEth,
-                ammPoolsLensWstEth: ammPoolsLensWstEth
+                ammPoolsLensWstEth: ammPoolsLensWstEth,
+                ammPoolsServiceUsdm: ammPoolsServiceUsdm,
+                ammPoolsLensUsdm: ammPoolsLensUsdm
             });
     }
 
@@ -113,6 +123,14 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
                 _nonReentrantBefore();
             }
             return ammPoolsServiceWstEth;
+        } else if (
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdm.provideLiquidityUsdmToAmmPoolUsdm.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdm.redeemFromAmmPoolUsdm.selector)
+        ) {
+            if (batchOperation == 0) {
+                _nonReentrantBefore();
+            }
+            return ammPoolsServiceUsdm;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenStakeService.stakeLpTokensToLiquidityMining.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenStakeService.unstakeLpTokensFromLiquidityMining.selector) ||
@@ -186,6 +204,8 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
             sig == IAmmSwapsLens.getSwapLensPoolConfiguration.selector
         ) {
             return ammSwapsLens;
+        } else if (sig == IAmmPoolsLensUsdm.getIpUsdmExchangeRate.selector) {
+            return ammPoolsLensUsdm;
         } else if (
             sig == ILiquidityMiningLens.balanceOfLpTokensStakedInLiquidityMining.selector ||
             sig == ILiquidityMiningLens.balanceOfPowerTokensDelegatedToLiquidityMining.selector ||

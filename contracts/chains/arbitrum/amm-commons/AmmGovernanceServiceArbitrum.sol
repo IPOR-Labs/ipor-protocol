@@ -26,14 +26,26 @@ contract AmmGovernanceServiceArbitrum is IAmmGovernanceService, IAmmGovernanceLe
     address internal immutable _wstEthAmmCharlieTreasury;
     address internal immutable _wstEthAmmCharlieTreasuryManager;
 
+    address internal immutable _usdm;
+    uint256 internal immutable _usdmDecimals;
+    address internal immutable _usdmAmmStorage;
+    address internal immutable _usdmAmmTreasury;
+    address internal immutable _usdmAmmPoolsTreasury;
+    address internal immutable _usdmAmmPoolsTreasuryManager;
+    address internal immutable _usdmAmmCharlieTreasury;
+    address internal immutable _usdmAmmCharlieTreasuryManager;
+
     modifier onlySupportedAssetManagement(address asset) {
-        if (asset == _wstEth) {
+        if (asset == _wstEth || asset == _usdm) {
             revert IporErrors.UnsupportedModule(IporErrors.UNSUPPORTED_MODULE_ASSET_MANAGEMENT, asset);
         }
         _;
     }
 
-    constructor(AmmGovernancePoolConfiguration memory wstEthPoolCfg) {
+    constructor(
+        AmmGovernancePoolConfiguration memory wstEthPoolCfg,
+        AmmGovernancePoolConfiguration memory usdmPoolCfg
+    ) {
         _wstEth = wstEthPoolCfg.asset.checkAddress();
         _wstEthDecimals = wstEthPoolCfg.decimals;
         _wstEthAmmStorage = wstEthPoolCfg.ammStorage.checkAddress();
@@ -43,6 +55,14 @@ contract AmmGovernanceServiceArbitrum is IAmmGovernanceService, IAmmGovernanceLe
         _wstEthAmmCharlieTreasury = wstEthPoolCfg.ammCharlieTreasury.checkAddress();
         _wstEthAmmCharlieTreasuryManager = wstEthPoolCfg.ammCharlieTreasuryManager.checkAddress();
 
+        _usdm = usdmPoolCfg.asset.checkAddress();
+        _usdmDecimals = usdmPoolCfg.decimals;
+        _usdmAmmStorage = usdmPoolCfg.ammStorage.checkAddress();
+        _usdmAmmTreasury = usdmPoolCfg.ammTreasury.checkAddress();
+        _usdmAmmPoolsTreasury = usdmPoolCfg.ammPoolsTreasury.checkAddress();
+        _usdmAmmPoolsTreasuryManager = usdmPoolCfg.ammPoolsTreasuryManager.checkAddress();
+        _usdmAmmCharlieTreasury = usdmPoolCfg.ammCharlieTreasury.checkAddress();
+        _usdmAmmCharlieTreasuryManager = usdmPoolCfg.ammCharlieTreasuryManager.checkAddress();
     }
 
     function getAmmGovernancePoolConfiguration(
@@ -160,15 +180,27 @@ contract AmmGovernanceServiceArbitrum is IAmmGovernanceService, IAmmGovernanceLe
         if (asset == _wstEth) {
             return
                 AmmGovernancePoolConfiguration({
-                asset: _wstEth,
-                decimals: _wstEthDecimals,
-                ammStorage: _wstEthAmmStorage,
-                ammTreasury: _wstEthAmmTreasury,
-                ammPoolsTreasury: _wstEthAmmPoolsTreasury,
-                ammPoolsTreasuryManager: _wstEthAmmPoolsTreasuryManager,
-                ammCharlieTreasury: _wstEthAmmCharlieTreasury,
-                ammCharlieTreasuryManager: _wstEthAmmCharlieTreasuryManager
-            });
+                    asset: _wstEth,
+                    decimals: _wstEthDecimals,
+                    ammStorage: _wstEthAmmStorage,
+                    ammTreasury: _wstEthAmmTreasury,
+                    ammPoolsTreasury: _wstEthAmmPoolsTreasury,
+                    ammPoolsTreasuryManager: _wstEthAmmPoolsTreasuryManager,
+                    ammCharlieTreasury: _wstEthAmmCharlieTreasury,
+                    ammCharlieTreasuryManager: _wstEthAmmCharlieTreasuryManager
+                });
+        } else if (asset == _usdm) {
+            return
+                AmmGovernancePoolConfiguration({
+                    asset: _usdm,
+                    decimals: _usdmDecimals,
+                    ammStorage: _usdmAmmStorage,
+                    ammTreasury: _usdmAmmTreasury,
+                    ammPoolsTreasury: _usdmAmmPoolsTreasury,
+                    ammPoolsTreasuryManager: _usdmAmmPoolsTreasuryManager,
+                    ammCharlieTreasury: _usdmAmmCharlieTreasury,
+                    ammCharlieTreasuryManager: _usdmAmmCharlieTreasuryManager
+                });
         } else {
             revert(IporErrors.ASSET_NOT_SUPPORTED);
         }
@@ -177,6 +209,8 @@ contract AmmGovernanceServiceArbitrum is IAmmGovernanceService, IAmmGovernanceLe
     function _getAmmTreasury(address asset) internal view returns (address) {
         if (asset == _wstEth) {
             return _wstEthAmmTreasury;
+        } else if (asset == _usdm) {
+            return _usdmAmmTreasury;
         } else {
             revert(IporErrors.ASSET_NOT_SUPPORTED);
         }
