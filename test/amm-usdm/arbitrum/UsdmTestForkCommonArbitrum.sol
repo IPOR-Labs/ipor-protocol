@@ -97,9 +97,9 @@ contract UsdmTestForkCommonArbitrum is Test {
         _updateIporRouterImplementation();
 
         _setupIporProtocol();
-        _setupUser(IporProtocolOwner, 1_000_000e18);
-
         vm.stopPrank();
+
+        _setupUser(IporProtocolOwner, 1_000_000e18);
         _provideInitialLiquidity();
     }
 
