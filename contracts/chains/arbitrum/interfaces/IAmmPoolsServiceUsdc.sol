@@ -5,7 +5,7 @@ import {IProvideLiquidityEvents} from "../../../interfaces/IProvideLiquidityEven
 
 interface IAmmPoolsServiceUsdc is IProvideLiquidityEvents{
 
-    function provideLiquidityUsdc(address beneficiary, uint256 stEthAmount) external payable;
+    function provideLiquidityUsdc(address beneficiary, uint256 assetAmount) external payable;
 
     function redeemFromAmmPoolUsdc(address beneficiary, uint256 ipTokenAmount) external;
 

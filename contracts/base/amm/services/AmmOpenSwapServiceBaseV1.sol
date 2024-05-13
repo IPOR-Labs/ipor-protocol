@@ -24,7 +24,7 @@ abstract contract AmmOpenSwapServiceBaseV1 {
 
     address public constant ETH_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
-    uint256 public immutable version = 1;
+    uint256 public immutable version = 2;
 
     address public immutable asset;
     uint256 public immutable decimals;

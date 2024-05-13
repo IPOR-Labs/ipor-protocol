@@ -32,10 +32,6 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
     using Address for address;
     using IporContractValidator for address;
 
-    address public immutable wstEth;
-    address public immutable usdc;
-    address public immutable usdm;
-
     address public immutable ammSwapsLens;
     address public immutable ammPoolsLens;
     address public immutable ammCloseSwapLens;
@@ -46,16 +42,20 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
     address public immutable powerTokenLens;
     address public immutable liquidityMiningLens;
 
+    address public immutable wstEth;
+    address public immutable usdc;
+    address public immutable usdm;
+
     struct DeployedContractsArbitrum {
         address ammSwapsLens;
         address ammPoolsLens;
         address ammCloseSwapLens;
         address ammGovernanceService;
 
-        address liquidityMiningLens;
-        address powerTokenLens;
         address flowService;
         address stakeService;
+        address powerTokenLens;
+        address liquidityMiningLens;
 
         address wstEth;
         address usdc;
@@ -90,10 +90,10 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
             ammCloseSwapLens: ammCloseSwapLens,
             ammGovernanceService: ammGovernanceService,
 
-            liquidityMiningLens: liquidityMiningLens,
-            powerTokenLens: powerTokenLens,
             flowService: flowService,
             stakeService: stakeService,
+            powerTokenLens: powerTokenLens,
+            liquidityMiningLens: liquidityMiningLens,
 
             wstEth: wstEth,
             usdc: usdc,

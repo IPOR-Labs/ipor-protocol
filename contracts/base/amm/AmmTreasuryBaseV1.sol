@@ -81,7 +81,7 @@ IProxyImplementation
     }
 
     function getVersion() external pure returns (uint256) {
-        return 2_001;
+        return 2_002;
     }
 
     function pause() external override onlyPauseGuardian {

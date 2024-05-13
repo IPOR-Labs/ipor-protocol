@@ -28,10 +28,6 @@ contract AmmCloseSwapLensArbitrum is IAmmCloseSwapLens {
     function getAmmCloseSwapServicePoolConfiguration(
         address asset
     ) external view override returns (AmmCloseSwapServicePoolConfiguration memory) {
-        return _getPoolConfiguration(asset);
-    }
-
-    function _getPoolConfiguration(address asset) internal view returns (AmmCloseSwapServicePoolConfiguration memory) {
         StorageLibArbitrum.AssetServicesValue memory servicesCfg = StorageLibArbitrum.getAssetServicesStorage().value[asset];
 
         if (servicesCfg.ammCloseSwapService != address(0)) {
@@ -50,8 +46,6 @@ contract AmmCloseSwapLensArbitrum is IAmmCloseSwapLens {
         AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     ) external view override returns (AmmTypes.ClosingSwapDetails memory closingSwapDetails) {
         StorageLibArbitrum.AssetServicesValue memory servicesCfg = StorageLibArbitrum.getAssetServicesStorage().value[asset];
-
-        address messageSigner = StorageLibArbitrum.getMessageSignerStorage().value;
 
         if (servicesCfg.ammCloseSwapService == address(0)) {
             revert IporErrors.UnsupportedAsset(IporErrors.ASSET_NOT_SUPPORTED, asset);
@@ -106,7 +100,7 @@ contract AmmCloseSwapLensArbitrum is IAmmCloseSwapLens {
             ) = SwapCloseLogicLibBaseV1.calculateSwapUnwindWhenUnwindRequired(
                 AmmTypesBaseV1.UnwindParams({
                     asset: poolCfg.asset,
-                    messageSigner: messageSigner,
+                    messageSigner: StorageLibArbitrum.getMessageSignerStorage().value,
                     spread: poolCfg.spread,
                     ammStorage: poolCfg.ammStorage,
                     ammTreasury: poolCfg.ammTreasury,
@@ -123,5 +117,6 @@ contract AmmCloseSwapLensArbitrum is IAmmCloseSwapLens {
             closingSwapDetails.pnlValue = swapPnlValueToDate;
         }
     }
+
 
 }

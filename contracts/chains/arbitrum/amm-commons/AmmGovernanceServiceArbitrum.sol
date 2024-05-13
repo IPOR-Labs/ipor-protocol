@@ -29,6 +29,13 @@ contract AmmGovernanceServiceArbitrum is IAmmGovernanceServiceArbitrum, IAmmGove
     }
 
     function setIporIndexOracle(address asset, address iporIndexOracle) external override {
+        if (asset == address(0)) {
+            revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, asset, "asset");
+        }
+        if (iporIndexOracle == address(0)) {
+            revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, iporIndexOracle, "iporIndexOracle");
+        }
+
         StorageLibArbitrum.getIporIndexOracleStorage().value = iporIndexOracle;
     }
 
@@ -37,6 +44,9 @@ contract AmmGovernanceServiceArbitrum is IAmmGovernanceServiceArbitrum, IAmmGove
     }
 
     function setMessageSigner(address messageSigner) external override {
+        if (messageSigner == address(0)) {
+            revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, messageSigner, "messageSigner");
+        }
         StorageLibArbitrum.getMessageSignerStorage().value = messageSigner;
     }
 
@@ -49,10 +59,16 @@ contract AmmGovernanceServiceArbitrum is IAmmGovernanceServiceArbitrum, IAmmGove
     }
 
     function setAssetLensData(address asset, StorageLibArbitrum.AssetLensDataValue memory assetLensData) external override {
+        if (asset == address(0)) {
+            revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, asset, "asset");
+        }
         StorageLibArbitrum.getAssetLensDataStorage().value[asset] = assetLensData;
     }
 
     function setAssetServices(address asset, StorageLibArbitrum.AssetServicesValue memory assetServices) external override {
+        if (asset == address(0)) {
+            revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, asset, "asset");
+        }
         StorageLibArbitrum.getAssetServicesStorage().value[asset] = assetServices;
     }
 
@@ -61,15 +77,18 @@ contract AmmGovernanceServiceArbitrum is IAmmGovernanceServiceArbitrum, IAmmGove
     }
 
     function getAmmGovernancePoolConfiguration(
-        address asset_
+        address asset
     ) external view override returns (AmmGovernancePoolConfiguration memory) {
-        return _getPoolConfiguration(asset_);
+        return _getPoolConfiguration(asset);
     }
 
     function setAmmGovernancePoolConfiguration(
         address asset,
         StorageLibArbitrum.AssetGovernancePoolConfigValue calldata assetGovernancePoolConfig
     ) external override {
+        if (asset == address(0)) {
+            revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, asset, "asset");
+        }
         StorageLibArbitrum.getAssetGovernancePoolConfigStorage().value[asset] = assetGovernancePoolConfig;
     }
 
