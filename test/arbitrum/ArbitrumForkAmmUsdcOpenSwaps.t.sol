@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import "./ArbitrumTestForkCommons.sol";
 
-contract ArbitrumForkAmmWstEthOpenSwapsTest is ArbitrumTestForkCommons {
+contract ArbitrumForkAmmUsdmOpenSwapsTest is ArbitrumTestForkCommons {
     function setUp() public {
         vm.createSelectFork(vm.envString("ARBITRUM_PROVIDER_URL"), 171764768);
     }

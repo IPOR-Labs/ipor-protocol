@@ -213,11 +213,9 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServic
 
     /// @param inputAsset - input asset address (ETH, wETH, stETH, wstETH) entered by user
     /// @param inputAssetTotalAmount - total amount of input asset entered by user, value represented in decimals of input asset
-    /// @param assetTotalAmount - total amount of underlying asset (stETH) calculated by service, takes into consideration exchange rate of input asset, value represented in decimals of underlying asset
     function _transferTotalAmountToAmmTreasury(
         address inputAsset,
-        uint256 inputAssetTotalAmount,
-        uint256 assetTotalAmount
+        uint256 inputAssetTotalAmount
     ) internal override {
         if (inputAsset == ETH_ADDRESS) {
             _submitEth(inputAssetTotalAmount);

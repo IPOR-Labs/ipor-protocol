@@ -11,44 +11,66 @@ import "../../../libraries/math/IporMath.sol";
 import "../../../libraries/errors/AmmPoolsErrors.sol";
 import "../../../libraries/IporContractValidator.sol";
 import "../../../governance/AmmConfigurationManager.sol";
+import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
+import {IAmmGovernanceServiceArbitrum} from "../interfaces/IAmmGovernanceServiceArbitrum.sol";
+import {IAmmGovernanceLensArbitrum} from "../interfaces/IAmmGovernanceLensArbitrum.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
-contract AmmGovernanceServiceArbitrum is IAmmGovernanceService, IAmmGovernanceLens {
+contract AmmGovernanceServiceArbitrum is IAmmGovernanceServiceArbitrum, IAmmGovernanceService, IAmmGovernanceLens, IAmmGovernanceLensArbitrum {
     using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    address internal immutable _wstEth;
-    uint256 internal immutable _wstEthDecimals;
-    address internal immutable _wstEthAmmStorage;
-    address internal immutable _wstEthAmmTreasury;
-    address internal immutable _wstEthAmmPoolsTreasury;
-    address internal immutable _wstEthAmmPoolsTreasuryManager;
-    address internal immutable _wstEthAmmCharlieTreasury;
-    address internal immutable _wstEthAmmCharlieTreasuryManager;
-
     modifier onlySupportedAssetManagement(address asset) {
-        if (asset == _wstEth) {
+        StorageLibArbitrum.AssetGovernancePoolConfigValue storage poolConfig = StorageLibArbitrum.getAssetGovernancePoolConfigStorage().value[asset];
+        if (poolConfig.vault == address(0)) {
             revert IporErrors.UnsupportedModule(IporErrors.UNSUPPORTED_MODULE_ASSET_MANAGEMENT, asset);
         }
         _;
     }
 
-    constructor(AmmGovernancePoolConfiguration memory wstEthPoolCfg) {
-        _wstEth = wstEthPoolCfg.asset.checkAddress();
-        _wstEthDecimals = wstEthPoolCfg.decimals;
-        _wstEthAmmStorage = wstEthPoolCfg.ammStorage.checkAddress();
-        _wstEthAmmTreasury = wstEthPoolCfg.ammTreasury.checkAddress();
-        _wstEthAmmPoolsTreasury = wstEthPoolCfg.ammPoolsTreasury.checkAddress();
-        _wstEthAmmPoolsTreasuryManager = wstEthPoolCfg.ammPoolsTreasuryManager.checkAddress();
-        _wstEthAmmCharlieTreasury = wstEthPoolCfg.ammCharlieTreasury.checkAddress();
-        _wstEthAmmCharlieTreasuryManager = wstEthPoolCfg.ammCharlieTreasuryManager.checkAddress();
+    function setIporIndexOracle(address asset, address iporIndexOracle) external override {
+        StorageLibArbitrum.getIporIndexOracleStorage().value = iporIndexOracle;
+    }
 
+    function getIporIndexOracle(address asset) external override view returns (address) {
+        return StorageLibArbitrum.getIporIndexOracleStorage().value;
+    }
+
+    function setMessageSigner(address messageSigner) external override {
+        StorageLibArbitrum.getMessageSignerStorage().value = messageSigner;
+    }
+
+    function getMessageSigner() external view override returns (address) {
+        return StorageLibArbitrum.getMessageSignerStorage().value;
+    }
+
+    function getAssetLensData(address asset) external override view returns (StorageLibArbitrum.AssetLensDataValue memory) {
+        return StorageLibArbitrum.getAssetLensDataStorage().value[asset];
+    }
+
+    function setAssetLensData(address asset, StorageLibArbitrum.AssetLensDataValue memory assetLensData) external override {
+        StorageLibArbitrum.getAssetLensDataStorage().value[asset] = assetLensData;
+    }
+
+    function setAssetServices(address asset, StorageLibArbitrum.AssetServicesValue memory assetServices) external override {
+        StorageLibArbitrum.getAssetServicesStorage().value[asset] = assetServices;
+    }
+
+    function getAssetServices(address asset) external override view returns (StorageLibArbitrum.AssetServicesValue memory) {
+        return StorageLibArbitrum.getAssetServicesStorage().value[asset];
     }
 
     function getAmmGovernancePoolConfiguration(
-        address asset
+        address asset_
     ) external view override returns (AmmGovernancePoolConfiguration memory) {
-        return _getPoolConfiguration(asset);
+        return _getPoolConfiguration(asset_);
+    }
+
+    function setAmmGovernancePoolConfiguration(
+        address asset,
+        StorageLibArbitrum.AssetGovernancePoolConfigValue calldata assetGovernancePoolConfig
+    ) external override {
+        StorageLibArbitrum.getAssetGovernancePoolConfigStorage().value[asset] = assetGovernancePoolConfig;
     }
 
     function depositToAssetManagement(
@@ -156,29 +178,23 @@ contract AmmGovernanceServiceArbitrum is IAmmGovernanceService, IAmmGovernanceLe
         });
     }
 
-    function _getPoolConfiguration(address asset) internal view returns (AmmGovernancePoolConfiguration memory) {
-        if (asset == _wstEth) {
-            return
-                AmmGovernancePoolConfiguration({
-                asset: _wstEth,
-                decimals: _wstEthDecimals,
-                ammStorage: _wstEthAmmStorage,
-                ammTreasury: _wstEthAmmTreasury,
-                ammPoolsTreasury: _wstEthAmmPoolsTreasury,
-                ammPoolsTreasuryManager: _wstEthAmmPoolsTreasuryManager,
-                ammCharlieTreasury: _wstEthAmmCharlieTreasury,
-                ammCharlieTreasuryManager: _wstEthAmmCharlieTreasuryManager
-            });
-        } else {
-            revert(IporErrors.ASSET_NOT_SUPPORTED);
-        }
+    function _getPoolConfiguration(address asset_) internal view returns (AmmGovernancePoolConfiguration memory) {
+        StorageLibArbitrum.AssetGovernancePoolConfigValue memory poolConfig = StorageLibArbitrum.getAssetGovernancePoolConfigStorage().value[asset_];
+
+        return AmmGovernancePoolConfiguration({
+            asset: asset_,
+            decimals: poolConfig.decimals,
+            ammStorage: poolConfig.ammStorage,
+            ammTreasury: poolConfig.ammTreasury,
+            ammPoolsTreasury: poolConfig.ammPoolsTreasury,
+            ammPoolsTreasuryManager: poolConfig.ammPoolsTreasuryManager,
+            ammCharlieTreasury: poolConfig.ammCharlieTreasury,
+            ammCharlieTreasuryManager: poolConfig.ammCharlieTreasuryManager
+        });
     }
 
     function _getAmmTreasury(address asset) internal view returns (address) {
-        if (asset == _wstEth) {
-            return _wstEthAmmTreasury;
-        } else {
-            revert(IporErrors.ASSET_NOT_SUPPORTED);
-        }
+        StorageLibArbitrum.AssetGovernancePoolConfigValue storage poolConfig = StorageLibArbitrum.getAssetGovernancePoolConfigStorage().value[asset];
+        return poolConfig.ammTreasury;
     }
 }
