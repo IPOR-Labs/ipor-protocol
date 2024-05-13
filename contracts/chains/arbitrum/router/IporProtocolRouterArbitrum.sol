@@ -24,6 +24,8 @@ import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/IporContractValidator.sol";
 import "../../../router/IporProtocolRouterAbstract.sol";
 import {IAmmPoolsLensArbitrum} from "../amm-commons/AmmPoolsLensArbitrum.sol";
+import "../../../amm-usdm/interfaces/IAmmPoolsServiceUsdm.sol";
+import "../../../amm-usdm/interfaces/IAmmPoolsLensUsdm.sol";
 
 /// @title Entry point for IPOR protocol
 contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
@@ -32,6 +34,7 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
 
     address public immutable wstEth;
     address public immutable usdc;
+    address public immutable usdm;
 
     address public immutable ammSwapsLens;
     address public immutable ammPoolsLens;
@@ -56,6 +59,7 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
 
         address wstEth;
         address usdc;
+        address usdm;
     }
 
     constructor(DeployedContractsArbitrum memory deployedContracts) {
@@ -71,6 +75,7 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
 
         wstEth = deployedContracts.wstEth.checkAddress();
         usdc = deployedContracts.usdc.checkAddress();
+        usdm = deployedContracts.usdm.checkAddress();
 
         _disableInitializers();
     }
@@ -91,7 +96,8 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
             stakeService: stakeService,
 
             wstEth: wstEth,
-            usdc: usdc
+            usdc: usdc,
+            usdm: usdm
         });
     }
 
@@ -123,6 +129,15 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
                 _nonReentrantBefore();
             }
             StorageLibArbitrum.AssetServicesValue storage servicesCfg = StorageLibArbitrum.getAssetServicesStorage().value[wstEth];
+            return servicesCfg.ammPoolsService;
+        } else if (
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdm.provideLiquidityUsdmToAmmPoolUsdm.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdm.redeemFromAmmPoolUsdm.selector)
+        ) {
+            if (batchOperation == 0) {
+                _nonReentrantBefore();
+            }
+            StorageLibArbitrum.AssetServicesValue storage servicesCfg = StorageLibArbitrum.getAssetServicesStorage().value[usdm];
             return servicesCfg.ammPoolsService;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenStakeService.stakeLpTokensToLiquidityMining.selector) ||

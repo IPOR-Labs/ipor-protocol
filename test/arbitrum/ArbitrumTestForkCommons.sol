@@ -29,6 +29,8 @@ import "../../contracts/base/spread/SpreadBaseV1.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "./interfaces/IERC20Bridged.sol";
 import {AmmPoolsLensArbitrum} from "../../contracts/chains/arbitrum/amm-commons/AmmPoolsLensArbitrum.sol";
+import "../../contracts/amm-usdm/AmmPoolsLensUsdm.sol";
+import {AmmPoolsServiceUsdm} from "../../contracts/amm-usdm/AmmPoolsServiceUsdm.sol";
 
 contract ArbitrumTestForkCommons is Test {
     address internal constant WST_ETH_BRIDGE = 0x07D4692291B9E30E326fd31706f686f83f331B82;
@@ -45,6 +47,7 @@ contract ArbitrumTestForkCommons is Test {
     address public constant USDT = 0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9;
 
     address public constant wstETH = 0x5979D7b546E38E414F7E9822514be443A4800529;
+    address public constant USDM = 0x59D9356E565Ab3A36dD77763Fc0d87fEaf85508C;
 
     uint256 public messageSignerPrivateKey;
     address public messageSignerAddress;
@@ -54,11 +57,18 @@ contract ArbitrumTestForkCommons is Test {
     address public ammStorageWstEthImpl;
     address public ammStorageWstEthProxy;
 
+    address public ammTreasuryUsdmImpl;
+    address public ammTreasuryUsdmProxy;
+    address public ammStorageUsdmImpl;
+    address public ammStorageUsdmProxy;
+
     address public iporProtocolRouterImpl;
     address public iporProtocolRouterProxy;
 
     address public ipwstETH;
     address public spreadWstEth;
+
+    address public ipUsdm;
 
     address public ammSwapsLens;
     address public ammPoolsLens;
@@ -73,6 +83,10 @@ contract ArbitrumTestForkCommons is Test {
     address public ammOpenSwapServiceUsdc;
     address public ammCloseSwapServiceUsdc;
 
+    address public ammPoolsServiceUsdm;
+    address public ammOpenSwapServiceUsdm = _defaultAddress;
+    address public ammCloseSwapServiceUsdm = _defaultAddress;
+
     address public iporOracleImpl;
     address public iporOracleProxy;
 
@@ -83,20 +97,20 @@ contract ArbitrumTestForkCommons is Test {
         _createDummyContracts();
         _createIpToken();
         _createIporOracle();
-        _createAmmStorageWstEth();
+        _createAmmStorage();
         _createSpreadForWstEth();
 
-        _upgradeAmmTreasuryWstEth();
+        _upgradeAmmTreasury();
 
         _createAmmSwapsLens();
         _createAmmPoolsLens();
-        _createGovernanceService();
-
-        _createAmmOpenSwapServiceWstEth();
-        _createAmmCloseSwapServiceWstEth();
         _createAmmCloseSwapLens();
 
-        _createAmmPoolsServiceWstEth();
+        _createGovernanceService();
+
+        _createAmmPoolsService();
+        _createAmmOpenSwapServiceWstEth();
+        _createAmmCloseSwapServiceWstEth();
 
         _updateIporRouterImplementation();
 
@@ -179,7 +193,8 @@ contract ArbitrumTestForkCommons is Test {
             stakeService: _defaultAddress,
 
             wstEth: wstETH,
-            usdc: USDC
+            usdc: USDC,
+            usdm: USDM
         });
 
         iporProtocolRouterImpl = address(new IporProtocolRouterArbitrum(deployedContracts));
@@ -193,11 +208,17 @@ contract ArbitrumTestForkCommons is Test {
         ammTreasuryWstEthProxy = address(
             new ERC1967Proxy(address(emptyImpl), abi.encodeWithSignature("initialize(bool)", true))
         );
+
+        ammTreasuryUsdmProxy = address(
+            new ERC1967Proxy(address(emptyImpl), abi.encodeWithSignature("initialize(bool)", true))
+        );
     }
 
     function _createIpToken() internal {
         ipwstETH = address(new IpToken("IP wstETH", "ipwstETH", wstETH));
         IpToken(ipwstETH).setTokenManager(iporProtocolRouterProxy);
+        ipUsdm = address(new IpToken("IP Usdm", "ipUsdm", USDM));
+        IpToken(ipUsdm).setTokenManager(iporProtocolRouterProxy);
     }
 
     function _setupUser(address user, uint256 value) internal {
@@ -225,7 +246,8 @@ contract ArbitrumTestForkCommons is Test {
             stakeService: _defaultAddress,
 
             wstEth: wstETH,
-            usdc: USDC
+            usdc: USDC,
+            usdm: USDM
         });
 
         iporProtocolRouterImpl = address(new IporProtocolRouterArbitrum(deployedContracts));
@@ -249,7 +271,7 @@ contract ArbitrumTestForkCommons is Test {
         );
     }
 
-    function _createAmmPoolsServiceWstEth() private {
+    function _createAmmPoolsService() private {
         ammPoolsServiceWstEth = address(
             new AmmPoolsServiceWstEth({
                 wstEthInput: wstETH,
@@ -259,6 +281,18 @@ contract ArbitrumTestForkCommons is Test {
                 iporOracleInput: iporOracleProxy,
                 iporProtocolRouterInput: iporProtocolRouterProxy,
                 redeemFeeRateWstEthInput: 5 * 1e15
+            })
+        );
+
+        ammPoolsServiceUsdm = address(
+            new AmmPoolsServiceUsdm({
+                usdmInput: USDM,
+                ipUsdmInput: ipUsdm,
+                ammTreasuryUsdmInput: ammTreasuryUsdmProxy,
+                ammStorageUsdmInput: ammStorageUsdmProxy,
+                iporOracleInput: iporOracleProxy,
+                iporProtocolRouterInput: iporProtocolRouterProxy,
+                redeemFeeRateUsdmInput: 5 * 1e15
             })
         );
     }
@@ -277,16 +311,23 @@ contract ArbitrumTestForkCommons is Test {
         );
     }
 
-    function _upgradeAmmTreasuryWstEth() private {
+    function _upgradeAmmTreasury() private {
         ammTreasuryWstEthImpl = address(new AmmTreasuryBaseV1(wstETH, iporProtocolRouterProxy, ammStorageWstEthProxy));
         AmmTreasuryBaseV1(ammTreasuryWstEthProxy).upgradeTo(ammTreasuryWstEthImpl);
+        ammTreasuryUsdmImpl = address(new AmmTreasuryBaseV1(USDM, iporProtocolRouterProxy, ammStorageUsdmProxy));
+        AmmTreasuryBaseV1(ammTreasuryUsdmProxy).upgradeTo(ammTreasuryUsdmImpl);
     }
 
-    function _createAmmStorageWstEth() private {
+    function _createAmmStorage() private {
         ammStorageWstEthImpl = address(new AmmStorageBaseV1(iporProtocolRouterProxy));
 
         ammStorageWstEthProxy = address(
             new ERC1967Proxy(ammStorageWstEthImpl, abi.encodeWithSignature("initialize()", ""))
+        );
+        ammStorageUsdmImpl = address(new AmmStorageBaseV1(iporProtocolRouterProxy));
+
+        ammStorageUsdmProxy = address(
+            new ERC1967Proxy(ammStorageUsdmImpl, abi.encodeWithSignature("initialize()", ""))
         );
     }
 
