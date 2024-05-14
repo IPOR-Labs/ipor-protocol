@@ -128,7 +128,7 @@ contract UsdcTestForkCommonArbitrum is Test {
 
     function _createAmmPoolsLens() private {
         ammPoolsLens = address(
-            new AmmPoolsLensArbitrum()
+            new AmmPoolsLensArbitrum(iporOracleProxy)
         );
     }
 
@@ -140,13 +140,13 @@ contract UsdcTestForkCommonArbitrum is Test {
 
     function _createAmmSwapsLens() private {
         ammSwapsLens = address(
-            new AmmSwapsLensArbitrum()
+            new AmmSwapsLensArbitrum(iporOracleProxy)
         );
     }
 
     function _createAmmCloseSwapLens() private {
         ammCloseSwapLens = address(
-            new AmmCloseSwapLensArbitrum()
+            new AmmCloseSwapLensArbitrum(iporOracleProxy)
         );
     }
 
@@ -177,8 +177,7 @@ contract UsdcTestForkCommonArbitrum is Test {
                 openingFeeRate: 5e14,
                 openingFeeTreasuryPortionRate: 5e17
             }),
-                iporOracle_: iporOracleProxy,
-                messageSigner_: messageSignerAddress
+                iporOracle_: iporOracleProxy
             })
         );
     }
@@ -200,8 +199,7 @@ contract UsdcTestForkCommonArbitrum is Test {
                 openingFeeRate: 0,
                 openingFeeTreasuryPortionRate: 5e17
             }),
-                iporOracle_: iporOracleProxy,
-                messageSigner_: messageSignerAddress
+                iporOracle_: iporOracleProxy
             })
         );
     }
@@ -230,8 +228,7 @@ contract UsdcTestForkCommonArbitrum is Test {
                 timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days: 2 days,
                 timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days: 3 days
             }),
-                iporOracle_: iporOracleProxy,
-                messageSigner_: messageSignerAddress
+                iporOracle_: iporOracleProxy
             })
         );
     }
@@ -250,8 +247,6 @@ contract UsdcTestForkCommonArbitrum is Test {
         AmmTreasuryBaseV1(ammTreasuryUsdcProxy).unpause();
 
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(USDC, 1000000000, 0, 0);
-
-        IAmmGovernanceServiceArbitrum(iporProtocolRouterProxy).setIporIndexOracle(USDC, iporOracleProxy);
 
         IAmmGovernanceServiceArbitrum(iporProtocolRouterProxy).setMessageSigner(messageSignerAddress);
 

@@ -132,8 +132,6 @@ contract ArbitrumTestForkCommons is Test {
 
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(wstETH, 1000000000, 0, 0);
 
-        IAmmGovernanceServiceArbitrum(iporProtocolRouterProxy).setIporIndexOracle(wstETH, iporOracleProxy);
-
         IAmmGovernanceServiceArbitrum(iporProtocolRouterProxy).setMessageSigner(messageSignerAddress);
 
         IAmmGovernanceServiceArbitrum(iporProtocolRouterProxy).setAmmGovernancePoolConfiguration(wstETH, StorageLibArbitrum.AssetGovernancePoolConfigValue({
@@ -261,13 +259,13 @@ contract ArbitrumTestForkCommons is Test {
 
     function _createAmmSwapsLens() private {
         ammSwapsLens = address(
-            new AmmSwapsLensArbitrum()
+            new AmmSwapsLensArbitrum(iporOracleProxy)
         );
     }
 
     function _createAmmPoolsLens() private {
         ammPoolsLens = address(
-            new AmmPoolsLensArbitrum()
+            new AmmPoolsLensArbitrum(iporOracleProxy)
         );
     }
 
@@ -404,7 +402,7 @@ contract ArbitrumTestForkCommons is Test {
 
     function _createAmmCloseSwapLens() private {
         ammCloseSwapLens = address(
-            new AmmCloseSwapLensArbitrum()
+            new AmmCloseSwapLensArbitrum(iporOracleProxy)
         );
     }
 

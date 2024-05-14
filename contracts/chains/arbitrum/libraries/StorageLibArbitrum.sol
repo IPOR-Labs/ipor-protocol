@@ -17,7 +17,6 @@ library StorageLibArbitrum {
         AmmSwapsLiquidators,
         AmmPoolsAppointedToRebalance,
         AmmPoolsParams,
-        IporIndexOracle, /// @dev The address of the IPOR Index Oracle Proxy.
         MessageSigner, /// @dev The address of the IPOR Message Signer.
         AssetLensData, /// @dev Mapping of asset address to asset lens data.
         AssetGovernancePoolConfig, /// @dev Mapping of asset address to asset governance data.
@@ -60,10 +59,6 @@ library StorageLibArbitrum {
 
     struct AssetGovernancePoolConfigStorage {
         mapping(address => AssetGovernancePoolConfigValue) value;
-    }
-
-    struct IporIndexOracleStorage {
-        address value;
     }
 
     struct MessageSignerStorage {
@@ -188,13 +183,6 @@ library StorageLibArbitrum {
     /// @return store - point to amm pools params storage.
     function getAmmPoolsParamsStorage() internal pure returns (AmmPoolsParamsStorage storage store) {
         uint256 slot = _getStorageSlot(StorageId.AmmPoolsParams);
-        assembly {
-            store.slot := slot
-        }
-    }
-
-   function getIporIndexOracleStorage() internal pure returns (IporIndexOracleStorage storage store) {
-        uint256 slot = _getStorageSlot(StorageId.IporIndexOracle);
         assembly {
             store.slot := slot
         }

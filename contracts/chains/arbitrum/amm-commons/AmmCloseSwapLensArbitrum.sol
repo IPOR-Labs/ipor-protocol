@@ -25,6 +25,12 @@ contract AmmCloseSwapLensArbitrum is IAmmCloseSwapLens {
     using SwapLogicBaseV1 for AmmTypesBaseV1.Swap;
     using AmmCloseSwapServicePoolConfigurationLib for IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration;
 
+    address public immutable iporOracle;
+
+    constructor(address iporOracle_) {
+        iporOracle = iporOracle_.checkAddress();
+    }
+
     function getAmmCloseSwapServicePoolConfiguration(
         address asset
     ) external view override returns (AmmCloseSwapServicePoolConfiguration memory) {
@@ -53,7 +59,7 @@ contract AmmCloseSwapLensArbitrum is IAmmCloseSwapLens {
 
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg = IAmmCloseSwapService(servicesCfg.ammCloseSwapService).getPoolConfiguration();
 
-        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(StorageLibArbitrum.getIporIndexOracleStorage().value).getAccruedIndex(
+        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(iporOracle).getAccruedIndex(
             block.timestamp,
             poolCfg.asset
         );

@@ -138,8 +138,6 @@ contract UsdmTestForkCommonArbitrum is Test {
 
         IAmmGovernanceService(IporProtocolRouterProxy).setAmmPoolsParams(USDM, 1000000000, 0, 0);
 
-        IAmmGovernanceServiceArbitrum(IporProtocolRouterProxy).setIporIndexOracle(USDM, iporOracleProxy);
-
         IAmmGovernanceServiceArbitrum(IporProtocolRouterProxy).setMessageSigner(messageSignerAddress);
 
         IAmmGovernanceServiceArbitrum(IporProtocolRouterProxy).setAmmGovernancePoolConfiguration(USDM, StorageLibArbitrum.AssetGovernancePoolConfigValue({
@@ -241,7 +239,7 @@ contract UsdmTestForkCommonArbitrum is Test {
 
     function _createAmmPoolsLens() private {
         ammPoolsLens = address(
-            new AmmPoolsLensArbitrum()
+            new AmmPoolsLensArbitrum(iporOracleProxy)
         );
     }
 

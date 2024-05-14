@@ -16,6 +16,12 @@ contract AmmSwapsLensArbitrum is IAmmSwapsLens {
     using AmmLib for AmmTypes.AmmPoolCoreModel;
     using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
 
+    address public immutable iporOracle;
+
+    constructor(address iporOracle_) {
+        iporOracle = iporOracle_.checkAddress();
+    }
+
     function getSwapLensPoolConfiguration(
         address asset
     ) external view override returns (SwapLensPoolConfiguration memory) {
@@ -29,36 +35,29 @@ contract AmmSwapsLensArbitrum is IAmmSwapsLens {
         uint256 chunkSize
     ) external view returns (uint256 totalCount, IAmmSwapsLens.IporSwap[] memory swaps) {
         StorageLibArbitrum.AssetLensDataValue storage lensPoolCfg = StorageLibArbitrum.getAssetLensDataStorage().value[asset];
-        address iporOracleProxy = StorageLibArbitrum.getIporIndexOracleStorage().value;
-
-        return AmmSwapsLensLibBaseV1.getSwaps(iporOracleProxy, lensPoolCfg.ammStorage, asset, account, offset, chunkSize);
+        return AmmSwapsLensLibBaseV1.getSwaps(iporOracle, lensPoolCfg.ammStorage, asset, account, offset, chunkSize);
     }
 
     function getPnlPayFixed(address asset, uint256 swapId) external view override returns (int256) {
         StorageLibArbitrum.AssetLensDataValue storage lensPoolCfg = StorageLibArbitrum.getAssetLensDataStorage().value[asset];
-        address iporOracleProxy = StorageLibArbitrum.getIporIndexOracleStorage().value;
-
-        return AmmSwapsLensLibBaseV1.getPnlPayFixed(iporOracleProxy, lensPoolCfg.ammStorage, asset, swapId);
+        return AmmSwapsLensLibBaseV1.getPnlPayFixed(iporOracle, lensPoolCfg.ammStorage, asset, swapId);
     }
 
     function getPnlReceiveFixed(address asset, uint256 swapId) external view override returns (int256) {
         StorageLibArbitrum.AssetLensDataValue storage lensPoolCfg = StorageLibArbitrum.getAssetLensDataStorage().value[asset];
-        address iporOracleProxy = StorageLibArbitrum.getIporIndexOracleStorage().value;
-
-        return AmmSwapsLensLibBaseV1.getPnlReceiveFixed(iporOracleProxy, lensPoolCfg.ammStorage, asset, swapId);
+        return AmmSwapsLensLibBaseV1.getPnlReceiveFixed(iporOracle, lensPoolCfg.ammStorage, asset, swapId);
     }
 
     function getSoap(
         address asset
     ) external view override returns (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap) {
         StorageLibArbitrum.AssetLensDataValue storage lensPoolCfg = StorageLibArbitrum.getAssetLensDataStorage().value[asset];
-        address iporOracleProxy = StorageLibArbitrum.getIporIndexOracleStorage().value;
 
         AmmTypes.AmmPoolCoreModel memory ammCoreModel;
 
         ammCoreModel.asset = asset;
         ammCoreModel.ammStorage = lensPoolCfg.ammStorage;
-        ammCoreModel.iporOracle = iporOracleProxy;
+        ammCoreModel.iporOracle = iporOracle;
 
         (soapPayFixed, soapReceiveFixed, soap) = ammCoreModel.getSoap();
     }
@@ -74,10 +73,9 @@ contract AmmSwapsLensArbitrum is IAmmSwapsLens {
 
         SwapLensPoolConfiguration memory poolCfg = _getSwapLensPoolConfiguration(asset);
 
-        address iporOracleProxy = StorageLibArbitrum.getIporIndexOracleStorage().value;
         address messageSigner = StorageLibArbitrum.getMessageSignerStorage().value;
 
-        (uint256 indexValue, ,) = IIporOracle(iporOracleProxy).getIndex(asset);
+        (uint256 indexValue, ,) = IIporOracle(iporOracle).getIndex(asset);
 
         AmmTypes.OpenSwapRiskIndicators memory swapRiskIndicatorsPayFixed = payFixedRiskIndicatorsInputs.verify(
             asset,

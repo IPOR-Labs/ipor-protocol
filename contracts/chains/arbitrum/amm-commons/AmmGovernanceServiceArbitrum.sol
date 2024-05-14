@@ -28,21 +28,6 @@ contract AmmGovernanceServiceArbitrum is IAmmGovernanceServiceArbitrum, IAmmGove
         _;
     }
 
-    function setIporIndexOracle(address asset, address iporIndexOracle) external override {
-        if (asset == address(0)) {
-            revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, asset, "asset");
-        }
-        if (iporIndexOracle == address(0)) {
-            revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, iporIndexOracle, "iporIndexOracle");
-        }
-
-        StorageLibArbitrum.getIporIndexOracleStorage().value = iporIndexOracle;
-    }
-
-    function getIporIndexOracle(address asset) external override view returns (address) {
-        return StorageLibArbitrum.getIporIndexOracleStorage().value;
-    }
-
     function setMessageSigner(address messageSigner) external override {
         if (messageSigner == address(0)) {
             revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, messageSigner, "messageSigner");

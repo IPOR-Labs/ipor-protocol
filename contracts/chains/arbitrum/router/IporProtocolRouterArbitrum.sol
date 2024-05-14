@@ -223,7 +223,6 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
             sig == IAmmGovernanceService.withdrawFromAssetManagement.selector ||
             sig == IAmmGovernanceService.withdrawAllFromAssetManagement.selector ||
             sig == IAmmGovernanceService.setAmmPoolsParams.selector ||
-            sig == IAmmGovernanceServiceArbitrum.setIporIndexOracle.selector ||
             sig == IAmmGovernanceServiceArbitrum.setMessageSigner.selector ||
             sig == IAmmGovernanceServiceArbitrum.setAssetLensData.selector ||
             sig == IAmmGovernanceServiceArbitrum.setAmmGovernancePoolConfiguration.selector ||
@@ -240,7 +239,6 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
             sig == IAmmGovernanceLens.isAppointedToRebalanceInAmm.selector ||
             sig == IAmmGovernanceLens.getAmmPoolsParams.selector ||
             sig == IAmmGovernanceLens.getAmmGovernancePoolConfiguration.selector ||
-            sig == IAmmGovernanceLensArbitrum.getIporIndexOracle.selector ||
             sig == IAmmGovernanceLensArbitrum.getMessageSigner.selector ||
             sig == IAmmGovernanceLensArbitrum.getAssetLensData.selector ||
             sig == IAmmGovernanceLensArbitrum.getAssetServices.selector

@@ -4,7 +4,6 @@ pragma solidity 0.8.20;
 import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
 
 interface IAmmGovernanceServiceArbitrum {
-    function setIporIndexOracle(address asset, address iporIndexOracle) external;
     function setMessageSigner(address messageSigner) external;
     function setAssetLensData(address asset, StorageLibArbitrum.AssetLensDataValue memory assetLensData) external;
     function setAssetServices(address asset, StorageLibArbitrum.AssetServicesValue memory assetServices) external;
