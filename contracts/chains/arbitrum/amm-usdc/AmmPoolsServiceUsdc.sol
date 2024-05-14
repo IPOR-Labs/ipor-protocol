@@ -53,7 +53,7 @@ contract AmmPoolsServiceUsdc is IAmmPoolsServiceUsdc {
         require(redeemFeeRateInput <= 1e18, AmmPoolsErrors.CFG_INVALID_REDEEM_FEE_RATE);
     }
 
-    function provideLiquidityUsdc(address beneficiary, uint256 assetAmount) external payable override {
+    function provideLiquidityUsdcToAmmPoolUsdc(address beneficiary, uint256 assetAmount) external payable override {
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(asset);
 
         uint256 actualLiquidityPoolBalance = IAmmTreasuryBaseV1(ammTreasury).getLiquidityPoolBalance();
@@ -107,8 +107,6 @@ contract AmmPoolsServiceUsdc is IAmmPoolsServiceUsdc {
         require(amountToRedeem > 0 && wadAmountToRedeem > 0, AmmPoolsErrors.CANNOT_REDEEM_ASSET_AMOUNT_TOO_LOW);
 
         IIpToken(ipToken).burn(msg.sender, ipTokenAmount);
-
-        IAmmStorage(ammStorage).subtractLiquidityInternal(wadAmountToRedeem);
 
         IERC20(asset).safeTransferFrom(ammTreasury, beneficiary, amountToRedeem);
 

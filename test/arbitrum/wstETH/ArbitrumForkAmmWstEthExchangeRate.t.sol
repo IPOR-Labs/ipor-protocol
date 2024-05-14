@@ -2,9 +2,9 @@
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import "./ArbitrumTestForkCommons.sol";
-import "../../contracts/interfaces/IAmmCloseSwapServiceWstEth.sol";
-import "../../contracts/interfaces/types/AmmTypes.sol";
+import "../ArbitrumTestForkCommons.sol";
+import "../../../contracts/interfaces/IAmmCloseSwapServiceWstEth.sol";
+import "../../../contracts/interfaces/types/AmmTypes.sol";
 
 contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
     function setUp() public {
@@ -484,7 +484,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
 
-    function testShouldNotChangeExchangeRateWhenChangeStorageBalanceCharlieTreasury() public {
+    function testShouldNotChangeExchangeRateWhenChangeStorageBalanceDAOTreasury() public {
         //given
         _init();
         address user = _getUserAddress(22);

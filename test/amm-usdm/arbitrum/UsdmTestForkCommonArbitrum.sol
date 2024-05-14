@@ -97,9 +97,11 @@ contract UsdmTestForkCommonArbitrum is Test {
         _createIpToken();
         _createAmmStorage();
         _upgradeAmmTreasury();
-        _createGovernanceService();
-        _createAmmPoolsService();
+
         _createAmmPoolsLens();
+        _createGovernanceService();
+
+        _createAmmPoolsServiceUsdm();
 
         _updateIporRouterImplementation();
 
@@ -243,18 +245,7 @@ contract UsdmTestForkCommonArbitrum is Test {
         );
     }
 
-    function _createAmmPoolsService() private {
-        ammPoolsServiceWstEth = address(
-            new AmmPoolsServiceWstEth({
-                wstEthInput: wstETH,
-                ipwstEthInput: ipwstETH,
-                ammTreasuryWstEthInput: ammTreasuryWstEthProxy,
-                ammStorageWstEthInput: ammStorageWstEthProxy,
-                iporOracleInput: iporOracleProxy,
-                iporProtocolRouterInput: IporProtocolRouterProxy,
-                redeemFeeRateWstEthInput: 5 * 1e15
-            })
-        );
+    function _createAmmPoolsServiceUsdm() private {
 
         ammPoolsServiceUsdm = address(
             new AmmPoolsServiceUsdm({
@@ -265,20 +256,6 @@ contract UsdmTestForkCommonArbitrum is Test {
                 iporOracleInput: iporOracleProxy,
                 iporProtocolRouterInput: IporProtocolRouterProxy,
                 redeemFeeRateUsdmInput: 5 * 1e15
-            })
-        );
-    }
-
-    function _createNewAmmPoolsServiceWstEthWithZEROFee() internal {
-        ammPoolsServiceWstEth = address(
-            new AmmPoolsServiceWstEth({
-                wstEthInput: wstETH,
-                ipwstEthInput: ipwstETH,
-                ammTreasuryWstEthInput: ammTreasuryWstEthProxy,
-                ammStorageWstEthInput: ammStorageWstEthProxy,
-                iporOracleInput: iporOracleProxy,
-                iporProtocolRouterInput: IporProtocolRouterProxy,
-                redeemFeeRateWstEthInput: 0
             })
         );
     }

@@ -108,7 +108,7 @@ contract ArbitrumTestForkCommons is Test {
 
         _createGovernanceService();
 
-        _createAmmPoolsService();
+        _createAmmPoolsServices();
         _createAmmOpenSwapServiceWstEth();
         _createAmmCloseSwapServiceWstEth();
 
@@ -271,7 +271,7 @@ contract ArbitrumTestForkCommons is Test {
         );
     }
 
-    function _createAmmPoolsService() private {
+    function _createAmmPoolsServices() private {
         ammPoolsServiceWstEth = address(
             new AmmPoolsServiceWstEth({
                 wstEthInput: wstETH,
