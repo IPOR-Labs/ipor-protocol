@@ -11,7 +11,6 @@ import "../../../libraries/math/IporMath.sol";
 import "../../../security/OwnerManager.sol";
 import "../../../governance/AmmConfigurationManager.sol";
 import "../../../libraries/math/InterestRates.sol";
-import "../../../libraries/RiskManagementLogic.sol";
 import "./SwapLogicBaseV1.sol";
 
 library SwapCloseLogicLibBaseV1 {

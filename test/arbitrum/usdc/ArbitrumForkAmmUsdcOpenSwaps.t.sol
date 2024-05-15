@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {IAmmOpenSwapServiceUsdc} from "../../../contracts/chains/arbitrum/interfaces/IAmmOpenSwapServiceUsdc.sol";
 
 import "./UsdcTestForkCommonArbitrum.sol";
-
+import {IWETH9} from "../../../contracts/amm-eth/interfaces/IWETH9.sol";
 contract ArbitrumForkAmmUsdcOpenSwapsTest is UsdcTestForkCommonArbitrum {
 
     uint256 public constant T_ASSET_DECIMALS = 1e6;

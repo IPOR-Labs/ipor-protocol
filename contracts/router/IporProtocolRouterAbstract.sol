@@ -3,22 +3,7 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
-
-import "../interfaces/IAmmSwapsLens.sol";
-import "../interfaces/IAmmPoolsLens.sol";
-import "../interfaces/IPowerTokenLens.sol";
-import "../interfaces/ILiquidityMiningLens.sol";
-import "../interfaces/IAmmGovernanceService.sol";
-import "../interfaces/IAmmGovernanceLens.sol";
-import "../interfaces/IAmmOpenSwapLens.sol";
-import "../interfaces/IAmmOpenSwapServiceWstEth.sol";
-import "../interfaces/IAmmCloseSwapServiceWstEth.sol";
-import "../interfaces/IAmmCloseSwapLens.sol";
-import "../interfaces/IPowerTokenFlowsService.sol";
-import "../interfaces/IPowerTokenStakeService.sol";
 import "../interfaces/IProxyImplementation.sol";
-import "../amm-eth/interfaces/IAmmPoolsServiceWstEth.sol";
-import "../amm-eth/interfaces/IAmmPoolsLensStEth.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/IporContractValidator.sol";
 import "./AccessControl.sol";

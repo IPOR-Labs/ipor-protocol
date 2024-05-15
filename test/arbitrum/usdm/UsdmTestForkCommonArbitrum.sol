@@ -9,9 +9,7 @@ import "../../../contracts/interfaces/IAmmSwapsLens.sol";
 import "../../../contracts/interfaces/IAmmOpenSwapLens.sol";
 import "../../../contracts/interfaces/IAmmCloseSwapLens.sol";
 import "../../../contracts/chains/ethereum/amm-commons/AmmSwapsLens.sol";
-import "../../../contracts/amm/AmmPoolsLens.sol";
 
-import "../../../contracts/amm/AssetManagementLens.sol";
 import "../../../contracts/amm/AmmPoolsService.sol";
 import "../../../contracts/chains/arbitrum/amm-commons/AmmCloseSwapLensArbitrum.sol";
 import "../../../contracts/chains/arbitrum/amm-commons/AmmGovernanceServiceArbitrum.sol";
@@ -19,7 +17,6 @@ import "../../../contracts/chains/arbitrum/amm-commons/AmmSwapsLensArbitrum.sol"
 
 import "../../../contracts/base/amm/AmmStorageBaseV1.sol";
 import "../../../contracts/base/amm/AmmTreasuryBaseV1.sol";
-import "../../../contracts/base/spread/SpreadBaseV1.sol";
 
 import "../../../contracts/tokens/IpToken.sol";
 import "../../arbitrum/interfaces/IERC20Bridged.sol";

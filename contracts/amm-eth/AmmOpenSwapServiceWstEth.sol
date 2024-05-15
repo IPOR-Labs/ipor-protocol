@@ -3,10 +3,6 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 import "../interfaces/IAmmOpenSwapServiceWstEth.sol";
-import "./interfaces/IStETH.sol";
-import "./interfaces/IWETH9.sol";
-import "./interfaces/IwstEth.sol";
-import "./interfaces/IAmmPoolsServiceStEth.sol";
 import "../base/amm/services/AmmOpenSwapServiceBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.

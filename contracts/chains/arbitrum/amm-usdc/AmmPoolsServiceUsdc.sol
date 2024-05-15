@@ -15,7 +15,7 @@ import "../../../libraries/AmmLib.sol";
 import "../../../governance/AmmConfigurationManager.sol";
 import "../../../base/interfaces/IAmmTreasuryBaseV1.sol";
 import {IAmmPoolsServiceUsdc} from "../interfaces/IAmmPoolsServiceUsdc.sol";
-import {IProvideLiquidityEvents} from "../../../interfaces/IProvideLiquidityEvents.sol";
+
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmPoolsServiceUsdc is IAmmPoolsServiceUsdc {

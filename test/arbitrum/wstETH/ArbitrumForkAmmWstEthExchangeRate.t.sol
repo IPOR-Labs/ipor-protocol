@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../ArbitrumTestForkCommons.sol";
 import "../../../contracts/interfaces/IAmmCloseSwapServiceWstEth.sol";
 import "../../../contracts/interfaces/types/AmmTypes.sol";
+import {IAmmPoolsLens} from "../../../contracts/interfaces/IAmmPoolsLens.sol";
 
 contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
     function setUp() public {

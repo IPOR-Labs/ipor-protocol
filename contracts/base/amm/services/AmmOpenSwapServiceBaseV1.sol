@@ -9,8 +9,6 @@ import "../../../libraries/math/IporMath.sol";
 import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/errors/AmmErrors.sol";
 import "../../../libraries/IporContractValidator.sol";
-import "../../../amm/libraries/types/AmmInternalTypes.sol";
-import "../../../base/spread/SpreadBaseV1.sol";
 import "../libraries/SwapEventsBaseV1.sol";
 import "../libraries/SwapLogicBaseV1.sol";
 import "../../interfaces/ISpreadBaseV1.sol";

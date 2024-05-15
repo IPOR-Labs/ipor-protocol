@@ -3,16 +3,12 @@ pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import {IWETH9} from "../../contracts/amm-eth/interfaces/IWETH9.sol";
+
 import "../../contracts/oracles/IporOracle.sol";
-import "../mocks/EmptyRouterImplementation.sol";
 import "../../contracts/chains/arbitrum/router/IporProtocolRouterArbitrum.sol";
-import "../../contracts/interfaces/IAmmSwapsLens.sol";
-import "../../contracts/interfaces/IAmmOpenSwapLens.sol";
 import "../../contracts/interfaces/IAmmCloseSwapLens.sol";
 import "../../contracts/chains/ethereum/amm-commons/AmmSwapsLens.sol";
-import "../../contracts/amm/AmmPoolsLens.sol";
-import "../../contracts/amm-eth/AmmPoolsLensWstEth.sol";
-import "../../contracts/amm/AssetManagementLens.sol";
 import "../../contracts/amm-eth/AmmOpenSwapServiceWstEth.sol";
 import "../../contracts/amm-eth/AmmCloseSwapServiceWstEth.sol";
 import "../../contracts/amm/AmmPoolsService.sol";
@@ -29,7 +25,7 @@ import "../../contracts/base/spread/SpreadBaseV1.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "./interfaces/IERC20Bridged.sol";
 import {AmmPoolsLensArbitrum} from "../../contracts/chains/arbitrum/amm-commons/AmmPoolsLensArbitrum.sol";
-import "../../contracts/amm-usdm/AmmPoolsLensUsdm.sol";
+
 import {AmmPoolsServiceUsdm} from "../../contracts/amm-usdm/AmmPoolsServiceUsdm.sol";
 
 contract ArbitrumTestForkCommons is Test {

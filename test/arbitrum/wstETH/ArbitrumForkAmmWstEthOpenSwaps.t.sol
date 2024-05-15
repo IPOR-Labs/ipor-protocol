@@ -3,7 +3,9 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
+import {IAmmPoolsLens} from "../../../contracts/interfaces/IAmmPoolsLens.sol";
 import "../ArbitrumTestForkCommons.sol";
+import {IStETH} from "../../../contracts/amm-eth/interfaces/IStETH.sol";
 
 contract ArbitrumForkAmmWstEthOpenSwapsTest is ArbitrumTestForkCommons {
     function setUp() public {
