@@ -23,16 +23,19 @@ library StorageLibArbitrum {
         AssetServices /// @dev Mapping of asset address to set of services per pool.
     }
 
+    /// @notice Struct for one asset which contains services for a specific asset pool.
     struct AssetServicesValue {
         address ammPoolsService;
         address ammOpenSwapService;
         address ammCloseSwapService;
     }
 
+    /// @notice Struct which contains services for a specific asset pool.
     struct AssetServicesStorage {
         mapping(address => AssetServicesValue) value;
     }
 
+    /// @notice Struct for one asset combining all data required for lens services related to a specific asset pool.
     struct AssetLensDataValue {
         uint256 decimals;
         address ipToken;
@@ -42,10 +45,12 @@ library StorageLibArbitrum {
         address vault;
     }
 
+    /// @notice Struct combining all data required for lens services related to a specific asset pool.
     struct AssetLensDataStorage {
         mapping(address => AssetLensDataValue) value;
     }
 
+    /// @notice Struct which contains governance configuration for a specific asset pool.
     struct AssetGovernancePoolConfigValue {
         uint256 decimals;
         address ammStorage;
@@ -57,6 +62,7 @@ library StorageLibArbitrum {
         address ammCharlieTreasuryManager;
     }
 
+    /// @notice Struct which contains governance configuration for a specific asset pool.
     struct AssetGovernancePoolConfigStorage {
         mapping(address => AssetGovernancePoolConfigValue) value;
     }
