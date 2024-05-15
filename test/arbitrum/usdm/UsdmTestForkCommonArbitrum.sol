@@ -85,12 +85,12 @@ contract UsdmTestForkCommonArbitrum is Test {
         _createAmmStorage();
         _upgradeAmmTreasury();
 
+        _createAmmPoolsServiceUsdm();
+
         _createAmmPoolsLens();
         _createGovernanceService();
         _createAmmSwapsLens();
         _createAmmCloseSwapLens();
-
-        _createAmmPoolsServiceUsdm();
 
         _updateIporRouterImplementation();
 
