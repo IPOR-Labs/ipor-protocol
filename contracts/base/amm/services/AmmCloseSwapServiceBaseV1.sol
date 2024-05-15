@@ -32,7 +32,7 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
     using AmmLib for AmmTypes.AmmPoolCoreModel;
     using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
 
-    uint256 public immutable version = 2001;
+    uint256 public immutable version = 2_002;
 
     address public immutable asset;
     uint256 public immutable decimals;

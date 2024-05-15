@@ -32,7 +32,7 @@ library StorageLibArbitrum {
 
     /// @notice Struct which contains services for a specific asset pool.
     struct AssetServicesStorage {
-        mapping(address => AssetServicesValue) value;
+        mapping(address asset => AssetServicesValue) value;
     }
 
     /// @notice Struct for one asset combining all data required for lens services related to a specific asset pool.
@@ -47,7 +47,7 @@ library StorageLibArbitrum {
 
     /// @notice Struct combining all data required for lens services related to a specific asset pool.
     struct AssetLensDataStorage {
-        mapping(address => AssetLensDataValue) value;
+        mapping(address asset => AssetLensDataValue) value;
     }
 
     /// @notice Struct which contains governance configuration for a specific asset pool.
@@ -64,7 +64,7 @@ library StorageLibArbitrum {
 
     /// @notice Struct which contains governance configuration for a specific asset pool.
     struct AssetGovernancePoolConfigStorage {
-        mapping(address => AssetGovernancePoolConfigValue) value;
+        mapping(address asset => AssetGovernancePoolConfigValue) value;
     }
 
     struct MessageSignerStorage {
@@ -91,14 +91,14 @@ library StorageLibArbitrum {
     /// value is a flag to indicate whether account is a liquidator.
     /// True - account is a liquidator, False - account is not a liquidator.
     struct AmmSwapsLiquidatorsStorage {
-        mapping(address => mapping(address => bool)) value;
+        mapping(address asset => mapping(address account => bool isLiquidator)) value;
     }
 
     /// @notice Struct which contains information about accounts appointed to rebalance.
     /// @dev first key - asset address, second key - account address which is allowed to rebalance in the asset pool,
     /// value - flag to indicate whether account is allowed to rebalance. True - allowed, False - not allowed.
     struct AmmPoolsAppointedToRebalanceStorage {
-        mapping(address => mapping(address => bool)) value;
+        mapping(address asset => mapping(address account => bool isAppointedToRebalance)) value;
     }
 
     struct AmmPoolsParamsValue {
@@ -115,12 +115,12 @@ library StorageLibArbitrum {
 
     /// @dev key - asset address, value - struct AmmOpenSwapParamsValue
     struct AmmPoolsParamsStorage {
-        mapping(address => AmmPoolsParamsValue) value;
+        mapping(address asset => AmmPoolsParamsValue) value;
     }
 
     /// @dev key - function sig, value - 1 if function is paused, 0 if not
     struct RouterFunctionPausedStorage {
-        mapping(bytes4 => uint256) value;
+        mapping(bytes4 sig => uint256 isPaused) value;
     }
 
     /// @notice Gets Ipor Protocol Router owner address.
