@@ -19,7 +19,7 @@ import "../../../interfaces/IAmmCloseSwapServiceWstEth.sol";
 import "../../../interfaces/IAmmCloseSwapLens.sol";
 import "../../../interfaces/IPowerTokenFlowsService.sol";
 import "../../../interfaces/IPowerTokenStakeService.sol";
-import "../../../amm-eth/interfaces/IAmmPoolsServiceWstEth.sol";
+import "../interfaces/IAmmPoolsServiceWstEth.sol";
 import {IAmmPoolsServiceUsdc} from "../interfaces/IAmmPoolsServiceUsdc.sol";
 import {IAmmOpenSwapServiceUsdc} from "../interfaces/IAmmOpenSwapServiceUsdc.sol";
 import {IAmmPoolsLensArbitrum} from "../amm-commons/AmmPoolsLensArbitrum.sol";

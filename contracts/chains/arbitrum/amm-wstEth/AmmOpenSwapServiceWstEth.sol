@@ -2,8 +2,9 @@
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
-import "../interfaces/IAmmOpenSwapServiceWstEth.sol";
-import "../base/amm/services/AmmOpenSwapServiceBaseV1.sol";
+import "../../../interfaces/IAmmOpenSwapServiceWstEth.sol";
+import "../../../base/amm/services/AmmOpenSwapServiceBaseV1.sol";
+import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 /// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
@@ -11,11 +12,8 @@ contract AmmOpenSwapServiceWstEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServi
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using IporContractValidator for address;
 
-    address public immutable messageSigner;
-    address public immutable wstETH;
-
     modifier onlySupportedInputAsset(address inputAsset) {
-        if (inputAsset == wstETH) {
+        if (inputAsset == asset) {
             _;
         } else {
             revert IporErrors.UnsupportedAsset(IporErrors.INPUT_ASSET_NOT_SUPPORTED, inputAsset);
@@ -24,16 +22,12 @@ contract AmmOpenSwapServiceWstEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServi
 
     constructor(
         AmmTypesBaseV1.AmmOpenSwapServicePoolConfiguration memory poolCfg,
-        address iporOracleInput,
-        address messageSignerInput,
-        address wstETHInput
-    ) AmmOpenSwapServiceBaseV1(poolCfg, iporOracleInput) {
-        messageSigner = messageSignerInput.checkAddress();
-        wstETH = wstETHInput.checkAddress();
+        address iporOracle_
+    ) AmmOpenSwapServiceBaseV1(poolCfg, iporOracle_) {
     }
 
     function getMessageSigner() public view override returns (address) {
-        return messageSigner;
+        return StorageLibArbitrum.getMessageSignerStorage().value;
     }
 
     function openSwapPayFixed28daysWstEth(
