@@ -9,8 +9,8 @@ import "../../contracts/oracles/IporOracle.sol";
 import "../../contracts/chains/arbitrum/router/IporProtocolRouterArbitrum.sol";
 import "../../contracts/interfaces/IAmmCloseSwapLens.sol";
 import "../../contracts/chains/ethereum/amm-commons/AmmSwapsLens.sol";
-import "../../contracts/amm-eth/AmmOpenSwapServiceWstEth.sol";
-import "../../contracts/amm-eth/AmmCloseSwapServiceWstEth.sol";
+import "../../contracts/chains/arbitrum/amm-wstEth/AmmOpenSwapServiceWstEth.sol";
+import "../../contracts/chains/arbitrum/amm-wstEth/AmmCloseSwapServiceWstEth.sol";
 import "../../contracts/amm/AmmPoolsService.sol";
 import "../../contracts/chains/arbitrum/amm-commons/AmmCloseSwapLensArbitrum.sol";
 import "../../contracts/chains/arbitrum/amm-commons/AmmGovernanceServiceArbitrum.sol";
@@ -341,9 +341,7 @@ contract ArbitrumTestForkCommons is Test {
                 openingFeeRate: 5e14,
                 openingFeeTreasuryPortionRate: 5e17
             }),
-                iporOracleInput: iporOracleProxy,
-                messageSignerInput: messageSignerAddress,
-                wstETHInput: wstETH
+                iporOracle_: iporOracleProxy
             })
         );
     }
@@ -365,9 +363,7 @@ contract ArbitrumTestForkCommons is Test {
                 openingFeeRate: 0,
                 openingFeeTreasuryPortionRate: 5e17
             }),
-                iporOracleInput: iporOracleProxy,
-                messageSignerInput: messageSignerAddress,
-                wstETHInput: wstETH
+                iporOracle_: iporOracleProxy
             })
         );
     }
@@ -389,9 +385,7 @@ contract ArbitrumTestForkCommons is Test {
                 openingFeeRate: 0,
                 openingFeeTreasuryPortionRate: 5e17
             }),
-                iporOracleInput: iporOracleProxy,
-                messageSignerInput: messageSignerAddress,
-                wstETHInput: wstETH
+                iporOracle_: iporOracleProxy
             })
         );
     }
@@ -426,8 +420,7 @@ contract ArbitrumTestForkCommons is Test {
                 timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days: 2 days,
                 timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days: 3 days
             }),
-                iporOracleInput: iporOracleProxy,
-                messageSignerInput: messageSignerAddress
+                iporOracle_: iporOracleProxy
             })
         );
     }
@@ -456,8 +449,7 @@ contract ArbitrumTestForkCommons is Test {
                 timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days: 60 days,
                 timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days: 90 days
             }),
-                iporOracleInput: iporOracleProxy,
-                messageSignerInput: messageSignerAddress
+                iporOracle_: iporOracleProxy
             })
         );
     }
