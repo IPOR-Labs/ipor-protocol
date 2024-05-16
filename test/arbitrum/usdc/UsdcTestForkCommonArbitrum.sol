@@ -18,7 +18,7 @@ import "../../../contracts/chains/arbitrum/amm-commons/AmmCloseSwapLensArbitrum.
 import "../../../contracts/chains/arbitrum/amm-commons/AmmGovernanceServiceArbitrum.sol";
 import "../../../contracts/chains/arbitrum/amm-commons/AmmSwapsLensArbitrum.sol";
 
-import "../../../contracts/amm-eth/AmmPoolsServiceWstEth.sol";
+import "../../../contracts/chains/arbitrum/amm-wstEth/AmmPoolsServiceWstEth.sol";
 import "../../../contracts/base/amm/AmmStorageBaseV1.sol";
 import "../../../contracts/base/amm/AmmTreasuryBaseV1.sol";
 import "../../../contracts/base/spread/SpreadBaseV1.sol";
