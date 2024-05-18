@@ -21,6 +21,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     uint256 internal immutable _usdtDecimals;
     address internal immutable _usdtAmmStorage;
     address internal immutable _usdtAmmTreasury;
+    address internal immutable _usdtAmmVault;
     address internal immutable _usdtAmmPoolsTreasury;
     address internal immutable _usdtAmmPoolsTreasuryManager;
     address internal immutable _usdtAmmCharlieTreasury;
@@ -30,6 +31,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     uint256 internal immutable _usdcDecimals;
     address internal immutable _usdcAmmStorage;
     address internal immutable _usdcAmmTreasury;
+    address internal immutable _usdcAmmVault;
     address internal immutable _usdcAmmPoolsTreasury;
     address internal immutable _usdcAmmPoolsTreasuryManager;
     address internal immutable _usdcAmmCharlieTreasury;
@@ -39,6 +41,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
     uint256 internal immutable _daiDecimals;
     address internal immutable _daiAmmStorage;
     address internal immutable _daiAmmTreasury;
+    address internal immutable _daiAmmVault;
     address internal immutable _daiAmmPoolsTreasury;
     address internal immutable _daiAmmPoolsTreasuryManager;
     address internal immutable _daiAmmCharlieTreasury;
@@ -90,6 +93,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         _usdtDecimals = usdtPoolCfg.decimals;
         _usdtAmmStorage = usdtPoolCfg.ammStorage.checkAddress();
         _usdtAmmTreasury = usdtPoolCfg.ammTreasury.checkAddress();
+        _usdtAmmVault = usdtPoolCfg.ammVault.checkAddress();
         _usdtAmmPoolsTreasury = usdtPoolCfg.ammPoolsTreasury.checkAddress();
         _usdtAmmPoolsTreasuryManager = usdtPoolCfg.ammPoolsTreasuryManager.checkAddress();
         _usdtAmmCharlieTreasury = usdtPoolCfg.ammCharlieTreasury.checkAddress();
@@ -99,6 +103,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         _usdcDecimals = usdcPoolCfg.decimals;
         _usdcAmmStorage = usdcPoolCfg.ammStorage.checkAddress();
         _usdcAmmTreasury = usdcPoolCfg.ammTreasury.checkAddress();
+        _usdcAmmVault = usdcPoolCfg.ammVault.checkAddress();
         _usdcAmmPoolsTreasury = usdcPoolCfg.ammPoolsTreasury.checkAddress();
         _usdcAmmPoolsTreasuryManager = usdcPoolCfg.ammPoolsTreasuryManager.checkAddress();
         _usdcAmmCharlieTreasury = usdcPoolCfg.ammCharlieTreasury.checkAddress();
@@ -108,6 +113,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         _daiDecimals = daiPoolCfg.decimals;
         _daiAmmStorage = daiPoolCfg.ammStorage.checkAddress();
         _daiAmmTreasury = daiPoolCfg.ammTreasury.checkAddress();
+        _daiAmmVault = daiPoolCfg.ammVault.checkAddress();
         _daiAmmPoolsTreasury = daiPoolCfg.ammPoolsTreasury.checkAddress();
         _daiAmmPoolsTreasuryManager = daiPoolCfg.ammPoolsTreasuryManager.checkAddress();
         _daiAmmCharlieTreasury = daiPoolCfg.ammCharlieTreasury.checkAddress();
@@ -261,6 +267,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
                 decimals: _usdtDecimals,
                 ammStorage: _usdtAmmStorage,
                 ammTreasury: _usdtAmmTreasury,
+                ammVault: _usdtAmmVault,
                 ammPoolsTreasury: _usdtAmmPoolsTreasury,
                 ammPoolsTreasuryManager: _usdtAmmPoolsTreasuryManager,
                 ammCharlieTreasury: _usdtAmmCharlieTreasury,
@@ -273,6 +280,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
                 decimals: _usdcDecimals,
                 ammStorage: _usdcAmmStorage,
                 ammTreasury: _usdcAmmTreasury,
+                ammVault: _usdcAmmVault,
                 ammPoolsTreasury: _usdcAmmPoolsTreasury,
                 ammPoolsTreasuryManager: _usdcAmmPoolsTreasuryManager,
                 ammCharlieTreasury: _usdcAmmCharlieTreasury,
@@ -285,6 +293,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
                 decimals: _daiDecimals,
                 ammStorage: _daiAmmStorage,
                 ammTreasury: _daiAmmTreasury,
+                ammVault: _daiAmmVault,
                 ammPoolsTreasury: _daiAmmPoolsTreasury,
                 ammPoolsTreasuryManager: _daiAmmPoolsTreasuryManager,
                 ammCharlieTreasury: _daiAmmCharlieTreasury,
@@ -297,6 +306,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
                 decimals: _stEthDecimals,
                 ammStorage: _stEthAmmStorage,
                 ammTreasury: _stEthAmmTreasury,
+                ammVault: address(0),
                 ammPoolsTreasury: _stEthAmmPoolsTreasury,
                 ammPoolsTreasuryManager: _stEthAmmPoolsTreasuryManager,
                 ammCharlieTreasury: _stEthAmmCharlieTreasury,
@@ -309,6 +319,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
                 decimals: _weEthDecimals,
                 ammStorage: _weEthAmmStorage,
                 ammTreasury: _weEthAmmTreasury,
+                ammVault: address(0),
                 ammPoolsTreasury: _weEthAmmPoolsTreasury,
                 ammPoolsTreasuryManager: _weEthAmmPoolsTreasuryManager,
                 ammCharlieTreasury: _weEthAmmCharlieTreasury,
@@ -321,6 +332,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
                 decimals: _usdmDecimals,
                 ammStorage: _usdmAmmStorage,
                 ammTreasury: _usdmAmmTreasury,
+                ammVault: address(0),
                 ammPoolsTreasury: _usdmAmmPoolsTreasury,
                 ammPoolsTreasuryManager: _usdmAmmPoolsTreasuryManager,
                 ammCharlieTreasury: _usdmAmmCharlieTreasury,

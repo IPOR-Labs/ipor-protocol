@@ -128,7 +128,7 @@ contract UsdmTestForkCommonArbitrum is Test {
             decimals: IERC20MetadataUpgradeable(USDM).decimals(),
             ammStorage: ammStorageUsdmProxy,
             ammTreasury: ammTreasuryUsdmProxy,
-            vault: address(0),
+            ammVault: address(0),
             ammPoolsTreasury: treasurer,
             ammPoolsTreasuryManager: treasurer,
             ammCharlieTreasury: treasurer,

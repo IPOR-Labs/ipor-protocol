@@ -55,7 +55,7 @@ library StorageLibArbitrum {
         uint256 decimals;
         address ammStorage;
         address ammTreasury;
-        address vault;
+        address ammVault;
         address ammPoolsTreasury;
         address ammPoolsTreasuryManager;
         address ammCharlieTreasury;

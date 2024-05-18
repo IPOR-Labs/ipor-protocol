@@ -134,7 +134,7 @@ contract ArbitrumTestForkCommons is Test {
             decimals: IERC20MetadataUpgradeable(wstETH).decimals(),
             ammStorage: ammStorageWstEthProxy,
             ammTreasury: ammTreasuryWstEthProxy,
-            vault: address(0),
+            ammVault: address(0),
             ammPoolsTreasury: treasurer,
             ammPoolsTreasuryManager: treasurer,
             ammCharlieTreasury: treasurer,
