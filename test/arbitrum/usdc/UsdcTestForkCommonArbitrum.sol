@@ -265,8 +265,8 @@ contract UsdcTestForkCommonArbitrum is Test {
             ipToken: ipUsdc,
             ammStorage: ammStorageUsdcProxy,
             ammTreasury: ammTreasuryUsdcProxy,
-            spread: address(0),
-            vault: address(0)
+            ammVault: address(0),
+            spread: address(0)
         }));
 
         IAmmGovernanceServiceArbitrum(iporProtocolRouterProxy).setAssetServices(USDC, StorageLibArbitrum.AssetServicesValue({

@@ -41,8 +41,8 @@ library StorageLibArbitrum {
         address ipToken;
         address ammStorage;
         address ammTreasury;
+        address ammVault;
         address spread;
-        address vault;
     }
 
     /// @notice Struct combining all data required for lens services related to a specific asset pool.

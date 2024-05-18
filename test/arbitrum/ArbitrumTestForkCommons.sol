@@ -147,8 +147,8 @@ contract ArbitrumTestForkCommons is Test {
             ipToken: ipwstETH,
             ammStorage: ammStorageWstEthProxy,
             ammTreasury: ammTreasuryWstEthProxy,
-            spread: spreadWstEth,
-            vault: address(0)
+            ammVault: address(0),
+            spread: spreadWstEth
         }));
 
         IAmmGovernanceServiceArbitrum(iporProtocolRouterProxy).setAssetServices(wstETH, StorageLibArbitrum.AssetServicesValue({
