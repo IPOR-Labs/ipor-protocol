@@ -13,7 +13,7 @@ import "../../../contracts/amm-usdm/AmmPoolsServiceUsdm.sol";
 import "../../../contracts/amm-usdm/AmmPoolsLensUsdm.sol";
 import "../../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
 import "../../../contracts/chains/ethereum/amm-commons/AmmGovernanceService.sol";
-import "../arbitrum/WUsdmMock.sol";
+import "../../arbitrum/usdm/WUsdmMock.sol";
 
 contract UsdmTestForkCommonEthereum is Test {
     address constant USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;

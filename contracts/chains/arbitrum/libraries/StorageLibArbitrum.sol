@@ -17,23 +17,25 @@ library StorageLibArbitrum {
         AmmSwapsLiquidators,
         AmmPoolsAppointedToRebalance,
         AmmPoolsParams,
-        IporIndexOracle, /// @dev The address of the IPOR Index Oracle Proxy.
         MessageSigner, /// @dev The address of the IPOR Message Signer.
         AssetLensData, /// @dev Mapping of asset address to asset lens data.
         AssetGovernancePoolConfig, /// @dev Mapping of asset address to asset governance data.
         AssetServices /// @dev Mapping of asset address to set of services per pool.
     }
 
+    /// @notice Struct for one asset which contains services for a specific asset pool.
     struct AssetServicesValue {
         address ammPoolsService;
         address ammOpenSwapService;
         address ammCloseSwapService;
     }
 
+    /// @notice Struct which contains services for a specific asset pool.
     struct AssetServicesStorage {
-        mapping(address => AssetServicesValue) value;
+        mapping(address asset => AssetServicesValue) value;
     }
 
+    /// @notice Struct for one asset combining all data required for lens services related to a specific asset pool.
     struct AssetLensDataValue {
         uint256 decimals;
         address ipToken;
@@ -43,10 +45,12 @@ library StorageLibArbitrum {
         address vault;
     }
 
+    /// @notice Struct combining all data required for lens services related to a specific asset pool.
     struct AssetLensDataStorage {
-        mapping(address => AssetLensDataValue) value;
+        mapping(address asset => AssetLensDataValue) value;
     }
 
+    /// @notice Struct which contains governance configuration for a specific asset pool.
     struct AssetGovernancePoolConfigValue {
         uint256 decimals;
         address ammStorage;
@@ -58,12 +62,9 @@ library StorageLibArbitrum {
         address ammCharlieTreasuryManager;
     }
 
+    /// @notice Struct which contains governance configuration for a specific asset pool.
     struct AssetGovernancePoolConfigStorage {
-        mapping(address => AssetGovernancePoolConfigValue) value;
-    }
-
-    struct IporIndexOracleStorage {
-        address value;
+        mapping(address asset => AssetGovernancePoolConfigValue) value;
     }
 
     struct MessageSignerStorage {
@@ -90,14 +91,14 @@ library StorageLibArbitrum {
     /// value is a flag to indicate whether account is a liquidator.
     /// True - account is a liquidator, False - account is not a liquidator.
     struct AmmSwapsLiquidatorsStorage {
-        mapping(address => mapping(address => bool)) value;
+        mapping(address asset => mapping(address account => bool isLiquidator)) value;
     }
 
     /// @notice Struct which contains information about accounts appointed to rebalance.
     /// @dev first key - asset address, second key - account address which is allowed to rebalance in the asset pool,
     /// value - flag to indicate whether account is allowed to rebalance. True - allowed, False - not allowed.
     struct AmmPoolsAppointedToRebalanceStorage {
-        mapping(address => mapping(address => bool)) value;
+        mapping(address asset => mapping(address account => bool isAppointedToRebalance)) value;
     }
 
     struct AmmPoolsParamsValue {
@@ -114,12 +115,12 @@ library StorageLibArbitrum {
 
     /// @dev key - asset address, value - struct AmmOpenSwapParamsValue
     struct AmmPoolsParamsStorage {
-        mapping(address => AmmPoolsParamsValue) value;
+        mapping(address asset => AmmPoolsParamsValue) value;
     }
 
     /// @dev key - function sig, value - 1 if function is paused, 0 if not
     struct RouterFunctionPausedStorage {
-        mapping(bytes4 => uint256) value;
+        mapping(bytes4 sig => uint256 isPaused) value;
     }
 
     /// @notice Gets Ipor Protocol Router owner address.
@@ -188,13 +189,6 @@ library StorageLibArbitrum {
     /// @return store - point to amm pools params storage.
     function getAmmPoolsParamsStorage() internal pure returns (AmmPoolsParamsStorage storage store) {
         uint256 slot = _getStorageSlot(StorageId.AmmPoolsParams);
-        assembly {
-            store.slot := slot
-        }
-    }
-
-   function getIporIndexOracleStorage() internal pure returns (IporIndexOracleStorage storage store) {
-        uint256 slot = _getStorageSlot(StorageId.IporIndexOracle);
         assembly {
             store.slot := slot
         }

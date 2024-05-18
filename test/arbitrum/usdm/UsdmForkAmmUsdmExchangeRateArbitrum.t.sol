@@ -3,7 +3,6 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import "../../../contracts/interfaces/IAmmCloseSwapServiceWstEth.sol";
 import "../../../contracts/interfaces/types/AmmTypes.sol";
 import {UsdmTestForkCommonArbitrum} from "./UsdmTestForkCommonArbitrum.sol";
 import {IAmmPoolsLens} from "../../../contracts/interfaces/IAmmPoolsLens.sol";
@@ -59,7 +58,7 @@ contract UsdmForkAmmUsdmExchangeRateEthereumTest is UsdmTestForkCommonArbitrum {
     {
         // given
         _init();
-        vm.startPrank(IporProtocolOwner);
+        vm.startPrank(PROTOCOL_OWNER);
         _createAmmPoolsServiceUsdm(0);
         _setupAssetServices();
         vm.stopPrank();

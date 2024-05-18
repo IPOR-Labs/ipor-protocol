@@ -11,6 +11,7 @@ import {IporContractValidator} from "../../../libraries/IporContractValidator.so
 import {IAmmOpenSwapServiceUsdc} from "../interfaces/IAmmOpenSwapServiceUsdc.sol";
 import {AmmTypesBaseV1} from "../../../base/types/AmmTypesBaseV1.sol";
 import {AmmOpenSwapServiceBaseV1} from "../../../base/amm/services/AmmOpenSwapServiceBaseV1.sol";
+import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 /// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
@@ -28,9 +29,12 @@ contract AmmOpenSwapServiceUsdc is AmmOpenSwapServiceBaseV1, IAmmOpenSwapService
 
     constructor(
         AmmTypesBaseV1.AmmOpenSwapServicePoolConfiguration memory poolCfg,
-        address iporOracle_,
-        address messageSigner_
-    ) AmmOpenSwapServiceBaseV1(poolCfg, iporOracle_, messageSigner_) {}
+        address iporOracle_
+    ) AmmOpenSwapServiceBaseV1(poolCfg, iporOracle_) {}
+
+    function getMessageSigner() public view override returns (address) {
+        return StorageLibArbitrum.getMessageSignerStorage().value;
+    }
 
     function openSwapPayFixed28daysUsdc(
         address beneficiary,

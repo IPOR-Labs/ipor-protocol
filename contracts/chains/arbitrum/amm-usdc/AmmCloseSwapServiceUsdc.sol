@@ -5,15 +5,20 @@ import {AmmTypes} from "../../../interfaces/types/AmmTypes.sol";
 import {IAmmCloseSwapLens} from "../../../interfaces/IAmmCloseSwapLens.sol";
 import {IAmmCloseSwapServiceUsdc} from "../../../interfaces/IAmmCloseSwapServiceUsdc.sol";
 import {AmmCloseSwapServiceBaseV1} from "../../../base/amm/services/AmmCloseSwapServiceBaseV1.sol";
+import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 /// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
 contract AmmCloseSwapServiceUsdc is AmmCloseSwapServiceBaseV1, IAmmCloseSwapServiceUsdc {
+
     constructor(
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
-        address iporOracle_,
-        address messageSigner_
-    ) AmmCloseSwapServiceBaseV1(poolCfg, iporOracle_, messageSigner_) {}
+        address iporOracle_
+    ) AmmCloseSwapServiceBaseV1(poolCfg, iporOracle_) {}
+
+    function getMessageSigner() public view override returns (address) {
+        return StorageLibArbitrum.getMessageSignerStorage().value;
+    }
 
     function closeSwapsUsdc(
         address beneficiary,

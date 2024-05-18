@@ -16,10 +16,14 @@ contract AmmPoolsLensArbitrum is IAmmPoolsLensArbitrum {
     using IporContractValidator for address;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
 
+    address public immutable iporOracle;
+
+    constructor(address iporOracle_) {
+        iporOracle = iporOracle_.checkAddress();
+    }
+
     function getIpTokenExchangeRate(address asset_) external view returns (uint256) {
         StorageLibArbitrum.AssetLensDataValue memory assetLensData = StorageLibArbitrum.getAssetLensDataStorage().value[asset_];
-
-        address iporOracle = StorageLibArbitrum.getIporIndexOracleStorage().value;
 
         AmmTypes.AmmPoolCoreModel memory model = AmmTypes.AmmPoolCoreModel({
             asset: asset_,

@@ -15,6 +15,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServic
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using IporContractValidator for address;
 
+    address public immutable messageSigner;
     address public immutable wETH;
     address public immutable wstETH;
 
@@ -32,9 +33,14 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServic
         address messageSignerInput,
         address wETHInput,
         address wstETHInput
-    ) AmmOpenSwapServiceBaseV1(poolCfg, iporOracleInput, messageSignerInput) {
+    ) AmmOpenSwapServiceBaseV1(poolCfg, iporOracleInput) {
+        messageSigner = messageSignerInput.checkAddress();
         wETH = wETHInput.checkAddress();
         wstETH = wstETHInput.checkAddress();
+    }
+
+    function getMessageSigner() public view override returns (address) {
+        return messageSigner;
     }
 
     function openSwapPayFixed28daysStEth(

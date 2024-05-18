@@ -245,7 +245,7 @@ contract ProvideUsdmArbitrumTest is UsdmTestForkCommonArbitrum {
     function testShouldNotProvideLiquidityWhenMaxLiquidityPoolBalanceExceeded() public {
         // given
         uint provideAmount = 20_001e18;
-        vm.startPrank(IporProtocolOwner);
+        vm.startPrank(PROTOCOL_OWNER);
         IAmmGovernanceService(IporProtocolRouterProxy).setAmmPoolsParams(USDM, 20_000, 0, 5000);
         vm.stopPrank();
 

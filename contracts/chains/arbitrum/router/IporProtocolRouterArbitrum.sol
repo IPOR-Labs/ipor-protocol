@@ -4,28 +4,30 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts/utils/Address.sol";
 
 import "../../../interfaces/IAmmSwapsLens.sol";
-import "../../../interfaces/IAmmPoolsLens.sol";
 import "../../../interfaces/IPowerTokenLens.sol";
 import "../../../interfaces/ILiquidityMiningLens.sol";
 import "../../../interfaces/IAmmGovernanceService.sol";
+import {IAmmCloseSwapServiceUsdc} from "../../../interfaces/IAmmCloseSwapServiceUsdc.sol";
+
 import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
 import {IAmmGovernanceServiceArbitrum} from "../interfaces/IAmmGovernanceServiceArbitrum.sol";
 import {IAmmGovernanceLensArbitrum} from "../interfaces/IAmmGovernanceLensArbitrum.sol";
+import "../../../amm-usdm/interfaces/IAmmPoolsServiceUsdm.sol";
 import "../../../interfaces/IAmmGovernanceLens.sol";
-import "../../../interfaces/IAmmOpenSwapLens.sol";
 import "../../../interfaces/IAmmOpenSwapServiceWstEth.sol";
 import "../../../interfaces/IAmmCloseSwapServiceWstEth.sol";
 import "../../../interfaces/IAmmCloseSwapLens.sol";
 import "../../../interfaces/IPowerTokenFlowsService.sol";
 import "../../../interfaces/IPowerTokenStakeService.sol";
-import "../../../amm-eth/interfaces/IAmmPoolsServiceWstEth.sol";
-import "../../../amm-eth/interfaces/IAmmPoolsLensWstEth.sol";
+import "../interfaces/IAmmPoolsServiceWstEth.sol";
+import {IAmmPoolsServiceUsdc} from "../interfaces/IAmmPoolsServiceUsdc.sol";
+import {IAmmOpenSwapServiceUsdc} from "../interfaces/IAmmOpenSwapServiceUsdc.sol";
+import {IAmmPoolsLensArbitrum} from "../amm-commons/AmmPoolsLensArbitrum.sol";
+
 import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/IporContractValidator.sol";
+
 import "../../../router/IporProtocolRouterAbstract.sol";
-import {IAmmPoolsLensArbitrum} from "../amm-commons/AmmPoolsLensArbitrum.sol";
-import "../../../amm-usdm/interfaces/IAmmPoolsServiceUsdm.sol";
-import "../../../amm-usdm/interfaces/IAmmPoolsLensUsdm.sol";
 
 /// @title Entry point for IPOR protocol
 contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
@@ -140,6 +142,34 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
             StorageLibArbitrum.AssetServicesValue storage servicesCfg = StorageLibArbitrum.getAssetServicesStorage().value[usdm];
             return servicesCfg.ammPoolsService;
         } else if (
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdc.provideLiquidityUsdcToAmmPoolUsdc.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdc.redeemFromAmmPoolUsdc.selector)
+        ) {
+            if (batchOperation == 0) {
+                _nonReentrantBefore();
+            }
+            StorageLibArbitrum.AssetServicesValue storage servicesCfg = StorageLibArbitrum.getAssetServicesStorage().value[usdc];
+            return servicesCfg.ammPoolsService;
+        } else if (
+            _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapServiceUsdc.openSwapPayFixed28daysUsdc.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapServiceUsdc.openSwapPayFixed60daysUsdc.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapServiceUsdc.openSwapPayFixed90daysUsdc.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapServiceUsdc.openSwapReceiveFixed28daysUsdc.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapServiceUsdc.openSwapReceiveFixed60daysUsdc.selector) ||
+            _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapServiceUsdc.openSwapReceiveFixed90daysUsdc.selector)
+        ) {
+            if (batchOperation == 0) {
+                _nonReentrantBefore();
+            }
+            StorageLibArbitrum.AssetServicesValue storage servicesCfg = StorageLibArbitrum.getAssetServicesStorage().value[usdc];
+            return servicesCfg.ammOpenSwapService;
+        } else if (_checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapServiceUsdc.closeSwapsUsdc.selector)) {
+            if (batchOperation == 0) {
+                _nonReentrantBefore();
+            }
+            StorageLibArbitrum.AssetServicesValue storage servicesCfg = StorageLibArbitrum.getAssetServicesStorage().value[usdc];
+            return servicesCfg.ammCloseSwapService;
+        } else if (
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenStakeService.stakeLpTokensToLiquidityMining.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenStakeService.unstakeLpTokensFromLiquidityMining.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenStakeService.stakeGovernanceTokenToPowerToken.selector) ||
@@ -189,7 +219,6 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
             sig == IAmmGovernanceService.withdrawFromAssetManagement.selector ||
             sig == IAmmGovernanceService.withdrawAllFromAssetManagement.selector ||
             sig == IAmmGovernanceService.setAmmPoolsParams.selector ||
-            sig == IAmmGovernanceServiceArbitrum.setIporIndexOracle.selector ||
             sig == IAmmGovernanceServiceArbitrum.setMessageSigner.selector ||
             sig == IAmmGovernanceServiceArbitrum.setAssetLensData.selector ||
             sig == IAmmGovernanceServiceArbitrum.setAmmGovernancePoolConfiguration.selector ||
@@ -206,7 +235,6 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
             sig == IAmmGovernanceLens.isAppointedToRebalanceInAmm.selector ||
             sig == IAmmGovernanceLens.getAmmPoolsParams.selector ||
             sig == IAmmGovernanceLens.getAmmGovernancePoolConfiguration.selector ||
-            sig == IAmmGovernanceLensArbitrum.getIporIndexOracle.selector ||
             sig == IAmmGovernanceLensArbitrum.getMessageSigner.selector ||
             sig == IAmmGovernanceLensArbitrum.getAssetLensData.selector ||
             sig == IAmmGovernanceLensArbitrum.getAssetServices.selector

@@ -22,7 +22,7 @@ contract UsdmForkAmmGovernanceServiceArbitrumTest is UsdmTestForkCommonArbitrum 
                 IporErrors.UNSUPPORTED_MODULE_ASSET_MANAGEMENT,
                 USDM
             ));
-        vm.prank(IporProtocolOwner);
+        vm.prank(PROTOCOL_OWNER);
         IAmmGovernanceService(IporProtocolRouterProxy).withdrawFromAssetManagement(USDM, 100 * 1e18);
     }
 
@@ -36,7 +36,7 @@ contract UsdmForkAmmGovernanceServiceArbitrumTest is UsdmTestForkCommonArbitrum 
                 IporErrors.UNSUPPORTED_MODULE_ASSET_MANAGEMENT,
                 USDM
             ));
-        vm.prank(IporProtocolOwner);
+        vm.prank(PROTOCOL_OWNER);
         IAmmGovernanceService(IporProtocolRouterProxy).withdrawAllFromAssetManagement(USDM);
     }
 }

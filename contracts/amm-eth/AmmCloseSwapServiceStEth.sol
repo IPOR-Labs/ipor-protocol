@@ -7,11 +7,21 @@ import "../base/amm/services/AmmCloseSwapServiceBaseV1.sol";
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 /// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
 contract AmmCloseSwapServiceStEth is AmmCloseSwapServiceBaseV1, IAmmCloseSwapServiceStEth {
+    using IporContractValidator for address;
+
+    address public immutable messageSigner;
+
     constructor(
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput,
         address messageSignerInput
-    ) AmmCloseSwapServiceBaseV1(poolCfg, iporOracleInput, messageSignerInput) {}
+    ) AmmCloseSwapServiceBaseV1(poolCfg, iporOracleInput) {
+        messageSigner = messageSignerInput.checkAddress();
+    }
+
+    function getMessageSigner() public view override returns (address) {
+        return messageSigner;
+    }
 
     function closeSwapsStEth(
         address beneficiary,

@@ -9,8 +9,6 @@ import "../../../libraries/math/IporMath.sol";
 import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/errors/AmmErrors.sol";
 import "../../../libraries/IporContractValidator.sol";
-import "../../../amm/libraries/types/AmmInternalTypes.sol";
-import "../../../base/spread/SpreadBaseV1.sol";
 import "../libraries/SwapEventsBaseV1.sol";
 import "../libraries/SwapLogicBaseV1.sol";
 import "../../interfaces/ISpreadBaseV1.sol";
@@ -24,12 +22,11 @@ abstract contract AmmOpenSwapServiceBaseV1 {
 
     address public constant ETH_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
-    uint256 public immutable version = 2;
+    uint256 public immutable version = 2_002;
 
     address public immutable asset;
     uint256 public immutable decimals;
 
-    address public immutable messageSigner;
     address public immutable iporOracle;
     address public immutable spread;
     address public immutable ammStorage;
@@ -58,8 +55,7 @@ abstract contract AmmOpenSwapServiceBaseV1 {
 
     constructor(
         AmmTypesBaseV1.AmmOpenSwapServicePoolConfiguration memory poolCfg,
-        address iporOracleInput,
-        address messageSignerInput
+        address iporOracleInput
     ) {
         asset = poolCfg.asset.checkAddress();
         decimals = poolCfg.decimals;
@@ -76,8 +72,9 @@ abstract contract AmmOpenSwapServiceBaseV1 {
         openingFeeTreasuryPortionRate = poolCfg.openingFeeTreasuryPortionRate;
 
         iporOracle = iporOracleInput.checkAddress();
-        messageSigner = messageSignerInput.checkAddress();
     }
+
+    function getMessageSigner() public view virtual returns (address);
 
     /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
     function _openSwapPayFixed(
@@ -100,7 +97,7 @@ abstract contract AmmOpenSwapServiceBaseV1 {
                     asset,
                     uint256(tenor),
                     uint256(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING),
-                    messageSigner
+                    getMessageSigner()
                 )
             );
     }
@@ -126,7 +123,7 @@ abstract contract AmmOpenSwapServiceBaseV1 {
                     asset,
                     uint256(tenor),
                     uint256(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED),
-                    messageSigner
+                    getMessageSigner()
                 )
             );
     }

@@ -3,9 +3,11 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import "./ArbitrumTestForkCommons.sol";
+import {IAmmPoolsLens} from "../../../contracts/interfaces/IAmmPoolsLens.sol";
+import "../ArbitrumTestForkCommons.sol";
+import {IStETH} from "../../../contracts/amm-eth/interfaces/IStETH.sol";
 
-contract ArbitrumForkAmmUsdmOpenSwapsTest is ArbitrumTestForkCommons {
+contract ArbitrumForkAmmWstEthOpenSwapsTest is ArbitrumTestForkCommons {
     function setUp() public {
         vm.createSelectFork(vm.envString("ARBITRUM_PROVIDER_URL"), 171764768);
     }

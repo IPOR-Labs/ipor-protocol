@@ -11,11 +11,9 @@ import "../../../interfaces/IAmmCloseSwapService.sol";
 import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/IporContractValidator.sol";
 import "../../../libraries/AmmCloseSwapServicePoolConfigurationLib.sol";
-import "../../../amm/libraries/SwapCloseLogicLib.sol";
 import "../../../base/types/AmmTypesBaseV1.sol";
 import "../../../base/amm/libraries/SwapLogicBaseV1.sol";
 import "../../../base/amm/libraries/SwapCloseLogicLibBaseV1.sol";
-import "../../../base/amm/services/AmmCloseSwapServiceBaseV1.sol";
 import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
@@ -24,6 +22,12 @@ contract AmmCloseSwapLensArbitrum is IAmmCloseSwapLens {
     using IporContractValidator for address;
     using SwapLogicBaseV1 for AmmTypesBaseV1.Swap;
     using AmmCloseSwapServicePoolConfigurationLib for IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration;
+
+    address public immutable iporOracle;
+
+    constructor(address iporOracle_) {
+        iporOracle = iporOracle_.checkAddress();
+    }
 
     function getAmmCloseSwapServicePoolConfiguration(
         address asset
@@ -53,7 +57,7 @@ contract AmmCloseSwapLensArbitrum is IAmmCloseSwapLens {
 
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg = IAmmCloseSwapService(servicesCfg.ammCloseSwapService).getPoolConfiguration();
 
-        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(StorageLibArbitrum.getIporIndexOracleStorage().value).getAccruedIndex(
+        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(iporOracle).getAccruedIndex(
             block.timestamp,
             poolCfg.asset
         );

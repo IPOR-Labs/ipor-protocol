@@ -3,25 +3,21 @@ pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import {IWETH9} from "../../contracts/amm-eth/interfaces/IWETH9.sol";
+
 import "../../contracts/oracles/IporOracle.sol";
-import "../mocks/EmptyRouterImplementation.sol";
 import "../../contracts/chains/arbitrum/router/IporProtocolRouterArbitrum.sol";
-import "../../contracts/interfaces/IAmmSwapsLens.sol";
-import "../../contracts/interfaces/IAmmOpenSwapLens.sol";
 import "../../contracts/interfaces/IAmmCloseSwapLens.sol";
 import "../../contracts/chains/ethereum/amm-commons/AmmSwapsLens.sol";
-import "../../contracts/amm/AmmPoolsLens.sol";
-import "../../contracts/amm-eth/AmmPoolsLensWstEth.sol";
-import "../../contracts/amm/AssetManagementLens.sol";
-import "../../contracts/amm-eth/AmmOpenSwapServiceWstEth.sol";
-import "../../contracts/amm-eth/AmmCloseSwapServiceWstEth.sol";
+import "../../contracts/chains/arbitrum/amm-wstEth/AmmOpenSwapServiceWstEth.sol";
+import "../../contracts/chains/arbitrum/amm-wstEth/AmmCloseSwapServiceWstEth.sol";
 import "../../contracts/amm/AmmPoolsService.sol";
 import "../../contracts/chains/arbitrum/amm-commons/AmmCloseSwapLensArbitrum.sol";
 import "../../contracts/chains/arbitrum/amm-commons/AmmGovernanceServiceArbitrum.sol";
 import "../../contracts/chains/arbitrum/amm-commons/AmmSwapsLensArbitrum.sol";
 import {StorageLibArbitrum} from "../../contracts/chains/arbitrum/libraries/StorageLibArbitrum.sol";
 
-import "../../contracts/amm-eth/AmmPoolsServiceWstEth.sol";
+import "../../contracts/chains/arbitrum/amm-wstEth/AmmPoolsServiceWstEth.sol";
 import "../../contracts/base/amm/AmmStorageBaseV1.sol";
 import "../../contracts/base/amm/AmmTreasuryBaseV1.sol";
 import "../../contracts/base/spread/SpreadBaseV1.sol";
@@ -29,7 +25,7 @@ import "../../contracts/base/spread/SpreadBaseV1.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "./interfaces/IERC20Bridged.sol";
 import {AmmPoolsLensArbitrum} from "../../contracts/chains/arbitrum/amm-commons/AmmPoolsLensArbitrum.sol";
-import "../../contracts/amm-usdm/AmmPoolsLensUsdm.sol";
+
 import {AmmPoolsServiceUsdm} from "../../contracts/amm-usdm/AmmPoolsServiceUsdm.sol";
 
 contract ArbitrumTestForkCommons is Test {
@@ -108,7 +104,7 @@ contract ArbitrumTestForkCommons is Test {
 
         _createGovernanceService();
 
-        _createAmmPoolsService();
+        _createAmmPoolsServices();
         _createAmmOpenSwapServiceWstEth();
         _createAmmCloseSwapServiceWstEth();
 
@@ -131,8 +127,6 @@ contract ArbitrumTestForkCommons is Test {
         AmmTreasuryBaseV1(ammTreasuryWstEthProxy).unpause();
 
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(wstETH, 1000000000, 0, 0);
-
-        IAmmGovernanceServiceArbitrum(iporProtocolRouterProxy).setIporIndexOracle(wstETH, iporOracleProxy);
 
         IAmmGovernanceServiceArbitrum(iporProtocolRouterProxy).setMessageSigner(messageSignerAddress);
 
@@ -261,17 +255,17 @@ contract ArbitrumTestForkCommons is Test {
 
     function _createAmmSwapsLens() private {
         ammSwapsLens = address(
-            new AmmSwapsLensArbitrum()
+            new AmmSwapsLensArbitrum(iporOracleProxy)
         );
     }
 
     function _createAmmPoolsLens() private {
         ammPoolsLens = address(
-            new AmmPoolsLensArbitrum()
+            new AmmPoolsLensArbitrum(iporOracleProxy)
         );
     }
 
-    function _createAmmPoolsService() private {
+    function _createAmmPoolsServices() private {
         ammPoolsServiceWstEth = address(
             new AmmPoolsServiceWstEth({
                 wstEthInput: wstETH,
@@ -347,9 +341,7 @@ contract ArbitrumTestForkCommons is Test {
                 openingFeeRate: 5e14,
                 openingFeeTreasuryPortionRate: 5e17
             }),
-                iporOracleInput: iporOracleProxy,
-                messageSignerInput: messageSignerAddress,
-                wstETHInput: wstETH
+                iporOracle_: iporOracleProxy
             })
         );
     }
@@ -371,9 +363,7 @@ contract ArbitrumTestForkCommons is Test {
                 openingFeeRate: 0,
                 openingFeeTreasuryPortionRate: 5e17
             }),
-                iporOracleInput: iporOracleProxy,
-                messageSignerInput: messageSignerAddress,
-                wstETHInput: wstETH
+                iporOracle_: iporOracleProxy
             })
         );
     }
@@ -395,16 +385,14 @@ contract ArbitrumTestForkCommons is Test {
                 openingFeeRate: 0,
                 openingFeeTreasuryPortionRate: 5e17
             }),
-                iporOracleInput: iporOracleProxy,
-                messageSignerInput: messageSignerAddress,
-                wstETHInput: wstETH
+                iporOracle_: iporOracleProxy
             })
         );
     }
 
     function _createAmmCloseSwapLens() private {
         ammCloseSwapLens = address(
-            new AmmCloseSwapLensArbitrum()
+            new AmmCloseSwapLensArbitrum(iporOracleProxy)
         );
     }
 
@@ -432,8 +420,7 @@ contract ArbitrumTestForkCommons is Test {
                 timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days: 2 days,
                 timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days: 3 days
             }),
-                iporOracleInput: iporOracleProxy,
-                messageSignerInput: messageSignerAddress
+                iporOracle_: iporOracleProxy
             })
         );
     }
@@ -462,8 +449,7 @@ contract ArbitrumTestForkCommons is Test {
                 timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days: 60 days,
                 timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days: 90 days
             }),
-                iporOracleInput: iporOracleProxy,
-                messageSignerInput: messageSignerAddress
+                iporOracle_: iporOracleProxy
             })
         );
     }
