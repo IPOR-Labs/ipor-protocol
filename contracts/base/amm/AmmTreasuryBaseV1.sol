@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
+
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import {IporMath} from "../../libraries/math/IporMath.sol";
 import "../../interfaces/IProxyImplementation.sol";
 import "../interfaces/IAmmTreasuryBaseV1.sol";
 import "../interfaces/IAmmStorageBaseV1.sol";
@@ -17,13 +20,13 @@ import "../../security/PauseManager.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 
 contract AmmTreasuryBaseV1 is
-    Initializable,
-    PausableUpgradeable,
-    ReentrancyGuardUpgradeable,
-    UUPSUpgradeable,
-    IporOwnableUpgradeable,
-    IAmmTreasuryBaseV1,
-    IProxyImplementation
+Initializable,
+PausableUpgradeable,
+ReentrancyGuardUpgradeable,
+UUPSUpgradeable,
+IporOwnableUpgradeable,
+IAmmTreasuryBaseV1,
+IProxyImplementation
 {
     using SafeCast for uint256;
     using SafeCast for int256;
@@ -31,6 +34,7 @@ contract AmmTreasuryBaseV1 is
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     address public immutable asset;
+    uint256 public immutable assetDecimals;
     address public immutable router;
     address public immutable ammStorage;
 
@@ -43,6 +47,7 @@ contract AmmTreasuryBaseV1 is
 
     constructor(address assetInput, address routerInput, address ammStorageInput) {
         asset = assetInput.checkAddress();
+        assetDecimals = IERC20Metadata(asset).decimals();
         router = routerInput.checkAddress();
         ammStorage = ammStorageInput.checkAddress();
 
@@ -64,18 +69,19 @@ contract AmmTreasuryBaseV1 is
     function getLiquidityPoolBalance() external view override returns (uint256) {
         AmmTypesBaseV1.Balance memory balance = IAmmStorageBaseV1(ammStorage).getBalance();
 
-        uint256 liquidityPool = (IERC20Upgradeable(asset).balanceOf(address(this)).toInt256() -
-            balance.totalCollateralPayFixed.toInt256() -
-            balance.totalCollateralReceiveFixed.toInt256() -
-            balance.iporPublicationFee.toInt256() -
-            balance.treasury.toInt256() -
-            balance.totalLiquidationDepositBalance.toInt256()).toUint256();
+        uint256 liquidityPool =
+                    (IporMath.convertToWad(IERC20Upgradeable(asset).balanceOf(address(this)), assetDecimals).toInt256() -
+                    balance.totalCollateralPayFixed.toInt256() -
+                    balance.totalCollateralReceiveFixed.toInt256() -
+                    balance.iporPublicationFee.toInt256() -
+                    balance.treasury.toInt256() -
+                        balance.totalLiquidationDepositBalance.toInt256()).toUint256();
 
         return liquidityPool;
     }
 
     function getVersion() external pure returns (uint256) {
-        return 2_001;
+        return 2_002;
     }
 
     function pause() external override onlyPauseGuardian {

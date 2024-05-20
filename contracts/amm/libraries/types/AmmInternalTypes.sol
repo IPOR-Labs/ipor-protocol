@@ -44,18 +44,6 @@ library AmmInternalTypes {
         IporTypes.AccruedIpor accruedIpor;
     }
 
-    /// @notice Risk indicators context data
-    struct RiskIndicatorsContext {
-        /// @notice Asset address for which the risk indicators are calculated.
-        address asset;
-        /// @notice Tenor of the swap.
-        IporTypes.SwapTenor tenor;
-        /// @notice AMM Liquidity Pool balance.
-        uint256 liquidityPoolBalance;
-        /// @notice AMM Min Leverage allowed for a swap.
-        uint256 minLeverage;
-    }
-
     /// @notice Spread context data
     struct SpreadContext {
         /// @notice Asset address for which the spread is calculated.

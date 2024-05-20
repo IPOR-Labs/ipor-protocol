@@ -1,22 +1,28 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "../../interfaces/types/IporTypes.sol";
-import "../../interfaces/types/AmmTypes.sol";
-import "../../libraries/IporContractValidator.sol";
-import "../../security/IporOwnable.sol";
-import "../../amm/libraries/types/AmmInternalTypes.sol";
-import "../../amm/spread/CalculateTimeWeightedNotionalLibs.sol";
-import "../../base/interfaces/IAmmStorageBaseV1.sol";
-import "../../base/events/AmmEventsBaseV1.sol";
-import "../interfaces/ISpreadBaseV1.sol";
-import "./DemandSpreadStEthLibsBaseV1.sol";
-import "../amm/libraries/SwapLogicBaseV1.sol";
-import "./SpreadStorageLibsBaseV1.sol";
-import "./OfferedRateCalculationLibsBaseV1.sol";
+import {SafeCast} from "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import {IporTypes} from "../../interfaces/types/IporTypes.sol";
+import {AmmTypes} from "../../interfaces/types/AmmTypes.sol";
+import {IporContractValidator} from "../../libraries/IporContractValidator.sol";
+import {IporOwnable} from "../../security/IporOwnable.sol";
+import {AmmInternalTypes} from "../../amm/libraries/types/AmmInternalTypes.sol";
+import {SpreadStorageLibs} from "../../amm/spread/SpreadStorageLibs.sol";
+import {CalculateTimeWeightedNotionalLibs} from "../../amm/spread/CalculateTimeWeightedNotionalLibs.sol";
+import {IAmmStorageBaseV1} from "../../base/interfaces/IAmmStorageBaseV1.sol";
+import {AmmEventsBaseV1} from "../../base/events/AmmEventsBaseV1.sol";
+import {ISpreadBaseV1} from "../interfaces/ISpreadBaseV1.sol";
+import {SpreadInputData} from "../interfaces/DemandSpreadTypesBaseV1.sol";
+import {SwapLogicBaseV1} from "../amm/libraries/SwapLogicBaseV1.sol";
+import {SpreadStorageLibsBaseV1} from "./SpreadStorageLibsBaseV1.sol";
+import {OfferedRateCalculationLibsBaseV1} from "./OfferedRateCalculationLibsBaseV1.sol";
+import {SpreadTypesBaseV1} from "../types/SpreadTypesBaseV1.sol";
+import {CalculateTimeWeightedNotionalLibsBaseV1} from "./CalculateTimeWeightedNotionalLibsBaseV1.sol";
+import {IporErrors} from "../../libraries/errors/IporErrors.sol";
+import {AmmErrors} from "../../libraries/errors/AmmErrors.sol";
 
 // @dev This contract should calculate the spread for one asset and for all tenors.
-contract SpreadBaseV1 is IporOwnable, ISpreadBaseV1 {
+abstract contract SpreadBaseV2 is IporOwnable, ISpreadBaseV1 {
     error UnknownTenor(IporTypes.SwapTenor tenor, string errorCode, string methodName);
     using IporContractValidator for address;
     using SafeCast for uint256;
@@ -54,9 +60,7 @@ contract SpreadBaseV1 is IporOwnable, ISpreadBaseV1 {
         return 2_001;
     }
 
-    function spreadFunctionConfig() external pure override returns (uint256[] memory) {
-        return DemandSpreadStEthLibsBaseV1.spreadFunctionConfig();
-    }
+    function spreadFunctionConfig() external pure override virtual returns (uint256[] memory);
 
     function getTimeWeightedNotional()
         external
@@ -240,17 +244,19 @@ contract SpreadBaseV1 is IporOwnable, ISpreadBaseV1 {
         }
     }
 
-    function _calculateDemandPayFixed(SpreadInputs memory spreadInputs) internal view returns (uint256 spreadValue) {
-        DemandSpreadStEthLibsBaseV1.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
+    function _calculatePayFixedSpread(SpreadInputData memory inputData) internal virtual view returns (uint256 spreadValue);
 
-        spreadValue = DemandSpreadStEthLibsBaseV1.calculatePayFixedSpread(inputData);
+    function _calculateDemandPayFixed(SpreadInputs memory spreadInputs) internal view returns (uint256 spreadValue) {
+        SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
+
+        spreadValue = _calculatePayFixedSpread(inputData);
     }
 
     function _calculateDemandPayFixedAndUpdateTimeWeightedNotional(
         SpreadInputs memory spreadInputs
     ) internal returns (uint256 spreadValue) {
-        DemandSpreadStEthLibsBaseV1.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
-        spreadValue = DemandSpreadStEthLibsBaseV1.calculatePayFixedSpread(inputData);
+        SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
+        spreadValue = _calculatePayFixedSpread(inputData);
 
         SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibsBaseV1
             .getTimeWeightedNotionalForAssetAndTenor(inputData.timeWeightedNotionalStorageId);
@@ -265,17 +271,19 @@ contract SpreadBaseV1 is IporOwnable, ISpreadBaseV1 {
     function _calculateDemandReceiveFixed(
         SpreadInputs calldata spreadInputs
     ) internal view returns (uint256 spreadValue) {
-        DemandSpreadStEthLibsBaseV1.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
+        SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
 
-        spreadValue = DemandSpreadStEthLibsBaseV1.calculateReceiveFixedSpread(inputData);
+        spreadValue = _calculateReceiveFixedSpread(inputData);
     }
+
+    function _calculateReceiveFixedSpread(SpreadInputData memory inputData) internal virtual view returns (uint256 spreadValue);
 
     function _calculateImbalanceReceiveFixedAndUpdateTimeWeightedNotional(
         SpreadInputs calldata spreadInputs
     ) internal returns (uint256 spreadValue) {
-        DemandSpreadStEthLibsBaseV1.SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
+        SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
 
-        spreadValue = DemandSpreadStEthLibsBaseV1.calculateReceiveFixedSpread(inputData);
+        spreadValue = _calculateReceiveFixedSpread(inputData);
         SpreadTypesBaseV1.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibsBaseV1
             .getTimeWeightedNotionalForAssetAndTenor(inputData.timeWeightedNotionalStorageId);
 
@@ -288,8 +296,8 @@ contract SpreadBaseV1 is IporOwnable, ISpreadBaseV1 {
 
     function _getSpreadConfigForDemand(
         SpreadInputs memory spreadInputs
-    ) internal pure returns (DemandSpreadStEthLibsBaseV1.SpreadInputData memory inputData) {
-        inputData = DemandSpreadStEthLibsBaseV1.SpreadInputData({
+    ) internal pure returns (SpreadInputData memory inputData) {
+        inputData = SpreadInputData({
             totalCollateralPayFixed: spreadInputs.totalCollateralPayFixed,
             totalCollateralReceiveFixed: spreadInputs.totalCollateralReceiveFixed,
             liquidityPoolBalance: spreadInputs.liquidityPoolBalance,

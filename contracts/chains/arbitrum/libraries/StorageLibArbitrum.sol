@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 /// @title Storage ID's associated with the IPOR Protocol Router.
-library StorageLib {
+library StorageLibArbitrum {
     uint256 constant STORAGE_SLOT_BASE = 1_000_000;
 
     // append only
@@ -16,7 +16,59 @@ library StorageLib {
         RouterFunctionPaused,
         AmmSwapsLiquidators,
         AmmPoolsAppointedToRebalance,
-        AmmPoolsParams
+        AmmPoolsParams,
+        MessageSigner, /// @dev The address of the IPOR Message Signer.
+        AssetLensData, /// @dev Mapping of asset address to asset lens data.
+        AssetGovernancePoolConfig, /// @dev Mapping of asset address to asset governance data.
+        AssetServices /// @dev Mapping of asset address to set of services per pool.
+    }
+
+    /// @notice Struct for one asset which contains services for a specific asset pool.
+    struct AssetServicesValue {
+        address ammPoolsService;
+        address ammOpenSwapService;
+        address ammCloseSwapService;
+    }
+
+    /// @notice Struct which contains services for a specific asset pool.
+    struct AssetServicesStorage {
+        mapping(address asset => AssetServicesValue) value;
+    }
+
+    /// @notice Struct for one asset combining all data required for lens services related to a specific asset pool.
+    struct AssetLensDataValue {
+        uint8 decimals;
+        address ipToken;
+        address ammStorage;
+        address ammTreasury;
+        address ammVault;
+        address spread;
+    }
+
+    /// @notice Struct combining all data required for lens services related to a specific asset pool.
+    struct AssetLensDataStorage {
+        mapping(address asset => AssetLensDataValue) value;
+    }
+
+    /// @notice Struct which contains governance configuration for a specific asset pool.
+    struct AssetGovernancePoolConfigValue {
+        uint8 decimals;
+        address ammStorage;
+        address ammTreasury;
+        address ammVault;
+        address ammPoolsTreasury;
+        address ammPoolsTreasuryManager;
+        address ammCharlieTreasury;
+        address ammCharlieTreasuryManager;
+    }
+
+    /// @notice Struct which contains governance configuration for a specific asset pool.
+    struct AssetGovernancePoolConfigStorage {
+        mapping(address asset => AssetGovernancePoolConfigValue) value;
+    }
+
+    struct MessageSignerStorage {
+        address value;
     }
 
     /// @notice Struct which contains owner address of IPOR Protocol Router.
@@ -39,18 +91,18 @@ library StorageLib {
     /// value is a flag to indicate whether account is a liquidator.
     /// True - account is a liquidator, False - account is not a liquidator.
     struct AmmSwapsLiquidatorsStorage {
-        mapping(address => mapping(address => bool)) value;
+        mapping(address asset => mapping(address account => bool isLiquidator)) value;
     }
 
     /// @notice Struct which contains information about accounts appointed to rebalance.
     /// @dev first key - asset address, second key - account address which is allowed to rebalance in the asset pool,
     /// value - flag to indicate whether account is allowed to rebalance. True - allowed, False - not allowed.
     struct AmmPoolsAppointedToRebalanceStorage {
-        mapping(address => mapping(address => bool)) value;
+        mapping(address asset => mapping(address account => bool isAppointedToRebalance)) value;
     }
 
     struct AmmPoolsParamsValue {
-        /// @dev max liquidity pool balance in the asset pool, represented WITHOUT 18 decimals
+        /// @dev max liquidity pool balance in the asset pool, represented without 18 decimals
         uint32 maxLiquidityPoolBalance;
         /// @dev The threshold for auto-rebalancing the pool. Value represented without 18 decimals.
         /// Value represents multiplication of 1000.
@@ -63,12 +115,12 @@ library StorageLib {
 
     /// @dev key - asset address, value - struct AmmOpenSwapParamsValue
     struct AmmPoolsParamsStorage {
-        mapping(address => AmmPoolsParamsValue) value;
+        mapping(address asset => AmmPoolsParamsValue) value;
     }
 
     /// @dev key - function sig, value - 1 if function is paused, 0 if not
     struct RouterFunctionPausedStorage {
-        mapping(bytes4 => uint256) value;
+        mapping(bytes4 sig => uint256 isPaused) value;
     }
 
     /// @notice Gets Ipor Protocol Router owner address.
@@ -123,9 +175,9 @@ library StorageLib {
     /// @notice Gets point to accounts appointed to rebalance storage.
     /// @return store - point to accounts appointed to rebalance storage.
     function getAmmPoolsAppointedToRebalanceStorage()
-        internal
-        pure
-        returns (AmmPoolsAppointedToRebalanceStorage storage store)
+    internal
+    pure
+    returns (AmmPoolsAppointedToRebalanceStorage storage store)
     {
         uint256 slot = _getStorageSlot(StorageId.AmmPoolsAppointedToRebalance);
         assembly {
@@ -137,6 +189,34 @@ library StorageLib {
     /// @return store - point to amm pools params storage.
     function getAmmPoolsParamsStorage() internal pure returns (AmmPoolsParamsStorage storage store) {
         uint256 slot = _getStorageSlot(StorageId.AmmPoolsParams);
+        assembly {
+            store.slot := slot
+        }
+    }
+
+    function getMessageSignerStorage() internal pure returns (MessageSignerStorage storage store) {
+        uint256 slot = _getStorageSlot(StorageId.MessageSigner);
+        assembly {
+            store.slot := slot
+        }
+    }
+
+    function getAssetLensDataStorage() internal pure returns (AssetLensDataStorage storage store) {
+        uint256 slot = _getStorageSlot(StorageId.AssetLensData);
+        assembly {
+            store.slot := slot
+        }
+    }
+
+    function getAssetGovernancePoolConfigStorage() internal pure returns (AssetGovernancePoolConfigStorage storage store) {
+        uint256 slot = _getStorageSlot(StorageId.AssetGovernancePoolConfig);
+        assembly {
+            store.slot := slot
+        }
+    }
+
+    function getAssetServicesStorage() internal pure returns (AssetServicesStorage storage store) {
+        uint256 slot = _getStorageSlot(StorageId.AssetServices);
         assembly {
             store.slot := slot
         }

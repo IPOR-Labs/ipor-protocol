@@ -3,10 +3,9 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import "../../../contracts/interfaces/IAmmCloseSwapServiceWstEth.sol";
 import "../../../contracts/interfaces/types/AmmTypes.sol";
 import {UsdmTestForkCommonArbitrum} from "./UsdmTestForkCommonArbitrum.sol";
-import {IAmmPoolsLensUsdm} from "../../../contracts/amm-usdm/interfaces/IAmmPoolsLensUsdm.sol";
+import {IAmmPoolsLens} from "../../../contracts/interfaces/IAmmPoolsLens.sol";
 import {IAmmPoolsServiceUsdm} from "../../../contracts/amm-usdm/interfaces/IAmmPoolsServiceUsdm.sol";
 
 contract UsdmForkAmmUsdmExchangeRateEthereumTest is UsdmTestForkCommonArbitrum {
@@ -19,14 +18,14 @@ contract UsdmForkAmmUsdmExchangeRateEthereumTest is UsdmTestForkCommonArbitrum {
 
         uint256 provideAmount = 10_000 * 1e18;
 
-        uint256 exchangeRateBefore = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLens(IporProtocolRouterProxy).getIpTokenExchangeRate(USDM);
 
         // when
         vm.prank(user);
         IAmmPoolsServiceUsdm(IporProtocolRouterProxy).provideLiquidityUsdmToAmmPoolUsdm(user, provideAmount);
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLens(IporProtocolRouterProxy).getIpTokenExchangeRate(USDM);
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -39,7 +38,7 @@ contract UsdmForkAmmUsdmExchangeRateEthereumTest is UsdmTestForkCommonArbitrum {
 
         uint256 provideAmount = 1 ether;
 
-        uint256 exchangeRateBefore = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLens(IporProtocolRouterProxy).getIpTokenExchangeRate(USDM);
 
         // when
         vm.startPrank(user);
@@ -49,7 +48,7 @@ contract UsdmForkAmmUsdmExchangeRateEthereumTest is UsdmTestForkCommonArbitrum {
         vm.stopPrank();
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLens(IporProtocolRouterProxy).getIpTokenExchangeRate(USDM);
 
         assertLt(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -59,9 +58,9 @@ contract UsdmForkAmmUsdmExchangeRateEthereumTest is UsdmTestForkCommonArbitrum {
     {
         // given
         _init();
-        vm.startPrank(IporProtocolOwner);
+        vm.startPrank(PROTOCOL_OWNER);
         _createAmmPoolsServiceUsdm(0);
-        _updateIporRouterImplementation();
+        _setupAssetServices();
         vm.stopPrank();
 
         address user = _getUserAddress(22);
@@ -69,7 +68,7 @@ contract UsdmForkAmmUsdmExchangeRateEthereumTest is UsdmTestForkCommonArbitrum {
 
         uint256 provideAmount = 100e18;
 
-        uint256 exchangeRateBefore = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLens(IporProtocolRouterProxy).getIpTokenExchangeRate(USDM);
 
         // when
         vm.startPrank(user);
@@ -80,7 +79,7 @@ contract UsdmForkAmmUsdmExchangeRateEthereumTest is UsdmTestForkCommonArbitrum {
         vm.stopPrank();
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLens(IporProtocolRouterProxy).getIpTokenExchangeRate(USDM);
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }

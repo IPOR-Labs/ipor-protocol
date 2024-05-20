@@ -15,6 +15,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServic
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using IporContractValidator for address;
 
+    address public immutable messageSigner;
     address public immutable wETH;
     address public immutable wstETH;
 
@@ -32,9 +33,14 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServic
         address messageSignerInput,
         address wETHInput,
         address wstETHInput
-    ) AmmOpenSwapServiceBaseV1(poolCfg, iporOracleInput, messageSignerInput) {
+    ) AmmOpenSwapServiceBaseV1(poolCfg, iporOracleInput) {
+        messageSigner = messageSignerInput.checkAddress();
         wETH = wETHInput.checkAddress();
         wstETH = wstETHInput.checkAddress();
+    }
+
+    function getMessageSigner() public view override returns (address) {
+        return messageSigner;
     }
 
     function openSwapPayFixed28daysStEth(
@@ -213,11 +219,9 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServic
 
     /// @param inputAsset - input asset address (ETH, wETH, stETH, wstETH) entered by user
     /// @param inputAssetTotalAmount - total amount of input asset entered by user, value represented in decimals of input asset
-    /// @param assetTotalAmount - total amount of underlying asset (stETH) calculated by service, takes into consideration exchange rate of input asset, value represented in decimals of underlying asset
     function _transferTotalAmountToAmmTreasury(
         address inputAsset,
-        uint256 inputAssetTotalAmount,
-        uint256 assetTotalAmount
+        uint256 inputAssetTotalAmount
     ) internal override {
         if (inputAsset == ETH_ADDRESS) {
             _submitEth(inputAssetTotalAmount);

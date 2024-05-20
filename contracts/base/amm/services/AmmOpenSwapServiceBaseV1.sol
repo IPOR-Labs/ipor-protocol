@@ -9,8 +9,6 @@ import "../../../libraries/math/IporMath.sol";
 import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/errors/AmmErrors.sol";
 import "../../../libraries/IporContractValidator.sol";
-import "../../../amm/libraries/types/AmmInternalTypes.sol";
-import "../../../base/spread/SpreadBaseV1.sol";
 import "../libraries/SwapEventsBaseV1.sol";
 import "../libraries/SwapLogicBaseV1.sol";
 import "../../interfaces/ISpreadBaseV1.sol";
@@ -24,12 +22,11 @@ abstract contract AmmOpenSwapServiceBaseV1 {
 
     address public constant ETH_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
-    uint256 public immutable version = 1;
+    uint256 public immutable version = 2_002;
 
     address public immutable asset;
     uint256 public immutable decimals;
 
-    address public immutable messageSigner;
     address public immutable iporOracle;
     address public immutable spread;
     address public immutable ammStorage;
@@ -58,8 +55,7 @@ abstract contract AmmOpenSwapServiceBaseV1 {
 
     constructor(
         AmmTypesBaseV1.AmmOpenSwapServicePoolConfiguration memory poolCfg,
-        address iporOracleInput,
-        address messageSignerInput
+        address iporOracleInput
     ) {
         asset = poolCfg.asset.checkAddress();
         decimals = poolCfg.decimals;
@@ -76,8 +72,9 @@ abstract contract AmmOpenSwapServiceBaseV1 {
         openingFeeTreasuryPortionRate = poolCfg.openingFeeTreasuryPortionRate;
 
         iporOracle = iporOracleInput.checkAddress();
-        messageSigner = messageSignerInput.checkAddress();
     }
+
+    function getMessageSigner() public view virtual returns (address);
 
     /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
     function _openSwapPayFixed(
@@ -100,7 +97,7 @@ abstract contract AmmOpenSwapServiceBaseV1 {
                     asset,
                     uint256(tenor),
                     uint256(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING),
-                    messageSigner
+                    getMessageSigner()
                 )
             );
     }
@@ -126,7 +123,7 @@ abstract contract AmmOpenSwapServiceBaseV1 {
                     asset,
                     uint256(tenor),
                     uint256(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED),
-                    messageSigner
+                    getMessageSigner()
                 )
             );
     }
@@ -207,7 +204,7 @@ abstract contract AmmOpenSwapServiceBaseV1 {
             iporPublicationFee
         );
 
-        _transferTotalAmountToAmmTreasury(ctx.inputAsset, bosStruct.inputAssetTotalAmount, bosStruct.assetTotalAmount);
+        _transferTotalAmountToAmmTreasury(ctx.inputAsset, bosStruct.inputAssetTotalAmount);
 
         _emitOpenSwapEvent(
             ctx.inputAsset,
@@ -296,7 +293,7 @@ abstract contract AmmOpenSwapServiceBaseV1 {
             iporPublicationFee
         );
 
-        _transferTotalAmountToAmmTreasury(ctx.inputAsset, bosStruct.inputAssetTotalAmount, bosStruct.assetTotalAmount);
+        _transferTotalAmountToAmmTreasury(ctx.inputAsset, bosStruct.inputAssetTotalAmount);
 
         _emitOpenSwapEvent(
             ctx.inputAsset,
@@ -314,11 +311,9 @@ abstract contract AmmOpenSwapServiceBaseV1 {
 
     /// @notice Transfer asset input to AMM Treasury in underlying token (asset) after opening swap
     /// @param inputAsset Address of the asset input the asset which user enters to open swap, can be different than underlying asset but have to be in 1:1 price relation with underlying asset
-    /// @param assetTotalAmount Total amount of underlying asset.
     function _transferTotalAmountToAmmTreasury(
         address inputAsset,
-        uint256 inputAssetTotalAmount,
-        uint256 assetTotalAmount
+        uint256 inputAssetTotalAmount
     ) internal virtual;
 
     //    function _validateTotalAmount(address inputAsset, uint256 totalAmount) internal view virtual;
@@ -352,9 +347,7 @@ abstract contract AmmOpenSwapServiceBaseV1 {
     ) internal view returns (AmmTypesBaseV1.BeforeOpenSwapStruct memory bosStruct) {
         require(ctx.beneficiary != address(0), IporErrors.WRONG_ADDRESS);
 
-        uint256 assetTotalAmount = _convertToAssetAmount(ctx.inputAsset, inputAssetTotalAmount);
-
-        uint256 wadAssetTotalAmount = IporMath.convertToWad(assetTotalAmount, decimals);
+        uint256 wadAssetTotalAmount = IporMath.convertToWad(_convertToAssetAmount(ctx.inputAsset, inputAssetTotalAmount), decimals);
 
         /// @dev to achieve 18 decimals precision we multiply by 1e12 because for stETH
         /// pool liquidationDepositAmount is represented in 6 decimals in storage and in Service configuration.
@@ -385,7 +378,6 @@ abstract contract AmmOpenSwapServiceBaseV1 {
             AmmTypesBaseV1.BeforeOpenSwapStruct({
                 inputAssetTotalAmount: inputAssetTotalAmount,
                 wadInputAssetTotalAmount: _convertInputAssetAmountToWadAmount(ctx.inputAsset, inputAssetTotalAmount),
-                assetTotalAmount: assetTotalAmount,
                 wadAssetTotalAmount: wadAssetTotalAmount,
                 collateral: collateral,
                 notional: notional,
