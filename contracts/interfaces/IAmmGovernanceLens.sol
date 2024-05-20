@@ -13,6 +13,8 @@ interface IAmmGovernanceLens {
         address ammStorage;
         /// @notice address of AMM Treasury
         address ammTreasury;
+        /// @notice address of AMM Vault
+        address ammVault;
         /// @notice address of AMM Pools Treasury Wallet
         address ammPoolsTreasury;
         /// @notice address of user which is allowed to manage AMM Pools Treasury Wallet

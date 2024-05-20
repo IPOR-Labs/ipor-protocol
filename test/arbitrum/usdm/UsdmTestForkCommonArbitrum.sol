@@ -128,7 +128,7 @@ contract UsdmTestForkCommonArbitrum is Test {
             decimals: IERC20MetadataUpgradeable(USDM).decimals(),
             ammStorage: ammStorageUsdmProxy,
             ammTreasury: ammTreasuryUsdmProxy,
-            vault: address(0),
+            ammVault: address(0),
             ammPoolsTreasury: treasurer,
             ammPoolsTreasuryManager: treasurer,
             ammCharlieTreasury: treasurer,
@@ -141,8 +141,8 @@ contract UsdmTestForkCommonArbitrum is Test {
             ipToken: ipUsdm,
             ammStorage: ammStorageUsdmProxy,
             ammTreasury: ammTreasuryUsdmProxy,
-            spread: address(0),
-            vault: address(0)
+            ammVault: address(0),
+            spread: address(0)
         }));
 
         IAmmGovernanceServiceArbitrum(IporProtocolRouterProxy).setAssetServices(USDM, StorageLibArbitrum.AssetServicesValue({

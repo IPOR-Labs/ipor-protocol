@@ -138,6 +138,7 @@ contract TestEthMarketCommons is Test {
             _getUserAddress(123),
             _getUserAddress(123),
             _getUserAddress(123),
+            _getUserAddress(123),
             _getUserAddress(123)
         );
 
@@ -145,6 +146,7 @@ contract TestEthMarketCommons is Test {
             .AmmGovernancePoolConfiguration(
             USDC,
             6,
+            _getUserAddress(123),
             _getUserAddress(123),
             _getUserAddress(123),
             _getUserAddress(123),
@@ -162,6 +164,7 @@ contract TestEthMarketCommons is Test {
             _getUserAddress(123),
             _getUserAddress(123),
             _getUserAddress(123),
+            _getUserAddress(123),
             _getUserAddress(123)
         );
 
@@ -169,6 +172,7 @@ contract TestEthMarketCommons is Test {
             .AmmGovernancePoolConfiguration(
             stEth,
             18,
+            _getUserAddress(123),
             _getUserAddress(123),
             _getUserAddress(123),
             _getUserAddress(123),
@@ -186,6 +190,7 @@ contract TestEthMarketCommons is Test {
             _getUserAddress(123),
             _getUserAddress(123),
             _getUserAddress(123),
+            _getUserAddress(123),
             _getUserAddress(123)
         );
 
@@ -193,6 +198,7 @@ contract TestEthMarketCommons is Test {
             .AmmGovernancePoolConfiguration(
             USDM,
             18,
+            _getUserAddress(123),
             _getUserAddress(123),
             _getUserAddress(123),
             _getUserAddress(123),
