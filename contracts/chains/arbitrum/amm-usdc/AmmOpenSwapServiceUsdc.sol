@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity 0.8.20;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import {IERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import {IERC20MetadataUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
+import {SafeERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+
 
 import {IporTypes} from "../../../interfaces/types/IporTypes.sol";
 import {AmmTypes} from "../../../interfaces/types/AmmTypes.sol";
@@ -169,7 +172,7 @@ contract AmmOpenSwapServiceUsdc is AmmOpenSwapServiceBaseV1, IAmmOpenSwapService
         uint256 inputAssetAmount
     ) internal view override returns (uint256) {
         /// @dev USDC is represented in 6 decimals
-        return IporMath.convertToWad(inputAssetAmount, decimals);
+        return IporMath.convertToWad(inputAssetAmount, IERC20MetadataUpgradeable(inputAsset).decimals());
     }
 
     function _validateInputAsset(address inputAsset, uint256 inputAssetTotalAmount) internal view override {

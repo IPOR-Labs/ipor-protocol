@@ -64,7 +64,20 @@ contract AmmGovernanceServiceArbitrum is IAmmGovernanceServiceArbitrum, IAmmGove
     function getAmmGovernancePoolConfiguration(
         address asset
     ) external view override returns (AmmGovernancePoolConfiguration memory) {
-        return _getPoolConfiguration(asset);
+        StorageLibArbitrum.AssetGovernancePoolConfigValue memory poolConfig = StorageLibArbitrum.getAssetGovernancePoolConfigStorage().value[asset];
+
+        return AmmGovernancePoolConfiguration({
+            asset: asset,
+            decimals: poolConfig.decimals,
+            ammStorage: poolConfig.ammStorage,
+            ammTreasury: poolConfig.ammTreasury,
+            ammVault: poolConfig.ammVault,
+            ammPoolsTreasury: poolConfig.ammPoolsTreasury,
+            ammPoolsTreasuryManager: poolConfig.ammPoolsTreasuryManager,
+            ammCharlieTreasury: poolConfig.ammCharlieTreasury,
+            ammCharlieTreasuryManager: poolConfig.ammCharlieTreasuryManager
+        });
+
     }
 
     function setAmmGovernancePoolConfiguration(
@@ -81,50 +94,53 @@ contract AmmGovernanceServiceArbitrum is IAmmGovernanceServiceArbitrum, IAmmGove
         address asset,
         uint256 wadAssetAmount
     ) external override onlySupportedAssetManagement(asset) {
-        IAmmTreasury(_getAmmTreasury(asset)).depositToAssetManagementInternal(wadAssetAmount);
+        StorageLibArbitrum.AssetGovernancePoolConfigValue storage poolConfig = StorageLibArbitrum.getAssetGovernancePoolConfigStorage().value[asset];
+        IAmmTreasury(poolConfig.ammTreasury).depositToAssetManagementInternal(wadAssetAmount);
     }
 
     function withdrawFromAssetManagement(
         address asset,
         uint256 wadAssetAmount
     ) external override onlySupportedAssetManagement(asset) {
-        IAmmTreasury(_getAmmTreasury(asset)).withdrawFromAssetManagementInternal(wadAssetAmount);
+        StorageLibArbitrum.AssetGovernancePoolConfigValue storage poolConfig = StorageLibArbitrum.getAssetGovernancePoolConfigStorage().value[asset];
+        IAmmTreasury(poolConfig.ammTreasury).withdrawFromAssetManagementInternal(wadAssetAmount);
     }
 
     function withdrawAllFromAssetManagement(address asset) external override onlySupportedAssetManagement(asset) {
-        IAmmTreasury(_getAmmTreasury(asset)).withdrawAllFromAssetManagementInternal();
+        StorageLibArbitrum.AssetGovernancePoolConfigValue storage poolConfig = StorageLibArbitrum.getAssetGovernancePoolConfigStorage().value[asset];
+        IAmmTreasury(poolConfig.ammTreasury).withdrawAllFromAssetManagementInternal();
     }
 
     function transferToTreasury(address asset, uint256 wadAssetAmountInput) external override {
-        AmmGovernancePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+        StorageLibArbitrum.AssetGovernancePoolConfigValue memory poolConfig = StorageLibArbitrum.getAssetGovernancePoolConfigStorage().value[asset];
 
-        require(msg.sender == poolCfg.ammPoolsTreasuryManager, AmmPoolsErrors.CALLER_NOT_TREASURY_MANAGER);
+        require(msg.sender == poolConfig.ammPoolsTreasuryManager, AmmPoolsErrors.CALLER_NOT_TREASURY_MANAGER);
 
-        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(wadAssetAmountInput, poolCfg.decimals);
-        uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, poolCfg.decimals);
+        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(wadAssetAmountInput, poolConfig.decimals);
+        uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, poolConfig.decimals);
 
-        IAmmStorage(poolCfg.ammStorage).updateStorageWhenTransferToTreasuryInternal(wadAssetAmount);
+        IAmmStorage(poolConfig.ammStorage).updateStorageWhenTransferToTreasuryInternal(wadAssetAmount);
 
         IERC20Upgradeable(asset).safeTransferFrom(
-            poolCfg.ammTreasury,
-            poolCfg.ammPoolsTreasury,
+            poolConfig.ammTreasury,
+            poolConfig.ammPoolsTreasury,
             assetAmountAssetDecimals
         );
     }
 
     function transferToCharlieTreasury(address asset, uint256 wadAssetAmountInput) external override {
-        AmmGovernancePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+        StorageLibArbitrum.AssetGovernancePoolConfigValue memory poolConfig = StorageLibArbitrum.getAssetGovernancePoolConfigStorage().value[asset];
 
-        require(msg.sender == poolCfg.ammCharlieTreasuryManager, AmmPoolsErrors.CALLER_NOT_PUBLICATION_FEE_TRANSFERER);
+        require(msg.sender == poolConfig.ammCharlieTreasuryManager, AmmPoolsErrors.CALLER_NOT_PUBLICATION_FEE_TRANSFERER);
 
-        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(wadAssetAmountInput, poolCfg.decimals);
-        uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, poolCfg.decimals);
+        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(wadAssetAmountInput, poolConfig.decimals);
+        uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, poolConfig.decimals);
 
-        IAmmStorage(poolCfg.ammStorage).updateStorageWhenTransferToCharlieTreasuryInternal(wadAssetAmount);
+        IAmmStorage(poolConfig.ammStorage).updateStorageWhenTransferToCharlieTreasuryInternal(wadAssetAmount);
 
         IERC20Upgradeable(asset).safeTransferFrom(
-            poolCfg.ammTreasury,
-            poolCfg.ammCharlieTreasury,
+            poolConfig.ammTreasury,
+            poolConfig.ammCharlieTreasury,
             assetAmountAssetDecimals
         );
     }
@@ -180,26 +196,5 @@ contract AmmGovernanceServiceArbitrum is IAmmGovernanceServiceArbitrum, IAmmGove
             autoRebalanceThresholdInThousands: ammPoolsParamsCfg.autoRebalanceThresholdInThousands,
             ammTreasuryAndAssetManagementRatio: ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio
         });
-    }
-
-    function _getPoolConfiguration(address asset_) internal view returns (AmmGovernancePoolConfiguration memory) {
-        StorageLibArbitrum.AssetGovernancePoolConfigValue memory poolConfig = StorageLibArbitrum.getAssetGovernancePoolConfigStorage().value[asset_];
-
-        return AmmGovernancePoolConfiguration({
-            asset: asset_,
-            decimals: poolConfig.decimals,
-            ammStorage: poolConfig.ammStorage,
-            ammTreasury: poolConfig.ammTreasury,
-            ammVault: poolConfig.ammVault,
-            ammPoolsTreasury: poolConfig.ammPoolsTreasury,
-            ammPoolsTreasuryManager: poolConfig.ammPoolsTreasuryManager,
-            ammCharlieTreasury: poolConfig.ammCharlieTreasury,
-            ammCharlieTreasuryManager: poolConfig.ammCharlieTreasuryManager
-        });
-    }
-
-    function _getAmmTreasury(address asset) internal view returns (address) {
-        StorageLibArbitrum.AssetGovernancePoolConfigValue storage poolConfig = StorageLibArbitrum.getAssetGovernancePoolConfigStorage().value[asset];
-        return poolConfig.ammTreasury;
     }
 }

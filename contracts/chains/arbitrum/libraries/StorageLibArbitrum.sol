@@ -37,7 +37,7 @@ library StorageLibArbitrum {
 
     /// @notice Struct for one asset combining all data required for lens services related to a specific asset pool.
     struct AssetLensDataValue {
-        uint256 decimals;
+        uint8 decimals;
         address ipToken;
         address ammStorage;
         address ammTreasury;
@@ -52,7 +52,7 @@ library StorageLibArbitrum {
 
     /// @notice Struct which contains governance configuration for a specific asset pool.
     struct AssetGovernancePoolConfigValue {
-        uint256 decimals;
+        uint8 decimals;
         address ammStorage;
         address ammTreasury;
         address ammVault;
