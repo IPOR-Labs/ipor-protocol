@@ -4,10 +4,10 @@ pragma solidity 0.8.20;
 import {CalculateTimeWeightedNotionalLibsBaseV1} from "./CalculateTimeWeightedNotionalLibsBaseV1.sol";
 import {SpreadStorageLibsBaseV1} from "../spread/SpreadStorageLibsBaseV1.sol";
 import {IporMath} from "../../libraries/math/IporMath.sol";
-import {SpreadInputData} from "../interfaces/DemandSpreadTypes.sol";
+import {SpreadInputData} from "../interfaces/DemandSpreadTypesBaseV1.sol";
 
 
-library DemandSpreadStableLibs {
+library DemandSpreadStableLibsBaseV1 {
     uint256 internal constant INTERVAL_ONE = 2e17;
     uint256 internal constant INTERVAL_TWO = 5e17;
     uint256 internal constant INTERVAL_THREE = 1e18;

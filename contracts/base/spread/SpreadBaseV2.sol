@@ -12,7 +12,7 @@ import {CalculateTimeWeightedNotionalLibs} from "../../amm/spread/CalculateTimeW
 import {IAmmStorageBaseV1} from "../../base/interfaces/IAmmStorageBaseV1.sol";
 import {AmmEventsBaseV1} from "../../base/events/AmmEventsBaseV1.sol";
 import {ISpreadBaseV1} from "../interfaces/ISpreadBaseV1.sol";
-import {SpreadInputData} from "../interfaces/DemandSpreadTypes.sol";
+import {SpreadInputData} from "../interfaces/DemandSpreadTypesBaseV1.sol";
 import {SwapLogicBaseV1} from "../amm/libraries/SwapLogicBaseV1.sol";
 import {SpreadStorageLibsBaseV1} from "./SpreadStorageLibsBaseV1.sol";
 import {OfferedRateCalculationLibsBaseV1} from "./OfferedRateCalculationLibsBaseV1.sol";
