@@ -22,7 +22,7 @@ contract AmmGovernanceServiceArbitrum is IAmmGovernanceServiceArbitrum, IAmmGove
 
     modifier onlySupportedAssetManagement(address asset) {
         StorageLibArbitrum.AssetGovernancePoolConfigValue storage poolConfig = StorageLibArbitrum.getAssetGovernancePoolConfigStorage().value[asset];
-        if (poolConfig.vault == address(0)) {
+        if (poolConfig.ammVault == address(0)) {
             revert IporErrors.UnsupportedModule(IporErrors.UNSUPPORTED_MODULE_ASSET_MANAGEMENT, asset);
         }
         _;
@@ -190,6 +190,7 @@ contract AmmGovernanceServiceArbitrum is IAmmGovernanceServiceArbitrum, IAmmGove
             decimals: poolConfig.decimals,
             ammStorage: poolConfig.ammStorage,
             ammTreasury: poolConfig.ammTreasury,
+            ammVault: poolConfig.ammVault,
             ammPoolsTreasury: poolConfig.ammPoolsTreasury,
             ammPoolsTreasuryManager: poolConfig.ammPoolsTreasuryManager,
             ammCharlieTreasury: poolConfig.ammCharlieTreasury,

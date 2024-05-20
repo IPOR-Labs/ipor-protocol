@@ -31,7 +31,7 @@ contract AmmPoolsLensArbitrum is IAmmPoolsLensArbitrum {
             ipToken: assetLensData.ipToken,
             ammStorage: assetLensData.ammStorage,
             ammTreasury: assetLensData.ammTreasury,
-            assetManagement: assetLensData.vault,
+            assetManagement: assetLensData.ammVault,
             iporOracle: iporOracle
         });
 
