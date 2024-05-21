@@ -57,7 +57,7 @@ abstract contract SpreadBaseV2 is IporOwnable, ISpreadBaseV1 {
     }
 
     function getVersion() external pure virtual override returns (uint256) {
-        return 2_001;
+        return 2_002;
     }
 
     function spreadFunctionConfig() external pure override virtual returns (uint256[] memory);
