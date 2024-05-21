@@ -19,10 +19,6 @@ contract AmmCloseSwapServiceStEth is AmmCloseSwapServiceBaseV1, IAmmCloseSwapSer
         messageSigner = messageSignerInput.checkAddress();
     }
 
-    function getMessageSigner() public view override returns (address) {
-        return messageSigner;
-    }
-
     function closeSwapsStEth(
         address beneficiary,
         uint256[] memory payFixedSwapIds,
@@ -61,5 +57,9 @@ contract AmmCloseSwapServiceStEth is AmmCloseSwapServiceBaseV1, IAmmCloseSwapSer
             receiveFixedSwapIds,
             riskIndicatorsInput
         );
+    }
+
+    function _getMessageSigner() internal view override returns (address) {
+        return messageSigner;
     }
 }

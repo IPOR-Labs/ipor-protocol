@@ -26,10 +26,6 @@ contract AmmOpenSwapServiceWstEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServi
     ) AmmOpenSwapServiceBaseV1(poolCfg, iporOracle_) {
     }
 
-    function getMessageSigner() public view override returns (address) {
-        return StorageLibArbitrum.getMessageSignerStorage().value;
-    }
-
     function openSwapPayFixed28daysWstEth(
         address beneficiary,
         address inputAsset,
@@ -148,6 +144,10 @@ contract AmmOpenSwapServiceWstEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServi
                 leverage,
                 riskIndicatorsInputs
             );
+    }
+
+    function _getMessageSigner() internal view override returns (address) {
+        return StorageLibArbitrum.getMessageSignerStorage().value;
     }
 
     function _convertToAssetAmount(

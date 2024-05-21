@@ -74,7 +74,7 @@ abstract contract AmmOpenSwapServiceBaseV1 {
         iporOracle = iporOracleInput.checkAddress();
     }
 
-    function getMessageSigner() public view virtual returns (address);
+    function _getMessageSigner() internal view virtual returns (address);
 
     /// @dev Notice! assetInput is in price relation 1:1 to underlying asset
     function _openSwapPayFixed(
@@ -97,7 +97,7 @@ abstract contract AmmOpenSwapServiceBaseV1 {
                     asset,
                     uint256(tenor),
                     uint256(AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING),
-                    getMessageSigner()
+                    _getMessageSigner()
                 )
             );
     }
@@ -123,7 +123,7 @@ abstract contract AmmOpenSwapServiceBaseV1 {
                     asset,
                     uint256(tenor),
                     uint256(AmmTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED),
-                    getMessageSigner()
+                    _getMessageSigner()
                 )
             );
     }

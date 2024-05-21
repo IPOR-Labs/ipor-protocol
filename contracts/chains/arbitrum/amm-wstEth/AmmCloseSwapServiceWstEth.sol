@@ -16,10 +16,6 @@ contract AmmCloseSwapServiceWstEth is AmmCloseSwapServiceBaseV1, IAmmCloseSwapSe
     ) AmmCloseSwapServiceBaseV1(poolCfg, iporOracle_) {
     }
 
-    function getMessageSigner() public view override returns (address) {
-        return StorageLibArbitrum.getMessageSignerStorage().value;
-    }
-
     function closeSwapsWstEth(
         address beneficiary,
         uint256[] memory payFixedSwapIds,
@@ -58,5 +54,9 @@ contract AmmCloseSwapServiceWstEth is AmmCloseSwapServiceBaseV1, IAmmCloseSwapSe
             receiveFixedSwapIds,
             riskIndicatorsInput
         );
+    }
+
+    function _getMessageSigner() internal view override returns (address) {
+        return StorageLibArbitrum.getMessageSignerStorage().value;
     }
 }

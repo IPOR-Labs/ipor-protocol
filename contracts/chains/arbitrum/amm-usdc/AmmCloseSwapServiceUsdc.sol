@@ -16,10 +16,6 @@ contract AmmCloseSwapServiceUsdc is AmmCloseSwapServiceBaseV1, IAmmCloseSwapServ
         address iporOracle_
     ) AmmCloseSwapServiceBaseV1(poolCfg, iporOracle_) {}
 
-    function getMessageSigner() public view override returns (address) {
-        return StorageLibArbitrum.getMessageSignerStorage().value;
-    }
-
     function closeSwapsUsdc(
         address beneficiary,
         uint256[] memory payFixedSwapIds,
@@ -58,5 +54,9 @@ contract AmmCloseSwapServiceUsdc is AmmCloseSwapServiceBaseV1, IAmmCloseSwapServ
             receiveFixedSwapIds,
             riskIndicatorsInput
         );
+    }
+
+    function _getMessageSigner() internal view override returns (address) {
+        return StorageLibArbitrum.getMessageSignerStorage().value;
     }
 }

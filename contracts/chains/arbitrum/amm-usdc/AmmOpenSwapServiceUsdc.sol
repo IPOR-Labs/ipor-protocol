@@ -35,10 +35,6 @@ contract AmmOpenSwapServiceUsdc is AmmOpenSwapServiceBaseV1, IAmmOpenSwapService
         address iporOracle_
     ) AmmOpenSwapServiceBaseV1(poolCfg, iporOracle_) {}
 
-    function getMessageSigner() public view override returns (address) {
-        return StorageLibArbitrum.getMessageSignerStorage().value;
-    }
-
     function openSwapPayFixed28daysUsdc(
         address beneficiary,
         address inputAsset,
@@ -157,6 +153,10 @@ contract AmmOpenSwapServiceUsdc is AmmOpenSwapServiceBaseV1, IAmmOpenSwapService
             leverage,
             riskIndicatorsInputs
         );
+    }
+
+    function _getMessageSigner() internal view override returns (address) {
+        return StorageLibArbitrum.getMessageSignerStorage().value;
     }
 
     function _convertToAssetAmount(

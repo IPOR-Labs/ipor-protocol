@@ -39,10 +39,6 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServic
         wstETH = wstETHInput.checkAddress();
     }
 
-    function getMessageSigner() public view override returns (address) {
-        return messageSigner;
-    }
-
     function openSwapPayFixed28daysStEth(
         address beneficiary,
         address inputAsset,
@@ -161,6 +157,10 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServic
                 leverage,
                 riskIndicatorsInputs
             );
+    }
+
+    function _getMessageSigner() internal view override returns (address) {
+        return messageSigner;
     }
 
     function _convertToAssetAmount(

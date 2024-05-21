@@ -104,8 +104,6 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
             .timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days;
     }
 
-    function getMessageSigner() public view virtual returns (address);
-
     function getPoolConfiguration()
         external
         view
@@ -114,6 +112,8 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
     {
         return _getPoolConfiguration();
     }
+
+    function _getMessageSigner() internal view virtual returns (address);
 
     function _emergencyCloseSwaps(
         uint256[] memory payFixedSwapIds,
@@ -408,7 +408,7 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
             ) = SwapCloseLogicLibBaseV1.calculateSwapUnwindWhenUnwindRequired(
                 AmmTypesBaseV1.UnwindParams({
                     asset: asset,
-                    messageSigner: getMessageSigner(),
+                    messageSigner: _getMessageSigner(),
                     spread: spread,
                     ammStorage: ammStorage,
                     ammTreasury: ammTreasury,
