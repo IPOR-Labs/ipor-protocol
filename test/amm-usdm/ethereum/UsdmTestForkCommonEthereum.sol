@@ -13,7 +13,7 @@ import "../../../contracts/amm-usdm/AmmPoolsServiceUsdm.sol";
 import "../../../contracts/amm-usdm/AmmPoolsLensUsdm.sol";
 import "../../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
 import "../../../contracts/chains/ethereum/amm-commons/AmmGovernanceService.sol";
-import "../arbitrum/WUsdmMock.sol";
+import "../../arbitrum/usdm/WUsdmMock.sol";
 
 contract UsdmTestForkCommonEthereum is Test {
     address constant USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
@@ -50,10 +50,16 @@ contract UsdmTestForkCommonEthereum is Test {
 
     address constant AmmStorageUsdtProxy = 0x364f116352EB95033D73822bA81257B8c1f5B1CE;
     address constant AmmTreasuryUsdtProxy = 0x28BC58e600eF718B9E97d294098abecb8c96b687;
+    address constant AssetManagementUsdtProxy = 0x8e679C1d67Af0CD4b314896856f09ece9E64D6B5;
+
     address constant AmmStorageUsdcProxy = 0xB3d1c1aB4D30800162da40eb18B3024154924ba5;
     address constant AmmTreasuryUsdcProxy = 0x137000352B4ed784e8fa8815d225c713AB2e7Dc9;
+    address constant AssetManagementUsdcProxy = 0x7aa7b0B738C2570C2f9F892cB7cA5bB89b9BF260;
+
     address constant AmmStorageDaiProxy = 0xb99f2a02c0851efdD417bd6935d2eFcd23c56e61;
     address constant AmmTreasuryDaiProxy = 0xEd7d74AA7eB1f12F83dA36DFaC1de2257b4e7523;
+    address constant AssetManagementDaiProxy = 0xA6aC8B6AF789319A1Db994E25760Eb86F796e2B0;
+
     address constant AmmStorageStEthProxy = 0x08a8Ec037DF2e54194B397cd7c761631440197c6;
     address constant AmmTreasuryStEthProxy = 0x63395EDAF74a80aa1155dB7Cd9BBA976a88DeE4E;
     address constant AmmStorageWeEthProxy = 0x77Fe3a8E8d1d73Df54Ca07674Bf1bD6C5841e3b5;
@@ -133,6 +139,7 @@ contract UsdmTestForkCommonEthereum is Test {
                     decimals: IERC20MetadataUpgradeable(USDT).decimals(),
                     ammStorage: AmmStorageUsdtProxy,
                     ammTreasury: AmmTreasuryUsdtProxy,
+                ammVault: AssetManagementUsdtProxy,
                     ammPoolsTreasury: IporProtocolOwner,
                     ammPoolsTreasuryManager: IporProtocolOwner,
                     ammCharlieTreasury: IporProtocolOwner,
@@ -143,6 +150,7 @@ contract UsdmTestForkCommonEthereum is Test {
                     decimals: IERC20MetadataUpgradeable(USDC).decimals(),
                     ammStorage: AmmStorageUsdcProxy,
                     ammTreasury: AmmTreasuryUsdcProxy,
+                ammVault: AssetManagementUsdcProxy,
                     ammPoolsTreasury: IporProtocolOwner,
                     ammPoolsTreasuryManager: IporProtocolOwner,
                     ammCharlieTreasury: IporProtocolOwner,
@@ -153,6 +161,7 @@ contract UsdmTestForkCommonEthereum is Test {
                     decimals: IERC20MetadataUpgradeable(DAI).decimals(),
                     ammStorage: AmmStorageDaiProxy,
                     ammTreasury: AmmTreasuryDaiProxy,
+                ammVault: AssetManagementDaiProxy,
                     ammPoolsTreasury: IporProtocolOwner,
                     ammPoolsTreasuryManager: IporProtocolOwner,
                     ammCharlieTreasury: IporProtocolOwner,
@@ -163,6 +172,7 @@ contract UsdmTestForkCommonEthereum is Test {
                     decimals: IERC20MetadataUpgradeable(stETH).decimals(),
                     ammStorage: AmmStorageStEthProxy,
                     ammTreasury: AmmTreasuryStEthProxy,
+                ammVault: address(0),
                     ammPoolsTreasury: IporProtocolOwner,
                     ammPoolsTreasuryManager: IporProtocolOwner,
                     ammCharlieTreasury: IporProtocolOwner,
@@ -173,6 +183,7 @@ contract UsdmTestForkCommonEthereum is Test {
                     decimals: IERC20MetadataUpgradeable(weETH).decimals(),
                     ammStorage: AmmStorageWeEthProxy,
                     ammTreasury: AmmTreasuryWeEthProxy,
+                ammVault: address(0),
                     ammPoolsTreasury: IporProtocolOwner,
                     ammPoolsTreasuryManager: IporProtocolOwner,
                     ammCharlieTreasury: IporProtocolOwner,
@@ -183,6 +194,7 @@ contract UsdmTestForkCommonEthereum is Test {
                     decimals: IERC20MetadataUpgradeable(USDM).decimals(),
                     ammStorage: ammStorageUsdmProxy,
                     ammTreasury: ammTreasuryUsdmProxy,
+                ammVault: address(0),
                     ammPoolsTreasury: IporProtocolOwner,
                     ammPoolsTreasuryManager: IporProtocolOwner,
                     ammCharlieTreasury: IporProtocolOwner,

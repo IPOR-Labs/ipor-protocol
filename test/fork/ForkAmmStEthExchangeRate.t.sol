@@ -1517,7 +1517,7 @@ contract ForkAmmStEthExchangeRateTest is TestForkCommons {
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
 
-    function testShouldNotChangeExchangeRateWhenChangeStorageBalanceCharlieTreasury() public {
+    function testShouldNotChangeExchangeRateWhenChangeStorageBalanceDAOTreasury() public {
         //given
         _init();
         address user = _getUserAddress(22);

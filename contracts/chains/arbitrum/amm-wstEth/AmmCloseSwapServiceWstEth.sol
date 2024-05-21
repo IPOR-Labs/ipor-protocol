@@ -1,17 +1,20 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 
-import "../interfaces/IAmmCloseSwapServiceWstEth.sol";
-import "../base/amm/services/AmmCloseSwapServiceBaseV1.sol";
+import "../../../interfaces/IAmmCloseSwapServiceWstEth.sol";
+import "../../../base/amm/services/AmmCloseSwapServiceBaseV1.sol";
+import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 /// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
 contract AmmCloseSwapServiceWstEth is AmmCloseSwapServiceBaseV1, IAmmCloseSwapServiceWstEth {
+    using IporContractValidator for address;
+
     constructor(
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
-        address iporOracleInput,
-        address messageSignerInput
-    ) AmmCloseSwapServiceBaseV1(poolCfg, iporOracleInput, messageSignerInput) {}
+        address iporOracle_
+    ) AmmCloseSwapServiceBaseV1(poolCfg, iporOracle_) {
+    }
 
     function closeSwapsWstEth(
         address beneficiary,
@@ -51,5 +54,9 @@ contract AmmCloseSwapServiceWstEth is AmmCloseSwapServiceBaseV1, IAmmCloseSwapSe
             receiveFixedSwapIds,
             riskIndicatorsInput
         );
+    }
+
+    function _getMessageSigner() internal view override returns (address) {
+        return StorageLibArbitrum.getMessageSignerStorage().value;
     }
 }

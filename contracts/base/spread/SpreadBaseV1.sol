@@ -6,7 +6,6 @@ import "../../interfaces/types/AmmTypes.sol";
 import "../../libraries/IporContractValidator.sol";
 import "../../security/IporOwnable.sol";
 import "../../amm/libraries/types/AmmInternalTypes.sol";
-import "../../amm/spread/SpreadStorageLibs.sol";
 import "../../amm/spread/CalculateTimeWeightedNotionalLibs.sol";
 import "../../base/interfaces/IAmmStorageBaseV1.sol";
 import "../../base/events/AmmEventsBaseV1.sol";

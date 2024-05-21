@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.20;
 
-import "../../amm/spread/ISpreadStorageLens.sol";
 import "../../amm/spread/SpreadTypes.sol";
 import "../../amm/spread/SpreadStorageLibs.sol";
 import "../../base/events/AmmEventsBaseV1.sol";

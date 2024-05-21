@@ -3,16 +3,16 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import "../interfaces/IIpToken.sol";
-import "../interfaces/types/AmmTypes.sol";
-import "./interfaces/IAmmPoolsServiceWstEth.sol";
-import "../libraries/errors/AmmErrors.sol";
-import "../libraries/math/IporMath.sol";
-import "../libraries/StorageLib.sol";
-import "../libraries/IporContractValidator.sol";
-import "../libraries/AmmLib.sol";
-import "../governance/AmmConfigurationManager.sol";
-import "../base/interfaces/IAmmTreasuryBaseV1.sol";
+import "../../../interfaces/IIpToken.sol";
+import "../../../interfaces/types/AmmTypes.sol";
+import "../interfaces/IAmmPoolsServiceWstEth.sol";
+import "../../../libraries/errors/AmmErrors.sol";
+import "../../../libraries/math/IporMath.sol";
+import "../../../libraries/StorageLib.sol";
+import "../../../libraries/IporContractValidator.sol";
+import "../../../libraries/AmmLib.sol";
+import "../../../governance/AmmConfigurationManager.sol";
+import "../../../base/interfaces/IAmmTreasuryBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmPoolsServiceWstEth is IAmmPoolsServiceWstEth {

@@ -2,9 +2,10 @@
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import "./ArbitrumTestForkCommons.sol";
-import "../../contracts/interfaces/IAmmCloseSwapServiceWstEth.sol";
-import "../../contracts/interfaces/types/AmmTypes.sol";
+import "../ArbitrumTestForkCommons.sol";
+import "../../../contracts/interfaces/IAmmCloseSwapServiceWstEth.sol";
+import "../../../contracts/interfaces/types/AmmTypes.sol";
+import {IAmmPoolsLens} from "../../../contracts/interfaces/IAmmPoolsLens.sol";
 
 contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
     function setUp() public {
@@ -19,14 +20,14 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
 
         uint256 provideAmount = 1 ether;
 
-        uint256 exchangeRateBefore = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         // when
         vm.prank(user);
         IAmmPoolsServiceWstEth(iporProtocolRouterProxy).provideLiquidityWstEth(user, provideAmount);
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -39,7 +40,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
 
         uint256 provideAmount = 1 ether;
 
-        uint256 exchangeRateBefore = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         // when
         vm.startPrank(user);
@@ -49,7 +50,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
         vm.stopPrank();
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         assertLt(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -60,14 +61,14 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
         // given
         _init();
         _createNewAmmPoolsServiceWstEthWithZEROFee();
-        _updateIporRouterImplementation();
+        _setupAssetServices();
 
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
 
         uint256 provideAmount = 1 ether;
 
-        uint256 exchangeRateBefore = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         // when
         vm.startPrank(user);
@@ -78,7 +79,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
         vm.stopPrank();
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -110,7 +111,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         //when
         vm.prank(user);
@@ -124,7 +125,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -156,7 +157,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         //when
         vm.prank(user);
@@ -170,7 +171,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -202,7 +203,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         //when
         vm.prank(user);
@@ -216,7 +217,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -248,7 +249,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         //when
         vm.prank(user);
@@ -262,7 +263,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -294,7 +295,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         //when
         vm.prank(user);
@@ -308,7 +309,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -340,7 +341,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         //when
         vm.prank(user);
@@ -354,7 +355,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         assertNotEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -367,7 +368,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
 
         /// @dev setup opening fee to zero
         _createAmmOpenSwapServiceWstEthCase2();
-        _updateIporRouterImplementation();
+        _setupAssetServices();
 
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
@@ -393,7 +394,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         //when
         vm.prank(user);
@@ -407,7 +408,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -467,7 +468,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
             closeRiskIndicatorsInputs
         );
         AmmTypesBaseV1.Balance memory balance = AmmStorageBaseV1(ammStorageWstEthProxy).getBalance();
-        uint256 exchangeRateBefore = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         uint256 balancePublicationFeeBefore = AmmStorageBaseV1(ammStorageWstEthProxy).getBalance().iporPublicationFee;
 
@@ -476,7 +477,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
         IAmmGovernanceService(iporProtocolRouterProxy).transferToCharlieTreasury(wstETH, balancePublicationFeeBefore);
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
         uint256 balancePublicationFeeAfter = AmmStorageBaseV1(ammStorageWstEthProxy).getBalance().iporPublicationFee;
 
         assertEq(balancePublicationFeeAfter, 0, "iporPublicationFee after");
@@ -484,7 +485,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
 
-    function testShouldNotChangeExchangeRateWhenChangeStorageBalanceCharlieTreasury() public {
+    function testShouldNotChangeExchangeRateWhenChangeStorageBalanceDAOTreasury() public {
         //given
         _init();
         address user = _getUserAddress(22);
@@ -539,7 +540,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
             closeRiskIndicatorsInputs
         );
         AmmTypesBaseV1.Balance memory balance = AmmStorageBaseV1(ammStorageWstEthProxy).getBalance();
-        uint256 exchangeRateBefore = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         uint256 balanceTreasuryBefore = AmmStorageBaseV1(ammStorageWstEthProxy).getBalance().treasury;
 
@@ -548,7 +549,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
         IAmmGovernanceService(iporProtocolRouterProxy).transferToTreasury(wstETH, balanceTreasuryBefore);
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
         uint256 balanceTreasuryAfter = AmmStorageBaseV1(ammStorageWstEthProxy).getBalance().treasury;
 
         assertEq(balanceTreasuryAfter, 0, "iporPublicationFee after");
@@ -567,7 +568,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
 
         /// @dev setup opening fee to zero
         _createAmmOpenSwapServiceWstEthCase3();
-        _updateIporRouterImplementation();
+        _setupAssetServices();
 
         AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
             maxCollateralRatio: 50000000000000000,
@@ -588,7 +589,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
             messageSignerPrivateKey
         );
 
-        uint256 exchangeRateBefore = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
 
         //when
         vm.prank(user);
@@ -603,7 +604,7 @@ contract ArbitrumForkAmmWstEthExchangeRateTest is ArbitrumTestForkCommons {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensWstEth(iporProtocolRouterProxy).getIpwstEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(wstETH);
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
 }

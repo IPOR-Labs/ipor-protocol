@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
+
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "forge-std/Test.sol";
 import "../../../contracts/tokens/IpToken.sol";
@@ -264,49 +265,49 @@ contract IporProtocolFactory is Test {
         amm.usdm.spreadRouter = amm.spreadRouter;
 
         _assetManagementBuilder
-            .withAssetType(BuilderUtils.AssetType.USDT)
-            .withAsset(address(amm.usdt.asset))
-            .withAmmTreasury(address(amm.usdt.ammTreasury))
-            .withAssetManagementProxyAddress(address(amm.usdt.assetManagement))
-            .upgrade();
+        .withAssetType(BuilderUtils.AssetType.USDT)
+        .withAsset(address(amm.usdt.asset))
+        .withAmmTreasury(address(amm.usdt.ammTreasury))
+        .withAssetManagementProxyAddress(address(amm.usdt.assetManagement))
+        .upgrade();
 
         _assetManagementBuilder
-            .withAssetType(BuilderUtils.AssetType.USDC)
-            .withAsset(address(amm.usdc.asset))
-            .withAmmTreasury(address(amm.usdc.ammTreasury))
-            .withAssetManagementProxyAddress(address(amm.usdc.assetManagement))
-            .upgrade();
+        .withAssetType(BuilderUtils.AssetType.USDC)
+        .withAsset(address(amm.usdc.asset))
+        .withAmmTreasury(address(amm.usdc.ammTreasury))
+        .withAssetManagementProxyAddress(address(amm.usdc.assetManagement))
+        .upgrade();
 
         _assetManagementBuilder
-            .withAssetType(BuilderUtils.AssetType.DAI)
-            .withAsset(address(amm.dai.asset))
-            .withAmmTreasury(address(amm.dai.ammTreasury))
-            .withAssetManagementProxyAddress(address(amm.dai.assetManagement))
-            .upgrade();
+        .withAssetType(BuilderUtils.AssetType.DAI)
+        .withAsset(address(amm.dai.asset))
+        .withAmmTreasury(address(amm.dai.ammTreasury))
+        .withAssetManagementProxyAddress(address(amm.dai.assetManagement))
+        .upgrade();
 
         _ammTreasuryBuilder
-            .withAsset(address(amm.usdt.asset))
-            .withAmmStorage(address(amm.usdt.ammStorage))
-            .withAssetManagement(address(amm.usdt.assetManagement))
-            .withIporProtocolRouter(address(amm.router))
-            .withAmmTreasuryProxyAddress(address(amm.usdt.ammTreasury))
-            .upgrade();
+        .withAsset(address(amm.usdt.asset))
+        .withAmmStorage(address(amm.usdt.ammStorage))
+        .withAssetManagement(address(amm.usdt.assetManagement))
+        .withIporProtocolRouter(address(amm.router))
+        .withAmmTreasuryProxyAddress(address(amm.usdt.ammTreasury))
+        .upgrade();
 
         _ammTreasuryBuilder
-            .withAsset(address(amm.usdc.asset))
-            .withAmmStorage(address(amm.usdc.ammStorage))
-            .withAssetManagement(address(amm.usdc.assetManagement))
-            .withIporProtocolRouter(address(amm.router))
-            .withAmmTreasuryProxyAddress(address(amm.usdc.ammTreasury))
-            .upgrade();
+        .withAsset(address(amm.usdc.asset))
+        .withAmmStorage(address(amm.usdc.ammStorage))
+        .withAssetManagement(address(amm.usdc.assetManagement))
+        .withIporProtocolRouter(address(amm.router))
+        .withAmmTreasuryProxyAddress(address(amm.usdc.ammTreasury))
+        .upgrade();
 
         _ammTreasuryBuilder
-            .withAsset(address(amm.dai.asset))
-            .withAmmStorage(address(amm.dai.ammStorage))
-            .withAssetManagement(address(amm.dai.assetManagement))
-            .withIporProtocolRouter(address(amm.router))
-            .withAmmTreasuryProxyAddress(address(amm.dai.ammTreasury))
-            .upgrade();
+        .withAsset(address(amm.dai.asset))
+        .withAmmStorage(address(amm.dai.ammStorage))
+        .withAssetManagement(address(amm.dai.assetManagement))
+        .withIporProtocolRouter(address(amm.router))
+        .withAmmTreasuryProxyAddress(address(amm.dai.ammTreasury))
+        .upgrade();
 
         amm.router = _getFullIporProtocolRouterInstance(amm, cfg);
 
@@ -393,19 +394,19 @@ contract IporProtocolFactory is Test {
         iporProtocol.spreadRouter = _spreadRouterBuilder.build();
 
         _assetManagementBuilder
-            .withAssetType(BuilderUtils.AssetType.USDT)
-            .withAsset(address(iporProtocol.asset))
-            .withAmmTreasury(address(iporProtocol.ammTreasury))
-            .withAssetManagementProxyAddress(address(iporProtocol.assetManagement))
-            .upgrade();
+        .withAssetType(BuilderUtils.AssetType.USDT)
+        .withAsset(address(iporProtocol.asset))
+        .withAmmTreasury(address(iporProtocol.ammTreasury))
+        .withAssetManagementProxyAddress(address(iporProtocol.assetManagement))
+        .upgrade();
 
         _ammTreasuryBuilder
-            .withAsset(address(iporProtocol.asset))
-            .withAmmStorage(address(iporProtocol.ammStorage))
-            .withAssetManagement(address(iporProtocol.assetManagement))
-            .withIporProtocolRouter(address(iporProtocol.router))
-            .withAmmTreasuryProxyAddress(address(iporProtocol.ammTreasury))
-            .upgrade();
+        .withAsset(address(iporProtocol.asset))
+        .withAmmStorage(address(iporProtocol.ammStorage))
+        .withAssetManagement(address(iporProtocol.assetManagement))
+        .withIporProtocolRouter(address(iporProtocol.router))
+        .withAmmTreasuryProxyAddress(address(iporProtocol.ammTreasury))
+        .upgrade();
 
         iporProtocol.router = _getUsdtIporProtocolRouterInstance(iporProtocol, cfg);
 
@@ -496,19 +497,19 @@ contract IporProtocolFactory is Test {
         iporProtocol.spreadRouter = _spreadRouterBuilder.build();
 
         _assetManagementBuilder
-            .withAssetType(BuilderUtils.AssetType.USDC)
-            .withAsset(address(iporProtocol.asset))
-            .withAmmTreasury(address(iporProtocol.ammTreasury))
-            .withAssetManagementProxyAddress(address(iporProtocol.assetManagement))
-            .upgrade();
+        .withAssetType(BuilderUtils.AssetType.USDC)
+        .withAsset(address(iporProtocol.asset))
+        .withAmmTreasury(address(iporProtocol.ammTreasury))
+        .withAssetManagementProxyAddress(address(iporProtocol.assetManagement))
+        .upgrade();
 
         _ammTreasuryBuilder
-            .withAsset(address(iporProtocol.asset))
-            .withAmmStorage(address(iporProtocol.ammStorage))
-            .withAssetManagement(address(iporProtocol.assetManagement))
-            .withIporProtocolRouter(address(iporProtocol.router))
-            .withAmmTreasuryProxyAddress(address(iporProtocol.ammTreasury))
-            .upgrade();
+        .withAsset(address(iporProtocol.asset))
+        .withAmmStorage(address(iporProtocol.ammStorage))
+        .withAssetManagement(address(iporProtocol.assetManagement))
+        .withIporProtocolRouter(address(iporProtocol.router))
+        .withAmmTreasuryProxyAddress(address(iporProtocol.ammTreasury))
+        .upgrade();
 
         iporProtocol.router = _getUsdcIporProtocolRouterInstance(iporProtocol, cfg);
 
@@ -598,18 +599,18 @@ contract IporProtocolFactory is Test {
         _spreadRouterBuilder.withSpread90DaysTestCase(cfg.spread90DaysTestCase);
         iporProtocol.spreadRouter = _spreadRouterBuilder.build();
         _assetManagementBuilder
-            .withAssetType(BuilderUtils.AssetType.DAI)
-            .withAsset(address(iporProtocol.asset))
-            .withAmmTreasury(address(iporProtocol.ammTreasury))
-            .withAssetManagementProxyAddress(address(iporProtocol.assetManagement))
-            .upgrade();
+        .withAssetType(BuilderUtils.AssetType.DAI)
+        .withAsset(address(iporProtocol.asset))
+        .withAmmTreasury(address(iporProtocol.ammTreasury))
+        .withAssetManagementProxyAddress(address(iporProtocol.assetManagement))
+        .upgrade();
         _ammTreasuryBuilder
-            .withAsset(address(iporProtocol.asset))
-            .withAmmStorage(address(iporProtocol.ammStorage))
-            .withAssetManagement(address(iporProtocol.assetManagement))
-            .withIporProtocolRouter(address(iporProtocol.router))
-            .withAmmTreasuryProxyAddress(address(iporProtocol.ammTreasury))
-            .upgrade();
+        .withAsset(address(iporProtocol.asset))
+        .withAmmStorage(address(iporProtocol.ammStorage))
+        .withAssetManagement(address(iporProtocol.assetManagement))
+        .withIporProtocolRouter(address(iporProtocol.router))
+        .withAmmTreasuryProxyAddress(address(iporProtocol.ammTreasury))
+        .upgrade();
         iporProtocol.router = _getDaiIporProtocolRouterInstance(iporProtocol, cfg);
         iporProtocol.ammSwapsLens = IAmmSwapsLens(address(iporProtocol.router));
         iporProtocol.ammPoolsService = IAmmPoolsService(address(iporProtocol.router));
@@ -860,6 +861,7 @@ contract IporProtocolFactory is Test {
                     address(amm.usdt.asset),
                     address(amm.usdt.ammTreasury),
                     address(amm.usdt.ammStorage),
+                    address(amm.usdt.assetManagement),
                     cfg.ammPoolsTreasury,
                     cfg.ammPoolsTreasuryManager,
                     cfg.ammCharlieTreasury,
@@ -869,6 +871,7 @@ contract IporProtocolFactory is Test {
                     address(amm.usdc.asset),
                     address(amm.usdc.ammTreasury),
                     address(amm.usdc.ammStorage),
+                    address(amm.usdc.assetManagement),
                     cfg.ammPoolsTreasury,
                     cfg.ammPoolsTreasuryManager,
                     cfg.ammCharlieTreasury,
@@ -878,6 +881,7 @@ contract IporProtocolFactory is Test {
                     address(amm.dai.asset),
                     address(amm.dai.ammTreasury),
                     address(amm.dai.ammStorage),
+                    address(amm.dai.assetManagement),
                     cfg.ammPoolsTreasury,
                     cfg.ammPoolsTreasuryManager,
                     cfg.ammCharlieTreasury,
@@ -887,6 +891,7 @@ contract IporProtocolFactory is Test {
                     address(amm.stEth.asset),
                     address(amm.stEth.ammTreasury),
                     address(amm.stEth.ammStorage),
+                    address(amm.stEth.assetManagement),
                     cfg.ammPoolsTreasury,
                     cfg.ammPoolsTreasuryManager,
                     cfg.ammCharlieTreasury,
@@ -896,6 +901,7 @@ contract IporProtocolFactory is Test {
                     address(amm.stEth.asset), // mock todo: fix if needed
                     address(amm.stEth.ammTreasury),
                     address(amm.stEth.ammStorage),
+                    address(amm.stEth.assetManagement),
                     cfg.ammPoolsTreasury,
                     cfg.ammPoolsTreasuryManager,
                     cfg.ammCharlieTreasury,
@@ -905,6 +911,7 @@ contract IporProtocolFactory is Test {
                     address(amm.usdm.asset), // mock todo: fix if needed
                     address(amm.usdm.ammTreasury),
                     address(amm.usdm.ammStorage),
+                    address(amm.usdm.assetManagement),
                     cfg.ammPoolsTreasury,
                     cfg.ammPoolsTreasuryManager,
                     cfg.ammCharlieTreasury,
@@ -1142,6 +1149,7 @@ contract IporProtocolFactory is Test {
                     address(iporProtocol.asset),
                     address(iporProtocol.ammTreasury),
                     address(iporProtocol.ammStorage),
+                    address(iporProtocol.assetManagement),
                     cfg.ammPoolsTreasury,
                     cfg.ammPoolsTreasuryManager,
                     cfg.ammCharlieTreasury,
@@ -1358,6 +1366,7 @@ contract IporProtocolFactory is Test {
                     address(iporProtocol.asset),
                     address(iporProtocol.ammTreasury),
                     address(iporProtocol.ammStorage),
+                    address(iporProtocol.assetManagement),
                     cfg.ammPoolsTreasury,
                     cfg.ammPoolsTreasuryManager,
                     cfg.ammCharlieTreasury,
@@ -1580,6 +1589,7 @@ contract IporProtocolFactory is Test {
                     address(iporProtocol.asset),
                     address(iporProtocol.ammTreasury),
                     address(iporProtocol.ammStorage),
+                    address(iporProtocol.assetManagement),
                     cfg.ammPoolsTreasury,
                     cfg.ammPoolsTreasuryManager,
                     cfg.ammCharlieTreasury,
@@ -1623,14 +1633,15 @@ contract IporProtocolFactory is Test {
     }
 
     function _prepareFakePoolCfgForGovernanceService()
-        internal
-        returns (IAmmGovernanceLens.AmmGovernancePoolConfiguration memory poolCfg)
+    internal
+    returns (IAmmGovernanceLens.AmmGovernancePoolConfiguration memory poolCfg)
     {
         poolCfg = IAmmGovernanceLens.AmmGovernancePoolConfiguration({
             asset: address(_fakeContract),
             decimals: 0,
             ammStorage: address(_fakeContract),
             ammTreasury: address(_fakeContract),
+            ammVault: address(_fakeContract),
             ammPoolsTreasury: address(_fakeContract),
             ammPoolsTreasuryManager: address(_fakeContract),
             ammCharlieTreasury: address(_fakeContract),
@@ -1639,8 +1650,8 @@ contract IporProtocolFactory is Test {
     }
 
     function _prepareFakePoolCfgForPoolsService()
-        internal
-        returns (AmmPoolsService.AmmPoolsServicePoolConfiguration memory poolCfg)
+    internal
+    returns (AmmPoolsService.AmmPoolsServicePoolConfiguration memory poolCfg)
     {
         poolCfg = IAmmPoolsService.AmmPoolsServicePoolConfiguration({
             asset: address(_fakeContract),
@@ -1655,8 +1666,8 @@ contract IporProtocolFactory is Test {
     }
 
     function _prepareFakePoolCfgForCloseSwapService()
-        internal
-        returns (IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg)
+    internal
+    returns (IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg)
     {
         poolCfg = IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration({
             asset: address(_fakeContract),
@@ -1682,8 +1693,8 @@ contract IporProtocolFactory is Test {
     }
 
     function _prepareFakePoolCfgForOpenSwapService()
-        internal
-        returns (IAmmOpenSwapLens.AmmOpenSwapServicePoolConfiguration memory poolCfg)
+    internal
+    returns (IAmmOpenSwapLens.AmmOpenSwapServicePoolConfiguration memory poolCfg)
     {
         poolCfg = IAmmOpenSwapLens.AmmOpenSwapServicePoolConfiguration({
             asset: address(_fakeContract),
@@ -1703,6 +1714,7 @@ contract IporProtocolFactory is Test {
         address asset,
         address ammTreasury,
         address ammStorage,
+        address ammVault,
         address ammPoolsTreasury,
         address ammPoolsTreasuryManager,
         address ammCharlieTreasury,
@@ -1713,6 +1725,7 @@ contract IporProtocolFactory is Test {
             decimals: IERC20MetadataUpgradeable(asset).decimals(),
             ammStorage: ammStorage,
             ammTreasury: ammTreasury,
+            ammVault: ammVault,
             ammPoolsTreasury: ammPoolsTreasury == address(0) ? _owner : ammPoolsTreasury,
             ammPoolsTreasuryManager: ammPoolsTreasuryManager == address(0) ? _owner : ammPoolsTreasuryManager,
             ammCharlieTreasury: ammCharlieTreasury == address(0) ? _owner : ammCharlieTreasury,

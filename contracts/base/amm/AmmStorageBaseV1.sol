@@ -44,8 +44,8 @@ contract AmmStorageBaseV1 is
     StorageInternalTypes.SwapContainer internal _swapsPayFixed;
     StorageInternalTypes.SwapContainer internal _swapsReceiveFixed;
 
-    mapping(IporTypes.SwapTenor => AmmInternalTypes.OpenSwapList) private _openedSwapsPayFixed;
-    mapping(IporTypes.SwapTenor => AmmInternalTypes.OpenSwapList) private _openedSwapsReceiveFixed;
+    mapping(IporTypes.SwapTenor tenor => AmmInternalTypes.OpenSwapList) private _openedSwapsPayFixed;
+    mapping(IporTypes.SwapTenor tenor => AmmInternalTypes.OpenSwapList) private _openedSwapsReceiveFixed;
 
     uint128 internal totalLiquidationDepositBalance;
 

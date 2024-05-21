@@ -32,12 +32,11 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
     using AmmLib for AmmTypes.AmmPoolCoreModel;
     using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
 
-    uint256 public immutable version = 2001;
+    uint256 public immutable version = 2_002;
 
     address public immutable asset;
     uint256 public immutable decimals;
 
-    address public immutable messageSigner;
     address public immutable iporOracle;
     address public immutable spread;
     address public immutable ammStorage;
@@ -72,13 +71,11 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
 
     constructor(
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
-        address iporOracleInput,
-        address messageSignerInput
+        address iporOracleInput
     ) {
         asset = poolCfg.asset.checkAddress();
         decimals = poolCfg.decimals;
 
-        messageSigner = messageSignerInput.checkAddress();
         iporOracle = iporOracleInput.checkAddress();
         spread = poolCfg.spread.checkAddress();
         ammStorage = poolCfg.ammStorage.checkAddress();
@@ -115,6 +112,8 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
     {
         return _getPoolConfiguration();
     }
+
+    function _getMessageSigner() internal view virtual returns (address);
 
     function _emergencyCloseSwaps(
         uint256[] memory payFixedSwapIds,
@@ -409,7 +408,7 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
             ) = SwapCloseLogicLibBaseV1.calculateSwapUnwindWhenUnwindRequired(
                 AmmTypesBaseV1.UnwindParams({
                     asset: asset,
-                    messageSigner: messageSigner,
+                    messageSigner: _getMessageSigner(),
                     spread: spread,
                     ammStorage: ammStorage,
                     ammTreasury: ammTreasury,

@@ -99,9 +99,6 @@ library AmmTypesBaseV1 {
         /// @dev Notice! Input Asset can be different than the asset that is used as a collateral. Value represented in 18 decimals.
         uint256 wadInputAssetTotalAmount;
         /// @notice Amount of underlying asset that is used as a collateral and other costs related to swap opening.
-        /// @dev The amount is represented in decimals of the asset.
-        uint256 assetTotalAmount;
-        /// @notice Amount of underlying asset that is used as a collateral and other costs related to swap opening.
         /// @dev The amount is represented in 18 decimals regardless of the decimals of the asset.
         uint256 wadAssetTotalAmount;
         /// @notice Swap's collateral.
