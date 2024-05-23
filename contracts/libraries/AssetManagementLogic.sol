@@ -9,8 +9,8 @@ library AssetManagementLogic {
     /// @notice Calculate rebalance amount for liquidity provisioning
     /// @param wadAmmTreasuryErc20BalanceAfterDeposit AmmTreasury erc20 balance in wad, Notice: this balance is after providing liquidity operation!
     /// @param vaultBalance Vault balance in wad, AssetManagement's accrued balance.
-    /// @param wadAmmTreasuryAndAssetManagementRatioCfg AmmTreasury and AssetManagement Ratio taken from cofniguration.
-    /// @dev If wadAmmTreasuryAndAssetManagementRatioCfg is 0, then no rebalance betwee AmmTreasury and Asset Management is turned off.
+    /// @param wadAmmTreasuryAndAssetManagementRatioCfg AmmTreasury and AssetManagement Ratio taken from configuration.
+    /// @dev If wadAmmTreasuryAndAssetManagementRatioCfg is 0, then no rebalance between AmmTreasury and Asset Management is turned off.
     /// @return int256 Rebalance amount. If positive then required to deposit, if negative then required to withdraw from Asset Management
     function calculateRebalanceAmountAfterProvideLiquidity(
         uint256 wadAmmTreasuryErc20BalanceAfterDeposit,
@@ -34,7 +34,7 @@ library AssetManagementLogic {
     /// @param vaultBalance ERC20 balance of the Vault.
     /// @param wadOperationAmount Amount of ERC20 tokens to withdraw.
     /// @param wadAmmTreasuryAndAssetManagementRatioCfg Amm Treasury and Asset Management Ratio.
-    /// @dev If wadAmmTreasuryAndAssetManagementRatioCfg is 0, then no rebalance betwee AmmTreasury and Asset Management is turned off.
+    /// @dev If wadAmmTreasuryAndAssetManagementRatioCfg is 0, then no rebalance between AmmTreasury and Asset Management is turned off.
     /// @return int256 Rebalance amount. If positive then required to deposit, if negative then required to withdraw from Asset Management.
     /// @dev All values represented in WAD (18 decimals).
     function calculateRebalanceAmountBeforeWithdraw(
