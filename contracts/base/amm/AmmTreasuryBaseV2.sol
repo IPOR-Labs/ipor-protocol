@@ -22,13 +22,13 @@ import "../../security/PauseManager.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 
 contract AmmTreasuryBaseV2 is
-Initializable,
-PausableUpgradeable,
-ReentrancyGuardUpgradeable,
-UUPSUpgradeable,
-IporOwnableUpgradeable,
-IAmmTreasuryBaseV2,
-IProxyImplementation
+    Initializable,
+    PausableUpgradeable,
+    ReentrancyGuardUpgradeable,
+    UUPSUpgradeable,
+    IporOwnableUpgradeable,
+    IAmmTreasuryBaseV2,
+    IProxyImplementation
 {
     using SafeCast for uint256;
     using SafeCast for int256;
@@ -106,7 +106,7 @@ IProxyImplementation
     function withdrawFromVaultInternal(uint256 wadAssetAmount) override external onlyRouter nonReentrant whenNotPaused {
         IERC4626(ammVault).withdraw(
             IporMath.convertWadToAssetDecimals(
-                wadAssetAmount, assetDecimals),  address(this), address(this));
+                wadAssetAmount, assetDecimals), address(this), address(this));
     }
 
     function withdrawAllFromVaultInternal() override external onlyRouter nonReentrant whenNotPaused {

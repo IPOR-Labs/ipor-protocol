@@ -24,6 +24,14 @@ contract ProvideUsdcArbitrumTest is UsdcTestForkCommonArbitrum {
         _setupUser(userOne, 100_000 * T_ASSET_DECIMALS);
     }
 
+    function testShouldProvideLiquidityAndDepositToAmmVault() public {
+        //TODO:
+    }
+
+    function testShouldRedeemLiquidityAndWithdrawFromAmmVault() public {
+        //TODO:
+    }
+
     function testShouldExchangeRateBe1WhenNoProvideUsdc() external {
         //given
 

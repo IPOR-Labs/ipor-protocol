@@ -146,8 +146,7 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
         );
     }
 
-    //TODO: fix it!
-    function rebalanceBetweenAmmTreasuryAndAssetManagement() external {
+    function rebalanceBetweenAmmTreasuryAndAmmVault() external {
         require(
             AmmConfigurationManager.isAppointedToRebalanceInAmm(asset, msg.sender),
             AmmPoolsErrors.CALLER_NOT_APPOINTED_TO_REBALANCE
@@ -162,12 +161,11 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
             assetDecimals
         );
 
-        //TODO: fix total balance!
-        uint256 totalBalance = wadAmmTreasuryAssetBalance + IAssetManagement(ammVault).totalBalance();
+        uint256 wadTotalBalance = wadAmmTreasuryAssetBalance + IporMath.convertToWad(IERC4626(ammVault).maxWithdraw(ammTreasury), assetDecimals);
 
-        require(totalBalance > 0, AmmPoolsErrors.ASSET_MANAGEMENT_BALANCE_IS_EMPTY);
+        require(wadTotalBalance > 0, AmmPoolsErrors.ASSET_MANAGEMENT_BALANCE_IS_EMPTY);
 
-        uint256 ratio = IporMath.division(wadAmmTreasuryAssetBalance * 1e18, totalBalance);
+        uint256 ratio = IporMath.division(wadAmmTreasuryAssetBalance * 1e18, wadTotalBalance);
 
         /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals, example 45% = 4500, so to achieve number in 18 decimals we need to multiply by 1e14
         uint256 ammTreasuryAssetManagementBalanceRatio = uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) *
@@ -175,12 +173,12 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
 
         if (ratio > ammTreasuryAssetManagementBalanceRatio) {
             uint256 wadAssetAmount = wadAmmTreasuryAssetBalance -
-                                IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18);
+                                IporMath.division(ammTreasuryAssetManagementBalanceRatio * wadTotalBalance, 1e18);
             if (wadAssetAmount > 0) {
                 IAmmTreasuryBaseV2(ammTreasury).depositToVaultInternal(wadAssetAmount);
             }
         } else {
-            uint256 wadAssetAmount = IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18) -
+            uint256 wadAssetAmount = IporMath.division(ammTreasuryAssetManagementBalanceRatio * wadTotalBalance, 1e18) -
                         wadAmmTreasuryAssetBalance;
             if (wadAssetAmount > 0) {
                 IAmmTreasuryBaseV2(ammTreasury).withdrawFromVaultInternal(wadAssetAmount);

@@ -11,6 +11,11 @@ import "../../../contracts/interfaces/types/AmmTypes.sol";
 contract ArbitrumForkAmmUsdcCloseSwapsTest is UsdcTestForkCommonArbitrum {
     uint256 public constant T_ASSET_DECIMALS = 1e6;
 
+
+    function testShouldClosePositionAndWithdrawFromAmmVault() public {
+        //TODO:
+    }
+
     function testShouldClosePositionUsdcForUsdc28daysPayFixed() public {
         //given
         _init();
