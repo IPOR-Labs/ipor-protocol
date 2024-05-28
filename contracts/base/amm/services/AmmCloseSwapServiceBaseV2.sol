@@ -24,7 +24,8 @@ import "../libraries/SwapCloseLogicLibBaseV1.sol";
 import "../../interfaces/ISpreadBaseV1.sol";
 import {AssetManagementLogic} from "../../../libraries/AssetManagementLogic.sol";
 
-/// @title Abstract contract for closing swap, generation one, characterized by: with additional asset management logic and rebalance between AmmTreasury and AmmVault (PlasmaVault from Ipor Fusion)
+/// @title Abstract contract for closing swap, generation one,
+/// characterized by: with additional asset management logic and rebalance between AmmTreasury and AmmVault (PlasmaVault from Ipor Fusion)
 abstract contract AmmCloseSwapServiceBaseV2 is AmmCloseSwapServiceBaseV1 {
     using Address for address;
     using IporContractValidator for address;

@@ -24,11 +24,77 @@ contract ProvideUsdcArbitrumTest is UsdcTestForkCommonArbitrum {
         _setupUser(userOne, 100_000 * T_ASSET_DECIMALS);
     }
 
-    function testShouldProvideLiquidityAndDepositToAmmVault() public {
-        //TODO:
+    function testShouldProvideLiquidityUsdcAndDepositToAmmVault() public {
+        // given
+        address userTwo = _getUserAddress(33);
+        _setupUser(userTwo, 100_000 * T_ASSET_DECIMALS);
+
+//        uint userOneUsdcBalanceBefore = IERC20(USDC).balanceOf(userOne);
+//        uint userOneIpUsdcBalanceBefore = IERC20(ipUsdc).balanceOf(userOne);
+//        uint userTwoUsdcBalanceBefore = IERC20(USDC).balanceOf(userTwo);
+//        uint userTwoIpUsdcBalanceBefore = IERC20(ipUsdc).balanceOf(userTwo);
+
+        uint256 ammTreasuryUsdcBalanceBefore = IERC20(USDC).balanceOf(ammTreasuryUsdcProxy);
+        uint256 ammVaultUsdcBalanceBefore = IERC20(USDC).balanceOf(ammVaultUsdc);
+
+
+        uint provideAmount = 10000 * T_ASSET_DECIMALS;
+        uint256 wadProvideAmount = 10000 * PROTOCOL_DECIMALS;
+//        uint exchangeRateBefore = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(USDC);
+
+        vm.prank(PROTOCOL_OWNER);
+        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(USDC, 1000000000, 1, 0);
+
+        // when
+        vm.prank(userOne);
+        IAmmPoolsServiceUsdc(iporProtocolRouterProxy).provideLiquidityUsdcToAmmPoolUsdc(userTwo, provideAmount);
+
+        // then
+//        uint userOneUsdcBalanceAfter = IERC20(USDC).balanceOf(userOne);
+//        uint userOneIpUsdcBalanceAfter = IERC20(ipUsdc).balanceOf(userOne);
+//        uint userTwoUsdcBalanceAfter = IERC20(USDC).balanceOf(userTwo);
+//        uint userTwoIpUsdcBalanceAfter = IERC20(ipUsdc).balanceOf(userTwo);
+
+        uint256 ammTreasuryUsdcBalanceAfter = IERC20(USDC).balanceOf(ammTreasuryUsdcProxy);
+        uint256 ammVaultUsdcBalanceAfter = IERC20(USDC).balanceOf(ammVaultUsdc);
+
+//        uint256 exchangeRateAfter = IAmmPoolsLens(iporProtocolRouterProxy).getIpTokenExchangeRate(USDC);
+
+        console2.log("ammTreasuryUsdcBalanceBefore: ", ammTreasuryUsdcBalanceBefore);
+        console2.log("ammTreasuryUsdcBalanceAfter: ", ammTreasuryUsdcBalanceAfter);
+
+        console2.log("ammVaultUsdcBalanceBefore: ", ammVaultUsdcBalanceBefore);
+        console2.log("ammVaultUsdcBalanceAfter: ", ammVaultUsdcBalanceAfter);
+
+//        assertApproxEqAbs(
+//            userOneUsdcBalanceBefore - provideAmount,
+//            userOneUsdcBalanceAfter,
+//            10,
+//            "user balance of usdc should decrease"
+//        );
+//        assertEq(userOneIpUsdcBalanceBefore, userOneIpUsdcBalanceAfter, "user ipUsdc balance should not change");
+//        assertEq(userTwoUsdcBalanceBefore, userTwoUsdcBalanceAfter, "user balance of usdc should not change");
+//        assertEq(
+//            userTwoIpUsdcBalanceBefore + wadProvideAmount,
+//            userTwoIpUsdcBalanceAfter,
+//            "user ipusdc balance should increase"
+//        );
+//        assertEq(userTwoIpUsdcBalanceAfter, wadProvideAmount, "user ipusdc balance should be equal to provideAmount");
+//        assertEq(
+//            ammTreasuryUsdcBalanceBefore,
+//            10000 * 1e6,
+//            "amm treasury balance should be 10000000"
+//        );
+//        assertApproxEqAbs(
+//            ammTreasuryUsdcBalanceAfter,
+//            10100000000,
+//            10,
+//            "amm treasury balance should be 110000000"
+//        );
+//        assertEq(exchangeRateBefore, exchangeRateAfter, "exchangeRate should not change");
     }
 
-    function testShouldRedeemLiquidityAndWithdrawFromAmmVault() public {
+    function testShouldRedeemLiquidityUsdcAndWithdrawFromAmmVault() public {
         //TODO:
     }
 

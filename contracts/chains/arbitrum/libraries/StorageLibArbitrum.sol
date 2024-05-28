@@ -105,8 +105,7 @@ library StorageLibArbitrum {
         /// @dev max liquidity pool balance in the asset pool, represented without 18 decimals
         uint32 maxLiquidityPoolBalance;
         /// @dev The threshold for auto-rebalancing the pool. Value represented without 18 decimals.
-        /// Value represents multiplication of 1000.
-        uint32 autoRebalanceThresholdInThousands;
+        uint32 autoRebalanceThreshold;
         /// @dev asset management ratio, represented without 18 decimals, value represents percentage with 2 decimals
         /// 65% = 6500, 99,99% = 9999, this is a percentage which stay in Amm Treasury in opposite to Asset Management
         /// based on AMM Treasury balance (100%).

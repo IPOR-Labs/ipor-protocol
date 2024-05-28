@@ -351,7 +351,8 @@ contract UsdcTestForkCommonArbitrum is Test {
                     ammVault_: ammVaultUsdc,
                     iporOracle_: iporOracleProxy,
                     iporProtocolRouter_: iporProtocolRouterProxy,
-                    redeemFeeRate_: 5 * 1e15
+                    redeemFeeRate_: 5 * 1e15,
+                    autoRebalanceThresholdMultiplier_: 1000
                 }
             ));
     }
@@ -384,7 +385,8 @@ contract UsdcTestForkCommonArbitrum is Test {
                     ammVault_: ammVaultUsdc,
                     iporOracle_: iporOracleProxy,
                     iporProtocolRouter_: iporProtocolRouterProxy,
-                    redeemFeeRate_: redeemFeeRateAssetInput
+                    redeemFeeRate_: redeemFeeRateAssetInput,
+                    autoRebalanceThresholdMultiplier_: 1000
                 }
 
             ));
@@ -400,7 +402,8 @@ contract UsdcTestForkCommonArbitrum is Test {
                 ammVault_: ammVaultUsdc,
                 iporOracle_: iporOracleProxy,
                 iporProtocolRouter_: iporProtocolRouterProxy,
-                redeemFeeRate_: 0
+                redeemFeeRate_: 0,
+                autoRebalanceThresholdMultiplier_: 1000
             })
         );
     }

@@ -46,6 +46,8 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
 
     uint256 public immutable redeemFeeRate;
 
+    /// @dev Multiplier for auto rebalance threshold param. For stables (USDC, USDC, DAI, USDM, etc) it is 1000 - means in thousands (1000x), for ETH, wstETH etc. is 1 - (1x)
+    uint256 public immutable autoRebalanceThresholdMultiplier;
 
     constructor(
         address asset_,
@@ -55,7 +57,8 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
         address ammVault_,
         address iporOracle_,
         address iporProtocolRouter_,
-        uint256 redeemFeeRate_
+        uint256 redeemFeeRate_,
+        uint256 autoRebalanceThresholdMultiplier_
     ) {
         asset = asset_.checkAddress();
         assetDecimals = IERC20Metadata(asset).decimals();
@@ -66,6 +69,7 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
         iporOracle = iporOracle_.checkAddress();
         iporProtocolRouter = iporProtocolRouter_.checkAddress();
         redeemFeeRate = redeemFeeRate_;
+        autoRebalanceThresholdMultiplier = autoRebalanceThresholdMultiplier_;
 
         require(redeemFeeRate_ <= 1e18, AmmPoolsErrors.CFG_INVALID_REDEEM_FEE_RATE);
     }
@@ -203,8 +207,8 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg,
         uint256 wadOperationAmount
     ) internal {
-        /// @dev 1e21 explanation: autoRebalanceThresholdInThousands represents value in thousands without decimals, example threshold=10 it is 10_000*1e18, so to achieve number in 18 decimals we need to multiply by 1e21
-        uint256 autoRebalanceThreshold = uint256(ammPoolsParamsCfg.autoRebalanceThresholdInThousands) * 1e21;
+        /// @dev 1e18 * autoRebalanceThresholdMultiplier explanation: autoRebalanceThreshold represents value without decimals, selected asset can have different multiplier, for example for stables is 1000x, value in thousands, for ETH, wstETH etc. is 1x
+        uint256 autoRebalanceThreshold = uint256(ammPoolsParamsCfg.autoRebalanceThreshold) * 1e18 * autoRebalanceThresholdMultiplier;
 
         if (autoRebalanceThreshold > 0 && wadOperationAmount >= autoRebalanceThreshold) {
             int256 rebalanceAmount = AssetManagementLogic.calculateRebalanceAmountAfterProvideLiquidity(
@@ -235,8 +239,8 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
             asset
         );
 
-        /// @dev 1e21 explanation: autoRebalanceThresholdInThousands represents value in thousands without decimals, example threshold=10 it is 10_000*1e18, so to achieve number in 18 decimals we need to multiply by 1e21
-        uint256 autoRebalanceThreshold = uint256(ammPoolsParamsCfg.autoRebalanceThresholdInThousands) * 1e21;
+        /// @dev 1e18 * autoRebalanceThresholdMultiplier explanation: autoRebalanceThreshold represents value without decimals, selected asset can have different multiplier, for example for stables is 1000x, value in thousands, for ETH, wstETH etc. is 1x
+        uint256 autoRebalanceThreshold = uint256(ammPoolsParamsCfg.autoRebalanceThreshold) * 1e18 * autoRebalanceThresholdMultiplier;
 
         if (
             wadOperationAmount > wadAmmTreasuryErc20Balance ||
