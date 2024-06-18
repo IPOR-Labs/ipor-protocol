@@ -3,8 +3,8 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts-upgradeable/interfaces/draft-IERC1822Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/interfaces/IERC1967Upgradeable.sol";
-import "./IIporContractCommonGov.sol";
 import "./IProxyImplementation.sol";
+import {IRouterAccessControl} from "./IRouterAccessControl.sol";
 import "./IAmmSwapsLens.sol";
 import "./IAmmPoolsLens.sol";
 import "./IAssetManagementLens.sol";
@@ -37,7 +37,7 @@ import "./IProvideLiquidityEvents.sol";
 interface IIporProtocol is
     IERC1822ProxiableUpgradeable,
     IERC1967Upgradeable,
-    IIporContractCommonGov,
+    IRouterAccessControl,
     IProxyImplementation,
     IAmmSwapsLens,
     IAmmPoolsLens,
