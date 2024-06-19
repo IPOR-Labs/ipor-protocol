@@ -21,6 +21,7 @@ import "../../libraries/IporContractValidator.sol";
 import "../../security/PauseManager.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 
+/// @title AMM Treasury Base V2 support Asset Management which is ERC4626 Vault.
 contract AmmTreasuryBaseV2 is
     Initializable,
     PausableUpgradeable,
@@ -87,7 +88,7 @@ contract AmmTreasuryBaseV2 is
 
         uint256 liquidityPool =
                     (IporMath.convertToWad(IERC20Upgradeable(asset).balanceOf(address(this)), assetDecimals).toInt256() +
-                    (IERC4626(ammVault).maxWithdraw(address(this))).toInt256() -
+                    (IporMath.convertToWad(IERC4626(ammVault).maxWithdraw(address(this)), assetDecimals)).toInt256() -
                     balance.totalCollateralPayFixed.toInt256() -
                     balance.totalCollateralReceiveFixed.toInt256() -
                     balance.iporPublicationFee.toInt256() -
@@ -98,9 +99,9 @@ contract AmmTreasuryBaseV2 is
     }
 
     function depositToVaultInternal(uint256 wadAssetAmount) override external onlyRouter nonReentrant whenNotPaused {
-        IERC4626(ammVault).deposit(
-            IporMath.convertWadToAssetDecimals(
-                wadAssetAmount, assetDecimals), address(this));
+        uint256 assetAmount = IporMath.convertWadToAssetDecimals(wadAssetAmount, assetDecimals);
+        IERC20Upgradeable(asset).forceApprove(ammVault, assetAmount);
+        IERC4626(ammVault).deposit(assetAmount, address(this));
     }
 
     function withdrawFromVaultInternal(uint256 wadAssetAmount) override external onlyRouter nonReentrant whenNotPaused {

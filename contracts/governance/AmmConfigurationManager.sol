@@ -23,7 +23,7 @@ library AmmConfigurationManager {
     /// @param maxLiquidityPoolBalance maximum liquidity pool balance
     /// @param autoRebalanceThreshold auto rebalance threshold
     /// @param ammTreasuryAndAssetManagementRatio AMM treasury and asset management ratio
-    /// @dev Params autoRebalanceThreshold and ammTreasuryAndAssetManagementRatio are not supported in stETH pool. Because stETH pool doesn't have asset management.
+    /// @dev Params autoRebalanceThreshold and ammTreasuryAndAssetManagementRatio are not used in pools which do not have Asset Management / Plasma Vault.
     event AmmPoolsParamsChanged(
         address indexed asset,
         uint32 maxLiquidityPoolBalance,

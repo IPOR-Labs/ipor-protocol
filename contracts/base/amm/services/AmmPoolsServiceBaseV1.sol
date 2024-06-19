@@ -156,9 +156,7 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
             AmmPoolsErrors.CALLER_NOT_APPOINTED_TO_REBALANCE
         );
 
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
-            asset
-        );
+        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(asset);
 
         uint256 wadAmmTreasuryAssetBalance = IporMath.convertToWad(
             IERC20Upgradeable(asset).balanceOf(ammTreasury),
@@ -216,7 +214,8 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
                     IERC20Upgradeable(asset).balanceOf(ammTreasury),
                     assetDecimals
                 ),
-                IERC4626(ammVault).maxWithdraw(ammTreasury),
+                /// @dev Notice! Plasma Vault balances are in asset decimals
+                IporMath.convertToWad(IERC4626(ammVault).maxWithdraw(ammTreasury), assetDecimals),
                 /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals, example 45% = 4500, so to achieve number in 18 decimals we need to multiply by 1e14
                 uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) * 1e14
             );
@@ -235,9 +234,7 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
             assetDecimals
         );
 
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
-            asset
-        );
+        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(asset);
 
         /// @dev 1e18 * autoRebalanceThresholdMultiplier explanation: autoRebalanceThreshold represents value without decimals, selected asset can have different multiplier, for example for stables is 1000x, value in thousands, for ETH, wstETH etc. is 1x
         uint256 autoRebalanceThreshold = uint256(ammPoolsParamsCfg.autoRebalanceThreshold) * 1e18 * autoRebalanceThresholdMultiplier;
@@ -248,7 +245,8 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
         ) {
             int256 rebalanceAmount = AssetManagementLogic.calculateRebalanceAmountBeforeWithdraw(
                 wadAmmTreasuryErc20Balance,
-                IERC4626(ammVault).maxWithdraw(ammTreasury),
+                /// @dev Notice! Plasma Vault balances are in asset decimals
+                IporMath.convertToWad(IERC4626(ammVault).maxWithdraw(ammTreasury), assetDecimals),
                 wadOperationAmount,
                 /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals, example 45% = 4500, so to achieve number in 18 decimals we need to multiply by 1e14
                 uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) * 1e14

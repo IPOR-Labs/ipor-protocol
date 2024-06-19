@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 import {IAmmTreasuryBaseV1} from "./IAmmTreasuryBaseV1.sol";
 
-/// @notice Interface of the AmmTreasury contract.
+/// @notice Interface of the AmmTreasury contract which supports Asset Management / Plasma Vault.
 interface IAmmTreasuryBaseV2 is IAmmTreasuryBaseV1 {
     /// @notice Transfers the assets from the AmmTreasury to the AmmVault.
     /// @dev AmmTreasury balance in storage is not changing after this deposit, balance of ERC20 assets on AmmTreasury

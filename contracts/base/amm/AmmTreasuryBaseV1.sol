@@ -19,6 +19,7 @@ import "../../libraries/IporContractValidator.sol";
 import "../../security/PauseManager.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 
+/// @title AMM Treasury Base V1 - Asset Management / Vault is not supported in this version.
 contract AmmTreasuryBaseV1 is
 Initializable,
 PausableUpgradeable,

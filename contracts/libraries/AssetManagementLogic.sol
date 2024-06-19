@@ -8,13 +8,13 @@ library AssetManagementLogic {
 
     /// @notice Calculate rebalance amount for liquidity provisioning
     /// @param wadAmmTreasuryErc20BalanceAfterDeposit AmmTreasury erc20 balance in wad, Notice: this balance is after providing liquidity operation!
-    /// @param vaultBalance Vault balance in wad, AssetManagement's accrued balance.
+    /// @param wadVaultBalance Vault balance in WAD, AssetManagement's accrued balance.
     /// @param wadAmmTreasuryAndAssetManagementRatioCfg AmmTreasury and AssetManagement Ratio taken from configuration.
     /// @dev If wadAmmTreasuryAndAssetManagementRatioCfg is 0, then no rebalance between AmmTreasury and Asset Management is turned off.
     /// @return int256 Rebalance amount. If positive then required to deposit, if negative then required to withdraw from Asset Management
     function calculateRebalanceAmountAfterProvideLiquidity(
         uint256 wadAmmTreasuryErc20BalanceAfterDeposit,
-        uint256 vaultBalance,
+        uint256 wadVaultBalance,
         uint256 wadAmmTreasuryAndAssetManagementRatioCfg
     ) internal pure returns (int256) {
         if (wadAmmTreasuryAndAssetManagementRatioCfg == 0) {
@@ -23,10 +23,10 @@ library AssetManagementLogic {
 
         return
             IporMath.divisionInt(
-                (wadAmmTreasuryErc20BalanceAfterDeposit + vaultBalance).toInt256() *
+                (wadAmmTreasuryErc20BalanceAfterDeposit + wadVaultBalance).toInt256() *
                     (1e18 - wadAmmTreasuryAndAssetManagementRatioCfg.toInt256()),
                 1e18
-            ) - vaultBalance.toInt256();
+            ) - wadVaultBalance.toInt256();
     }
 
     /// @notice Calculates rebalance amount before withdraw from pool.
