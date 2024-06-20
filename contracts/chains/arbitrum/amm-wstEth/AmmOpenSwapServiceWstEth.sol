@@ -23,8 +23,7 @@ contract AmmOpenSwapServiceWstEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServi
     constructor(
         AmmTypesBaseV1.AmmOpenSwapServicePoolConfiguration memory poolCfg,
         address iporOracle_
-    ) AmmOpenSwapServiceBaseV1(poolCfg, iporOracle_) {
-    }
+    ) AmmOpenSwapServiceBaseV1(poolCfg, iporOracle_) {}
 
     function openSwapPayFixed28daysWstEth(
         address beneficiary,
@@ -186,10 +185,7 @@ contract AmmOpenSwapServiceWstEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServi
         }
     }
 
-    function _transferTotalAmountToAmmTreasury(
-        address inputAsset,
-        uint256 inputAssetTotalAmount
-    ) internal override {
+    function _transferTotalAmountToAmmTreasury(address inputAsset, uint256 inputAssetTotalAmount) internal override {
         IERC20Upgradeable(asset).safeTransferFrom(msg.sender, ammTreasury, inputAssetTotalAmount);
     }
 }

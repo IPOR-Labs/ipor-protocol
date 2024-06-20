@@ -145,7 +145,6 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         _usdmAmmPoolsTreasuryManager = usdmPoolCfg.ammPoolsTreasuryManager.checkAddress();
         _usdmAmmCharlieTreasury = usdmPoolCfg.ammCharlieTreasury.checkAddress();
         _usdmAmmCharlieTreasuryManager = usdmPoolCfg.ammCharlieTreasuryManager.checkAddress();
-
     }
 
     function getAmmGovernancePoolConfiguration(
@@ -263,86 +262,85 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         if (asset == _usdt) {
             return
                 AmmGovernancePoolConfiguration({
-                asset: _usdt,
-                decimals: _usdtDecimals,
-                ammStorage: _usdtAmmStorage,
-                ammTreasury: _usdtAmmTreasury,
-                ammVault: _usdtAmmVault,
-                ammPoolsTreasury: _usdtAmmPoolsTreasury,
-                ammPoolsTreasuryManager: _usdtAmmPoolsTreasuryManager,
-                ammCharlieTreasury: _usdtAmmCharlieTreasury,
-                ammCharlieTreasuryManager: _usdtAmmCharlieTreasuryManager
-            });
+                    asset: _usdt,
+                    decimals: _usdtDecimals,
+                    ammStorage: _usdtAmmStorage,
+                    ammTreasury: _usdtAmmTreasury,
+                    ammVault: _usdtAmmVault,
+                    ammPoolsTreasury: _usdtAmmPoolsTreasury,
+                    ammPoolsTreasuryManager: _usdtAmmPoolsTreasuryManager,
+                    ammCharlieTreasury: _usdtAmmCharlieTreasury,
+                    ammCharlieTreasuryManager: _usdtAmmCharlieTreasuryManager
+                });
         } else if (asset == _usdc) {
             return
                 AmmGovernancePoolConfiguration({
-                asset: _usdc,
-                decimals: _usdcDecimals,
-                ammStorage: _usdcAmmStorage,
-                ammTreasury: _usdcAmmTreasury,
-                ammVault: _usdcAmmVault,
-                ammPoolsTreasury: _usdcAmmPoolsTreasury,
-                ammPoolsTreasuryManager: _usdcAmmPoolsTreasuryManager,
-                ammCharlieTreasury: _usdcAmmCharlieTreasury,
-                ammCharlieTreasuryManager: _usdcAmmCharlieTreasuryManager
-            });
+                    asset: _usdc,
+                    decimals: _usdcDecimals,
+                    ammStorage: _usdcAmmStorage,
+                    ammTreasury: _usdcAmmTreasury,
+                    ammVault: _usdcAmmVault,
+                    ammPoolsTreasury: _usdcAmmPoolsTreasury,
+                    ammPoolsTreasuryManager: _usdcAmmPoolsTreasuryManager,
+                    ammCharlieTreasury: _usdcAmmCharlieTreasury,
+                    ammCharlieTreasuryManager: _usdcAmmCharlieTreasuryManager
+                });
         } else if (asset == _dai) {
             return
                 AmmGovernancePoolConfiguration({
-                asset: _dai,
-                decimals: _daiDecimals,
-                ammStorage: _daiAmmStorage,
-                ammTreasury: _daiAmmTreasury,
-                ammVault: _daiAmmVault,
-                ammPoolsTreasury: _daiAmmPoolsTreasury,
-                ammPoolsTreasuryManager: _daiAmmPoolsTreasuryManager,
-                ammCharlieTreasury: _daiAmmCharlieTreasury,
-                ammCharlieTreasuryManager: _daiAmmCharlieTreasuryManager
-            });
+                    asset: _dai,
+                    decimals: _daiDecimals,
+                    ammStorage: _daiAmmStorage,
+                    ammTreasury: _daiAmmTreasury,
+                    ammVault: _daiAmmVault,
+                    ammPoolsTreasury: _daiAmmPoolsTreasury,
+                    ammPoolsTreasuryManager: _daiAmmPoolsTreasuryManager,
+                    ammCharlieTreasury: _daiAmmCharlieTreasury,
+                    ammCharlieTreasuryManager: _daiAmmCharlieTreasuryManager
+                });
         } else if (asset == _stEth) {
             return
                 AmmGovernancePoolConfiguration({
-                asset: _stEth,
-                decimals: _stEthDecimals,
-                ammStorage: _stEthAmmStorage,
-                ammTreasury: _stEthAmmTreasury,
-                ammVault: address(0),
-                ammPoolsTreasury: _stEthAmmPoolsTreasury,
-                ammPoolsTreasuryManager: _stEthAmmPoolsTreasuryManager,
-                ammCharlieTreasury: _stEthAmmCharlieTreasury,
-                ammCharlieTreasuryManager: _stEthAmmCharlieTreasuryManager
-            });
+                    asset: _stEth,
+                    decimals: _stEthDecimals,
+                    ammStorage: _stEthAmmStorage,
+                    ammTreasury: _stEthAmmTreasury,
+                    ammVault: address(0),
+                    ammPoolsTreasury: _stEthAmmPoolsTreasury,
+                    ammPoolsTreasuryManager: _stEthAmmPoolsTreasuryManager,
+                    ammCharlieTreasury: _stEthAmmCharlieTreasury,
+                    ammCharlieTreasuryManager: _stEthAmmCharlieTreasuryManager
+                });
         } else if (asset == _weEth) {
             return
                 AmmGovernancePoolConfiguration({
-                asset: _weEth,
-                decimals: _weEthDecimals,
-                ammStorage: _weEthAmmStorage,
-                ammTreasury: _weEthAmmTreasury,
-                ammVault: address(0),
-                ammPoolsTreasury: _weEthAmmPoolsTreasury,
-                ammPoolsTreasuryManager: _weEthAmmPoolsTreasuryManager,
-                ammCharlieTreasury: _weEthAmmCharlieTreasury,
-                ammCharlieTreasuryManager: _weEthAmmCharlieTreasuryManager
-            });
+                    asset: _weEth,
+                    decimals: _weEthDecimals,
+                    ammStorage: _weEthAmmStorage,
+                    ammTreasury: _weEthAmmTreasury,
+                    ammVault: address(0),
+                    ammPoolsTreasury: _weEthAmmPoolsTreasury,
+                    ammPoolsTreasuryManager: _weEthAmmPoolsTreasuryManager,
+                    ammCharlieTreasury: _weEthAmmCharlieTreasury,
+                    ammCharlieTreasuryManager: _weEthAmmCharlieTreasuryManager
+                });
         } else if (asset == _usdm) {
             return
                 AmmGovernancePoolConfiguration({
-                asset: _usdm,
-                decimals: _usdmDecimals,
-                ammStorage: _usdmAmmStorage,
-                ammTreasury: _usdmAmmTreasury,
-                ammVault: address(0),
-                ammPoolsTreasury: _usdmAmmPoolsTreasury,
-                ammPoolsTreasuryManager: _usdmAmmPoolsTreasuryManager,
-                ammCharlieTreasury: _usdmAmmCharlieTreasury,
-                ammCharlieTreasuryManager: _usdmAmmCharlieTreasuryManager
-            });
+                    asset: _usdm,
+                    decimals: _usdmDecimals,
+                    ammStorage: _usdmAmmStorage,
+                    ammTreasury: _usdmAmmTreasury,
+                    ammVault: address(0),
+                    ammPoolsTreasury: _usdmAmmPoolsTreasury,
+                    ammPoolsTreasuryManager: _usdmAmmPoolsTreasuryManager,
+                    ammCharlieTreasury: _usdmAmmCharlieTreasury,
+                    ammCharlieTreasuryManager: _usdmAmmCharlieTreasuryManager
+                });
         } else {
             revert(IporErrors.ASSET_NOT_SUPPORTED);
         }
     }
-
 
     function _getAmmTreasury(address asset) internal view returns (address) {
         if (asset == _usdt) {

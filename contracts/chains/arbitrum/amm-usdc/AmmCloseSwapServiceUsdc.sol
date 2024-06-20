@@ -10,7 +10,6 @@ import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 /// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
 contract AmmCloseSwapServiceUsdc is AmmCloseSwapServiceBaseV2, IAmmCloseSwapServiceUsdc {
-
     constructor(
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         address iporOracle_

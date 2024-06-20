@@ -48,7 +48,7 @@ contract AccessControl is IRouterAccessControl {
 
     /// @notice Gets IPOR Protocol Owner on Router
     /// @return IPOR Protocol Owner address
-    function owner() external override view returns (address) {
+    function owner() external view override returns (address) {
         return OwnerManager.getOwner();
     }
 
@@ -79,7 +79,7 @@ contract AccessControl is IRouterAccessControl {
     /// @dev Can be called only by pause guardian
     function pause(bytes4[] calldata functionSigs) external override onlyPauseGuardian {
         uint256 len = functionSigs.length;
-        for (uint256 i; i < len;) {
+        for (uint256 i; i < len; ) {
             StorageLib.getRouterFunctionPaused().value[functionSigs[i]] = 1;
             unchecked {
                 ++i;
@@ -91,7 +91,7 @@ contract AccessControl is IRouterAccessControl {
     /// @dev Can be called only by Owner of Ipor Protocol Router
     function unpause(bytes4[] calldata functionSigs) external override onlyOwner {
         uint256 len = functionSigs.length;
-        for (uint256 i; i < len;) {
+        for (uint256 i; i < len; ) {
             StorageLib.getRouterFunctionPaused().value[functionSigs[i]] = 0;
             unchecked {
                 ++i;

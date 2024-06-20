@@ -8,11 +8,7 @@ interface AaveIncentivesInterface {
      * @param to Address that will be receiving the rewards
      * @return Rewards claimed
      **/
-    function claimRewards(
-        address[] calldata assets,
-        uint256 amount,
-        address to
-    ) external returns (uint256);
+    function claimRewards(address[] calldata assets, uint256 amount, address to) external returns (uint256);
 
     /**
      * @dev returns the unclaimed rewards of the user

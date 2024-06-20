@@ -5,8 +5,11 @@ import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
 
 interface IAmmGovernanceServiceArbitrum {
     function setMessageSigner(address messageSigner) external;
+
     function setAssetLensData(address asset, StorageLibArbitrum.AssetLensDataValue memory assetLensData) external;
+
     function setAssetServices(address asset, StorageLibArbitrum.AssetServicesValue memory assetServices) external;
+
     function setAmmGovernancePoolConfiguration(
         address asset,
         StorageLibArbitrum.AssetGovernancePoolConfigValue calldata assetGovernancePoolConfig

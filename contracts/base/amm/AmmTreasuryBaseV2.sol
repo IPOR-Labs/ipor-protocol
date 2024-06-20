@@ -87,30 +87,39 @@ IProxyImplementation
 
         return
             (IporMath.convertToWad(IERC20Upgradeable(asset).balanceOf(address(this)), assetDecimals).toInt256() +
-            (IporMath.convertToWad(IERC4626(ammAssetManagement).maxWithdraw(address(this)), assetDecimals)).toInt256() -
-            balance.totalCollateralPayFixed.toInt256() -
-            balance.totalCollateralReceiveFixed.toInt256() -
-            balance.iporPublicationFee.toInt256() -
-            balance.treasury.toInt256() -
+                (IporMath.convertToWad(IERC4626(ammAssetManagement).maxWithdraw(address(this)), assetDecimals))
+                    .toInt256() -
+                balance.totalCollateralPayFixed.toInt256() -
+                balance.totalCollateralReceiveFixed.toInt256() -
+                balance.iporPublicationFee.toInt256() -
+                balance.treasury.toInt256() -
                 balance.totalLiquidationDepositBalance.toInt256()).toUint256();
-
     }
 
-    function depositToAssetManagementInternal(uint256 wadAssetAmount) override external onlyRouter nonReentrant whenNotPaused {
+    function depositToAssetManagementInternal(
+        uint256 wadAssetAmount
+    ) external override onlyRouter nonReentrant whenNotPaused {
         uint256 assetAmount = IporMath.convertWadToAssetDecimals(wadAssetAmount, assetDecimals);
         IERC20Upgradeable(asset).forceApprove(ammAssetManagement, assetAmount);
         IERC4626(ammAssetManagement).deposit(assetAmount, address(this));
     }
 
-    function withdrawFromAssetManagementInternal(uint256 wadAssetAmount) override external onlyRouter nonReentrant whenNotPaused {
+    function withdrawFromAssetManagementInternal(
+        uint256 wadAssetAmount
+    ) external override onlyRouter nonReentrant whenNotPaused {
         IERC4626(ammAssetManagement).withdraw(
-            IporMath.convertWadToAssetDecimals(
-                wadAssetAmount, assetDecimals), address(this), address(this));
+            IporMath.convertWadToAssetDecimals(wadAssetAmount, assetDecimals),
+            address(this),
+            address(this)
+        );
     }
 
-    function withdrawAllFromAssetManagementInternal() override external onlyRouter nonReentrant whenNotPaused {
+    function withdrawAllFromAssetManagementInternal() external override onlyRouter nonReentrant whenNotPaused {
         IERC4626(ammAssetManagement).redeem(
-            IERC4626(ammAssetManagement).balanceOf(address(this)), address(this), address(this));
+            IERC4626(ammAssetManagement).balanceOf(address(this)),
+            address(this),
+            address(this)
+        );
     }
 
     function getVersion() external pure returns (uint256) {

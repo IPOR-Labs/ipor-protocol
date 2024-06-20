@@ -3,7 +3,6 @@ pragma solidity 0.8.20;
 
 /// @title Interface responsible for viewing data from PowerToken smart contract.
 interface IPowerTokenLens {
-
     struct PwTokenCooldown {
         // @dev The timestamp when the account can redeem Power Tokens
         uint256 endTimestamp;

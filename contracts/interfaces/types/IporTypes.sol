@@ -18,7 +18,7 @@ library IporTypes {
 
     /// @notice The struct describing the IPOR and its params calculated for the time when it was most recently updated and the change that took place since the update.
     /// Namely, the interest that would be computed into IBT should the rebalance occur.
-    struct  AccruedIpor {
+    struct AccruedIpor {
         /// @notice IPOR Index Value
         /// @dev value represented in 18 decimals
         uint256 indexValue;

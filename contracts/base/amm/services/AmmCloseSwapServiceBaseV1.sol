@@ -69,10 +69,7 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
     /// @dev Time after open swap when it is allowed to close swap with unwinding, for tenor 90 days, represented in seconds
     uint256 public immutable timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days;
 
-    constructor(
-        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
-        address iporOracleInput
-    ) {
+    constructor(IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg, address iporOracleInput) {
         asset = poolCfg.asset.checkAddress();
         decimals = poolCfg.decimals;
 
@@ -105,8 +102,7 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
             .timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days;
     }
 
-
-    function version() public virtual pure returns(uint256) {
+    function version() public pure virtual returns (uint256) {
         return 2_002;
     }
 
@@ -540,7 +536,9 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
         }
     }
 
-    function _getTimeBeforeMaturityAllowedToCloseSwapByBuyer(IporTypes.SwapTenor tenor) internal view returns (uint256) {
+    function _getTimeBeforeMaturityAllowedToCloseSwapByBuyer(
+        IporTypes.SwapTenor tenor
+    ) internal view returns (uint256) {
         if (tenor == IporTypes.SwapTenor.DAYS_28) {
             return timeBeforeMaturityAllowedToCloseSwapByBuyerTenor28days;
         } else if (tenor == IporTypes.SwapTenor.DAYS_60) {

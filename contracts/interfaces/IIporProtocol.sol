@@ -31,7 +31,6 @@ import "../amm-usdm/interfaces/IAmmPoolsServiceUsdm.sol";
 import "./IAmmOpenSwapServiceStEth.sol";
 import "./IProvideLiquidityEvents.sol";
 
-
 /// @title Interface for interaction with IPOR protocol.
 /// Interface combines all IporProtocolRouter interfaces and supported services and lenses by router.
 interface IIporProtocol is
@@ -65,4 +64,5 @@ interface IIporProtocol is
     IAmmPoolsLensUsdm,
     IProvideLiquidityEvents
 {
+
 }

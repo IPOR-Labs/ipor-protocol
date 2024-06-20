@@ -19,7 +19,7 @@ import {IAmmCloseSwapServiceWstEth} from "../../../interfaces/IAmmCloseSwapServi
 import {IAmmPoolsServiceUsdc} from "../interfaces/IAmmPoolsServiceUsdc.sol";
 import {IAmmOpenSwapServiceUsdc} from "../interfaces/IAmmOpenSwapServiceUsdc.sol";
 import {IAmmCloseSwapServiceUsdc} from "../../../interfaces/IAmmCloseSwapServiceUsdc.sol";
-import {IAmmPoolsServiceUsdm} from  "../../../amm-usdm/interfaces/IAmmPoolsServiceUsdm.sol";
+import {IAmmPoolsServiceUsdm} from "../../../amm-usdm/interfaces/IAmmPoolsServiceUsdm.sol";
 import {IporErrors} from "../../../libraries/errors/IporErrors.sol";
 import {IporContractValidator} from "../../../libraries/IporContractValidator.sol";
 import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
@@ -49,12 +49,10 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
         address ammPoolsLens;
         address ammCloseSwapLens;
         address ammGovernanceService;
-
         address flowService;
         address stakeService;
         address powerTokenLens;
         address liquidityMiningLens;
-
         address wstEth;
         address usdc;
         address usdm;
@@ -83,20 +81,18 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
     function getConfiguration() external view returns (DeployedContractsArbitrum memory) {
         return
             DeployedContractsArbitrum({
-            ammSwapsLens: ammSwapsLens,
-            ammPoolsLens: ammPoolsLens,
-            ammCloseSwapLens: ammCloseSwapLens,
-            ammGovernanceService: ammGovernanceService,
-
-            flowService: flowService,
-            stakeService: stakeService,
-            powerTokenLens: powerTokenLens,
-            liquidityMiningLens: liquidityMiningLens,
-
-            wstEth: wstEth,
-            usdc: usdc,
-            usdm: usdm
-        });
+                ammSwapsLens: ammSwapsLens,
+                ammPoolsLens: ammPoolsLens,
+                ammCloseSwapLens: ammCloseSwapLens,
+                ammGovernanceService: ammGovernanceService,
+                flowService: flowService,
+                stakeService: stakeService,
+                powerTokenLens: powerTokenLens,
+                liquidityMiningLens: liquidityMiningLens,
+                wstEth: wstEth,
+                usdc: usdc,
+                usdm: usdm
+            });
     }
 
     function _getRouterImplementation(bytes4 sig, uint256 batchOperation) internal override returns (address) {
@@ -111,13 +107,17 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
-            StorageLibArbitrum.AssetServicesValue storage servicesCfg = StorageLibArbitrum.getAssetServicesStorage().value[wstEth];
+            StorageLibArbitrum.AssetServicesValue storage servicesCfg = StorageLibArbitrum
+                .getAssetServicesStorage()
+                .value[wstEth];
             return servicesCfg.ammOpenSwapService;
         } else if (_checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapServiceWstEth.closeSwapsWstEth.selector)) {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
-            StorageLibArbitrum.AssetServicesValue storage servicesCfg = StorageLibArbitrum.getAssetServicesStorage().value[wstEth];
+            StorageLibArbitrum.AssetServicesValue storage servicesCfg = StorageLibArbitrum
+                .getAssetServicesStorage()
+                .value[wstEth];
             return servicesCfg.ammCloseSwapService;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceWstEth.provideLiquidityWstEth.selector) ||
@@ -126,7 +126,9 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
-            StorageLibArbitrum.AssetServicesValue storage servicesCfg = StorageLibArbitrum.getAssetServicesStorage().value[wstEth];
+            StorageLibArbitrum.AssetServicesValue storage servicesCfg = StorageLibArbitrum
+                .getAssetServicesStorage()
+                .value[wstEth];
             return servicesCfg.ammPoolsService;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdm.provideLiquidityUsdmToAmmPoolUsdm.selector) ||
@@ -135,7 +137,9 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
-            StorageLibArbitrum.AssetServicesValue storage servicesCfg = StorageLibArbitrum.getAssetServicesStorage().value[usdm];
+            StorageLibArbitrum.AssetServicesValue storage servicesCfg = StorageLibArbitrum
+                .getAssetServicesStorage()
+                .value[usdm];
             return servicesCfg.ammPoolsService;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdc.provideLiquidityUsdcToAmmPoolUsdc.selector) ||
@@ -144,7 +148,9 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
-            StorageLibArbitrum.AssetServicesValue storage servicesCfg = StorageLibArbitrum.getAssetServicesStorage().value[usdc];
+            StorageLibArbitrum.AssetServicesValue storage servicesCfg = StorageLibArbitrum
+                .getAssetServicesStorage()
+                .value[usdc];
             return servicesCfg.ammPoolsService;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapServiceUsdc.openSwapPayFixed28daysUsdc.selector) ||
@@ -157,13 +163,17 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
-            StorageLibArbitrum.AssetServicesValue storage servicesCfg = StorageLibArbitrum.getAssetServicesStorage().value[usdc];
+            StorageLibArbitrum.AssetServicesValue storage servicesCfg = StorageLibArbitrum
+                .getAssetServicesStorage()
+                .value[usdc];
             return servicesCfg.ammOpenSwapService;
         } else if (_checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapServiceUsdc.closeSwapsUsdc.selector)) {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
-            StorageLibArbitrum.AssetServicesValue storage servicesCfg = StorageLibArbitrum.getAssetServicesStorage().value[usdc];
+            StorageLibArbitrum.AssetServicesValue storage servicesCfg = StorageLibArbitrum
+                .getAssetServicesStorage()
+                .value[usdc];
             return servicesCfg.ammCloseSwapService;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenStakeService.stakeLpTokensToLiquidityMining.selector) ||
@@ -224,7 +234,9 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
             return ammGovernanceService;
         } else if (sig == IAmmCloseSwapServiceWstEth.emergencyCloseSwapsWstEth.selector) {
             _onlyOwner();
-            StorageLibArbitrum.AssetServicesValue storage servicesCfg = StorageLibArbitrum.getAssetServicesStorage().value[wstEth];
+            StorageLibArbitrum.AssetServicesValue storage servicesCfg = StorageLibArbitrum
+                .getAssetServicesStorage()
+                .value[wstEth];
             return servicesCfg.ammCloseSwapService;
         } else if (
             sig == IAmmGovernanceLens.isSwapLiquidator.selector ||
@@ -271,8 +283,7 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
             sig == IAmmCloseSwapLens.getClosingSwapDetails.selector
         ) {
             return ammCloseSwapLens;
-        }
-        else if (sig == IAmmPoolsLensArbitrum.getIpTokenExchangeRate.selector) {
+        } else if (sig == IAmmPoolsLensArbitrum.getIpTokenExchangeRate.selector) {
             return ammPoolsLens;
         }
 

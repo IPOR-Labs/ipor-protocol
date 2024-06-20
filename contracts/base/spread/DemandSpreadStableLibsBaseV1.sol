@@ -6,12 +6,10 @@ import {SpreadStorageLibsBaseV1} from "../spread/SpreadStorageLibsBaseV1.sol";
 import {IporMath} from "../../libraries/math/IporMath.sol";
 import {SpreadInputData} from "../interfaces/DemandSpreadTypesBaseV1.sol";
 
-
 library DemandSpreadStableLibsBaseV1 {
     uint256 internal constant INTERVAL_ONE = 2e17;
     uint256 internal constant INTERVAL_TWO = 5e17;
     uint256 internal constant INTERVAL_THREE = 1e18;
-
 
     uint256 internal constant SLOPE_ONE = 5e16;
     uint256 internal constant BASE_ONE = 0;
@@ -21,8 +19,6 @@ library DemandSpreadStableLibsBaseV1 {
 
     uint256 internal constant SLOPE_THREE = 5e17;
     uint256 internal constant BASE_THREE = 2e17;
-
-
 
     /// @notice Gets the spread function configuration.
     function spreadFunctionConfig() internal pure returns (uint256[] memory) {

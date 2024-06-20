@@ -34,24 +34,32 @@ contract AmmSwapsLensArbitrum is IAmmSwapsLens {
         uint256 offset,
         uint256 chunkSize
     ) external view returns (uint256 totalCount, IAmmSwapsLens.IporSwap[] memory swaps) {
-        StorageLibArbitrum.AssetLensDataValue storage lensPoolCfg = StorageLibArbitrum.getAssetLensDataStorage().value[asset];
+        StorageLibArbitrum.AssetLensDataValue storage lensPoolCfg = StorageLibArbitrum.getAssetLensDataStorage().value[
+            asset
+        ];
         return AmmSwapsLensLibBaseV1.getSwaps(iporOracle, lensPoolCfg.ammStorage, asset, account, offset, chunkSize);
     }
 
     function getPnlPayFixed(address asset, uint256 swapId) external view override returns (int256) {
-        StorageLibArbitrum.AssetLensDataValue storage lensPoolCfg = StorageLibArbitrum.getAssetLensDataStorage().value[asset];
+        StorageLibArbitrum.AssetLensDataValue storage lensPoolCfg = StorageLibArbitrum.getAssetLensDataStorage().value[
+            asset
+        ];
         return AmmSwapsLensLibBaseV1.getPnlPayFixed(iporOracle, lensPoolCfg.ammStorage, asset, swapId);
     }
 
     function getPnlReceiveFixed(address asset, uint256 swapId) external view override returns (int256) {
-        StorageLibArbitrum.AssetLensDataValue storage lensPoolCfg = StorageLibArbitrum.getAssetLensDataStorage().value[asset];
+        StorageLibArbitrum.AssetLensDataValue storage lensPoolCfg = StorageLibArbitrum.getAssetLensDataStorage().value[
+            asset
+        ];
         return AmmSwapsLensLibBaseV1.getPnlReceiveFixed(iporOracle, lensPoolCfg.ammStorage, asset, swapId);
     }
 
     function getSoap(
         address asset
     ) external view override returns (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap) {
-        StorageLibArbitrum.AssetLensDataValue storage lensPoolCfg = StorageLibArbitrum.getAssetLensDataStorage().value[asset];
+        StorageLibArbitrum.AssetLensDataValue storage lensPoolCfg = StorageLibArbitrum.getAssetLensDataStorage().value[
+            asset
+        ];
 
         AmmTypes.AmmPoolCoreModel memory ammCoreModel;
 
@@ -75,7 +83,7 @@ contract AmmSwapsLensArbitrum is IAmmSwapsLens {
 
         address messageSigner = StorageLibArbitrum.getMessageSignerStorage().value;
 
-        (uint256 indexValue, ,) = IIporOracle(iporOracle).getIndex(asset);
+        (uint256 indexValue, , ) = IIporOracle(iporOracle).getIndex(asset);
 
         AmmTypes.OpenSwapRiskIndicators memory swapRiskIndicatorsPayFixed = payFixedRiskIndicatorsInputs.verify(
             asset,
@@ -102,19 +110,26 @@ contract AmmSwapsLensArbitrum is IAmmSwapsLens {
         );
     }
 
-    function getBalancesForOpenSwap(address asset) external view returns (IporTypes.AmmBalancesForOpenSwapMemory memory) {
-        StorageLibArbitrum.AssetLensDataValue storage lensPoolCfg = StorageLibArbitrum.getAssetLensDataStorage().value[asset];
+    function getBalancesForOpenSwap(
+        address asset
+    ) external view returns (IporTypes.AmmBalancesForOpenSwapMemory memory) {
+        StorageLibArbitrum.AssetLensDataValue storage lensPoolCfg = StorageLibArbitrum.getAssetLensDataStorage().value[
+            asset
+        ];
 
         return AmmSwapsLensLibBaseV1.getBalancesForOpenSwap(lensPoolCfg.ammStorage, lensPoolCfg.ammTreasury);
     }
 
     function _getSwapLensPoolConfiguration(address asset_) internal view returns (SwapLensPoolConfiguration memory) {
-        StorageLibArbitrum.AssetLensDataValue memory lensPoolCfg = StorageLibArbitrum.getAssetLensDataStorage().value[asset_];
-        return SwapLensPoolConfiguration({
-            asset: asset_,
-            ammStorage: lensPoolCfg.ammStorage,
-            ammTreasury: lensPoolCfg.ammTreasury,
-            spread: lensPoolCfg.spread
-        });
+        StorageLibArbitrum.AssetLensDataValue memory lensPoolCfg = StorageLibArbitrum.getAssetLensDataStorage().value[
+            asset_
+        ];
+        return
+            SwapLensPoolConfiguration({
+                asset: asset_,
+                ammStorage: lensPoolCfg.ammStorage,
+                ammTreasury: lensPoolCfg.ammTreasury,
+                spread: lensPoolCfg.spread
+            });
     }
 }
