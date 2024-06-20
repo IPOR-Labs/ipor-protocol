@@ -38,6 +38,8 @@ library IporErrors {
     /// @dev Error appears if user/account doesn't have enough balance to open a swap with a specific totalAmount
     error InputAssetBalanceTooLow(string errorCode, address inputAsset, uint256 inputAssetBalance, uint256 totalAmount);
 
+    error DecimalMismatch();
+
     // 000-199 - general codes
 
     /// @notice General problem, address is wrong

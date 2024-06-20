@@ -23,8 +23,8 @@ import "../../../libraries/AssetManagementLogic.sol";
 import "../../../libraries/AmmLib.sol";
 import "../../../governance/AmmConfigurationManager.sol";
 
-/// @title Base contract for AMM pools service for Pools with one asset and Vault with one underlying asset same as pool asset.
-/// @notice This contract is used for providing liquidity and redeeming liquidity from AMM pools including configured rebalancing between AMM Treasury and Vault (Plasma Vault from Ipor Fusion).
+/// @title Base contract for AMM pools service for Pools with one asset and Asset Management support with one underlying asset same as pool asset.
+/// @notice This contract is used for providing liquidity and redeeming liquidity from AMM pools including configured rebalancing between AMM Treasury and Asset Management (like Plasma Vault from Ipor Fusion).
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
     using IporContractValidator for address;
@@ -39,7 +39,7 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
     address public immutable ipToken;
     address public immutable ammTreasury;
     address public immutable ammStorage;
-    address public immutable ammVault;
+    address public immutable ammAssetManagement;
 
     address public immutable iporOracle;
     address public immutable iporProtocolRouter;
@@ -54,7 +54,7 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
         address ipToken_,
         address ammTreasury_,
         address ammStorage_,
-        address ammVault_,
+        address ammAssetManagement_,
         address iporOracle_,
         address iporProtocolRouter_,
         uint256 redeemFeeRate_,
@@ -65,13 +65,18 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
         ipToken = ipToken_.checkAddress();
         ammTreasury = ammTreasury_.checkAddress();
         ammStorage = ammStorage_.checkAddress();
-        ammVault = ammVault_.checkAddress();
+        ammAssetManagement = ammAssetManagement_.checkAddress();
         iporOracle = iporOracle_.checkAddress();
         iporProtocolRouter = iporProtocolRouter_.checkAddress();
         redeemFeeRate = redeemFeeRate_;
         autoRebalanceThresholdMultiplier = autoRebalanceThresholdMultiplier_;
 
         require(redeemFeeRate_ <= 1e18, AmmPoolsErrors.CFG_INVALID_REDEEM_FEE_RATE);
+
+        /// @dev pool asset decimals must match the underlying asset decimals in the AmmAssetManagement vault
+        if (IERC20Metadata(ammAssetManagement).decimals() != assetDecimals) {
+            revert IporErrors.DecimalMismatch();
+        }
     }
 
     function _provideLiquidity(address beneficiary, uint256 assetAmount) internal virtual {
@@ -150,7 +155,7 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
         );
     }
 
-    function rebalanceBetweenAmmTreasuryAndAmmVault() external {
+    function rebalanceBetweenAmmTreasuryAndAssetManagement() external {
         require(
             AmmConfigurationManager.isAppointedToRebalanceInAmm(asset, msg.sender),
             AmmPoolsErrors.CALLER_NOT_APPOINTED_TO_REBALANCE
@@ -163,7 +168,7 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
             assetDecimals
         );
 
-        uint256 wadTotalBalance = wadAmmTreasuryAssetBalance + IporMath.convertToWad(IERC4626(ammVault).maxWithdraw(ammTreasury), assetDecimals);
+        uint256 wadTotalBalance = wadAmmTreasuryAssetBalance + IporMath.convertToWad(IERC4626(ammAssetManagement).maxWithdraw(ammTreasury), assetDecimals);
 
         require(wadTotalBalance > 0, AmmPoolsErrors.ASSET_MANAGEMENT_BALANCE_IS_EMPTY);
 
@@ -177,13 +182,13 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
             uint256 wadAssetAmount = wadAmmTreasuryAssetBalance -
                                 IporMath.division(ammTreasuryAssetManagementBalanceRatio * wadTotalBalance, 1e18);
             if (wadAssetAmount > 0) {
-                IAmmTreasuryBaseV2(ammTreasury).depositToVaultInternal(wadAssetAmount);
+                IAmmTreasuryBaseV2(ammTreasury).depositToAssetManagementInternal(wadAssetAmount);
             }
         } else {
             uint256 wadAssetAmount = IporMath.division(ammTreasuryAssetManagementBalanceRatio * wadTotalBalance, 1e18) -
                         wadAmmTreasuryAssetBalance;
             if (wadAssetAmount > 0) {
-                IAmmTreasuryBaseV2(ammTreasury).withdrawFromVaultInternal(wadAssetAmount);
+                IAmmTreasuryBaseV2(ammTreasury).withdrawFromAssetManagementInternal(wadAssetAmount);
             }
         }
     }
@@ -215,13 +220,13 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
                     assetDecimals
                 ),
                 /// @dev Notice! Plasma Vault balances are in asset decimals
-                IporMath.convertToWad(IERC4626(ammVault).maxWithdraw(ammTreasury), assetDecimals),
+                IporMath.convertToWad(IERC4626(ammAssetManagement).maxWithdraw(ammTreasury), assetDecimals),
                 /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals, example 45% = 4500, so to achieve number in 18 decimals we need to multiply by 1e14
                 uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) * 1e14
             );
 
             if (rebalanceAmount > 0) {
-                IAmmTreasuryBaseV2(ammTreasury).depositToVaultInternal(rebalanceAmount.toUint256());
+                IAmmTreasuryBaseV2(ammTreasury).depositToAssetManagementInternal(rebalanceAmount.toUint256());
             }
         }
     }
@@ -246,14 +251,14 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
             int256 rebalanceAmount = AssetManagementLogic.calculateRebalanceAmountBeforeWithdraw(
                 wadAmmTreasuryErc20Balance,
                 /// @dev Notice! Plasma Vault balances are in asset decimals
-                IporMath.convertToWad(IERC4626(ammVault).maxWithdraw(ammTreasury), assetDecimals),
+                IporMath.convertToWad(IERC4626(ammAssetManagement).maxWithdraw(ammTreasury), assetDecimals),
                 wadOperationAmount,
                 /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals, example 45% = 4500, so to achieve number in 18 decimals we need to multiply by 1e14
                 uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) * 1e14
             );
 
             if (rebalanceAmount < 0) {
-                IAmmTreasuryBaseV2(ammTreasury).withdrawFromVaultInternal((- rebalanceAmount).toUint256());
+                IAmmTreasuryBaseV2(ammTreasury).withdrawFromAssetManagementInternal((- rebalanceAmount).toUint256());
             }
         }
     }

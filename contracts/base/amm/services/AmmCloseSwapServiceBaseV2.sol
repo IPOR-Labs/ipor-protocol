@@ -25,7 +25,7 @@ import "../../interfaces/ISpreadBaseV1.sol";
 import {AssetManagementLogic} from "../../../libraries/AssetManagementLogic.sol";
 
 /// @title Abstract contract for closing swap, generation one,
-/// characterized by: with additional asset management logic and rebalance between AmmTreasury and AmmVault (PlasmaVault from Ipor Fusion)
+/// characterized by: with additional asset management logic and rebalance between AmmTreasury and Asset Management (PlasmaVault from Ipor Fusion)
 abstract contract AmmCloseSwapServiceBaseV2 is AmmCloseSwapServiceBaseV1 {
     using Address for address;
     using IporContractValidator for address;
@@ -52,7 +52,7 @@ abstract contract AmmCloseSwapServiceBaseV2 is AmmCloseSwapServiceBaseV1 {
     /// @return wadPayoutForLiquidator Final value transferred to liquidator, if liquidator is beneficiary then value is zero
     /// @dev If beneficiary is buyer, then liquidation deposit amount is added to transfer amount.
     /// @dev Input amounts and returned values are represented in 18 decimals.
-    /// @dev Method support rebalance between AmmTreasury and AmmVault (PlasmaVault from Ipor Fusion)
+    /// @dev Method support rebalance between AmmTreasury and AssetManagement (PlasmaVault from Ipor Fusion)
     function _transferDerivativeAmount(
         address beneficiary,
         address buyer,
@@ -87,7 +87,7 @@ abstract contract AmmCloseSwapServiceBaseV2 is AmmCloseSwapServiceBaseV1 {
 
                 int256 rebalanceAmount = AssetManagementLogic.calculateRebalanceAmountBeforeWithdraw(
                     IporMath.convertToWad(ammTreasuryErc20BalanceBeforeRedeem, decimals),
-                    IERC4626(ammVault).maxWithdraw(ammTreasury),
+                    IERC4626(ammAssetManagement).maxWithdraw(ammTreasury),
                     wadTransferAmount + wadPayoutForLiquidator,
                     /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals,
                     /// example: 45% = 4500, so to achieve number in 18 decimals we need to multiply by 1e14
@@ -95,7 +95,7 @@ abstract contract AmmCloseSwapServiceBaseV2 is AmmCloseSwapServiceBaseV1 {
                 );
 
                 if (rebalanceAmount < 0) {
-                    IAmmTreasuryBaseV2(ammTreasury).withdrawFromVaultInternal(
+                    IAmmTreasuryBaseV2(ammTreasury).withdrawFromAssetManagementInternal(
                         (- rebalanceAmount).toUint256()
                     );
 

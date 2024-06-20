@@ -39,8 +39,8 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
     address public immutable spread;
     address public immutable ammStorage;
     address public immutable ammTreasury;
-    /// @dev vault address can be zero address here, if vault is not used
-    address public immutable ammVault;
+    /// @dev Asset Management address can be zero address here, if Asset Management is not used, not supported.
+    address public immutable ammAssetManagement;
 
     /// @dev Unwinding fee rate, value represented in 18 decimals. Represents percentage of swap notional.
     uint256 public immutable unwindingFeeRate;
@@ -80,7 +80,7 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
         spread = poolCfg.spread.checkAddress();
         ammStorage = poolCfg.ammStorage.checkAddress();
         ammTreasury = poolCfg.ammTreasury.checkAddress();
-        ammVault = poolCfg.assetManagement;
+        ammAssetManagement = poolCfg.assetManagement;
 
         unwindingFeeRate = poolCfg.unwindingFeeRate;
         unwindingFeeTreasuryPortionRate = poolCfg.unwindingFeeTreasuryPortionRate;
@@ -508,7 +508,7 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
                 decimals: decimals,
                 ammStorage: ammStorage,
                 ammTreasury: ammTreasury,
-                assetManagement: ammVault,
+                assetManagement: ammAssetManagement,
                 spread: spread,
                 unwindingFeeRate: unwindingFeeRate,
                 unwindingFeeTreasuryPortionRate: unwindingFeeTreasuryPortionRate,

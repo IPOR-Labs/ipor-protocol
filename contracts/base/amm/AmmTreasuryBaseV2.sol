@@ -23,26 +23,24 @@ import "../../security/IporOwnableUpgradeable.sol";
 
 /// @title AMM Treasury Base V2 support Asset Management which is ERC4626 Vault.
 contract AmmTreasuryBaseV2 is
-    Initializable,
-    PausableUpgradeable,
-    ReentrancyGuardUpgradeable,
-    UUPSUpgradeable,
-    IporOwnableUpgradeable,
-    IAmmTreasuryBaseV2,
-    IProxyImplementation
+Initializable,
+PausableUpgradeable,
+ReentrancyGuardUpgradeable,
+UUPSUpgradeable,
+IporOwnableUpgradeable,
+IAmmTreasuryBaseV2,
+IProxyImplementation
 {
     using SafeCast for uint256;
     using SafeCast for int256;
     using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    error DecimalMismatch();
-
     address public immutable asset;
     uint256 public immutable assetDecimals;
     address public immutable router;
     address public immutable ammStorage;
-    address public immutable ammVault;
+    address public immutable ammAssetManagement;
 
     modifier onlyPauseGuardian() {
         if (!PauseManager.isPauseGuardian(msg.sender)) {
@@ -56,16 +54,16 @@ contract AmmTreasuryBaseV2 is
         _;
     }
 
-    constructor(address asset_, address router_, address ammStorage_, address ammVault_) {
+    constructor(address asset_, address router_, address ammStorage_, address ammAssetManagement_) {
         asset = asset_.checkAddress();
         assetDecimals = IERC20Metadata(asset).decimals();
         router = router_.checkAddress();
         ammStorage = ammStorage_.checkAddress();
-        ammVault = ammVault_.checkAddress();
+        ammAssetManagement = ammAssetManagement_.checkAddress();
 
-        /// @dev pool asset decimals must match the underlying asset decimals in the AmmVault
-        if (IERC20Metadata(ammVault).decimals() != assetDecimals) {
-            revert DecimalMismatch();
+        /// @dev pool asset decimals must match the underlying asset decimals in the AmmAssetManagement vault
+        if (IERC20Metadata(ammAssetManagement).decimals() != assetDecimals) {
+            revert IporErrors.DecimalMismatch();
         }
 
         _disableInitializers();
@@ -88,7 +86,7 @@ contract AmmTreasuryBaseV2 is
 
         uint256 liquidityPool =
                     (IporMath.convertToWad(IERC20Upgradeable(asset).balanceOf(address(this)), assetDecimals).toInt256() +
-                    (IporMath.convertToWad(IERC4626(ammVault).maxWithdraw(address(this)), assetDecimals)).toInt256() -
+                    (IporMath.convertToWad(IERC4626(ammAssetManagement).maxWithdraw(address(this)), assetDecimals)).toInt256() -
                     balance.totalCollateralPayFixed.toInt256() -
                     balance.totalCollateralReceiveFixed.toInt256() -
                     balance.iporPublicationFee.toInt256() -
@@ -98,21 +96,22 @@ contract AmmTreasuryBaseV2 is
         return liquidityPool;
     }
 
-    function depositToVaultInternal(uint256 wadAssetAmount) override external onlyRouter nonReentrant whenNotPaused {
+    function depositToAssetManagementInternal(uint256 wadAssetAmount) override external onlyRouter nonReentrant whenNotPaused {
         uint256 assetAmount = IporMath.convertWadToAssetDecimals(wadAssetAmount, assetDecimals);
-        IERC20Upgradeable(asset).forceApprove(ammVault, assetAmount);
-        IERC4626(ammVault).deposit(assetAmount, address(this));
+        IERC20Upgradeable(asset).forceApprove(ammAssetManagement, assetAmount);
+        IERC4626(ammAssetManagement).deposit(assetAmount, address(this));
     }
 
-    function withdrawFromVaultInternal(uint256 wadAssetAmount) override external onlyRouter nonReentrant whenNotPaused {
-        IERC4626(ammVault).withdraw(
+    function withdrawFromAssetManagementInternal(uint256 wadAssetAmount) override external onlyRouter nonReentrant whenNotPaused {
+        IERC4626(ammAssetManagement).withdraw(
             IporMath.convertWadToAssetDecimals(
                 wadAssetAmount, assetDecimals), address(this), address(this));
     }
 
-    function withdrawAllFromVaultInternal() override external onlyRouter nonReentrant whenNotPaused {
+    function withdrawAllFromAssetManagementInternal() override external onlyRouter nonReentrant whenNotPaused {
 
-        IERC4626(ammVault).withdraw(IERC4626(ammVault).maxWithdraw(address(this)), address(this), address(this));
+        IERC4626(ammAssetManagement).withdraw(
+            IERC4626(ammAssetManagement).maxWithdraw(address(this)), address(this), address(this));
     }
 
     function getVersion() external pure returns (uint256) {
