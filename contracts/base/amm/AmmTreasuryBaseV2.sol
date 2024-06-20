@@ -84,16 +84,15 @@ IProxyImplementation
     function getLiquidityPoolBalance() external view override returns (uint256) {
         AmmTypesBaseV1.Balance memory balance = IAmmStorageBaseV1(ammStorage).getBalance();
 
-        uint256 liquidityPool =
-                    (IporMath.convertToWad(IERC20Upgradeable(asset).balanceOf(address(this)), assetDecimals).toInt256() +
-                    (IporMath.convertToWad(IERC4626(ammAssetManagement).maxWithdraw(address(this)), assetDecimals)).toInt256() -
-                    balance.totalCollateralPayFixed.toInt256() -
-                    balance.totalCollateralReceiveFixed.toInt256() -
-                    balance.iporPublicationFee.toInt256() -
-                    balance.treasury.toInt256() -
-                        balance.totalLiquidationDepositBalance.toInt256()).toUint256();
+        return
+            (IporMath.convertToWad(IERC20Upgradeable(asset).balanceOf(address(this)), assetDecimals).toInt256() +
+            (IporMath.convertToWad(IERC4626(ammAssetManagement).maxWithdraw(address(this)), assetDecimals)).toInt256() -
+            balance.totalCollateralPayFixed.toInt256() -
+            balance.totalCollateralReceiveFixed.toInt256() -
+            balance.iporPublicationFee.toInt256() -
+            balance.treasury.toInt256() -
+                balance.totalLiquidationDepositBalance.toInt256()).toUint256();
 
-        return liquidityPool;
     }
 
     function depositToAssetManagementInternal(uint256 wadAssetAmount) override external onlyRouter nonReentrant whenNotPaused {
@@ -109,9 +108,8 @@ IProxyImplementation
     }
 
     function withdrawAllFromAssetManagementInternal() override external onlyRouter nonReentrant whenNotPaused {
-
-        IERC4626(ammAssetManagement).withdraw(
-            IERC4626(ammAssetManagement).maxWithdraw(address(this)), address(this), address(this));
+        IERC4626(ammAssetManagement).redeem(
+            IERC4626(ammAssetManagement).balanceOf(address(this)), address(this), address(this));
     }
 
     function getVersion() external pure returns (uint256) {

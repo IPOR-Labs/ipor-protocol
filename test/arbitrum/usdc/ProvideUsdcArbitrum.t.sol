@@ -38,8 +38,6 @@ contract ProvideUsdcArbitrumTest is UsdcTestForkCommonArbitrum {
         vm.prank(PROTOCOL_OWNER);
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(USDC, 1000000000, 1, 1);
 
-        IAmmGovernanceLens.AmmPoolsParamsConfiguration memory poolParams = IAmmGovernanceLens(iporProtocolRouterProxy).getAmmPoolsParams(USDC);
-
         uint256 ammTreasuryUsdcBalanceBefore = IERC20(USDC).balanceOf(ammTreasuryUsdcProxy);
         uint256 ammVaultUsdcBalanceBefore = IERC20(USDC).balanceOf(ammVaultUsdc);
         uint256 liquidityPoolBalanceBefore = IAmmTreasuryBaseV2(ammTreasuryUsdcProxy).getLiquidityPoolBalance();
@@ -71,8 +69,6 @@ contract ProvideUsdcArbitrumTest is UsdcTestForkCommonArbitrum {
 
         vm.prank(PROTOCOL_OWNER);
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(USDC, 1000000000, 1, 100);
-
-        IAmmGovernanceLens.AmmPoolsParamsConfiguration memory poolParams = IAmmGovernanceLens(iporProtocolRouterProxy).getAmmPoolsParams(USDC);
 
         vm.prank(userOne);
         IAmmPoolsServiceUsdc(iporProtocolRouterProxy).provideLiquidityUsdcToAmmPoolUsdc(userTwo, provideAmount);

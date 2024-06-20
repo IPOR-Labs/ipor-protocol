@@ -89,7 +89,7 @@ contract UsdcTestForkCommonArbitrum is Test {
 
         vm.startPrank(PROTOCOL_OWNER);
 
-        _createAmmVault();
+        _createAmmAssetManagement();
 
         _createDummyContracts();
         _createIpToken();
@@ -370,7 +370,7 @@ contract UsdcTestForkCommonArbitrum is Test {
         );
     }
 
-    function _createAmmVault() private {
+    function _createAmmAssetManagement() private {
         ammVaultUsdc = address(new MockPlasmaVault(IERC20(USDC), "ipvUSDC", "ipvUSDC"));
     }
 

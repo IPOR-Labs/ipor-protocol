@@ -37,6 +37,11 @@ abstract contract AmmCloseSwapServiceBaseV2 is AmmCloseSwapServiceBaseV1 {
         address iporOracleInput
     ) AmmCloseSwapServiceBaseV1(poolCfg, iporOracleInput){
         poolCfg.assetManagement.checkAddress();
+
+        /// @dev pool asset decimals must match the underlying asset decimals in the AmmAssetManagement vault
+        if (IERC4626(ammAssetManagement).decimals() != decimals) {
+            revert IporErrors.DecimalMismatch();
+        }
     }
 
     function version() public pure override virtual returns (uint256) {
@@ -87,7 +92,8 @@ abstract contract AmmCloseSwapServiceBaseV2 is AmmCloseSwapServiceBaseV1 {
 
                 int256 rebalanceAmount = AssetManagementLogic.calculateRebalanceAmountBeforeWithdraw(
                     IporMath.convertToWad(ammTreasuryErc20BalanceBeforeRedeem, decimals),
-                    IERC4626(ammAssetManagement).maxWithdraw(ammTreasury),
+                    /// @dev Notice! Plasma Vault balances are in asset decimals
+                    IporMath.convertToWad(IERC4626(ammAssetManagement).maxWithdraw(ammTreasury), decimals),
                     wadTransferAmount + wadPayoutForLiquidator,
                     /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals,
                     /// example: 45% = 4500, so to achieve number in 18 decimals we need to multiply by 1e14
