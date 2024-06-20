@@ -170,17 +170,17 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
 
         /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals, example 45% = 4500, so to achieve number in 18 decimals we need to multiply by 1e14
         uint256 ammTreasuryAssetManagementBalanceRatio = uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) *
-            1e14;
+                    1e14;
 
         if (ratio > ammTreasuryAssetManagementBalanceRatio) {
             uint256 wadAssetAmount = wadAmmTreasuryAssetBalance -
-                IporMath.division(ammTreasuryAssetManagementBalanceRatio * wadTotalBalance, 1e18);
+                                IporMath.division(ammTreasuryAssetManagementBalanceRatio * wadTotalBalance, 1e18);
             if (wadAssetAmount > 0) {
                 IAmmTreasuryBaseV2(ammTreasury).depositToAssetManagementInternal(wadAssetAmount);
             }
         } else {
             uint256 wadAssetAmount = IporMath.division(ammTreasuryAssetManagementBalanceRatio * wadTotalBalance, 1e18) -
-                wadAmmTreasuryAssetBalance;
+                        wadAmmTreasuryAssetBalance;
             if (wadAssetAmount > 0) {
                 IAmmTreasuryBaseV2(ammTreasury).withdrawFromAssetManagementInternal(wadAssetAmount);
             }
@@ -251,7 +251,7 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
             );
 
             if (rebalanceAmount < 0) {
-                IAmmTreasuryBaseV2(ammTreasury).withdrawFromAssetManagementInternal((-rebalanceAmount).toUint256());
+                IAmmTreasuryBaseV2(ammTreasury).withdrawFromAssetManagementInternal((- rebalanceAmount).toUint256());
             }
         }
     }

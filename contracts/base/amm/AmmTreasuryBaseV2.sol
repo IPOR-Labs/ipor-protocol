@@ -23,13 +23,13 @@ import "../../security/IporOwnableUpgradeable.sol";
 
 /// @title AMM Treasury Base V2 support Asset Management which is ERC4626 Vault.
 contract AmmTreasuryBaseV2 is
-    Initializable,
-    PausableUpgradeable,
-    ReentrancyGuardUpgradeable,
-    UUPSUpgradeable,
-    IporOwnableUpgradeable,
-    IAmmTreasuryBaseV2,
-    IProxyImplementation
+Initializable,
+PausableUpgradeable,
+ReentrancyGuardUpgradeable,
+UUPSUpgradeable,
+IporOwnableUpgradeable,
+IAmmTreasuryBaseV2,
+IProxyImplementation
 {
     using SafeCast for uint256;
     using SafeCast for int256;

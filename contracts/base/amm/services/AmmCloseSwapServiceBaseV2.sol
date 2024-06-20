@@ -35,7 +35,7 @@ abstract contract AmmCloseSwapServiceBaseV2 is AmmCloseSwapServiceBaseV1 {
     constructor(
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput
-    ) AmmCloseSwapServiceBaseV1(poolCfg, iporOracleInput) {
+    ) AmmCloseSwapServiceBaseV1(poolCfg, iporOracleInput){
         poolCfg.assetManagement.checkAddress();
 
         /// @dev pool asset must match the underlying asset in the AmmAssetManagement vault
@@ -77,7 +77,7 @@ abstract contract AmmCloseSwapServiceBaseV2 is AmmCloseSwapServiceBaseV1 {
             uint256 transferAmountAssetDecimals = IporMath.convertWadToAssetDecimals(wadTransferAmount, decimals);
 
             uint256 totalTransferAmountAssetDecimals = transferAmountAssetDecimals +
-                IporMath.convertWadToAssetDecimals(wadPayoutForLiquidator, decimals);
+                                IporMath.convertWadToAssetDecimals(wadPayoutForLiquidator, decimals);
 
             uint256 ammTreasuryErc20BalanceBeforeRedeem = IERC20Upgradeable(asset).balanceOf(ammTreasury);
 
