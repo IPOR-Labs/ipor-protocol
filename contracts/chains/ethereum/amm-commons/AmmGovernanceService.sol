@@ -254,7 +254,7 @@ contract AmmGovernanceService is IAmmGovernanceService, IAmmGovernanceLens {
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(asset);
         cfg = AmmPoolsParamsConfiguration({
             maxLiquidityPoolBalance: uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
-            autoRebalanceThresholdInThousands: ammPoolsParamsCfg.autoRebalanceThresholdInThousands,
+            autoRebalanceThreshold: ammPoolsParamsCfg.autoRebalanceThreshold,
             ammTreasuryAndAssetManagementRatio: ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio
         });
     }

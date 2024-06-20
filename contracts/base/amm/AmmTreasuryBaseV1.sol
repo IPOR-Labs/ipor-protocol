@@ -19,6 +19,7 @@ import "../../libraries/IporContractValidator.sol";
 import "../../security/PauseManager.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 
+/// @title AMM Treasury Base V1 - Asset Management / Vault is not supported in this version.
 contract AmmTreasuryBaseV1 is
 Initializable,
 PausableUpgradeable,
@@ -45,11 +46,11 @@ IProxyImplementation
         _;
     }
 
-    constructor(address assetInput, address routerInput, address ammStorageInput) {
-        asset = assetInput.checkAddress();
+    constructor(address asset_, address router_, address ammStorage_) {
+        asset = asset_.checkAddress();
         assetDecimals = IERC20Metadata(asset).decimals();
-        router = routerInput.checkAddress();
-        ammStorage = ammStorageInput.checkAddress();
+        router = router_.checkAddress();
+        ammStorage = ammStorage_.checkAddress();
 
         _disableInitializers();
     }
@@ -85,7 +86,7 @@ IProxyImplementation
     }
 
     function pause() external override onlyPauseGuardian {
-        IERC20Upgradeable(asset).safeApprove(router, 0);
+        IERC20Upgradeable(asset).forceApprove(router, 0);
         _pause();
     }
 

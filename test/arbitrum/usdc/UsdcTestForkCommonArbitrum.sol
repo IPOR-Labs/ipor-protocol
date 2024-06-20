@@ -2,6 +2,7 @@
 pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
+import "forge-std/console2.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../../../contracts/oracles/IporOracle.sol";
 import "../../../contracts/chains/arbitrum/router/IporProtocolRouterArbitrum.sol";
@@ -20,7 +21,7 @@ import "../../../contracts/chains/arbitrum/amm-commons/AmmSwapsLensArbitrum.sol"
 
 import "../../../contracts/chains/arbitrum/amm-wstEth/AmmPoolsServiceWstEth.sol";
 import "../../../contracts/base/amm/AmmStorageBaseV1.sol";
-import "../../../contracts/base/amm/AmmTreasuryBaseV1.sol";
+import "../../../contracts/base/amm/AmmTreasuryBaseV2.sol";
 import "../../../contracts/base/spread/SpreadBaseV1.sol";
 
 import "../../../contracts/tokens/IpToken.sol";
@@ -31,6 +32,8 @@ import {IAmmPoolsServiceUsdc} from "../../../contracts/chains/arbitrum/interface
 import {AmmOpenSwapServiceUsdc} from "../../../contracts/chains/arbitrum/amm-usdc/AmmOpenSwapServiceUsdc.sol";
 import {AmmCloseSwapServiceUsdc} from "../../../contracts/chains/arbitrum/amm-usdc/AmmCloseSwapServiceUsdc.sol";
 import "../../../contracts/amm-usdm/AmmPoolsServiceUsdm.sol";
+import {MockPlasmaVault} from "../../mocks/tokens/MockPlasmaVault.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 
 contract UsdcTestForkCommonArbitrum is Test {
@@ -69,6 +72,7 @@ contract UsdcTestForkCommonArbitrum is Test {
     address public ammTreasuryUsdcProxy;
     address public ammStorageUsdcImpl;
     address public ammStorageUsdcProxy;
+    address public ammAssetManagementUsdc;
 
 
     address public spreadUsdc;
@@ -85,10 +89,13 @@ contract UsdcTestForkCommonArbitrum is Test {
 
         vm.startPrank(PROTOCOL_OWNER);
 
+        _createAmmAssetManagement();
+
         _createDummyContracts();
         _createIpToken();
         _createAmmStorage();
         _upgradeAmmTreasury();
+
 
         _createSpreadForUsdc();
         _createAmmPoolsServiceUsdc();
@@ -210,7 +217,7 @@ contract UsdcTestForkCommonArbitrum is Test {
                 decimals: IERC20MetadataUpgradeable(USDC).decimals(),
                 ammStorage: ammStorageUsdcProxy,
                 ammTreasury: ammTreasuryUsdcProxy,
-                assetManagement: address(0),
+                assetManagement: ammAssetManagementUsdc,
                 spread: spreadUsdc,
                 unwindingFeeTreasuryPortionRate: 25e16,
                 unwindingFeeRate: 5 * 1e11,
@@ -241,8 +248,8 @@ contract UsdcTestForkCommonArbitrum is Test {
 
         guardians[0] = PROTOCOL_OWNER;
 
-        AmmTreasuryBaseV1(ammTreasuryUsdcProxy).addPauseGuardians(guardians);
-        AmmTreasuryBaseV1(ammTreasuryUsdcProxy).unpause();
+        AmmTreasuryBaseV2(ammTreasuryUsdcProxy).addPauseGuardians(guardians);
+        AmmTreasuryBaseV2(ammTreasuryUsdcProxy).unpause();
 
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(USDC, 1000000000, 0, 0);
 
@@ -252,7 +259,7 @@ contract UsdcTestForkCommonArbitrum is Test {
             decimals: IERC20MetadataUpgradeable(USDC).decimals(),
             ammStorage: ammStorageUsdcProxy,
             ammTreasury: ammTreasuryUsdcProxy,
-            ammVault: address(0),
+            ammVault: ammAssetManagementUsdc,
             ammPoolsTreasury: treasurer,
             ammPoolsTreasuryManager: treasurer,
             ammCharlieTreasury: treasurer,
@@ -265,7 +272,7 @@ contract UsdcTestForkCommonArbitrum is Test {
             ipToken: ipUsdc,
             ammStorage: ammStorageUsdcProxy,
             ammTreasury: ammTreasuryUsdcProxy,
-            ammVault: address(0),
+            ammVault: ammAssetManagementUsdc,
             spread: address(0)
         }));
 
@@ -286,7 +293,7 @@ contract UsdcTestForkCommonArbitrum is Test {
     }
 
     function _createDummyContracts() internal {
-        AmmTreasuryBaseV1 emptyImpl = new AmmTreasuryBaseV1(USDC, _defaultAddress, _defaultAddress);
+        AmmTreasuryBaseV2 emptyImpl = new AmmTreasuryBaseV2(USDC, _defaultAddress, _defaultAddress, ammAssetManagementUsdc);
 
         ammTreasuryUsdcProxy = address(
             new ERC1967Proxy(address(emptyImpl), abi.encodeWithSignature("initialize(bool)", true))
@@ -337,20 +344,22 @@ contract UsdcTestForkCommonArbitrum is Test {
         ammPoolsServiceUsdc = address(
             new AmmPoolsServiceUsdc(
                 {
-                    assetInput: USDC,
-                    ipTokenInput: ipUsdc,
-                    ammTreasuryInput: ammTreasuryUsdcProxy,
-                    ammStorageInput: ammStorageUsdcProxy,
-                    iporOracleInput: iporOracleProxy,
-                    iporProtocolRouterInput: iporProtocolRouterProxy,
-                    redeemFeeRateInput: 5 * 1e15
+                    asset_: USDC,
+                    ipToken_: ipUsdc,
+                    ammTreasury_: ammTreasuryUsdcProxy,
+                    ammStorage_: ammStorageUsdcProxy,
+                    ammAssetManagement_: ammAssetManagementUsdc,
+                    iporOracle_: iporOracleProxy,
+                    iporProtocolRouter_: iporProtocolRouterProxy,
+                    redeemFeeRate_: 5 * 1e15,
+                    autoRebalanceThresholdMultiplier_: 1000
                 }
             ));
     }
 
     function _upgradeAmmTreasury() private {
-        ammTreasuryUsdcImpl = address(new AmmTreasuryBaseV1(USDC, iporProtocolRouterProxy, ammStorageUsdcProxy));
-        AmmTreasuryBaseV1(ammTreasuryUsdcProxy).upgradeTo(ammTreasuryUsdcImpl);
+        ammTreasuryUsdcImpl = address(new AmmTreasuryBaseV2(USDC, iporProtocolRouterProxy, ammStorageUsdcProxy, ammAssetManagementUsdc));
+        AmmTreasuryBaseV2(ammTreasuryUsdcProxy).upgradeTo(ammTreasuryUsdcImpl);
     }
 
     function _createAmmStorage() private {
@@ -361,17 +370,23 @@ contract UsdcTestForkCommonArbitrum is Test {
         );
     }
 
+    function _createAmmAssetManagement() private {
+        ammAssetManagementUsdc = address(new MockPlasmaVault(IERC20(USDC), "ipvUSDC", "ipvUSDC"));
+    }
+
     function _createAmmPoolsServiceUsdc(uint redeemFeeRateAssetInput) internal {
         ammPoolsServiceUsdc = address(
             new AmmPoolsServiceUsdc(
                 {
-                    assetInput: USDC,
-                    ipTokenInput: ipUsdc,
-                    ammTreasuryInput: ammTreasuryUsdcProxy,
-                    ammStorageInput: ammStorageUsdcProxy,
-                    iporOracleInput: iporOracleProxy,
-                    iporProtocolRouterInput: iporProtocolRouterProxy,
-                    redeemFeeRateInput: redeemFeeRateAssetInput
+                    asset_: USDC,
+                    ipToken_: ipUsdc,
+                    ammTreasury_: ammTreasuryUsdcProxy,
+                    ammStorage_: ammStorageUsdcProxy,
+                    ammAssetManagement_: ammAssetManagementUsdc,
+                    iporOracle_: iporOracleProxy,
+                    iporProtocolRouter_: iporProtocolRouterProxy,
+                    redeemFeeRate_: redeemFeeRateAssetInput,
+                    autoRebalanceThresholdMultiplier_: 1000
                 }
 
             ));
@@ -380,13 +395,15 @@ contract UsdcTestForkCommonArbitrum is Test {
     function _createNewAmmPoolsServiceUsdcWithZEROFee() internal {
         ammPoolsServiceUsdc = address(
             new AmmPoolsServiceUsdc({
-                assetInput: USDC,
-                ipTokenInput: ipUsdc,
-                ammTreasuryInput: ammTreasuryUsdcProxy,
-                ammStorageInput: ammStorageUsdcProxy,
-                iporOracleInput: iporOracleProxy,
-                iporProtocolRouterInput: iporProtocolRouterProxy,
-                redeemFeeRateInput: 0
+                asset_: USDC,
+                ipToken_: ipUsdc,
+                ammTreasury_: ammTreasuryUsdcProxy,
+                ammStorage_: ammStorageUsdcProxy,
+                ammAssetManagement_: ammAssetManagementUsdc,
+                iporOracle_: iporOracleProxy,
+                iporProtocolRouter_: iporProtocolRouterProxy,
+                redeemFeeRate_: 0,
+                autoRebalanceThresholdMultiplier_: 1000
             })
         );
     }
