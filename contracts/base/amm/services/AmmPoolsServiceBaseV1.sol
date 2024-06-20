@@ -73,9 +73,10 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
 
         require(redeemFeeRate_ <= 1e18, AmmPoolsErrors.CFG_INVALID_REDEEM_FEE_RATE);
 
-        /// @dev pool asset decimals must match the underlying asset decimals in the AmmAssetManagement vault
-        if (IERC20Metadata(ammAssetManagement).decimals() != assetDecimals) {
-            revert IporErrors.DecimalMismatch();
+        /// @dev pool asset must match the underlying asset in the AmmAssetManagement vault
+        address ammAssetManagementAsset = IERC4626(ammAssetManagement).asset();
+        if (ammAssetManagementAsset != asset) {
+            revert IporErrors.AssetMismatch(ammAssetManagementAsset, asset);
         }
     }
 

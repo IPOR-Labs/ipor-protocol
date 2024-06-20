@@ -24,12 +24,14 @@ contract AmmPoolsServiceUsdc is IAmmPoolsServiceUsdc, AmmPoolsServiceBaseV1 {
         address ipToken_,
         address ammTreasury_,
         address ammStorage_,
-        address ammVault_,
+        address ammAssetManagement_,
         address iporOracle_,
         address iporProtocolRouter_,
         uint256 redeemFeeRate_,
         uint256 autoRebalanceThresholdMultiplier_
-    ) AmmPoolsServiceBaseV1(asset_, ipToken_, ammTreasury_, ammStorage_, ammVault_, iporOracle_, iporProtocolRouter_, redeemFeeRate_, autoRebalanceThresholdMultiplier_) {
+    ) AmmPoolsServiceBaseV1(
+        asset_, ipToken_, ammTreasury_, ammStorage_,
+        ammAssetManagement_, iporOracle_, iporProtocolRouter_, redeemFeeRate_, autoRebalanceThresholdMultiplier_) {
     }
 
     function provideLiquidityUsdcToAmmPoolUsdc(address beneficiary, uint256 assetAmount) external payable override {

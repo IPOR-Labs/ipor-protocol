@@ -36,7 +36,7 @@ contract AmmGovernanceServiceUsdcTest is UsdcTestForkCommonArbitrum {
         IAmmPoolsServiceUsdc(iporProtocolRouterProxy).provideLiquidityUsdcToAmmPoolUsdc(userTwo, provideAmount);
 
         uint256 ammTreasuryUsdcBalanceBefore = IERC20(USDC).balanceOf(ammTreasuryUsdcProxy);
-        uint256 ammVaultUsdcBalanceBefore = IERC20(USDC).balanceOf(ammVaultUsdc);
+        uint256 ammAssetManagementUsdcBalanceBefore = IERC20(USDC).balanceOf(ammAssetManagementUsdc);
         uint256 liquidityPoolBalanceBefore = IAmmTreasuryBaseV2(ammTreasuryUsdcProxy).getLiquidityPoolBalance();
 
         // when
@@ -45,13 +45,13 @@ contract AmmGovernanceServiceUsdcTest is UsdcTestForkCommonArbitrum {
 
         //then
         uint256 ammTreasuryUsdcBalanceAfter = IERC20(USDC).balanceOf(ammTreasuryUsdcProxy);
-        uint256 ammVaultUsdcBalanceAfter = IERC20(USDC).balanceOf(ammVaultUsdc);
+        uint256 ammAssetManagementUsdcBalanceAfter = IERC20(USDC).balanceOf(ammAssetManagementUsdc);
         uint256 liquidityPoolBalanceAfter = IAmmTreasuryBaseV2(ammTreasuryUsdcProxy).getLiquidityPoolBalance();
 
-        assertEq(ammVaultUsdcBalanceBefore, 19_998 * 1e6);
-        assertEq(ammTreasuryUsdcBalanceBefore, 2 * 1e6); /// @dev 1% stay on amm treasury
+        assertEq(ammAssetManagementUsdcBalanceBefore, 19_800 * 1e6);
+        assertEq(ammTreasuryUsdcBalanceBefore, 200 * 1e6); /// @dev 1% stay on amm treasury
 
-        assertEq(ammVaultUsdcBalanceAfter, 0);
+        assertEq(ammAssetManagementUsdcBalanceAfter, 0);
         assertEq(ammTreasuryUsdcBalanceAfter, 20_000 * 1e6); /// @dev everything withdrawn from amm asset management stays on amm treasury
 
         assertEq(liquidityPoolBalanceBefore, liquidityPoolBalanceAfter);

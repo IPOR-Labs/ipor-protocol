@@ -75,7 +75,7 @@ contract ArbitrumForkAmmUsdcCloseSwapsTest is UsdcTestForkCommonArbitrum {
             IporTypes.SwapTenor.DAYS_28
         );
 
-        uint256 ammVaultUsdcBalanceBefore = IERC20(USDC).balanceOf(ammVaultUsdc);
+        uint256 ammAssetManagementUsdcBalanceBefore = IERC20(USDC).balanceOf(ammAssetManagementUsdc);
 
         //when
         vm.prank(user);
@@ -87,10 +87,10 @@ contract ArbitrumForkAmmUsdcCloseSwapsTest is UsdcTestForkCommonArbitrum {
         );
 
         //then
-        uint256 ammVaultUsdcBalanceAfter = IERC20(USDC).balanceOf(ammVaultUsdc);
+        uint256 ammAssetManagementUsdcBalanceAfter = IERC20(USDC).balanceOf(ammAssetManagementUsdc);
 
-        assertGt(ammVaultUsdcBalanceBefore, 0, "There is something in Asset Management before close swap");
-        assertGt(ammVaultUsdcBalanceBefore, ammVaultUsdcBalanceAfter, "After close swap, vaule in Asset Management should decrease");
+        assertGt(ammAssetManagementUsdcBalanceBefore, 0, "There is something in Asset Management before close swap");
+        assertGt(ammAssetManagementUsdcBalanceBefore, ammAssetManagementUsdcBalanceAfter, "After close swap, vaule in Asset Management should decrease");
 
     }
 

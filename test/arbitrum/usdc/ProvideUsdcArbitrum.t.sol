@@ -39,7 +39,7 @@ contract ProvideUsdcArbitrumTest is UsdcTestForkCommonArbitrum {
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(USDC, 1000000000, 1, 1);
 
         uint256 ammTreasuryUsdcBalanceBefore = IERC20(USDC).balanceOf(ammTreasuryUsdcProxy);
-        uint256 ammVaultUsdcBalanceBefore = IERC20(USDC).balanceOf(ammVaultUsdc);
+        uint256 ammAssetManagementUsdcBalanceBefore = IERC20(USDC).balanceOf(ammAssetManagementUsdc);
         uint256 liquidityPoolBalanceBefore = IAmmTreasuryBaseV2(ammTreasuryUsdcProxy).getLiquidityPoolBalance();
 
         // when
@@ -48,12 +48,12 @@ contract ProvideUsdcArbitrumTest is UsdcTestForkCommonArbitrum {
 
         // then
         uint256 ammTreasuryUsdcBalanceAfter = IERC20(USDC).balanceOf(ammTreasuryUsdcProxy);
-        uint256 ammVaultUsdcBalanceAfter = IERC20(USDC).balanceOf(ammVaultUsdc);
+        uint256 ammAssetManagementUsdcBalanceAfter = IERC20(USDC).balanceOf(ammAssetManagementUsdc);
         uint256 liquidityPoolBalanceAfter = IAmmTreasuryBaseV2(ammTreasuryUsdcProxy).getLiquidityPoolBalance();
 
         assertLt(liquidityPoolBalanceBefore, liquidityPoolBalanceAfter, "liquidity pool balance should increase");
         assertGt(ammTreasuryUsdcBalanceBefore, ammTreasuryUsdcBalanceAfter, "amm treasury balance should decrease because of rebalance");
-        assertLt(ammVaultUsdcBalanceBefore, ammVaultUsdcBalanceAfter, "amm vault balance should increase");
+        assertLt(ammAssetManagementUsdcBalanceBefore, ammAssetManagementUsdcBalanceAfter, "amm vault balance should increase");
         assertEq(liquidityPoolBalanceAfter, 10_000 * 1e18 + wadProvideAmount, "liquidity pool balance should be equal to wadProvideAmount and initial deposit");
 
     }
@@ -76,7 +76,7 @@ contract ProvideUsdcArbitrumTest is UsdcTestForkCommonArbitrum {
         uint256 ipTokens = IERC20(ipUsdc).balanceOf(userTwo);
 
         uint256 ammTreasuryUsdcBalanceBefore = IERC20(USDC).balanceOf(ammTreasuryUsdcProxy);
-        uint256 ammVaultUsdcBalanceBefore = IERC20(USDC).balanceOf(ammVaultUsdc);
+        uint256 ammAssetManagementUsdcBalanceBefore = IERC20(USDC).balanceOf(ammAssetManagementUsdc);
         uint256 liquidityPoolBalanceBefore = IAmmTreasuryBaseV2(ammTreasuryUsdcProxy).getLiquidityPoolBalance();
 
         // when
@@ -86,16 +86,16 @@ contract ProvideUsdcArbitrumTest is UsdcTestForkCommonArbitrum {
         // then
         uint256 userOneUsdcBalanceAfter = IERC20(USDC).balanceOf(userOne);
         uint256 ammTreasuryUsdcBalanceAfter = IERC20(USDC).balanceOf(ammTreasuryUsdcProxy);
-        uint256 ammVaultUsdcBalanceAfter = IERC20(USDC).balanceOf(ammVaultUsdc);
+        uint256 ammAssetManagementUsdcBalanceAfter = IERC20(USDC).balanceOf(ammAssetManagementUsdc);
         uint256 liquidityPoolBalanceAfter = IAmmTreasuryBaseV2(ammTreasuryUsdcProxy).getLiquidityPoolBalance();
 
         assertEq(ammTreasuryUsdcBalanceBefore, 200 * 1e6, "amm treasury balance should be 2 after rebalance");
-        assertEq(ammVaultUsdcBalanceBefore, 19_800 * 1e6, "amm vault balance should be 19_800 because of rebalance to Vault");
+        assertEq(ammAssetManagementUsdcBalanceBefore, 19_800 * 1e6, "amm vault balance should be 19_800 because of rebalance to Vault");
         assertEq(liquidityPoolBalanceBefore, 20_000 * 1e18, "liquidity pool balance should be 20_000, initial 10_000 and 10_000 deposit");
 
         assertEq(userOneUsdcBalanceAfter, 99_950 * 1e6, "userOneUsdcBalanceAfter should be 100_000 minus redeem fee 5%");
         assertEq(liquidityPoolBalanceAfter, 10_050 * 1e18, "liquidity pool balance should be 10_050, include 5% redeem fee");
-        assertEq(ammVaultUsdcBalanceAfter, 9949500000, "amm vault balance should be 9949500000, include 5% redeem fee");
+        assertEq(ammAssetManagementUsdcBalanceAfter, 9949500000, "amm vault balance should be 9949500000, include 5% redeem fee");
 
     }
 

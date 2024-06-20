@@ -38,9 +38,10 @@ abstract contract AmmCloseSwapServiceBaseV2 is AmmCloseSwapServiceBaseV1 {
     ) AmmCloseSwapServiceBaseV1(poolCfg, iporOracleInput){
         poolCfg.assetManagement.checkAddress();
 
-        /// @dev pool asset decimals must match the underlying asset decimals in the AmmAssetManagement vault
-        if (IERC4626(ammAssetManagement).decimals() != decimals) {
-            revert IporErrors.DecimalMismatch();
+        /// @dev pool asset must match the underlying asset in the AmmAssetManagement vault
+        address ammAssetManagementAsset = IERC4626(ammAssetManagement).asset();
+        if (ammAssetManagementAsset != asset) {
+            revert IporErrors.AssetMismatch(ammAssetManagementAsset, asset);
         }
     }
 
