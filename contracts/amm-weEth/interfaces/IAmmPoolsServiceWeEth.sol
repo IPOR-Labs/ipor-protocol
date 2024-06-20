@@ -14,9 +14,5 @@ interface IAmmPoolsServiceWeEth {
 
     function redeemFromAmmPoolWeEth(address beneficiary, uint256 ipTokenAmount) external;
 
-    error ProvideLiquidityFailed(
-        address poolAsset,
-        string errorCode,
-        string errorMessage
-    );
+    error ProvideLiquidityFailed(address poolAsset, string errorCode, string errorMessage);
 }

@@ -27,7 +27,6 @@ import {IAmmPoolsServiceUsdc} from "../chains/arbitrum/interfaces/IAmmPoolsServi
 import {IAmmOpenSwapServiceUsdc} from "../chains/arbitrum/interfaces/IAmmOpenSwapServiceUsdc.sol";
 import {IAmmCloseSwapServiceUsdc} from "../interfaces/IAmmCloseSwapServiceUsdc.sol";
 
-
 /// @title Interface for interaction with IPOR protocol.
 /// Interface combines all IporProtocolRouter interfaces and supported services and lenses by router.
 interface IIporProtocolArbitrum is
@@ -55,4 +54,5 @@ interface IIporProtocolArbitrum is
     IAmmOpenSwapServiceUsdc,
     IAmmCloseSwapServiceUsdc
 {
+
 }

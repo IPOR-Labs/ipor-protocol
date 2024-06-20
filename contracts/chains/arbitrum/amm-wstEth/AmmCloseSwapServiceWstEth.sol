@@ -13,8 +13,7 @@ contract AmmCloseSwapServiceWstEth is AmmCloseSwapServiceBaseV1, IAmmCloseSwapSe
     constructor(
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         address iporOracle_
-    ) AmmCloseSwapServiceBaseV1(poolCfg, iporOracle_) {
-    }
+    ) AmmCloseSwapServiceBaseV1(poolCfg, iporOracle_) {}
 
     function closeSwapsWstEth(
         address beneficiary,

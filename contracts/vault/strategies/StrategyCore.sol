@@ -47,7 +47,12 @@ abstract contract StrategyCore is
     /// @param shareTokenAddress share token associated with one strategy
     /// @param treasury Treasury address where claimed tokens are transferred.
     /// @param amount S
-    event DoClaim(address indexed claimedBy, address indexed shareTokenAddress, address indexed treasury, uint256 amount);
+    event DoClaim(
+        address indexed claimedBy,
+        address indexed shareTokenAddress,
+        address indexed treasury,
+        uint256 amount
+    );
 
     /// @notice Emmited when Treasury address has changed
     /// @param newTreasury new Treasury address

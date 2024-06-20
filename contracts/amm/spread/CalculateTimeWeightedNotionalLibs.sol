@@ -66,7 +66,10 @@ library CalculateTimeWeightedNotionalLibs {
             timeWeightedNotional.timeWeightedNotionalReceiveFixed = newSwapNotional + oldWeightedNotionalReceiveFixed;
         }
         timeWeightedNotional.lastUpdateTimeReceiveFixed = block.timestamp;
-        SpreadStorageLibs.saveTimeWeightedNotionalForAssetAndTenor(timeWeightedNotional.storageId, timeWeightedNotional);
+        SpreadStorageLibs.saveTimeWeightedNotionalForAssetAndTenor(
+            timeWeightedNotional.storageId,
+            timeWeightedNotional
+        );
     }
 
     /// @notice Updates the time-weighted notional value for the pay fixed leg.
@@ -94,7 +97,10 @@ library CalculateTimeWeightedNotionalLibs {
             timeWeightedNotional.timeWeightedNotionalPayFixed = newSwapNotional + oldWeightedNotionalPayFixed;
         }
         timeWeightedNotional.lastUpdateTimePayFixed = block.timestamp;
-        SpreadStorageLibs.saveTimeWeightedNotionalForAssetAndTenor(timeWeightedNotional.storageId, timeWeightedNotional);
+        SpreadStorageLibs.saveTimeWeightedNotionalForAssetAndTenor(
+            timeWeightedNotional.storageId,
+            timeWeightedNotional
+        );
     }
 
     /// @notice Calculates the time-weighted notional values for the pay fixed and receive fixed legs.
@@ -116,7 +122,9 @@ library CalculateTimeWeightedNotionalLibs {
         uint256 timeWeightedNotionalReceiveFixedIteration;
 
         for (uint256 i; i != length; ) {
-            timeWeightedNotional = SpreadStorageLibs.getTimeWeightedNotionalForAssetAndTenor(timeWeightedNotionalStorageIds[i]);
+            timeWeightedNotional = SpreadStorageLibs.getTimeWeightedNotionalForAssetAndTenor(
+                timeWeightedNotionalStorageIds[i]
+            );
             timeWeightedNotionalPayFixedIteration = _isTimeWeightedNotionalRecalculationRequired(
                 timeWeightedNotional.lastUpdateTimePayFixed,
                 tenorsInSeconds[i],
@@ -141,7 +149,9 @@ library CalculateTimeWeightedNotionalLibs {
                     tenorsInSeconds[i]
                 )
                 : timeWeightedNotional.timeWeightedNotionalReceiveFixed;
-            timeWeightedNotionalReceiveFixed = timeWeightedNotionalReceiveFixedIteration + timeWeightedNotionalReceiveFixed;
+            timeWeightedNotionalReceiveFixed =
+                timeWeightedNotionalReceiveFixedIteration +
+                timeWeightedNotionalReceiveFixed;
 
             unchecked {
                 ++i;

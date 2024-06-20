@@ -3,7 +3,6 @@ pragma solidity 0.8.20;
 
 /// @title LiquidityMiningLens interface responsible for reading data from LiquidityMining.
 interface ILiquidityMiningLens {
-
     /// @title Struct pair representing delegated pwToken balance
     struct DelegatedPwTokenBalance {
         /// @notice lpToken address

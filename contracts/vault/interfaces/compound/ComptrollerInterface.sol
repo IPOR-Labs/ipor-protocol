@@ -6,10 +6,5 @@ interface ComptrollerInterface {
 
     function claimComp(address holder, address[] calldata) external;
 
-    function claimComp(
-        address[] calldata holders,
-        address[] calldata cTokens,
-        bool borrowers,
-        bool suppliers
-    ) external;
+    function claimComp(address[] calldata holders, address[] calldata cTokens, bool borrowers, bool suppliers) external;
 }

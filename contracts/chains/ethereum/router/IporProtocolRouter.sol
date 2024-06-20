@@ -230,7 +230,7 @@ contract IporProtocolRouter is IporProtocolRouterAbstract {
                 _nonReentrantBefore();
             }
             return ammPoolsService;
-        }  else if (
+        } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdm.provideLiquidityUsdmToAmmPoolUsdm.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdm.redeemFromAmmPoolUsdm.selector)
         ) {
@@ -362,7 +362,7 @@ contract IporProtocolRouter is IporProtocolRouterAbstract {
             return ammPoolsLensStEth;
         } else if (sig == IAmmPoolsLensWeEth.getIpWeEthExchangeRate.selector) {
             return ammPoolsLensWeEth;
-        }  else if (sig == IAmmPoolsLensUsdm.getIpUsdmExchangeRate.selector) {
+        } else if (sig == IAmmPoolsLensUsdm.getIpUsdmExchangeRate.selector) {
             return ammPoolsLensUsdm;
         } else if (sig == IAmmPoolsService.getAmmPoolServiceConfiguration.selector) {
             return ammPoolsService;

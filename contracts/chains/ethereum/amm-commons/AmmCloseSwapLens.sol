@@ -18,7 +18,7 @@ import "../../../base/amm/libraries/SwapCloseLogicLibBaseV1.sol";
 import "../../../base/amm/services/AmmCloseSwapServiceBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
-    contract AmmCloseSwapLens is IAmmCloseSwapLens {
+contract AmmCloseSwapLens is IAmmCloseSwapLens {
     using Address for address;
     using IporContractValidator for address;
     using SwapLogicBaseV1 for AmmTypesBaseV1.Swap;

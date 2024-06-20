@@ -197,9 +197,7 @@ contract AmmStorage is
         uint256 chunkSize
     ) external view override returns (uint256 totalCount, AmmTypes.Swap[] memory swaps) {
         uint32[] storage ids = _swapsPayFixed.ids[account];
-        return (
-            ids.length, _getPositions(_swapsPayFixed.swaps, ids, offset, chunkSize)
-        );
+        return (ids.length, _getPositions(_swapsPayFixed.swaps, ids, offset, chunkSize));
     }
 
     function getSwapsReceiveFixed(
@@ -208,9 +206,7 @@ contract AmmStorage is
         uint256 chunkSize
     ) external view override returns (uint256 totalCount, AmmTypes.Swap[] memory swaps) {
         uint32[] storage ids = _swapsReceiveFixed.ids[account];
-        return (
-            ids.length, _getPositions(_swapsReceiveFixed.swaps, ids, offset, chunkSize)
-        );
+        return (ids.length, _getPositions(_swapsReceiveFixed.swaps, ids, offset, chunkSize));
     }
 
     function getSwapIds(

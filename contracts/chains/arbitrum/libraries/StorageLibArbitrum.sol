@@ -174,9 +174,9 @@ library StorageLibArbitrum {
     /// @notice Gets point to accounts appointed to rebalance storage.
     /// @return store - point to accounts appointed to rebalance storage.
     function getAmmPoolsAppointedToRebalanceStorage()
-    internal
-    pure
-    returns (AmmPoolsAppointedToRebalanceStorage storage store)
+        internal
+        pure
+        returns (AmmPoolsAppointedToRebalanceStorage storage store)
     {
         uint256 slot = _getStorageSlot(StorageId.AmmPoolsAppointedToRebalance);
         assembly {
@@ -207,7 +207,11 @@ library StorageLibArbitrum {
         }
     }
 
-    function getAssetGovernancePoolConfigStorage() internal pure returns (AssetGovernancePoolConfigStorage storage store) {
+    function getAssetGovernancePoolConfigStorage()
+        internal
+        pure
+        returns (AssetGovernancePoolConfigStorage storage store)
+    {
         uint256 slot = _getStorageSlot(StorageId.AssetGovernancePoolConfig);
         assembly {
             store.slot := slot

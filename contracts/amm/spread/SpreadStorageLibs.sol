@@ -179,5 +179,4 @@ library SpreadStorageLibs {
     function _getStorageSlot(StorageId storageId) private pure returns (uint256 slot) {
         slot = uint256(storageId) + STORAGE_SLOT_BASE;
     }
-
 }

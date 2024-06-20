@@ -10,10 +10,7 @@ interface AaveLendingPoolCore {
 
     function getReserveTotalBorrowsVariable(address reserve) external view returns (uint256);
 
-    function getReserveCurrentAverageStableBorrowRate(address reserve)
-        external
-        view
-        returns (uint256);
+    function getReserveCurrentAverageStableBorrowRate(address reserve) external view returns (uint256);
 
     function getReserveAvailableLiquidity(address reserve) external view returns (uint256);
 }

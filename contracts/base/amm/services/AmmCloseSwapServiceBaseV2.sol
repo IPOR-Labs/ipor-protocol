@@ -35,7 +35,7 @@ abstract contract AmmCloseSwapServiceBaseV2 is AmmCloseSwapServiceBaseV1 {
     constructor(
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput
-    ) AmmCloseSwapServiceBaseV1(poolCfg, iporOracleInput){
+    ) AmmCloseSwapServiceBaseV1(poolCfg, iporOracleInput) {
         poolCfg.assetManagement.checkAddress();
 
         /// @dev pool asset must match the underlying asset in the AmmAssetManagement vault
@@ -45,7 +45,7 @@ abstract contract AmmCloseSwapServiceBaseV2 is AmmCloseSwapServiceBaseV1 {
         }
     }
 
-    function version() public pure override virtual returns (uint256) {
+    function version() public pure virtual override returns (uint256) {
         return 2_003;
     }
 
@@ -64,7 +64,7 @@ abstract contract AmmCloseSwapServiceBaseV2 is AmmCloseSwapServiceBaseV1 {
         address buyer,
         uint256 wadLiquidationDepositAmount,
         uint256 wadTransferAmount
-    ) internal override virtual returns (uint256 wadTransferredToBuyer, uint256 wadPayoutForLiquidator) {
+    ) internal virtual override returns (uint256 wadTransferredToBuyer, uint256 wadPayoutForLiquidator) {
         if (beneficiary == buyer) {
             wadTransferAmount = wadTransferAmount + wadLiquidationDepositAmount;
         } else {
@@ -74,17 +74,12 @@ abstract contract AmmCloseSwapServiceBaseV2 is AmmCloseSwapServiceBaseV1 {
         }
 
         if (wadTransferAmount + wadPayoutForLiquidator > 0) {
-            uint256 transferAmountAssetDecimals = IporMath.convertWadToAssetDecimals(
-                wadTransferAmount,
-                decimals
-            );
+            uint256 transferAmountAssetDecimals = IporMath.convertWadToAssetDecimals(wadTransferAmount, decimals);
 
             uint256 totalTransferAmountAssetDecimals = transferAmountAssetDecimals +
-                                IporMath.convertWadToAssetDecimals(wadPayoutForLiquidator, decimals);
+                IporMath.convertWadToAssetDecimals(wadPayoutForLiquidator, decimals);
 
-            uint256 ammTreasuryErc20BalanceBeforeRedeem = IERC20Upgradeable(asset).balanceOf(
-                ammTreasury
-            );
+            uint256 ammTreasuryErc20BalanceBeforeRedeem = IERC20Upgradeable(asset).balanceOf(ammTreasury);
 
             if (ammTreasuryErc20BalanceBeforeRedeem <= totalTransferAmountAssetDecimals) {
                 StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
@@ -102,15 +97,12 @@ abstract contract AmmCloseSwapServiceBaseV2 is AmmCloseSwapServiceBaseV1 {
                 );
 
                 if (rebalanceAmount < 0) {
-                    IAmmTreasuryBaseV2(ammTreasury).withdrawFromAssetManagementInternal(
-                        (- rebalanceAmount).toUint256()
-                    );
+                    IAmmTreasuryBaseV2(ammTreasury).withdrawFromAssetManagementInternal((-rebalanceAmount).toUint256());
 
                     /// @dev check if withdraw from asset management is enough to cover transfer amount
                     /// @dev possible case when strategies are paused and assets are temporary locked
                     require(
-                        totalTransferAmountAssetDecimals <=
-                        IERC20Upgradeable(asset).balanceOf(ammTreasury),
+                        totalTransferAmountAssetDecimals <= IERC20Upgradeable(asset).balanceOf(ammTreasury),
                         AmmErrors.ASSET_MANAGEMENT_WITHDRAW_NOT_ENOUGH
                     );
                 }

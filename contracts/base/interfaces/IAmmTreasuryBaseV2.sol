@@ -22,5 +22,4 @@ interface IAmmTreasuryBaseV2 is IAmmTreasuryBaseV1 {
     /// @dev AmmTreasury Balance in storage is not changing after this withdraw, balance of ERC20 assets on AmmTreasury is changing.
     /// @dev Function can be executed only by the IPOR Protocol Router as internal interaction.
     function withdrawAllFromAssetManagementInternal() external;
-
 }

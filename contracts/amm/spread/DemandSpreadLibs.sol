@@ -3,12 +3,10 @@ pragma solidity 0.8.20;
 
 import "../../amm/spread/CalculateTimeWeightedNotionalLibs.sol";
 
-
 library DemandSpreadLibs {
     uint256 internal constant INTERVAL_ONE = 2e17;
     uint256 internal constant INTERVAL_TWO = 5e17;
     uint256 internal constant INTERVAL_THREE = 1e18;
-
 
     uint256 internal constant SLOPE_ONE = 5e16;
     uint256 internal constant BASE_ONE = 0;
@@ -18,7 +16,6 @@ library DemandSpreadLibs {
 
     uint256 internal constant SLOPE_THREE = 5e17;
     uint256 internal constant BASE_THREE = 2e17;
-
 
     /// @notice DTO for the Weighted Notional
     struct SpreadInputData {

@@ -21,13 +21,13 @@ import "../../security/IporOwnableUpgradeable.sol";
 
 /// @title AMM Treasury Base V1 - Asset Management / Vault is not supported in this version.
 contract AmmTreasuryBaseV1 is
-Initializable,
-PausableUpgradeable,
-ReentrancyGuardUpgradeable,
-UUPSUpgradeable,
-IporOwnableUpgradeable,
-IAmmTreasuryBaseV1,
-IProxyImplementation
+    Initializable,
+    PausableUpgradeable,
+    ReentrancyGuardUpgradeable,
+    UUPSUpgradeable,
+    IporOwnableUpgradeable,
+    IAmmTreasuryBaseV1,
+    IProxyImplementation
 {
     using SafeCast for uint256;
     using SafeCast for int256;
@@ -70,13 +70,14 @@ IProxyImplementation
     function getLiquidityPoolBalance() external view override returns (uint256) {
         AmmTypesBaseV1.Balance memory balance = IAmmStorageBaseV1(ammStorage).getBalance();
 
-        uint256 liquidityPool =
-                    (IporMath.convertToWad(IERC20Upgradeable(asset).balanceOf(address(this)), assetDecimals).toInt256() -
-                    balance.totalCollateralPayFixed.toInt256() -
-                    balance.totalCollateralReceiveFixed.toInt256() -
-                    balance.iporPublicationFee.toInt256() -
-                    balance.treasury.toInt256() -
-                        balance.totalLiquidationDepositBalance.toInt256()).toUint256();
+        uint256 liquidityPool = (IporMath
+            .convertToWad(IERC20Upgradeable(asset).balanceOf(address(this)), assetDecimals)
+            .toInt256() -
+            balance.totalCollateralPayFixed.toInt256() -
+            balance.totalCollateralReceiveFixed.toInt256() -
+            balance.iporPublicationFee.toInt256() -
+            balance.treasury.toInt256() -
+            balance.totalLiquidationDepositBalance.toInt256()).toUint256();
 
         return liquidityPool;
     }

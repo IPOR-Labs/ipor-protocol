@@ -105,15 +105,7 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
         /// @dev Order of the following two functions is important, first safeTransferFrom, then rebalanceIfNeededAfterProvideLiquidity.
         _rebalanceIfNeededAfterProvideLiquidity(ammPoolsParamsCfg, wadAssetAmount);
 
-        emit ProvideLiquidity(
-            asset,
-            msg.sender,
-            beneficiary,
-            ammTreasury,
-            exchangeRate,
-            wadAssetAmount,
-            ipTokenAmount
-        );
+        emit ProvideLiquidity(asset, msg.sender, beneficiary, ammTreasury, exchangeRate, wadAssetAmount, ipTokenAmount);
     }
 
     function _redeem(address beneficiary, uint256 ipTokenAmount) internal virtual {
@@ -130,15 +122,15 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
         uint256 wadAssetAmount = IporMath.division(ipTokenAmount * exchangeRate, 1e18);
 
         uint256 amountToRedeem = IporMath.convertWadToAssetDecimals(
-            IporMath.division(wadAssetAmount * (1e18 - redeemFeeRate), 1e18), assetDecimals);
+            IporMath.division(wadAssetAmount * (1e18 - redeemFeeRate), 1e18),
+            assetDecimals
+        );
 
         uint256 wadAmountToRedeem = IporMath.convertToWad(amountToRedeem, assetDecimals);
 
         require(amountToRedeem > 0 && wadAmountToRedeem > 0, AmmPoolsErrors.CANNOT_REDEEM_ASSET_AMOUNT_TOO_LOW);
 
-        _rebalanceIfNeededBeforeRedeem(
-            wadAmountToRedeem
-        );
+        _rebalanceIfNeededBeforeRedeem(wadAmountToRedeem);
 
         IIpToken(ipToken).burn(msg.sender, ipTokenAmount);
 
@@ -169,7 +161,8 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
             assetDecimals
         );
 
-        uint256 wadTotalBalance = wadAmmTreasuryAssetBalance + IporMath.convertToWad(IERC4626(ammAssetManagement).maxWithdraw(ammTreasury), assetDecimals);
+        uint256 wadTotalBalance = wadAmmTreasuryAssetBalance +
+            IporMath.convertToWad(IERC4626(ammAssetManagement).maxWithdraw(ammTreasury), assetDecimals);
 
         require(wadTotalBalance > 0, AmmPoolsErrors.ASSET_MANAGEMENT_BALANCE_IS_EMPTY);
 
@@ -177,17 +170,17 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
 
         /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals, example 45% = 4500, so to achieve number in 18 decimals we need to multiply by 1e14
         uint256 ammTreasuryAssetManagementBalanceRatio = uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) *
-                    1e14;
+            1e14;
 
         if (ratio > ammTreasuryAssetManagementBalanceRatio) {
             uint256 wadAssetAmount = wadAmmTreasuryAssetBalance -
-                                IporMath.division(ammTreasuryAssetManagementBalanceRatio * wadTotalBalance, 1e18);
+                IporMath.division(ammTreasuryAssetManagementBalanceRatio * wadTotalBalance, 1e18);
             if (wadAssetAmount > 0) {
                 IAmmTreasuryBaseV2(ammTreasury).depositToAssetManagementInternal(wadAssetAmount);
             }
         } else {
             uint256 wadAssetAmount = IporMath.division(ammTreasuryAssetManagementBalanceRatio * wadTotalBalance, 1e18) -
-                        wadAmmTreasuryAssetBalance;
+                wadAmmTreasuryAssetBalance;
             if (wadAssetAmount > 0) {
                 IAmmTreasuryBaseV2(ammTreasury).withdrawFromAssetManagementInternal(wadAssetAmount);
             }
@@ -212,14 +205,13 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
         uint256 wadOperationAmount
     ) internal {
         /// @dev 1e18 * autoRebalanceThresholdMultiplier explanation: autoRebalanceThreshold represents value without decimals, selected asset can have different multiplier, for example for stables is 1000x, value in thousands, for ETH, wstETH etc. is 1x
-        uint256 autoRebalanceThreshold = uint256(ammPoolsParamsCfg.autoRebalanceThreshold) * 1e18 * autoRebalanceThresholdMultiplier;
+        uint256 autoRebalanceThreshold = uint256(ammPoolsParamsCfg.autoRebalanceThreshold) *
+            1e18 *
+            autoRebalanceThresholdMultiplier;
 
         if (autoRebalanceThreshold > 0 && wadOperationAmount >= autoRebalanceThreshold) {
             int256 rebalanceAmount = AssetManagementLogic.calculateRebalanceAmountAfterProvideLiquidity(
-                IporMath.convertToWad(
-                    IERC20Upgradeable(asset).balanceOf(ammTreasury),
-                    assetDecimals
-                ),
+                IporMath.convertToWad(IERC20Upgradeable(asset).balanceOf(ammTreasury), assetDecimals),
                 /// @dev Notice! Plasma Vault balances are in asset decimals
                 IporMath.convertToWad(IERC4626(ammAssetManagement).maxWithdraw(ammTreasury), assetDecimals),
                 /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals, example 45% = 4500, so to achieve number in 18 decimals we need to multiply by 1e14
@@ -232,9 +224,7 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
         }
     }
 
-    function _rebalanceIfNeededBeforeRedeem(
-        uint256 wadOperationAmount
-    ) internal {
+    function _rebalanceIfNeededBeforeRedeem(uint256 wadOperationAmount) internal {
         uint256 wadAmmTreasuryErc20Balance = IporMath.convertToWad(
             IERC20Upgradeable(asset).balanceOf(ammTreasury),
             assetDecimals
@@ -243,7 +233,9 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
         StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(asset);
 
         /// @dev 1e18 * autoRebalanceThresholdMultiplier explanation: autoRebalanceThreshold represents value without decimals, selected asset can have different multiplier, for example for stables is 1000x, value in thousands, for ETH, wstETH etc. is 1x
-        uint256 autoRebalanceThreshold = uint256(ammPoolsParamsCfg.autoRebalanceThreshold) * 1e18 * autoRebalanceThresholdMultiplier;
+        uint256 autoRebalanceThreshold = uint256(ammPoolsParamsCfg.autoRebalanceThreshold) *
+            1e18 *
+            autoRebalanceThresholdMultiplier;
 
         if (
             wadOperationAmount > wadAmmTreasuryErc20Balance ||
@@ -259,9 +251,8 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
             );
 
             if (rebalanceAmount < 0) {
-                IAmmTreasuryBaseV2(ammTreasury).withdrawFromAssetManagementInternal((- rebalanceAmount).toUint256());
+                IAmmTreasuryBaseV2(ammTreasury).withdrawFromAssetManagementInternal((-rebalanceAmount).toUint256());
             }
         }
     }
-
 }
