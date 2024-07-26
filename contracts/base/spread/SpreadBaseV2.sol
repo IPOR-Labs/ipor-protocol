@@ -60,7 +60,7 @@ abstract contract SpreadBaseV2 is IporOwnable, ISpreadBaseV1 {
         return 2_002;
     }
 
-    function spreadFunctionConfig() external pure override virtual returns (uint256[] memory);
+    function spreadFunctionConfig() external pure virtual override returns (uint256[] memory);
 
     function getTimeWeightedNotional()
         external
@@ -244,7 +244,9 @@ abstract contract SpreadBaseV2 is IporOwnable, ISpreadBaseV1 {
         }
     }
 
-    function _calculatePayFixedSpread(SpreadInputData memory inputData) internal virtual view returns (uint256 spreadValue);
+    function _calculatePayFixedSpread(
+        SpreadInputData memory inputData
+    ) internal view virtual returns (uint256 spreadValue);
 
     function _calculateDemandPayFixed(SpreadInputs memory spreadInputs) internal view returns (uint256 spreadValue) {
         SpreadInputData memory inputData = _getSpreadConfigForDemand(spreadInputs);
@@ -276,7 +278,9 @@ abstract contract SpreadBaseV2 is IporOwnable, ISpreadBaseV1 {
         spreadValue = _calculateReceiveFixedSpread(inputData);
     }
 
-    function _calculateReceiveFixedSpread(SpreadInputData memory inputData) internal virtual view returns (uint256 spreadValue);
+    function _calculateReceiveFixedSpread(
+        SpreadInputData memory inputData
+    ) internal view virtual returns (uint256 spreadValue);
 
     function _calculateImbalanceReceiveFixedAndUpdateTimeWeightedNotional(
         SpreadInputs calldata spreadInputs

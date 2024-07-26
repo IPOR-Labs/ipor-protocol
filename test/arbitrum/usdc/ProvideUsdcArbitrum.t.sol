@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "forge-std/console2.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../../../contracts/libraries/math/IporMath.sol";
 import "../../../contracts/libraries/ProvideLiquidityEvents.sol";
@@ -11,7 +10,10 @@ import "../../../contracts/libraries/errors/AmmPoolsErrors.sol";
 import {IAmmPoolsServiceUsdc} from "../../../contracts/chains/arbitrum/interfaces/IAmmPoolsServiceUsdc.sol";
 import {IAmmPoolsLens} from "../../../contracts/interfaces/IAmmPoolsLens.sol";
 import {IAmmGovernanceService} from "../../../contracts/interfaces/IAmmGovernanceService.sol";
+import {IAmmGovernanceLens} from "../../../contracts/interfaces/IAmmGovernanceLens.sol";
+import {IAmmTreasuryBaseV2} from "../../../contracts/base/amm/AmmTreasuryBaseV2.sol";
 import {UsdcTestForkCommonArbitrum} from "./UsdcTestForkCommonArbitrum.sol";
+
 
 contract ProvideUsdcArbitrumTest is UsdcTestForkCommonArbitrum {
     address userOne;
@@ -22,6 +24,79 @@ contract ProvideUsdcArbitrumTest is UsdcTestForkCommonArbitrum {
         _init();
         userOne = _getUserAddress(22);
         _setupUser(userOne, 100_000 * T_ASSET_DECIMALS);
+    }
+
+    function testShouldProvideLiquidityUsdcAndDepositToAmmVault() public {
+        // given
+        address userTwo = _getUserAddress(33);
+        _setupUser(userTwo, 100_000 * T_ASSET_DECIMALS);
+
+
+        uint provideAmount = 10000 * T_ASSET_DECIMALS;
+        uint256 wadProvideAmount = 10000 * PROTOCOL_DECIMALS;
+
+        vm.prank(PROTOCOL_OWNER);
+        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(USDC, 1000000000, 1, 1);
+
+        uint256 ammTreasuryUsdcBalanceBefore = IERC20(USDC).balanceOf(ammTreasuryUsdcProxy);
+        uint256 ammAssetManagementUsdcBalanceBefore = IERC20(USDC).balanceOf(ammAssetManagementUsdc);
+        uint256 liquidityPoolBalanceBefore = IAmmTreasuryBaseV2(ammTreasuryUsdcProxy).getLiquidityPoolBalance();
+
+        // when
+        vm.prank(userOne);
+        IAmmPoolsServiceUsdc(iporProtocolRouterProxy).provideLiquidityUsdcToAmmPoolUsdc(userTwo, provideAmount);
+
+        // then
+        uint256 ammTreasuryUsdcBalanceAfter = IERC20(USDC).balanceOf(ammTreasuryUsdcProxy);
+        uint256 ammAssetManagementUsdcBalanceAfter = IERC20(USDC).balanceOf(ammAssetManagementUsdc);
+        uint256 liquidityPoolBalanceAfter = IAmmTreasuryBaseV2(ammTreasuryUsdcProxy).getLiquidityPoolBalance();
+
+        assertLt(liquidityPoolBalanceBefore, liquidityPoolBalanceAfter, "liquidity pool balance should increase");
+        assertGt(ammTreasuryUsdcBalanceBefore, ammTreasuryUsdcBalanceAfter, "amm treasury balance should decrease because of rebalance");
+        assertLt(ammAssetManagementUsdcBalanceBefore, ammAssetManagementUsdcBalanceAfter, "amm vault balance should increase");
+        assertEq(liquidityPoolBalanceAfter, 10_000 * 1e18 + wadProvideAmount, "liquidity pool balance should be equal to wadProvideAmount and initial deposit");
+
+    }
+
+    function testShouldRedeemLiquidityUsdcAndWithdrawFromAmmVault() public {
+        // given
+        address userTwo = _getUserAddress(33);
+        _setupUser(userTwo, 100_000 * T_ASSET_DECIMALS);
+
+
+        uint provideAmount = 10000 * T_ASSET_DECIMALS;
+        uint256 wadProvideAmount = 10000 * PROTOCOL_DECIMALS;
+
+        vm.prank(PROTOCOL_OWNER);
+        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(USDC, 1000000000, 1, 100);
+
+        vm.prank(userOne);
+        IAmmPoolsServiceUsdc(iporProtocolRouterProxy).provideLiquidityUsdcToAmmPoolUsdc(userTwo, provideAmount);
+
+        uint256 ipTokens = IERC20(ipUsdc).balanceOf(userTwo);
+
+        uint256 ammTreasuryUsdcBalanceBefore = IERC20(USDC).balanceOf(ammTreasuryUsdcProxy);
+        uint256 ammAssetManagementUsdcBalanceBefore = IERC20(USDC).balanceOf(ammAssetManagementUsdc);
+        uint256 liquidityPoolBalanceBefore = IAmmTreasuryBaseV2(ammTreasuryUsdcProxy).getLiquidityPoolBalance();
+
+        // when
+        vm.prank(userTwo);
+        IAmmPoolsServiceUsdc(iporProtocolRouterProxy).redeemFromAmmPoolUsdc(userOne, ipTokens);
+
+        // then
+        uint256 userOneUsdcBalanceAfter = IERC20(USDC).balanceOf(userOne);
+        uint256 ammTreasuryUsdcBalanceAfter = IERC20(USDC).balanceOf(ammTreasuryUsdcProxy);
+        uint256 ammAssetManagementUsdcBalanceAfter = IERC20(USDC).balanceOf(ammAssetManagementUsdc);
+        uint256 liquidityPoolBalanceAfter = IAmmTreasuryBaseV2(ammTreasuryUsdcProxy).getLiquidityPoolBalance();
+
+        assertEq(ammTreasuryUsdcBalanceBefore, 200 * 1e6, "amm treasury balance should be 2 after rebalance");
+        assertEq(ammAssetManagementUsdcBalanceBefore, 19_800 * 1e6, "amm vault balance should be 19_800 because of rebalance to Vault");
+        assertEq(liquidityPoolBalanceBefore, 20_000 * 1e18, "liquidity pool balance should be 20_000, initial 10_000 and 10_000 deposit");
+
+        assertEq(userOneUsdcBalanceAfter, 99_950 * 1e6, "userOneUsdcBalanceAfter should be 100_000 minus redeem fee 5%");
+        assertEq(liquidityPoolBalanceAfter, 10_050 * 1e18, "liquidity pool balance should be 10_050, include 5% redeem fee");
+        assertEq(ammAssetManagementUsdcBalanceAfter, 9949500000, "amm vault balance should be 9949500000, include 5% redeem fee");
+
     }
 
     function testShouldExchangeRateBe1WhenNoProvideUsdc() external {

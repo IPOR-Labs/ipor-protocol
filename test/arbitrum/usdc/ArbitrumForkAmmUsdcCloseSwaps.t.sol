@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
+
+import "forge-std/console2.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import "./UsdcTestForkCommonArbitrum.sol";
@@ -10,6 +12,87 @@ import "../../../contracts/interfaces/types/AmmTypes.sol";
 
 contract ArbitrumForkAmmUsdcCloseSwapsTest is UsdcTestForkCommonArbitrum {
     uint256 public constant T_ASSET_DECIMALS = 1e6;
+
+
+    function testShouldClosePositionAndWithdrawFromAmmVault() public {
+        //given
+        _init();
+        address user = _getUserAddress(22);
+        _setupUser(user, 1000 * T_ASSET_DECIMALS);
+        uint256 totalAmount = 1000 * 1e6;
+
+        address userOne = _getUserAddress(33);
+        _setupUser(userOne, 100_000 * T_ASSET_DECIMALS);
+
+
+        uint provideAmount = 10000 * T_ASSET_DECIMALS;
+        uint256 wadProvideAmount = 10000 * PROTOCOL_DECIMALS;
+
+        vm.warp(block.timestamp);
+
+        AmmTypes.RiskIndicatorsInputs memory riskIndicatorsInputs = AmmTypes.RiskIndicatorsInputs({
+            maxCollateralRatio: 500000000000000000,
+            maxCollateralRatioPerLeg: 500000000000000000,
+            maxLeveragePerLeg: 1000000000000000000000,
+            baseSpreadPerLeg: 3695000000000000,
+            fixedRateCapPerLeg: 20000000000000000,
+            demandSpreadFactor: 20,
+            expiration: block.timestamp + 1000,
+            signature: bytes("0x00")
+        });
+
+        riskIndicatorsInputs.signature = signRiskParams(
+            riskIndicatorsInputs,
+            USDC,
+            uint256(IporTypes.SwapTenor.DAYS_28),
+            0,
+            messageSignerPrivateKey
+        );
+
+        vm.prank(user);
+        uint256 swapId = IAmmOpenSwapServiceUsdc(iporProtocolRouterProxy).openSwapPayFixed28daysUsdc(
+            user,
+            USDC,
+            totalAmount,
+            1e18,
+            10e18,
+            riskIndicatorsInputs
+        );
+
+        vm.prank(PROTOCOL_OWNER);
+        IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(USDC, 1000000000, 1, 1);
+
+        vm.prank(userOne);
+        IAmmPoolsServiceUsdc(iporProtocolRouterProxy).provideLiquidityUsdcToAmmPoolUsdc(userOne, provideAmount);
+
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = swapId;
+        uint256[] memory swapRfIds = new uint256[](0);
+
+        vm.warp(block.timestamp + 1 days + 1);
+
+        AmmTypes.CloseSwapRiskIndicatorsInput memory closeRiskIndicatorsInputs = _prepareCloseSwapRiskIndicators(
+            IporTypes.SwapTenor.DAYS_28
+        );
+
+        uint256 ammAssetManagementUsdcBalanceBefore = IERC20(USDC).balanceOf(ammAssetManagementUsdc);
+
+        //when
+        vm.prank(user);
+        IAmmCloseSwapServiceUsdc(iporProtocolRouterProxy).closeSwapsUsdc(
+            user,
+            swapPfIds,
+            swapRfIds,
+            closeRiskIndicatorsInputs
+        );
+
+        //then
+        uint256 ammAssetManagementUsdcBalanceAfter = IERC20(USDC).balanceOf(ammAssetManagementUsdc);
+
+        assertGt(ammAssetManagementUsdcBalanceBefore, 0, "There is something in Asset Management before close swap");
+        assertGt(ammAssetManagementUsdcBalanceBefore, ammAssetManagementUsdcBalanceAfter, "After close swap, vaule in Asset Management should decrease");
+
+    }
 
     function testShouldClosePositionUsdcForUsdc28daysPayFixed() public {
         //given
@@ -135,13 +218,13 @@ contract ArbitrumForkAmmUsdcCloseSwapsTest is UsdcTestForkCommonArbitrum {
         vm.prank(user);
         AmmTypes.ClosingSwapDetails memory closingSwapDetails = IAmmCloseSwapLens(iporProtocolRouterProxy)
             .getClosingSwapDetails(
-                USDC,
-                user,
-                AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-                swapId,
-                closeTimestamp,
-                closeRiskIndicatorsInputs
-            );
+            USDC,
+            user,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            swapId,
+            closeTimestamp,
+            closeRiskIndicatorsInputs
+        );
 
         //then
         assertEq(uint256(closingSwapDetails.closableStatus), uint256(AmmTypes.SwapClosableStatus.SWAP_IS_CLOSABLE));
@@ -272,13 +355,13 @@ contract ArbitrumForkAmmUsdcCloseSwapsTest is UsdcTestForkCommonArbitrum {
         vm.prank(user);
         AmmTypes.ClosingSwapDetails memory closingSwapDetails = IAmmCloseSwapLens(iporProtocolRouterProxy)
             .getClosingSwapDetails(
-                USDC,
-                user,
-                AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-                swapId,
-                closeTimestamp,
-                closeRiskIndicatorsInputs
-            );
+            USDC,
+            user,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            swapId,
+            closeTimestamp,
+            closeRiskIndicatorsInputs
+        );
 
         //then
         assertEq(uint256(closingSwapDetails.closableStatus), uint256(AmmTypes.SwapClosableStatus.SWAP_IS_CLOSABLE));
@@ -335,13 +418,13 @@ contract ArbitrumForkAmmUsdcCloseSwapsTest is UsdcTestForkCommonArbitrum {
         vm.prank(user);
         AmmTypes.ClosingSwapDetails memory closingSwapDetails = IAmmCloseSwapLens(iporProtocolRouterProxy)
             .getClosingSwapDetails(
-                USDC,
-                user,
-                AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-                swapId,
-                closeTimestamp,
-                closeRiskIndicatorsInputs
-            );
+            USDC,
+            user,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            swapId,
+            closeTimestamp,
+            closeRiskIndicatorsInputs
+        );
 
         //then
         assertEq(uint256(closingSwapDetails.closableStatus), uint256(AmmTypes.SwapClosableStatus.SWAP_IS_CLOSABLE));
@@ -423,5 +506,4 @@ contract ArbitrumForkAmmUsdcCloseSwapsTest is UsdcTestForkCommonArbitrum {
     }
 
 
-   
 }

@@ -32,4 +32,5 @@ interface ISpreadRouter is
     ISpreadStorageLens,
     ISpreadStorageService
 {
+
 }

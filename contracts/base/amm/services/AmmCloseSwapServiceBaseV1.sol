@@ -32,8 +32,6 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
     using AmmLib for AmmTypes.AmmPoolCoreModel;
     using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
 
-    uint256 public immutable version = 2_002;
-
     address public immutable asset;
     uint256 public immutable decimals;
 
@@ -41,6 +39,8 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
     address public immutable spread;
     address public immutable ammStorage;
     address public immutable ammTreasury;
+    /// @dev Asset Management address can be zero address here, if Asset Management is not used, not supported.
+    address public immutable ammAssetManagement;
 
     /// @dev Unwinding fee rate, value represented in 18 decimals. Represents percentage of swap notional.
     uint256 public immutable unwindingFeeRate;
@@ -69,10 +69,7 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
     /// @dev Time after open swap when it is allowed to close swap with unwinding, for tenor 90 days, represented in seconds
     uint256 public immutable timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days;
 
-    constructor(
-        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
-        address iporOracleInput
-    ) {
+    constructor(IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg, address iporOracleInput) {
         asset = poolCfg.asset.checkAddress();
         decimals = poolCfg.decimals;
 
@@ -80,6 +77,7 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
         spread = poolCfg.spread.checkAddress();
         ammStorage = poolCfg.ammStorage.checkAddress();
         ammTreasury = poolCfg.ammTreasury.checkAddress();
+        ammAssetManagement = poolCfg.assetManagement;
 
         unwindingFeeRate = poolCfg.unwindingFeeRate;
         unwindingFeeTreasuryPortionRate = poolCfg.unwindingFeeTreasuryPortionRate;
@@ -102,6 +100,10 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
             .timeAfterOpenAllowedToCloseSwapWithUnwindingTenor60days;
         timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days = poolCfg
             .timeAfterOpenAllowedToCloseSwapWithUnwindingTenor90days;
+    }
+
+    function version() public pure virtual returns (uint256) {
+        return 2_002;
     }
 
     function getPoolConfiguration()
@@ -475,7 +477,7 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
         address buyer,
         uint256 wadLiquidationDepositAmount,
         uint256 wadTransferAmount
-    ) internal returns (uint256 wadTransferredToBuyer, uint256 wadPayoutForLiquidator) {
+    ) internal virtual returns (uint256 wadTransferredToBuyer, uint256 wadPayoutForLiquidator) {
         if (beneficiary == buyer) {
             wadTransferAmount = wadTransferAmount + wadLiquidationDepositAmount;
         } else {
@@ -502,7 +504,7 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
                 decimals: decimals,
                 ammStorage: ammStorage,
                 ammTreasury: ammTreasury,
-                assetManagement: address(0),
+                assetManagement: ammAssetManagement,
                 spread: spread,
                 unwindingFeeRate: unwindingFeeRate,
                 unwindingFeeTreasuryPortionRate: unwindingFeeTreasuryPortionRate,
@@ -534,7 +536,9 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
         }
     }
 
-    function _getTimeBeforeMaturityAllowedToCloseSwapByBuyer(IporTypes.SwapTenor tenor) internal view returns (uint256) {
+    function _getTimeBeforeMaturityAllowedToCloseSwapByBuyer(
+        IporTypes.SwapTenor tenor
+    ) internal view returns (uint256) {
         if (tenor == IporTypes.SwapTenor.DAYS_28) {
             return timeBeforeMaturityAllowedToCloseSwapByBuyerTenor28days;
         } else if (tenor == IporTypes.SwapTenor.DAYS_60) {

@@ -369,8 +369,8 @@ contract AmmPoolsService is IAmmPoolsService {
         uint256 vaultBalance,
         uint256 wadOperationAmount
     ) internal {
-        /// @dev 1e21 explanation: autoRebalanceThresholdInThousands represents value in thousands without decimals, example threshold=10 it is 10_000*1e18, so to achieve number in 18 decimals we need to multiply by 1e21
-        uint256 autoRebalanceThreshold = uint256(ammPoolsParamsCfg.autoRebalanceThresholdInThousands) * 1e21;
+        /// @dev 1e21 explanation: autoRebalanceThreshold represents value in thousands without decimals, example threshold=10 it is 10_000*1e18, so to achieve number in 18 decimals we need to multiply by 1e21
+        uint256 autoRebalanceThreshold = uint256(ammPoolsParamsCfg.autoRebalanceThreshold) * 1e21;
 
         if (autoRebalanceThreshold > 0 && wadOperationAmount >= autoRebalanceThreshold) {
             int256 rebalanceAmount = AssetManagementLogic.calculateRebalanceAmountAfterProvideLiquidity(
@@ -399,8 +399,8 @@ contract AmmPoolsService is IAmmPoolsService {
             poolCfg.asset
         );
 
-        /// @dev 1e21 explanation: autoRebalanceThresholdInThousands represents value in thousands without decimals, example threshold=10 it is 10_000*1e18, so to achieve number in 18 decimals we need to multiply by 1e21
-        uint256 autoRebalanceThreshold = uint256(ammPoolsParamsCfg.autoRebalanceThresholdInThousands) * 1e21;
+        /// @dev 1e21 explanation: autoRebalanceThreshold represents value in thousands without decimals, example threshold=10 it is 10_000*1e18, so to achieve number in 18 decimals we need to multiply by 1e21
+        uint256 autoRebalanceThreshold = uint256(ammPoolsParamsCfg.autoRebalanceThreshold) * 1e21;
 
         if (
             wadOperationAmount > wadAmmTreasuryErc20Balance ||

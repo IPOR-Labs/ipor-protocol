@@ -21,13 +21,13 @@ library AmmConfigurationManager {
     /// @notice Emitted when AMM Pools Params are changed.
     /// @param asset address of the asset (pool)
     /// @param maxLiquidityPoolBalance maximum liquidity pool balance
-    /// @param autoRebalanceThresholdInThousands auto rebalance threshold in thousands
+    /// @param autoRebalanceThreshold auto rebalance threshold
     /// @param ammTreasuryAndAssetManagementRatio AMM treasury and asset management ratio
-    /// @dev Params autoRebalanceThresholdInThousands and ammTreasuryAndAssetManagementRatio are not supported in stETH pool. Because stETH pool doesn't have asset management.
+    /// @dev Params autoRebalanceThreshold and ammTreasuryAndAssetManagementRatio are not used in pools which do not have Asset Management / Plasma Vault.
     event AmmPoolsParamsChanged(
         address indexed asset,
         uint32 maxLiquidityPoolBalance,
-        uint32 autoRebalanceThresholdInThousands,
+        uint32 autoRebalanceThreshold,
         uint16 ammTreasuryAndAssetManagementRatio
     );
 
@@ -120,13 +120,13 @@ library AmmConfigurationManager {
     /// @notice Sets AMM Pools Params.
     /// @param asset address of the asset (pool)
     /// @param newMaxLiquidityPoolBalance maximum liquidity pool balance
-    /// @param newAutoRebalanceThresholdInThousands auto rebalance threshold (for USDT, USDC, DAI in thousands)
+    /// @param newAutoRebalanceThreshold auto rebalance threshold (for USDT, USDC, DAI in thousands)
     /// @param newAmmTreasuryAndAssetManagementRatio AMM treasury and asset management ratio
     /// @dev Allowed only for the owner of the Ipor Protocol Router
     function setAmmPoolsParams(
         address asset,
         uint32 newMaxLiquidityPoolBalance,
-        uint32 newAutoRebalanceThresholdInThousands,
+        uint32 newAutoRebalanceThreshold,
         uint16 newAmmTreasuryAndAssetManagementRatio
     ) internal {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
@@ -136,14 +136,14 @@ library AmmConfigurationManager {
 
         StorageLib.getAmmPoolsParamsStorage().value[asset] = StorageLib.AmmPoolsParamsValue({
             maxLiquidityPoolBalance: newMaxLiquidityPoolBalance,
-            autoRebalanceThresholdInThousands: newAutoRebalanceThresholdInThousands,
+            autoRebalanceThreshold: newAutoRebalanceThreshold,
             ammTreasuryAndAssetManagementRatio: newAmmTreasuryAndAssetManagementRatio
         });
 
         emit AmmPoolsParamsChanged(
             asset,
             newMaxLiquidityPoolBalance,
-            newAutoRebalanceThresholdInThousands,
+            newAutoRebalanceThreshold,
             newAmmTreasuryAndAssetManagementRatio
         );
     }

@@ -187,7 +187,7 @@ contract AmmPoolsServiceWeEth is IAmmPoolsServiceWeEth {
 
         uint256 exchangeRate = _getExchangeRate(actualLiquidityPoolBalance);
 
-        if(weEthFrom != iporProtocolRouter) {
+        if (weEthFrom != iporProtocolRouter) {
             IERC20(weEth).safeTransferFrom(weEthFrom, ammTreasuryWeEth, weEthAmount);
         } else {
             IERC20(weEth).safeTransfer(ammTreasuryWeEth, weEthAmount);

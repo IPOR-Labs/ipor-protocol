@@ -14,6 +14,6 @@
         "var-name-mixedcase": "error",
         "imports-on-top": "error",
         "func-visibility": ["warn", { "ignoreConstructors": true }],
-        "compiler-version": ["error", "0.8.14"]
+        "compiler-version": ["error", "0.8.20"]
     }
 }

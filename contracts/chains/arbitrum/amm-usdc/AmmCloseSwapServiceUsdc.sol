@@ -4,17 +4,16 @@ pragma solidity 0.8.20;
 import {AmmTypes} from "../../../interfaces/types/AmmTypes.sol";
 import {IAmmCloseSwapLens} from "../../../interfaces/IAmmCloseSwapLens.sol";
 import {IAmmCloseSwapServiceUsdc} from "../../../interfaces/IAmmCloseSwapServiceUsdc.sol";
-import {AmmCloseSwapServiceBaseV1} from "../../../base/amm/services/AmmCloseSwapServiceBaseV1.sol";
+import {AmmCloseSwapServiceBaseV2} from "../../../base/amm/services/AmmCloseSwapServiceBaseV2.sol";
 import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 /// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
-contract AmmCloseSwapServiceUsdc is AmmCloseSwapServiceBaseV1, IAmmCloseSwapServiceUsdc {
-
+contract AmmCloseSwapServiceUsdc is AmmCloseSwapServiceBaseV2, IAmmCloseSwapServiceUsdc {
     constructor(
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         address iporOracle_
-    ) AmmCloseSwapServiceBaseV1(poolCfg, iporOracle_) {}
+    ) AmmCloseSwapServiceBaseV2(poolCfg, iporOracle_) {}
 
     function closeSwapsUsdc(
         address beneficiary,

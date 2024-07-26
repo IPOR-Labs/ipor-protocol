@@ -4,7 +4,6 @@ pragma solidity 0.8.20;
 import "../../amm/spread/SpreadStorageLibs.sol";
 
 library SpreadTypes {
-
     /// @notice Dto for the Weighted Notional
     struct TimeWeightedNotionalMemory {
         /// @notice timeWeightedNotionalPayFixed with 18 decimals

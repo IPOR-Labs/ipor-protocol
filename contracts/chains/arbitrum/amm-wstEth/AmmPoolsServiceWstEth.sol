@@ -109,7 +109,6 @@ contract AmmPoolsServiceWstEth is IAmmPoolsServiceWstEth {
         );
     }
 
-
     function _getExchangeRate(uint256 actualLiquidityPoolBalance) internal view returns (uint256) {
         AmmTypes.AmmPoolCoreModel memory model = AmmTypes.AmmPoolCoreModel({
             asset: wstEth,

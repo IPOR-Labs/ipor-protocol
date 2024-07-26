@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 
-import "../interfaces/IAmmCloseSwapServiceUsdc.sol";
-import "./AmmCloseSwapServiceStable.sol";
+import {AmmTypes} from "../interfaces/types/AmmTypes.sol";
+import {IAmmCloseSwapLens} from "../interfaces/IAmmCloseSwapLens.sol";
+import {IAmmCloseSwapServiceUsdc} from "../interfaces/IAmmCloseSwapServiceUsdc.sol";
+import {AmmCloseSwapServiceStable}  from "./AmmCloseSwapServiceStable.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmCloseSwapServiceUsdc is AmmCloseSwapServiceStable, IAmmCloseSwapServiceUsdc {

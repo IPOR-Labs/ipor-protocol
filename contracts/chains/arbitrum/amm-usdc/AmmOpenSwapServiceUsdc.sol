@@ -5,7 +5,6 @@ import {IERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20
 import {IERC20MetadataUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import {SafeERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
-
 import {IporTypes} from "../../../interfaces/types/IporTypes.sol";
 import {AmmTypes} from "../../../interfaces/types/AmmTypes.sol";
 import {IporErrors} from "../../../libraries/errors/IporErrors.sol";
@@ -45,14 +44,14 @@ contract AmmOpenSwapServiceUsdc is AmmOpenSwapServiceBaseV1, IAmmOpenSwapService
     ) external override onlySupportedInputAsset(inputAsset) returns (uint256) {
         return
             _openSwapPayFixed(
-            beneficiary,
-            inputAsset,
-            inputAssetTotalAmount,
-            IporTypes.SwapTenor.DAYS_28,
-            acceptableFixedInterestRate,
-            leverage,
-            riskIndicatorsInputs
-        );
+                beneficiary,
+                inputAsset,
+                inputAssetTotalAmount,
+                IporTypes.SwapTenor.DAYS_28,
+                acceptableFixedInterestRate,
+                leverage,
+                riskIndicatorsInputs
+            );
     }
 
     function openSwapPayFixed60daysUsdc(
@@ -65,14 +64,14 @@ contract AmmOpenSwapServiceUsdc is AmmOpenSwapServiceBaseV1, IAmmOpenSwapService
     ) external override onlySupportedInputAsset(inputAsset) returns (uint256) {
         return
             _openSwapPayFixed(
-            beneficiary,
-            inputAsset,
-            inputAssetTotalAmount,
-            IporTypes.SwapTenor.DAYS_60,
-            acceptableFixedInterestRate,
-            leverage,
-            riskIndicatorsInputs
-        );
+                beneficiary,
+                inputAsset,
+                inputAssetTotalAmount,
+                IporTypes.SwapTenor.DAYS_60,
+                acceptableFixedInterestRate,
+                leverage,
+                riskIndicatorsInputs
+            );
     }
 
     function openSwapPayFixed90daysUsdc(
@@ -85,14 +84,14 @@ contract AmmOpenSwapServiceUsdc is AmmOpenSwapServiceBaseV1, IAmmOpenSwapService
     ) external override onlySupportedInputAsset(inputAsset) returns (uint256) {
         return
             _openSwapPayFixed(
-            beneficiary,
-            inputAsset,
-            inputAssetTotalAmount,
-            IporTypes.SwapTenor.DAYS_90,
-            acceptableFixedInterestRate,
-            leverage,
-            riskIndicatorsInputs
-        );
+                beneficiary,
+                inputAsset,
+                inputAssetTotalAmount,
+                IporTypes.SwapTenor.DAYS_90,
+                acceptableFixedInterestRate,
+                leverage,
+                riskIndicatorsInputs
+            );
     }
 
     function openSwapReceiveFixed28daysUsdc(
@@ -105,14 +104,14 @@ contract AmmOpenSwapServiceUsdc is AmmOpenSwapServiceBaseV1, IAmmOpenSwapService
     ) external override onlySupportedInputAsset(inputAsset) returns (uint256) {
         return
             _openSwapReceiveFixed(
-            beneficiary,
-            inputAsset,
-            inputAssetTotalAmount,
-            IporTypes.SwapTenor.DAYS_28,
-            acceptableFixedInterestRate,
-            leverage,
-            riskIndicatorsInputs
-        );
+                beneficiary,
+                inputAsset,
+                inputAssetTotalAmount,
+                IporTypes.SwapTenor.DAYS_28,
+                acceptableFixedInterestRate,
+                leverage,
+                riskIndicatorsInputs
+            );
     }
 
     function openSwapReceiveFixed60daysUsdc(
@@ -125,14 +124,14 @@ contract AmmOpenSwapServiceUsdc is AmmOpenSwapServiceBaseV1, IAmmOpenSwapService
     ) external override onlySupportedInputAsset(inputAsset) returns (uint256) {
         return
             _openSwapReceiveFixed(
-            beneficiary,
-            inputAsset,
-            inputAssetTotalAmount,
-            IporTypes.SwapTenor.DAYS_60,
-            acceptableFixedInterestRate,
-            leverage,
-            riskIndicatorsInputs
-        );
+                beneficiary,
+                inputAsset,
+                inputAssetTotalAmount,
+                IporTypes.SwapTenor.DAYS_60,
+                acceptableFixedInterestRate,
+                leverage,
+                riskIndicatorsInputs
+            );
     }
 
     function openSwapReceiveFixed90daysUsdc(
@@ -145,14 +144,14 @@ contract AmmOpenSwapServiceUsdc is AmmOpenSwapServiceBaseV1, IAmmOpenSwapService
     ) external override onlySupportedInputAsset(inputAsset) returns (uint256) {
         return
             _openSwapReceiveFixed(
-            beneficiary,
-            inputAsset,
-            inputAssetTotalAmount,
-            IporTypes.SwapTenor.DAYS_90,
-            acceptableFixedInterestRate,
-            leverage,
-            riskIndicatorsInputs
-        );
+                beneficiary,
+                inputAsset,
+                inputAssetTotalAmount,
+                IporTypes.SwapTenor.DAYS_90,
+                acceptableFixedInterestRate,
+                leverage,
+                riskIndicatorsInputs
+            );
     }
 
     function _getMessageSigner() internal view override returns (address) {
@@ -195,10 +194,7 @@ contract AmmOpenSwapServiceUsdc is AmmOpenSwapServiceBaseV1, IAmmOpenSwapService
         }
     }
 
-    function _transferTotalAmountToAmmTreasury(
-        address inputAsset,
-        uint256 inputAssetTotalAmount
-    ) internal override {
+    function _transferTotalAmountToAmmTreasury(address inputAsset, uint256 inputAssetTotalAmount) internal override {
         IERC20Upgradeable(asset).safeTransferFrom(msg.sender, ammTreasury, inputAssetTotalAmount);
     }
 }

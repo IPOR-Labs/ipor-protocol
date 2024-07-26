@@ -14,16 +14,19 @@ contract SpreadUsdc is SpreadBaseV2 {
         SpreadTypesBaseV1.TimeWeightedNotionalMemory[] memory timeWeightedNotional
     ) SpreadBaseV2(iporProtocolRouterInput, assetInput, timeWeightedNotional) {}
 
-    function spreadFunctionConfig() external pure override returns (uint256[] memory)
-    {
+    function spreadFunctionConfig() external pure override returns (uint256[] memory) {
         return DemandSpreadStableLibsBaseV1.spreadFunctionConfig();
     }
 
-    function _calculatePayFixedSpread(SpreadInputData memory inputData) internal view override returns (uint256 spreadValue){
+    function _calculatePayFixedSpread(
+        SpreadInputData memory inputData
+    ) internal view override returns (uint256 spreadValue) {
         return DemandSpreadStableLibsBaseV1.calculatePayFixedSpread(inputData);
     }
 
-    function _calculateReceiveFixedSpread(SpreadInputData memory inputData) internal view override returns (uint256 spreadValue){
+    function _calculateReceiveFixedSpread(
+        SpreadInputData memory inputData
+    ) internal view override returns (uint256 spreadValue) {
         return DemandSpreadStableLibsBaseV1.calculateReceiveFixedSpread(inputData);
     }
 }
