@@ -88,7 +88,7 @@ abstract contract AmmCloseSwapServiceBaseV2 is AmmCloseSwapServiceBaseV1 {
 
                 int256 rebalanceAmount = AssetManagementLogic.calculateRebalanceAmountBeforeWithdraw(
                     IporMath.convertToWad(ammTreasuryErc20BalanceBeforeRedeem, decimals),
-                    /// @dev Notice! Plasma Vault balances are in asset decimals
+                    /// @dev Notice! Plasma Vault underlying asset is the same as the pool asset
                     IporMath.convertToWad(IERC4626(ammAssetManagement).maxWithdraw(ammTreasury), decimals),
                     wadTransferAmount + wadPayoutForLiquidator,
                     /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals,
