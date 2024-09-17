@@ -8,7 +8,7 @@ import "../../contracts/amm/spread/Spread90Days.sol";
 import "../../contracts/amm/spread/SpreadStorageLens.sol";
 import "../../contracts/amm/spread/SpreadRouter.sol";
 import "../../contracts/amm/spread/SpreadCloseSwapService.sol";
-import "../../contracts/amm/AmmStorage.sol";
+import "../../contracts/chains/ethereum/amm-old/AmmStorage.sol";
 import "../../contracts/amm/spread/SpreadStorageService.sol";
 
 contract SpreadTestSystem is TestCommons {

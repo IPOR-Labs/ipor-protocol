@@ -1,20 +1,21 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 
-import {AmmTypes} from "../interfaces/types/AmmTypes.sol";
-import {IAmmCloseSwapLens} from "../interfaces/IAmmCloseSwapLens.sol";
-import {IAmmCloseSwapServiceUsdc} from "../interfaces/IAmmCloseSwapServiceUsdc.sol";
-import {AmmCloseSwapServiceStable}  from "./AmmCloseSwapServiceStable.sol";
+import {AmmTypes} from "../../../interfaces/types/AmmTypes.sol";
+import {IAmmCloseSwapLens} from "../../../interfaces/IAmmCloseSwapLens.sol";
+import {IAmmCloseSwapServiceDai} from "../../../interfaces/IAmmCloseSwapServiceDai.sol";
+import {AmmCloseSwapServiceBaseV2} from "../../../base/amm/services/AmmCloseSwapServiceBaseV2.sol";
+import {StorageLibEthereum} from "../libraries/StorageLibEthereum.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
-contract AmmCloseSwapServiceUsdc is AmmCloseSwapServiceStable, IAmmCloseSwapServiceUsdc {
+/// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
+contract AmmCloseSwapServiceDai is AmmCloseSwapServiceBaseV2, IAmmCloseSwapServiceDai {
     constructor(
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
-        address iporOracleInput,
-        address messageSignerInput
-    ) AmmCloseSwapServiceStable(poolCfg, iporOracleInput, messageSignerInput) {}
+        address iporOracle_
+    ) AmmCloseSwapServiceBaseV2(poolCfg, iporOracle_) {}
 
-    function closeSwapsUsdc(
+    function closeSwapsDai(
         address beneficiary,
         uint256[] memory payFixedSwapIds,
         uint256[] memory receiveFixedSwapIds,
@@ -35,7 +36,7 @@ contract AmmCloseSwapServiceUsdc is AmmCloseSwapServiceStable, IAmmCloseSwapServ
         );
     }
 
-    function emergencyCloseSwapsUsdc(
+    function emergencyCloseSwapsDai(
         uint256[] memory payFixedSwapIds,
         uint256[] memory receiveFixedSwapIds,
         AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
@@ -47,11 +48,14 @@ contract AmmCloseSwapServiceUsdc is AmmCloseSwapServiceStable, IAmmCloseSwapServ
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
         )
     {
-        (closedPayFixedSwaps, closedReceiveFixedSwaps) = _closeSwaps(
-            msg.sender,
+        (closedPayFixedSwaps, closedReceiveFixedSwaps) = _emergencyCloseSwaps(
             payFixedSwapIds,
             receiveFixedSwapIds,
             riskIndicatorsInput
         );
+    }
+
+    function _getMessageSigner() internal view override returns (address) {
+        return StorageLibEthereum.getMessageSignerStorage().value;
     }
 }

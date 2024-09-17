@@ -310,8 +310,6 @@ abstract contract AmmOpenSwapServiceBaseV1 {
     /// @param inputAsset Address of the asset input the asset which user enters to open swap, can be different than underlying asset but have to be in 1:1 price relation with underlying asset
     function _transferTotalAmountToAmmTreasury(address inputAsset, uint256 inputAssetTotalAmount) internal virtual;
 
-    //    function _validateTotalAmount(address inputAsset, uint256 totalAmount) internal view virtual;
-
     function _validateInputAsset(address inputAsset, uint256 inputAssetTotalAmount) internal view virtual;
 
     /// @notice Converts input asset amount to underlying asset amount using exchange rate between input asset and underlying asset.

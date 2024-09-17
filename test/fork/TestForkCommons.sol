@@ -29,7 +29,7 @@ import "../../contracts/amm-eth/AmmCloseSwapServiceStEth.sol";
 import "../../contracts/chains/ethereum/amm-commons/AmmCloseSwapLens.sol";
 import "../../contracts/amm/AmmPoolsService.sol";
 import "../../contracts/chains/ethereum/amm-commons/AmmGovernanceService.sol";
-import "../../contracts/amm/AmmStorage.sol";
+import "../../contracts/chains/ethereum/amm-old/AmmStorage.sol";
 import "../../contracts/amm/AmmTreasury.sol";
 
 import "../../contracts/amm-eth/AmmPoolsServiceStEth.sol";

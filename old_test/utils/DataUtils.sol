@@ -8,7 +8,7 @@ import {IporOracleUtils} from "../utils/IporOracleUtils.sol";
 import {AmmTreasuryUtils} from "../utils/AmmTreasuryUtils.sol";
 import {JosephUtils} from "../utils/JosephUtils.sol";
 import {AssetManagementUtils} from "../utils/AssetManagementUtils.sol";
-import "contracts/amm/AmmStorage.sol";
+import "../../contracts/chains/ethereum/amm-old/AmmStorage.sol";
 import "contracts/libraries/Constants.sol";
 import "test/mocks/tokens/MockTestnetToken.sol";
 import "test/mocks/spread/MockSpreadModel.sol";

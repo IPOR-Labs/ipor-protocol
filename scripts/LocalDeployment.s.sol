@@ -25,7 +25,7 @@ import "../contracts/vault/AssetManagementDai.sol";
 import "../contracts/tokens/IpToken.sol";
 import "../contracts/tokens/IvToken.sol";
 import "../test/mocks/tokens/MockTestnetToken.sol";
-import "../contracts/amm/AmmStorage.sol";
+import "../contracts/chains/ethereum/amm-old/AmmStorage.sol";
 import "../contracts/amm/AmmTreasury.sol";
 import "../contracts/amm/spread/SpreadCloseSwapService.sol";
 import "../test/mocks/TestnetFaucet.sol";

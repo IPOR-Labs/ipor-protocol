@@ -4,7 +4,7 @@ pragma solidity 0.8.20;
 import "../../../contracts/tokens/IpToken.sol";
 import "../../../contracts/oracles/IporOracle.sol";
 import "../../mocks/MockIporWeighted.sol";
-import "../../../contracts/amm/AmmStorage.sol";
+import "../../../contracts/chains/ethereum/amm-old/AmmStorage.sol";
 import "../../../contracts/amm/AmmTreasury.sol";
 import "../../../contracts/amm/spread/SpreadRouter.sol";
 import "../../../contracts/vault/AssetManagement.sol";

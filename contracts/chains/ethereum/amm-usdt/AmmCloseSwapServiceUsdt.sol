@@ -1,16 +1,19 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.20;
 
-import "../interfaces/IAmmCloseSwapServiceUsdt.sol";
-import "./AmmCloseSwapServiceStable.sol";
+import {AmmTypes} from "../../../interfaces/types/AmmTypes.sol";
+import {IAmmCloseSwapLens} from "../../../interfaces/IAmmCloseSwapLens.sol";
+import {IAmmCloseSwapServiceUsdt} from "../../../interfaces/IAmmCloseSwapServiceUsdt.sol";
+import {AmmCloseSwapServiceBaseV2} from "../../../base/amm/services/AmmCloseSwapServiceBaseV2.sol";
+import {StorageLibEthereum} from "../libraries/StorageLibEthereum.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
-contract AmmCloseSwapServiceUsdt is AmmCloseSwapServiceStable, IAmmCloseSwapServiceUsdt {
+/// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
+contract AmmCloseSwapServiceUsdt is AmmCloseSwapServiceBaseV2, IAmmCloseSwapServiceUsdt {
     constructor(
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
-        address iporOracleInput,
-        address messageSignerInput
-    ) AmmCloseSwapServiceStable(poolCfg, iporOracleInput, messageSignerInput) {}
+        address iporOracle_
+    ) AmmCloseSwapServiceBaseV2(poolCfg, iporOracle_) {}
 
     function closeSwapsUsdt(
         address beneficiary,
@@ -45,11 +48,14 @@ contract AmmCloseSwapServiceUsdt is AmmCloseSwapServiceStable, IAmmCloseSwapServ
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
         )
     {
-        (closedPayFixedSwaps, closedReceiveFixedSwaps) = _closeSwaps(
-            msg.sender,
+        (closedPayFixedSwaps, closedReceiveFixedSwaps) = _emergencyCloseSwaps(
             payFixedSwapIds,
             receiveFixedSwapIds,
             riskIndicatorsInput
         );
+    }
+
+    function _getMessageSigner() internal view override returns (address) {
+        return StorageLibEthereum.getMessageSignerStorage().value;
     }
 }

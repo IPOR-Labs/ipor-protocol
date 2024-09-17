@@ -4,7 +4,7 @@ pragma solidity 0.8.20;
 import "test/TestCommons.sol";
 import "../utils/TestConstants.sol";
 
-import "contracts/amm/AmmStorage.sol";
+import "../../contracts/chains/ethereum/amm-old/AmmStorage.sol";
 
 contract AmmCollateralRatioTest is TestCommons {
     IporProtocolFactory.IporProtocolConfig private _cfg;
