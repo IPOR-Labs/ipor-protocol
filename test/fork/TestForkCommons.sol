@@ -33,12 +33,6 @@ import "../../contracts/amm/AmmStorage.sol";
 import "../../contracts/amm/AmmTreasury.sol";
 
 import "../../contracts/amm-eth/AmmPoolsServiceStEth.sol";
-import "../../contracts/vault/strategies/StrategyDsrDai.sol";
-import "../../contracts/vault/AssetManagementDai.sol";
-import "../../contracts/vault/AssetManagementUsdt.sol";
-import "../../contracts/vault/AssetManagementUsdc.sol";
-import "../../contracts/vault/strategies/StrategyAave.sol";
-import "../../contracts/vault/strategies/StrategyCompound.sol";
 import "../../contracts/interfaces/IIpTokenV1.sol";
 import "../../contracts/amm-eth/interfaces/IWETH9.sol";
 import "../../contracts/amm-eth/interfaces/IStETH.sol";
@@ -256,90 +250,6 @@ contract TestForkCommons is Test {
 
     function _getUserAddress(uint256 number) internal returns (address) {
         return vm.rememberKey(number);
-    }
-
-    function _createNewStrategyDsrDai() internal {
-        StrategyDsrDai strategyDsrDaiImpl = new StrategyDsrDai(DAI, sDai, stanleyProxyDai);
-
-        vm.startPrank(owner);
-        ERC1967Proxy proxy = new ERC1967Proxy(address(strategyDsrDaiImpl), abi.encodeWithSignature("initialize()"));
-        vm.stopPrank();
-
-        strategyDsrDaiProxy = address(proxy);
-    }
-
-    function _createNewStrategyAaveDai() internal {
-        StrategyAave strategyAaveImpl = new StrategyAave(
-            DAI,
-            18,
-            aDAI,
-            stanleyProxyDai,
-            AAVE,
-            stakedAAVE,
-            aaveLendingPoolAddressProvider,
-            aaveIncentivesController
-        );
-
-        vm.startPrank(owner);
-        ERC1967Proxy proxy = new ERC1967Proxy(address(strategyAaveImpl), abi.encodeWithSignature("initialize()"));
-        vm.stopPrank();
-
-        strategyAaveDaiProxy = address(proxy);
-    }
-
-    function _createNewStrategyAaveUsdt() internal {
-        StrategyAave strategyAaveImpl = new StrategyAave(
-            USDT,
-            6,
-            aUSDT,
-            stanleyProxyUsdt,
-            AAVE,
-            stakedAAVE,
-            aaveLendingPoolAddressProvider,
-            aaveIncentivesController
-        );
-
-        vm.startPrank(owner);
-        ERC1967Proxy proxy = new ERC1967Proxy(address(strategyAaveImpl), abi.encodeWithSignature("initialize()"));
-        vm.stopPrank();
-
-        strategyAaveUsdtProxy = address(proxy);
-    }
-
-    function _createNewStrategyCompoundDai() internal {
-        StrategyCompound strategyCompoundImpl = new StrategyCompound(
-            DAI,
-            18,
-            cDAI,
-            stanleyProxyDai,
-            7200,
-            comptroller,
-            COMP
-        );
-
-        vm.startPrank(owner);
-        ERC1967Proxy proxy = new ERC1967Proxy(address(strategyCompoundImpl), abi.encodeWithSignature("initialize()"));
-        vm.stopPrank();
-
-        strategyCompoundDaiProxy = address(proxy);
-    }
-
-    function _createNewStrategyCompoundUsdt() internal {
-        StrategyCompound strategyCompoundImpl = new StrategyCompound(
-            USDT,
-            6,
-            cUSDT,
-            stanleyProxyUsdt,
-            7200,
-            comptroller,
-            COMP
-        );
-
-        vm.startPrank(owner);
-        ERC1967Proxy proxy = new ERC1967Proxy(address(strategyCompoundImpl), abi.encodeWithSignature("initialize()"));
-        vm.stopPrank();
-
-        strategyCompoundUsdtProxy = address(proxy);
     }
 
     function _upgradeSpreadRouter() internal {

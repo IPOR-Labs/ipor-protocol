@@ -2,7 +2,6 @@
 pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
-import "forge-std/console2.sol";
 import "../mocks/assetManagement/MockAssetManagementLogic.sol";
 
 contract UnitAssetManagementLogic is Test {

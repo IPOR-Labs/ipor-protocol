@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 
-import "forge-std/console2.sol";
 import "../../contracts/amm-eth/interfaces/IAmmPoolsServiceStEth.sol";
 import "../../contracts/interfaces/IAmmSwapsLens.sol";
 import "../../contracts/interfaces/types/AmmTypes.sol";

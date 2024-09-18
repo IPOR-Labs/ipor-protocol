@@ -72,7 +72,7 @@ contract AmmShouldClosePositionTest is TestCommons {
 
         uint256 ammERC20BalanceBefore = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         uint256 userERC20BalanceBefore = _iporProtocol.asset.balanceOf(_userTwo);
-        uint256 assetManagementBalanceBefore = _iporProtocol.assetManagement.totalBalance();
+        uint256 assetManagementBalanceBefore = _iporProtocol.assetManagement.maxWithdraw(address(_iporProtocol.ammTreasury));
 
         uint256[] memory pfSwapIds = new uint256[](1);
         uint256[] memory rfSwapIds = new uint256[](0);
@@ -87,14 +87,14 @@ contract AmmShouldClosePositionTest is TestCommons {
         // then
         uint256 ammERC20BalanceAfter = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         uint256 userERC20BalanceAfter = _iporProtocol.asset.balanceOf(_userTwo);
-        uint256 assetManagementBalanceAfter = _iporProtocol.assetManagement.totalBalance();
+        uint256 assetManagementBalanceAfter = _iporProtocol.assetManagement.maxWithdraw(address(_iporProtocol.ammTreasury));
 
         assertEq(ammERC20BalanceBefore, 17_890e6, "ammERC20BalanceBefore");
         assertEq(userERC20BalanceBefore, 9_990_000e6, "userERC20BalanceBefore");
-        assertEq(assetManagementBalanceBefore, 20_110e18, "assetManagementBalanceBefore");
-        assertEq(ammERC20BalanceAfter, 15509192767, "ammERC20BalanceAfter");
+        assertEq(assetManagementBalanceBefore, 20_110e6, "assetManagementBalanceBefore");
+        assertEq(ammERC20BalanceAfter, 15467215199, "ammERC20BalanceAfter");
         assertEq(userERC20BalanceAfter, 10009803276237, "userERC20BalanceAfter");
-        assertEq(assetManagementBalanceAfter, 2735739900090834400000, "assetManagementBalanceAfter");
+        assertEq(assetManagementBalanceAfter, 2729508564, "assetManagementBalanceAfter");
     }
 
     function testShouldClosePositionUSDTAndRebalanceLiquiditationDepositEdgeCase() public {
@@ -149,7 +149,7 @@ contract AmmShouldClosePositionTest is TestCommons {
 
         uint256 ammERC20BalanceBefore = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         uint256 userERC20BalanceBefore = _iporProtocol.asset.balanceOf(_userTwo);
-        uint256 assetManagementBalanceBefore = _iporProtocol.assetManagement.totalBalance();
+        uint256 assetManagementBalanceBefore = _iporProtocol.assetManagement.maxWithdraw(address(_iporProtocol.ammTreasury));
 
         uint256[] memory pfSwapIds = new uint256[](1);
         uint256[] memory rfSwapIds = new uint256[](0);
@@ -164,15 +164,16 @@ contract AmmShouldClosePositionTest is TestCommons {
         // then
         uint256 ammERC20BalanceAfter = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         uint256 userERC20BalanceAfter = _iporProtocol.asset.balanceOf(_userTwo);
-        uint256 assetManagementBalanceAfter = _iporProtocol.assetManagement.totalBalance();
+        uint256 assetManagementBalanceAfter = _iporProtocol.assetManagement.maxWithdraw(address(_iporProtocol.ammTreasury));
 
         assertEq(ammERC20BalanceBefore, 19800e6, "ammERC20BalanceBefore");
         assertEq(userERC20BalanceBefore, 9_990_000e6, "userERC20BalanceBefore");
-        assertEq(assetManagementBalanceBefore, 20_110e18, "assetManagementBalanceBefore");
-        assertEq(ammERC20BalanceAfter, 17132692767, "ammERC20BalanceAfter");
+        assertEq(assetManagementBalanceBefore, 20_110e6, "assetManagementBalanceBefore");
+        assertEq(ammERC20BalanceAfter, 17090715199, "ammERC20BalanceAfter");
         assertEq(userERC20BalanceAfter, 10009778276237, "userERC20BalanceAfter");
-        assertEq(assetManagementBalanceAfter, 3022239900090834400000, "assetManagementBalanceAfter");
+        assertEq(assetManagementBalanceAfter, 3016008564, "assetManagementBalanceAfter");
     }
+
 
     function testShouldClosePositionUsdtAndRebalanceWhen100PercentageLossBeneficiaryDiffThanBuyer() public {
         // given
@@ -221,7 +222,7 @@ contract AmmShouldClosePositionTest is TestCommons {
 
         uint256 ammERC20BalanceBefore = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         uint256 userERC20BalanceBefore = _iporProtocol.asset.balanceOf(_userTwo);
-        uint256 assetManagementBalanceBefore = _iporProtocol.assetManagement.totalBalance();
+        uint256 assetManagementBalanceBefore = _iporProtocol.assetManagement.maxWithdraw(address(_iporProtocol.ammTreasury));
 
         uint256[] memory pfSwapIds = new uint256[](0);
         uint256[] memory rfSwapIds = new uint256[](1);
@@ -230,19 +231,19 @@ contract AmmShouldClosePositionTest is TestCommons {
         // when
         vm.warp(endTimestamp);
         vm.startPrank(_userTwo);
-        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(_userThree, pfSwapIds, rfSwapIds,getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(_userThree, pfSwapIds, rfSwapIds, getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));
         vm.stopPrank();
 
         // then
         uint256 ammERC20BalanceAfter = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
         uint256 userERC20BalanceAfter = _iporProtocol.asset.balanceOf(_userTwo);
-        uint256 assetManagementBalanceAfter = _iporProtocol.assetManagement.totalBalance();
+        uint256 assetManagementBalanceAfter = _iporProtocol.assetManagement.maxWithdraw(address(_iporProtocol.ammTreasury));
 
         assertEq(ammERC20BalanceBefore, 0, "ammERC20BalanceBefore");
         assertEq(userERC20BalanceBefore, 9_990_000e6, "userERC20BalanceBefore");
-        assertEq(assetManagementBalanceBefore, 38_000 * 1e18, "assetManagementBalanceBefore");
-        assertEq(ammERC20BalanceAfter, 32357181507, "ammERC20BalanceAfter");
+        assertEq(assetManagementBalanceBefore, 38_000 * 1e6, "assetManagementBalanceBefore");
+        assertEq(ammERC20BalanceAfter, 32278750000, "ammERC20BalanceAfter");
         assertEq(userERC20BalanceAfter, 9990000000000, "userERC20BalanceAfter");
-        assertEq(assetManagementBalanceAfter, 5708914383375520000000, "assetManagementBalanceAfter");
+        assertEq(assetManagementBalanceAfter, 5696250000, "assetManagementBalanceAfter");
     }
 }

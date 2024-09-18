@@ -95,6 +95,13 @@ abstract contract AmmCloseSwapServiceStable is IAmmCloseSwapService {
         iporOracle = iporOracleInput.checkAddress();
         messageSigner = messageSignerInput.checkAddress();
         spreadRouter = poolCfg.spread.checkAddress();
+
+        /// @dev pool asset must match the underlying asset in the AmmAssetManagement vault
+        address ammAssetManagementAsset = IERC4626(_assetManagement).asset();
+        if (ammAssetManagementAsset != _asset) {
+            revert IporErrors.AssetMismatch(ammAssetManagementAsset, _asset);
+        }
+
     }
 
     function getPoolConfiguration()
@@ -557,6 +564,8 @@ abstract contract AmmCloseSwapServiceStable is IAmmCloseSwapService {
             if (ammTreasuryErc20BalanceBeforeRedeem <= totalTransferAmountAssetDecimals) {
                 AmmTypes.AmmPoolCoreModel memory model;
 
+                model.asset = poolCfg.asset;
+                model.assetDecimals = poolCfg.decimals;
                 model.ammStorage = poolCfg.ammStorage;
                 model.ammTreasury = poolCfg.ammTreasury;
                 model.assetManagement = poolCfg.assetManagement;

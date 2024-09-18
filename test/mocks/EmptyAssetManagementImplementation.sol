@@ -6,7 +6,7 @@ import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../../contracts/security/IporOwnableUpgradeable.sol";
-import "forge-std/console2.sol";
+
 contract EmptyAssetManagementImplementation is
     Initializable,
     PausableUpgradeable,
