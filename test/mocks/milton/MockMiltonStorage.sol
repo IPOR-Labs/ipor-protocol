@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.20;
 
-import "../../../contracts/chains/ethereum/amm-old/AmmStorage.sol";
+import "../../../contracts/chains/ethereum/amm-commons/AmmStorage.sol";
 
 contract MockAmmStorage is AmmStorage {
     constructor(

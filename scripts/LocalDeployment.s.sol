@@ -2,7 +2,7 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "forge-std/Script.sol";
-import "../contracts/chains/ethereum/router/IporProtocolRouter.sol";
+import "../contracts/chains/ethereum/router/IporProtocolRouterEthereum.sol";
 import "../contracts/amm/AmmPoolsLens.sol";
 import "../contracts/amm/AmmOpenSwapService.sol";
 import "../contracts/chains/ethereum/amm-commons/AmmGovernanceService.sol";
@@ -25,7 +25,7 @@ import "../contracts/vault/AssetManagementDai.sol";
 import "../contracts/tokens/IpToken.sol";
 import "../contracts/tokens/IvToken.sol";
 import "../test/mocks/tokens/MockTestnetToken.sol";
-import "../contracts/chains/ethereum/amm-old/AmmStorage.sol";
+import "../contracts/chains/ethereum/amm-commons/AmmStorage.sol";
 import "../contracts/amm/AmmTreasury.sol";
 import "../contracts/amm/spread/SpreadCloseSwapService.sol";
 import "../test/mocks/TestnetFaucet.sol";
@@ -316,7 +316,7 @@ contract LocalDeployment is Script {
     }
 
     function deployDummyIporProtocolRouter(System memory system) public {
-        IporProtocolRouter.DeployedContracts memory deployedContracts = IporProtocolRouter.DeployedContracts({
+        IporProtocolRouter.DeployedContracts memory deployedContracts = IporProtocolRouterEthereum.DeployedContracts({
             ammSwapsLens: defaultAnvilAddress,
             ammPoolsLens: defaultAnvilAddress,
             assetManagementLens: defaultAnvilAddress,
@@ -758,7 +758,7 @@ contract LocalDeployment is Script {
             })
         );
 
-        IporProtocolRouter.DeployedContracts memory deployedContracts = IporProtocolRouter.DeployedContracts({
+        IporProtocolRouter.DeployedContracts memory deployedContracts = IporProtocolRouterEthereum.DeployedContracts({
             ammSwapsLens: system.ammSwapsLens,
             ammPoolsLens: system.ammPoolsLens,
             assetManagementLens: system.assetManagementLens,
@@ -773,7 +773,7 @@ contract LocalDeployment is Script {
         });
 
         system.routerImpl = address(new IporProtocolRouter(deployedContracts));
-        IporProtocolRouter(system.routerProxy).upgradeTo(system.routerImpl);
+        IporProtocolRouterEthereum(system.routerProxy).upgradeTo(system.routerImpl);
     }
 
     function deployFaucet(System memory system) internal {

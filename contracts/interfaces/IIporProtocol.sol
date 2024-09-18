@@ -7,7 +7,6 @@ import "./IProxyImplementation.sol";
 import {IRouterAccessControl} from "./IRouterAccessControl.sol";
 import "./IAmmSwapsLens.sol";
 import "./IAmmPoolsLens.sol";
-import "./IAssetManagementLens.sol";
 import "./ILiquidityMiningLens.sol";
 import "./IPowerTokenLens.sol";
 import "./IAmmOpenSwapService.sol";
@@ -32,7 +31,7 @@ import "./IAmmOpenSwapServiceStEth.sol";
 import "./IProvideLiquidityEvents.sol";
 
 /// @title Interface for interaction with IPOR protocol.
-/// Interface combines all IporProtocolRouter interfaces and supported services and lenses by router.
+/// Interface combines all IporProtocolRouterEthereum.sol interfaces and supported services and lenses by router.
 interface IIporProtocol is
     IERC1822ProxiableUpgradeable,
     IERC1967Upgradeable,
@@ -40,7 +39,6 @@ interface IIporProtocol is
     IProxyImplementation,
     IAmmSwapsLens,
     IAmmPoolsLens,
-    IAssetManagementLens,
     ILiquidityMiningLens,
     IPowerTokenLens,
     IAmmPoolsLensStEth,
@@ -52,7 +50,6 @@ interface IIporProtocol is
     IAmmCloseSwapServiceDai,
     IAmmCloseSwapServiceStEth,
     IAmmCloseSwapLens,
-    IAmmPoolsService,
     IAmmPoolsServiceWeEth,
     IAmmGovernanceService,
     IAmmGovernanceLens,

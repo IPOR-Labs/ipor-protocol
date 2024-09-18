@@ -10,7 +10,7 @@ import "../../contracts/base/amm/AmmTreasuryBaseV1.sol";
 import "../../contracts/base/amm/AmmStorageBaseV1.sol";
 import "../../contracts/amm-weEth/AmmPoolsServiceWeEth.sol";
 import "../../contracts/amm-weEth/AmmPoolsLensWeEth.sol";
-import "../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
+import "../../contracts/chains/ethereum/router/IporProtocolRouterEthereum.sol";
 
 contract WeEthTestForkCommon is Test {
 
@@ -118,8 +118,8 @@ contract WeEthTestForkCommon is Test {
     }
 
     function _updateIporRouterImplementation() internal {
-        IporProtocolRouter newImplementation = new IporProtocolRouter(
-            IporProtocolRouter.DeployedContracts({
+        IporProtocolRouterEthereum newImplementation = new IporProtocolRouter(
+            IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: AmmSwapsLens,
                 ammPoolsLens: AmmPoolsLens,
                 assetManagementLens: AssetManagementLens,
@@ -145,7 +145,7 @@ contract WeEthTestForkCommon is Test {
             })
         );
 
-        IporProtocolRouter(IporProtocolRouterProxy).upgradeTo(address(newImplementation));
+        IporProtocolRouterEthereum(IporProtocolRouterProxy).upgradeTo(address(newImplementation));
     }
 
     function _setupPools() internal {

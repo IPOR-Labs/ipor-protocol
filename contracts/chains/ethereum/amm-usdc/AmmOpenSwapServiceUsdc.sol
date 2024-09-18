@@ -13,9 +13,9 @@ import {IporContractValidator} from "../../../libraries/IporContractValidator.so
 import {IAmmOpenSwapServiceUsdc} from "../interfaces/IAmmOpenSwapServiceUsdc.sol";
 import {AmmTypesBaseV1} from "../../../base/types/AmmTypesBaseV1.sol";
 import {AmmOpenSwapServiceBaseV1} from "../../../base/amm/services/AmmOpenSwapServiceBaseV1.sol";
-import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
+import {StorageLibEthereum} from "../libraries/StorageLibEthereum.sol";
 
-/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
+/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouterEthereum.sol.
 /// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
 contract AmmOpenSwapServiceUsdc is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServiceUsdc {
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -155,7 +155,7 @@ contract AmmOpenSwapServiceUsdc is AmmOpenSwapServiceBaseV1, IAmmOpenSwapService
     }
 
     function _getMessageSigner() internal view override returns (address) {
-        return StorageLibArbitrum.getMessageSignerStorage().value;
+        return StorageLibEthereum.getMessageSignerStorage().value;
     }
 
     function _convertToAssetAmount(

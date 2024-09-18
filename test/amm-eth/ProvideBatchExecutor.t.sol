@@ -4,7 +4,7 @@ pragma solidity 0.8.20;
 import "forge-std/Test.sol";
 import "./TestEthMarketCommons.sol";
 import "../../contracts/libraries/errors/AmmErrors.sol";
-import "../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
+import "../../contracts/chains/ethereum/router/IporProtocolRouterEthereum.sol";
 
 contract ProvideBatchExecutor is TestEthMarketCommons {
     function setUp() public {
@@ -42,7 +42,7 @@ contract ProvideBatchExecutor is TestEthMarketCommons {
 
         // when
         vm.prank(userOne);
-        IporProtocolRouter(iporProtocolRouter).batchExecutor{value: 150e18}(requestData);
+        IporProtocolRouterEthereum(iporProtocolRouter).batchExecutor{value: 150e18}(requestData);
 
         // then
         uint userEthBalanceAfter = userOne.balance;

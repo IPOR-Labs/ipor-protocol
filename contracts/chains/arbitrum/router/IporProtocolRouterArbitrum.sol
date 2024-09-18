@@ -77,7 +77,7 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
     }
 
     /// @notice Gets the Router configuration
-    /// @return DeployedContracts struct
+    /// @return DeployedContractsArbitrum struct
     function getConfiguration() external view returns (DeployedContractsArbitrum memory) {
         return
             DeployedContractsArbitrum({

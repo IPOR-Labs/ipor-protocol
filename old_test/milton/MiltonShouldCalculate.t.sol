@@ -8,7 +8,7 @@ import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
 import "contracts/interfaces/types/IporTypes.sol";
 import "contracts/interfaces/types/AmmStorageTypes.sol";
-import "../../contracts/chains/ethereum/amm-old/AmmStorage.sol";
+import "../../contracts/chains/ethereum/amm-commons/AmmStorage.sol";
 import "test/mocks/spread/MockSpreadModel.sol";
 
 contract AmmTreasuryShouldCalculateTest is TestCommons, DataUtils, SwapUtils {

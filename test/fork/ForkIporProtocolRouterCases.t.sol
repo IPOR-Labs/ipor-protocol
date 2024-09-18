@@ -374,7 +374,7 @@ contract ForkIporProtocolRouterCases is TestForkCommons {
 
         // when
         vm.prank(user);
-        IporProtocolRouter(iporProtocolRouterProxy).batchExecutor{value: 150e18}(requestData);
+        IporProtocolRouterEthereum(iporProtocolRouterProxy).batchExecutor{value: 150e18}(requestData);
 
         // then
         uint userIpstEthBalanceAfter = IERC20(ipstETH).balanceOf(user);

@@ -4,7 +4,7 @@ pragma solidity 0.8.20;
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
 import "../../contracts/interfaces/types/AmmTypes.sol";
-import "../../contracts/chains/ethereum/amm-old/AmmStorage.sol";
+import "../../contracts/chains/ethereum/amm-commons/AmmStorage.sol";
 
 contract AmmUnwindSwap is TestCommons {
     address internal _buyer;

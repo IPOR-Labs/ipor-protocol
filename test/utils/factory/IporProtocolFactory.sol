@@ -10,7 +10,6 @@ import "../builder/AssetBuilder.sol";
 import "../builder/IpTokenBuilder.sol";
 import "../builder/IporWeightedBuilder.sol";
 import "../builder/AmmStorageBuilder.sol";
-import "../builder/AssetManagementBuilder.sol";
 import "../builder/SpreadRouterBuilder.sol";
 import "../builder/AmmTreasuryBuilder.sol";
 import "../builder/IporProtocolRouterBuilder.sol";
@@ -18,31 +17,22 @@ import "../../utils/factory/IporOracleFactory.sol";
 import "../../../contracts/interfaces/IAmmSwapsLens.sol";
 import "../../../contracts/interfaces/IAmmPoolsLens.sol";
 import "../../../contracts/interfaces/IAmmCloseSwapLens.sol";
-import "../../../contracts/interfaces/IAssetManagementLens.sol";
 import "../../../contracts/interfaces/IPowerTokenLens.sol";
 import "../../../contracts/interfaces/ILiquidityMiningLens.sol";
 import "../../../contracts/interfaces/IPowerTokenFlowsService.sol";
 import "../../../contracts/interfaces/IPowerTokenStakeService.sol";
-import "../../../contracts/chains/ethereum/amm-commons/AmmSwapsLens.sol";
-import "../../../contracts/amm/AmmPoolsLens.sol";
-import "../../../contracts/amm/AssetManagementLens.sol";
-import "../../../contracts/amm/AmmOpenSwapService.sol";
-import "../../../contracts/amm/AmmCloseSwapServiceUsdt.sol";
-import "../../../contracts/amm/AmmCloseSwapServiceUsdc.sol";
-import "../../../contracts/amm/AmmCloseSwapServiceDai.sol";
 import "../../../contracts/chains/ethereum/amm-commons/AmmCloseSwapLens.sol";
 
-import "../../../contracts/amm/AmmPoolsService.sol";
-import "../../../contracts/chains/ethereum/amm-commons/AmmGovernanceService.sol";
 import "../../mocks/EmptyImplementation.sol";
 import "../builder/PowerTokenLensBuilder.sol";
 import "../builder/LiquidityMiningLensBuilder.sol";
 import "../builder/PowerTokenFlowsServiceBuilder.sol";
 import "../builder/PowerTokenStakeServiceBuilder.sol";
+import {AmmSwapsLensEthereum} from "../../../contracts/chains/ethereum/amm-commons/AmmSwapsLensEthereum.sol";
 
 contract IporProtocolFactory is Test {
     struct Amm {
-        IporProtocolRouter router;
+        IporProtocolRouterEthereum router;
         SpreadRouter spreadRouter;
         IporOracle iporOracle;
         MockIporWeighted iporWeighted;
@@ -97,7 +87,6 @@ contract IporProtocolFactory is Test {
     AmmStorageBuilder internal _ammStorageBuilder;
     AmmTreasuryBuilder internal _ammTreasuryBuilder;
     SpreadRouterBuilder internal _spreadRouterBuilder;
-    AssetManagementBuilder internal _assetManagementBuilder;
     AmmTreasuryBuilder internal _miltonBuilder;
     IporProtocolRouterBuilder internal _iporProtocolRouterBuilder;
     PowerTokenLensBuilder internal _powerTokenLensBuilder;
@@ -647,12 +636,12 @@ contract IporProtocolFactory is Test {
     function _getFullIporProtocolRouterInstance(
         Amm memory amm,
         AmmConfig memory cfg
-    ) public returns (IporProtocolRouter) {
+    ) public returns (IporProtocolRouterEthereum) {
         if (address(amm.router) == address(0)) {
             amm.router = _iporProtocolRouterBuilder.buildEmptyProxy();
         }
 
-        IporProtocolRouter.DeployedContracts memory deployerContracts;
+        IporProtocolRouterEthereum.DeployedContracts memory deployerContracts;
 
         deployerContracts.ammSwapsLens = address(
             new AmmSwapsLens(
@@ -935,7 +924,7 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammPoolsServiceUsdm = _fakeContract;
 
         vm.startPrank(address(_owner));
-        IporProtocolRouter(amm.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
+        IporProtocolRouterEthereum(amm.router).upgradeTo(address(new IporProtocolRouterEthereum(deployerContracts)));
         vm.stopPrank();
 
         amm.usdt.ammSwapsLens = IAmmSwapsLens(address(amm.router));
@@ -981,20 +970,35 @@ contract IporProtocolFactory is Test {
         amm.dai.liquidityMiningLens = ILiquidityMiningLens(address(amm.router));
         amm.dai.flowService = IPowerTokenFlowsService(address(amm.router));
         amm.dai.stakeService = IPowerTokenStakeService(address(amm.router));
-        return IporProtocolRouter(amm.router);
+        return IporProtocolRouterEthereum(amm.router);
     }
 
     function _getUsdtIporProtocolRouterInstance(
         BuilderUtils.IporProtocol memory iporProtocol,
         IporProtocolConfig memory cfg
-    ) public returns (IporProtocolRouter) {
+    ) public returns (IporProtocolRouterEthereum) {
         if (address(iporProtocol.router) == address(0)) {
             iporProtocol.router = _iporProtocolRouterBuilder.buildEmptyProxy();
         }
-        IporProtocolRouter.DeployedContracts memory deployerContracts;
+        IporProtocolRouterEthereum.DeployedContractsEthereum memory deployerContracts;
+
+//        address ammSwapsLens;
+//        address ammPoolsLens;
+//        address ammCloseSwapLens;
+//        address ammGovernanceService;
+//        address flowService;
+//        address stakeService;
+//        address powerTokenLens;
+//        address liquidityMiningLens;
+//        address usdt;
+//        address usdc;
+//        address dai;
+//        address stEth;
+//        address weEth;
+//        address usdm;
 
         deployerContracts.ammSwapsLens = address(
-            new AmmSwapsLens(
+            new AmmSwapsLensEthereum(
                 IAmmSwapsLens.SwapLensPoolConfiguration({
                     asset: address(iporProtocol.asset),
                     ammStorage: address(iporProtocol.ammStorage),
@@ -1179,7 +1183,7 @@ contract IporProtocolFactory is Test {
 
 
         vm.startPrank(address(_owner));
-        IporProtocolRouter(iporProtocol.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
+        IporProtocolRouterEthereum(iporProtocol.router).upgradeTo(address(new IporProtocolRouterEthereum(deployerContracts)));
         vm.stopPrank();
 
         iporProtocol.ammSwapsLens = IAmmSwapsLens(address(iporProtocol.router));
@@ -1196,18 +1200,18 @@ contract IporProtocolFactory is Test {
         iporProtocol.flowService = IPowerTokenFlowsService(address(iporProtocol.router));
         iporProtocol.stakeService = IPowerTokenStakeService(address(iporProtocol.router));
 
-        return IporProtocolRouter(iporProtocol.router);
+        return IporProtocolRouterEthereum(iporProtocol.router);
     }
 
     function _getUsdcIporProtocolRouterInstance(
         BuilderUtils.IporProtocol memory iporProtocol,
         IporProtocolConfig memory cfg
-    ) public returns (IporProtocolRouter) {
+    ) public returns (IporProtocolRouterEthereum) {
         if (address(iporProtocol.router) == address(0)) {
             iporProtocol.router = _iporProtocolRouterBuilder.buildEmptyProxy();
         }
 
-        IporProtocolRouter.DeployedContracts memory deployerContracts;
+        IporProtocolRouterEthereum.DeployedContracts memory deployerContracts;
 
         deployerContracts.ammSwapsLens = address(
             new AmmSwapsLens(
@@ -1395,7 +1399,7 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammPoolsServiceUsdm = _fakeContract;
 
         vm.startPrank(address(_owner));
-        IporProtocolRouter(iporProtocol.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
+        IporProtocolRouterEthereum(iporProtocol.router).upgradeTo(address(new IporProtocolRouterEthereum(deployerContracts)));
         vm.stopPrank();
 
         iporProtocol.ammSwapsLens = IAmmSwapsLens(address(iporProtocol.router));
@@ -1412,18 +1416,18 @@ contract IporProtocolFactory is Test {
         iporProtocol.flowService = IPowerTokenFlowsService(address(iporProtocol.router));
         iporProtocol.stakeService = IPowerTokenStakeService(address(iporProtocol.router));
 
-        return IporProtocolRouter(iporProtocol.router);
+        return IporProtocolRouterEthereum(iporProtocol.router);
     }
 
     function _getDaiIporProtocolRouterInstance(
         BuilderUtils.IporProtocol memory iporProtocol,
         IporProtocolConfig memory cfg
-    ) public returns (IporProtocolRouter) {
+    ) public returns (IporProtocolRouterEthereum) {
         if (address(iporProtocol.router) == address(0)) {
             iporProtocol.router = _iporProtocolRouterBuilder.buildEmptyProxy();
         }
 
-        IporProtocolRouter.DeployedContracts memory deployerContracts;
+        IporProtocolRouterEthereum.DeployedContracts memory deployerContracts;
 
         //todo Fix
         deployerContracts.ammPoolsLensStEth = address(123);
@@ -1612,7 +1616,7 @@ contract IporProtocolFactory is Test {
 
         vm.startPrank(address(_owner));
 
-        IporProtocolRouter(iporProtocol.router).upgradeTo(address(new IporProtocolRouter(deployerContracts)));
+        IporProtocolRouterEthereum(iporProtocol.router).upgradeTo(address(new IporProtocolRouterEthereum(deployerContracts)));
         vm.stopPrank();
 
         iporProtocol.ammSwapsLens = IAmmSwapsLens(address(iporProtocol.router));
@@ -1629,7 +1633,7 @@ contract IporProtocolFactory is Test {
         iporProtocol.flowService = IPowerTokenFlowsService(address(iporProtocol.router));
         iporProtocol.stakeService = IPowerTokenStakeService(address(iporProtocol.router));
 
-        return IporProtocolRouter(iporProtocol.router);
+        return IporProtocolRouterEthereum(iporProtocol.router);
     }
 
     function _prepareFakePoolCfgForGovernanceService()

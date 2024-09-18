@@ -98,7 +98,7 @@ library AmmErrors {
     /// @notice Unsupported swap tenor
     string public constant UNSUPPORTED_SWAP_TENOR = "IPOR_330";
 
-    /// @notice Sender is not AMM (is not a IporProtocolRouter contract)
+    /// @notice Sender is not AMM (is not a IporProtocolRouterEthereum.sol contract)
     string public constant SENDER_NOT_AMM = "IPOR_331";
 
     /// @notice Storage id is not time weighted notional group

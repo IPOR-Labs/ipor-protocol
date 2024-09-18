@@ -4,7 +4,7 @@ pragma solidity 0.8.20;
 import "forge-std/Test.sol";
 import "../utils/TestConstants.sol";
 import "contracts/amm/AmmTreasury.sol";
-import "../../contracts/chains/ethereum/amm-old/AmmStorage.sol";
+import "../../contracts/chains/ethereum/amm-commons/AmmStorage.sol";
 import "contracts/oracles/IporOracle.sol";
 
 contract SwapUtils is Test {

@@ -4,20 +4,21 @@ pragma solidity 0.8.20;
 import "../../../contracts/tokens/IpToken.sol";
 import "../../../contracts/oracles/IporOracle.sol";
 import "../../mocks/MockIporWeighted.sol";
-import "../../../contracts/chains/ethereum/amm-old/AmmStorage.sol";
-import "../../../contracts/amm/AmmTreasury.sol";
+import "../../../contracts/chains/ethereum/amm-commons/AmmStorage.sol";
 import "../../../contracts/amm/spread/SpreadRouter.sol";
-import "../../../contracts/vault/AssetManagement.sol";
-import "../../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
+import "../../../contracts/chains/ethereum/router/IporProtocolRouterEthereum.sol";
 import "../../../contracts/interfaces/IAmmOpenSwapLens.sol";
 import "../../../contracts/interfaces/IAmmCloseSwapLens.sol";
 import "../../mocks/tokens/MockTestnetToken.sol";
+import {AmmTreasuryBaseV2} from "../../../contracts/base/amm/AmmTreasuryBaseV2.sol";
 
 contract BuilderUtils {
     struct IporProtocol {
-        IporProtocolRouter router;
+        IporProtocolRouterEthereum router;
         IAmmSwapsLens ammSwapsLens;
-        IAmmPoolsService ammPoolsService;
+        IAmmPoolsServiceUsdt ammPoolsServiceUsdt;
+        IAmmPoolsServiceUsdc ammPoolsServiceUsdc;
+        IAmmPoolsServiceDai ammPoolsServiceDai;
         IAmmPoolsLens ammPoolsLens;
         IAmmOpenSwapLens ammOpenSwapLens;
         IAmmCloseSwapLens ammCloseSwapLens;
@@ -33,8 +34,7 @@ contract BuilderUtils {
         MockIporWeighted iporWeighted;
         AmmStorage ammStorage;
         SpreadRouter spreadRouter;
-        AssetManagement assetManagement;
-        AmmTreasury ammTreasury;
+        AmmTreasuryBaseV2 ammTreasury;
         ILiquidityMiningLens liquidityMiningLens;
         IPowerTokenLens powerTokenLens;
         IPowerTokenFlowsService flowService;

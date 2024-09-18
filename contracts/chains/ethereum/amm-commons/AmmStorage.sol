@@ -6,18 +6,18 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
-import "../interfaces/types/AmmStorageTypes.sol";
-import "../interfaces/IAmmStorage.sol";
-import "../interfaces/IProxyImplementation.sol";
-import "../interfaces/IIporContractCommonGov.sol";
-import "../libraries/Constants.sol";
-import "../libraries/PaginationUtils.sol";
-import "../libraries/IporContractValidator.sol";
-import "../security/PauseManager.sol";
-import "../security/IporOwnableUpgradeable.sol";
-import "./libraries/types/AmmInternalTypes.sol";
-import "./libraries/types/StorageInternalTypes.sol";
-import "./libraries/SoapIndicatorRebalanceLogic.sol";
+import "../../../interfaces/types/AmmStorageTypes.sol";
+import "../../../interfaces/IAmmStorage.sol";
+import "../../../interfaces/IProxyImplementation.sol";
+import "../../../interfaces/IIporContractCommonGov.sol";
+import "../../../libraries/Constants.sol";
+import "../../../libraries/PaginationUtils.sol";
+import "../../../libraries/IporContractValidator.sol";
+import "../../../security/PauseManager.sol";
+import "../../../security/IporOwnableUpgradeable.sol";
+import "../../../amm/libraries/types/AmmInternalTypes.sol";
+import "../../../amm/libraries/types/StorageInternalTypes.sol";
+import "../../../amm/libraries/SoapIndicatorRebalanceLogic.sol";
 
 /// @dev all stored values related to tokens are in 18 decimals.
 contract AmmStorage is

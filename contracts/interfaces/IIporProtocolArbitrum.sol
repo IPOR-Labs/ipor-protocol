@@ -5,7 +5,6 @@ import "@openzeppelin/contracts-upgradeable/interfaces/draft-IERC1822Upgradeable
 import "@openzeppelin/contracts-upgradeable/interfaces/IERC1967Upgradeable.sol";
 import "./IProxyImplementation.sol";
 import "./IAmmSwapsLens.sol";
-import "./IAssetManagementLens.sol";
 import "./ILiquidityMiningLens.sol";
 import "./IPowerTokenLens.sol";
 import "./IAmmCloseSwapServiceWstEth.sol";
@@ -28,7 +27,7 @@ import {IAmmOpenSwapServiceUsdc} from "../chains/arbitrum/interfaces/IAmmOpenSwa
 import {IAmmCloseSwapServiceUsdc} from "../interfaces/IAmmCloseSwapServiceUsdc.sol";
 
 /// @title Interface for interaction with IPOR protocol.
-/// Interface combines all IporProtocolRouter interfaces and supported services and lenses by router.
+/// Interface combines all IporProtocolRouterEthereum.sol interfaces and supported services and lenses by router.
 interface IIporProtocolArbitrum is
     IERC1822ProxiableUpgradeable,
     IERC1967Upgradeable,

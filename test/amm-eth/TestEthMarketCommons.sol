@@ -8,10 +8,10 @@ import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/amm-eth/AmmPoolsServiceStEth.sol";
 import "../../contracts/amm-eth/AmmPoolsLensStEth.sol";
 import "../../contracts/interfaces/IAmmGovernanceLens.sol";
-import "../../contracts/chains/ethereum/amm-commons/AmmGovernanceService.sol";
-import "../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
+import "../../contracts/chains/ethereum/router/IporProtocolRouterEthereum.sol";
 import "../../contracts/base/amm/AmmStorageBaseV1.sol";
 import "../../contracts/base/amm/AmmTreasuryBaseV1.sol";
+import {AmmGovernanceServiceEthereum} from "../../contracts/chains/ethereum/amm-commons/AmmGovernanceServiceEthereum.sol";
 
 contract TestEthMarketCommons is Test {
     address internal defaultAnvilAddress = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
@@ -207,14 +207,14 @@ contract TestEthMarketCommons is Test {
             _getUserAddress(123)
         );
 
-        ammGovernanceService = address(new AmmGovernanceService(usdtConfig, usdcConfig, daiConfig, stEthConfig, weEthConfig, usdmConfig));
+        ammGovernanceService = address(new AmmGovernanceServiceEthereum());
         vm.stopPrank();
     }
 
     function _updateIporRouterImplementation() internal {
         vm.startPrank(owner);
-        IporProtocolRouter newImplementation = new IporProtocolRouter(
-            IporProtocolRouter.DeployedContracts({
+        IporProtocolRouterEthereum newImplementation = new IporProtocolRouter(
+            IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: _getUserAddress(123),
                 ammPoolsLens: _getUserAddress(123),
                 assetManagementLens: _getUserAddress(123),
@@ -240,7 +240,7 @@ contract TestEthMarketCommons is Test {
             })
         );
 
-        IporProtocolRouter(iporProtocolRouter).upgradeTo(address(newImplementation));
+        IporProtocolRouterEthereum(iporProtocolRouter).upgradeTo(address(newImplementation));
         vm.stopPrank();
     }
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.20;
 import "forge-std/Test.sol";
-import "../../../contracts/chains/ethereum/amm-old/AmmStorage.sol";
+import "../../../contracts/chains/ethereum/amm-commons/AmmStorage.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 contract AmmStorageBuilder is Test {

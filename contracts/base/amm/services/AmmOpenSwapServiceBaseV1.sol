@@ -14,7 +14,7 @@ import "../libraries/SwapLogicBaseV1.sol";
 import "../../interfaces/ISpreadBaseV1.sol";
 import "../../../base/interfaces/IAmmStorageBaseV1.sol";
 
-/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
+/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouterEthereum.sol.
 abstract contract AmmOpenSwapServiceBaseV1 {
     using Address for address;
     using IporContractValidator for address;

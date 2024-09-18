@@ -25,7 +25,7 @@ import "../../../governance/AmmConfigurationManager.sol";
 
 /// @title Base contract for AMM pools service for Pools with one asset and Asset Management support with one underlying asset same as pool asset.
 /// @notice This contract is used for providing liquidity and redeeming liquidity from AMM pools including configured rebalancing between AMM Treasury and Asset Management (like Plasma Vault from Ipor Fusion).
-/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
+/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouterEthereum.sol.
 contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
     using IporContractValidator for address;
     using SafeCast for int256;

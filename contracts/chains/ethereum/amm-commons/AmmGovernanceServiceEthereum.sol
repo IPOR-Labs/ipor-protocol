@@ -11,22 +11,22 @@ import "../../../libraries/math/IporMath.sol";
 import "../../../libraries/errors/AmmPoolsErrors.sol";
 import "../../../libraries/IporContractValidator.sol";
 import "../../../governance/AmmConfigurationManager.sol";
-import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
-import {IAmmGovernanceServiceArbitrum} from "../interfaces/IAmmGovernanceServiceArbitrum.sol";
-import {IAmmGovernanceLensArbitrum} from "../interfaces/IAmmGovernanceLensArbitrum.sol";
+import {StorageLibEthereum} from "../libraries/StorageLibEthereum.sol";
+import {IAmmGovernanceServiceEthereum} from "../interfaces/IAmmGovernanceServiceEthereum.sol";
+import {IAmmGovernanceLensEthereum} from "../interfaces/IAmmGovernanceLensEthereum.sol";
 
-/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
+/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouterEthereum.sol.
 contract AmmGovernanceServiceEthereum is
-    IAmmGovernanceServiceArbitrum,
+    IAmmGovernanceServiceEthereum,
     IAmmGovernanceService,
     IAmmGovernanceLens,
-    IAmmGovernanceLensArbitrum
+    IAmmGovernanceLensEthereum
 {
     using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     modifier onlySupportedAssetManagement(address asset) {
-        StorageLibArbitrum.AssetGovernancePoolConfigValue storage poolConfig = StorageLibArbitrum
+        StorageLibEthereum.AssetGovernancePoolConfigValue storage poolConfig = StorageLibEthereum
             .getAssetGovernancePoolConfigStorage()
             .value[asset];
         if (poolConfig.ammVault == address(0)) {
@@ -39,49 +39,49 @@ contract AmmGovernanceServiceEthereum is
         if (messageSigner == address(0)) {
             revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, messageSigner, "messageSigner");
         }
-        StorageLibArbitrum.getMessageSignerStorage().value = messageSigner;
+        StorageLibEthereum.getMessageSignerStorage().value = messageSigner;
     }
 
     function getMessageSigner() external view override returns (address) {
-        return StorageLibArbitrum.getMessageSignerStorage().value;
+        return StorageLibEthereum.getMessageSignerStorage().value;
     }
 
     function getAssetLensData(
         address asset
-    ) external view override returns (StorageLibArbitrum.AssetLensDataValue memory) {
-        return StorageLibArbitrum.getAssetLensDataStorage().value[asset];
+    ) external view override returns (StorageLibEthereum.AssetLensDataValue memory) {
+        return StorageLibEthereum.getAssetLensDataStorage().value[asset];
     }
 
     function setAssetLensData(
         address asset,
-        StorageLibArbitrum.AssetLensDataValue memory assetLensData
+        StorageLibEthereum.AssetLensDataValue memory assetLensData
     ) external override {
         if (asset == address(0)) {
             revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, asset, "asset");
         }
-        StorageLibArbitrum.getAssetLensDataStorage().value[asset] = assetLensData;
+        StorageLibEthereum.getAssetLensDataStorage().value[asset] = assetLensData;
     }
 
     function setAssetServices(
         address asset,
-        StorageLibArbitrum.AssetServicesValue memory assetServices
+        StorageLibEthereum.AssetServicesValue memory assetServices
     ) external override {
         if (asset == address(0)) {
             revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, asset, "asset");
         }
-        StorageLibArbitrum.getAssetServicesStorage().value[asset] = assetServices;
+        StorageLibEthereum.getAssetServicesStorage().value[asset] = assetServices;
     }
 
     function getAssetServices(
         address asset
-    ) external view override returns (StorageLibArbitrum.AssetServicesValue memory) {
-        return StorageLibArbitrum.getAssetServicesStorage().value[asset];
+    ) external view override returns (StorageLibEthereum.AssetServicesValue memory) {
+        return StorageLibEthereum.getAssetServicesStorage().value[asset];
     }
 
     function getAmmGovernancePoolConfiguration(
         address asset
     ) external view override returns (AmmGovernancePoolConfiguration memory) {
-        StorageLibArbitrum.AssetGovernancePoolConfigValue memory poolConfig = StorageLibArbitrum
+        StorageLibEthereum.AssetGovernancePoolConfigValue memory poolConfig = StorageLibEthereum
             .getAssetGovernancePoolConfigStorage()
             .value[asset];
 
@@ -101,19 +101,19 @@ contract AmmGovernanceServiceEthereum is
 
     function setAmmGovernancePoolConfiguration(
         address asset,
-        StorageLibArbitrum.AssetGovernancePoolConfigValue calldata assetGovernancePoolConfig
+        StorageLibEthereum.AssetGovernancePoolConfigValue calldata assetGovernancePoolConfig
     ) external override {
         if (asset == address(0)) {
             revert IporErrors.WrongAddress(IporErrors.WRONG_ADDRESS, asset, "asset");
         }
-        StorageLibArbitrum.getAssetGovernancePoolConfigStorage().value[asset] = assetGovernancePoolConfig;
+        StorageLibEthereum.getAssetGovernancePoolConfigStorage().value[asset] = assetGovernancePoolConfig;
     }
 
     function depositToAssetManagement(
         address asset,
         uint256 wadAssetAmount
     ) external override onlySupportedAssetManagement(asset) {
-        StorageLibArbitrum.AssetGovernancePoolConfigValue storage poolConfig = StorageLibArbitrum
+        StorageLibEthereum.AssetGovernancePoolConfigValue storage poolConfig = StorageLibEthereum
             .getAssetGovernancePoolConfigStorage()
             .value[asset];
         IAmmTreasury(poolConfig.ammTreasury).depositToAssetManagementInternal(wadAssetAmount);
@@ -123,21 +123,21 @@ contract AmmGovernanceServiceEthereum is
         address asset,
         uint256 wadAssetAmount
     ) external override onlySupportedAssetManagement(asset) {
-        StorageLibArbitrum.AssetGovernancePoolConfigValue storage poolConfig = StorageLibArbitrum
+        StorageLibEthereum.AssetGovernancePoolConfigValue storage poolConfig = StorageLibEthereum
             .getAssetGovernancePoolConfigStorage()
             .value[asset];
         IAmmTreasury(poolConfig.ammTreasury).withdrawFromAssetManagementInternal(wadAssetAmount);
     }
 
     function withdrawAllFromAssetManagement(address asset) external override onlySupportedAssetManagement(asset) {
-        StorageLibArbitrum.AssetGovernancePoolConfigValue storage poolConfig = StorageLibArbitrum
+        StorageLibEthereum.AssetGovernancePoolConfigValue storage poolConfig = StorageLibEthereum
             .getAssetGovernancePoolConfigStorage()
             .value[asset];
         IAmmTreasury(poolConfig.ammTreasury).withdrawAllFromAssetManagementInternal();
     }
 
     function transferToTreasury(address asset, uint256 wadAssetAmountInput) external override {
-        StorageLibArbitrum.AssetGovernancePoolConfigValue memory poolConfig = StorageLibArbitrum
+        StorageLibEthereum.AssetGovernancePoolConfigValue memory poolConfig = StorageLibEthereum
             .getAssetGovernancePoolConfigStorage()
             .value[asset];
 
@@ -156,7 +156,7 @@ contract AmmGovernanceServiceEthereum is
     }
 
     function transferToCharlieTreasury(address asset, uint256 wadAssetAmountInput) external override {
-        StorageLibArbitrum.AssetGovernancePoolConfigValue memory poolConfig = StorageLibArbitrum
+        StorageLibEthereum.AssetGovernancePoolConfigValue memory poolConfig = StorageLibEthereum
             .getAssetGovernancePoolConfigStorage()
             .value[asset];
 

@@ -14,11 +14,9 @@ import "../../../libraries/AmmCloseSwapServicePoolConfigurationLib.sol";
 import "../../../base/types/AmmTypesBaseV1.sol";
 import "../../../base/amm/libraries/SwapLogicBaseV1.sol";
 import "../../../base/amm/libraries/SwapCloseLogicLibBaseV1.sol";
-import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
 
-/// TODO: use AmmCloseSwapLensBaseV1
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouterEthereum.sol.
-contract AmmCloseSwapLensArbitrum is IAmmCloseSwapLens {
+contract AmmCloseSwapLensBaseV1 is IAmmCloseSwapLens {
     using Address for address;
     using IporContractValidator for address;
     using SwapLogicBaseV1 for AmmTypesBaseV1.Swap;
@@ -30,38 +28,34 @@ contract AmmCloseSwapLensArbitrum is IAmmCloseSwapLens {
         iporOracle = iporOracle_.checkAddress();
     }
 
-    function getAmmCloseSwapServicePoolConfiguration(
-        address asset
-    ) external view override returns (AmmCloseSwapServicePoolConfiguration memory) {
-        StorageLibArbitrum.AssetServicesValue memory servicesCfg = StorageLibArbitrum.getAssetServicesStorage().value[
-            asset
-        ];
+    function _getAmmCloseSwapServicePoolConfiguration(
+        address asset, address ammCloseSwapService
+    ) internal view returns (AmmCloseSwapServicePoolConfiguration memory) {
 
-        if (servicesCfg.ammCloseSwapService != address(0)) {
-            return IAmmCloseSwapService(servicesCfg.ammCloseSwapService).getPoolConfiguration();
+        if (ammCloseSwapService != address(0)) {
+            return IAmmCloseSwapService(ammCloseSwapService).getPoolConfiguration();
         } else {
             revert IporErrors.UnsupportedAsset(IporErrors.ASSET_NOT_SUPPORTED, asset);
         }
     }
 
-    function getClosingSwapDetails(
+    function _getClosingSwapDetails(
         address asset,
         address account,
         AmmTypes.SwapDirection direction,
         uint256 swapId,
         uint256 closeTimestamp,
-        AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
-    ) external view override returns (AmmTypes.ClosingSwapDetails memory closingSwapDetails) {
-        StorageLibArbitrum.AssetServicesValue memory servicesCfg = StorageLibArbitrum.getAssetServicesStorage().value[
-            asset
-        ];
+        AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput,
+        address ammCloseSwapService,
+        address messageSigner
+    ) internal view returns (AmmTypes.ClosingSwapDetails memory closingSwapDetails) {
 
-        if (servicesCfg.ammCloseSwapService == address(0)) {
+        if (ammCloseSwapService == address(0)) {
             revert IporErrors.UnsupportedAsset(IporErrors.ASSET_NOT_SUPPORTED, asset);
         }
 
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg = IAmmCloseSwapService(
-            servicesCfg.ammCloseSwapService
+            ammCloseSwapService
         ).getPoolConfiguration();
 
         IporTypes.AccruedIpor memory accruedIpor = IIporOracle(iporOracle).getAccruedIndex(
@@ -76,30 +70,30 @@ contract AmmCloseSwapLensArbitrum is IAmmCloseSwapLens {
         int256 swapPnlValueToDate = swap.calculatePnl(block.timestamp, accruedIpor.ibtPrice);
 
         (closingSwapDetails.closableStatus, closingSwapDetails.swapUnwindRequired) = SwapCloseLogicLibBaseV1
-            .getClosableStatusForSwap(
-                AmmTypesBaseV1.ClosableSwapInput({
-                    account: account,
-                    asset: poolCfg.asset,
-                    closeTimestamp: closeTimestamp,
-                    swapBuyer: swap.buyer,
-                    swapOpenTimestamp: swap.openTimestamp,
-                    swapCollateral: swap.collateral,
-                    swapTenor: swap.tenor,
-                    swapState: swap.state,
-                    swapPnlValueToDate: swapPnlValueToDate,
-                    minLiquidationThresholdToCloseBeforeMaturityByCommunity: poolCfg
-                        .minLiquidationThresholdToCloseBeforeMaturityByCommunity,
-                    minLiquidationThresholdToCloseBeforeMaturityByBuyer: poolCfg
-                        .minLiquidationThresholdToCloseBeforeMaturityByBuyer,
-                    timeBeforeMaturityAllowedToCloseSwapByCommunity: poolCfg
-                        .timeBeforeMaturityAllowedToCloseSwapByCommunity,
-                    timeBeforeMaturityAllowedToCloseSwapByBuyer: poolCfg.getTimeBeforeMaturityAllowedToCloseSwapByBuyer(
-                        swap.tenor
-                    ),
-                    timeAfterOpenAllowedToCloseSwapWithUnwinding: poolCfg
-                        .getTimeAfterOpenAllowedToCloseSwapWithUnwinding(swap.tenor)
-                })
-            );
+        .getClosableStatusForSwap(
+            AmmTypesBaseV1.ClosableSwapInput({
+                account: account,
+                asset: poolCfg.asset,
+                closeTimestamp: closeTimestamp,
+                swapBuyer: swap.buyer,
+                swapOpenTimestamp: swap.openTimestamp,
+                swapCollateral: swap.collateral,
+                swapTenor: swap.tenor,
+                swapState: swap.state,
+                swapPnlValueToDate: swapPnlValueToDate,
+                minLiquidationThresholdToCloseBeforeMaturityByCommunity: poolCfg
+            .minLiquidationThresholdToCloseBeforeMaturityByCommunity,
+                minLiquidationThresholdToCloseBeforeMaturityByBuyer: poolCfg
+            .minLiquidationThresholdToCloseBeforeMaturityByBuyer,
+                timeBeforeMaturityAllowedToCloseSwapByCommunity: poolCfg
+            .timeBeforeMaturityAllowedToCloseSwapByCommunity,
+                timeBeforeMaturityAllowedToCloseSwapByBuyer: poolCfg.getTimeBeforeMaturityAllowedToCloseSwapByBuyer(
+                    swap.tenor
+                ),
+                timeAfterOpenAllowedToCloseSwapWithUnwinding: poolCfg
+            .getTimeAfterOpenAllowedToCloseSwapWithUnwinding(swap.tenor)
+            })
+        );
 
         if (closingSwapDetails.swapUnwindRequired == true) {
             (
@@ -111,7 +105,7 @@ contract AmmCloseSwapLensArbitrum is IAmmCloseSwapLens {
             ) = SwapCloseLogicLibBaseV1.calculateSwapUnwindWhenUnwindRequired(
                 AmmTypesBaseV1.UnwindParams({
                     asset: poolCfg.asset,
-                    messageSigner: StorageLibArbitrum.getMessageSignerStorage().value,
+                    messageSigner: messageSigner,
                     spread: poolCfg.spread,
                     ammStorage: poolCfg.ammStorage,
                     ammTreasury: poolCfg.ammTreasury,

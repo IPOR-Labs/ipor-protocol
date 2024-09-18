@@ -9,7 +9,7 @@ import "../../../libraries/RiskIndicatorsValidatorLib.sol";
 import "../../../libraries/AmmLib.sol";
 import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
 
-/// @dev It is not recommended to use lens contract directly, should be used only through IporProtocolRouter.
+/// @dev It is not recommended to use lens contract directly, should be used only through IporProtocolRouterEthereum.sol.
 contract AmmSwapsLensArbitrum is IAmmSwapsLens {
     using Address for address;
     using IporContractValidator for address;

@@ -15,7 +15,7 @@ import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
 import {IAmmGovernanceServiceArbitrum} from "../interfaces/IAmmGovernanceServiceArbitrum.sol";
 import {IAmmGovernanceLensArbitrum} from "../interfaces/IAmmGovernanceLensArbitrum.sol";
 
-/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
+/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouterEthereum.sol.
 contract AmmGovernanceServiceArbitrum is
     IAmmGovernanceServiceArbitrum,
     IAmmGovernanceService,

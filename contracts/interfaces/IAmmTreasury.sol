@@ -13,7 +13,7 @@ interface IAmmTreasury {
     /// @return decimals decimals of asset
     /// @return ammStorage address of AmmStorage
     /// @return assetManagement address of AssetManagement
-    /// @return iporProtocolRouter address of IporProtocolRouter
+    /// @return iporProtocolRouter address of IporProtocolRouterEthereum.sol
     function getConfiguration()
         external
         view

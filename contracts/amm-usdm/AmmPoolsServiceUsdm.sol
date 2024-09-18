@@ -15,7 +15,7 @@ import "../libraries/AmmLib.sol";
 import "../governance/AmmConfigurationManager.sol";
 import "../base/interfaces/IAmmTreasuryBaseV1.sol";
 
-/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
+/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouterEthereum.sol.
 contract AmmPoolsServiceUsdm is IAmmPoolsServiceUsdm {
     using IporContractValidator for address;
     using SafeERC20 for IERC20;

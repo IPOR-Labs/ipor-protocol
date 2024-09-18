@@ -17,7 +17,7 @@ import "../../../base/interfaces/IAmmTreasuryBaseV1.sol";
 import {IAmmPoolsServiceUsdt} from "../interfaces/IAmmPoolsServiceUsdt.sol";
 import {AmmPoolsServiceBaseV1} from "../../../base/amm/services/AmmPoolsServiceBaseV1.sol";
 
-/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
+/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouterEthereum.sol.
 contract AmmPoolsServiceUsdt is IAmmPoolsServiceUsdt, AmmPoolsServiceBaseV1 {
     constructor(
         address asset_,

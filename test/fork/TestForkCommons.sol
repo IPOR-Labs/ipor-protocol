@@ -6,39 +6,37 @@ import "forge-std/console2.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../../contracts/oracles/IporOracle.sol";
 import "../mocks/EmptyRouterImplementation.sol";
-import "../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
+import "../../contracts/chains/ethereum/router/IporProtocolRouterEthereum.sol";
 import "../../contracts/interfaces/IAmmSwapsLens.sol";
 import "../../contracts/interfaces/IAmmOpenSwapLens.sol";
 import "../../contracts/interfaces/IAmmCloseSwapLens.sol";
-import "../../contracts/chains/ethereum/amm-commons/AmmSwapsLens.sol";
-import "../../contracts/amm/AmmPoolsLens.sol";
+import "../../contracts/chains/ethereum/amm-commons/AmmSwapsLensEthereum.sol";
+import "../../contracts/chains/ethereum/amm-commons/AmmPoolsLensEthereum.sol";
 import "../../contracts/amm-eth/AmmPoolsLensStEth.sol";
-import "../../contracts/amm/AssetManagementLens.sol";
 import "../../contracts/amm/spread/Spread28Days.sol";
 import "../../contracts/amm/spread/Spread60Days.sol";
 import "../../contracts/amm/spread/Spread90Days.sol";
 import "../../contracts/amm/spread/SpreadCloseSwapService.sol";
 import "../../contracts/amm/spread/SpreadStorageLens.sol";
 import "../../contracts/amm/spread/SpreadRouter.sol";
-import "../../contracts/amm/AmmOpenSwapService.sol";
+
+import "../../contracts/chains/ethereum/amm-usdt/AmmOpenSwapServiceUsdt.sol";
+import "../../contracts/chains/ethereum/amm-usdc/AmmOpenSwapServiceUsdc.sol";
+import "../../contracts/chains/ethereum/amm-dai/AmmOpenSwapServiceDai.sol";
 import "../../contracts/amm-eth/AmmOpenSwapServiceStEth.sol";
-import "../../contracts/amm/AmmCloseSwapServiceUsdt.sol";
-import "../../contracts/amm/AmmCloseSwapServiceUsdc.sol";
-import "../../contracts/amm/AmmCloseSwapServiceDai.sol";
+import "../../contracts/chains/ethereum/amm-usdt/AmmCloseSwapServiceUsdt.sol";
+import "../../contracts/chains/ethereum/amm-usdc/AmmCloseSwapServiceUsdc.sol";
+import "../../contracts/chains/ethereum/amm-dai/AmmCloseSwapServiceDai.sol";
 import "../../contracts/amm-eth/AmmCloseSwapServiceStEth.sol";
 import "../../contracts/chains/ethereum/amm-commons/AmmCloseSwapLens.sol";
-import "../../contracts/amm/AmmPoolsService.sol";
-import "../../contracts/chains/ethereum/amm-commons/AmmGovernanceService.sol";
-import "../../contracts/chains/ethereum/amm-old/AmmStorage.sol";
-import "../../contracts/amm/AmmTreasury.sol";
+import "../../contracts/chains/ethereum/amm-usdt/AmmPoolsServiceUsdt.sol";
+import "../../contracts/chains/ethereum/amm-usdc/AmmPoolsServiceUsdc.sol";
+import "../../contracts/chains/ethereum/amm-dai/AmmPoolsServiceDai.sol";
+import "../../contracts/chains/ethereum/amm-commons/AmmGovernanceServiceEthereum.sol";
+import "../../contracts/chains/ethereum/amm-commons/AmmStorage.sol";
 
 import "../../contracts/amm-eth/AmmPoolsServiceStEth.sol";
-import "../../contracts/vault/strategies/StrategyDsrDai.sol";
-import "../../contracts/vault/AssetManagementDai.sol";
-import "../../contracts/vault/AssetManagementUsdt.sol";
-import "../../contracts/vault/AssetManagementUsdc.sol";
-import "../../contracts/vault/strategies/StrategyAave.sol";
-import "../../contracts/vault/strategies/StrategyCompound.sol";
+
 import "../../contracts/interfaces/IIpTokenV1.sol";
 import "../../contracts/amm-eth/interfaces/IWETH9.sol";
 import "../../contracts/amm-eth/interfaces/IStETH.sol";
@@ -224,8 +222,8 @@ contract TestForkCommons is Test {
     }
 
     function _updateIporRouterImplementation() internal {
-        IporProtocolRouter newImplementation = new IporProtocolRouter(
-            IporProtocolRouter.DeployedContracts(
+        IporProtocolRouterEthereum newImplementation = new IporProtocolRouter(
+            IporProtocolRouterEthereum.DeployedContracts(
                 ammSwapsLens,
                 ammPoolsLens,
                 assetManagementLens,
@@ -251,7 +249,7 @@ contract TestForkCommons is Test {
             )
         );
         vm.prank(owner);
-        IporProtocolRouter(iporProtocolRouterProxy).upgradeTo(address(newImplementation));
+        IporProtocolRouterEthereum(iporProtocolRouterProxy).upgradeTo(address(newImplementation));
     }
 
     function _getUserAddress(uint256 number) internal returns (address) {

@@ -18,7 +18,7 @@ import {IWeEth} from "./interfaces/IWeEth.sol";
 import {IWETH} from "./interfaces/IWETH.sol";
 import {IEEthLiquidityPool} from "./interfaces/IEEthLiquidityPool.sol";
 
-/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
+/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouterEthereum.sol.
 contract AmmPoolsServiceWeEth is IAmmPoolsServiceWeEth {
     using IporContractValidator for address;
     using SafeERC20 for IERC20;

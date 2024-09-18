@@ -44,7 +44,7 @@ library AmmEventsBaseV1 {
         /// @notice lastUpdateTimeReceiveFixed timestamp in seconds
         uint256 lastUpdateTimeReceiveFixed,
         /// @notice storageId from SpreadStorageLibsBaseV1.StorageId or from SpreadStorageLibs.StorageId depends on asset
-        /// @dev If asset is USDT, USDC, DAI then sender is a IporProtocolRouter, if asset is stETH sender is a SpreadStEth contract
+        /// @dev If asset is USDT, USDC, DAI then sender is a IporProtocolRouterEthereum.sol, if asset is stETH sender is a SpreadStEth contract
         uint256 storageId
     );
 }

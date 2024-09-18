@@ -14,10 +14,10 @@ import "../../../libraries/IporContractValidator.sol";
 import "../../../libraries/AmmLib.sol";
 import "../../../governance/AmmConfigurationManager.sol";
 import "../../../base/interfaces/IAmmTreasuryBaseV1.sol";
-import {IAmmPoolsServiceDai} from "../interfaces/IAmmPoolsServiceUsdc.sol";
+import {IAmmPoolsServiceDai} from "../interfaces/IAmmPoolsServiceDai.sol";
 import {AmmPoolsServiceBaseV1} from "../../../base/amm/services/AmmPoolsServiceBaseV1.sol";
 
-/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
+/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouterEthereum.sol.
 contract AmmPoolsServiceDai is IAmmPoolsServiceDai, AmmPoolsServiceBaseV1 {
     constructor(
         address asset_,

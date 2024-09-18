@@ -11,9 +11,9 @@ import "../../../contracts/base/amm/AmmTreasuryBaseV1.sol";
 import "../../../contracts/base/amm/AmmStorageBaseV1.sol";
 import "../../../contracts/amm-usdm/AmmPoolsServiceUsdm.sol";
 import "../../../contracts/amm-usdm/AmmPoolsLensUsdm.sol";
-import "../../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
-import "../../../contracts/chains/ethereum/amm-commons/AmmGovernanceService.sol";
+import "../../../contracts/chains/ethereum/router/IporProtocolRouterEthereum.sol";
 import "../../arbitrum/usdm/WUsdmMock.sol";
+import {AmmGovernanceServiceEthereum} from "../../../contracts/chains/ethereum/amm-commons/AmmGovernanceServiceEthereum.sol";
 
 contract UsdmTestForkCommonEthereum is Test {
     address constant USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
@@ -132,81 +132,12 @@ contract UsdmTestForkCommonEthereum is Test {
     }
 
     function _createAmmGovernanceService() internal {
-        ammGovernanceService = address(
-            new AmmGovernanceService({
-                usdtPoolCfg: IAmmGovernanceLens.AmmGovernancePoolConfiguration({
-                    asset: USDT,
-                    decimals: IERC20MetadataUpgradeable(USDT).decimals(),
-                    ammStorage: AmmStorageUsdtProxy,
-                    ammTreasury: AmmTreasuryUsdtProxy,
-                ammVault: AssetManagementUsdtProxy,
-                    ammPoolsTreasury: IporProtocolOwner,
-                    ammPoolsTreasuryManager: IporProtocolOwner,
-                    ammCharlieTreasury: IporProtocolOwner,
-                    ammCharlieTreasuryManager: IporProtocolOwner
-                }),
-                    usdcPoolCfg: IAmmGovernanceLens.AmmGovernancePoolConfiguration({
-                    asset: USDC,
-                    decimals: IERC20MetadataUpgradeable(USDC).decimals(),
-                    ammStorage: AmmStorageUsdcProxy,
-                    ammTreasury: AmmTreasuryUsdcProxy,
-                ammVault: AssetManagementUsdcProxy,
-                    ammPoolsTreasury: IporProtocolOwner,
-                    ammPoolsTreasuryManager: IporProtocolOwner,
-                    ammCharlieTreasury: IporProtocolOwner,
-                    ammCharlieTreasuryManager: IporProtocolOwner
-                }),
-                    daiPoolCfg: IAmmGovernanceLens.AmmGovernancePoolConfiguration({
-                    asset: DAI,
-                    decimals: IERC20MetadataUpgradeable(DAI).decimals(),
-                    ammStorage: AmmStorageDaiProxy,
-                    ammTreasury: AmmTreasuryDaiProxy,
-                ammVault: AssetManagementDaiProxy,
-                    ammPoolsTreasury: IporProtocolOwner,
-                    ammPoolsTreasuryManager: IporProtocolOwner,
-                    ammCharlieTreasury: IporProtocolOwner,
-                    ammCharlieTreasuryManager: IporProtocolOwner
-                }),
-                    stEthPoolCfg: IAmmGovernanceLens.AmmGovernancePoolConfiguration({
-                    asset: stETH,
-                    decimals: IERC20MetadataUpgradeable(stETH).decimals(),
-                    ammStorage: AmmStorageStEthProxy,
-                    ammTreasury: AmmTreasuryStEthProxy,
-                ammVault: address(0),
-                    ammPoolsTreasury: IporProtocolOwner,
-                    ammPoolsTreasuryManager: IporProtocolOwner,
-                    ammCharlieTreasury: IporProtocolOwner,
-                    ammCharlieTreasuryManager: IporProtocolOwner
-                }),
-                    weEthPoolCfg: IAmmGovernanceLens.AmmGovernancePoolConfiguration({
-                    asset: weETH,
-                    decimals: IERC20MetadataUpgradeable(weETH).decimals(),
-                    ammStorage: AmmStorageWeEthProxy,
-                    ammTreasury: AmmTreasuryWeEthProxy,
-                ammVault: address(0),
-                    ammPoolsTreasury: IporProtocolOwner,
-                    ammPoolsTreasuryManager: IporProtocolOwner,
-                    ammCharlieTreasury: IporProtocolOwner,
-                    ammCharlieTreasuryManager: IporProtocolOwner
-                }),
-                    usdmPoolCfg: IAmmGovernanceLens.AmmGovernancePoolConfiguration({
-                    asset: USDM,
-                    decimals: IERC20MetadataUpgradeable(USDM).decimals(),
-                    ammStorage: ammStorageUsdmProxy,
-                    ammTreasury: ammTreasuryUsdmProxy,
-                ammVault: address(0),
-                    ammPoolsTreasury: IporProtocolOwner,
-                    ammPoolsTreasuryManager: IporProtocolOwner,
-                    ammCharlieTreasury: IporProtocolOwner,
-                    ammCharlieTreasuryManager: IporProtocolOwner
-                })
-            })
-        );
+        ammGovernanceService = address(new AmmGovernanceServiceEthereum());
     }
 
     function _updateIporRouterImplementation() internal {
 
-        IporProtocolRouter.DeployedContracts memory deployedContracts = IporProtocolRouter
+        IporProtocolRouter.DeployedContracts memory deployedContracts = IporProtocolRouterEthereum
             .DeployedContracts({
             ammSwapsLens: AmmSwapsLens,
             ammPoolsLens: AmmPoolsLens,
@@ -233,7 +164,7 @@ contract UsdmTestForkCommonEthereum is Test {
         });
 
         address iporProtocolRouterImpl = address(new IporProtocolRouter(deployedContracts));
-        IporProtocolRouter(IporProtocolRouterProxy).upgradeTo(iporProtocolRouterImpl);
+        IporProtocolRouterEthereum(IporProtocolRouterProxy).upgradeTo(iporProtocolRouterImpl);
     }
 
     function _setupPools() internal {

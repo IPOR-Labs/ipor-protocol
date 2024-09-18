@@ -7,7 +7,7 @@ import {PauseManager} from "../security/PauseManager.sol";
 import {OwnerManager} from "../security/OwnerManager.sol";
 import {IRouterAccessControl} from "../interfaces/IRouterAccessControl.sol";
 
-/// @title Smart contract responsible for managing access to administrative functions in IporProtocolRouter
+/// @title Smart contract responsible for managing access to administrative functions in IporProtocolRouterEthereum.sol
 contract AccessControl is IRouterAccessControl {
     /// @dev Reentrancy - flag when thread is left method
     uint256 internal constant _NOT_ENTERED = 1;
@@ -75,7 +75,7 @@ contract AccessControl is IRouterAccessControl {
         return StorageLib.getRouterFunctionPaused().value[functionSig];
     }
 
-    /// @notice Pauses list of functions in IporProtocolRouter
+    /// @notice Pauses list of functions in IporProtocolRouterEthereum.sol
     /// @dev Can be called only by pause guardian
     function pause(bytes4[] calldata functionSigs) external override onlyPauseGuardian {
         uint256 len = functionSigs.length;
@@ -87,7 +87,7 @@ contract AccessControl is IRouterAccessControl {
         }
     }
 
-    /// @notice Unpauses list of functions in IporProtocolRouter
+    /// @notice Unpauses list of functions in IporProtocolRouterEthereum.sol
     /// @dev Can be called only by Owner of Ipor Protocol Router
     function unpause(bytes4[] calldata functionSigs) external override onlyOwner {
         uint256 len = functionSigs.length;

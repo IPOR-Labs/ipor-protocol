@@ -15,7 +15,7 @@ import {AmmTypesBaseV1} from "../../../base/types/AmmTypesBaseV1.sol";
 import {AmmOpenSwapServiceBaseV1} from "../../../base/amm/services/AmmOpenSwapServiceBaseV1.sol";
 import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
 
-/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
+/// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouterEthereum.sol.
 /// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
 contract AmmOpenSwapServiceUsdc is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServiceUsdc {
     using SafeERC20Upgradeable for IERC20Upgradeable;

@@ -26,7 +26,7 @@ contract IporProtocolRouterTest is TestCommons {
     function testSwitchImplementation() public {
         // given
         IporProtocolRouterBuilder builder = new IporProtocolRouterBuilder(address(this));
-        IporProtocolRouter router = builder.buildEmptyProxy();
+        IporProtocolRouterEthereum router = builder.buildEmptyProxy();
 
         address newImplementation = address(new EmptyRouterImplementation());
         address oldImplementation = router.getImplementation();
@@ -240,7 +240,7 @@ contract IporProtocolRouterTest is TestCommons {
     function testCheckAddressesInConstructor() public {
         vm.expectRevert("IPOR_000");
         new IporProtocolRouter(
-            IporProtocolRouter.DeployedContracts({
+            IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: address(0),
                 ammPoolsLens: _userOne,
                 ammPoolsLensStEth: _userOne,
@@ -268,7 +268,7 @@ contract IporProtocolRouterTest is TestCommons {
 
         vm.expectRevert("IPOR_000");
         new IporProtocolRouter(
-            IporProtocolRouter.DeployedContracts({
+            IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: _userOne,
                 ammPoolsLens: address(0),
                 ammPoolsLensStEth: _userOne,
@@ -295,7 +295,7 @@ contract IporProtocolRouterTest is TestCommons {
         );
         vm.expectRevert("IPOR_000");
         new IporProtocolRouter(
-            IporProtocolRouter.DeployedContracts({
+            IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: _userOne,
                 ammPoolsLens: _userOne,
                 ammPoolsLensStEth: address(0),
@@ -323,7 +323,7 @@ contract IporProtocolRouterTest is TestCommons {
 
         vm.expectRevert("IPOR_000");
         new IporProtocolRouter(
-            IporProtocolRouter.DeployedContracts({
+            IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: _userOne,
                 ammPoolsLens: _userOne,
                 ammPoolsLensStEth: _userOne,
@@ -351,7 +351,7 @@ contract IporProtocolRouterTest is TestCommons {
 
         vm.expectRevert("IPOR_000");
         new IporProtocolRouter(
-            IporProtocolRouter.DeployedContracts({
+            IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: _userOne,
                 ammPoolsLens: _userOne,
                 ammPoolsLensStEth: _userOne,
@@ -379,7 +379,7 @@ contract IporProtocolRouterTest is TestCommons {
 
         vm.expectRevert("IPOR_000");
         new IporProtocolRouter(
-            IporProtocolRouter.DeployedContracts({
+            IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: _userOne,
                 ammPoolsLens: _userOne,
                 ammPoolsLensStEth: _userOne,
@@ -407,7 +407,7 @@ contract IporProtocolRouterTest is TestCommons {
 
         vm.expectRevert("IPOR_000");
         new IporProtocolRouter(
-            IporProtocolRouter.DeployedContracts({
+            IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: _userOne,
                 ammPoolsLens: _userOne,
                 ammPoolsLensStEth: _userOne,
@@ -435,7 +435,7 @@ contract IporProtocolRouterTest is TestCommons {
 
         vm.expectRevert("IPOR_000");
         new IporProtocolRouter(
-            IporProtocolRouter.DeployedContracts({
+            IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: _userOne,
                 ammPoolsLens: _userOne,
                 ammPoolsLensStEth: _userOne,
@@ -463,7 +463,7 @@ contract IporProtocolRouterTest is TestCommons {
 
         vm.expectRevert("IPOR_000");
         new IporProtocolRouter(
-            IporProtocolRouter.DeployedContracts({
+            IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: _userOne,
                 ammPoolsLens: _userOne,
                 ammPoolsLensStEth: _userOne,
@@ -491,7 +491,7 @@ contract IporProtocolRouterTest is TestCommons {
 
         vm.expectRevert("IPOR_000");
         new IporProtocolRouter(
-            IporProtocolRouter.DeployedContracts({
+            IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: _userOne,
                 ammPoolsLens: _userOne,
                 ammPoolsLensStEth: _userOne,
@@ -519,7 +519,7 @@ contract IporProtocolRouterTest is TestCommons {
 
         vm.expectRevert("IPOR_000");
         new IporProtocolRouter(
-            IporProtocolRouter.DeployedContracts({
+            IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: _userOne,
                 ammPoolsLens: _userOne,
                 ammPoolsLensStEth: _userOne,
@@ -547,7 +547,7 @@ contract IporProtocolRouterTest is TestCommons {
 
         vm.expectRevert("IPOR_000");
         new IporProtocolRouter(
-            IporProtocolRouter.DeployedContracts({
+            IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: _userOne,
                 ammPoolsLens: _userOne,
                 ammPoolsLensStEth: _userOne,
@@ -575,7 +575,7 @@ contract IporProtocolRouterTest is TestCommons {
 
         vm.expectRevert("IPOR_000");
         new IporProtocolRouter(
-            IporProtocolRouter.DeployedContracts({
+            IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: _userOne,
                 ammPoolsLens: _userOne,
                 ammPoolsLensStEth: _userOne,
