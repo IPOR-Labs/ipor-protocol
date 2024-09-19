@@ -92,16 +92,6 @@ contract TestForkCommons is Test {
     address public constant stanleyProxyUsdc = 0x7aa7b0B738C2570C2f9F892cB7cA5bB89b9BF260;
     address public constant stanleyProxyUsdt = 0x8e679C1d67Af0CD4b314896856f09ece9E64D6B5;
 
-    address public constant strategyAaveProxyUsdt = 0x58703DA5295794ed4E82323fcce7371272c5127D;
-    address public constant strategyAaveProxyUsdc = 0x77fCaE921e3df22810c5a1aC1D33f2586BbA028f;
-    address public constant strategyAaveProxyDai = 0x526d0047725D48BBc6e24C7B82A3e47C1AF1f62f;
-
-    address public constant strategyCompoundProxyUsdt = 0xE4cD9AA68Be5b5276573E24FA7A0007da29aB5B1;
-    address public constant strategyCompoundProxyUsdc = 0xe5257cf3Bd0eFD397227981fe7bbd55c7582f526;
-    address public constant strategyCompoundProxyDai = 0x87CEF19aCa214d12082E201e6130432Df39fc774;
-
-    address public constant strategyDsrProxyDai = 0xc26be51E50a358eC6d366147d78Ab94E9597239C;
-
     address public constant oracleUpdater = 0xC3A53976E9855d815A08f577C2BEef2a799470b7;
 
     address public constant AAVE = 0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9;
@@ -125,12 +115,6 @@ contract TestForkCommons is Test {
 
     address public ammPoolsService = 0x9bcde34F504A1a9BC3496Ba9f1AEA4c5FC400517;
     address public ammGovernanceService = 0x8Ec9AEF0241A19Ffb278b3963d0EaaE7De52158d;
-
-    address public strategyDsrDaiProxy = 0xc26be51E50a358eC6d366147d78Ab94E9597239C;
-    address public strategyAaveDaiProxy = 0x526d0047725D48BBc6e24C7B82A3e47C1AF1f62f;
-    address public strategyAaveUsdtProxy = 0x58703DA5295794ed4E82323fcce7371272c5127D;
-    address public strategyCompoundDaiProxy = 0x87CEF19aCa214d12082E201e6130432Df39fc774;
-    address public strategyCompoundUsdtProxy = 0xE4cD9AA68Be5b5276573E24FA7A0007da29aB5B1;
 
     // new Implementations
     address public spreadCloseSwapService = 0x948548414A364C7D6f379ED73aeDDb3C795Dcacd;
