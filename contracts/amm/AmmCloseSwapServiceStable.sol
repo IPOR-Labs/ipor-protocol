@@ -101,7 +101,6 @@ abstract contract AmmCloseSwapServiceStable is IAmmCloseSwapService {
         if (ammAssetManagementAsset != _asset) {
             revert IporErrors.AssetMismatch(ammAssetManagementAsset, _asset);
         }
-
     }
 
     function getPoolConfiguration()

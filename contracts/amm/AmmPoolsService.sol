@@ -167,8 +167,8 @@ contract AmmPoolsService is IAmmPoolsService {
             poolCfg.decimals
         );
 
-        uint256 totalBalance = wadAmmTreasuryAssetBalance
-            + IporMath.convertToWad(IERC4626(poolCfg.assetManagement).maxWithdraw(poolCfg.ammTreasury), poolCfg.decimals);
+        uint256 totalBalance = wadAmmTreasuryAssetBalance +
+            IporMath.convertToWad(IERC4626(poolCfg.assetManagement).maxWithdraw(poolCfg.ammTreasury), poolCfg.decimals);
 
         require(totalBalance > 0, AmmPoolsErrors.ASSET_MANAGEMENT_BALANCE_IS_EMPTY);
 

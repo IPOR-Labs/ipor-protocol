@@ -72,9 +72,13 @@ contract AssetManagementLens is IAssetManagementLens {
 
     function balanceOfAmmTreasuryInAssetManagement(address asset) external view returns (uint256) {
         AssetManagementConfiguration memory assetManagementConfiguration = _getAssetManagementConfiguration(asset);
-        return IporMath.convertToWad(
-            IERC4626(assetManagementConfiguration.assetManagement).maxWithdraw(
-                assetManagementConfiguration.ammTreasury), assetManagementConfiguration.decimals);
+        return
+            IporMath.convertToWad(
+                IERC4626(assetManagementConfiguration.assetManagement).maxWithdraw(
+                    assetManagementConfiguration.ammTreasury
+                ),
+                assetManagementConfiguration.decimals
+            );
     }
 
     function _getAssetManagementConfiguration(
@@ -83,27 +87,27 @@ contract AssetManagementLens is IAssetManagementLens {
         if (asset == _usdt) {
             return
                 AssetManagementConfiguration({
-                asset: _usdt,
-                decimals: _usdtDecimals,
-                assetManagement: _usdtAssetManagement,
-                ammTreasury: _usdtAmmTreasury
-            });
+                    asset: _usdt,
+                    decimals: _usdtDecimals,
+                    assetManagement: _usdtAssetManagement,
+                    ammTreasury: _usdtAmmTreasury
+                });
         } else if (asset == _usdc) {
             return
                 AssetManagementConfiguration({
-                asset: _usdc,
-                decimals: _usdcDecimals,
-                assetManagement: _usdcAssetManagement,
-                ammTreasury: _usdcAmmTreasury
-            });
+                    asset: _usdc,
+                    decimals: _usdcDecimals,
+                    assetManagement: _usdcAssetManagement,
+                    ammTreasury: _usdcAmmTreasury
+                });
         } else if (asset == _dai) {
             return
                 AssetManagementConfiguration({
-                asset: _dai,
-                decimals: _daiDecimals,
-                assetManagement: _daiAssetManagement,
-                ammTreasury: _daiAmmTreasury
-            });
+                    asset: _dai,
+                    decimals: _daiDecimals,
+                    assetManagement: _daiAssetManagement,
+                    ammTreasury: _daiAmmTreasury
+                });
         } else {
             revert(IporErrors.ASSET_NOT_SUPPORTED);
         }

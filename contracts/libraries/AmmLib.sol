@@ -77,18 +77,24 @@ library AmmLib {
         AmmTypes.AmmPoolCoreModel memory model
     ) internal view returns (IporTypes.AmmBalancesMemory memory) {
         require(model.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " ammTreasury"));
+
         IporTypes.AmmBalancesMemory memory accruedBalance = IAmmStorage(model.ammStorage).getBalance();
 
-        uint256 actualVaultBalance =
-            IporMath.convertToWad(IERC4626(model.assetManagement).maxWithdraw(model.ammTreasury), model.assetDecimals);
+        uint256 actualVaultBalance = IporMath.convertToWad(
+            /// @dev Plasma Vault underlying is always the same as the pool asset
+            IERC4626(model.assetManagement).maxWithdraw(model.ammTreasury),
+            model.assetDecimals
+        );
 
         int256 liquidityPool = accruedBalance.liquidityPool.toInt256() +
             actualVaultBalance.toInt256() -
             accruedBalance.vault.toInt256();
 
         require(liquidityPool >= 0, AmmErrors.LIQUIDITY_POOL_AMOUNT_TOO_LOW);
+
         accruedBalance.liquidityPool = liquidityPool.toUint256();
         accruedBalance.vault = actualVaultBalance;
+
         return accruedBalance;
     }
 }

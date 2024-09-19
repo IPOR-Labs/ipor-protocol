@@ -126,6 +126,7 @@ contract AmmTreasury is
 
         IAmmStorage(_ammStorage).updateStorageWhenWithdrawFromAssetManagement(
             wadAssetAmount,
+            /// @dev Plasma Vault underlying is always the same as the pool asset
             IporMath.convertToWad(IERC4626(_assetManagement).maxWithdraw(address(this)), _decimals)
         );
     }
@@ -137,6 +138,7 @@ contract AmmTreasury is
 
         IAmmStorage(_ammStorage).updateStorageWhenWithdrawFromAssetManagement(
             IporMath.convertToWad(withdrawnAmount, _decimals),
+            /// @dev Plasma Vault underlying is always the same as the pool asset
             IporMath.convertToWad(IERC4626(_assetManagement).maxWithdraw(address(this)), _decimals)
         );
     }
