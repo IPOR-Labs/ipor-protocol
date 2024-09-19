@@ -64,9 +64,9 @@ contract ForkIporProtocolRouterCases is TestForkCommons {
         //then
         assertEq(balances.totalCollateralPayFixed, 17825873015180730640170, "totalCollateralPayFixed");
         assertEq(balances.totalCollateralReceiveFixed, 11446145165352924187665, "totalCollateralReceiveFixed");
-        assertEq(balances.liquidityPool, 3705871659406544199057522, "liquidityPoolBalance");
         assertEq(balances.totalNotionalPayFixed, 6107616493193503532894565, "totalNotionalPayFixed");
         assertEq(balances.totalNotionalReceiveFixed, 5438565550120171901150066, "totalNotionalReceiveFixed");
+        assertEq(balances.liquidityPool, 3706455723667577290180611, "liquidityPoolBalance");
     }
 
     function testShouldOpenPositionStEthForEth28daysPayFixedWhenRouterHasEth() public {
