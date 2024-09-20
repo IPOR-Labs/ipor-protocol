@@ -77,8 +77,8 @@ jobs:
 
       - name: Slack status success
         if: inputs.success
-        # from tag: v1.6.0-ipor-v3
-        uses: IPOR-Labs/github-action-slack-notify-build@f2aeded4a01c0e5245e6f9aec2f3ff10f1a3625d
+        # from tag: v2-ipor-v1
+        uses: IPOR-Labs/github-action-slack-notify-build@5d45bafed9eff565533d3162564a840e4a9745a3
         with:
           message_id: ${{ inputs.slack-status-msg-id }}
           channel: ${{ inputs.status-slack-channel-name }}
@@ -93,8 +93,8 @@ jobs:
 
       - name: Slack status fail
         if: ${{ !inputs.success }}
-        # from tag: v1.6.0-ipor-v3
-        uses: IPOR-Labs/github-action-slack-notify-build@f2aeded4a01c0e5245e6f9aec2f3ff10f1a3625d
+        # from tag: v2-ipor-v1
+        uses: IPOR-Labs/github-action-slack-notify-build@5d45bafed9eff565533d3162564a840e4a9745a3
         with:
           message_id: ${{ inputs.slack-status-msg-id }}
           channel: ${{ inputs.status-slack-channel-name }}
@@ -110,8 +110,8 @@ jobs:
       - name: Slack alarm
         id: slack-alarm
         if: ${{ !inputs.success }}
-        # from tag: v1.6.0-ipor-v3
-        uses: IPOR-Labs/github-action-slack-notify-build@f2aeded4a01c0e5245e6f9aec2f3ff10f1a3625d
+        # from tag: v2-ipor-v1
+        uses: IPOR-Labs/github-action-slack-notify-build@5d45bafed9eff565533d3162564a840e4a9745a3
         with:
           channel: ${{ inputs.alarms-slack-channel-name }}
           status: FAILED
