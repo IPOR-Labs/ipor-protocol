@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.20;
+pragma solidity 0.8.26;
 
 /// @title Interface for interaction with standalone IPOR smart contract by DAO government with common methods.
 interface IIporContractCommonGov {
