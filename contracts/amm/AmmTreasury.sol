@@ -134,6 +134,10 @@ contract AmmTreasury is
     function withdrawAllFromAssetManagementInternal() external nonReentrant onlyRouter whenNotPaused {
         uint256 withdrawnAmount = IERC4626(_assetManagement).maxWithdraw(address(this));
 
+        if (withdrawnAmount == 0) {
+            return;
+        }
+
         IERC4626(_assetManagement).withdraw(withdrawnAmount, address(this), address(this));
 
         IAmmStorage(_ammStorage).updateStorageWhenWithdrawFromAssetManagement(
