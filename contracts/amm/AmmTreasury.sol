@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.20;
+pragma solidity 0.8.26;
 
+import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import {IporMath} from "../libraries/math/IporMath.sol";
 import "../interfaces/IAmmTreasury.sol";
 import "../interfaces/IAmmStorage.sol";
 import "../interfaces/IAssetManagement.sol";
@@ -54,6 +56,12 @@ contract AmmTreasury is
         _assetManagement = assetManagement.checkAddress();
         _router = router.checkAddress();
 
+        /// @dev pool asset must match the underlying asset in the AmmAssetManagement vault
+        address ammAssetManagementAsset = IERC4626(assetManagement).asset();
+        if (ammAssetManagementAsset != asset) {
+            revert IporErrors.AssetMismatch(ammAssetManagementAsset, asset);
+        }
+
         _disableInitializers();
     }
 
@@ -96,21 +104,47 @@ contract AmmTreasury is
     /// @notice Joseph deposits to AssetManagement asset amount from AmmTreasury.
     /// @param wadAssetAmount underlying token amount represented in 18 decimals
     function depositToAssetManagementInternal(uint256 wadAssetAmount) external onlyRouter nonReentrant whenNotPaused {
-        (uint256 vaultBalance, uint256 depositedAmount) = IAssetManagement(_assetManagement).deposit(wadAssetAmount);
-        IAmmStorage(_ammStorage).updateStorageWhenDepositToAssetManagement(depositedAmount, vaultBalance);
+        uint256 assetAmount = IporMath.convertWadToAssetDecimals(wadAssetAmount, _decimals);
+
+        IERC20Upgradeable(_asset).forceApprove(_assetManagement, assetAmount);
+
+        IERC4626(_assetManagement).deposit(assetAmount, address(this));
+
+        IAmmStorage(_ammStorage).updateStorageWhenDepositToAssetManagement(
+            wadAssetAmount,
+            IporMath.convertToWad(IERC4626(_assetManagement).maxWithdraw(address(this)), _decimals)
+        );
     }
 
     //@param wadAssetAmount underlying token amount represented in 18 decimals
     function withdrawFromAssetManagementInternal(
         uint256 wadAssetAmount
     ) external nonReentrant onlyRouter whenNotPaused {
-        (uint256 withdrawnAmount, uint256 vaultBalance) = IAssetManagement(_assetManagement).withdraw(wadAssetAmount);
-        IAmmStorage(_ammStorage).updateStorageWhenWithdrawFromAssetManagement(withdrawnAmount, vaultBalance);
+        uint256 assetAmount = IporMath.convertWadToAssetDecimals(wadAssetAmount, _decimals);
+
+        IERC4626(_assetManagement).withdraw(assetAmount, address(this), address(this));
+
+        IAmmStorage(_ammStorage).updateStorageWhenWithdrawFromAssetManagement(
+            wadAssetAmount,
+            /// @dev Plasma Vault underlying is always the same as the pool asset
+            IporMath.convertToWad(IERC4626(_assetManagement).maxWithdraw(address(this)), _decimals)
+        );
     }
 
     function withdrawAllFromAssetManagementInternal() external nonReentrant onlyRouter whenNotPaused {
-        (uint256 withdrawnAmount, uint256 vaultBalance) = IAssetManagement(_assetManagement).withdrawAll();
-        IAmmStorage(_ammStorage).updateStorageWhenWithdrawFromAssetManagement(withdrawnAmount, vaultBalance);
+        uint256 withdrawnAmount = IERC4626(_assetManagement).maxWithdraw(address(this));
+
+        if (withdrawnAmount == 0) {
+            return;
+        }
+
+        IERC4626(_assetManagement).withdraw(withdrawnAmount, address(this), address(this));
+
+        IAmmStorage(_ammStorage).updateStorageWhenWithdrawFromAssetManagement(
+            IporMath.convertToWad(withdrawnAmount, _decimals),
+            /// @dev Plasma Vault underlying is always the same as the pool asset
+            IporMath.convertToWad(IERC4626(_assetManagement).maxWithdraw(address(this)), _decimals)
+        );
     }
 
     function grantMaxAllowanceForSpender(address spender) external override onlyOwner {

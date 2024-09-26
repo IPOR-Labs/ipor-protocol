@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.20;
+pragma solidity 0.8.26;
 
 library Constants {
     uint256 public constant MAX_VALUE = type(uint256).max;

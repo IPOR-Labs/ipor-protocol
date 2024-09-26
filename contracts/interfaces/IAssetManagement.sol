@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.20;
+pragma solidity 0.8.26;
 
 /// @title Interface for interaction with Asset Management DSR smart contract.
 /// @notice Asset Management is responsible for delegating assets stored in AmmTreasury to Asset Management and forward to money market where they can earn interest.

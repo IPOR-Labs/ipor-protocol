@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.20;
+pragma solidity 0.8.26;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
+import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 import "../interfaces/types/IporTypes.sol";
 import "../interfaces/types/AmmTypes.sol";
 import "../interfaces/IIpToken.sol";
@@ -101,6 +102,22 @@ contract AmmPoolsService is IAmmPoolsService {
                 _daiRedeemLpMaxCollateralRatio <= 1e18,
             AmmPoolsErrors.CFG_INVALID_REDEEM_LP_MAX_COLLATERAL_RATIO
         );
+
+        /// @dev pool asset must match the underlying asset in the AmmAssetManagement vault
+        address ammAssetManagementAssetUsdt = IERC4626(_usdtAssetManagement).asset();
+        if (ammAssetManagementAssetUsdt != _usdt) {
+            revert IporErrors.AssetMismatch(ammAssetManagementAssetUsdt, _usdt);
+        }
+
+        address ammAssetManagementAssetUsdc = IERC4626(_usdcAssetManagement).asset();
+        if (ammAssetManagementAssetUsdc != _usdc) {
+            revert IporErrors.AssetMismatch(ammAssetManagementAssetUsdc, _usdc);
+        }
+
+        address ammAssetManagementAssetDai = IERC4626(_daiAssetManagement).asset();
+        if (ammAssetManagementAssetDai != _dai) {
+            revert IporErrors.AssetMismatch(ammAssetManagementAssetDai, _dai);
+        }
     }
 
     function getAmmPoolServiceConfiguration(
@@ -150,7 +167,8 @@ contract AmmPoolsService is IAmmPoolsService {
             poolCfg.decimals
         );
 
-        uint256 totalBalance = wadAmmTreasuryAssetBalance + IAssetManagement(poolCfg.assetManagement).totalBalance();
+        uint256 totalBalance = wadAmmTreasuryAssetBalance +
+            IporMath.convertToWad(IERC4626(poolCfg.assetManagement).maxWithdraw(poolCfg.ammTreasury), poolCfg.decimals);
 
         require(totalBalance > 0, AmmPoolsErrors.ASSET_MANAGEMENT_BALANCE_IS_EMPTY);
 
@@ -161,14 +179,27 @@ contract AmmPoolsService is IAmmPoolsService {
             1e14;
 
         if (ratio > ammTreasuryAssetManagementBalanceRatio) {
-            uint256 wadAssetAmount = wadAmmTreasuryAssetBalance -
-                IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18);
+            uint256 wadAssetAmount = IporMath.convertToWad(
+                IporMath.convertWadToAssetDecimals(
+                    wadAmmTreasuryAssetBalance -
+                        IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18),
+                    poolCfg.decimals
+                ),
+                poolCfg.decimals
+            );
+
             if (wadAssetAmount > 0) {
                 IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagementInternal(wadAssetAmount);
             }
         } else {
-            uint256 wadAssetAmount = IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18) -
-                wadAmmTreasuryAssetBalance;
+            uint256 wadAssetAmount = IporMath.convertToWad(
+                IporMath.convertWadToAssetDecimals(
+                    IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18) -
+                        wadAmmTreasuryAssetBalance,
+                    poolCfg.decimals
+                ),
+                poolCfg.decimals
+            );
             if (wadAssetAmount > 0) {
                 IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagementInternal(wadAssetAmount);
             }
@@ -183,13 +214,17 @@ contract AmmPoolsService is IAmmPoolsService {
         AmmTypes.AmmPoolCoreModel memory model;
 
         model.asset = asset;
+        model.assetDecimals = poolCfg.decimals;
         model.ipToken = poolCfg.ipToken;
         model.ammStorage = poolCfg.ammStorage;
         model.ammTreasury = poolCfg.ammTreasury;
         model.assetManagement = poolCfg.assetManagement;
         model.iporOracle = iporOracle;
+
         IporTypes.AmmBalancesMemory memory balance = model.getAccruedBalance();
+
         uint256 exchangeRate = model.getExchangeRate(balance.liquidityPool);
+
         require(exchangeRate > 0, AmmErrors.LIQUIDITY_POOL_IS_EMPTY);
 
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmount, poolCfg.decimals);
@@ -230,6 +265,7 @@ contract AmmPoolsService is IAmmPoolsService {
         AmmTypes.AmmPoolCoreModel memory model;
 
         model.asset = asset;
+        model.assetDecimals = poolCfg.decimals;
         model.ipToken = poolCfg.ipToken;
         model.ammStorage = poolCfg.ammStorage;
         model.ammTreasury = poolCfg.ammTreasury;
@@ -384,7 +420,12 @@ contract AmmPoolsService is IAmmPoolsService {
             );
 
             if (rebalanceAmount > 0) {
-                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagementInternal(rebalanceAmount.toUint256());
+                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagementInternal(
+                    IporMath.convertToWad(
+                        IporMath.convertWadToAssetDecimals(rebalanceAmount.toUint256(), poolCfg.decimals),
+                        poolCfg.decimals
+                    )
+                );
             }
         }
     }
@@ -415,7 +456,12 @@ contract AmmPoolsService is IAmmPoolsService {
             );
 
             if (rebalanceAmount < 0) {
-                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagementInternal((-rebalanceAmount).toUint256());
+                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagementInternal(
+                    IporMath.convertToWad(
+                        IporMath.convertWadToAssetDecimals((-rebalanceAmount).toUint256(), poolCfg.decimals),
+                        poolCfg.decimals
+                    )
+                );
             }
         }
     }

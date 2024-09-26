@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.20;
+pragma solidity 0.8.26;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import "./TestForkCommons.sol";
@@ -98,9 +98,9 @@ contract ForkAmmSwapsLensTest is TestForkCommons {
         //then
         assertEq(balances.totalCollateralPayFixed, 17825873015180730640170, "totalCollateralPayFixed");
         assertEq(balances.totalCollateralReceiveFixed, 11446145165352924187665, "totalCollateralReceiveFixed");
-        assertEq(balances.liquidityPool, 3705871659406544199057522, "liquidityPoolBalance");
         assertEq(balances.totalNotionalPayFixed, 6107616493193503532894565, "totalNotionalPayFixed");
         assertEq(balances.totalNotionalReceiveFixed, 5438565550120171901150066, "totalNotionalReceiveFixed");
+        assertEq(balances.liquidityPool, 3706455723667577290180611, "liquidityPoolBalance");
     }
 
     function testShouldReturnBalanceForOpenSwapUsdt() public {
@@ -114,9 +114,9 @@ contract ForkAmmSwapsLensTest is TestForkCommons {
         //then
         assertEq(balances.totalCollateralPayFixed, 737802071965033573688, "totalCollateralPayFixed");
         assertEq(balances.totalCollateralReceiveFixed, 99999999770736445500, "totalCollateralReceiveFixed");
-        assertEq(balances.liquidityPool, 2667440921110203210028509, "liquidityPoolBalance");
         assertEq(balances.totalNotionalPayFixed, 369638838054481820417688, "totalNotionalPayFixed");
         assertEq(balances.totalNotionalReceiveFixed, 24997969548656956276528, "totalNotionalReceiveFixed");
+        assertEq(balances.liquidityPool, 2668030214509375559273121, "liquidityPoolBalance");
     }
 
     function testShouldReturnBalanceForOpenSwapDai() public {
@@ -130,9 +130,9 @@ contract ForkAmmSwapsLensTest is TestForkCommons {
         //then
         assertEq(balances.totalCollateralPayFixed, 1453316901408450704442, "totalCollateralPayFixed");
         assertEq(balances.totalCollateralReceiveFixed, 4713715726233326275407, "totalCollateralReceiveFixed");
-        assertEq(balances.liquidityPool, 5126679256988652388452333, "liquidityPoolBalance");
         assertEq(balances.totalNotionalPayFixed, 203464366197183098621880, "totalNotionalPayFixed");
         assertEq(balances.totalNotionalReceiveFixed, 2060970330827863645871645, "totalNotionalReceiveFixed");
+        assertEq(balances.liquidityPool, 5144191303262143372091931, "liquidityPoolBalance");
     }
 
     function testShouldReturnBalanceForOpenSwapStEthCase1() public {
@@ -412,7 +412,7 @@ contract ForkAmmSwapsLensTest is TestForkCommons {
         int256 pnlValue = IAmmSwapsLens(iporProtocolRouterProxy).getPnlReceiveFixed(DAI, swapId);
 
         //then
-        assertEq(pnlValue, -37675638710819723664, "pnlValue");
+        assertEq(pnlValue, -37675511196491173012, "pnlValue");
     }
 
     function testShouldReturnPnlPayFixedDai() public {

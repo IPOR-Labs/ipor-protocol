@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.20;
+pragma solidity 0.8.26;
 
 import "../interfaces/types/AmmTypes.sol";
 import "../interfaces/IAmmPoolsLens.sol";
@@ -65,6 +65,22 @@ contract AmmPoolsLens is IAmmPoolsLens {
         _daiAssetManagement = daiPoolCfg.assetManagement.checkAddress();
 
         iporOracle = iporOracleInput.checkAddress();
+
+        /// @dev pool asset must match the underlying asset in the AmmAssetManagement vault
+        address ammAssetManagementAssetUsdt = IERC4626(_usdtAssetManagement).asset();
+        if (ammAssetManagementAssetUsdt != _usdt) {
+            revert IporErrors.AssetMismatch(ammAssetManagementAssetUsdt, _usdt);
+        }
+
+        address ammAssetManagementAssetUsdc = IERC4626(_usdcAssetManagement).asset();
+        if (ammAssetManagementAssetUsdc != _usdc) {
+            revert IporErrors.AssetMismatch(ammAssetManagementAssetUsdc, _usdc);
+        }
+
+        address ammAssetManagementAssetDai = IERC4626(_daiAssetManagement).asset();
+        if (ammAssetManagementAssetDai != _dai) {
+            revert IporErrors.AssetMismatch(ammAssetManagementAssetDai, _dai);
+        }
     }
 
     function getAmmPoolsLensConfiguration(

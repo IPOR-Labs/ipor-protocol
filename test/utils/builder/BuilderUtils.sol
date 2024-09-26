@@ -1,17 +1,18 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.20;
+pragma solidity 0.8.26;
 
+import {ERC4626} from "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
 import "../../../contracts/tokens/IpToken.sol";
 import "../../../contracts/oracles/IporOracle.sol";
 import "../../mocks/MockIporWeighted.sol";
 import "../../../contracts/amm/AmmStorage.sol";
 import "../../../contracts/amm/AmmTreasury.sol";
 import "../../../contracts/amm/spread/SpreadRouter.sol";
-import "../../../contracts/vault/AssetManagement.sol";
 import "../../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
 import "../../../contracts/interfaces/IAmmOpenSwapLens.sol";
 import "../../../contracts/interfaces/IAmmCloseSwapLens.sol";
 import "../../mocks/tokens/MockTestnetToken.sol";
+
 
 contract BuilderUtils {
     struct IporProtocol {
@@ -33,7 +34,7 @@ contract BuilderUtils {
         MockIporWeighted iporWeighted;
         AmmStorage ammStorage;
         SpreadRouter spreadRouter;
-        AssetManagement assetManagement;
+        ERC4626 assetManagement;
         AmmTreasury ammTreasury;
         ILiquidityMiningLens liquidityMiningLens;
         IPowerTokenLens powerTokenLens;

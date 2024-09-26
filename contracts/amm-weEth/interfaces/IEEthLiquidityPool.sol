@@ -1,4 +1,4 @@
-pragma solidity 0.8.20;
+pragma solidity 0.8.26;
 
 interface IEEthLiquidityPool {
     function deposit(address _referral) external payable returns (uint256);

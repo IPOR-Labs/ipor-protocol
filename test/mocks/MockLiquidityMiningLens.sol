@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.20;
+pragma solidity 0.8.26;
 
 import "../../contracts/interfaces/ILiquidityMiningLens.sol";
 import "../utils/builder/BuilderUtils.sol";

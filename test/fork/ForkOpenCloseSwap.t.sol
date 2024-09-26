@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.20;
+pragma solidity 0.8.26;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
@@ -213,7 +213,7 @@ contract ForkOpenCloseSwap is TestForkCommons {
         assertEq(1964246590348907269306, swap.collateral, "swap.collateral");
         assertEq(19642465903489072693060, swap.notional, "swap.notional");
         assertEq(19001703562314131674314, swap.ibtQuantity, "swap.ibtQuantity");
-        assertEq(19195397630443031, swap.fixedInterestRate, "swap.fixedInterestRate");
+        assertEq(19197695220136575, swap.fixedInterestRate, "swap.fixedInterestRate");
         assertEq(25000000000000000000, swap.liquidationDepositAmount, "swap.liquidationDepositAmount");
         assertEq(1, swap.state, "swap.state");
     }
