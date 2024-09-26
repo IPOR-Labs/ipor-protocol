@@ -179,14 +179,27 @@ contract AmmPoolsService is IAmmPoolsService {
             1e14;
 
         if (ratio > ammTreasuryAssetManagementBalanceRatio) {
-            uint256 wadAssetAmount = wadAmmTreasuryAssetBalance -
-                IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18);
+            uint256 wadAssetAmount = IporMath.convertToWad(
+                IporMath.convertWadToAssetDecimals(
+                    wadAmmTreasuryAssetBalance -
+                        IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18),
+                    poolCfg.decimals
+                ),
+                poolCfg.decimals
+            );
+
             if (wadAssetAmount > 0) {
                 IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagementInternal(wadAssetAmount);
             }
         } else {
-            uint256 wadAssetAmount = IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18) -
-                wadAmmTreasuryAssetBalance;
+            uint256 wadAssetAmount = IporMath.convertToWad(
+                IporMath.convertWadToAssetDecimals(
+                    IporMath.division(ammTreasuryAssetManagementBalanceRatio * totalBalance, 1e18) -
+                        wadAmmTreasuryAssetBalance,
+                    poolCfg.decimals
+                ),
+                poolCfg.decimals
+            );
             if (wadAssetAmount > 0) {
                 IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagementInternal(wadAssetAmount);
             }
@@ -407,7 +420,12 @@ contract AmmPoolsService is IAmmPoolsService {
             );
 
             if (rebalanceAmount > 0) {
-                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagementInternal(rebalanceAmount.toUint256());
+                IAmmTreasury(poolCfg.ammTreasury).depositToAssetManagementInternal(
+                    IporMath.convertToWad(
+                        IporMath.convertWadToAssetDecimals(rebalanceAmount.toUint256(), poolCfg.decimals),
+                        poolCfg.decimals
+                    )
+                );
             }
         }
     }
@@ -438,7 +456,12 @@ contract AmmPoolsService is IAmmPoolsService {
             );
 
             if (rebalanceAmount < 0) {
-                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagementInternal((-rebalanceAmount).toUint256());
+                IAmmTreasury(poolCfg.ammTreasury).withdrawFromAssetManagementInternal(
+                    IporMath.convertToWad(
+                        IporMath.convertWadToAssetDecimals((-rebalanceAmount).toUint256(), poolCfg.decimals),
+                        poolCfg.decimals
+                    )
+                );
             }
         }
     }
