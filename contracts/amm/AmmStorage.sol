@@ -35,8 +35,6 @@ contract AmmStorage is
 
     using SoapIndicatorRebalanceLogic for AmmStorageTypes.SoapIndicators;
 
-    int256 private constant INTEREST_THRESHOLD = -1e18;
-
     address private immutable _iporProtocolRouter;
     address private immutable _ammTreasury;
 
@@ -438,8 +436,6 @@ contract AmmStorage is
         uint256 vaultBalance,
         int256 interest
     ) internal {
-        /// @dev allow to have negative interest but not lower than INTEREST_THRESHOLD
-        require(interest >= INTEREST_THRESHOLD, AmmErrors.INTEREST_FROM_STRATEGY_EXCEEDED_THRESHOLD);
         require(ammLiquidityPoolBalance.toInt256() >= -interest, AmmErrors.LIQUIDITY_POOL_AMOUNT_TOO_LOW);
 
         ammLiquidityPoolBalance = (ammLiquidityPoolBalance.toInt256() + interest).toUint256();
