@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.20;
+pragma solidity 0.8.26;
 
 /// @title Interface for interaction with AmmTreasury, smart contract responsible for storing assets treasury for AMM
 interface IAmmTreasury {

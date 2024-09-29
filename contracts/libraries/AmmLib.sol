@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.20;
-import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-
+pragma solidity 0.8.26;
+import {SafeCast} from "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 import "../interfaces/types/AmmTypes.sol";
 import "../interfaces/types/AmmStorageTypes.sol";
 import "../interfaces/IIpToken.sol";
@@ -77,16 +77,24 @@ library AmmLib {
         AmmTypes.AmmPoolCoreModel memory model
     ) internal view returns (IporTypes.AmmBalancesMemory memory) {
         require(model.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " ammTreasury"));
+
         IporTypes.AmmBalancesMemory memory accruedBalance = IAmmStorage(model.ammStorage).getBalance();
 
-        uint256 actualVaultBalance = IAssetManagement(model.assetManagement).totalBalance();
+        uint256 actualVaultBalance = IporMath.convertToWad(
+            /// @dev Plasma Vault underlying is always the same as the pool asset
+            IERC4626(model.assetManagement).maxWithdraw(model.ammTreasury),
+            model.assetDecimals
+        );
+
         int256 liquidityPool = accruedBalance.liquidityPool.toInt256() +
             actualVaultBalance.toInt256() -
             accruedBalance.vault.toInt256();
 
         require(liquidityPool >= 0, AmmErrors.LIQUIDITY_POOL_AMOUNT_TOO_LOW);
+
         accruedBalance.liquidityPool = liquidityPool.toUint256();
         accruedBalance.vault = actualVaultBalance;
+
         return accruedBalance;
     }
 }

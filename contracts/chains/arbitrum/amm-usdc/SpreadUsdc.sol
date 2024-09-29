@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.20;
+pragma solidity 0.8.26;
 
 import {SpreadBaseV2} from "../../../base/spread/SpreadBaseV2.sol";
 import {DemandSpreadStableLibsBaseV1} from "../../../base/spread/DemandSpreadStableLibsBaseV1.sol";

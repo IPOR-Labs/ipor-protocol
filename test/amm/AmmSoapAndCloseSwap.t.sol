@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.20;
+pragma solidity 0.8.26;
 
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
@@ -44,9 +44,10 @@ contract AmmSoapAndCloseSwapTest is TestCommons {
             getRiskIndicatorsInputs(address(_iporProtocol.asset),RECEIVE_FIXED)
         );
         vm.stopPrank();
-        console2.log("openSwapReceiveFixed28daysUsdt");
+
         uint256[] memory pfSwapIds = new uint256[](0);
         uint256[] memory swapIds = new uint256[](1);
+
         swapIds[0] = swap1;
         vm.prank(_userTwo);
         _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(_userOne, pfSwapIds, swapIds,getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28));

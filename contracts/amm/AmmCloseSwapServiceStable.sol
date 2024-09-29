@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.20;
+pragma solidity 0.8.26;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
@@ -95,6 +95,12 @@ abstract contract AmmCloseSwapServiceStable is IAmmCloseSwapService {
         iporOracle = iporOracleInput.checkAddress();
         messageSigner = messageSignerInput.checkAddress();
         spreadRouter = poolCfg.spread.checkAddress();
+
+        /// @dev pool asset must match the underlying asset in the AmmAssetManagement vault
+        address ammAssetManagementAsset = IERC4626(_assetManagement).asset();
+        if (ammAssetManagementAsset != _asset) {
+            revert IporErrors.AssetMismatch(ammAssetManagementAsset, _asset);
+        }
     }
 
     function getPoolConfiguration()
@@ -557,6 +563,8 @@ abstract contract AmmCloseSwapServiceStable is IAmmCloseSwapService {
             if (ammTreasuryErc20BalanceBeforeRedeem <= totalTransferAmountAssetDecimals) {
                 AmmTypes.AmmPoolCoreModel memory model;
 
+                model.asset = poolCfg.asset;
+                model.assetDecimals = poolCfg.decimals;
                 model.ammStorage = poolCfg.ammStorage;
                 model.ammTreasury = poolCfg.ammTreasury;
                 model.assetManagement = poolCfg.assetManagement;

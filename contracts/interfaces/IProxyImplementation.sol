@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.20;
+pragma solidity 0.8.26;
 
 /// @title Technical interface for reading data related to the UUPS proxy pattern in Ipor Protocol.
 interface IProxyImplementation {

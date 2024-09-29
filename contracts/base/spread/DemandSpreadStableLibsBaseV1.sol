@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.20;
+pragma solidity 0.8.26;
 
 import {CalculateTimeWeightedNotionalLibsBaseV1} from "./CalculateTimeWeightedNotionalLibsBaseV1.sol";
 import {SpreadStorageLibsBaseV1} from "../spread/SpreadStorageLibsBaseV1.sol";

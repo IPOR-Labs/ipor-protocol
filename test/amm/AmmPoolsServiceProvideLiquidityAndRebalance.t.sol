@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.20;
+pragma solidity 0.8.26;
 
 import "../TestCommons.sol";
 
@@ -19,7 +19,7 @@ contract AmmPoolsServiceProvideLiquidityAndRebalanceTest is TestCommons {
 
         uint32 autoRebalanceThreshold = 10;
         uint16 ammTreasuryAssetManagementRatio = 1500;
-        uint256 userPosition = 500000 * 1e6;
+        uint256 userPosition = 500_000 * 1e6;
 
         vm.warp(100);
 
@@ -37,7 +37,7 @@ contract AmmPoolsServiceProvideLiquidityAndRebalanceTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_userOne, userPosition);
         vm.stopPrank();
 
-        uint256 assetManagementBalanceBefore = _iporProtocol.assetManagement.totalBalance();
+        uint256 assetManagementBalanceBefore = _iporProtocol.assetManagement.maxWithdraw(address(_iporProtocol.ammTreasury));
         uint256 ammTreasuryBalanceBefore = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
 
         _iporProtocol.ammGovernanceService.addAppointedToRebalanceInAmm(address(_iporProtocol.asset), address(this));
@@ -46,8 +46,10 @@ contract AmmPoolsServiceProvideLiquidityAndRebalanceTest is TestCommons {
         _iporProtocol.ammPoolsService.rebalanceBetweenAmmTreasuryAndAssetManagement(address(_iporProtocol.asset));
 
         //then
-        assertEq(_iporProtocol.assetManagement.totalBalance(), assetManagementBalanceBefore);
+        assertEq(_iporProtocol.assetManagement.maxWithdraw(address(_iporProtocol.ammTreasury)), assetManagementBalanceBefore);
         assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)), ammTreasuryBalanceBefore);
+
+        assertEq(userPosition, _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)) + _iporProtocol.assetManagement.maxWithdraw(address(_iporProtocol.ammTreasury)));
     }
 
     function testProvideLiquidityAndRebalanceDifferentTimestamp() public {
@@ -74,7 +76,7 @@ contract AmmPoolsServiceProvideLiquidityAndRebalanceTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_userOne, userPosition);
         vm.stopPrank();
 
-        uint256 assetManagementBalanceBefore = _iporProtocol.assetManagement.totalBalance();
+        uint256 assetManagementBalanceBefore = _iporProtocol.assetManagement.maxWithdraw(address(_iporProtocol.ammTreasury));
         uint256 ammTreasuryBalanceBefore = _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury));
 
         _iporProtocol.ammGovernanceService.addAppointedToRebalanceInAmm(address(_iporProtocol.asset), address(this));
@@ -85,10 +87,10 @@ contract AmmPoolsServiceProvideLiquidityAndRebalanceTest is TestCommons {
 
         //then
         assertTrue(
-            _iporProtocol.assetManagement.totalBalance() != assetManagementBalanceBefore,
+            _iporProtocol.assetManagement.maxWithdraw(address(_iporProtocol.ammTreasury)) == assetManagementBalanceBefore,
             "incorrect asset management balance"
         );
-        assertNotEq(
+        assertEq(
             _iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)),
             ammTreasuryBalanceBefore,
             "incorrect amm treasury balance"
@@ -104,7 +106,7 @@ contract AmmPoolsServiceProvideLiquidityAndRebalanceTest is TestCommons {
         uint256 userPosition = 500_000 * 1e6;
 
         uint256 expectedAmmTreasuryBalance = 150_000 * 1e6;
-        uint256 expectedAssetManagementBalance = 850_000 * 1e18;
+        uint256 expectedAssetManagementBalance = 850_000 * 1e6;
 
         vm.warp(100);
 
@@ -132,7 +134,7 @@ contract AmmPoolsServiceProvideLiquidityAndRebalanceTest is TestCommons {
         //then
 
         assertEq(
-            _iporProtocol.assetManagement.totalBalance(),
+            _iporProtocol.assetManagement.maxWithdraw(address(_iporProtocol.ammTreasury)),
             expectedAssetManagementBalance,
             "incorrect asset management balance"
         );
@@ -151,8 +153,8 @@ contract AmmPoolsServiceProvideLiquidityAndRebalanceTest is TestCommons {
         uint16 ammTreasuryAssetManagementRatio = 1500;
         uint256 userPosition = 500000 * 1e6;
 
-        uint256 expectedAmmTreasuryBalance = 150000000354;
-        uint256 expectedAssetManagementBalance = 850000002004415777875000;
+        uint256 expectedAmmTreasuryBalance = 150000000000;
+        uint256 expectedAssetManagementBalance = 850000000000;
 
         vm.warp(100);
 
@@ -179,7 +181,7 @@ contract AmmPoolsServiceProvideLiquidityAndRebalanceTest is TestCommons {
         _iporProtocol.ammPoolsService.provideLiquidityUsdt(_userOne, userPosition);
 
         //then
-        assertEq(_iporProtocol.assetManagement.totalBalance(), expectedAssetManagementBalance);
+        assertEq(_iporProtocol.assetManagement.maxWithdraw(address(_iporProtocol.ammTreasury)), expectedAssetManagementBalance);
         assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.ammTreasury)), expectedAmmTreasuryBalance);
     }
 }
