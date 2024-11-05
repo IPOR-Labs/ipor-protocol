@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.26;
 
-import {SpreadBaseV2} from "../../base/spread/SpreadBaseV2.sol";
-import {DemandSpreadStableLibsBaseV1} from "../../base/spread/DemandSpreadStableLibsBaseV1.sol";
-import {SpreadTypesBaseV1} from "../../base/types/SpreadTypesBaseV1.sol";
-import {SpreadInputData} from "../../base/interfaces/DemandSpreadTypesBaseV1.sol";
+import {SpreadBaseV2} from "../../spread/SpreadBaseV2.sol";
+import {DemandSpreadStableLibsBaseV1} from "../../spread/DemandSpreadStableLibsBaseV1.sol";
+import {SpreadTypesBaseV1} from "../../types/SpreadTypesBaseV1.sol";
+import {SpreadInputData} from "../../interfaces/DemandSpreadTypesBaseV1.sol";
 
 contract SpreadUsdcBaseV2 is SpreadBaseV2 {
     /// @custom:oz-upgrades-unsafe-allow constructor
