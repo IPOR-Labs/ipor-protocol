@@ -1,17 +1,16 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.26;
 
-import {IAmmPoolsLensArbitrum} from "../interfaces/IAmmPoolsLensArbitrum.sol";
-import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
+import {IAmmPoolsLensBaseV1} from "../../interfaces/IAmmPoolsLensBaseV1.sol";
+import {StorageLibBaseV1} from "../../libraries/StorageLibBaseV1.sol";
 import {AmmLib} from "../../../libraries/AmmLib.sol";
 import {IporContractValidator} from "../../../libraries/IporContractValidator.sol";
 
 import "../../../interfaces/types/AmmTypes.sol";
 import "../../../base/interfaces/IAmmTreasuryBaseV1.sol";
 
-//TODO: remove?
 /// @dev It is not recommended to use lens contract directly, should be used only through IporProtocolRouter.
-contract AmmPoolsLensArbitrum is IAmmPoolsLensArbitrum {
+contract AmmPoolsLensBaseV1 is IAmmPoolsLensBaseV1 {
     using IporContractValidator for address;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
 
@@ -22,7 +21,7 @@ contract AmmPoolsLensArbitrum is IAmmPoolsLensArbitrum {
     }
 
     function getIpTokenExchangeRate(address asset_) external view returns (uint256) {
-        StorageLibArbitrum.AssetLensDataValue memory assetLensData = StorageLibArbitrum.getAssetLensDataStorage().value[
+        StorageLibBaseV1.AssetLensDataValue memory assetLensData = StorageLibBaseV1.getAssetLensDataStorage().value[
             asset_
         ];
 

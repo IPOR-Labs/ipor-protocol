@@ -7,11 +7,10 @@ import "../../../base/amm/libraries/AmmSwapsLensLibBaseV1.sol";
 import "../../../libraries/IporContractValidator.sol";
 import "../../../libraries/RiskIndicatorsValidatorLib.sol";
 import "../../../libraries/AmmLib.sol";
-import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
+import {StorageLibBaseV1} from "../../libraries/StorageLibBaseV1.sol";
 
-//TODO: remove?
 /// @dev It is not recommended to use lens contract directly, should be used only through IporProtocolRouter.
-contract AmmSwapsLensArbitrum is IAmmSwapsLens {
+contract AmmSwapsLensBaseV1 is IAmmSwapsLens {
     using Address for address;
     using IporContractValidator for address;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
@@ -35,21 +34,21 @@ contract AmmSwapsLensArbitrum is IAmmSwapsLens {
         uint256 offset,
         uint256 chunkSize
     ) external view returns (uint256 totalCount, IAmmSwapsLens.IporSwap[] memory swaps) {
-        StorageLibArbitrum.AssetLensDataValue storage lensPoolCfg = StorageLibArbitrum.getAssetLensDataStorage().value[
+        StorageLibBaseV1.AssetLensDataValue storage lensPoolCfg = StorageLibBaseV1.getAssetLensDataStorage().value[
             asset
         ];
         return AmmSwapsLensLibBaseV1.getSwaps(iporOracle, lensPoolCfg.ammStorage, asset, account, offset, chunkSize);
     }
 
     function getPnlPayFixed(address asset, uint256 swapId) external view override returns (int256) {
-        StorageLibArbitrum.AssetLensDataValue storage lensPoolCfg = StorageLibArbitrum.getAssetLensDataStorage().value[
+        StorageLibBaseV1.AssetLensDataValue storage lensPoolCfg = StorageLibBaseV1.getAssetLensDataStorage().value[
             asset
         ];
         return AmmSwapsLensLibBaseV1.getPnlPayFixed(iporOracle, lensPoolCfg.ammStorage, asset, swapId);
     }
 
     function getPnlReceiveFixed(address asset, uint256 swapId) external view override returns (int256) {
-        StorageLibArbitrum.AssetLensDataValue storage lensPoolCfg = StorageLibArbitrum.getAssetLensDataStorage().value[
+        StorageLibBaseV1.AssetLensDataValue storage lensPoolCfg = StorageLibBaseV1.getAssetLensDataStorage().value[
             asset
         ];
         return AmmSwapsLensLibBaseV1.getPnlReceiveFixed(iporOracle, lensPoolCfg.ammStorage, asset, swapId);
@@ -58,7 +57,7 @@ contract AmmSwapsLensArbitrum is IAmmSwapsLens {
     function getSoap(
         address asset
     ) external view override returns (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap) {
-        StorageLibArbitrum.AssetLensDataValue storage lensPoolCfg = StorageLibArbitrum.getAssetLensDataStorage().value[
+        StorageLibBaseV1.AssetLensDataValue storage lensPoolCfg = StorageLibBaseV1.getAssetLensDataStorage().value[
             asset
         ];
 
@@ -82,7 +81,7 @@ contract AmmSwapsLensArbitrum is IAmmSwapsLens {
 
         SwapLensPoolConfiguration memory poolCfg = _getSwapLensPoolConfiguration(asset);
 
-        address messageSigner = StorageLibArbitrum.getMessageSignerStorage().value;
+        address messageSigner = StorageLibBaseV1.getMessageSignerStorage().value;
 
         (uint256 indexValue, , ) = IIporOracle(iporOracle).getIndex(asset);
 
@@ -114,7 +113,7 @@ contract AmmSwapsLensArbitrum is IAmmSwapsLens {
     function getBalancesForOpenSwap(
         address asset
     ) external view returns (IporTypes.AmmBalancesForOpenSwapMemory memory) {
-        StorageLibArbitrum.AssetLensDataValue storage lensPoolCfg = StorageLibArbitrum.getAssetLensDataStorage().value[
+        StorageLibBaseV1.AssetLensDataValue storage lensPoolCfg = StorageLibBaseV1.getAssetLensDataStorage().value[
             asset
         ];
 
@@ -122,7 +121,7 @@ contract AmmSwapsLensArbitrum is IAmmSwapsLens {
     }
 
     function _getSwapLensPoolConfiguration(address asset_) internal view returns (SwapLensPoolConfiguration memory) {
-        StorageLibArbitrum.AssetLensDataValue memory lensPoolCfg = StorageLibArbitrum.getAssetLensDataStorage().value[
+        StorageLibBaseV1.AssetLensDataValue memory lensPoolCfg = StorageLibBaseV1.getAssetLensDataStorage().value[
             asset_
         ];
         return
