@@ -14,11 +14,10 @@ import "../../../libraries/AmmCloseSwapServicePoolConfigurationLib.sol";
 import "../../../base/types/AmmTypesBaseV1.sol";
 import "../../../base/amm/libraries/SwapLogicBaseV1.sol";
 import "../../../base/amm/libraries/SwapCloseLogicLibBaseV1.sol";
-import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
+import {StorageLibBaseV1} from "../../libraries/StorageLibBaseV1.sol";
 
-//TODO: remove?
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
-contract AmmCloseSwapLensArbitrum is IAmmCloseSwapLens {
+contract AmmCloseSwapLensBaseV1 is IAmmCloseSwapLens {
     using Address for address;
     using IporContractValidator for address;
     using SwapLogicBaseV1 for AmmTypesBaseV1.Swap;
@@ -33,7 +32,7 @@ contract AmmCloseSwapLensArbitrum is IAmmCloseSwapLens {
     function getAmmCloseSwapServicePoolConfiguration(
         address asset
     ) external view override returns (AmmCloseSwapServicePoolConfiguration memory) {
-        StorageLibArbitrum.AssetServicesValue memory servicesCfg = StorageLibArbitrum.getAssetServicesStorage().value[
+        StorageLibBaseV1.AssetServicesValue memory servicesCfg = StorageLibBaseV1.getAssetServicesStorage().value[
             asset
         ];
 
@@ -52,7 +51,7 @@ contract AmmCloseSwapLensArbitrum is IAmmCloseSwapLens {
         uint256 closeTimestamp,
         AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     ) external view override returns (AmmTypes.ClosingSwapDetails memory closingSwapDetails) {
-        StorageLibArbitrum.AssetServicesValue memory servicesCfg = StorageLibArbitrum.getAssetServicesStorage().value[
+        StorageLibBaseV1.AssetServicesValue memory servicesCfg = StorageLibBaseV1.getAssetServicesStorage().value[
             asset
         ];
 
@@ -111,7 +110,7 @@ contract AmmCloseSwapLensArbitrum is IAmmCloseSwapLens {
             ) = SwapCloseLogicLibBaseV1.calculateSwapUnwindWhenUnwindRequired(
                 AmmTypesBaseV1.UnwindParams({
                     asset: poolCfg.asset,
-                    messageSigner: StorageLibArbitrum.getMessageSignerStorage().value,
+                    messageSigner: StorageLibBaseV1.getMessageSignerStorage().value,
                     spread: poolCfg.spread,
                     ammStorage: poolCfg.ammStorage,
                     ammTreasury: poolCfg.ammTreasury,
