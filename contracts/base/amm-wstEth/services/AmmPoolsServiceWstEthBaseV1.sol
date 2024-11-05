@@ -15,8 +15,7 @@ import "../../../governance/AmmConfigurationManager.sol";
 import "../../../base/interfaces/IAmmTreasuryBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
-/// @deprecated - start using AmmPoolsServiceWstEthBaseV1
-contract AmmPoolsServiceWstEth is IAmmPoolsServiceWstEth {
+contract AmmPoolsServiceWstEthBaseV1 is IAmmPoolsServiceWstEth {
     using IporContractValidator for address;
     using SafeERC20 for IERC20;
     using AmmLib for AmmTypes.AmmPoolCoreModel;

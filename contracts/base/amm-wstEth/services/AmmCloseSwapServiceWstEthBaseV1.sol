@@ -7,8 +7,8 @@ import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 /// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
-/// @deprecated - start using AmmCloseSwapServiceWstEthBaseV1
-contract AmmCloseSwapServiceWstEth is AmmCloseSwapServiceBaseV1, IAmmCloseSwapServiceWstEth {
+/// @dev Close Swap Service for wstEth pool - no asset management support
+contract AmmCloseSwapServiceWstEthBaseV1 is AmmCloseSwapServiceBaseV1, IAmmCloseSwapServiceWstEth {
     using IporContractValidator for address;
 
     constructor(
