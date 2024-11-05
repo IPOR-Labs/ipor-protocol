@@ -4,7 +4,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 
 import "../../../interfaces/IAmmOpenSwapServiceWstEth.sol";
 import "../../../base/amm/services/AmmOpenSwapServiceBaseV1.sol";
-import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
+import {StorageLibBaseV1} from "../../libraries/StorageLibBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 /// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
@@ -147,7 +147,7 @@ contract AmmOpenSwapServiceWstEthBaseV1 is AmmOpenSwapServiceBaseV1, IAmmOpenSwa
     }
 
     function _getMessageSigner() internal view override returns (address) {
-        return StorageLibArbitrum.getMessageSignerStorage().value;
+        return StorageLibBaseV1.getMessageSignerStorage().value;
     }
 
     function _convertToAssetAmount(

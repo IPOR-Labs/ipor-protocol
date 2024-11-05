@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "../../../interfaces/IIpToken.sol";
 import "../../../interfaces/types/AmmTypes.sol";
-import "../interfaces/IAmmPoolsServiceWstEth.sol";
+import "../interfaces/IAmmPoolsServiceWstEthBaseV1.sol";
 import "../../../libraries/errors/AmmErrors.sol";
 import "../../../libraries/math/IporMath.sol";
 import "../../../libraries/StorageLib.sol";
@@ -15,7 +15,7 @@ import "../../../governance/AmmConfigurationManager.sol";
 import "../../../base/interfaces/IAmmTreasuryBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
-contract AmmPoolsServiceWstEthBaseV1 is IAmmPoolsServiceWstEth {
+contract AmmPoolsServiceWstEthBaseV1 is IAmmPoolsServiceWstEthBaseV1 {
     using IporContractValidator for address;
     using SafeERC20 for IERC20;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
@@ -67,7 +67,7 @@ contract AmmPoolsServiceWstEthBaseV1 is IAmmPoolsServiceWstEth {
 
         IIpToken(ipwstEth).mint(beneficiary, ipTokenAmount);
 
-        emit IAmmPoolsServiceWstEth.ProvideLiquidityWstEth(
+        emit IAmmPoolsServiceWstEthBaseV1.ProvideLiquidityWstEth(
             msg.sender,
             beneficiary,
             ammTreasuryWstEth,
@@ -98,7 +98,7 @@ contract AmmPoolsServiceWstEthBaseV1 is IAmmPoolsServiceWstEth {
 
         IERC20(wstEth).safeTransferFrom(ammTreasuryWstEth, beneficiary, amountToRedeem);
 
-        emit RedeemWstEth(
+        emit IAmmPoolsServiceWstEthBaseV1.RedeemWstEth(
             ammTreasuryWstEth,
             msg.sender,
             beneficiary,

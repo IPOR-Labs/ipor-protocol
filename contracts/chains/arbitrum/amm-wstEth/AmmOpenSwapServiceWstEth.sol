@@ -8,7 +8,7 @@ import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 /// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
-/// @deprecated - start using AmmOpenSwapServiceWstEthBaseV1
+/// @dev DEPRECATED - start using AmmOpenSwapServiceWstEthBaseV1
 contract AmmOpenSwapServiceWstEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServiceWstEth {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using IporContractValidator for address;

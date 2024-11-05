@@ -3,7 +3,7 @@ pragma solidity 0.8.26;
 
 import "../../../interfaces/IAmmCloseSwapServiceWstEth.sol";
 import "../../../base/amm/services/AmmCloseSwapServiceBaseV1.sol";
-import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
+import {StorageLibBaseV1} from "../../libraries/StorageLibBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 /// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
@@ -57,6 +57,6 @@ contract AmmCloseSwapServiceWstEthBaseV1 is AmmCloseSwapServiceBaseV1, IAmmClose
     }
 
     function _getMessageSigner() internal view override returns (address) {
-        return StorageLibArbitrum.getMessageSignerStorage().value;
+        return StorageLibBaseV1.getMessageSignerStorage().value;
     }
 }
