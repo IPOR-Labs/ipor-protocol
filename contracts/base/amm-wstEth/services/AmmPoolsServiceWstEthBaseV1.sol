@@ -29,23 +29,23 @@ contract AmmPoolsServiceWstEthBaseV1 is IAmmPoolsServiceWstEthBaseV1 {
     uint256 public immutable redeemFeeRateWstEth;
 
     constructor(
-        address wstEthInput,
-        address ipwstEthInput,
-        address ammTreasuryWstEthInput,
-        address ammStorageWstEthInput,
-        address iporOracleInput,
-        address iporProtocolRouterInput,
-        uint256 redeemFeeRateWstEthInput
+        address wstEth_,
+        address ipwstEth_,
+        address ammTreasuryWstEth_,
+        address ammStorageWstEth_,
+        address iporOracle_,
+        address iporProtocolRouter_,
+        uint256 redeemFeeRateWstEth_
     ) {
-        wstEth = wstEthInput.checkAddress();
-        ipwstEth = ipwstEthInput.checkAddress();
-        ammTreasuryWstEth = ammTreasuryWstEthInput.checkAddress();
-        ammStorageWstEth = ammStorageWstEthInput.checkAddress();
-        iporOracle = iporOracleInput.checkAddress();
-        iporProtocolRouter = iporProtocolRouterInput.checkAddress();
-        redeemFeeRateWstEth = redeemFeeRateWstEthInput;
+        wstEth = wstEth_.checkAddress();
+        ipwstEth = ipwstEth_.checkAddress();
+        ammTreasuryWstEth = ammTreasuryWstEth_.checkAddress();
+        ammStorageWstEth = ammStorageWstEth_.checkAddress();
+        iporOracle = iporOracle_.checkAddress();
+        iporProtocolRouter = iporProtocolRouter_.checkAddress();
+        redeemFeeRateWstEth = redeemFeeRateWstEth_;
 
-        require(redeemFeeRateWstEthInput <= 1e18, AmmPoolsErrors.CFG_INVALID_REDEEM_FEE_RATE);
+        require(redeemFeeRateWstEth_ <= 1e18, AmmPoolsErrors.CFG_INVALID_REDEEM_FEE_RATE);
     }
 
     function provideLiquidityWstEth(address beneficiary, uint256 wstEthAmount) external payable override {
