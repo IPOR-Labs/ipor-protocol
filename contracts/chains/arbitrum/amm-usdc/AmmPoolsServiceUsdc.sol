@@ -17,7 +17,6 @@ import "../../../base/interfaces/IAmmTreasuryBaseV1.sol";
 import {IAmmPoolsServiceUsdc} from "../interfaces/IAmmPoolsServiceUsdc.sol";
 import {AmmPoolsServiceBaseV1} from "../../../base/amm/services/AmmPoolsServiceBaseV1.sol";
 
-//TODO: remove?
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmPoolsServiceUsdc is IAmmPoolsServiceUsdc, AmmPoolsServiceBaseV1 {
     constructor(

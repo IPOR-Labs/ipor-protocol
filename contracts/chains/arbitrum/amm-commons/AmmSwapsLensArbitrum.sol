@@ -9,7 +9,6 @@ import "../../../libraries/RiskIndicatorsValidatorLib.sol";
 import "../../../libraries/AmmLib.sol";
 import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
 
-//TODO: remove?
 /// @dev It is not recommended to use lens contract directly, should be used only through IporProtocolRouter.
 contract AmmSwapsLensArbitrum is IAmmSwapsLens {
     using Address for address;

@@ -9,7 +9,6 @@ import {IporContractValidator} from "../../../libraries/IporContractValidator.so
 import "../../../interfaces/types/AmmTypes.sol";
 import "../../../base/interfaces/IAmmTreasuryBaseV1.sol";
 
-//TODO: remove?
 /// @dev It is not recommended to use lens contract directly, should be used only through IporProtocolRouter.
 contract AmmPoolsLensArbitrum is IAmmPoolsLensArbitrum {
     using IporContractValidator for address;

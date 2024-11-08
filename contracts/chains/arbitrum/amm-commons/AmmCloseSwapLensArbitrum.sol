@@ -16,7 +16,6 @@ import "../../../base/amm/libraries/SwapLogicBaseV1.sol";
 import "../../../base/amm/libraries/SwapCloseLogicLibBaseV1.sol";
 import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
 
-//TODO: remove?
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmCloseSwapLensArbitrum is IAmmCloseSwapLens {
     using Address for address;
