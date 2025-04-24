@@ -49,4 +49,8 @@ contract AmmPoolsServiceUsdcBaseV1 is IAmmPoolsServiceUsdcBaseV1, AmmPoolsServic
     function redeemFromAmmPoolUsdc(address beneficiary, uint256 ipTokenAmount) external {
         _redeem(beneficiary, ipTokenAmount);
     }
+
+    function rebalanceBetweenAmmTreasuryAndAssetManagementUsdc() external override {
+        _rebalanceBetweenAmmTreasuryAndAssetManagement();
+    }
 }

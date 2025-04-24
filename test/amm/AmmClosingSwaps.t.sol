@@ -17,6 +17,7 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
 
     function setUp() public {
+    
         _admin = address(this);
         _buyer = _getUserAddress(1);
         _community = _getUserAddress(2);
@@ -28,6 +29,89 @@ contract AmmClosingSwaps is TestCommons, DataUtils {
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE1;
         _cfg.openSwapServiceTestCase = BuilderUtils.AmmOpenSwapServiceTestCase.CASE3;
         _cfg.spread28DaysTestCase = BuilderUtils.Spread28DaysTestCase.CASE0;
+    }
+
+    /**
+* @dev This test verifies that a swap cannot be closed by a legitimate liquidator
+ *      if the swap beneficiary is a blacklisted address.
+ *
+ * Conditions:
+ * 1. Swap asset: USDT or USDC.
+ * 2. Swap beneficiary: Blacklisted address.
+ *
+ * Run this test using:
+ * ```
+ * forge test -vvvv --match-test testCannotCloseSwapByLiquidatorAfterMaturity
+ * ```
+ *
+ * Test files: https://drive.google.com/file/d/1TjVhquYDqCowjRs_NLMdNF8-nkZGvm3D/view?usp=sharing
+ *
+ */
+    function testCannotClosePayFixedAsLiquidatorAfterMaturity() public {
+        //given
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+        MockTestnetToken asset = _iporProtocol.asset;
+
+        uint256 liquidityAmount = 1_000_000 * 1e6;
+        uint256 totalAmount = 10_000 * 1e6;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
+
+        //
+        // This address is a banned address from https://dune.com/phabc/usdt---banned-addresses
+        //
+        address maliciousSwapBeneficiary = 0xcaCa5575eB423183bA4B6EE3aA9fc2cB488aEEEE;
+
+        asset.addToBlackList(maliciousSwapBeneficiary);
+
+        asset.approve(address(_iporProtocol.router), liquidityAmount);
+        _iporProtocol.ammPoolsService.provideLiquidityUsdt(_admin, liquidityAmount);
+
+        asset.transfer(_buyer, totalAmount);
+
+        vm.prank(_buyer);
+        asset.approve(address(_iporProtocol.router), totalAmount);
+
+        uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
+        uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
+        uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
+
+        vm.startPrank(_buyer);
+        uint256 swapId = _iporProtocol.ammOpenSwapService.openSwapPayFixed28daysUsdt(
+            maliciousSwapBeneficiary,   // @audit: Malicious user passes a banned address here.
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage,
+            getRiskIndicatorsInputs(0)
+        );
+        vm.stopPrank();
+
+        vm.warp(100 + 28 days + 1 seconds);
+
+        _iporProtocol.ammGovernanceService.addSwapLiquidator(address(_iporProtocol.asset), _liquidator);
+
+        uint256[] memory swapPfIds = new uint256[](1);
+        swapPfIds[0] = 1;
+        uint256[] memory swapRfIds = new uint256[](0);
+
+        //when
+        vm.startPrank(_liquidator);
+        _iporProtocol.ammCloseSwapServiceUsdt.closeSwapsUsdt(
+            _liquidator,
+            swapPfIds,
+            swapRfIds,
+            getCloseRiskIndicatorsInputs(address(_iporProtocol.asset), IporTypes.SwapTenor.DAYS_28)
+        );
+        vm.stopPrank();
+
+        //then
+        uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
+        uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
+        uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
+
+        // assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873);
+        // assertEq(adminBalanceAfter - adminBalanceBefore, 0);
+        assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
     function testShouldAddSwapLiquidatorAsIporOwner() public {
