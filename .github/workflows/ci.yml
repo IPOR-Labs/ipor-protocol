@@ -17,6 +17,7 @@ jobs:
     secrets:
       ETHEREUM_PROVIDER_URL: ${{ secrets.ETHEREUM_PROVIDER_URL }}
       ARBITRUM_PROVIDER_URL: ${{ secrets.ARBITRUM_PROVIDER_URL }}
+      BASE_PROVIDER_URL: ${{ secrets.BASE_PROVIDER_URL }}
     with:
       test-options: '--no-match-path "test/fork/*"'
       fork-test-options: '--match-path "test/fork/*"'
