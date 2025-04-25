@@ -56,7 +56,7 @@ interface IAmmGovernanceService {
     /// @param asset Address of asset representing specific pool
     /// @param newMaxLiquidityPoolBalance New max liquidity pool balance threshold. Value represented WITHOUT 18 decimals.
     /// @param newAutoRebalanceThreshold New auto rebalance threshold (for stablecoins represented in thousands). Value represented WITHOUT 18 decimals. For stablecoins value represents multiplication of 1000.
-    /// @param newAmmTreasuryAndAssetManagementRatio New AMM Treasury and Asset Management ratio, represented WITHOUT 18 decimals, value represents percentage with 2 decimals. Example: 65% = 6500, 99,99% = 9999
+    /// @param newAmmTreasuryAndAssetManagementRatio New AMM Treasury and Asset Management ratio, represented WITHOUT 18 decimals, value represents percentage with 2 decimals. Example: 65% = 6500, 99,99% = 9999. The value determines what percentage of total funds remains in AMM treasury, while the rest goes to asset management.
     function setAmmPoolsParams(
         address asset,
         uint32 newMaxLiquidityPoolBalance,

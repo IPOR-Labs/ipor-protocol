@@ -148,7 +148,7 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
         );
     }
 
-    function rebalanceBetweenAmmTreasuryAndAssetManagement() external {
+    function _rebalanceBetweenAmmTreasuryAndAssetManagement() internal virtual {
         require(
             AmmConfigurationManager.isAppointedToRebalanceInAmm(asset, msg.sender),
             AmmPoolsErrors.CALLER_NOT_APPOINTED_TO_REBALANCE

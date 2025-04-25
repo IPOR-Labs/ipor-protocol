@@ -7,6 +7,8 @@ on:
         required: true
       ARBITRUM_PROVIDER_URL:
         required: true
+      BASE_PROVIDER_URL:
+        required: true
 
     inputs:
 
@@ -59,8 +61,8 @@ jobs:
           node-version: ${{ inputs.node-version }}
 
       - name: Set up node_modules cache
-        # from tag: v4.0.2
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9
+        # from tag: v4.2.3
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
@@ -85,6 +87,7 @@ jobs:
         env:
           ETHEREUM_PROVIDER_URL: ${{ secrets.ETHEREUM_PROVIDER_URL }}
           ARBITRUM_PROVIDER_URL: ${{ secrets.ARBITRUM_PROVIDER_URL }}
+          BASE_PROVIDER_URL: ${{ secrets.BASE_PROVIDER_URL }}
         run: |
           forge test ${{ inputs.test-options }} -vvv
         id: test
@@ -94,6 +97,7 @@ jobs:
         env:
           ETHEREUM_PROVIDER_URL: ${{ secrets.ETHEREUM_PROVIDER_URL }}
           ARBITRUM_PROVIDER_URL: ${{ secrets.ARBITRUM_PROVIDER_URL }}
+          BASE_PROVIDER_URL: ${{ secrets.BASE_PROVIDER_URL }}
         run: |
           forge test ${{ inputs.fork-test-options }} --fork-url ${{ secrets.ETHEREUM_PROVIDER_URL }} -vvv
         id: fork-test
