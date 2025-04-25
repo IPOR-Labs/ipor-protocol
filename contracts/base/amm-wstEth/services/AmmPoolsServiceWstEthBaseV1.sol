@@ -15,6 +15,7 @@ import "../../../governance/AmmConfigurationManager.sol";
 import "../../../base/interfaces/IAmmTreasuryBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
+/// @dev Asset Management is NOT supported in this contract. Rebalancing between AMM Treasury and Asset Management is NOT supported in this contract.
 contract AmmPoolsServiceWstEthBaseV1 is IAmmPoolsServiceWstEthBaseV1 {
     using IporContractValidator for address;
     using SafeERC20 for IERC20;

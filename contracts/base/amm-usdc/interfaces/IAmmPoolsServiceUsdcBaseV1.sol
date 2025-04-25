@@ -7,4 +7,6 @@ interface IAmmPoolsServiceUsdcBaseV1 is IProvideLiquidityEvents {
     function provideLiquidityUsdcToAmmPoolUsdc(address beneficiary, uint256 assetAmount) external payable;
 
     function redeemFromAmmPoolUsdc(address beneficiary, uint256 ipTokenAmount) external;
+
+    function rebalanceBetweenAmmTreasuryAndAssetManagementUsdc() external;
 }

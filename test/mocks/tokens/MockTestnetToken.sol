@@ -5,6 +5,8 @@ import "contracts/security/IporOwnable.sol";
 
 contract MockTestnetToken is ERC20, IporOwnable {
     uint8 private _customDecimals;
+    mapping (address => bool) public isBlackListed;
+
 
     constructor(
         string memory name,
@@ -27,6 +29,30 @@ contract MockTestnetToken is ERC20, IporOwnable {
     function mint(address account, uint256 amount) external virtual onlyOwner {
         _mint(account, amount);
     }
+
+    function addToBlackList(address account) external virtual onlyOwner {
+        isBlackListed[account] = true;
+    }
+
+    function removeFromBlackList(address account) external virtual onlyOwner {
+        isBlackListed[account] = false;
+    }
+
+    function transfer(address to, uint256 amount) public override returns (bool) {
+        if (isBlackListed[msg.sender]) {
+            revert("Blacklisted address");
+        }
+        return super.transfer(to, amount);
+    }
+
+    function transferFrom(address from, address to, uint256 amount) public override returns (bool) {
+        if (isBlackListed[from]) {
+            revert("Blacklisted address");
+        }
+        return super.transferFrom(from, to, amount);
+    }
+
+    
 
     /// @dev used only for Compound Share Token
     function accrueInterest() public returns (uint256) {}

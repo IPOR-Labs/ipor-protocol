@@ -7,6 +7,8 @@ on:
         required: true
       ARBITRUM_PROVIDER_URL:
         required: true
+      BASE_PROVIDER_URL:
+        required: true
 
     inputs:
 
@@ -85,6 +87,7 @@ jobs:
         env:
           ETHEREUM_PROVIDER_URL: ${{ secrets.ETHEREUM_PROVIDER_URL }}
           ARBITRUM_PROVIDER_URL: ${{ secrets.ARBITRUM_PROVIDER_URL }}
+          BASE_PROVIDER_URL: ${{ secrets.BASE_PROVIDER_URL }}
         run: |
           forge test ${{ inputs.test-options }} -vvv
         id: test
@@ -94,6 +97,7 @@ jobs:
         env:
           ETHEREUM_PROVIDER_URL: ${{ secrets.ETHEREUM_PROVIDER_URL }}
           ARBITRUM_PROVIDER_URL: ${{ secrets.ARBITRUM_PROVIDER_URL }}
+          BASE_PROVIDER_URL: ${{ secrets.BASE_PROVIDER_URL }}
         run: |
           forge test ${{ inputs.fork-test-options }} --fork-url ${{ secrets.ETHEREUM_PROVIDER_URL }} -vvv
         id: fork-test
