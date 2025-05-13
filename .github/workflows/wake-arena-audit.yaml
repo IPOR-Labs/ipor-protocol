@@ -3,7 +3,7 @@ run-name: ${{ github.actor }} prepared Wake Arena PR
 on:
   push:
     branches:
-      - main #todo change to your main branch
+      - develop
 jobs:
   perform-audit:
     runs-on: ubuntu-latest
