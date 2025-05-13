@@ -1,0 +1,22 @@
+name: Wake Arena Audit
+run-name: ${{ github.actor }} prepared Wake Arena PR
+on:
+  push:
+    branches:
+      - develop
+jobs:
+  perform-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 
+      - name: Install dependencies
+        run: npm install # todo check if the command to install dependencies is correct
+      - name: Setup Wake
+        uses: Ackee-Blockchain/wake-setup-action@0.1.0
+      - name: Setup Wake Arena
+        uses: Ackee-Blockchain/wake-arena-setup-action@0.1.1
+      - name: Perform audit
+        env:
+          WAKE_ARENA_API_KEY: ${{ secrets.WAKE_ARENA_API_KEY }}
+        run: wake-arena check --name "${{ github.event.head_commit.message }}" --project "FsLgbYu_"
