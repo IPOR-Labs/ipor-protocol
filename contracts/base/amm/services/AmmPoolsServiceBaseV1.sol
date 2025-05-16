@@ -194,7 +194,7 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
             ipToken: ipToken,
             ammStorage: ammStorage,
             ammTreasury: ammTreasury,
-            assetManagement: address(0),
+            assetManagement: ammAssetManagement,
             iporOracle: iporOracle
         });
         return model.getExchangeRate(actualLiquidityPoolBalance);
