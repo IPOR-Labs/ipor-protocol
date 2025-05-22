@@ -27,7 +27,6 @@ contract AmmStorageBaseV1 is
 {
     using IporContractValidator for address;
     using SafeCast for uint256;
-    using SafeCast for int256;
     using SoapIndicatorRebalanceLogic for AmmStorageTypes.SoapIndicators;
 
     /// @dev to achieve 18 decimals precision we multiply by 1e12 because for stETH pool liquidationDepositAmount is represented in 6 decimals in storage.

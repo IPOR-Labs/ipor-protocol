@@ -7,13 +7,9 @@ import {IERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 import {IProvideLiquidityEvents} from "../../../interfaces/IProvideLiquidityEvents.sol";
 import {IAmmTreasuryBaseV2} from "../../../base/interfaces/IAmmTreasuryBaseV2.sol";
-import "../../../interfaces/types/IporTypes.sol";
 import "../../../interfaces/types/AmmTypes.sol";
 import "../../../interfaces/IIpToken.sol";
-import "../../../interfaces/IAmmTreasury.sol";
-import "../../../interfaces/IAmmPoolsService.sol";
 import "../../../interfaces/IAmmStorage.sol";
-import "../../../libraries/Constants.sol";
 import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/errors/AmmErrors.sol";
 import "../../../libraries/errors/AmmPoolsErrors.sol";

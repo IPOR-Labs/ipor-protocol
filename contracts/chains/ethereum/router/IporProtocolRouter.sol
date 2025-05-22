@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.26;
 
-import "@openzeppelin/contracts/utils/Address.sol";
-
 import "../../../interfaces/IAmmSwapsLens.sol";
 import "../../../interfaces/IAmmPoolsLens.sol";
 import "../../../interfaces/IAssetManagementLens.sol";
@@ -33,7 +31,6 @@ import "../../../amm-usdm/interfaces/IAmmPoolsLensUsdm.sol";
 
 /// @title Entry point for IPOR protocol
 contract IporProtocolRouter is IporProtocolRouterAbstract {
-    using Address for address;
     using IporContractValidator for address;
 
     address public immutable ammSwapsLens;

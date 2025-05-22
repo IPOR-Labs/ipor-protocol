@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.26;
-import "@openzeppelin/contracts/utils/Address.sol";
 
 import "../../../interfaces/IIporOracle.sol";
 import "../../interfaces/IAmmTreasuryBaseV1.sol";
@@ -16,7 +15,6 @@ import "../../../base/interfaces/IAmmStorageBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 abstract contract AmmOpenSwapServiceBaseV1 {
-    using Address for address;
     using IporContractValidator for address;
     using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
 

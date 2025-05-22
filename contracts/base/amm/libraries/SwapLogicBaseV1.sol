@@ -13,7 +13,6 @@ import "../../types/AmmTypesBaseV1.sol";
 library SwapLogicBaseV1 {
     using SafeCast for uint256;
     using InterestRates for uint256;
-    using InterestRates for int256;
 
     /// @notice Calculates core amounts related with swap
     /// @param tenor swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days

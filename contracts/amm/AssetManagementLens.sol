@@ -3,7 +3,6 @@ pragma solidity 0.8.26;
 
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 import "../interfaces/IAssetManagementLens.sol";
-import "../interfaces/IAssetManagement.sol";
 import "../libraries/errors/IporErrors.sol";
 import {IporMath} from "../libraries/math/IporMath.sol";
 import "../libraries/IporContractValidator.sol";

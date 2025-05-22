@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.26;
 
-import {SafeCast} from "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import {IporTypes} from "../../interfaces/types/IporTypes.sol";
 import {AmmTypes} from "../../interfaces/types/AmmTypes.sol";
 import {IporContractValidator} from "../../libraries/IporContractValidator.sol";
@@ -25,7 +24,6 @@ import {AmmErrors} from "../../libraries/errors/AmmErrors.sol";
 abstract contract SpreadBaseV2 is IporOwnable, ISpreadBaseV1 {
     error UnknownTenor(IporTypes.SwapTenor tenor, string errorCode, string methodName);
     using IporContractValidator for address;
-    using SafeCast for uint256;
 
     address public immutable asset;
     address public immutable iporProtocolRouter;
