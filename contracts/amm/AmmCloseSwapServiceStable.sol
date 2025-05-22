@@ -15,7 +15,6 @@ import "../libraries/math/IporMath.sol";
 import "../libraries/IporContractValidator.sol";
 import "../libraries/AmmLib.sol";
 import "../libraries/AssetManagementLogic.sol";
-import "../libraries/RiskIndicatorsValidatorLib.sol";
 import "../libraries/AmmCloseSwapServicePoolConfigurationLib.sol";
 import "../governance/AmmConfigurationManager.sol";
 import "../base/amm/libraries/SwapLogicBaseV1.sol";
@@ -33,7 +32,6 @@ abstract contract AmmCloseSwapServiceStable is IAmmCloseSwapService {
     using SafeCast for int256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
-    using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
     using AmmCloseSwapServicePoolConfigurationLib for IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration;
 
     address internal immutable _asset;

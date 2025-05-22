@@ -9,7 +9,6 @@ import {StorageLibBaseV1} from "../../libraries/StorageLibBaseV1.sol";
 /// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
 /// @dev Close Swap Service for wstEth pool - Asset Management IS NOT supported in this contract.
 contract AmmCloseSwapServiceWstEthBaseV1 is AmmCloseSwapServiceBaseV1, IAmmCloseSwapServiceWstEth {
-    using IporContractValidator for address;
 
     constructor(
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,

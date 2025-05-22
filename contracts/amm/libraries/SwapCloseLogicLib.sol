@@ -9,9 +9,7 @@ import "../../base/amm/libraries/SwapCloseLogicLibBaseV1.sol";
 
 library SwapCloseLogicLib {
     using SafeCast for uint256;
-    using SafeCast for int256;
     using InterestRates for uint256;
-    using InterestRates for int256;
     using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
 
     /// @notice Calculate swap unwind when unwind is required.

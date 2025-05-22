@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.26;
 
-import "@openzeppelin/contracts/utils/Address.sol";
-
 import "../../../interfaces/types/IporTypes.sol";
 import "../../../interfaces/types/AmmTypes.sol";
 import "../../../interfaces/IIporOracle.sol";
@@ -19,7 +17,6 @@ import "../../../base/amm/services/AmmCloseSwapServiceBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmCloseSwapLens is IAmmCloseSwapLens {
-    using Address for address;
     using IporContractValidator for address;
     using SwapLogicBaseV1 for AmmTypesBaseV1.Swap;
     using AmmCloseSwapServicePoolConfigurationLib for IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration;

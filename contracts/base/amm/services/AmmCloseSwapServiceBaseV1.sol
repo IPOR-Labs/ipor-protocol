@@ -30,7 +30,6 @@ abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SwapLogicBaseV1 for AmmTypesBaseV1.Swap;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
-    using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
 
     address public immutable asset;
     uint256 public immutable decimals;

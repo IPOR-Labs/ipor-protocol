@@ -26,7 +26,6 @@ abstract contract SpreadBaseV2 is IporOwnable, ISpreadBaseV1 {
     error UnknownTenor(IporTypes.SwapTenor tenor, string errorCode, string methodName);
     using IporContractValidator for address;
     using SafeCast for uint256;
-    using SafeCast for int256;
 
     address public immutable asset;
     address public immutable iporProtocolRouter;

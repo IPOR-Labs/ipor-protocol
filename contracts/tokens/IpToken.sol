@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.26;
 
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../interfaces/IIpToken.sol";
 import "../libraries/errors/IporErrors.sol";
@@ -10,7 +9,6 @@ import "../libraries/errors/AmmPoolsErrors.sol";
 import "../security/IporOwnable.sol";
 
 contract IpToken is IporOwnable, IIpToken, ERC20 {
-    using SafeERC20 for IERC20;
 
     address private immutable _asset;
 

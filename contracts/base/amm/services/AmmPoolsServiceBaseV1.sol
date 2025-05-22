@@ -29,8 +29,6 @@ import "../../../governance/AmmConfigurationManager.sol";
 contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
     using IporContractValidator for address;
     using SafeCast for int256;
-    using SafeCast for uint256;
-    using SafeCast for uint32;
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
 

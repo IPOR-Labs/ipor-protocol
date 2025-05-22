@@ -5,7 +5,6 @@ import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {IProxyImplementation} from "../interfaces/IProxyImplementation.sol";
 import {IporErrors} from "../libraries/errors/IporErrors.sol";
-import {IporContractValidator} from "../libraries/IporContractValidator.sol";
 import {AccessControl} from "./AccessControl.sol";
 import {StorageLib} from "../libraries/StorageLib.sol";
 import {OwnerManager} from "../security/OwnerManager.sol";
@@ -14,7 +13,6 @@ import {StorageSlotUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/
 /// @title Entry point for IPOR protocol
 abstract contract IporProtocolRouterAbstract is UUPSUpgradeable, AccessControl, IProxyImplementation {
     using Address for address;
-    using IporContractValidator for address;
 
     uint256 private constant SINGLE_OPERATION = 0;
     uint256 private constant BATCH_OPERATION = 1;

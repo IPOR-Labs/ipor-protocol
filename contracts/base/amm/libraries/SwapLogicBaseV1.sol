@@ -12,10 +12,8 @@ import "../../types/AmmTypesBaseV1.sol";
 /// @title Core logic for IPOR Swap
 library SwapLogicBaseV1 {
     using SafeCast for uint256;
-    using SafeCast for int256;
     using InterestRates for uint256;
     using InterestRates for int256;
-    using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
 
     /// @notice Calculates core amounts related with swap
     /// @param tenor swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days

@@ -10,7 +10,6 @@ import {StorageLibArbitrum} from "../libraries/StorageLibArbitrum.sol";
 /// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
 contract AmmOpenSwapServiceWstEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServiceWstEth {
     using SafeERC20Upgradeable for IERC20Upgradeable;
-    using IporContractValidator for address;
 
     modifier onlySupportedInputAsset(address inputAsset) {
         if (inputAsset == asset) {
