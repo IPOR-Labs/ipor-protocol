@@ -49,7 +49,7 @@ contract AmmPoolsServiceWstEth is IAmmPoolsServiceWstEth {
     }
 
     function provideLiquidityWstEth(address beneficiary, uint256 wstEthAmount) external payable override {
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(wstEth);
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(wstEth);
 
         uint256 actualLiquidityPoolBalance = IAmmTreasuryBaseV1(ammTreasuryWstEth).getLiquidityPoolBalance();
         uint256 newPoolBalance = actualLiquidityPoolBalance + wstEthAmount;

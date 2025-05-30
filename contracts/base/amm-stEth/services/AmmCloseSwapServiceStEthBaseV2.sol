@@ -1,23 +1,28 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.26;
 
-import "../interfaces/IAmmCloseSwapServiceStEth.sol";
-import "../base/amm/services/AmmCloseSwapServiceBaseV1.sol";
+import {IAmmCloseSwapServiceStEth} from "../../../interfaces/IAmmCloseSwapServiceStEth.sol";
+import {AmmCloseSwapServiceBaseV2} from "../../amm/services/AmmCloseSwapServiceBaseV2.sol";
+
+import {IporContractValidator} from "../../../libraries/IporContractValidator.sol";
+
+import {IAmmCloseSwapLens} from "../../../interfaces/IAmmCloseSwapLens.sol";
+
+import {AmmTypes} from "../../../interfaces/types/AmmTypes.sol";
+
+import {StorageLibBaseV1} from "../../libraries/StorageLibBaseV1.sol";
+
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 /// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
-contract AmmCloseSwapServiceStEth is AmmCloseSwapServiceBaseV1, IAmmCloseSwapServiceStEth {
+//TODO: are we going with v1 or v2?
+contract AmmCloseSwapServiceStEthBaseV2 is AmmCloseSwapServiceBaseV2, IAmmCloseSwapServiceStEth {
     using IporContractValidator for address;
-
-    address public immutable messageSigner;
 
     constructor(
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
-        address iporOracleInput,
-        address messageSignerInput
-    ) AmmCloseSwapServiceBaseV1(poolCfg, iporOracleInput) {
-        messageSigner = messageSignerInput.checkAddress();
-    }
+        address iporOracle_
+    ) AmmCloseSwapServiceBaseV2(poolCfg, iporOracle_) {}
 
     function closeSwapsStEth(
         address beneficiary,
@@ -60,6 +65,6 @@ contract AmmCloseSwapServiceStEth is AmmCloseSwapServiceBaseV1, IAmmCloseSwapSer
     }
 
     function _getMessageSigner() internal view override returns (address) {
-        return messageSigner;
+        return StorageLibBaseV1.getMessageSignerStorage().value;
     }
 }

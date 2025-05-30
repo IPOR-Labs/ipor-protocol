@@ -571,7 +571,7 @@ abstract contract AmmCloseSwapServiceStable is IAmmCloseSwapService {
 
                 IporTypes.AmmBalancesMemory memory balance = model.getAccruedBalance();
 
-                StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
+                StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
                     poolCfg.asset
                 );
 

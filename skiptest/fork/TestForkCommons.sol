@@ -12,7 +12,6 @@ import "../../contracts/interfaces/IAmmOpenSwapLens.sol";
 import "../../contracts/interfaces/IAmmCloseSwapLens.sol";
 import "../../contracts/chains/ethereum/amm-commons/AmmSwapsLens.sol";
 import "../../contracts/amm/AmmPoolsLens.sol";
-import "../../contracts/amm-eth/AmmPoolsLensStEth.sol";
 import "../../contracts/amm/AssetManagementLens.sol";
 import "../../contracts/amm/spread/Spread28Days.sol";
 import "../../contracts/amm/spread/Spread60Days.sol";
@@ -21,11 +20,11 @@ import "../../contracts/amm/spread/SpreadCloseSwapService.sol";
 import "../../contracts/amm/spread/SpreadStorageLens.sol";
 import "../../contracts/amm/spread/SpreadRouter.sol";
 import "../../contracts/amm/AmmOpenSwapService.sol";
-import "../../contracts/amm-eth/AmmOpenSwapServiceStEth.sol";
+import "../../contracts/chains/ethereum/amm-services/AmmOpenSwapServiceStEth.sol";
 import "../../contracts/amm/AmmCloseSwapServiceUsdt.sol";
 import "../../contracts/amm/AmmCloseSwapServiceUsdc.sol";
 import "../../contracts/amm/AmmCloseSwapServiceDai.sol";
-import "../../contracts/amm-eth/AmmCloseSwapServiceStEth.sol";
+import {AmmCloseSwapServiceStEthBaseV2} from "../../contracts/base/amm-stEth/services/AmmCloseSwapServiceStEthBaseV2.sol";
 import "../../contracts/chains/ethereum/amm-commons/AmmCloseSwapLens.sol";
 import "../../contracts/amm/AmmPoolsService.sol";
 import "../../contracts/chains/ethereum/amm-commons/AmmGovernanceService.sol";
@@ -384,9 +383,9 @@ contract TestForkCommons is Test {
     }
 
     function _createAmmPoolsLensStEth() private {
-        ammPoolsLensStEth = address(
-            new AmmPoolsLensStEth(stETH, ipstETH, ammTreasuryProxyStEth, ammStorageProxyStEth, iporOracleProxy)
-        );
+//        ammPoolsLensStEth = address(
+//            new AmmPoolsLensStEth(stETH, ipstETH, ammTreasuryProxyStEth, ammStorageProxyStEth, iporOracleProxy)
+//        );
     }
 
     function _createNewAmmPoolsServiceStEth() private {
@@ -610,7 +609,7 @@ contract TestForkCommons is Test {
             });
 
         ammOpenSwapServiceStEth = address(
-            new AmmOpenSwapServiceStEth(cfg, iporOracleProxy, messageSignerAddress, wETH, wstETH)
+            new AmmOpenSwapServiceStEth(cfg, iporOracleProxy, wETH, wstETH)
         );
     }
 
@@ -632,7 +631,7 @@ contract TestForkCommons is Test {
             });
 
         ammOpenSwapServiceStEth = address(
-            new AmmOpenSwapServiceStEth(cfg, iporOracleProxy, messageSignerAddress, wETH, wstETH)
+            new AmmOpenSwapServiceStEth(cfg, iporOracleProxy, wETH, wstETH)
         );
     }
 
@@ -654,7 +653,7 @@ contract TestForkCommons is Test {
             });
 
         ammOpenSwapServiceStEth = address(
-            new AmmOpenSwapServiceStEth(cfg, iporOracleProxy, messageSignerAddress, wETH, wstETH)
+            new AmmOpenSwapServiceStEth(cfg, iporOracleProxy, wETH, wstETH)
         );
     }
 
@@ -839,7 +838,7 @@ contract TestForkCommons is Test {
             });
 
         ammCloseSwapServiceStEth = address(
-            new AmmCloseSwapServiceStEth(stEthConfig, iporOracleProxy, messageSignerAddress)
+            new AmmCloseSwapServiceStEthBaseV2(stEthConfig, iporOracleProxy)
         );
     }
 
@@ -868,7 +867,7 @@ contract TestForkCommons is Test {
             });
 
         ammCloseSwapServiceStEth = address(
-            new AmmCloseSwapServiceStEth(stEthConfig, iporOracleProxy, messageSignerAddress)
+            new AmmCloseSwapServiceStEthBaseV2(stEthConfig, iporOracleProxy)
         );
     }
 

@@ -22,10 +22,10 @@ import "./IAmmGovernanceLens.sol";
 import "./IPowerTokenStakeService.sol";
 import "./IPowerTokenFlowsService.sol";
 import "./ISwapEventsBaseV1.sol";
-import "../amm-eth/interfaces/IAmmPoolsLensStEth.sol";
+// import "../amm-eth/interfaces/IAmmPoolsLensStEth.sol";
 import "../amm-eth/interfaces/IAmmPoolsServiceStEth.sol";
 import "../amm-weEth/interfaces/IAmmPoolsServiceWeEth.sol";
-import "../amm-weEth/interfaces/IAmmPoolsLensWeEth.sol";
+// import "../amm-weEth/interfaces/IAmmPoolsLensWeEth.sol";
 import "../amm-usdm/interfaces/IAmmPoolsLensUsdm.sol";
 import "../amm-usdm/interfaces/IAmmPoolsServiceUsdm.sol";
 import "./IAmmOpenSwapServiceStEth.sol";
@@ -43,8 +43,7 @@ interface IIporProtocol is
     IAssetManagementLens,
     ILiquidityMiningLens,
     IPowerTokenLens,
-    IAmmPoolsLensStEth,
-    IAmmPoolsLensWeEth,
+    
     IAmmOpenSwapService,
     IAmmOpenSwapServiceStEth,
     IAmmCloseSwapServiceUsdt,

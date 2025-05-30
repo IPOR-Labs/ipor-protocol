@@ -158,7 +158,7 @@ contract AmmPoolsService is IAmmPoolsService {
 
         AmmPoolsServicePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
             poolCfg.asset
         );
 
@@ -208,7 +208,7 @@ contract AmmPoolsService is IAmmPoolsService {
 
     function _provideLiquidity(address asset, address beneficiary, uint256 assetAmount) internal {
         AmmPoolsServicePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
             poolCfg.asset
         );
         AmmTypes.AmmPoolCoreModel memory model;
@@ -401,7 +401,7 @@ contract AmmPoolsService is IAmmPoolsService {
 
     function _rebalanceIfNeededAfterProvideLiquidity(
         AmmPoolsServicePoolConfiguration memory poolCfg,
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg,
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg,
         uint256 vaultBalance,
         uint256 wadOperationAmount
     ) internal {
@@ -436,7 +436,7 @@ contract AmmPoolsService is IAmmPoolsService {
         uint256 vaultBalance,
         uint256 wadOperationAmount
     ) internal {
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
             poolCfg.asset
         );
 

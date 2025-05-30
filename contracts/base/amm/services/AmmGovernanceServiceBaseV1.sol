@@ -222,7 +222,7 @@ contract AmmGovernanceServiceBaseV1 is
     }
 
     function getAmmPoolsParams(address asset) external view override returns (AmmPoolsParamsConfiguration memory cfg) {
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(asset);
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(asset);
         cfg = AmmPoolsParamsConfiguration({
             maxLiquidityPoolBalance: uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
             autoRebalanceThreshold: ammPoolsParamsCfg.autoRebalanceThreshold,

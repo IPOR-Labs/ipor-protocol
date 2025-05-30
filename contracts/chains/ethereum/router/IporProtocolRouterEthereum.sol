@@ -23,41 +23,51 @@ import "../../../interfaces/IPowerTokenFlowsService.sol";
 import "../../../interfaces/IPowerTokenStakeService.sol";
 import "../../../amm-eth/interfaces/IAmmPoolsServiceStEth.sol";
 import "../../../amm-weEth/interfaces/IAmmPoolsServiceWeEth.sol";
-import "../../../amm-eth/interfaces/IAmmPoolsLensStEth.sol";
-import "../../../amm-weEth/interfaces/IAmmPoolsLensWeEth.sol";
+// import "../../../amm-eth/interfaces/IAmmPoolsLensStEth.sol";
+// import "../../../amm-weEth/interfaces/IAmmPoolsLensWeEth.sol";
 import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/IporContractValidator.sol";
 import "../../../router/IporProtocolRouterAbstract.sol";
 import "../../../amm-usdm/interfaces/IAmmPoolsServiceUsdm.sol";
 import "../../../amm-usdm/interfaces/IAmmPoolsLensUsdm.sol";
 
-/// @title Entry point for IPOR protocol
-contract IporProtocolRouter is IporProtocolRouterAbstract {
+/// @title Entry point for IPOR protocol on Ethereum chain
+contract IporProtocolRouterEthereum is IporProtocolRouterAbstract {
     using Address for address;
     using IporContractValidator for address;
 
     address public immutable ammSwapsLens;
     address public immutable ammPoolsLens;
+    address public immutable ammCloseSwapLens;
+    address public immutable ammGovernanceService;
+
+    address public immutable flowService;
+    address public immutable stakeService;
+    address public immutable powerTokenLens;
+    address public immutable liquidityMiningLens;
+
     address public immutable assetManagementLens;
     address public immutable ammOpenSwapService;
     address public immutable ammOpenSwapServiceStEth;
     address public immutable ammCloseSwapServiceUsdt;
     address public immutable ammCloseSwapServiceUsdc;
     address public immutable ammCloseSwapServiceDai;
-    address public immutable ammCloseSwapServiceStEth;
-    address public immutable ammCloseSwapLens;
+
+
     address public immutable ammPoolsService;
-    address public immutable ammGovernanceService;
-    address public immutable liquidityMiningLens;
-    address public immutable powerTokenLens;
-    address public immutable flowService;
-    address public immutable stakeService;
+
+    address public immutable ammCloseSwapServiceStEth;
     address public immutable ammPoolsServiceStEth;
     address public immutable ammPoolsLensStEth;
+
+
     address public immutable ammPoolsServiceWeEth;
     address public immutable ammPoolsLensWeEth;
     address public immutable ammPoolsServiceUsdm;
     address public immutable ammPoolsLensUsdm;
+
+    address public immutable stEth;
+    address public immutable weEth;
 
     struct DeployedContracts {
         address ammSwapsLens;
@@ -358,10 +368,10 @@ contract IporProtocolRouter is IporProtocolRouterAbstract {
             sig == IAmmCloseSwapLens.getClosingSwapDetails.selector
         ) {
             return ammCloseSwapLens;
-        } else if (sig == IAmmPoolsLensStEth.getIpstEthExchangeRate.selector) {
-            return ammPoolsLensStEth;
-        } else if (sig == IAmmPoolsLensWeEth.getIpWeEthExchangeRate.selector) {
-            return ammPoolsLensWeEth;
+        // } else if (sig == IAmmPoolsLensStEth.getIpstEthExchangeRate.selector) {
+        //     return ammPoolsLensStEth;
+        // } else if (sig == IAmmPoolsLensWeEth.getIpWeEthExchangeRate.selector) {
+        //     return ammPoolsLensWeEth;
         } else if (sig == IAmmPoolsLensUsdm.getIpUsdmExchangeRate.selector) {
             return ammPoolsLensUsdm;
         } else if (sig == IAmmPoolsService.getAmmPoolServiceConfiguration.selector) {

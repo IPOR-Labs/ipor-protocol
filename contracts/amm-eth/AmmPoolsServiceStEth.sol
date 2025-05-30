@@ -53,7 +53,7 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
     }
 
     function provideLiquidityStEth(address beneficiary, uint256 stEthAmount) external payable override {
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
 
         uint256 actualLiquidityPoolBalance = IAmmTreasuryBaseV1(ammTreasuryStEth).getLiquidityPoolBalance();
         uint256 newPoolBalance = actualLiquidityPoolBalance + stEthAmount;
@@ -84,7 +84,7 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
     function provideLiquidityWEth(address beneficiary, uint256 wEthAmount) external payable override {
         require(wEthAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
         uint256 actualLiquidityPoolBalance = IAmmTreasuryBaseV1(ammTreasuryStEth).getLiquidityPoolBalance();
         uint256 newPoolBalance = wEthAmount + actualLiquidityPoolBalance;
 
@@ -103,7 +103,7 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
         require(ethAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
         require(msg.value > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
         uint256 actualLiquidityPoolBalance = IAmmTreasuryBaseV1(ammTreasuryStEth).getLiquidityPoolBalance();
         uint256 newPoolBalance = ethAmount + actualLiquidityPoolBalance;
 

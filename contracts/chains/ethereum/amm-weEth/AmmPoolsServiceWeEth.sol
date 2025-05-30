@@ -3,20 +3,21 @@ pragma solidity 0.8.26;
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import "../interfaces/IIpToken.sol";
-import "../interfaces/types/AmmTypes.sol";
-import "../libraries/errors/AmmErrors.sol";
-import "../libraries/math/IporMath.sol";
-import "../libraries/StorageLib.sol";
-import "../libraries/IporContractValidator.sol";
-import "../libraries/AmmLib.sol";
-import "../libraries/ProvideLiquidityEvents.sol";
-import "../governance/AmmConfigurationManager.sol";
-import "../base/interfaces/IAmmTreasuryBaseV1.sol";
-import {IAmmPoolsServiceWeEth} from "./interfaces/IAmmPoolsServiceWeEth.sol";
-import {IWeEth} from "./interfaces/IWeEth.sol";
-import {IWETH} from "./interfaces/IWETH.sol";
-import {IEEthLiquidityPool} from "./interfaces/IEEthLiquidityPool.sol";
+import "../../../interfaces/IIpToken.sol";
+import "../../../interfaces/types/AmmTypes.sol";
+import "../../../libraries/errors/AmmErrors.sol";
+import "../../../libraries/math/IporMath.sol";
+
+import "../../../libraries/IporContractValidator.sol";
+import "../../../libraries/AmmLib.sol";
+import "../../../libraries/ProvideLiquidityEvents.sol";
+import "../../../governance/AmmConfigurationManager.sol";
+import "../../../base/interfaces/IAmmTreasuryBaseV1.sol";
+import "../../../amm-weEth/interfaces/IAmmPoolsServiceWeEth.sol";
+import "../../../amm-weEth/interfaces/IWeEth.sol";
+import "../../../amm-weEth/interfaces/IWETH.sol";
+import "../../../amm-weEth/interfaces/IEEthLiquidityPool.sol";
+import "../../../base/libraries/StorageLibBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmPoolsServiceWeEth is IAmmPoolsServiceWeEth {
@@ -175,7 +176,7 @@ contract AmmPoolsServiceWeEth is IAmmPoolsServiceWeEth {
         uint256 weEthAmount,
         address weEthFrom
     ) internal returns (uint256 ipTokenAmount) {
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(weEth);
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(weEth);
 
         uint256 actualLiquidityPoolBalance = IAmmTreasuryBaseV1(ammTreasuryWeEth).getLiquidityPoolBalance();
         uint256 newPoolBalance = actualLiquidityPoolBalance + weEthAmount;

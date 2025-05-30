@@ -6,7 +6,6 @@ import "forge-std/Test.sol";
 import "../mocks/EmptyRouterImplementation.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/amm-eth/AmmPoolsServiceStEth.sol";
-import "../../contracts/amm-eth/AmmPoolsLensStEth.sol";
 import "../../contracts/interfaces/IAmmGovernanceLens.sol";
 import "../../contracts/chains/ethereum/amm-commons/AmmGovernanceService.sol";
 import "../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
@@ -121,10 +120,10 @@ contract TestEthMarketCommons is Test {
     }
 
     function _createAmmPoolsLensStEth() private {
-        vm.startPrank(owner);
-        AmmPoolsLensStEth lens = new AmmPoolsLensStEth(stEth, ipstEth, ammTreasuryStEth, ammStorageStEth, iporOracle);
-        ammPoolsLensStEth = address(lens);
-        vm.stopPrank();
+//        vm.startPrank(owner);
+//        AmmPoolsLensStEth lens = new AmmPoolsLensStEth(stEth, ipstEth, ammTreasuryStEth, ammStorageStEth, iporOracle);
+//        ammPoolsLensStEth = address(lens);
+//        vm.stopPrank();
     }
 
     function _createAmmGovernanceService() private {

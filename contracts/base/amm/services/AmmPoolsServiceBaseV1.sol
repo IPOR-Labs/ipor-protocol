@@ -25,6 +25,7 @@ import "../../../governance/AmmConfigurationManager.sol";
 
 /// @title Base contract for AMM pools service for Pools with one asset and Asset Management support with one underlying asset same as pool asset.
 /// @notice This contract is used for providing liquidity and redeeming liquidity from AMM pools including configured rebalancing between AMM Treasury and Asset Management (like Plasma Vault from Ipor Fusion).
+/// @notice Support Asset Management (IPOR Fusion Vault)
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
     using IporContractValidator for address;
@@ -81,7 +82,7 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
     }
 
     function _provideLiquidity(address beneficiary, uint256 assetAmount) internal virtual {
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(asset);
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(asset);
 
         uint256 actualLiquidityPoolBalance = IAmmTreasuryBaseV2(ammTreasury).getLiquidityPoolBalance();
 
@@ -154,7 +155,7 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
             AmmPoolsErrors.CALLER_NOT_APPOINTED_TO_REBALANCE
         );
 
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(asset);
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(asset);
 
         uint256 wadAmmTreasuryAssetBalance = IporMath.convertToWad(
             IERC20Upgradeable(asset).balanceOf(ammTreasury),
@@ -201,7 +202,7 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
     }
 
     function _rebalanceIfNeededAfterProvideLiquidity(
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg,
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg,
         uint256 wadOperationAmount
     ) internal {
         /// @dev 1e18 * autoRebalanceThresholdMultiplier explanation: autoRebalanceThreshold represents value without decimals, selected asset can have different multiplier, for example for stables is 1000x, value in thousands, for ETH, wstETH etc. is 1x
@@ -230,7 +231,7 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
             assetDecimals
         );
 
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(asset);
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(asset);
 
         /// @dev 1e18 * autoRebalanceThresholdMultiplier explanation: autoRebalanceThreshold represents value without decimals, selected asset can have different multiplier, for example for stables is 1000x, value in thousands, for ETH, wstETH etc. is 1x
         uint256 autoRebalanceThreshold = uint256(ammPoolsParamsCfg.autoRebalanceThreshold) *
