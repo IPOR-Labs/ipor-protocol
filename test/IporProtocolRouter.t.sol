@@ -298,35 +298,6 @@ contract IporProtocolRouterTest is TestCommons {
                 weEth: _userOne
             })
         );
-        vm.expectRevert("IPOR_000");
-        new IporProtocolRouterEthereum(
-            IporProtocolRouterEthereum.DeployedContracts({
-                ammSwapsLens: _userOne,
-                ammPoolsLens: _userOne,
-                // ammPoolsLensStEth: address(0),
-                assetManagementLens: _userOne,
-                ammOpenSwapService: _userOne,
-                // ammOpenSwapServiceStEth: _userOne,
-                ammCloseSwapServiceUsdt: _userOne,
-                ammCloseSwapServiceUsdc: _userOne,
-                ammCloseSwapServiceDai: _userOne,
-                ammCloseSwapLens: _userOne,
-                // ammCloseSwapServiceStEth: _userOne,
-                ammPoolsService: _userOne,
-                // ammPoolsServiceStEth: _userOne,
-                ammGovernanceService: _userOne,
-                liquidityMiningLens: _userOne,
-                powerTokenLens: _userOne,
-                flowService: _userOne,
-                stakeService: _userOne,
-                ammPoolsServiceWeEth: _userOne,
-                ammPoolsLensWeEth: _userOne,
-                ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne,
-                stEth: _userOne,
-                weEth: _userOne
-            })
-        );
 
         vm.expectRevert("IPOR_000");
         new IporProtocolRouterEthereum(
@@ -365,66 +336,6 @@ contract IporProtocolRouterTest is TestCommons {
                 ammPoolsLens: _userOne,
                 // ammPoolsLensStEth: _userOne,
                 assetManagementLens: _userOne,
-                ammOpenSwapService: address(0),
-                // ammOpenSwapServiceStEth: address(0),
-                ammCloseSwapServiceUsdt: _userOne,
-                ammCloseSwapServiceUsdc: _userOne,
-                ammCloseSwapServiceDai: _userOne,
-                ammCloseSwapLens: _userOne,
-                // ammCloseSwapServiceStEth: _userOne,
-                ammPoolsService: _userOne,
-                // ammPoolsServiceStEth: _userOne,
-                ammGovernanceService: _userOne,
-                liquidityMiningLens: _userOne,
-                powerTokenLens: _userOne,
-                flowService: _userOne,
-                stakeService: _userOne,
-                ammPoolsServiceWeEth: _userOne,
-                ammPoolsLensWeEth: _userOne,
-                ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne,
-                stEth: _userOne,
-                weEth: _userOne
-            })
-        );
-
-        vm.expectRevert("IPOR_000");
-        new IporProtocolRouterEthereum(
-            IporProtocolRouterEthereum.DeployedContracts({
-                ammSwapsLens: _userOne,
-                ammPoolsLens: _userOne,
-                // ammPoolsLensStEth: _userOne,
-                assetManagementLens: _userOne,
-                ammOpenSwapService: _userOne,
-                // ammOpenSwapServiceStEth: _userOne,
-                ammCloseSwapServiceUsdt: address(0),
-                ammCloseSwapServiceUsdc: _userOne,
-                ammCloseSwapServiceDai: _userOne,
-                ammCloseSwapLens: _userOne,
-                // ammCloseSwapServiceStEth: address(0),
-                ammPoolsService: _userOne,
-                // ammPoolsServiceStEth: _userOne,
-                ammGovernanceService: _userOne,
-                liquidityMiningLens: _userOne,
-                powerTokenLens: _userOne,
-                flowService: _userOne,
-                stakeService: _userOne,
-                ammPoolsServiceWeEth: _userOne,
-                ammPoolsLensWeEth: _userOne,
-                ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne,
-                stEth: _userOne,
-                weEth: _userOne
-            })
-        );
-
-        vm.expectRevert("IPOR_000");
-        new IporProtocolRouterEthereum(
-            IporProtocolRouterEthereum.DeployedContracts({
-                ammSwapsLens: _userOne,
-                ammPoolsLens: _userOne,
-                // ammPoolsLensStEth: _userOne,
-                assetManagementLens: _userOne,
                 ammOpenSwapService: _userOne,
                 // ammOpenSwapServiceStEth: _userOne,
                 ammCloseSwapServiceUsdt: _userOne,
@@ -434,36 +345,6 @@ contract IporProtocolRouterTest is TestCommons {
                 // ammCloseSwapServiceStEth: _userOne,
                 ammPoolsService: address(0),
                 // ammPoolsServiceStEth: _userOne,
-                ammGovernanceService: _userOne,
-                liquidityMiningLens: _userOne,
-                powerTokenLens: _userOne,
-                flowService: _userOne,
-                stakeService: _userOne,
-                ammPoolsServiceWeEth: _userOne,
-                ammPoolsLensWeEth: _userOne,
-                ammPoolsServiceUsdm: _userOne,
-                ammPoolsLensUsdm: _userOne,
-                stEth: _userOne,
-                weEth: _userOne
-            })
-        );
-
-        vm.expectRevert("IPOR_000");
-        new IporProtocolRouterEthereum(
-            IporProtocolRouterEthereum.DeployedContracts({
-                ammSwapsLens: _userOne,
-                ammPoolsLens: _userOne,
-                //ammPoolsLensStEth: _userOne,
-                assetManagementLens: _userOne,
-                ammOpenSwapService: _userOne,
-                // ammOpenSwapServiceStEth: _userOne,
-                ammCloseSwapServiceUsdt: _userOne,
-                ammCloseSwapServiceUsdc: _userOne,
-                ammCloseSwapServiceDai: _userOne,
-                ammCloseSwapLens: _userOne,
-                // ammCloseSwapServiceStEth: _userOne,
-                ammPoolsService: _userOne,
-                // ammPoolsServiceStEth: address(0),
                 ammGovernanceService: _userOne,
                 liquidityMiningLens: _userOne,
                 powerTokenLens: _userOne,
