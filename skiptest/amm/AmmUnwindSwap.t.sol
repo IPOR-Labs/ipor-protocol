@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.26;
 
-import "../TestCommons.sol";
+import "../../test/TestCommons.sol";
 import "../utils/TestConstants.sol";
 import "../../contracts/interfaces/types/AmmTypes.sol";
 import "../../contracts/amm/AmmStorage.sol";

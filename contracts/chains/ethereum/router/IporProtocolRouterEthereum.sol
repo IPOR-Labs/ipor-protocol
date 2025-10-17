@@ -30,6 +30,7 @@ import "../../../libraries/IporContractValidator.sol";
 import "../../../router/IporProtocolRouterAbstract.sol";
 import "../../../amm-usdm/interfaces/IAmmPoolsServiceUsdm.sol";
 import "../../../amm-usdm/interfaces/IAmmPoolsLensUsdm.sol";
+import "../../../base/interfaces/IAmmGovernanceServiceBaseV1.sol";
 
 /// @title Entry point for IPOR protocol on Ethereum chain
 contract IporProtocolRouterEthereum is IporProtocolRouterAbstract {
@@ -46,25 +47,28 @@ contract IporProtocolRouterEthereum is IporProtocolRouterAbstract {
     address public immutable powerTokenLens;
     address public immutable liquidityMiningLens;
 
-    address public immutable assetManagementLens;
-    address public immutable ammOpenSwapService;
-    address public immutable ammOpenSwapServiceStEth;
     address public immutable ammCloseSwapServiceUsdt;
     address public immutable ammCloseSwapServiceUsdc;
     address public immutable ammCloseSwapServiceDai;
-
-
+    /// @dev for USDT, USDC, DAI pools
+    address public immutable ammOpenSwapService;
+    /// @dev for USDT, USDC, DAI pools
     address public immutable ammPoolsService;
+    /// @dev for USDT, USDC, DAI pools
+    address public immutable assetManagementLens;
 
-    address public immutable ammCloseSwapServiceStEth;
-    address public immutable ammPoolsServiceStEth;
-    address public immutable ammPoolsLensStEth;
+    //-----------------------
 
+    //    address public immutable ammOpenSwapServiceStEth; AmmGovernanceServiceBaseV1.setAssetServices
+    //    address public immutable ammCloseSwapServiceStEth; AmmGovernanceServiceBaseV1.setAssetServices
+    //    address public immutable ammPoolsServiceStEth; AmmGovernanceServiceBaseV1.setAssetServices
 
-    address public immutable ammPoolsServiceWeEth;
+    address public immutable ammPoolsServiceWeEth; //AmmGovernanceServiceBaseV1.setAssetServices
     address public immutable ammPoolsLensWeEth;
     address public immutable ammPoolsServiceUsdm;
     address public immutable ammPoolsLensUsdm;
+
+    //    address public immutable ammPoolsLensStEth;
 
     address public immutable stEth;
     address public immutable weEth;
@@ -74,11 +78,11 @@ contract IporProtocolRouterEthereum is IporProtocolRouterAbstract {
         address ammPoolsLens;
         address assetManagementLens;
         address ammOpenSwapService;
-        address ammOpenSwapServiceStEth;
+        //        address ammOpenSwapServiceStEth;
         address ammCloseSwapServiceUsdt;
         address ammCloseSwapServiceUsdc;
         address ammCloseSwapServiceDai;
-        address ammCloseSwapServiceStEth;
+        //        address ammCloseSwapServiceStEth;
         address ammCloseSwapLens;
         address ammPoolsService;
         address ammGovernanceService;
@@ -86,37 +90,47 @@ contract IporProtocolRouterEthereum is IporProtocolRouterAbstract {
         address powerTokenLens;
         address flowService;
         address stakeService;
-        address ammPoolsServiceStEth;
-        address ammPoolsLensStEth;
+        //        address ammPoolsServiceStEth;
+        //        address ammPoolsLensStEth;
         address ammPoolsServiceWeEth;
         address ammPoolsLensWeEth;
         address ammPoolsServiceUsdm;
         address ammPoolsLensUsdm;
+        address stEth;
+        address weEth;
     }
 
     constructor(DeployedContracts memory deployedContracts) {
         ammSwapsLens = deployedContracts.ammSwapsLens.checkAddress();
         ammPoolsLens = deployedContracts.ammPoolsLens.checkAddress();
+        ammCloseSwapLens = deployedContracts.ammCloseSwapLens.checkAddress();
+        ammGovernanceService = deployedContracts.ammGovernanceService.checkAddress();
+
+        flowService = deployedContracts.flowService.checkAddress();
+        stakeService = deployedContracts.stakeService.checkAddress();
+        powerTokenLens = deployedContracts.powerTokenLens.checkAddress();
+        liquidityMiningLens = deployedContracts.liquidityMiningLens.checkAddress();
+
         assetManagementLens = deployedContracts.assetManagementLens.checkAddress();
         ammOpenSwapService = deployedContracts.ammOpenSwapService.checkAddress();
-        ammOpenSwapServiceStEth = deployedContracts.ammOpenSwapServiceStEth.checkAddress();
         ammCloseSwapServiceUsdt = deployedContracts.ammCloseSwapServiceUsdt.checkAddress();
         ammCloseSwapServiceUsdc = deployedContracts.ammCloseSwapServiceUsdc.checkAddress();
         ammCloseSwapServiceDai = deployedContracts.ammCloseSwapServiceDai.checkAddress();
-        ammCloseSwapServiceStEth = deployedContracts.ammCloseSwapServiceStEth.checkAddress();
-        ammCloseSwapLens = deployedContracts.ammCloseSwapLens.checkAddress();
         ammPoolsService = deployedContracts.ammPoolsService.checkAddress();
-        ammGovernanceService = deployedContracts.ammGovernanceService.checkAddress();
-        liquidityMiningLens = deployedContracts.liquidityMiningLens.checkAddress();
-        powerTokenLens = deployedContracts.powerTokenLens.checkAddress();
-        flowService = deployedContracts.flowService.checkAddress();
-        stakeService = deployedContracts.stakeService.checkAddress();
-        ammPoolsServiceStEth = deployedContracts.ammPoolsServiceStEth.checkAddress();
-        ammPoolsLensStEth = deployedContracts.ammPoolsLensStEth.checkAddress();
+
         ammPoolsServiceWeEth = deployedContracts.ammPoolsServiceWeEth.checkAddress();
         ammPoolsLensWeEth = deployedContracts.ammPoolsLensWeEth.checkAddress();
         ammPoolsServiceUsdm = deployedContracts.ammPoolsServiceUsdm.checkAddress();
         ammPoolsLensUsdm = deployedContracts.ammPoolsLensUsdm.checkAddress();
+
+        //        ammOpenSwapServiceStEth = deployedContracts.ammOpenSwapServiceStEth.checkAddress();
+        //        ammCloseSwapServiceStEth = deployedContracts.ammCloseSwapServiceStEth.checkAddress();
+        //        ammPoolsServiceStEth = deployedContracts.ammPoolsServiceStEth.checkAddress();
+
+        //        ammPoolsLensStEth = deployedContracts.ammPoolsLensStEth.checkAddress();
+        
+        stEth = deployedContracts.stEth.checkAddress();
+        weEth = deployedContracts.weEth.checkAddress();
 
         _disableInitializers();
     }
@@ -128,26 +142,29 @@ contract IporProtocolRouterEthereum is IporProtocolRouterAbstract {
             DeployedContracts({
                 ammSwapsLens: ammSwapsLens,
                 ammPoolsLens: ammPoolsLens,
-                assetManagementLens: assetManagementLens,
-                ammOpenSwapService: ammOpenSwapService,
-                ammOpenSwapServiceStEth: ammOpenSwapServiceStEth,
+                ammCloseSwapLens: ammCloseSwapLens,
+                ammGovernanceService: ammGovernanceService,
+                flowService: flowService,
+                stakeService: stakeService,
+                powerTokenLens: powerTokenLens,
+                liquidityMiningLens: liquidityMiningLens,
                 ammCloseSwapServiceUsdt: ammCloseSwapServiceUsdt,
                 ammCloseSwapServiceUsdc: ammCloseSwapServiceUsdc,
                 ammCloseSwapServiceDai: ammCloseSwapServiceDai,
-                ammCloseSwapLens: ammCloseSwapLens,
-                ammCloseSwapServiceStEth: ammCloseSwapServiceStEth,
+                ammOpenSwapService: ammOpenSwapService,
                 ammPoolsService: ammPoolsService,
-                ammGovernanceService: ammGovernanceService,
-                liquidityMiningLens: liquidityMiningLens,
-                powerTokenLens: powerTokenLens,
-                flowService: flowService,
-                stakeService: stakeService,
-                ammPoolsServiceStEth: ammPoolsServiceStEth,
-                ammPoolsLensStEth: ammPoolsLensStEth,
-                ammPoolsServiceWeEth: ammPoolsServiceWeEth,
-                ammPoolsLensWeEth: ammPoolsLensWeEth,
-                ammPoolsServiceUsdm: ammPoolsServiceUsdm,
-                ammPoolsLensUsdm: ammPoolsLensUsdm
+                assetManagementLens: assetManagementLens, //,// assetManagementLens,
+                ammPoolsServiceWeEth: ammPoolsServiceWeEth, //ammPoolsServiceWeEth,
+                ammPoolsLensWeEth: ammPoolsLensWeEth, //ammPoolsLensWeEth,
+                ammPoolsServiceUsdm: ammPoolsServiceUsdm, //ammPoolsServiceUsdm,
+                ammPoolsLensUsdm: ammPoolsLensUsdm, //ammPoolsLensUsdm
+                stEth: stEth,
+                weEth: weEth
+
+                //                ammOpenSwapServiceStEth: address(0),//ammOpenSwapServiceStEth,
+                //                ammCloseSwapServiceStEth: address(0),//ammCloseSwapServiceStEth,
+                //                ammPoolsServiceStEth: address(0),//ammPoolsServiceStEth,
+                //                ammPoolsLensStEth: address(0),//ammPoolsLensStEth,
             });
     }
 
@@ -163,7 +180,10 @@ contract IporProtocolRouterEthereum is IporProtocolRouterAbstract {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
-            return ammOpenSwapServiceStEth;
+            StorageLibBaseV1.AssetServicesValue storage servicesCfg = StorageLibBaseV1.getAssetServicesStorage().value[
+                stEth
+            ];
+            return servicesCfg.ammOpenSwapService;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapService.openSwapPayFixed60daysUsdt.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmOpenSwapService.openSwapPayFixed28daysUsdt.selector) ||
@@ -192,7 +212,10 @@ contract IporProtocolRouterEthereum is IporProtocolRouterAbstract {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
-            return ammCloseSwapServiceStEth;
+            StorageLibBaseV1.AssetServicesValue storage servicesCfg = StorageLibBaseV1.getAssetServicesStorage().value[
+                stEth
+            ];
+            return servicesCfg.ammCloseSwapService;
         } else if (_checkFunctionSigAndIsNotPause(sig, IAmmCloseSwapServiceUsdt.closeSwapsUsdt.selector)) {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
@@ -217,7 +240,10 @@ contract IporProtocolRouterEthereum is IporProtocolRouterAbstract {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
-            return ammPoolsServiceStEth;
+            StorageLibBaseV1.AssetServicesValue storage servicesCfg = StorageLibBaseV1.getAssetServicesStorage().value[
+                stEth
+            ];
+            return servicesCfg.ammPoolsService;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceWeEth.provideLiquidityWeEthToAmmPoolWeEth.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceWeEth.provideLiquidity.selector) ||
@@ -226,7 +252,10 @@ contract IporProtocolRouterEthereum is IporProtocolRouterAbstract {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
             }
-            return ammPoolsServiceWeEth;
+            StorageLibBaseV1.AssetServicesValue storage servicesCfg = StorageLibBaseV1.getAssetServicesStorage().value[
+                weEth
+            ];
+            return servicesCfg.ammPoolsService;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsService.provideLiquidityUsdt.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsService.provideLiquidityUsdc.selector) ||
@@ -240,14 +269,14 @@ contract IporProtocolRouterEthereum is IporProtocolRouterAbstract {
                 _nonReentrantBefore();
             }
             return ammPoolsService;
-        } else if (
-            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdm.provideLiquidityUsdmToAmmPoolUsdm.selector) ||
-            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdm.redeemFromAmmPoolUsdm.selector)
-        ) {
-            if (batchOperation == 0) {
-                _nonReentrantBefore();
-            }
-            return ammPoolsServiceUsdm;
+                   } else if (
+                       _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdm.provideLiquidityUsdmToAmmPoolUsdm.selector) ||
+                       _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdm.redeemFromAmmPoolUsdm.selector)
+                   ) {
+                       if (batchOperation == 0) {
+                           _nonReentrantBefore();
+                       }
+                       return ammPoolsServiceUsdm;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenStakeService.stakeLpTokensToLiquidityMining.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenStakeService.unstakeLpTokensFromLiquidityMining.selector) ||
@@ -297,13 +326,20 @@ contract IporProtocolRouterEthereum is IporProtocolRouterAbstract {
             sig == IAmmGovernanceService.depositToAssetManagement.selector ||
             sig == IAmmGovernanceService.withdrawFromAssetManagement.selector ||
             sig == IAmmGovernanceService.withdrawAllFromAssetManagement.selector ||
-            sig == IAmmGovernanceService.setAmmPoolsParams.selector
+            sig == IAmmGovernanceService.setAmmPoolsParams.selector ||
+            sig == IAmmGovernanceServiceBaseV1.setMessageSigner.selector ||
+            sig == IAmmGovernanceServiceBaseV1.setAssetLensData.selector ||
+            sig == IAmmGovernanceServiceBaseV1.setAmmGovernancePoolConfiguration.selector ||
+            sig == IAmmGovernanceServiceBaseV1.setAssetServices.selector
         ) {
             _onlyOwner();
             return ammGovernanceService;
         } else if (sig == IAmmCloseSwapServiceStEth.emergencyCloseSwapsStEth.selector) {
             _onlyOwner();
-            return ammCloseSwapServiceStEth;
+            StorageLibBaseV1.AssetServicesValue storage servicesCfg = StorageLibBaseV1.getAssetServicesStorage().value[
+                stEth
+            ];
+            return servicesCfg.ammCloseSwapService;
         } else if (sig == IAmmCloseSwapServiceUsdt.emergencyCloseSwapsUsdt.selector) {
             _onlyOwner();
             return ammCloseSwapServiceUsdt;
@@ -338,11 +374,11 @@ contract IporProtocolRouterEthereum is IporProtocolRouterAbstract {
             sig == IAmmPoolsLens.getAmmBalance.selector
         ) {
             return ammPoolsLens;
-        } else if (
-            sig == IAssetManagementLens.balanceOfAmmTreasuryInAssetManagement.selector ||
-            sig == IAssetManagementLens.getAssetManagementConfiguration.selector
-        ) {
-            return assetManagementLens;
+            } else if (
+                sig == IAssetManagementLens.balanceOfAmmTreasuryInAssetManagement.selector ||
+                sig == IAssetManagementLens.getAssetManagementConfiguration.selector
+            ) {
+                return assetManagementLens;
         } else if (
             sig == ILiquidityMiningLens.balanceOfLpTokensStakedInLiquidityMining.selector ||
             sig == ILiquidityMiningLens.balanceOfPowerTokensDelegatedToLiquidityMining.selector ||
@@ -368,12 +404,12 @@ contract IporProtocolRouterEthereum is IporProtocolRouterAbstract {
             sig == IAmmCloseSwapLens.getClosingSwapDetails.selector
         ) {
             return ammCloseSwapLens;
-        // } else if (sig == IAmmPoolsLensStEth.getIpstEthExchangeRate.selector) {
-        //     return ammPoolsLensStEth;
-        // } else if (sig == IAmmPoolsLensWeEth.getIpWeEthExchangeRate.selector) {
-        //     return ammPoolsLensWeEth;
-        } else if (sig == IAmmPoolsLensUsdm.getIpUsdmExchangeRate.selector) {
-            return ammPoolsLensUsdm;
+            // } else if (sig == IAmmPoolsLensStEth.getIpstEthExchangeRate.selector) {
+            //     return ammPoolsLensStEth;
+//            } else if (sig == IAmmPoolsLensWeEth.getIpWeEthExchangeRate.selector) {
+//                return ammPoolsLensWeEth;
+//                   } else if (sig == IAmmPoolsLensUsdm.getIpUsdmExchangeRate.selector) {
+//                return ammPoolsLensUsdm;
         } else if (sig == IAmmPoolsService.getAmmPoolServiceConfiguration.selector) {
             return ammPoolsService;
         }
