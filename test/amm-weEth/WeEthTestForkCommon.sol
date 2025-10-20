@@ -8,16 +8,19 @@ import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/base/amm/AmmTreasuryBaseV1.sol";
 import "../../contracts/base/amm/AmmStorageBaseV1.sol";
-import "../../contracts/amm-weEth/AmmPoolsServiceWeEth.sol";
-import "../../contracts/amm-weEth/AmmPoolsLensWeEth.sol";
-import "../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
+import "../../contracts/chains/ethereum/amm-weEth/AmmPoolsServiceWeEth.sol";
+// import "../../contracts/amm-weEth/AmmPoolsLensWeEth.sol";
+import "../../contracts/chains/ethereum/router/IporProtocolRouterEthereum.sol";
+import {AmmPoolsLensBaseV1} from "../../contracts/base/amm/services/AmmPoolsLensBaseV1.sol";
+import {IAmmGovernanceServiceBaseV1} from "../../contracts/base/interfaces/IAmmGovernanceServiceBaseV1.sol";
+import {StorageLibBaseV1} from "../../contracts/base/libraries/StorageLibBaseV1.sol";
+import "../../contracts/interfaces/IAmmGovernanceService.sol";
+import "../../contracts/base/amm/services/AmmGovernanceServiceBaseV1.sol";
 
 contract WeEthTestForkCommon is Test {
-
-
     address constant IporProtocolOwner = 0xD92E9F039E4189c342b4067CC61f5d063960D248;
     address payable constant IporProtocolRouterProxy = payable(0x16d104009964e694761C0bf09d7Be49B7E3C26fd);
-    address constant IporOracleProxy = 0x421C69EAa54646294Db30026aeE80D01988a6876;
+    address constant iporOracleProxy = 0x421C69EAa54646294Db30026aeE80D01988a6876;
     address constant AmmSwapsLens = 0x476C44E60a377C1D23877E9Dd2955C384b2DCD8c;
     address constant AmmPoolsLens = 0xb653ED2bBd28DF9dde734FBe85f9312151940D01;
     address constant AssetManagementLens = 0xB8dbDecBaF552e765619B2677f724a8415192389;
@@ -40,13 +43,14 @@ contract WeEthTestForkCommon is Test {
     address constant ammPoolsServiceUsdm = IporProtocolRouterProxy;
     address constant ammPoolsLensUsdm = IporProtocolRouterProxy;
 
-
     address constant eETH = 0x35fA164735182de50811E8e2E824cFb9B6118ac2;
     address constant weETH = 0xCd5fE23C85820F7B72D0926FC9b05b43E359b7ee;
     address constant wETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
     address constant eEthLiquidityPool = 0x308861A430be4cce5502d0A12724771Fc6DaF216;
     address constant referral = 0x558c8eb91F6fd83FC5C995572c3515E2DAF7b7e0;
+    address public constant stETH = 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
+    address public constant USDM = 0x59D9356E565Ab3A36dD77763Fc0d87fEaf85508C;
 
     address ipWeEth;
     address ammTreasuryWeEthProxy;
@@ -54,6 +58,8 @@ contract WeEthTestForkCommon is Test {
     address ammPoolsLensWeEth;
     address ammPoolsServiceWeEth;
 
+    address ammPoolsLensBaseV1;
+    address newAmmGovernanceService;
 
     function _init() internal {
         vm.createSelectFork(vm.envString("ETHEREUM_PROVIDER_URL"), 19132375);
@@ -64,7 +70,11 @@ contract WeEthTestForkCommon is Test {
         _createTreasuryWeEth();
         _createAmmPoolsServiceWeEth(5 * 1e15);
         _createAmmPoolsLensWeEth();
+        _createNewAmmGovernanceService();
         _updateIporRouterImplementation();
+        _setupAmmGovernancePoolConfiguration();
+        _setupAssetServices();
+        _setupAssetLensData();
         _setupPools();
         vm.stopPrank();
     }
@@ -101,7 +111,7 @@ contract WeEthTestForkCommon is Test {
                     ipWeEthInput: ipWeEth,
                     ammTreasuryWeEthInput: ammTreasuryWeEthProxy,
                     ammStorageWeEthInput: ammStorageWeEthProxy,
-                    iporOracleInput: IporOracleProxy,
+                    iporOracleInput: iporOracleProxy,
                     iporProtocolRouterInput: IporProtocolRouterProxy,
                     redeemFeeRateWeEthInput: redeemFeeRateWeEthInput,
                     eEthLiquidityPoolExternalInput: eEthLiquidityPool,
@@ -112,40 +122,92 @@ contract WeEthTestForkCommon is Test {
     }
 
     function _createAmmPoolsLensWeEth() private {
-        ammPoolsLensWeEth = address(
-            new AmmPoolsLensWeEth(weETH, ipWeEth, ammTreasuryWeEthProxy, ammStorageWeEthProxy, IporOracleProxy)
-        );
+        ammPoolsLensBaseV1 = address(new AmmPoolsLensBaseV1({iporOracle_: iporOracleProxy}));
+        // WeETH uses ammPoolsLensBaseV1 instead of dedicated lens
+        ammPoolsLensWeEth = address(0);
+    }
+
+    function _createNewAmmGovernanceService() private {
+        newAmmGovernanceService = address(new AmmGovernanceServiceBaseV1());
     }
 
     function _updateIporRouterImplementation() internal {
-        IporProtocolRouter newImplementation = new IporProtocolRouter(
-            IporProtocolRouter.DeployedContracts({
+        IporProtocolRouterEthereum newImplementation = new IporProtocolRouterEthereum(
+            IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: AmmSwapsLens,
                 ammPoolsLens: AmmPoolsLens,
+                ammPoolsLensBaseV1: ammPoolsLensBaseV1,
                 assetManagementLens: AssetManagementLens,
                 ammOpenSwapService: AmmOpenSwapService,
-                ammOpenSwapServiceStEth: AmmOpenSwapServiceStEth,
+                // ammOpenSwapServiceStEth: AmmOpenSwapServiceStEth,
                 ammCloseSwapServiceUsdt: AmmCloseSwapServiceUsdt,
                 ammCloseSwapServiceUsdc: AmmCloseSwapServiceUsdc,
                 ammCloseSwapServiceDai: AmmCloseSwapServiceDai,
-                ammCloseSwapServiceStEth: AmmCloseSwapServiceStEth,
+                // ammCloseSwapServiceStEth: AmmCloseSwapServiceStEth,
                 ammCloseSwapLens: AmmCloseSwapLens,
                 ammPoolsService: AmmPoolsService,
-                ammGovernanceService: AmmGovernanceService,
+                ammGovernanceService: newAmmGovernanceService,
                 liquidityMiningLens: LiquidityMiningLens,
                 powerTokenLens: PowerTokenLens,
                 flowService: FlowsService,
                 stakeService: StakeService,
-                ammPoolsServiceStEth: AmmPoolsServiceEth,
-                ammPoolsLensStEth: AmmPoolsLensEth,
+                // ammPoolsServiceStEth: AmmPoolsServiceEth,
+                // ammPoolsLensStEth: AmmPoolsLensEth,
                 ammPoolsServiceWeEth: ammPoolsServiceWeEth,
                 ammPoolsLensWeEth: ammPoolsLensWeEth,
                 ammPoolsServiceUsdm: ammPoolsServiceUsdm,
-                ammPoolsLensUsdm: ammPoolsLensUsdm
+                ammPoolsLensUsdm: ammPoolsLensUsdm,
+                stEth: stETH,
+                weEth: weETH,
+                usdm: USDM
             })
         );
 
-        IporProtocolRouter(IporProtocolRouterProxy).upgradeTo(address(newImplementation));
+        IporProtocolRouterEthereum(IporProtocolRouterProxy).upgradeTo(address(newImplementation));
+    }
+
+    function _setupAmmGovernancePoolConfiguration() private {
+        // Setup pool configuration for weETH
+        IAmmGovernanceServiceBaseV1(IporProtocolRouterProxy).setAmmGovernancePoolConfiguration(
+            weETH,
+            StorageLibBaseV1.AssetGovernancePoolConfigValue({
+                decimals: 18,
+                ammStorage: ammStorageWeEthProxy,
+                ammTreasury: ammTreasuryWeEthProxy,
+                ammVault: address(0), // weETH doesn't have asset management
+                ammPoolsTreasury: address(0),
+                ammPoolsTreasuryManager: address(0),
+                ammCharlieTreasury: address(0),
+                ammCharlieTreasuryManager: address(0)
+            })
+        );
+    }
+
+    function _setupAssetServices() private {
+        // Setup AssetServices for weETH
+        IAmmGovernanceServiceBaseV1(IporProtocolRouterProxy).setAssetServices(
+            weETH,
+            StorageLibBaseV1.AssetServicesValue({
+                ammPoolsService: ammPoolsServiceWeEth,
+                ammOpenSwapService: address(0),
+                ammCloseSwapService: address(0)
+            })
+        );
+    }
+
+    function _setupAssetLensData() private {
+        // Setup AssetLensData for weETH
+        IAmmGovernanceServiceBaseV1(IporProtocolRouterProxy).setAssetLensData(
+            weETH,
+            StorageLibBaseV1.AssetLensDataValue({
+                decimals: 18,
+                ipToken: ipWeEth,
+                ammStorage: ammStorageWeEthProxy,
+                ammTreasury: ammTreasuryWeEthProxy,
+                ammVault: address(0), // weETH doesn't have asset management
+                spread: address(0) // weETH doesn't have spread yet
+            })
+        );
     }
 
     function _setupPools() internal {

@@ -4,7 +4,8 @@ pragma solidity 0.8.26;
 import "forge-std/Test.sol";
 import "./TestEthMarketCommons.sol";
 import "../../contracts/libraries/errors/AmmErrors.sol";
-import "../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
+import "../../contracts/chains/ethereum/router/IporProtocolRouterEthereum.sol";
+import {IAmmPoolsLensBaseV1} from "../../contracts/base/interfaces/IAmmPoolsLensBaseV1.sol";
 
 contract ProvideBatchExecutor is TestEthMarketCommons {
     function setUp() public {
@@ -14,13 +15,13 @@ contract ProvideBatchExecutor is TestEthMarketCommons {
 
     function testShouldProvideLiquidityWhenBatchExecutorIsUsed() external {
         // given
-        uint userEthBalanceBefore = userOne.balance;
-        uint userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
-        uint userStEthBalanceBefore = IStETH(stEth).balanceOf(userOne);
-        uint userWEthBalanceBefore = IERC20(wEth).balanceOf(userOne);
+        uint256 userEthBalanceBefore = userOne.balance;
+        uint256 userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
+        uint256 userStEthBalanceBefore = IStETH(stEth).balanceOf(userOne);
+        uint256 userWEthBalanceBefore = IERC20(wEth).balanceOf(userOne);
 
-        uint exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
-        uint ammTreasuryStEthBalanceBefore = IStETH(stEth).balanceOf(ammTreasuryStEth);
+        uint256 exchangeRateBefore = IAmmPoolsLensBaseV1(iporProtocolRouter).getIpTokenExchangeRate(stEth);
+        uint256 ammTreasuryStEthBalanceBefore = IStETH(stEth).balanceOf(ammTreasuryStEth);
 
         bytes[] memory requestData = new bytes[](3);
         requestData[0] = abi.encodeWithSelector(
@@ -42,16 +43,16 @@ contract ProvideBatchExecutor is TestEthMarketCommons {
 
         // when
         vm.prank(userOne);
-        IporProtocolRouter(iporProtocolRouter).batchExecutor{value: 150e18}(requestData);
+        IporProtocolRouterEthereum(iporProtocolRouter).batchExecutor{value: 150e18}(requestData);
 
         // then
-        uint userEthBalanceAfter = userOne.balance;
-        uint userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
-        uint userStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
-        uint userWethBalanceAfter = IERC20(wEth).balanceOf(userOne);
+        uint256 userEthBalanceAfter = userOne.balance;
+        uint256 userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
+        uint256 userStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
+        uint256 userWethBalanceAfter = IERC20(wEth).balanceOf(userOne);
 
-        uint exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
-        uint ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryStEth);
+        uint256 exchangeRateAfter = IAmmPoolsLensBaseV1(iporProtocolRouter).getIpTokenExchangeRate(stEth);
+        uint256 ammTreasuryStEthBalanceAfter = IStETH(stEth).balanceOf(ammTreasuryStEth);
 
         assertEq(
             userEthBalanceAfter,

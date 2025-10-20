@@ -244,6 +244,7 @@ contract IporProtocolRouterTest is TestCommons {
             IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: address(0),
                 ammPoolsLens: _userOne,
+                ammPoolsLensBaseV1: _userOne,
                 // ammPoolsLensStEth: _userOne,
                 assetManagementLens: _userOne,
                 ammOpenSwapService: _userOne,
@@ -265,7 +266,8 @@ contract IporProtocolRouterTest is TestCommons {
                 ammPoolsServiceUsdm: _userOne,
                 ammPoolsLensUsdm: _userOne,
                 stEth: _userOne,
-                weEth: _userOne
+                weEth: _userOne,
+                usdm: _userOne
             })
         );
 
@@ -274,6 +276,7 @@ contract IporProtocolRouterTest is TestCommons {
             IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: _userOne,
                 ammPoolsLens: address(0),
+                ammPoolsLensBaseV1: _userOne,
                 // ammPoolsLensStEth: _userOne,
                 assetManagementLens: _userOne,
                 ammOpenSwapService: _userOne,
@@ -295,7 +298,8 @@ contract IporProtocolRouterTest is TestCommons {
                 ammPoolsServiceUsdm: _userOne,
                 ammPoolsLensUsdm: _userOne,
                 stEth: _userOne,
-                weEth: _userOne
+                weEth: _userOne,
+                usdm: _userOne
             })
         );
 
@@ -304,6 +308,7 @@ contract IporProtocolRouterTest is TestCommons {
             IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: _userOne,
                 ammPoolsLens: _userOne,
+                ammPoolsLensBaseV1: _userOne,
                 // ammPoolsLensStEth: _userOne,
                 assetManagementLens: address(0),
                 ammOpenSwapService: _userOne,
@@ -325,7 +330,8 @@ contract IporProtocolRouterTest is TestCommons {
                 ammPoolsServiceUsdm: _userOne,
                 ammPoolsLensUsdm: _userOne,
                 stEth: _userOne,
-                weEth: _userOne
+                weEth: _userOne,
+                usdm: _userOne
             })
         );
 
@@ -334,6 +340,7 @@ contract IporProtocolRouterTest is TestCommons {
             IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: _userOne,
                 ammPoolsLens: _userOne,
+                ammPoolsLensBaseV1: _userOne,
                 // ammPoolsLensStEth: _userOne,
                 assetManagementLens: _userOne,
                 ammOpenSwapService: _userOne,
@@ -355,7 +362,8 @@ contract IporProtocolRouterTest is TestCommons {
                 ammPoolsServiceUsdm: _userOne,
                 ammPoolsLensUsdm: _userOne,
                 stEth: _userOne,
-                weEth: _userOne
+                weEth: _userOne,
+                usdm: _userOne
             })
         );
 
@@ -364,6 +372,7 @@ contract IporProtocolRouterTest is TestCommons {
             IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: _userOne,
                 ammPoolsLens: _userOne,
+                ammPoolsLensBaseV1: _userOne,
                 // ammPoolsLensStEth: _userOne,
                 assetManagementLens: _userOne,
                 ammOpenSwapService: _userOne,
@@ -385,7 +394,8 @@ contract IporProtocolRouterTest is TestCommons {
                 ammPoolsServiceUsdm: _userOne,
                 ammPoolsLensUsdm: _userOne,
                 stEth: _userOne,
-                weEth: _userOne
+                weEth: _userOne,
+                usdm: _userOne
             })
         );
 
@@ -394,6 +404,7 @@ contract IporProtocolRouterTest is TestCommons {
             IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: _userOne,
                 ammPoolsLens: _userOne,
+                ammPoolsLensBaseV1: _userOne,
                 // ammPoolsLensStEth: _userOne,
                 assetManagementLens: _userOne,
                 ammOpenSwapService: _userOne,
@@ -415,7 +426,8 @@ contract IporProtocolRouterTest is TestCommons {
                 ammPoolsServiceUsdm: _userOne,
                 ammPoolsLensUsdm: _userOne,
                 stEth: _userOne,
-                weEth: _userOne
+                weEth: _userOne,
+                usdm: _userOne
             })
         );
 
@@ -424,6 +436,7 @@ contract IporProtocolRouterTest is TestCommons {
             IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: _userOne,
                 ammPoolsLens: _userOne,
+                ammPoolsLensBaseV1: _userOne,
                 // ammPoolsLensStEth: _userOne,
                 assetManagementLens: _userOne,
                 ammOpenSwapService: _userOne,
@@ -445,7 +458,8 @@ contract IporProtocolRouterTest is TestCommons {
                 ammPoolsServiceUsdm: _userOne,
                 ammPoolsLensUsdm: _userOne,
                 stEth: _userOne,
-                weEth: _userOne
+                weEth: _userOne,
+                usdm: _userOne
             })
         );
 
@@ -454,6 +468,7 @@ contract IporProtocolRouterTest is TestCommons {
             IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: _userOne,
                 ammPoolsLens: _userOne,
+                ammPoolsLensBaseV1: _userOne,
                 // ammPoolsLensStEth: _userOne,
                 assetManagementLens: _userOne,
                 ammOpenSwapService: _userOne,
@@ -475,7 +490,8 @@ contract IporProtocolRouterTest is TestCommons {
                 ammPoolsServiceUsdm: _userOne,
                 ammPoolsLensUsdm: _userOne,
                 stEth: _userOne,
-                weEth: _userOne
+                weEth: _userOne,
+                usdm: _userOne
             })
         );
 
@@ -484,6 +500,7 @@ contract IporProtocolRouterTest is TestCommons {
             IporProtocolRouterEthereum.DeployedContracts({
                 ammSwapsLens: _userOne,
                 ammPoolsLens: _userOne,
+                ammPoolsLensBaseV1: _userOne,
                 // ammPoolsLensStEth: _userOne,
                 assetManagementLens: _userOne,
                 ammOpenSwapService: _userOne,
@@ -505,7 +522,8 @@ contract IporProtocolRouterTest is TestCommons {
                 ammPoolsServiceUsdm: _userOne,
                 ammPoolsLensUsdm: _userOne,
                 stEth: _userOne,
-                weEth: _userOne
+                weEth: _userOne,
+                usdm: _userOne
             })
         );
     }

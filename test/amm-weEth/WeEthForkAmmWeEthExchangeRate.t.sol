@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./WeEthTestForkCommon.sol";
 import "../../contracts/interfaces/IAmmCloseSwapServiceWstEth.sol";
 import "../../contracts/interfaces/types/AmmTypes.sol";
+import {IAmmPoolsLensBaseV1} from "../../contracts/base/interfaces/IAmmPoolsLensBaseV1.sol";
 
 contract UsdmForkAmmWstEthExchangeRateTest is WeEthTestForkCommon {
     function testShouldNotChangeExchangeRateWhenProvideLiquidityWeEthToAmmPoolWeEthForWeEth() public {
@@ -15,14 +16,14 @@ contract UsdmForkAmmWstEthExchangeRateTest is WeEthTestForkCommon {
 
         uint256 provideAmount = 10_000 * 1e18;
 
-        uint256 exchangeRateBefore = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
 
         // when
         vm.prank(user);
         IAmmPoolsServiceWeEth(IporProtocolRouterProxy).provideLiquidityWeEthToAmmPoolWeEth(user, provideAmount);
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -35,14 +36,14 @@ contract UsdmForkAmmWstEthExchangeRateTest is WeEthTestForkCommon {
 
         uint256 provideAmount = 10_000 * 1e18;
 
-        uint256 exchangeRateBefore = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
 
         // when
         vm.prank(user);
         IAmmPoolsServiceWeEth(IporProtocolRouterProxy).provideLiquidity(weETH, weETH, user, provideAmount);
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -55,14 +56,14 @@ contract UsdmForkAmmWstEthExchangeRateTest is WeEthTestForkCommon {
 
         uint256 provideAmount = 10_000 * 1e18;
 
-        uint256 exchangeRateBefore = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
 
         // when
         vm.prank(user);
         IAmmPoolsServiceWeEth(IporProtocolRouterProxy).provideLiquidity(weETH, eETH, user, provideAmount);
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -75,14 +76,14 @@ contract UsdmForkAmmWstEthExchangeRateTest is WeEthTestForkCommon {
 
         uint256 provideAmount = 10_000 * 1e18;
 
-        uint256 exchangeRateBefore = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
 
         // when
         vm.prank(user);
         IAmmPoolsServiceWeEth(IporProtocolRouterProxy).provideLiquidity(weETH, wETH, user, provideAmount);
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -95,7 +96,7 @@ contract UsdmForkAmmWstEthExchangeRateTest is WeEthTestForkCommon {
 
         uint256 provideAmount = 10_000 * 1e18;
 
-        uint256 exchangeRateBefore = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
+        uint256 exchangeRateBefore = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
 
         // when
         vm.prank(user);
@@ -107,7 +108,7 @@ contract UsdmForkAmmWstEthExchangeRateTest is WeEthTestForkCommon {
         );
 
         //then
-        uint256 exchangeRateAfter = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
+        uint256 exchangeRateAfter = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
     }
@@ -121,7 +122,7 @@ contract UsdmForkAmmWstEthExchangeRateTest is WeEthTestForkCommon {
 
             uint256 provideAmount = 1e18;
 
-            uint256 exchangeRateBefore = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
+            uint256 exchangeRateBefore = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
 
             // when
             vm.startPrank(user);
@@ -132,7 +133,7 @@ contract UsdmForkAmmWstEthExchangeRateTest is WeEthTestForkCommon {
             vm.stopPrank();
 
             //then
-            uint256 exchangeRateAfter = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
+            uint256 exchangeRateAfter = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
 
             assertLt(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
         }
@@ -152,7 +153,7 @@ contract UsdmForkAmmWstEthExchangeRateTest is WeEthTestForkCommon {
 
             uint256 provideAmount = 100e18;
 
-            uint256 exchangeRateBefore = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
+            uint256 exchangeRateBefore = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
 
             // when
             vm.startPrank(user);
@@ -163,7 +164,7 @@ contract UsdmForkAmmWstEthExchangeRateTest is WeEthTestForkCommon {
             vm.stopPrank();
 
             //then
-            uint256 exchangeRateAfter = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
+            uint256 exchangeRateAfter = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
 
             assertEq(exchangeRateBefore, exchangeRateAfter, "Exchange rate should not change");
         }

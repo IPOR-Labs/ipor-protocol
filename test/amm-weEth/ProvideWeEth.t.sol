@@ -4,6 +4,7 @@ pragma solidity 0.8.26;
 import "./WeEthTestForkCommon.sol";
 import "../../contracts/libraries/errors/AmmErrors.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {IAmmPoolsLensBaseV1} from "../../contracts/base/amm/services/AmmPoolsLensBaseV1.sol";
 
 contract ProvideWeEthTest is WeEthTestForkCommon {
     address userOne;
@@ -18,7 +19,7 @@ contract ProvideWeEthTest is WeEthTestForkCommon {
         //given
 
         //when
-        uint exchangeRate = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
+        uint exchangeRate = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
         //then
         assertEq(exchangeRate, 1e18, "exchangeRate should be 1");
     }
@@ -66,7 +67,7 @@ contract ProvideWeEthTest is WeEthTestForkCommon {
         uint userIpWeEthBalanceBefore = IERC20(ipWeEth).balanceOf(userOne);
         uint ammTreasuryWeEthBalanceBefore = IERC20(weETH).balanceOf(ammTreasuryWeEthProxy);
         uint provideAmount = 100e18;
-        uint exchangeRateBefore = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
 
         // when
         vm.prank(userOne);
@@ -77,7 +78,7 @@ contract ProvideWeEthTest is WeEthTestForkCommon {
         uint userIpWeEthBalanceAfter = IERC20(ipWeEth).balanceOf(userOne);
         uint ammTreasuryWeEthBalanceAfter = IERC20(weETH).balanceOf(ammTreasuryWeEthProxy);
 
-        uint exchangeRateAfter = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
+        uint exchangeRateAfter = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
 
         assertEq(
             userWeEthBalanceBefore - provideAmount,
@@ -111,7 +112,7 @@ contract ProvideWeEthTest is WeEthTestForkCommon {
         uint ammTreasuryWeEthBalanceBefore = IERC20(weETH).balanceOf(ammTreasuryWeEthProxy);
 
         uint provideAmount = 100e18;
-        uint exchangeRateBefore = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
 
         // when
         vm.prank(userOne);
@@ -123,7 +124,7 @@ contract ProvideWeEthTest is WeEthTestForkCommon {
         uint userTwoWeEthBalanceAfter = IERC20(weETH).balanceOf(userTwo);
         uint userTwoIpWeEthBalanceAfter = IERC20(ipWeEth).balanceOf(userTwo);
         uint ammTreasuryWeEthBalanceAfter = IERC20(weETH).balanceOf(ammTreasuryWeEthProxy);
-        uint exchangeRateAfter = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
+        uint exchangeRateAfter = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
 
         assertEq(
             userOneWeEthBalanceBefore - provideAmount,
@@ -160,7 +161,7 @@ contract ProvideWeEthTest is WeEthTestForkCommon {
         uint ammTreasuryWeEthBalanceBefore = IERC20(weETH).balanceOf(ammTreasuryWeEthProxy);
 
         uint provideAmount = 10e18;
-        uint exchangeRateBefore = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
 
         // when
         for (uint i; i < 10; ++i) {
@@ -176,7 +177,8 @@ contract ProvideWeEthTest is WeEthTestForkCommon {
         uint userTwoWeEthBalanceAfter = IERC20(weETH).balanceOf(userTwo);
         uint userTwoIpWeEthBalanceAfter = IERC20(ipWeEth).balanceOf(userTwo);
         uint ammTreasuryWeEthBalanceAfter = IERC20(weETH).balanceOf(ammTreasuryWeEthProxy);
-        uint exchangeRateAfter = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
+
+        uint exchangeRateAfter = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
 
         assertEq(
             userOneWeEthBalanceBefore,
@@ -235,7 +237,7 @@ contract ProvideWeEthTest is WeEthTestForkCommon {
         address userTwo = _getUserAddress(33);
 
         uint provideAmount = 100e18;
-        uint exchangeRateBefore = IAmmPoolsLensWeEth(IporProtocolRouterProxy).getIpWeEthExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
         uint256 ipTokenAmount = IporMath.division(provideAmount * 1e18, exchangeRateBefore);
 
         vm.prank(userOne);

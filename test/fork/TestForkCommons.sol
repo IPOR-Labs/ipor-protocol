@@ -137,6 +137,7 @@ contract TestForkCommons is Test {
 
     address public newAmmPoolsService;
     address public newAmmPoolsLens;
+    address public newAmmPoolsLensBaseV1;
     address public newAmmAssetManagementLens;
     address public newAmmSwapsLens;
     address public newAmmOpenSwapService;
@@ -241,11 +242,8 @@ contract TestForkCommons is Test {
     }
 
     function _createAmmPoolsLens() internal {
-        newAmmPoolsLens = address(
-            new AmmPoolsLensBaseV1({
-                iporOracle_: iporOracleProxy
-            })
-        );
+        ///TODO: check if newAmmPoolsLens old one are needed here
+        newAmmPoolsLensBaseV1 = address(new AmmPoolsLensBaseV1({iporOracle_: iporOracleProxy}));
     }
 
     function _createAmmAssetManagementLens() internal {
@@ -274,10 +272,12 @@ contract TestForkCommons is Test {
     }
 
     function _updateIporRouterImplementation() internal {
+ 
         IporProtocolRouterEthereum newImplementation = new IporProtocolRouterEthereum(
             IporProtocolRouterEthereum.DeployedContracts(
                 newAmmSwapsLens,
-                newAmmPoolsLens,
+                newAmmPoolsLensBaseV1,
+                newAmmPoolsLensBaseV1, // ammPoolsLensBaseV1 - reuse same lens
                 newAmmAssetManagementLens,
                 newAmmOpenSwapService,
                 // ammOpenSwapServiceStEth,
@@ -298,7 +298,8 @@ contract TestForkCommons is Test {
                 _getUserAddress(123),
                 _getUserAddress(123),
                 stETH,
-                weETH
+                weETH,
+                USDM
             )
         );
         vm.prank(owner);
@@ -831,7 +832,7 @@ contract TestForkCommons is Test {
 
         ammOpenSwapServiceStEth = address(new AmmOpenSwapServiceStEth(cfg, iporOracleProxy, wETH, wstETH));
 
-         vm.prank(owner);
+        vm.prank(owner);
         AmmGovernanceServiceBaseV1(iporProtocolRouterProxy).setAssetServices(
             stETH,
             StorageLibBaseV1.AssetServicesValue({
