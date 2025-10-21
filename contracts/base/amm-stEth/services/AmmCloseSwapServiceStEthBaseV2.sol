@@ -15,7 +15,6 @@ import {StorageLibBaseV1} from "../../libraries/StorageLibBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 /// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
-//TODO: are we going with v1 or v2?
 contract AmmCloseSwapServiceStEthBaseV2 is AmmCloseSwapServiceBaseV2, IAmmCloseSwapServiceStEth {
     using IporContractValidator for address;
 

@@ -569,6 +569,7 @@ contract ArbitrumForkAmmWstEthSwapsUnwindTest is ArbitrumTestForkCommons {
         _init();
         _createAmmCloseSwapServiceStEthUnwindCase1();
         _updateIporRouterImplementation();
+        _setupAssetServices();
 
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
@@ -638,6 +639,7 @@ contract ArbitrumForkAmmWstEthSwapsUnwindTest is ArbitrumTestForkCommons {
         _init();
         _createAmmCloseSwapServiceStEthUnwindCase1();
         _updateIporRouterImplementation();
+        _setupAssetServices();
 
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
@@ -699,6 +701,7 @@ contract ArbitrumForkAmmWstEthSwapsUnwindTest is ArbitrumTestForkCommons {
         _init();
         _createAmmCloseSwapServiceStEthUnwindCase1();
         _updateIporRouterImplementation();
+        _setupAssetServices();
 
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);
@@ -760,6 +763,7 @@ contract ArbitrumForkAmmWstEthSwapsUnwindTest is ArbitrumTestForkCommons {
         _init();
         _createAmmCloseSwapServiceStEthUnwindCase1();
         _updateIporRouterImplementation();
+        _setupAssetServices();
 
         address user = _getUserAddress(22);
         _setupUser(user, 1000 * 1e18);

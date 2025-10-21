@@ -2,18 +2,7 @@
 pragma solidity 0.8.26;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
-import "../../../interfaces/IIpToken.sol";
-import "../../../interfaces/types/AmmTypes.sol";
-import "../../../libraries/errors/AmmErrors.sol";
-import "../../../libraries/math/IporMath.sol";
-import "../../../libraries/StorageLib.sol";
-import "../../../libraries/IporContractValidator.sol";
-import "../../../libraries/AmmLib.sol";
-import "../../../governance/AmmConfigurationManager.sol";
-import "../../../base/interfaces/IAmmTreasuryBaseV1.sol";
 import {IAmmPoolsServiceUsdc} from "../interfaces/IAmmPoolsServiceUsdc.sol";
 import {AmmPoolsServiceBaseV1} from "../../../base/amm/services/AmmPoolsServiceBaseV1.sol";
 

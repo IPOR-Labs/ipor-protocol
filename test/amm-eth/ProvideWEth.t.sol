@@ -17,13 +17,14 @@ contract ProvideWEth is TestEthMarketCommons {
         uint256 ipTokenAmount
     );
 
-    event RedeemStEth(
-        address indexed ammTreasuryEth,
+    event Redeem(
+        address poolAsset,
+        address indexed ammTreasury,
         address indexed from,
         address indexed beneficiary,
         uint256 exchangeRate,
-        uint256 amountStEth,
-        uint256 redeemedAmountStEth,
+        uint256 amount,
+        uint256 redeemedAmount,
         uint256 ipTokenAmount
     );
 
@@ -270,7 +271,8 @@ contract ProvideWEth is TestEthMarketCommons {
         vm.prank(userTwo);
         vm.expectEmit(true, true, true, true);
         //then
-        emit RedeemStEth(
+        emit Redeem(
+            stEth,
             ammTreasuryStEth,
             userTwo,
             userOne,
@@ -312,7 +314,7 @@ contract ProvideWEth is TestEthMarketCommons {
     }
 
     function testShouldProvideEthToWhenBeneficiaryIsNotSenderAndReturnRestOfEthAndDirectTransferEthBeforeByTheSameUser()
-    external
+        external
     {
         // given
         uint userEthBalanceBefore = userOne.balance;
@@ -346,11 +348,7 @@ contract ProvideWEth is TestEthMarketCommons {
         assertEq(userEthBalanceBefore, 900_000e18, "user balance of Eth should be 900_000e18");
         assertEq(userEthBalanceAfter, 900_000e18, "user balance of Eth should be 900_000e18");
         assertEq(userIpstEthBalanceBefore, 0, "user ipstEth balance should be 0");
-        assertEq(
-            userIpstEthBalanceAfter,
-            99999999999999999999,
-            "user ipstEth balance should be 99999999999999999999"
-        );
+        assertEq(userIpstEthBalanceAfter, 99999999999999999999, "user ipstEth balance should be 99999999999999999999");
         assertEq(ammTreasuryStEthBalanceBefore, 0, "amm treasury balance should be 0");
         assertEq(
             ammTreasuryStEthBalanceAfter,
@@ -361,7 +359,7 @@ contract ProvideWEth is TestEthMarketCommons {
     }
 
     function testShouldProvideEthToWhenBeneficiaryIsNotSenderAndReturnRestOfEthAndDirectTransferEthBeforeByDifferentUser()
-    external
+        external
     {
         // given
         uint userEthBalanceBefore = userOne.balance;
@@ -395,11 +393,7 @@ contract ProvideWEth is TestEthMarketCommons {
         assertEq(userEthBalanceBefore, 900_000e18, "user balance of Eth should be 900_000e18");
         assertEq(userEthBalanceAfter, 900_007e18, "user balance of Eth should be 900_007e18");
         assertEq(userIpstEthBalanceBefore, 0, "user ipstEth balance should be 0");
-        assertEq(
-            userIpstEthBalanceAfter,
-            99999999999999999999,
-            "user ipstEth balance should be 99999999999999999999"
-        );
+        assertEq(userIpstEthBalanceAfter, 99999999999999999999, "user ipstEth balance should be 99999999999999999999");
         assertEq(ammTreasuryStEthBalanceBefore, 0, "amm treasury balance should be 0");
         assertEq(
             ammTreasuryStEthBalanceAfter,

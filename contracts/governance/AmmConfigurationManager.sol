@@ -130,7 +130,7 @@ library AmmConfigurationManager {
         uint16 newAmmTreasuryAndAssetManagementRatio
     ) internal {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        /// @dev newAmmTreasuryAndAssetManagementRatio is percentage with 2 decimals, example: 65% = 6500, (see description in StorageLib.AmmPoolsParamsValue)
+        /// @dev newAmmTreasuryAndAssetManagementRatio is percentage with 2 decimals, example: 65% = 6500, (see description in StorageLibBaseV1.AmmPoolsParamsValue)
         /// value cannot be greater than 10000 which is 100%
         require(newAmmTreasuryAndAssetManagementRatio < 1e4, AmmPoolsErrors.AMM_TREASURY_ASSET_MANAGEMENT_RATIO);
 

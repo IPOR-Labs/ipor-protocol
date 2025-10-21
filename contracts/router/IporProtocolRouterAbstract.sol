@@ -7,7 +7,7 @@ import {IProxyImplementation} from "../interfaces/IProxyImplementation.sol";
 import {IporErrors} from "../libraries/errors/IporErrors.sol";
 import {IporContractValidator} from "../libraries/IporContractValidator.sol";
 import {AccessControl} from "./AccessControl.sol";
-import {StorageLib} from "../libraries/StorageLib.sol";
+import {StorageLibBaseV1} from "../base/libraries/StorageLibBaseV1.sol";
 import {OwnerManager} from "../security/OwnerManager.sol";
 import {StorageSlotUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/StorageSlotUpgradeable.sol";
 
@@ -26,7 +26,7 @@ abstract contract IporProtocolRouterAbstract is UUPSUpgradeable, AccessControl, 
     function initialize(bool pausedInput) external initializer {
         __UUPSUpgradeable_init();
         OwnerManager.transferOwnership(msg.sender);
-        StorageLib.getReentrancyStatus().value = _NOT_ENTERED;
+        StorageLibBaseV1.getReentrancyStatus().value = _NOT_ENTERED;
     }
 
     /// @notice Gets the implementation of the router
@@ -71,7 +71,7 @@ abstract contract IporProtocolRouterAbstract is UUPSUpgradeable, AccessControl, 
 
         if (routerEthBalance > 0) {
             /// @dev if view method then return back ETH is skipped
-            if (StorageLib.getReentrancyStatus().value == _ENTERED) {
+            if (StorageLibBaseV1.getReentrancyStatus().value == _ENTERED) {
                 (bool success, ) = msg.sender.call{value: routerEthBalance}("");
 
                 if (!success) {

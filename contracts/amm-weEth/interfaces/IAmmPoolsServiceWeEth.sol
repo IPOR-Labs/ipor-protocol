@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.26;
 
-/// @title Interface of the AmmPoolsServiceWstEth contract.
+/// @title Interface of the AmmPoolsServiceWeEth contract.
 interface IAmmPoolsServiceWeEth {
     function provideLiquidityWeEthToAmmPoolWeEth(address beneficiary, uint256 weEthAmount) external;
 

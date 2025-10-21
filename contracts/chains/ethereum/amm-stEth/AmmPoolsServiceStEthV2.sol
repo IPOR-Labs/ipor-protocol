@@ -26,8 +26,8 @@ contract AmmPoolsServiceStEthV2 is IAmmPoolsServiceStEth, AmmPoolsServiceBaseV1 
     using SafeERC20 for IWETH9;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
 
-    address public immutable ST_ETH;
-    address public immutable W_ETH;
+    address public immutable stEth;
+    address public immutable wEth;
 
     constructor(
         address stEth_,
@@ -53,8 +53,8 @@ contract AmmPoolsServiceStEthV2 is IAmmPoolsServiceStEth, AmmPoolsServiceBaseV1 
             autoRebalanceThresholdMultiplier_
         )
     {
-        ST_ETH = stEth_.checkAddress();
-        W_ETH = wEth_.checkAddress();
+        stEth = stEth_.checkAddress();
+        wEth = wEth_.checkAddress();
     }
 
     /// @notice Provides liquidity to the AMM pool using stETH tokens
@@ -83,8 +83,8 @@ contract AmmPoolsServiceStEthV2 is IAmmPoolsServiceStEth, AmmPoolsServiceBaseV1 
             AmmErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH
         );
 
-        IWETH9(W_ETH).safeTransferFrom(msg.sender, iporProtocolRouter, wEthAmount);
-        IWETH9(W_ETH).withdraw(wEthAmount);
+        IWETH9(wEth).safeTransferFrom(msg.sender, iporProtocolRouter, wEthAmount);
+        IWETH9(wEth).withdraw(wEthAmount);
 
         _depositEth(wEthAmount, beneficiary, actualLiquidityPoolBalance);
     }
@@ -131,13 +131,13 @@ contract AmmPoolsServiceStEthV2 is IAmmPoolsServiceStEth, AmmPoolsServiceBaseV1 
     /// @param beneficiary Address that will receive ipstETH tokens
     /// @param actualLiquidityPoolBalance Current liquidity pool balance (for exchange rate calculation)
     function _depositEth(uint256 ethAmount, address beneficiary, uint256 actualLiquidityPoolBalance) private {
-        try IStETH(ST_ETH).submit{value: ethAmount}(address(0)) {
-            uint256 stEthAmount = IStETH(ST_ETH).balanceOf(address(this));
+        try IStETH(stEth).submit{value: ethAmount}(address(0)) {
+            uint256 stEthAmount = IStETH(stEth).balanceOf(address(this));
 
             if (stEthAmount > 0) {
                 uint256 exchangeRate = _getExchangeRate(actualLiquidityPoolBalance);
 
-                IStETH(ST_ETH).safeTransfer(ammTreasury, stEthAmount);
+                IStETH(stEth).safeTransfer(ammTreasury, stEthAmount);
 
                 uint256 ipTokenAmount = IporMath.division(stEthAmount * 1e18, exchangeRate);
 

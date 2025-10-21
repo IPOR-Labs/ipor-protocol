@@ -9,7 +9,6 @@ import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/base/amm/AmmTreasuryBaseV1.sol";
 import "../../contracts/base/amm/AmmStorageBaseV1.sol";
 import "../../contracts/chains/ethereum/amm-weEth/AmmPoolsServiceWeEth.sol";
-// import "../../contracts/amm-weEth/AmmPoolsLensWeEth.sol";
 import "../../contracts/chains/ethereum/router/IporProtocolRouterEthereum.sol";
 import {AmmPoolsLensBaseV1} from "../../contracts/base/amm/services/AmmPoolsLensBaseV1.sol";
 import {IAmmGovernanceServiceBaseV1} from "../../contracts/base/interfaces/IAmmGovernanceServiceBaseV1.sol";
@@ -139,11 +138,9 @@ contract WeEthTestForkCommon is Test {
                 ammPoolsLensBaseV1: ammPoolsLensBaseV1,
                 assetManagementLens: AssetManagementLens,
                 ammOpenSwapService: AmmOpenSwapService,
-                // ammOpenSwapServiceStEth: AmmOpenSwapServiceStEth,
                 ammCloseSwapServiceUsdt: AmmCloseSwapServiceUsdt,
                 ammCloseSwapServiceUsdc: AmmCloseSwapServiceUsdc,
                 ammCloseSwapServiceDai: AmmCloseSwapServiceDai,
-                // ammCloseSwapServiceStEth: AmmCloseSwapServiceStEth,
                 ammCloseSwapLens: AmmCloseSwapLens,
                 ammPoolsService: AmmPoolsService,
                 ammGovernanceService: newAmmGovernanceService,
@@ -151,8 +148,6 @@ contract WeEthTestForkCommon is Test {
                 powerTokenLens: PowerTokenLens,
                 flowService: FlowsService,
                 stakeService: StakeService,
-                // ammPoolsServiceStEth: AmmPoolsServiceEth,
-                // ammPoolsLensStEth: AmmPoolsLensEth,
                 ammPoolsServiceWeEth: ammPoolsServiceWeEth,
                 ammPoolsLensWeEth: ammPoolsLensWeEth,
                 ammPoolsServiceUsdm: ammPoolsServiceUsdm,

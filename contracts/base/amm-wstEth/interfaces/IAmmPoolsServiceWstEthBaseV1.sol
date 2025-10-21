@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.26;
 
-/// @title Interface of the AmmPoolsServiceWstEth contract.
+/// @title Interface of the AmmPoolsServiceWstEthBaseV1 contract.
 interface IAmmPoolsServiceWstEthBaseV1 {
     /// @notice Provides liquidity to the AMM pool. Provide wstETH asset to wstETH Pool.
     /// @param beneficiary The address of the beneficiary.

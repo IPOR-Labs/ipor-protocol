@@ -6,13 +6,11 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "forge-std/Test.sol";
 import "../mocks/EmptyRouterImplementation.sol";
 import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/amm-eth/AmmPoolsServiceStEth.sol";
 import "../../contracts/amm-eth/interfaces/IStETH.sol";
 import "../../contracts/amm-eth/interfaces/IWETH9.sol";
 import "../../contracts/amm-eth/interfaces/IAmmPoolsServiceStEth.sol";
 import "../../contracts/interfaces/IAmmGovernanceLens.sol";
 import "../../contracts/interfaces/IAmmGovernanceService.sol";
-// import "../../contracts/chains/ethereum/amm-commons/AmmGovernanceService.sol";
 import "../../contracts/chains/ethereum/router/IporProtocolRouterEthereum.sol";
 import "../../contracts/base/amm/AmmStorageBaseV1.sol";
 import "../../contracts/base/amm/AmmTreasuryBaseV1.sol";
@@ -20,6 +18,8 @@ import "../../contracts/base/amm/services/AmmGovernanceServiceBaseV1.sol";
 import "../../contracts/base/amm/services/AmmPoolsLensBaseV1.sol";
 import {IAmmGovernanceServiceBaseV1} from "../../contracts/base/interfaces/IAmmGovernanceServiceBaseV1.sol";
 import {StorageLibBaseV1} from "../../contracts/base/libraries/StorageLibBaseV1.sol";
+import {AmmPoolsServiceStEthV2} from "../../contracts/chains/ethereum/amm-stEth/AmmPoolsServiceStEthV2.sol";
+import {MockPlasmaVault} from "../mocks/tokens/MockPlasmaVault.sol";
 
 contract TestEthMarketCommons is Test {
     address internal defaultAnvilAddress = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
@@ -43,6 +43,7 @@ contract TestEthMarketCommons is Test {
     address payable public iporProtocolRouter;
     address public ammTreasuryStEth;
     address public ammStorageStEth;
+    address public newPlasmaVaultStEth;
     address public ammGovernanceService;
     address public ammPoolsServiceStEth;
     address public ammPoolsLensStEth;
@@ -59,9 +60,9 @@ contract TestEthMarketCommons is Test {
         _createIpstEth();
         _createDummyAmmTreasuryStEth();
         _createAmmStorageStEth();
+        _createPlasmaVaults();
         _upgradeAmmTreasuryStEth();
         _createAmmPoolServiceStEth();
-        _createAmmPoolsLensStEth();
         _createAmmPoolsLensBaseV1();
         _createAmmGovernanceService();
         _updateIporRouterImplementation();
@@ -74,6 +75,10 @@ contract TestEthMarketCommons is Test {
         _setupUser(userOne, 50_000e18);
         _setupUser(userTwo, 50_000e18);
         _setupUser(userThree, 10_000e18);
+    }
+
+    function _createPlasmaVaults() internal {
+        newPlasmaVaultStEth = address(new MockPlasmaVault(IERC20(stEth), "ipstETHfusion", "ipstETHfusion"));
     }
 
     function _createEmptyRouterImplementation() private {
@@ -119,25 +124,20 @@ contract TestEthMarketCommons is Test {
 
     function _createAmmPoolServiceStEth() private {
         vm.startPrank(owner);
-        AmmPoolsServiceStEth pool = new AmmPoolsServiceStEth(
+        AmmPoolsServiceStEthV2 pool = new AmmPoolsServiceStEthV2(
             stEth,
             wEth,
             ipstEth,
             ammTreasuryStEth,
             ammStorageStEth,
+            newPlasmaVaultStEth,
             iporOracle,
             iporProtocolRouter,
-            redeemFeeRateEth
+            redeemFeeRateEth,
+            1
         );
         ammPoolsServiceStEth = address(pool);
         vm.stopPrank();
-    }
-
-    function _createAmmPoolsLensStEth() private {
-        //        vm.startPrank(owner);
-        //        AmmPoolsLensStEth lens = new AmmPoolsLensStEth(stEth, ipstEth, ammTreasuryStEth, ammStorageStEth, iporOracle);
-        //        ammPoolsLensStEth = address(lens);
-        //        vm.stopPrank();
     }
 
     function _createAmmPoolsLensBaseV1() private {
@@ -148,85 +148,6 @@ contract TestEthMarketCommons is Test {
 
     function _createAmmGovernanceService() private {
         vm.startPrank(owner);
-        // IAmmGovernanceLens.AmmGovernancePoolConfiguration memory daiConfig = IAmmGovernanceLens
-        //     .AmmGovernancePoolConfiguration(
-        //         DAI,
-        //         18,
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123)
-        //     );
-
-        // IAmmGovernanceLens.AmmGovernancePoolConfiguration memory usdcConfig = IAmmGovernanceLens
-        //     .AmmGovernancePoolConfiguration(
-        //         USDC,
-        //         6,
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123)
-        //     );
-
-        // IAmmGovernanceLens.AmmGovernancePoolConfiguration memory usdtConfig = IAmmGovernanceLens
-        //     .AmmGovernancePoolConfiguration(
-        //         USDT,
-        //         6,
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123)
-        //     );
-
-        // IAmmGovernanceLens.AmmGovernancePoolConfiguration memory stEthConfig = IAmmGovernanceLens
-        //     .AmmGovernancePoolConfiguration(
-        //         stEth,
-        //         18,
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123)
-        //     );
-
-        // IAmmGovernanceLens.AmmGovernancePoolConfiguration memory weEthConfig = IAmmGovernanceLens
-        //     .AmmGovernancePoolConfiguration(
-        //         weETH,
-        //         18,
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123)
-        //     );
-
-        // IAmmGovernanceLens.AmmGovernancePoolConfiguration memory usdmConfig = IAmmGovernanceLens
-        //     .AmmGovernancePoolConfiguration(
-        //         USDM,
-        //         18,
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123),
-        //         _getUserAddress(123)
-        //     );
-
-        // ammGovernanceService = address(new AmmGovernanceService(usdtConfig, usdcConfig, daiConfig, stEthConfig, weEthConfig, usdmConfig));
         ammGovernanceService = address(new AmmGovernanceServiceBaseV1());
         vm.stopPrank();
     }
@@ -240,11 +161,9 @@ contract TestEthMarketCommons is Test {
                 ammPoolsLensBaseV1: ammPoolsLensBaseV1,
                 assetManagementLens: _getUserAddress(123),
                 ammOpenSwapService: _getUserAddress(123),
-                // ammOpenSwapServiceStEth: _getUserAddress(123),
                 ammCloseSwapServiceUsdt: _getUserAddress(123),
                 ammCloseSwapServiceUsdc: _getUserAddress(123),
                 ammCloseSwapServiceDai: _getUserAddress(123),
-                // ammCloseSwapServiceStEth: _getUserAddress(123),
                 ammCloseSwapLens: _getUserAddress(123),
                 ammPoolsService: _getUserAddress(123),
                 ammGovernanceService: ammGovernanceService,
@@ -252,8 +171,6 @@ contract TestEthMarketCommons is Test {
                 powerTokenLens: _getUserAddress(123),
                 flowService: _getUserAddress(123),
                 stakeService: _getUserAddress(123),
-                // ammPoolsServiceStEth: ammPoolsServiceStEth,
-                // ammPoolsLensStEth: ammPoolsLensStEth,
                 ammPoolsServiceWeEth: _getUserAddress(123),
                 ammPoolsLensWeEth: _getUserAddress(123),
                 ammPoolsServiceUsdm: _getUserAddress(123),

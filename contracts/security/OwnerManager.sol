@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.26;
 
-import "../libraries/StorageLib.sol";
 import "../libraries/errors/IporErrors.sol";
+import {StorageLibBaseV1} from "../base/libraries/StorageLibBaseV1.sol";
 
 /// @title Ipor Protocol Router Owner Manager library
 library OwnerManager {
@@ -17,14 +17,14 @@ library OwnerManager {
 
     /// @notice Gets the current owner of Ipor Protocol Router
     function getOwner() internal view returns (address) {
-        return StorageLib.getOwner().owner;
+        return StorageLibBaseV1.getOwner().owner;
     }
 
     /// @notice Oppoint account to transfer ownership
     /// @param newAppointedOwner Address of appointed owner
     function appointToOwnership(address newAppointedOwner) internal {
         require(newAppointedOwner != address(0), IporErrors.WRONG_ADDRESS);
-        StorageLib.AppointedOwnerStorage storage appointedOwnerStorage = StorageLib.getAppointedOwner();
+        StorageLibBaseV1.AppointedOwnerStorage storage appointedOwnerStorage = StorageLibBaseV1.getAppointedOwner();
         appointedOwnerStorage.appointedOwner = newAppointedOwner;
         emit AppointedToTransferOwnership(newAppointedOwner);
     }
@@ -32,7 +32,7 @@ library OwnerManager {
     /// @notice Confirm appointment to ownership
     /// @dev This is real transfer ownership in second step by appointed account
     function confirmAppointmentToOwnership() internal {
-        StorageLib.AppointedOwnerStorage storage appointedOwnerStorage = StorageLib.getAppointedOwner();
+        StorageLibBaseV1.AppointedOwnerStorage storage appointedOwnerStorage = StorageLibBaseV1.getAppointedOwner();
         appointedOwnerStorage.appointedOwner = address(0);
         transferOwnership(msg.sender);
     }
@@ -40,13 +40,13 @@ library OwnerManager {
     /// @notice Renounce ownership
     function renounceOwnership() internal {
         transferOwnership(address(0));
-        StorageLib.AppointedOwnerStorage storage appointedOwnerStorage = StorageLib.getAppointedOwner();
+        StorageLibBaseV1.AppointedOwnerStorage storage appointedOwnerStorage = StorageLibBaseV1.getAppointedOwner();
         appointedOwnerStorage.appointedOwner = address(0);
     }
 
     /// @notice Immediately transfers ownership
     function transferOwnership(address newOwner) internal {
-        StorageLib.OwnerStorage storage ownerStorage = StorageLib.getOwner();
+        StorageLibBaseV1.OwnerStorage storage ownerStorage = StorageLibBaseV1.getOwner();
         address oldOwner = ownerStorage.owner;
         ownerStorage.owner = newOwner;
         emit OwnershipTransferred(oldOwner, newOwner);

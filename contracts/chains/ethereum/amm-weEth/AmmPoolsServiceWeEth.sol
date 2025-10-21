@@ -37,7 +37,7 @@ contract AmmPoolsServiceWeEth is IAmmPoolsServiceWeEth {
     address public immutable iporOracle;
     address public immutable iporProtocolRouter;
     uint256 public immutable redeemFeeRateWeEth;
-    address public immutable referral; // 0x558c8eb91F6fd83FC5C995572c3515E2DAF7b7e0 ???
+    address public immutable referral;
 
     struct DeployedContracts {
         address ethInput;

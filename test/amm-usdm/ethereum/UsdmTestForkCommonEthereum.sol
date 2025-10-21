@@ -10,7 +10,6 @@ import "../../../contracts/tokens/IpToken.sol";
 import "../../../contracts/base/amm/AmmTreasuryBaseV1.sol";
 import "../../../contracts/base/amm/AmmStorageBaseV1.sol";
 import "../../../contracts/amm-usdm/AmmPoolsServiceUsdm.sol";
-import "../../../contracts/amm-usdm/AmmPoolsLensUsdm.sol";
 import "../../../contracts/chains/ethereum/router/IporProtocolRouterEthereum.sol";
 import "../../arbitrum/usdm/WUsdmMock.sol";
 import {AmmGovernanceServiceBaseV1} from "../../../contracts/base/amm/services/AmmGovernanceServiceBaseV1.sol";
@@ -93,7 +92,6 @@ contract UsdmTestForkCommonEthereum is Test {
         _createAmmStorageUsdm();
         _createTreasuryUsdm();
         _createAmmPoolsServiceUsdm(5 * 1e15);
-        _createAmmPoolsLensUsdm();
         _createAmmPoolsLensBaseV1();
         _createAmmGovernanceService();
         _updateIporRouterImplementation();
@@ -140,87 +138,12 @@ contract UsdmTestForkCommonEthereum is Test {
         );
     }
 
-    function _createAmmPoolsLensUsdm() private {
-        ammPoolsLensUsdm = address(
-            new AmmPoolsLensUsdm(USDM, ipUsdm, ammTreasuryUsdmProxy, ammStorageUsdmProxy, IporOracleProxy)
-        );
-    }
-
     function _createAmmPoolsLensBaseV1() private {
         ammPoolsLensBaseV1 = address(new AmmPoolsLensBaseV1({iporOracle_: IporOracleProxy}));
     }
 
     function _createAmmGovernanceService() internal {
         ammGovernanceService = address(new AmmGovernanceServiceBaseV1());
-        //     {
-        //         usdtPoolCfg: IAmmGovernanceLens.AmmGovernancePoolConfiguration({
-        //             asset: USDT,
-        //             decimals: IERC20MetadataUpgradeable(USDT).decimals(),
-        //             ammStorage: AmmStorageUsdtProxy,
-        //             ammTreasury: AmmTreasuryUsdtProxy,
-        //         ammVault: AssetManagementUsdtProxy,
-        //             ammPoolsTreasury: IporProtocolOwner,
-        //             ammPoolsTreasuryManager: IporProtocolOwner,
-        //             ammCharlieTreasury: IporProtocolOwner,
-        //             ammCharlieTreasuryManager: IporProtocolOwner
-        //         }),
-        //             usdcPoolCfg: IAmmGovernanceLens.AmmGovernancePoolConfiguration({
-        //             asset: USDC,
-        //             decimals: IERC20MetadataUpgradeable(USDC).decimals(),
-        //             ammStorage: AmmStorageUsdcProxy,
-        //             ammTreasury: AmmTreasuryUsdcProxy,
-        //         ammVault: AssetManagementUsdcProxy,
-        //             ammPoolsTreasury: IporProtocolOwner,
-        //             ammPoolsTreasuryManager: IporProtocolOwner,
-        //             ammCharlieTreasury: IporProtocolOwner,
-        //             ammCharlieTreasuryManager: IporProtocolOwner
-        //         }),
-        //             daiPoolCfg: IAmmGovernanceLens.AmmGovernancePoolConfiguration({
-        //             asset: DAI,
-        //             decimals: IERC20MetadataUpgradeable(DAI).decimals(),
-        //             ammStorage: AmmStorageDaiProxy,
-        //             ammTreasury: AmmTreasuryDaiProxy,
-        //         ammVault: AssetManagementDaiProxy,
-        //             ammPoolsTreasury: IporProtocolOwner,
-        //             ammPoolsTreasuryManager: IporProtocolOwner,
-        //             ammCharlieTreasury: IporProtocolOwner,
-        //             ammCharlieTreasuryManager: IporProtocolOwner
-        //         }),
-        //             stEthPoolCfg: IAmmGovernanceLens.AmmGovernancePoolConfiguration({
-        //             asset: stETH,
-        //             decimals: IERC20MetadataUpgradeable(stETH).decimals(),
-        //             ammStorage: AmmStorageStEthProxy,
-        //             ammTreasury: AmmTreasuryStEthProxy,
-        //         ammVault: address(0),
-        //             ammPoolsTreasury: IporProtocolOwner,
-        //             ammPoolsTreasuryManager: IporProtocolOwner,
-        //             ammCharlieTreasury: IporProtocolOwner,
-        //             ammCharlieTreasuryManager: IporProtocolOwner
-        //         }),
-        //             weEthPoolCfg: IAmmGovernanceLens.AmmGovernancePoolConfiguration({
-        //             asset: weETH,
-        //             decimals: IERC20MetadataUpgradeable(weETH).decimals(),
-        //             ammStorage: AmmStorageWeEthProxy,
-        //             ammTreasury: AmmTreasuryWeEthProxy,
-        //         ammVault: address(0),
-        //             ammPoolsTreasury: IporProtocolOwner,
-        //             ammPoolsTreasuryManager: IporProtocolOwner,
-        //             ammCharlieTreasury: IporProtocolOwner,
-        //             ammCharlieTreasuryManager: IporProtocolOwner
-        //         }),
-        //             usdmPoolCfg: IAmmGovernanceLens.AmmGovernancePoolConfiguration({
-        //             asset: USDM,
-        //             decimals: IERC20MetadataUpgradeable(USDM).decimals(),
-        //             ammStorage: ammStorageUsdmProxy,
-        //             ammTreasury: ammTreasuryUsdmProxy,
-        //         ammVault: address(0),
-        //             ammPoolsTreasury: IporProtocolOwner,
-        //             ammPoolsTreasuryManager: IporProtocolOwner,
-        //             ammCharlieTreasury: IporProtocolOwner,
-        //             ammCharlieTreasuryManager: IporProtocolOwner
-        //         })
-        //     })
-        // );
     }
 
     function _updateIporRouterImplementation() internal {
@@ -231,11 +154,9 @@ contract UsdmTestForkCommonEthereum is Test {
                 ammPoolsLensBaseV1: ammPoolsLensBaseV1,
                 assetManagementLens: AssetManagementLens,
                 ammOpenSwapService: AmmOpenSwapService,
-                // ammOpenSwapServiceStEth: AmmOpenSwapServiceStEth,
                 ammCloseSwapServiceUsdt: AmmCloseSwapServiceUsdt,
                 ammCloseSwapServiceUsdc: AmmCloseSwapServiceUsdc,
                 ammCloseSwapServiceDai: AmmCloseSwapServiceDai,
-                // ammCloseSwapServiceStEth: AmmCloseSwapServiceStEth,
                 ammCloseSwapLens: AmmCloseSwapLens,
                 ammPoolsService: AmmPoolsService,
                 ammGovernanceService: ammGovernanceService,
@@ -243,8 +164,6 @@ contract UsdmTestForkCommonEthereum is Test {
                 powerTokenLens: PowerTokenLens,
                 flowService: FlowsService,
                 stakeService: StakeService,
-                // ammPoolsServiceStEth: AmmPoolsServiceEth,
-                // ammPoolsLensStEth: AmmPoolsLensEth,
                 ammPoolsServiceWeEth: AmmPoolsServiceWeEth,
                 ammPoolsLensWeEth: AmmPoolsLensWeEth,
                 ammPoolsServiceUsdm: ammPoolsServiceUsdm,
@@ -278,7 +197,7 @@ contract UsdmTestForkCommonEthereum is Test {
         );
     }
 
-    function _setupAssetServices() private {
+    function _setupAssetServices() internal {
         // Setup AssetServices for USDM
         IAmmGovernanceServiceBaseV1(IporProtocolRouterProxy).setAssetServices(
             USDM,

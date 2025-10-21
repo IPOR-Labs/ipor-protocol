@@ -12,14 +12,11 @@ import "../../../contracts/interfaces/IAmmCloseSwapLens.sol";
 import "../../../contracts/chains/ethereum/amm-commons/AmmSwapsLens.sol";
 import "../../../contracts/amm/AmmPoolsLens.sol";
 import "../../../contracts/amm/AssetManagementLens.sol";
-import "../../../contracts/chains/arbitrum/amm-wstEth/AmmOpenSwapServiceWstEth.sol";
-import "../../../contracts/chains/arbitrum/amm-wstEth/AmmCloseSwapServiceWstEth.sol";
 import "../../../contracts/amm/AmmPoolsService.sol";
 import "../../../contracts/chains/arbitrum/amm-commons/AmmCloseSwapLensArbitrum.sol";
 import "../../../contracts/chains/arbitrum/amm-commons/AmmGovernanceServiceArbitrum.sol";
 import "../../../contracts/chains/arbitrum/amm-commons/AmmSwapsLensArbitrum.sol";
 
-import "../../../contracts/chains/arbitrum/amm-wstEth/AmmPoolsServiceWstEth.sol";
 import "../../../contracts/base/amm/AmmStorageBaseV1.sol";
 import "../../../contracts/base/amm/AmmTreasuryBaseV2.sol";
 import "../../../contracts/base/spread/SpreadBaseV1.sol";

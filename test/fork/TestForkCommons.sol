@@ -280,11 +280,9 @@ contract TestForkCommons is Test {
                 newAmmPoolsLensBaseV1, // ammPoolsLensBaseV1 - reuse same lens
                 newAmmAssetManagementLens,
                 newAmmOpenSwapService,
-                // ammOpenSwapServiceStEth,
                 newAmmCloseSwapServiceUsdt,
                 newAmmCloseSwapServiceUsdc,
                 newAmmCloseSwapServiceDai,
-                // ammCloseSwapServiceStEth,
                 newAmmCloseSwapLens,
                 newAmmPoolsService,
                 newAmmGovernanceService,
@@ -292,7 +290,6 @@ contract TestForkCommons is Test {
                 _getUserAddress(123),
                 _getUserAddress(123),
                 _getUserAddress(123),
-                // ammPoolsServiceStEth,
                 _getUserAddress(123),
                 _getUserAddress(123),
                 _getUserAddress(123),
@@ -985,17 +982,6 @@ contract TestForkCommons is Test {
         newAmmCloseSwapLens = address(
             new AmmCloseSwapLensBaseV1({
                 iporOracle_: iporOracleProxy
-                // usdtInput: USDT,
-                // usdcInput: USDC,
-                // daiInput: DAI,
-                // stETHInput: stETH,
-                // iporOracleInput: iporOracleProxy,
-                // messageSignerInput: messageSignerAddress,
-                // spreadRouterInput: spreadRouter,
-                // closeSwapServiceUsdtInput: newAmmCloseSwapServiceUsdt,
-                // closeSwapServiceUsdcInput: newAmmCloseSwapServiceUsdc,
-                // closeSwapServiceDaiInput: newAmmCloseSwapServiceDai,
-                // closeSwapServiceStEthInput: ammCloseSwapServiceStEth
             })
         );
     }

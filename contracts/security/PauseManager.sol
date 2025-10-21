@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.26;
 
-import "../libraries/StorageLib.sol";
+import {StorageLibBaseV1} from "../base/libraries/StorageLibBaseV1.sol";
 
 /// @title Ipor Protocol Router Pause Manager library
 library PauseManager {
@@ -17,7 +17,7 @@ library PauseManager {
     /// @param account Address of guardian
     /// @return true if account is Ipor Protocol Router pause guardian
     function isPauseGuardian(address account) internal view returns (bool) {
-        mapping(address => bool) storage pauseGuardians = StorageLib.getPauseGuardianStorage();
+        mapping(address => bool) storage pauseGuardians = StorageLibBaseV1.getPauseGuardianStorage();
         return pauseGuardians[account];
     }
 
@@ -29,7 +29,7 @@ library PauseManager {
             return;
         }
 
-        mapping(address => bool) storage pauseGuardians = StorageLib.getPauseGuardianStorage();
+        mapping(address => bool) storage pauseGuardians = StorageLibBaseV1.getPauseGuardianStorage();
 
         for (uint256 i; i < length; ) {
             pauseGuardians[newGuardians[i]] = true;
@@ -49,7 +49,7 @@ library PauseManager {
             return;
         }
 
-        mapping(address => bool) storage pauseGuardians = StorageLib.getPauseGuardianStorage();
+        mapping(address => bool) storage pauseGuardians = StorageLibBaseV1.getPauseGuardianStorage();
 
         for (uint256 i; i < length; ) {
             pauseGuardians[guardians[i]] = false;
