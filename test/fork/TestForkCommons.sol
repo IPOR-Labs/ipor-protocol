@@ -32,7 +32,6 @@ import "../../contracts/base/libraries/StorageLibBaseV1.sol";
 import "../../contracts/amm/AmmStorage.sol";
 import "../../contracts/amm/AmmTreasury.sol";
 
-import "../../contracts/amm-eth/AmmPoolsServiceStEth.sol";
 import "../../contracts/interfaces/IIpTokenV1.sol";
 import "../../contracts/amm-eth/interfaces/IWETH9.sol";
 import "../../contracts/amm-eth/interfaces/IStETH.sol";
@@ -43,6 +42,7 @@ import "../../contracts/amm/spread/SpreadStorageService.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {MockPlasmaVault} from "../mocks/tokens/MockPlasmaVault.sol";
 import {AmmSwapsLens} from "../../contracts/chains/ethereum/amm-commons/AmmSwapsLens.sol";
+import {AmmPoolsServiceStEth} from "../../contracts/chains/ethereum/amm-stEth/AmmPoolsServiceStEth.sol";
 
 contract TestForkCommons is Test {
     address public constant owner = 0xD92E9F039E4189c342b4067CC61f5d063960D248;
@@ -368,14 +368,18 @@ contract TestForkCommons is Test {
     function _createNewAmmPoolsServiceStEth() private {
         ammPoolsServiceStEth = address(
             new AmmPoolsServiceStEth(
-                stETH,
-                wETH,
-                ipstETH,
-                ammTreasuryProxyStEth,
-                ammStorageProxyStEth,
-                iporOracleProxy,
-                iporProtocolRouterProxy,
-                5000000000000000
+                {
+                    stEth_: stETH,
+                    wEth_: wETH,
+                    ipToken_: ipstETH,
+                    ammTreasury_: ammTreasuryProxyStEth,
+                    ammStorage_: ammStorageProxyStEth,
+                    ammAssetManagement_: newPlasmaVaultStEth,
+                    iporOracle_: iporOracleProxy,
+                    iporProtocolRouter_: iporProtocolRouterProxy,
+                    redeemFeeRate_: 5000000000000000,
+                    autoRebalanceThresholdMultiplier_: 1
+                }
             )
         );
     }
@@ -383,17 +387,21 @@ contract TestForkCommons is Test {
     function _createNewAmmPoolsServiceStEthWithZEROFee() internal {
         ammPoolsServiceStEth = address(
             new AmmPoolsServiceStEth(
-                stETH,
-                wETH,
-                ipstETH,
-                ammTreasuryProxyStEth,
-                ammStorageProxyStEth,
-                iporOracleProxy,
-                iporProtocolRouterProxy,
-                0
+                {
+                    stEth_: stETH,
+                    wEth_: wETH,
+                    ipToken_: ipstETH,
+                    ammTreasury_: ammTreasuryProxyStEth,
+                    ammStorage_: ammStorageProxyStEth,
+                    ammAssetManagement_: newPlasmaVaultStEth,
+                    iporOracle_: iporOracleProxy,
+                    iporProtocolRouter_: iporProtocolRouterProxy,
+                    redeemFeeRate_: 0,
+                    autoRebalanceThresholdMultiplier_: 1
+                }
             )
         );
-
+        
         vm.prank(owner);
         AmmGovernanceServiceBaseV1(iporProtocolRouterProxy).setAssetServices(
             stETH,
