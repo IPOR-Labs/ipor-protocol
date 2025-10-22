@@ -25,7 +25,7 @@ import "./interfaces/IERC20Bridged.sol";
 import {AmmPoolsLensArbitrum} from "../../contracts/chains/arbitrum/amm-commons/AmmPoolsLensArbitrum.sol";
 
 import {AmmPoolsServiceUsdm} from "../../contracts/amm-usdm/AmmPoolsServiceUsdm.sol";
-import {AmmPoolsServiceWstEthBaseV2} from "../../contracts/base/amm-wstEth/services/AmmPoolsServiceWstEthBaseV2.sol";
+import {AmmPoolsServiceWstEth} from "../../contracts/chains/arbitrum/amm-wstEth/AmmPoolsServiceWstEth.sol";
 import {AmmCloseSwapServiceWstEthBaseV2} from "../../contracts/base/amm-wstEth/services/AmmCloseSwapServiceWstEthBaseV2.sol";
 import {AmmOpenSwapServiceWstEthBaseV1} from "../../contracts/base/amm-wstEth/services/AmmOpenSwapServiceWstEthBaseV1.sol";
 import {MockPlasmaVault} from "../mocks/tokens/MockPlasmaVault.sol";
@@ -115,8 +115,6 @@ contract ArbitrumTestForkCommons is Test {
         _createAmmCloseSwapServiceWstEth();
 
         _updateIporRouterImplementation();
-
-        
 
         _setupIporProtocol();
 
@@ -279,15 +277,15 @@ contract ArbitrumTestForkCommons is Test {
 
     function _createAmmPoolsServices() private {
         ammPoolsServiceWstEth = address(
-            new AmmPoolsServiceWstEthBaseV2({
-                asset_: wstETH,
-                ipToken_: ipwstETH,
-                ammTreasury_: ammTreasuryWstEthProxy,
-                ammStorage_: ammStorageWstEthProxy,
-                ammAssetManagement_: newPlasmaVaultWstEth,
-                iporOracle_: iporOracleProxy,
-                iporProtocolRouter_: iporProtocolRouterProxy,
-                redeemFeeRate_: 5 * 1e15,
+            new AmmPoolsServiceWstEth({
+                wstEthInput: wstETH,
+                ipwstEthInput: ipwstETH,
+                ammTreasuryWstEthInput: ammTreasuryWstEthProxy,
+                ammStorageWstEthInput: ammStorageWstEthProxy,
+                ammAssetManagementInput: newPlasmaVaultWstEth,
+                iporOracleInput: iporOracleProxy,
+                iporProtocolRouterInput: iporProtocolRouterProxy,
+                redeemFeeRateWstEthInput: 5 * 1e15,
                 autoRebalanceThresholdMultiplier_: 1
             })
         );
@@ -307,15 +305,15 @@ contract ArbitrumTestForkCommons is Test {
 
     function _createNewAmmPoolsServiceWstEthWithZEROFee() internal {
         ammPoolsServiceWstEth = address(
-            new AmmPoolsServiceWstEthBaseV2({
-                asset_: wstETH,
-                ipToken_: ipwstETH,
-                ammTreasury_: ammTreasuryWstEthProxy,
-                ammStorage_: ammStorageWstEthProxy,
-                ammAssetManagement_: newPlasmaVaultWstEth,
-                iporOracle_: iporOracleProxy,
-                iporProtocolRouter_: iporProtocolRouterProxy,
-                redeemFeeRate_: 0,
+            new AmmPoolsServiceWstEth({
+                wstEthInput: wstETH,
+                ipwstEthInput: ipwstETH,
+                ammTreasuryWstEthInput: ammTreasuryWstEthProxy,
+                ammStorageWstEthInput: ammStorageWstEthProxy,
+                ammAssetManagementInput: newPlasmaVaultWstEth,
+                iporOracleInput: iporOracleProxy,
+                iporProtocolRouterInput: iporProtocolRouterProxy,
+                redeemFeeRateWstEthInput: 0,
                 autoRebalanceThresholdMultiplier_: 1
             })
         );

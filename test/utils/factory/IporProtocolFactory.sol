@@ -829,10 +829,6 @@ contract IporProtocolFactory is Test {
         deployerContracts.flowService = address(_powerTokenFlowsServiceBuilder.build());
         deployerContracts.stakeService = address(_powerTokenStakeServiceBuilder.build());
 
-        deployerContracts.ammPoolsLensWeEth = _fakeContract;
-        deployerContracts.ammPoolsServiceWeEth = _fakeContract;
-        deployerContracts.ammPoolsLensUsdm = _fakeContract;
-        deployerContracts.ammPoolsServiceUsdm = _fakeContract;
         deployerContracts.stEth = address(amm.stEth.asset);
         deployerContracts.weEth = _fakeAsset;
         deployerContracts.usdm = _fakeAsset;
@@ -1052,10 +1048,6 @@ contract IporProtocolFactory is Test {
         deployerContracts.liquidityMiningLens = address(_liquidityMiningLensBuilder.build());
         deployerContracts.flowService = address(_powerTokenFlowsServiceBuilder.build());
         deployerContracts.stakeService = address(_powerTokenStakeServiceBuilder.build());
-        deployerContracts.ammPoolsServiceWeEth = _fakeContract;
-        deployerContracts.ammPoolsLensWeEth = _fakeContract;
-        deployerContracts.ammPoolsLensUsdm = _fakeContract;
-        deployerContracts.ammPoolsServiceUsdm = _fakeContract;
         deployerContracts.stEth = _fakeAsset;
         deployerContracts.weEth = _fakeAsset;
         deployerContracts.usdm = _fakeAsset;
@@ -1253,10 +1245,6 @@ contract IporProtocolFactory is Test {
         deployerContracts.flowService = address(_powerTokenFlowsServiceBuilder.build());
         deployerContracts.stakeService = address(_powerTokenStakeServiceBuilder.build());
 
-        deployerContracts.ammPoolsLensWeEth = _fakeContract;
-        deployerContracts.ammPoolsServiceWeEth = _fakeContract;
-        deployerContracts.ammPoolsLensUsdm = _fakeContract;
-        deployerContracts.ammPoolsServiceUsdm = _fakeContract;
         deployerContracts.stEth = _fakeAsset;
         deployerContracts.weEth = _fakeAsset;
         deployerContracts.usdm = _fakeAsset;
@@ -1300,11 +1288,6 @@ contract IporProtocolFactory is Test {
         }
 
         IporProtocolRouterEthereum.DeployedContracts memory deployerContracts;
-
-        deployerContracts.ammPoolsLensWeEth = address(123);
-        deployerContracts.ammPoolsServiceWeEth = address(123);
-        deployerContracts.ammPoolsLensUsdm = _fakeContract;
-        deployerContracts.ammPoolsServiceUsdm = _fakeContract;
 
         deployerContracts.ammSwapsLens = address(
             new AmmSwapsLens(
@@ -1457,10 +1440,6 @@ contract IporProtocolFactory is Test {
         deployerContracts.flowService = address(_powerTokenFlowsServiceBuilder.build());
         deployerContracts.stakeService = address(_powerTokenStakeServiceBuilder.build());
 
-        deployerContracts.ammPoolsServiceWeEth = _fakeContract;
-        deployerContracts.ammPoolsLensWeEth = _fakeContract;
-        deployerContracts.ammPoolsServiceUsdm = _fakeContract;
-        deployerContracts.ammPoolsLensUsdm = _fakeContract;
         deployerContracts.stEth = _fakeAsset;
         deployerContracts.weEth = _fakeAsset;
         deployerContracts.usdm = _fakeAsset;

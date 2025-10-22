@@ -18,7 +18,7 @@ import "../../contracts/base/amm/services/AmmGovernanceServiceBaseV1.sol";
 import "../../contracts/base/amm/services/AmmPoolsLensBaseV1.sol";
 import {IAmmGovernanceServiceBaseV1} from "../../contracts/base/interfaces/IAmmGovernanceServiceBaseV1.sol";
 import {StorageLibBaseV1} from "../../contracts/base/libraries/StorageLibBaseV1.sol";
-import {AmmPoolsServiceStEthV2} from "../../contracts/chains/ethereum/amm-stEth/AmmPoolsServiceStEthV2.sol";
+import {AmmPoolsServiceStEth} from "../../contracts/chains/ethereum/amm-stEth/AmmPoolsServiceStEth.sol";
 import {MockPlasmaVault} from "../mocks/tokens/MockPlasmaVault.sol";
 
 contract TestEthMarketCommons is Test {
@@ -124,7 +124,7 @@ contract TestEthMarketCommons is Test {
 
     function _createAmmPoolServiceStEth() private {
         vm.startPrank(owner);
-        AmmPoolsServiceStEthV2 pool = new AmmPoolsServiceStEthV2(
+        AmmPoolsServiceStEth pool = new AmmPoolsServiceStEth(
             stEth,
             wEth,
             ipstEth,
@@ -171,10 +171,6 @@ contract TestEthMarketCommons is Test {
                 powerTokenLens: _getUserAddress(123),
                 flowService: _getUserAddress(123),
                 stakeService: _getUserAddress(123),
-                ammPoolsServiceWeEth: _getUserAddress(123),
-                ammPoolsLensWeEth: _getUserAddress(123),
-                ammPoolsServiceUsdm: _getUserAddress(123),
-                ammPoolsLensUsdm: _getUserAddress(123),
                 stEth: stEth,
                 weEth: weETH,
                 usdm: USDM

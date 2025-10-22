@@ -13,6 +13,7 @@ import {IAmmGovernanceServiceArbitrum} from "../interfaces/IAmmGovernanceService
 import {IAmmGovernanceLensArbitrum} from "../interfaces/IAmmGovernanceLensArbitrum.sol";
 import {IAmmPoolsLensArbitrum} from "../amm-commons/AmmPoolsLensArbitrum.sol";
 import {IAmmPoolsServiceWstEth} from "../interfaces/IAmmPoolsServiceWstEth.sol";
+import {IAmmPoolsServiceWstEthBaseV2} from "../../../base/amm-wstEth/interfaces/IAmmPoolsServiceWstEthBaseV2.sol";
 import {IAmmOpenSwapServiceWstEth} from "../../../interfaces/IAmmOpenSwapServiceWstEth.sol";
 import {IAmmCloseSwapServiceWstEth} from "../../../interfaces/IAmmCloseSwapServiceWstEth.sol";
 import {IAmmPoolsServiceUsdc} from "../interfaces/IAmmPoolsServiceUsdc.sol";
@@ -119,7 +120,11 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
             return servicesCfg.ammCloseSwapService;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceWstEth.provideLiquidityWstEth.selector) ||
-            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceWstEth.redeemFromAmmPoolWstEth.selector)
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceWstEth.redeemFromAmmPoolWstEth.selector) ||
+            _checkFunctionSigAndIsNotPause(
+                sig,
+                IAmmPoolsServiceWstEthBaseV2.rebalanceBetweenAmmTreasuryAndAssetManagementWstEth.selector
+            )
         ) {
             if (batchOperation == 0) {
                 _nonReentrantBefore();

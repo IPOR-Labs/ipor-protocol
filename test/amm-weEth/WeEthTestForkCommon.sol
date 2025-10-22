@@ -148,10 +148,6 @@ contract WeEthTestForkCommon is Test {
                 powerTokenLens: PowerTokenLens,
                 flowService: FlowsService,
                 stakeService: StakeService,
-                ammPoolsServiceWeEth: ammPoolsServiceWeEth,
-                ammPoolsLensWeEth: ammPoolsLensWeEth,
-                ammPoolsServiceUsdm: ammPoolsServiceUsdm,
-                ammPoolsLensUsdm: ammPoolsLensUsdm,
                 stEth: stETH,
                 weEth: weETH,
                 usdm: USDM

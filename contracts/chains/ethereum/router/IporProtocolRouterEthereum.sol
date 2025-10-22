@@ -76,10 +76,6 @@ contract IporProtocolRouterEthereum is IporProtocolRouterAbstract {
         address powerTokenLens;
         address flowService;
         address stakeService;
-        address ammPoolsServiceWeEth;
-        address ammPoolsLensWeEth;
-        address ammPoolsServiceUsdm;
-        address ammPoolsLensUsdm;
         address stEth;
         address weEth;
         address usdm;
@@ -97,12 +93,13 @@ contract IporProtocolRouterEthereum is IporProtocolRouterAbstract {
         powerTokenLens = deployedContracts.powerTokenLens.checkAddress();
         liquidityMiningLens = deployedContracts.liquidityMiningLens.checkAddress();
 
-        assetManagementLens = deployedContracts.assetManagementLens.checkAddress();
-        ammOpenSwapService = deployedContracts.ammOpenSwapService.checkAddress();
         ammCloseSwapServiceUsdt = deployedContracts.ammCloseSwapServiceUsdt.checkAddress();
         ammCloseSwapServiceUsdc = deployedContracts.ammCloseSwapServiceUsdc.checkAddress();
         ammCloseSwapServiceDai = deployedContracts.ammCloseSwapServiceDai.checkAddress();
+        ammOpenSwapService = deployedContracts.ammOpenSwapService.checkAddress();
+
         ammPoolsService = deployedContracts.ammPoolsService.checkAddress();
+        assetManagementLens = deployedContracts.assetManagementLens.checkAddress();
 
         stEth = deployedContracts.stEth.checkAddress();
         weEth = deployedContracts.weEth.checkAddress();
@@ -131,10 +128,6 @@ contract IporProtocolRouterEthereum is IporProtocolRouterAbstract {
                 ammOpenSwapService: ammOpenSwapService,
                 ammPoolsService: ammPoolsService,
                 assetManagementLens: assetManagementLens,
-                ammPoolsServiceWeEth: address(0),
-                ammPoolsLensWeEth: address(0),
-                ammPoolsServiceUsdm: address(0),
-                ammPoolsLensUsdm: address(0),
                 stEth: stEth,
                 weEth: weEth,
                 usdm: usdm
@@ -208,7 +201,11 @@ contract IporProtocolRouterEthereum is IporProtocolRouterAbstract {
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceStEth.provideLiquidityStEth.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceStEth.provideLiquidityWEth.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceStEth.provideLiquidityEth.selector) ||
-            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceStEth.redeemFromAmmPoolStEth.selector)
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceStEth.redeemFromAmmPoolStEth.selector) ||
+            _checkFunctionSigAndIsNotPause(
+                sig,
+                IAmmPoolsServiceStEth.rebalanceBetweenAmmTreasuryAndAssetManagementStEth.selector
+            )
         ) {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
@@ -250,8 +247,8 @@ contract IporProtocolRouterEthereum is IporProtocolRouterAbstract {
                 _nonReentrantBefore();
             }
             StorageLibBaseV1.AssetServicesValue storage servicesCfg = StorageLibBaseV1.getAssetServicesStorage().value[
-                        usdm
-                ];
+                usdm
+            ];
             return servicesCfg.ammPoolsService;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IPowerTokenStakeService.stakeLpTokensToLiquidityMining.selector) ||

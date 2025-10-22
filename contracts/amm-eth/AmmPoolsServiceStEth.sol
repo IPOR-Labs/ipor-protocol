@@ -52,7 +52,9 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
     }
 
     function provideLiquidityStEth(address beneficiary, uint256 stEthAmount) external payable override {
-        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
+            stEth
+        );
 
         uint256 actualLiquidityPoolBalance = IAmmTreasuryBaseV1(ammTreasuryStEth).getLiquidityPoolBalance();
         uint256 newPoolBalance = actualLiquidityPoolBalance + stEthAmount;
@@ -83,7 +85,9 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
     function provideLiquidityWEth(address beneficiary, uint256 wEthAmount) external payable override {
         require(wEthAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
-        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
+            stEth
+        );
         uint256 actualLiquidityPoolBalance = IAmmTreasuryBaseV1(ammTreasuryStEth).getLiquidityPoolBalance();
         uint256 newPoolBalance = wEthAmount + actualLiquidityPoolBalance;
 
@@ -102,7 +106,9 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
         require(ethAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
         require(msg.value > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
-        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(stEth);
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
+            stEth
+        );
         uint256 actualLiquidityPoolBalance = IAmmTreasuryBaseV1(ammTreasuryStEth).getLiquidityPoolBalance();
         uint256 newPoolBalance = ethAmount + actualLiquidityPoolBalance;
 
@@ -188,5 +194,12 @@ contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth {
             iporOracle: iporOracle
         });
         return model.getExchangeRate(actualLiquidityPoolBalance);
+    }
+
+    /// @notice Rebalancing is not supported in this legacy V1 contract
+    /// @dev This function is here for interface compatibility only
+    /// @dev Use the V2 contract (contracts/chains/ethereum/amm-stEth/AmmPoolsServiceStEth.sol) for rebalancing support
+    function rebalanceBetweenAmmTreasuryAndAssetManagementStEth() external pure {
+        revert("IPOR_901"); // Rebalancing not supported in V1 contract
     }
 }

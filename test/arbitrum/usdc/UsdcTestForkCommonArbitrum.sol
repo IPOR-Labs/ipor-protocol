@@ -28,7 +28,6 @@ import {AmmPoolsServiceUsdc} from "../../../contracts/chains/arbitrum/amm-usdc/A
 import {IAmmPoolsServiceUsdc} from "../../../contracts/chains/arbitrum/interfaces/IAmmPoolsServiceUsdc.sol";
 import {AmmOpenSwapServiceUsdc} from "../../../contracts/chains/arbitrum/amm-usdc/AmmOpenSwapServiceUsdc.sol";
 import {AmmCloseSwapServiceUsdc} from "../../../contracts/chains/arbitrum/amm-usdc/AmmCloseSwapServiceUsdc.sol";
-import "../../../contracts/amm-usdm/AmmPoolsServiceUsdm.sol";
 import {MockPlasmaVault} from "../../mocks/tokens/MockPlasmaVault.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 

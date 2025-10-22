@@ -20,7 +20,7 @@ import "../../../base/amm/services/AmmPoolsServiceBaseV1.sol";
 /// @notice Supports providing liquidity with stETH, ETH, and WETH
 /// @notice Includes auto-rebalancing between AMM Treasury and Asset Management (Plasma Vault)
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
-contract AmmPoolsServiceStEthV2 is IAmmPoolsServiceStEth, AmmPoolsServiceBaseV1 {
+contract AmmPoolsServiceStEth is IAmmPoolsServiceStEth, AmmPoolsServiceBaseV1 {
     using IporContractValidator for address;
     using SafeERC20 for IStETH;
     using SafeERC20 for IWETH9;
@@ -121,7 +121,7 @@ contract AmmPoolsServiceStEthV2 is IAmmPoolsServiceStEth, AmmPoolsServiceBaseV1 
 
     /// @notice Rebalances assets between AMM Treasury and Asset Management (Plasma Vault)
     /// @dev Can only be called by appointed rebalancer
-    function rebalanceBetweenAmmTreasuryAndAssetManagementStEth() external {
+    function rebalanceBetweenAmmTreasuryAndAssetManagementStEth() external override {
         _rebalanceBetweenAmmTreasuryAndAssetManagement();
     }
 

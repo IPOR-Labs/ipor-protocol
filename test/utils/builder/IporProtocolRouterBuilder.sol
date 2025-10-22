@@ -11,18 +11,13 @@ contract IporProtocolRouterBuilder is Test {
         address ammSwapsLens;
         address ammPoolsLens;
         address ammPoolsLensBaseV1;
-        address ammPoolsLensStEth;
         address assetManagementLens;
         address ammOpenSwapService;
-        address ammOpenSwapServiceStEth;
         address ammCloseSwapServiceUsdt;
         address ammCloseSwapServiceUsdc;
         address ammCloseSwapServiceDai;
-        address ammCloseSwapServiceStEth;
         address ammCloseSwapLens;
-        address ammCloseSwapLensStEth;
         address ammPoolsService;
-        address ammPoolsServiceStEth;
         address ammGovernanceService;
         address liquidityMiningLens;
         address powerTokenLens;
@@ -58,11 +53,6 @@ contract IporProtocolRouterBuilder is Test {
 
     function withAmmOpenSwapService(address ammOpenSwapService) public returns (IporProtocolRouterBuilder) {
         builderData.ammOpenSwapService = ammOpenSwapService;
-        return this;
-    }
-
-    function withAmmOpenSwapServiceStEth(address ammOpenSwapServiceStEth) public returns (IporProtocolRouterBuilder) {
-        builderData.ammOpenSwapServiceStEth = ammOpenSwapServiceStEth;
         return this;
     }
 
@@ -123,24 +113,16 @@ contract IporProtocolRouterBuilder is Test {
                     : 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266,
                 assetManagementLens: builderData.assetManagementLens,
                 ammOpenSwapService: builderData.ammOpenSwapService,
-                // ammOpenSwapServiceStEth: builderData.ammOpenSwapServiceStEth,
                 ammCloseSwapServiceUsdt: builderData.ammCloseSwapServiceUsdt,
                 ammCloseSwapServiceUsdc: builderData.ammCloseSwapServiceUsdc,
                 ammCloseSwapServiceDai: builderData.ammCloseSwapServiceDai,
                 ammCloseSwapLens: builderData.ammCloseSwapLens,
-                // ammCloseSwapServiceStEth: builderData.ammCloseSwapServiceStEth,
                 ammPoolsService: builderData.ammPoolsService,
                 ammGovernanceService: builderData.ammGovernanceService,
                 liquidityMiningLens: builderData.liquidityMiningLens,
                 powerTokenLens: builderData.powerTokenLens,
                 flowService: builderData.flowService,
                 stakeService: builderData.stakeService,
-                // ammPoolsServiceStEth: builderData.ammPoolsServiceStEth,
-                // ammPoolsLensStEth: builderData.ammPoolsLensStEth,
-                ammPoolsServiceWeEth: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, // TODO: fix address if needed
-                ammPoolsLensWeEth: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, // TODO: fix address if needed
-                ammPoolsServiceUsdm: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, // TODO: fix address if needed
-                ammPoolsLensUsdm: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, // TODO: fix address if needed
                 stEth: builderData.stEth != address(0) ? builderData.stEth : 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266,
                 weEth: builderData.weEth != address(0) ? builderData.weEth : 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266,
                 usdm: builderData.usdm != address(0) ? builderData.usdm : 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
@@ -164,26 +146,18 @@ contract IporProtocolRouterBuilder is Test {
                 ammPoolsLensBaseV1: builderData.ammPoolsLensBaseV1 != address(0)
                     ? builderData.ammPoolsLensBaseV1
                     : 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266,
-                // ammPoolsLensStEth: builderData.ammPoolsLensStEth,
                 assetManagementLens: builderData.assetManagementLens,
                 ammOpenSwapService: builderData.ammOpenSwapService,
-                // ammOpenSwapServiceStEth: builderData.ammOpenSwapServiceStEth,
                 ammCloseSwapServiceUsdt: builderData.ammCloseSwapServiceUsdt,
                 ammCloseSwapServiceUsdc: builderData.ammCloseSwapServiceUsdc,
                 ammCloseSwapServiceDai: builderData.ammCloseSwapServiceDai,
                 ammCloseSwapLens: builderData.ammCloseSwapLens,
-                // ammCloseSwapServiceStEth: builderData.ammCloseSwapServiceStEth,
                 ammPoolsService: builderData.ammPoolsService,
-                // ammPoolsServiceStEth: builderData.ammPoolsServiceStEth,
                 ammGovernanceService: builderData.ammGovernanceService,
                 liquidityMiningLens: builderData.liquidityMiningLens,
                 powerTokenLens: builderData.powerTokenLens,
                 flowService: builderData.flowService,
                 stakeService: builderData.stakeService,
-                ammPoolsServiceWeEth: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, // TODO: fix address if needed
-                ammPoolsLensWeEth: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, // TODO: fix address if needed
-                ammPoolsServiceUsdm: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, // TODO: fix address if needed
-                ammPoolsLensUsdm: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, // TODO: fix address if needed
                 stEth: builderData.stEth != address(0) ? builderData.stEth : 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266,
                 weEth: builderData.weEth != address(0) ? builderData.weEth : 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266,
                 usdm: builderData.usdm != address(0) ? builderData.usdm : 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266

@@ -290,10 +290,6 @@ contract TestForkCommons is Test {
                 _getUserAddress(123),
                 _getUserAddress(123),
                 _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123),
-                _getUserAddress(123),
                 stETH,
                 weETH,
                 USDM
