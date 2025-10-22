@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/base/amm/AmmTreasuryBaseV1.sol";
+import "../../contracts/base/amm/AmmTreasuryBaseV2.sol";
 import "../../contracts/base/amm/AmmStorageBaseV1.sol";
 import "../../contracts/chains/ethereum/amm-weEth/AmmPoolsServiceWeEth.sol";
 import "../../contracts/chains/ethereum/router/IporProtocolRouterEthereum.sol";
@@ -15,6 +16,7 @@ import {IAmmGovernanceServiceBaseV1} from "../../contracts/base/interfaces/IAmmG
 import {StorageLibBaseV1} from "../../contracts/base/libraries/StorageLibBaseV1.sol";
 import "../../contracts/interfaces/IAmmGovernanceService.sol";
 import "../../contracts/base/amm/services/AmmGovernanceServiceBaseV1.sol";
+import {MockPlasmaVault} from "../mocks/tokens/MockPlasmaVault.sol";
 
 contract WeEthTestForkCommon is Test {
     address constant IporProtocolOwner = 0xD92E9F039E4189c342b4067CC61f5d063960D248;
@@ -56,6 +58,7 @@ contract WeEthTestForkCommon is Test {
     address ammStorageWeEthProxy;
     address ammPoolsLensWeEth;
     address ammPoolsServiceWeEth;
+    address plasmaVaultWeEth;
 
     address ammPoolsLensBaseV1;
     address newAmmGovernanceService;
@@ -66,6 +69,7 @@ contract WeEthTestForkCommon is Test {
         vm.startPrank(IporProtocolOwner);
         _createIpWeEth();
         _createAmmStorageWeEth();
+        _createPlasmaVaultWeEth();
         _createTreasuryWeEth();
         _createAmmPoolsServiceWeEth(5 * 1e15);
         _createAmmPoolsLensWeEth();
@@ -83,8 +87,17 @@ contract WeEthTestForkCommon is Test {
         IpToken(ipWeEth).setTokenManager(IporProtocolRouterProxy);
     }
 
+    function _createPlasmaVaultWeEth() private {
+        plasmaVaultWeEth = address(new MockPlasmaVault(IERC20(weETH), "ipweETHfusion", "ipweETHfusion"));
+    }
+
     function _createTreasuryWeEth() private {
-        AmmTreasuryBaseV1 emptyImpl = new AmmTreasuryBaseV1(weETH, IporProtocolRouterProxy, ammStorageWeEthProxy);
+        AmmTreasuryBaseV2 emptyImpl = new AmmTreasuryBaseV2(
+            weETH,
+            IporProtocolRouterProxy,
+            ammStorageWeEthProxy,
+            plasmaVaultWeEth
+        );
 
         ammTreasuryWeEthProxy = address(
             new ERC1967Proxy(address(emptyImpl), abi.encodeWithSignature("initialize(bool)", false))
@@ -110,11 +123,13 @@ contract WeEthTestForkCommon is Test {
                     ipWeEthInput: ipWeEth,
                     ammTreasuryWeEthInput: ammTreasuryWeEthProxy,
                     ammStorageWeEthInput: ammStorageWeEthProxy,
+                    ammAssetManagementInput: plasmaVaultWeEth,
                     iporOracleInput: iporOracleProxy,
                     iporProtocolRouterInput: IporProtocolRouterProxy,
                     redeemFeeRateWeEthInput: redeemFeeRateWeEthInput,
                     eEthLiquidityPoolExternalInput: eEthLiquidityPool,
-                    referralInput: referral
+                    referralInput: referral,
+                    autoRebalanceThresholdMultiplierInput: 1 // 1x for ETH-based assets
                 })
             )
         );
@@ -158,14 +173,14 @@ contract WeEthTestForkCommon is Test {
     }
 
     function _setupAmmGovernancePoolConfiguration() private {
-        // Setup pool configuration for weETH
+        // Setup pool configuration for weETH with Asset Management support
         IAmmGovernanceServiceBaseV1(IporProtocolRouterProxy).setAmmGovernancePoolConfiguration(
             weETH,
             StorageLibBaseV1.AssetGovernancePoolConfigValue({
                 decimals: 18,
                 ammStorage: ammStorageWeEthProxy,
                 ammTreasury: ammTreasuryWeEthProxy,
-                ammVault: address(0), // weETH doesn't have asset management
+                ammVault: plasmaVaultWeEth, // Asset Management enabled via Plasma Vault
                 ammPoolsTreasury: address(0),
                 ammPoolsTreasuryManager: address(0),
                 ammCharlieTreasury: address(0),
@@ -187,7 +202,7 @@ contract WeEthTestForkCommon is Test {
     }
 
     function _setupAssetLensData() private {
-        // Setup AssetLensData for weETH
+        // Setup AssetLensData for weETH with Asset Management support
         IAmmGovernanceServiceBaseV1(IporProtocolRouterProxy).setAssetLensData(
             weETH,
             StorageLibBaseV1.AssetLensDataValue({
@@ -195,14 +210,21 @@ contract WeEthTestForkCommon is Test {
                 ipToken: ipWeEth,
                 ammStorage: ammStorageWeEthProxy,
                 ammTreasury: ammTreasuryWeEthProxy,
-                ammVault: address(0), // weETH doesn't have asset management
+                ammVault: plasmaVaultWeEth, // Asset Management enabled via Plasma Vault
                 spread: address(0) // weETH doesn't have spread yet
             })
         );
     }
 
     function _setupPools() internal {
-        IAmmGovernanceService(IporProtocolRouterProxy).setAmmPoolsParams(weETH, type(uint32).max, 0, 5000);
+        // Set pool parameters with asset management configuration
+        // maxLiquidityPoolBalance: unlimited, autoRebalanceThreshold: 1 weETH, ammTreasuryAndAssetManagementRatio: 50%
+        IAmmGovernanceService(IporProtocolRouterProxy).setAmmPoolsParams(
+            weETH,
+            type(uint32).max, // maxLiquidityPoolBalance (unlimited)
+            1, // autoRebalanceThreshold (1 weETH, will be multiplied by 1e18 * autoRebalanceThresholdMultiplier)
+            5000 // ammTreasuryAndAssetManagementRatio (50%)
+        );
     }
 
     function _setupUser(address user, uint256 value) internal {

@@ -217,7 +217,11 @@ contract IporProtocolRouterEthereum is IporProtocolRouterAbstract {
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceWeEth.provideLiquidityWeEthToAmmPoolWeEth.selector) ||
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceWeEth.provideLiquidity.selector) ||
-            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceWeEth.redeemFromAmmPoolWeEth.selector)
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceWeEth.redeemFromAmmPoolWeEth.selector) ||
+            _checkFunctionSigAndIsNotPause(
+                sig,
+                IAmmPoolsServiceWeEth.rebalanceBetweenAmmTreasuryAndAssetManagementWeEth.selector
+            )
         ) {
             if (batchOperation == 0) {
                 _nonReentrantBefore();

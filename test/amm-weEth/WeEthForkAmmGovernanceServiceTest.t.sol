@@ -11,37 +11,28 @@ contract WeEthForkAmmGovernanceServiceTest is WeEthTestForkCommon {
         _init();
     }
 
-    function testShouldNotWithdrawFromAssetManagementWeEth() public {
+    function testShouldNotWithdrawFromAssetManagementWeEthWhenVaultIsEmpty() public {
         //given
         _init();
 
         // when
-        // With BaseV1 architecture, the error is UNSUPPORTED_MODULE_ASSET_MANAGEMENT when ammVault is not configured
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                IporErrors.UnsupportedModule.selector,
-                IporErrors.UNSUPPORTED_MODULE_ASSET_MANAGEMENT,
-                weETH
-            )
-        );
+        // With asset management enabled, trying to withdraw from empty vault should fail with ERC4626 error
+        vm.expectRevert(bytes("ERC4626: withdraw more than max"));
         vm.prank(IporProtocolOwner);
         IAmmGovernanceService(IporProtocolRouterProxy).withdrawFromAssetManagement(weETH, 100 * 1e18);
     }
 
-    function testShouldNotWithdrawAllFromAssetManagementWeEth() public {
+    function testShouldWithdrawAllFromAssetManagementWeEthWhenVaultIsEmpty() public {
         //given
         _init();
 
         // when
-        // With BaseV1 architecture, the error is UNSUPPORTED_MODULE_ASSET_MANAGEMENT when ammVault is not configured
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                IporErrors.UnsupportedModule.selector,
-                IporErrors.UNSUPPORTED_MODULE_ASSET_MANAGEMENT,
-                weETH
-            )
-        );
+        // With asset management enabled, withdrawAll from empty vault should succeed (withdrawing 0)
         vm.prank(IporProtocolOwner);
         IAmmGovernanceService(IporProtocolRouterProxy).withdrawAllFromAssetManagement(weETH);
+
+        // then
+        // Should not revert, just withdraw 0
+        assertEq(IERC20(weETH).balanceOf(plasmaVaultWeEth), 0, "vault balance should still be 0");
     }
 }

@@ -65,7 +65,6 @@ contract ProvideWeEthTest is WeEthTestForkCommon {
         // given
         uint userWeEthBalanceBefore = IERC20(weETH).balanceOf(userOne);
         uint userIpWeEthBalanceBefore = IERC20(ipWeEth).balanceOf(userOne);
-        uint ammTreasuryWeEthBalanceBefore = IERC20(weETH).balanceOf(ammTreasuryWeEthProxy);
         uint provideAmount = 100e18;
         uint exchangeRateBefore = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
 
@@ -74,30 +73,32 @@ contract ProvideWeEthTest is WeEthTestForkCommon {
         IAmmPoolsServiceWeEth(IporProtocolRouterProxy).provideLiquidityWeEthToAmmPoolWeEth(userOne, provideAmount);
 
         // then
-        uint userWeEthBalanceAfter = IERC20(weETH).balanceOf(userOne);
-        uint userIpWeEthBalanceAfter = IERC20(ipWeEth).balanceOf(userOne);
-        uint ammTreasuryWeEthBalanceAfter = IERC20(weETH).balanceOf(ammTreasuryWeEthProxy);
-
-        uint exchangeRateAfter = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
-
         assertEq(
             userWeEthBalanceBefore - provideAmount,
-            userWeEthBalanceAfter,
+            IERC20(weETH).balanceOf(userOne),
             "user balance of weEth should decrease"
         );
         assertEq(
             userIpWeEthBalanceBefore + provideAmount,
-            userIpWeEthBalanceAfter,
+            IERC20(ipWeEth).balanceOf(userOne),
             "user ipstEth balance should increase"
         );
-        assertEq(userIpWeEthBalanceAfter, provideAmount, "user ipWeEth balance should be equal to provideAmount");
-        assertEq(ammTreasuryWeEthBalanceBefore, 0, "amm treasury balance should be 0");
         assertEq(
-            ammTreasuryWeEthBalanceAfter,
-            100000000000000000000,
-            "amm treasury balance should be 100000000000000000000"
+            IERC20(ipWeEth).balanceOf(userOne),
+            provideAmount,
+            "user ipWeEth balance should be equal to provideAmount"
         );
-        assertEq(exchangeRateBefore, exchangeRateAfter, "exchangeRate should not change");
+        // With asset management enabled and 50% ratio, funds are split between treasury and vault
+        assertEq(
+            IERC20(weETH).balanceOf(ammTreasuryWeEthProxy) + IERC20(weETH).balanceOf(plasmaVaultWeEth),
+            100000000000000000000,
+            "total balance (treasury + vault) should be 100000000000000000000"
+        );
+        assertEq(
+            exchangeRateBefore,
+            IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH),
+            "exchangeRate should not change"
+        );
     }
 
     function testShouldProvideWeEthToOtherAddressWhenBeneficiaryIsNotSender() external {
@@ -109,7 +110,6 @@ contract ProvideWeEthTest is WeEthTestForkCommon {
         uint userOneIpWeEthBalanceBefore = IERC20(ipWeEth).balanceOf(userOne);
         uint userTwoWeEthBalanceBefore = IERC20(weETH).balanceOf(userTwo);
         uint userTwoIpWeEthBalanceBefore = IERC20(ipWeEth).balanceOf(userTwo);
-        uint ammTreasuryWeEthBalanceBefore = IERC20(weETH).balanceOf(ammTreasuryWeEthProxy);
 
         uint provideAmount = 100e18;
         uint exchangeRateBefore = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
@@ -119,33 +119,38 @@ contract ProvideWeEthTest is WeEthTestForkCommon {
         IAmmPoolsServiceWeEth(IporProtocolRouterProxy).provideLiquidityWeEthToAmmPoolWeEth(userTwo, provideAmount);
 
         // then
-        uint userOneWeEthBalanceAfter = IERC20(weETH).balanceOf(userOne);
-        uint userOneIpWeEthBalanceAfter = IERC20(ipWeEth).balanceOf(userOne);
-        uint userTwoWeEthBalanceAfter = IERC20(weETH).balanceOf(userTwo);
-        uint userTwoIpWeEthBalanceAfter = IERC20(ipWeEth).balanceOf(userTwo);
-        uint ammTreasuryWeEthBalanceAfter = IERC20(weETH).balanceOf(ammTreasuryWeEthProxy);
-        uint exchangeRateAfter = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
-
         assertEq(
             userOneWeEthBalanceBefore - provideAmount,
-            userOneWeEthBalanceAfter,
+            IERC20(weETH).balanceOf(userOne),
             "user balance of usdm should decrease"
         );
-        assertEq(userOneIpWeEthBalanceBefore, userOneIpWeEthBalanceAfter, "user ipWeEth balance should not change");
-        assertEq(userTwoWeEthBalanceBefore, userTwoWeEthBalanceAfter, "user balance of usdm should not change");
+        assertEq(
+            userOneIpWeEthBalanceBefore,
+            IERC20(ipWeEth).balanceOf(userOne),
+            "user ipWeEth balance should not change"
+        );
+        assertEq(userTwoWeEthBalanceBefore, IERC20(weETH).balanceOf(userTwo), "user balance of usdm should not change");
         assertEq(
             userTwoIpWeEthBalanceBefore + provideAmount,
-            userTwoIpWeEthBalanceAfter,
+            IERC20(ipWeEth).balanceOf(userTwo),
             "user ipWeEth balance should increase"
         );
-        assertEq(userTwoIpWeEthBalanceAfter, provideAmount, "user ipWeEth balance should be equal to provideAmount");
-        assertEq(ammTreasuryWeEthBalanceBefore, 0, "amm treasury balance should be 0");
         assertEq(
-            ammTreasuryWeEthBalanceAfter,
-            100000000000000000000,
-            "amm treasury balance should be 100000000000000000000"
+            IERC20(ipWeEth).balanceOf(userTwo),
+            provideAmount,
+            "user ipWeEth balance should be equal to provideAmount"
         );
-        assertEq(exchangeRateBefore, exchangeRateAfter, "exchangeRate should not change");
+        // With asset management enabled and 50% ratio, funds are split between treasury and vault
+        assertEq(
+            IERC20(weETH).balanceOf(ammTreasuryWeEthProxy) + IERC20(weETH).balanceOf(plasmaVaultWeEth),
+            100000000000000000000,
+            "total balance (treasury + vault) should be 100000000000000000000"
+        );
+        assertEq(
+            exchangeRateBefore,
+            IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH),
+            "exchangeRate should not change"
+        );
     }
 
     function testShouldProvide10TimesWeEth() external {
@@ -158,7 +163,6 @@ contract ProvideWeEthTest is WeEthTestForkCommon {
         uint userOneIpWeEthBalanceBefore = IERC20(ipWeEth).balanceOf(userOne);
         uint userTwoWeEthBalanceBefore = IERC20(weETH).balanceOf(userTwo);
         uint userTwoIpWeEthBalanceBefore = IERC20(ipWeEth).balanceOf(userTwo);
-        uint ammTreasuryWeEthBalanceBefore = IERC20(weETH).balanceOf(ammTreasuryWeEthProxy);
 
         uint provideAmount = 10e18;
         uint exchangeRateBefore = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
@@ -172,27 +176,19 @@ contract ProvideWeEthTest is WeEthTestForkCommon {
         }
 
         // then
-        uint userOneWeEthBalanceAfter = IERC20(weETH).balanceOf(userOne);
-        uint userOneIpWeEthBalanceAfter = IERC20(ipWeEth).balanceOf(userOne);
-        uint userTwoWeEthBalanceAfter = IERC20(weETH).balanceOf(userTwo);
-        uint userTwoIpWeEthBalanceAfter = IERC20(ipWeEth).balanceOf(userTwo);
-        uint ammTreasuryWeEthBalanceAfter = IERC20(weETH).balanceOf(ammTreasuryWeEthProxy);
-
-        uint exchangeRateAfter = IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH);
-
         assertEq(
             userOneWeEthBalanceBefore,
             97062378226296843608896,
             "user balance of WeEth should be 97062378226296843608896"
         );
         assertEq(
-            userOneWeEthBalanceAfter,
+            IERC20(weETH).balanceOf(userOne),
             96962378226296843608896,
             "user balance of WeEth should be 96962378226296843608896"
         );
         assertEq(
             userOneIpWeEthBalanceBefore + provideAmount * 10,
-            userOneIpWeEthBalanceAfter,
+            IERC20(ipWeEth).balanceOf(userOne),
             "user ipWeEth balance should increase"
         );
         assertEq(
@@ -201,21 +197,25 @@ contract ProvideWeEthTest is WeEthTestForkCommon {
             "user balance of WeEth should be 97062378226296843608896"
         );
         assertEq(
-            userTwoWeEthBalanceAfter,
+            IERC20(weETH).balanceOf(userTwo),
             96962378226296843608896,
             "user balance of WeEth should be 96962378226296843608896"
         );
         assertEq(
             userTwoIpWeEthBalanceBefore + provideAmount * 10,
-            userTwoIpWeEthBalanceAfter,
+            IERC20(ipWeEth).balanceOf(userTwo),
             "user ipWeEth balance should increase"
         );
-        assertEq(exchangeRateBefore, exchangeRateAfter, "exchangeRate should not change");
-        assertEq(ammTreasuryWeEthBalanceBefore, 0, "amm treasury balance should be 0");
         assertEq(
-            ammTreasuryWeEthBalanceAfter,
+            exchangeRateBefore,
+            IAmmPoolsLensBaseV1(IporProtocolRouterProxy).getIpTokenExchangeRate(weETH),
+            "exchangeRate should not change"
+        );
+        // With asset management enabled and 50% ratio, funds are split between treasury and vault
+        assertEq(
+            IERC20(weETH).balanceOf(ammTreasuryWeEthProxy) + IERC20(weETH).balanceOf(plasmaVaultWeEth),
             200000000000000000000,
-            "amm treasury balance should be 200000000000000000000"
+            "total balance (treasury + vault) should be 200000000000000000000"
         );
     }
 
@@ -269,6 +269,9 @@ contract ProvideWeEthTest is WeEthTestForkCommon {
         IAmmPoolsServiceWeEth(IporProtocolRouterProxy).provideLiquidityWeEthToAmmPoolWeEth(userTwo, provideAmount);
 
         uint exchangeRate = 1000000000000000000;
+
+        // Note: With asset management, funds might be rebalanced automatically
+        // The redeem should still work correctly by withdrawing from vault if needed
 
         vm.prank(userTwo);
         vm.expectEmit(true, true, true, true);
