@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.26;
 
-import "@openzeppelin/contracts/utils/Address.sol";
 import "../../../interfaces/IAmmSwapsLens.sol";
 import "../../../base/amm/libraries/AmmSwapsLensLibBaseV1.sol";
 import "../../../libraries/IporContractValidator.sol";
@@ -11,7 +10,6 @@ import {StorageLibBaseV1} from "../../libraries/StorageLibBaseV1.sol";
 
 /// @dev It is not recommended to use lens contract directly, should be used only through IporProtocolRouter.
 contract AmmSwapsLensBaseV1 is IAmmSwapsLens {
-    using Address for address;
     using IporContractValidator for address;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
     using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;

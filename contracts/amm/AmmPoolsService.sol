@@ -23,8 +23,6 @@ import "../governance/AmmConfigurationManager.sol";
 contract AmmPoolsService is IAmmPoolsService {
     using IporContractValidator for address;
     using SafeCast for int256;
-    using SafeCast for uint256;
-    using SafeCast for uint32;
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
 

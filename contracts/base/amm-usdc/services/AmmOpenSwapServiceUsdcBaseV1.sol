@@ -9,7 +9,6 @@ import {IporTypes} from "../../../interfaces/types/IporTypes.sol";
 import {AmmTypes} from "../../../interfaces/types/AmmTypes.sol";
 import {IporErrors} from "../../../libraries/errors/IporErrors.sol";
 import {IporMath} from "../../../libraries/math/IporMath.sol";
-import {IporContractValidator} from "../../../libraries/IporContractValidator.sol";
 import {IAmmOpenSwapServiceUsdcBaseV1} from "../interfaces/IAmmOpenSwapServiceUsdcBaseV1.sol";
 import {AmmTypesBaseV1} from "../../../base/types/AmmTypesBaseV1.sol";
 import {AmmOpenSwapServiceBaseV1} from "../../../base/amm/services/AmmOpenSwapServiceBaseV1.sol";
@@ -19,7 +18,6 @@ import {StorageLibBaseV1} from "../../libraries/StorageLibBaseV1.sol";
 /// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
 contract AmmOpenSwapServiceUsdcBaseV1 is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServiceUsdcBaseV1 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
-    using IporContractValidator for address;
 
     modifier onlySupportedInputAsset(address inputAsset) {
         if (inputAsset == asset) {

@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.26;
 
-import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {IPowerTokenLens} from "../../../interfaces/IPowerTokenLens.sol";
 import {IPowerTokenFlowsService} from "../../../interfaces/IPowerTokenFlowsService.sol";
 import {ILiquidityMiningLens} from "../../../interfaces/ILiquidityMiningLens.sol";
@@ -28,7 +27,6 @@ import {IporProtocolRouterAbstract} from "../../../router/IporProtocolRouterAbst
 
 /// @title Entry point for IPOR protocol
 contract IporProtocolRouterBase is IporProtocolRouterAbstract {
-    using Address for address;
     using IporContractValidator for address;
 
     address public immutable ammSwapsLens;

@@ -22,7 +22,6 @@ contract AmmGovernanceServiceBaseV1 is
     IAmmGovernanceLens,
     IAmmGovernanceLensBaseV1
 {
-    using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     modifier onlySupportedAssetManagement(address asset) {
