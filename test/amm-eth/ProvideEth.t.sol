@@ -17,14 +17,13 @@ contract ProvideEth is TestEthMarketCommons {
         uint256 ipTokenAmount
     );
 
-    event Redeem(
-        address poolAsset,
-        address indexed ammTreasury,
+    event RedeemStEth(
+        address indexed ammTreasuryEth,
         address indexed from,
         address indexed beneficiary,
         uint256 exchangeRate,
-        uint256 amount,
-        uint256 redeemedAmount,
+        uint256 amountStEth,
+        uint256 redeemedAmountStEth,
         uint256 ipTokenAmount
     );
 
@@ -316,8 +315,7 @@ contract ProvideEth is TestEthMarketCommons {
         vm.prank(userTwo);
         vm.expectEmit(true, true, true, true);
         //then
-        emit Redeem(
-            stEth,
+        emit RedeemStEth(
             ammTreasuryStEth,
             userTwo,
             userOne,

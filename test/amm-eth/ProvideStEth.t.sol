@@ -7,8 +7,7 @@ import "../../contracts/libraries/errors/AmmErrors.sol";
 import {IAmmPoolsLensBaseV1} from "../../contracts/base/interfaces/IAmmPoolsLensBaseV1.sol";
 
 contract ProvideStEthTest is TestEthMarketCommons {
-    event ProvideLiquidity(
-        address poolAsset,
+    event ProvideLiquidityStEth(
         address indexed from,
         address indexed beneficiary,
         address indexed to,
@@ -17,14 +16,13 @@ contract ProvideStEthTest is TestEthMarketCommons {
         uint256 ipTokenAmount
     );
 
-    event Redeem(
-        address poolAsset,
-        address indexed ammTreasury,
+    event RedeemStEth(
+        address indexed ammTreasuryEth,
         address indexed from,
         address indexed beneficiary,
         uint256 exchangeRate,
-        uint256 amount,
-        uint256 redeemedAmount,
+        uint256 amountStEth,
+        uint256 redeemedAmountStEth,
         uint256 ipTokenAmount
     );
 
@@ -262,8 +260,7 @@ contract ProvideStEthTest is TestEthMarketCommons {
         vm.prank(userOne);
         vm.expectEmit(true, true, true, true);
         //then
-        emit ProvideLiquidity(
-            stEth,
+        emit ProvideLiquidityStEth(
             userOne,
             userTwo,
             ammTreasuryStEth,
@@ -291,8 +288,7 @@ contract ProvideStEthTest is TestEthMarketCommons {
         vm.prank(userTwo);
         vm.expectEmit(true, true, true, true);
         //then
-        emit Redeem(
-            stEth,
+        emit RedeemStEth(
             ammTreasuryStEth,
             userTwo,
             userOne,

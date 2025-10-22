@@ -125,6 +125,42 @@ contract AmmPoolsServiceStEthV2 is IAmmPoolsServiceStEth, AmmPoolsServiceBaseV1 
         _rebalanceBetweenAmmTreasuryAndAssetManagement();
     }
 
+    /// @notice Override to emit legacy stETH-specific ProvideLiquidityStEth event
+    function _emitProvideLiquidityEvent(
+        address beneficiary,
+        uint256 exchangeRate,
+        uint256 wadAssetAmount,
+        uint256 ipTokenAmount
+    ) internal virtual override {
+        emit IAmmPoolsServiceStEth.ProvideLiquidityStEth(
+            msg.sender,
+            beneficiary,
+            ammTreasury,
+            exchangeRate,
+            wadAssetAmount,
+            ipTokenAmount
+        );
+    }
+
+    /// @notice Override to emit legacy stETH-specific RedeemStEth event
+    function _emitRedeemEvent(
+        address beneficiary,
+        uint256 exchangeRate,
+        uint256 wadAssetAmount,
+        uint256 wadAmountToRedeem,
+        uint256 ipTokenAmount
+    ) internal virtual override {
+        emit IAmmPoolsServiceStEth.RedeemStEth(
+            ammTreasury,
+            msg.sender,
+            beneficiary,
+            exchangeRate,
+            wadAssetAmount,
+            wadAmountToRedeem,
+            ipTokenAmount
+        );
+    }
+
     /// @notice Internal function to convert ETH to stETH and mint ipstETH
     /// @dev Calls Lido's submit() function to convert ETH to stETH
     /// @param ethAmount Amount of ETH to convert

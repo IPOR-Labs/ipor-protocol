@@ -595,7 +595,7 @@ contract ArbitrumForkAmmWstEthSwapsUnwindTest is ArbitrumTestForkCommons {
             1,
             messageSignerPrivateKey
         );
-        
+
         IIporOracle(iporOracleProxy).addUpdater(owner);
 
         vm.prank(owner);

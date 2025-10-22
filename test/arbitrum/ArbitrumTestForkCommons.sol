@@ -108,13 +108,15 @@ contract ArbitrumTestForkCommons is Test {
 
         _createGovernanceService();
 
+        _createSpreadForWstEth();
+
         _createAmmPoolsServices();
         _createAmmOpenSwapServiceWstEth();
         _createAmmCloseSwapServiceWstEth();
 
         _updateIporRouterImplementation();
 
-        _createSpreadForWstEth();
+        
 
         _setupIporProtocol();
 
@@ -445,7 +447,7 @@ contract ArbitrumTestForkCommons is Test {
                     decimals: IERC20MetadataUpgradeable(wstETH).decimals(),
                     ammStorage: ammStorageWstEthProxy,
                     ammTreasury: ammTreasuryWstEthProxy,
-                    assetManagement: address(0),
+                    assetManagement: newPlasmaVaultWstEth,
                     spread: spreadWstEth,
                     unwindingFeeTreasuryPortionRate: 5 * 1e17,
                     unwindingFeeRate: 5 * 1e14,
