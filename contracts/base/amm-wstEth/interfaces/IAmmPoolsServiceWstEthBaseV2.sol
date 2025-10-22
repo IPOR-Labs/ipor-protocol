@@ -3,7 +3,7 @@ pragma solidity 0.8.26;
 
 import {IAmmPoolsServiceWstEthBaseV1} from "./IAmmPoolsServiceWstEthBaseV1.sol";
 
-/// @title Interface of the AmmPoolsServiceWstEthBaseV2 contract V2.
+/// @title Interface of the AmmPoolsServiceWstEthBaseV2 contract V2 which supports rebalancing between AmmTreasury and AssetManagement.
 interface IAmmPoolsServiceWstEthBaseV2 is IAmmPoolsServiceWstEthBaseV1 {
     /// @notice Rebalances wstETH assets between the AmmTreasury and the AssetManagement, based on configuration stored
     /// in the `AmmPoolsParamsValue.ammTreasuryAndAssetManagementRatio` field.

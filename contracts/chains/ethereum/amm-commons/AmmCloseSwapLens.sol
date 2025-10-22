@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.26;
 
-import "@openzeppelin/contracts/utils/Address.sol";
-
 import "../../../interfaces/types/IporTypes.sol";
 import "../../../interfaces/types/AmmTypes.sol";
 import "../../../interfaces/IIporOracle.sol";
@@ -21,7 +19,6 @@ import {StorageLibBaseV1} from "../../../base/libraries/StorageLibBaseV1.sol";
 /// @dev Legacy AmmCloseSwapLens for DAI/USDT/USDC which uses legacy SwapCloseLogicLib (not BaseV1)
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmCloseSwapLens is IAmmCloseSwapLens {
-    using Address for address;
     using IporContractValidator for address;
     using AmmCloseSwapServicePoolConfigurationLib for IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration;
 

@@ -37,8 +37,4 @@ interface IAssetManagement {
     /// @param amount of asset transferred from AmmTreasury to AssetManagement, represented in 18 decimals
     event Deposit(address from, address to, uint256 amount);
 
-    /// @notice Emitted when AmmTreasury executes withdraw function.
-    /// @param to account address where assets are transferred to
-    /// @param amount of asset transferred from AmmTreasury to AssetManagement, represented in 18 decimals
-    event Withdraw(address to, uint256 amount);
 }
