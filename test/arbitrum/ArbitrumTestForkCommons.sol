@@ -18,6 +18,7 @@ import {StorageLibArbitrum} from "../../contracts/chains/arbitrum/libraries/Stor
 
 import "../../contracts/base/amm/AmmStorageBaseV1.sol";
 import "../../contracts/base/amm/AmmTreasuryBaseV1.sol";
+import "../../contracts/base/amm/AmmTreasuryBaseV2.sol";
 import "../../contracts/base/spread/SpreadBaseV1.sol";
 
 import "../../contracts/tokens/IpToken.sol";
@@ -99,9 +100,9 @@ contract ArbitrumTestForkCommons is Test {
         _createIporOracle();
         _createAmmStorage();
 
-        _upgradeAmmTreasury();
-
         _createPlasmaVaults();
+
+        _upgradeAmmTreasury();
         _createAmmSwapsLens();
         _createAmmPoolsLens();
         _createAmmCloseSwapLens();
@@ -133,8 +134,8 @@ contract ArbitrumTestForkCommons is Test {
         address[] memory guardians = new address[](1);
 
         guardians[0] = owner;
-        AmmTreasuryBaseV1(ammTreasuryWstEthProxy).addPauseGuardians(guardians);
-        AmmTreasuryBaseV1(ammTreasuryWstEthProxy).unpause();
+        AmmTreasuryBaseV2(ammTreasuryWstEthProxy).addPauseGuardians(guardians);
+        AmmTreasuryBaseV2(ammTreasuryWstEthProxy).unpause();
 
         IAmmGovernanceService(iporProtocolRouterProxy).setAmmPoolsParams(wstETH, 1000000000, 0, 0);
 
@@ -320,8 +321,10 @@ contract ArbitrumTestForkCommons is Test {
     }
 
     function _upgradeAmmTreasury() private {
-        ammTreasuryWstEthImpl = address(new AmmTreasuryBaseV1(wstETH, iporProtocolRouterProxy, ammStorageWstEthProxy));
-        AmmTreasuryBaseV1(ammTreasuryWstEthProxy).upgradeTo(ammTreasuryWstEthImpl);
+        ammTreasuryWstEthImpl = address(
+            new AmmTreasuryBaseV2(wstETH, iporProtocolRouterProxy, ammStorageWstEthProxy, newPlasmaVaultWstEth)
+        );
+        AmmTreasuryBaseV2(ammTreasuryWstEthProxy).upgradeTo(ammTreasuryWstEthImpl);
         ammTreasuryUsdmImpl = address(new AmmTreasuryBaseV1(USDM, iporProtocolRouterProxy, ammStorageUsdmProxy));
         AmmTreasuryBaseV1(ammTreasuryUsdmProxy).upgradeTo(ammTreasuryUsdmImpl);
     }

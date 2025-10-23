@@ -13,7 +13,7 @@ import "../../contracts/interfaces/IAmmGovernanceLens.sol";
 import "../../contracts/interfaces/IAmmGovernanceService.sol";
 import "../../contracts/chains/ethereum/router/IporProtocolRouterEthereum.sol";
 import "../../contracts/base/amm/AmmStorageBaseV1.sol";
-import "../../contracts/base/amm/AmmTreasuryBaseV1.sol";
+import "../../contracts/base/amm/AmmTreasuryBaseV2.sol";
 import "../../contracts/base/amm/services/AmmGovernanceServiceBaseV1.sol";
 import "../../contracts/base/amm/services/AmmPoolsLensBaseV1.sol";
 import {IAmmGovernanceServiceBaseV1} from "../../contracts/base/interfaces/IAmmGovernanceServiceBaseV1.sol";
@@ -58,9 +58,10 @@ contract TestEthMarketCommons is Test {
         _createEmptyRouterImplementation();
 
         _createIpstEth();
+        _createPlasmaVaults();
         _createDummyAmmTreasuryStEth();
         _createAmmStorageStEth();
-        _createPlasmaVaults();
+        
         _upgradeAmmTreasuryStEth();
         _createAmmPoolServiceStEth();
         _createAmmPoolsLensBaseV1();
@@ -98,7 +99,7 @@ contract TestEthMarketCommons is Test {
 
     function _createDummyAmmTreasuryStEth() private {
         vm.prank(owner);
-        AmmTreasuryBaseV1 impl = new AmmTreasuryBaseV1(stEth, iporProtocolRouter, defaultAnvilAddress);
+        AmmTreasuryBaseV2 impl = new AmmTreasuryBaseV2(stEth, iporProtocolRouter, defaultAnvilAddress, newPlasmaVaultStEth);
         ERC1967Proxy proxy = _constructProxy(address(impl));
         ammTreasuryStEth = address(proxy);
     }
@@ -111,15 +112,8 @@ contract TestEthMarketCommons is Test {
     }
 
     function _upgradeAmmTreasuryStEth() private {
-        address impl = address(new AmmTreasuryBaseV1(stEth, iporProtocolRouter, ammStorageStEth));
-        AmmTreasuryBaseV1(ammTreasuryStEth).upgradeTo(impl);
-    }
-
-    function _createAmmTreasuryStEth() private {
-        vm.prank(owner);
-        AmmTreasuryBaseV1 impl = new AmmTreasuryBaseV1(stEth, iporProtocolRouter, userOne);
-        ERC1967Proxy proxy = _constructProxy(address(impl));
-        ammTreasuryStEth = address(proxy);
+        address impl = address(new AmmTreasuryBaseV2(stEth, iporProtocolRouter, ammStorageStEth, newPlasmaVaultStEth));
+        AmmTreasuryBaseV2(ammTreasuryStEth).upgradeTo(impl);
     }
 
     function _createAmmPoolServiceStEth() private {

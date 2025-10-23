@@ -37,6 +37,7 @@ import "../../contracts/amm-eth/interfaces/IWETH9.sol";
 import "../../contracts/amm-eth/interfaces/IStETH.sol";
 import "../../contracts/base/amm/AmmStorageBaseV1.sol";
 import "../../contracts/base/amm/AmmTreasuryBaseV1.sol";
+import "../../contracts/base/amm/AmmTreasuryBaseV2.sol";
 import "../../contracts/base/spread/SpreadBaseV1.sol";
 import "../../contracts/amm/spread/SpreadStorageService.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -272,7 +273,6 @@ contract TestForkCommons is Test {
     }
 
     function _updateIporRouterImplementation() internal {
- 
         IporProtocolRouterEthereum newImplementation = new IporProtocolRouterEthereum(
             IporProtocolRouterEthereum.DeployedContracts(
                 newAmmSwapsLens,
@@ -367,41 +367,37 @@ contract TestForkCommons is Test {
 
     function _createNewAmmPoolsServiceStEth() private {
         ammPoolsServiceStEth = address(
-            new AmmPoolsServiceStEth(
-                {
-                    stEth_: stETH,
-                    wEth_: wETH,
-                    ipToken_: ipstETH,
-                    ammTreasury_: ammTreasuryProxyStEth,
-                    ammStorage_: ammStorageProxyStEth,
-                    ammAssetManagement_: newPlasmaVaultStEth,
-                    iporOracle_: iporOracleProxy,
-                    iporProtocolRouter_: iporProtocolRouterProxy,
-                    redeemFeeRate_: 5000000000000000,
-                    autoRebalanceThresholdMultiplier_: 1
-                }
-            )
+            new AmmPoolsServiceStEth({
+                stEth_: stETH,
+                wEth_: wETH,
+                ipToken_: ipstETH,
+                ammTreasury_: ammTreasuryProxyStEth,
+                ammStorage_: ammStorageProxyStEth,
+                ammAssetManagement_: newPlasmaVaultStEth,
+                iporOracle_: iporOracleProxy,
+                iporProtocolRouter_: iporProtocolRouterProxy,
+                redeemFeeRate_: 5000000000000000,
+                autoRebalanceThresholdMultiplier_: 1
+            })
         );
     }
 
     function _createNewAmmPoolsServiceStEthWithZEROFee() internal {
         ammPoolsServiceStEth = address(
-            new AmmPoolsServiceStEth(
-                {
-                    stEth_: stETH,
-                    wEth_: wETH,
-                    ipToken_: ipstETH,
-                    ammTreasury_: ammTreasuryProxyStEth,
-                    ammStorage_: ammStorageProxyStEth,
-                    ammAssetManagement_: newPlasmaVaultStEth,
-                    iporOracle_: iporOracleProxy,
-                    iporProtocolRouter_: iporProtocolRouterProxy,
-                    redeemFeeRate_: 0,
-                    autoRebalanceThresholdMultiplier_: 1
-                }
-            )
+            new AmmPoolsServiceStEth({
+                stEth_: stETH,
+                wEth_: wETH,
+                ipToken_: ipstETH,
+                ammTreasury_: ammTreasuryProxyStEth,
+                ammStorage_: ammStorageProxyStEth,
+                ammAssetManagement_: newPlasmaVaultStEth,
+                iporOracle_: iporOracleProxy,
+                iporProtocolRouter_: iporProtocolRouterProxy,
+                redeemFeeRate_: 0,
+                autoRebalanceThresholdMultiplier_: 1
+            })
         );
-        
+
         vm.prank(owner);
         AmmGovernanceServiceBaseV1(iporProtocolRouterProxy).setAssetServices(
             stETH,
@@ -674,10 +670,11 @@ contract TestForkCommons is Test {
     }
 
     function _upgradeAmmTreasuryStEth() private {
-        AmmTreasuryBaseV1 newImplementation = new AmmTreasuryBaseV1(
+        AmmTreasuryBaseV2 newImplementation = new AmmTreasuryBaseV2(
             stETH,
             iporProtocolRouterProxy,
-            ammStorageProxyStEth
+            ammStorageProxyStEth,
+            newPlasmaVaultStEth
         );
 
         vm.prank(owner);
@@ -983,11 +980,7 @@ contract TestForkCommons is Test {
     }
 
     function _createAmmCloseSwapLens() private {
-        newAmmCloseSwapLens = address(
-            new AmmCloseSwapLensBaseV1({
-                iporOracle_: iporOracleProxy
-            })
-        );
+        newAmmCloseSwapLens = address(new AmmCloseSwapLensBaseV1({iporOracle_: iporOracleProxy}));
     }
 
     function _createAmmCloseSwapServiceStEth() private {
