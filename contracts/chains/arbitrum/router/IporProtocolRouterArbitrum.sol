@@ -17,6 +17,7 @@ import {IAmmPoolsServiceWstEthBaseV2} from "../../../base/amm-wstEth/interfaces/
 import {IAmmOpenSwapServiceWstEth} from "../../../interfaces/IAmmOpenSwapServiceWstEth.sol";
 import {IAmmCloseSwapServiceWstEth} from "../../../interfaces/IAmmCloseSwapServiceWstEth.sol";
 import {IAmmPoolsServiceUsdc} from "../interfaces/IAmmPoolsServiceUsdc.sol";
+import {IAmmPoolsServiceUsdcBaseV1} from "../../../base/amm-usdc/interfaces/IAmmPoolsServiceUsdcBaseV1.sol";
 import {IAmmOpenSwapServiceUsdc} from "../interfaces/IAmmOpenSwapServiceUsdc.sol";
 import {IAmmCloseSwapServiceUsdc} from "../../../interfaces/IAmmCloseSwapServiceUsdc.sol";
 import {IAmmPoolsServiceUsdm} from "../../../amm-usdm/interfaces/IAmmPoolsServiceUsdm.sol";
@@ -146,7 +147,11 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
             return servicesCfg.ammPoolsService;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdc.provideLiquidityUsdcToAmmPoolUsdc.selector) ||
-            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdc.redeemFromAmmPoolUsdc.selector)
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdc.redeemFromAmmPoolUsdc.selector) ||
+            _checkFunctionSigAndIsNotPause(
+                sig,
+                IAmmPoolsServiceUsdcBaseV1.rebalanceBetweenAmmTreasuryAndAssetManagementUsdc.selector
+            )
         ) {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
