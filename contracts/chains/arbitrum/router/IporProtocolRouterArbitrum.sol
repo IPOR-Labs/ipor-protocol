@@ -13,9 +13,11 @@ import {IAmmGovernanceServiceArbitrum} from "../interfaces/IAmmGovernanceService
 import {IAmmGovernanceLensArbitrum} from "../interfaces/IAmmGovernanceLensArbitrum.sol";
 import {IAmmPoolsLensArbitrum} from "../amm-commons/AmmPoolsLensArbitrum.sol";
 import {IAmmPoolsServiceWstEth} from "../interfaces/IAmmPoolsServiceWstEth.sol";
+import {IAmmPoolsServiceWstEthBaseV2} from "../../../base/amm-wstEth/interfaces/IAmmPoolsServiceWstEthBaseV2.sol";
 import {IAmmOpenSwapServiceWstEth} from "../../../interfaces/IAmmOpenSwapServiceWstEth.sol";
 import {IAmmCloseSwapServiceWstEth} from "../../../interfaces/IAmmCloseSwapServiceWstEth.sol";
 import {IAmmPoolsServiceUsdc} from "../interfaces/IAmmPoolsServiceUsdc.sol";
+import {IAmmPoolsServiceUsdcBaseV1} from "../../../base/amm-usdc/interfaces/IAmmPoolsServiceUsdcBaseV1.sol";
 import {IAmmOpenSwapServiceUsdc} from "../interfaces/IAmmOpenSwapServiceUsdc.sol";
 import {IAmmCloseSwapServiceUsdc} from "../../../interfaces/IAmmCloseSwapServiceUsdc.sol";
 import {IAmmPoolsServiceUsdm} from "../../../amm-usdm/interfaces/IAmmPoolsServiceUsdm.sol";
@@ -119,7 +121,11 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
             return servicesCfg.ammCloseSwapService;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceWstEth.provideLiquidityWstEth.selector) ||
-            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceWstEth.redeemFromAmmPoolWstEth.selector)
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceWstEth.redeemFromAmmPoolWstEth.selector) ||
+            _checkFunctionSigAndIsNotPause(
+                sig,
+                IAmmPoolsServiceWstEthBaseV2.rebalanceBetweenAmmTreasuryAndAssetManagementWstEth.selector
+            )
         ) {
             if (batchOperation == 0) {
                 _nonReentrantBefore();
@@ -141,7 +147,11 @@ contract IporProtocolRouterArbitrum is IporProtocolRouterAbstract {
             return servicesCfg.ammPoolsService;
         } else if (
             _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdc.provideLiquidityUsdcToAmmPoolUsdc.selector) ||
-            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdc.redeemFromAmmPoolUsdc.selector)
+            _checkFunctionSigAndIsNotPause(sig, IAmmPoolsServiceUsdc.redeemFromAmmPoolUsdc.selector) ||
+            _checkFunctionSigAndIsNotPause(
+                sig,
+                IAmmPoolsServiceUsdcBaseV1.rebalanceBetweenAmmTreasuryAndAssetManagementUsdc.selector
+            )
         ) {
             if (batchOperation == 0) {
                 _nonReentrantBefore();

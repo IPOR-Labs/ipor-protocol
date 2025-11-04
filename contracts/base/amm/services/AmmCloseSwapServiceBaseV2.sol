@@ -78,7 +78,7 @@ abstract contract AmmCloseSwapServiceBaseV2 is AmmCloseSwapServiceBaseV1 {
             uint256 ammTreasuryErc20BalanceBeforeRedeem = IERC20Upgradeable(asset).balanceOf(ammTreasury);
 
             if (ammTreasuryErc20BalanceBeforeRedeem <= totalTransferAmountAssetDecimals) {
-                StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
+                StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
                     asset
                 );
 

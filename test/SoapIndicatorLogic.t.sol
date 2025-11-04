@@ -2,7 +2,7 @@
 pragma solidity 0.8.26;
 
 import "forge-std/Test.sol";
-import "./TestCommons.sol";
+import "../test/TestCommons.sol";
 import "./utils/TestConstants.sol";
 import "../contracts/amm/libraries/SoapIndicatorLogic.sol";
 import "../contracts/amm/libraries/SoapIndicatorRebalanceLogic.sol";
@@ -23,6 +23,8 @@ contract SoapIndicatorLogicTest is TestCommons {
         uint256 averageInterestRate;
     }
 
+    SoapIndicatorRebalanceLogicWrapper internal _wrapper;
+
     function setUp() public {
         _admin = address(this);
         _userOne = _getUserAddress(1);
@@ -30,6 +32,7 @@ contract SoapIndicatorLogicTest is TestCommons {
         _userThree = _getUserAddress(3);
         _liquidityProvider = _getUserAddress(4);
         _users = usersToArray(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
+        _wrapper = new SoapIndicatorRebalanceLogicWrapper();
     }
 
     function testShouldCalculateInterestRateWhenOpenPositionSimpleCase1And18Decimals() public {
@@ -88,9 +91,9 @@ contract SoapIndicatorLogicTest is TestCommons {
         soapIndicators.rebalanceTimestamp = uint32(block.timestamp);
         // when
         vm.expectRevert("IPOR_314");
-        SoapIndicatorRebalanceLogic.calculateAverageInterestRateWhenCloseSwap(
-            soapIndicators.totalNotional,
-            soapIndicators.averageInterestRate,
+        _wrapper.calculateAverageInterestRateWhenCloseSwap(
+            uint128(soapIndicators.totalNotional),
+            uint64(soapIndicators.averageInterestRate),
             derivativeNotional,
             swapFixedInterestRate
         );
@@ -100,13 +103,12 @@ contract SoapIndicatorLogicTest is TestCommons {
         // given
         uint256 derivativeNotional = 40000 * TestConstants.D18;
         uint256 swapFixedInterestRate = TestConstants.PERCENTAGE_4_18DEC;
-        uint256 averageInterestRate = 2029718087;
 
         // when
         vm.expectRevert("IPOR_314");
-        SoapIndicatorRebalanceLogic.calculateAverageInterestRateWhenCloseSwap(
-            derivativeNotional - 1,
-            2029718087,
+        _wrapper.calculateAverageInterestRateWhenCloseSwap(
+            uint128(derivativeNotional - 1),
+            uint64(2029718087),
             derivativeNotional,
             swapFixedInterestRate
         );
@@ -114,7 +116,6 @@ contract SoapIndicatorLogicTest is TestCommons {
 
     function testShouldCalculateInterestRateEvenWhenClosePositionTotalNotionalAndAverageInterestRateTooLow() public {
         // given
-        uint256 derivativeNotional = 40000 * TestConstants.D18;
         uint256 swapFixedInterestRate = TestConstants.PERCENTAGE_4_18DEC;
 
         // when
@@ -153,23 +154,18 @@ contract SoapIndicatorLogicTest is TestCommons {
     function testShouldRevertWhenCalculateTimestampIsGreaterThanOrEqualToLastRebalanceTimestamp() public {
         // when
         vm.expectRevert("IPOR_317");
-        SoapIndicatorLogic.calculateHypotheticalInterestDelta(
+        _wrapper.calculateHypotheticalInterestDelta(
             TestConstants.ZERO,
             1,
-            TestConstants.ZERO,
-            TestConstants.ZERO
+            uint128(TestConstants.ZERO),
+            uint64(TestConstants.ZERO)
         );
     }
 
     function testShouldRevertWhenCalculateTimestampIsGreaterThanOrEqualToDerivativeOpenTimestamp() public {
         // when
         vm.expectRevert("IPOR_318");
-        SoapIndicatorRebalanceLogic.calculateInterestPaidOut(
-            TestConstants.ZERO,
-            1,
-            TestConstants.ZERO,
-            TestConstants.ZERO
-        );
+        _wrapper.calculateInterestPaidOut(TestConstants.ZERO, 1, TestConstants.ZERO, TestConstants.ZERO);
     }
 
     function testShouldCalculateHypotheticalInterestDeltaWhenSimpleCase1And18Decimals() public {
@@ -549,5 +545,55 @@ contract SoapIndicatorLogicTest is TestCommons {
             soapIndicatorsAfterCloseFirst.hypotheticalInterestCumulative,
             expectedBalances.expectedHypotheticalInterestCumulative
         );
+    }
+}
+
+// Helper contract for testing library reverts
+contract SoapIndicatorRebalanceLogicWrapper {
+    function calculateAverageInterestRateWhenCloseSwap(
+        uint128 totalNotional,
+        uint64 averageInterestRate,
+        uint256 derivativeNotional,
+        uint256 swapFixedInterestRate
+    ) external pure returns (uint256) {
+        return
+            uint256(
+                SoapIndicatorRebalanceLogic.calculateAverageInterestRateWhenCloseSwap(
+                    totalNotional,
+                    averageInterestRate,
+                    derivativeNotional,
+                    swapFixedInterestRate
+                )
+            );
+    }
+
+    function calculateHypotheticalInterestDelta(
+        uint256 calculateTimestamp,
+        uint256 lastRebalanceTimestamp,
+        uint128 totalNotional,
+        uint64 averageInterestRate
+    ) external pure returns (uint256) {
+        return
+            SoapIndicatorLogic.calculateHypotheticalInterestDelta(
+                calculateTimestamp,
+                lastRebalanceTimestamp,
+                totalNotional,
+                averageInterestRate
+            );
+    }
+
+    function calculateInterestPaidOut(
+        uint256 calculateTimestamp,
+        uint256 derivativeOpenTimestamp,
+        uint256 derivativeNotional,
+        uint256 swapFixedInterestRate
+    ) external pure returns (uint256) {
+        return
+            SoapIndicatorRebalanceLogic.calculateInterestPaidOut(
+                calculateTimestamp,
+                derivativeOpenTimestamp,
+                derivativeNotional,
+                swapFixedInterestRate
+            );
     }
 }

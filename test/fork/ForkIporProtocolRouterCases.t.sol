@@ -6,6 +6,8 @@ import "./TestForkCommons.sol";
 import "../../contracts/interfaces/IAmmCloseSwapServiceStEth.sol";
 import "../../contracts/interfaces/types/AmmTypes.sol";
 import "../contracts/IporClient.sol";
+import {IporProtocolRouterEthereum} from "../../contracts/chains/ethereum/router/IporProtocolRouterEthereum.sol";
+import {AmmPoolsLensBaseV1} from "../../contracts/base/amm/services/AmmPoolsLensBaseV1.sol";
 
 contract ForkIporProtocolRouterCases is TestForkCommons {
     function setUp() public {
@@ -348,7 +350,7 @@ contract ForkIporProtocolRouterCases is TestForkCommons {
         uint userStEthBalanceBefore = IStETH(stETH).balanceOf(user);
         uint userWEthBalanceBefore = IERC20(wETH).balanceOf(user);
 
-        uint exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint exchangeRateBefore = AmmPoolsLensBaseV1(iporProtocolRouterProxy).getIpTokenExchangeRate(stETH);
         uint ammTreasuryStEthBalanceBefore = IStETH(stETH).balanceOf(ammTreasuryProxyStEth);
 
         bytes[] memory requestData = new bytes[](3);
@@ -374,14 +376,14 @@ contract ForkIporProtocolRouterCases is TestForkCommons {
 
         // when
         vm.prank(user);
-        IporProtocolRouter(iporProtocolRouterProxy).batchExecutor{value: 150e18}(requestData);
+        IporProtocolRouterEthereum(iporProtocolRouterProxy).batchExecutor{value: 150e18}(requestData);
 
         // then
         uint userIpstEthBalanceAfter = IERC20(ipstETH).balanceOf(user);
         uint userStEthBalanceAfter = IStETH(stETH).balanceOf(user);
         uint userWethBalanceAfter = IERC20(wETH).balanceOf(user);
 
-        uint exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint exchangeRateAfter = AmmPoolsLensBaseV1(iporProtocolRouterProxy).getIpTokenExchangeRate(stETH);
         uint ammTreasuryStEthBalanceAfter = IStETH(stETH).balanceOf(ammTreasuryProxyStEth);
 
         assertEq(user.balance, userEthBalanceBefore - 100e18 + 12345, " user balance with additional eth 12345");

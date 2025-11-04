@@ -6,6 +6,8 @@ import "./BaseTestForkCommons.sol";
 import {IAmmCloseSwapServiceWstEth} from "../../contracts/interfaces/IAmmCloseSwapServiceWstEth.sol";
 import {AmmTypes} from "../../contracts/interfaces/types/AmmTypes.sol";
 import {AmmStorageBaseV1} from "../../contracts/base/amm/AmmStorageBaseV1.sol";
+import {AmmOpenSwapServiceWstEthBaseV1} from "../../contracts/base/amm-wstEth/services/AmmOpenSwapServiceWstEthBaseV1.sol";
+import {IAmmOpenSwapServiceWstEth} from "../../contracts/interfaces/IAmmOpenSwapServiceWstEth.sol";
 import {IAmmPoolsServiceWstEthBaseV2} from "../../contracts/base/amm-wstEth/interfaces/IAmmPoolsServiceWstEthBaseV2.sol";
 
 contract BaseForkAmmWstEthCloseSwapsTest is BaseTestForkCommons {

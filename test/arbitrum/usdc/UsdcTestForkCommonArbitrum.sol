@@ -12,14 +12,11 @@ import "../../../contracts/interfaces/IAmmCloseSwapLens.sol";
 import "../../../contracts/chains/ethereum/amm-commons/AmmSwapsLens.sol";
 import "../../../contracts/amm/AmmPoolsLens.sol";
 import "../../../contracts/amm/AssetManagementLens.sol";
-import "../../../contracts/chains/arbitrum/amm-wstEth/AmmOpenSwapServiceWstEth.sol";
-import "../../../contracts/chains/arbitrum/amm-wstEth/AmmCloseSwapServiceWstEth.sol";
 import "../../../contracts/amm/AmmPoolsService.sol";
 import "../../../contracts/chains/arbitrum/amm-commons/AmmCloseSwapLensArbitrum.sol";
 import "../../../contracts/chains/arbitrum/amm-commons/AmmGovernanceServiceArbitrum.sol";
 import "../../../contracts/chains/arbitrum/amm-commons/AmmSwapsLensArbitrum.sol";
 
-import "../../../contracts/chains/arbitrum/amm-wstEth/AmmPoolsServiceWstEth.sol";
 import "../../../contracts/base/amm/AmmStorageBaseV1.sol";
 import "../../../contracts/base/amm/AmmTreasuryBaseV2.sol";
 import "../../../contracts/base/spread/SpreadBaseV1.sol";
@@ -27,11 +24,10 @@ import "../../../contracts/base/spread/SpreadBaseV1.sol";
 import "../../../contracts/tokens/IpToken.sol";
 import "../../arbitrum/interfaces/IERC20Bridged.sol";
 import {AmmPoolsLensArbitrum} from "../../../contracts/chains/arbitrum/amm-commons/AmmPoolsLensArbitrum.sol";
-import {AmmPoolsServiceUsdc} from "../../../contracts/chains/arbitrum/amm-usdc/AmmPoolsServiceUsdc.sol";
+import {AmmPoolsServiceUsdcBaseV1} from "../../../contracts/base/amm-usdc/services/AmmPoolsServiceUsdcBaseV1.sol";
 import {IAmmPoolsServiceUsdc} from "../../../contracts/chains/arbitrum/interfaces/IAmmPoolsServiceUsdc.sol";
 import {AmmOpenSwapServiceUsdc} from "../../../contracts/chains/arbitrum/amm-usdc/AmmOpenSwapServiceUsdc.sol";
 import {AmmCloseSwapServiceUsdc} from "../../../contracts/chains/arbitrum/amm-usdc/AmmCloseSwapServiceUsdc.sol";
-import "../../../contracts/amm-usdm/AmmPoolsServiceUsdm.sol";
 import {MockPlasmaVault} from "../../mocks/tokens/MockPlasmaVault.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
@@ -342,7 +338,7 @@ contract UsdcTestForkCommonArbitrum is Test {
 
     function _createAmmPoolsServiceUsdc() private {
         ammPoolsServiceUsdc = address(
-            new AmmPoolsServiceUsdc(
+            new AmmPoolsServiceUsdcBaseV1(
                 {
                     asset_: USDC,
                     ipToken_: ipUsdc,
@@ -376,7 +372,7 @@ contract UsdcTestForkCommonArbitrum is Test {
 
     function _createAmmPoolsServiceUsdc(uint redeemFeeRateAssetInput) internal {
         ammPoolsServiceUsdc = address(
-            new AmmPoolsServiceUsdc(
+            new AmmPoolsServiceUsdcBaseV1(
                 {
                     asset_: USDC,
                     ipToken_: ipUsdc,
@@ -394,7 +390,7 @@ contract UsdcTestForkCommonArbitrum is Test {
 
     function _createNewAmmPoolsServiceUsdcWithZEROFee() internal {
         ammPoolsServiceUsdc = address(
-            new AmmPoolsServiceUsdc({
+            new AmmPoolsServiceUsdcBaseV1({
                 asset_: USDC,
                 ipToken_: ipUsdc,
                 ammTreasury_: ammTreasuryUsdcProxy,

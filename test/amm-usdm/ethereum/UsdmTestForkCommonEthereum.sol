@@ -10,10 +10,13 @@ import "../../../contracts/tokens/IpToken.sol";
 import "../../../contracts/base/amm/AmmTreasuryBaseV1.sol";
 import "../../../contracts/base/amm/AmmStorageBaseV1.sol";
 import "../../../contracts/amm-usdm/AmmPoolsServiceUsdm.sol";
-import "../../../contracts/amm-usdm/AmmPoolsLensUsdm.sol";
-import "../../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
-import "../../../contracts/chains/ethereum/amm-commons/AmmGovernanceService.sol";
+import "../../../contracts/chains/ethereum/router/IporProtocolRouterEthereum.sol";
 import "../../arbitrum/usdm/WUsdmMock.sol";
+import {AmmGovernanceServiceBaseV1} from "../../../contracts/base/amm/services/AmmGovernanceServiceBaseV1.sol";
+import {AmmPoolsLensBaseV1} from "../../../contracts/base/amm/services/AmmPoolsLensBaseV1.sol";
+import {IAmmGovernanceServiceBaseV1} from "../../../contracts/base/interfaces/IAmmGovernanceServiceBaseV1.sol";
+import {StorageLibBaseV1} from "../../../contracts/base/libraries/StorageLibBaseV1.sol";
+import "../../../contracts/interfaces/IAmmGovernanceService.sol";
 
 contract UsdmTestForkCommonEthereum is Test {
     address constant USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
@@ -73,18 +76,28 @@ contract UsdmTestForkCommonEthereum is Test {
     address ammPoolsLensUsdm;
 
     address ammGovernanceService;
+    address ammPoolsLensBaseV1;
+
+    uint256 messageSignerPrivateKey;
+    address messageSignerAddress;
 
     function _init() internal {
         vm.createSelectFork(vm.envString("ETHEREUM_PROVIDER_URL"), 19520045);
+
+        messageSignerPrivateKey = 0x12341234;
+        messageSignerAddress = vm.addr(messageSignerPrivateKey);
 
         vm.startPrank(IporProtocolOwner);
         _createIpUsdm();
         _createAmmStorageUsdm();
         _createTreasuryUsdm();
         _createAmmPoolsServiceUsdm(5 * 1e15);
-        _createAmmPoolsLensUsdm();
+        _createAmmPoolsLensBaseV1();
         _createAmmGovernanceService();
         _updateIporRouterImplementation();
+        _setupAmmGovernancePoolConfiguration();
+        _setupAssetServices();
+        _setupAssetLensData();
         _setupPools();
         vm.stopPrank();
         _provideInitialLiquidity();
@@ -125,115 +138,86 @@ contract UsdmTestForkCommonEthereum is Test {
         );
     }
 
-    function _createAmmPoolsLensUsdm() private {
-        ammPoolsLensUsdm = address(
-            new AmmPoolsLensUsdm(USDM, ipUsdm, ammTreasuryUsdmProxy, ammStorageUsdmProxy, IporOracleProxy)
-        );
+    function _createAmmPoolsLensBaseV1() private {
+        ammPoolsLensBaseV1 = address(new AmmPoolsLensBaseV1({iporOracle_: IporOracleProxy}));
     }
 
     function _createAmmGovernanceService() internal {
-        ammGovernanceService = address(
-            new AmmGovernanceService({
-                usdtPoolCfg: IAmmGovernanceLens.AmmGovernancePoolConfiguration({
-                    asset: USDT,
-                    decimals: IERC20MetadataUpgradeable(USDT).decimals(),
-                    ammStorage: AmmStorageUsdtProxy,
-                    ammTreasury: AmmTreasuryUsdtProxy,
-                ammVault: AssetManagementUsdtProxy,
-                    ammPoolsTreasury: IporProtocolOwner,
-                    ammPoolsTreasuryManager: IporProtocolOwner,
-                    ammCharlieTreasury: IporProtocolOwner,
-                    ammCharlieTreasuryManager: IporProtocolOwner
-                }),
-                    usdcPoolCfg: IAmmGovernanceLens.AmmGovernancePoolConfiguration({
-                    asset: USDC,
-                    decimals: IERC20MetadataUpgradeable(USDC).decimals(),
-                    ammStorage: AmmStorageUsdcProxy,
-                    ammTreasury: AmmTreasuryUsdcProxy,
-                ammVault: AssetManagementUsdcProxy,
-                    ammPoolsTreasury: IporProtocolOwner,
-                    ammPoolsTreasuryManager: IporProtocolOwner,
-                    ammCharlieTreasury: IporProtocolOwner,
-                    ammCharlieTreasuryManager: IporProtocolOwner
-                }),
-                    daiPoolCfg: IAmmGovernanceLens.AmmGovernancePoolConfiguration({
-                    asset: DAI,
-                    decimals: IERC20MetadataUpgradeable(DAI).decimals(),
-                    ammStorage: AmmStorageDaiProxy,
-                    ammTreasury: AmmTreasuryDaiProxy,
-                ammVault: AssetManagementDaiProxy,
-                    ammPoolsTreasury: IporProtocolOwner,
-                    ammPoolsTreasuryManager: IporProtocolOwner,
-                    ammCharlieTreasury: IporProtocolOwner,
-                    ammCharlieTreasuryManager: IporProtocolOwner
-                }),
-                    stEthPoolCfg: IAmmGovernanceLens.AmmGovernancePoolConfiguration({
-                    asset: stETH,
-                    decimals: IERC20MetadataUpgradeable(stETH).decimals(),
-                    ammStorage: AmmStorageStEthProxy,
-                    ammTreasury: AmmTreasuryStEthProxy,
-                ammVault: address(0),
-                    ammPoolsTreasury: IporProtocolOwner,
-                    ammPoolsTreasuryManager: IporProtocolOwner,
-                    ammCharlieTreasury: IporProtocolOwner,
-                    ammCharlieTreasuryManager: IporProtocolOwner
-                }),
-                    weEthPoolCfg: IAmmGovernanceLens.AmmGovernancePoolConfiguration({
-                    asset: weETH,
-                    decimals: IERC20MetadataUpgradeable(weETH).decimals(),
-                    ammStorage: AmmStorageWeEthProxy,
-                    ammTreasury: AmmTreasuryWeEthProxy,
-                ammVault: address(0),
-                    ammPoolsTreasury: IporProtocolOwner,
-                    ammPoolsTreasuryManager: IporProtocolOwner,
-                    ammCharlieTreasury: IporProtocolOwner,
-                    ammCharlieTreasuryManager: IporProtocolOwner
-                }),
-                    usdmPoolCfg: IAmmGovernanceLens.AmmGovernancePoolConfiguration({
-                    asset: USDM,
-                    decimals: IERC20MetadataUpgradeable(USDM).decimals(),
-                    ammStorage: ammStorageUsdmProxy,
-                    ammTreasury: ammTreasuryUsdmProxy,
-                ammVault: address(0),
-                    ammPoolsTreasury: IporProtocolOwner,
-                    ammPoolsTreasuryManager: IporProtocolOwner,
-                    ammCharlieTreasury: IporProtocolOwner,
-                    ammCharlieTreasuryManager: IporProtocolOwner
-                })
+        ammGovernanceService = address(new AmmGovernanceServiceBaseV1());
+    }
+
+    function _updateIporRouterImplementation() internal {
+        IporProtocolRouterEthereum.DeployedContracts memory deployedContracts = IporProtocolRouterEthereum
+            .DeployedContracts({
+                ammSwapsLens: AmmSwapsLens,
+                ammPoolsLens: AmmPoolsLens,
+                ammPoolsLensBaseV1: ammPoolsLensBaseV1,
+                assetManagementLens: AssetManagementLens,
+                ammOpenSwapService: AmmOpenSwapService,
+                ammCloseSwapServiceUsdt: AmmCloseSwapServiceUsdt,
+                ammCloseSwapServiceUsdc: AmmCloseSwapServiceUsdc,
+                ammCloseSwapServiceDai: AmmCloseSwapServiceDai,
+                ammCloseSwapLens: AmmCloseSwapLens,
+                ammPoolsService: AmmPoolsService,
+                ammGovernanceService: ammGovernanceService,
+                liquidityMiningLens: LiquidityMiningLens,
+                powerTokenLens: PowerTokenLens,
+                flowService: FlowsService,
+                stakeService: StakeService,
+                stEth: stETH,
+                weEth: weETH,
+                usdm: USDM
+            });
+
+        address iporProtocolRouterImpl = address(new IporProtocolRouterEthereum(deployedContracts));
+        IporProtocolRouterEthereum(IporProtocolRouterProxy).upgradeTo(iporProtocolRouterImpl);
+    }
+
+    function _setupAmmGovernancePoolConfiguration() private {
+        // Setup message signer
+        IAmmGovernanceServiceBaseV1(IporProtocolRouterProxy).setMessageSigner(messageSignerAddress);
+
+        // Setup pool configuration for USDM
+        IAmmGovernanceServiceBaseV1(IporProtocolRouterProxy).setAmmGovernancePoolConfiguration(
+            USDM,
+            StorageLibBaseV1.AssetGovernancePoolConfigValue({
+                decimals: 18,
+                ammStorage: ammStorageUsdmProxy,
+                ammTreasury: ammTreasuryUsdmProxy,
+                ammVault: address(0), // USDM doesn't have asset management
+                ammPoolsTreasury: address(0),
+                ammPoolsTreasuryManager: address(0),
+                ammCharlieTreasury: address(0),
+                ammCharlieTreasuryManager: address(0)
             })
         );
     }
 
-    function _updateIporRouterImplementation() internal {
+    function _setupAssetServices() internal {
+        // Setup AssetServices for USDM
+        IAmmGovernanceServiceBaseV1(IporProtocolRouterProxy).setAssetServices(
+            USDM,
+            StorageLibBaseV1.AssetServicesValue({
+                ammPoolsService: ammPoolsServiceUsdm,
+                ammOpenSwapService: address(0),
+                ammCloseSwapService: address(0)
+            })
+        );
+    }
 
-        IporProtocolRouter.DeployedContracts memory deployedContracts = IporProtocolRouter
-            .DeployedContracts({
-            ammSwapsLens: AmmSwapsLens,
-            ammPoolsLens: AmmPoolsLens,
-            assetManagementLens: AssetManagementLens,
-            ammOpenSwapService: AmmOpenSwapService,
-            ammOpenSwapServiceStEth: AmmOpenSwapServiceStEth,
-            ammCloseSwapServiceUsdt: AmmCloseSwapServiceUsdt,
-            ammCloseSwapServiceUsdc: AmmCloseSwapServiceUsdc,
-            ammCloseSwapServiceDai: AmmCloseSwapServiceDai,
-            ammCloseSwapServiceStEth: AmmCloseSwapServiceStEth,
-            ammCloseSwapLens: AmmCloseSwapLens,
-            ammPoolsService: AmmPoolsService,
-            ammGovernanceService: ammGovernanceService,
-            liquidityMiningLens: LiquidityMiningLens,
-            powerTokenLens: PowerTokenLens,
-            flowService: FlowsService,
-            stakeService: StakeService,
-            ammPoolsServiceStEth: AmmPoolsServiceEth,
-            ammPoolsLensStEth: AmmPoolsLensEth,
-            ammPoolsServiceWeEth: AmmPoolsServiceWeEth,
-            ammPoolsLensWeEth: AmmPoolsLensWeEth,
-            ammPoolsServiceUsdm: ammPoolsServiceUsdm,
-            ammPoolsLensUsdm: ammPoolsLensUsdm
-        });
-
-        address iporProtocolRouterImpl = address(new IporProtocolRouter(deployedContracts));
-        IporProtocolRouter(IporProtocolRouterProxy).upgradeTo(iporProtocolRouterImpl);
+    function _setupAssetLensData() private {
+        // Setup AssetLensData for USDM
+        IAmmGovernanceServiceBaseV1(IporProtocolRouterProxy).setAssetLensData(
+            USDM,
+            StorageLibBaseV1.AssetLensDataValue({
+                decimals: 18,
+                ipToken: ipUsdm,
+                ammStorage: ammStorageUsdmProxy,
+                ammTreasury: ammTreasuryUsdmProxy,
+                ammVault: address(0), // USDM doesn't have asset management
+                spread: address(0) // USDM doesn't have spread yet
+            })
+        );
     }
 
     function _setupPools() internal {

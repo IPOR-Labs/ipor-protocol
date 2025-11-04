@@ -8,7 +8,6 @@ import "../interfaces/types/AmmTypes.sol";
 import "./interfaces/IAmmPoolsServiceUsdm.sol";
 import "../libraries/errors/AmmErrors.sol";
 import "../libraries/math/IporMath.sol";
-import "../libraries/StorageLib.sol";
 import "../libraries/IporContractValidator.sol";
 import "../libraries/ProvideLiquidityEvents.sol";
 import "../libraries/AmmLib.sol";
@@ -50,7 +49,7 @@ contract AmmPoolsServiceUsdm is IAmmPoolsServiceUsdm {
     }
 
     function provideLiquidityUsdmToAmmPoolUsdm(address beneficiary, uint256 usdmAmount) external payable override {
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(usdm);
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(usdm);
 
         uint256 actualLiquidityPoolBalance = IAmmTreasuryBaseV1(ammTreasuryUsdm).getLiquidityPoolBalance();
         uint256 newPoolBalance = actualLiquidityPoolBalance + usdmAmount;

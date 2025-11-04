@@ -5,7 +5,7 @@ import {IAmmPoolsServiceWstEthBaseV2} from "../../../base/amm-wstEth/interfaces/
 import {AmmPoolsServiceBaseV1} from "../../../base/amm/services/AmmPoolsServiceBaseV1.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
-/// @dev Asset Management is supported in this contract. Rebalancing between AMM Treasury and Asset Management IS supported in this contract.   
+/// @dev Asset Management is supported in this contract. Rebalancing between AMM Treasury and Asset Management IS supported in this contract.
 contract AmmPoolsServiceWstEthBaseV2 is IAmmPoolsServiceWstEthBaseV2, AmmPoolsServiceBaseV1 {
     constructor(
         address asset_,

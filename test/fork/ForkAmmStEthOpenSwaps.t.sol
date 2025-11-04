@@ -2057,6 +2057,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         //given
         _init();
         address user = _getUserAddress(22);
+        deal(user, 123);
 
         uint256 totalAmount = 1e17;
 
@@ -2629,6 +2630,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         //given
         _init();
         address user = _getUserAddress(22);
+        deal(user, 123);
 
         uint256 totalAmount = 1e17;
 
@@ -3152,7 +3154,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         uint userOneStEthBalanceBefore = IStETH(stETH).balanceOf(user);
         uint userOneIpstEthBalanceBefore = IERC20(ipstETH).balanceOf(user);
         uint ammTreasuryStEthBalanceBefore = IStETH(stETH).balanceOf(ammTreasuryProxyStEth);
-        uint exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensBaseV1(iporProtocolRouterProxy).getIpTokenExchangeRate(stETH);
 
         uint provideAmount = 1 * 1e18;
 
@@ -3164,7 +3166,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         uint userOneStEthBalanceAfter = IStETH(stETH).balanceOf(user);
         uint userOneIpstEthBalanceAfter = IERC20(ipstETH).balanceOf(user);
         uint ammTreasuryStEthBalanceAfter = IStETH(stETH).balanceOf(ammTreasuryProxyStEth);
-        uint exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint exchangeRateAfter = IAmmPoolsLensBaseV1(iporProtocolRouterProxy).getIpTokenExchangeRate(stETH);
 
         assertEq(
             userOneStEthBalanceBefore - provideAmount,
@@ -3231,7 +3233,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         uint userWEthBalanceBefore = IWETH9(wETH).balanceOf(user);
         uint userOneIpstEthBalanceBefore = IERC20(ipstETH).balanceOf(user);
         uint ammTreasuryStEthBalanceBefore = IStETH(stETH).balanceOf(ammTreasuryProxyStEth);
-        uint exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensBaseV1(iporProtocolRouterProxy).getIpTokenExchangeRate(stETH);
 
         uint provideAmount = 1 * 1e18;
 
@@ -3243,7 +3245,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         uint userWEthBalanceAfter = IWETH9(wETH).balanceOf(user);
         uint userOneIpstEthBalanceAfter = IERC20(ipstETH).balanceOf(user);
         uint ammTreasuryStEthBalanceAfter = IStETH(stETH).balanceOf(ammTreasuryProxyStEth);
-        uint exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint exchangeRateAfter = IAmmPoolsLensBaseV1(iporProtocolRouterProxy).getIpTokenExchangeRate(stETH);
 
         assertEq(userWEthBalanceBefore - provideAmount, userWEthBalanceAfter, "user balance of wEth should decrease");
         assertLt(userOneIpstEthBalanceBefore, userOneIpstEthBalanceAfter, "user balance of ipstEth should increase");
@@ -3306,7 +3308,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         uint userEthBalanceBefore = user.balance;
         uint userOneIpstEthBalanceBefore = IERC20(ipstETH).balanceOf(user);
         uint ammTreasuryStEthBalanceBefore = IStETH(stETH).balanceOf(ammTreasuryProxyStEth);
-        uint exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensBaseV1(iporProtocolRouterProxy).getIpTokenExchangeRate(stETH);
 
         uint provideAmount = 1 * 1e18;
 
@@ -3318,7 +3320,7 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
         uint userEthBalanceAfter = user.balance;
         uint userOneIpstEthBalanceAfter = IERC20(ipstETH).balanceOf(user);
         uint ammTreasuryStEthBalanceAfter = IStETH(stETH).balanceOf(ammTreasuryProxyStEth);
-        uint exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouterProxy).getIpstEthExchangeRate();
+        uint exchangeRateAfter = IAmmPoolsLensBaseV1(iporProtocolRouterProxy).getIpTokenExchangeRate(stETH);
 
         assertEq(userEthBalanceBefore - provideAmount, userEthBalanceAfter, "user balance of Eth should decrease");
         assertLt(userOneIpstEthBalanceBefore, userOneIpstEthBalanceAfter, "user balance of ipstEth should increase");
@@ -3331,5 +3333,4 @@ contract ForkAmmStEthOpenSwapsTest is TestForkCommons {
 
         assertEq(exchangeRateBefore, exchangeRateAfter, "exchangeRate should not change");
     }
-
 }

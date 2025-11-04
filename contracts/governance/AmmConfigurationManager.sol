@@ -3,7 +3,7 @@ pragma solidity 0.8.26;
 
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/AmmPoolsErrors.sol";
-import "../libraries/StorageLib.sol";
+import "../base/libraries/StorageLibBaseV1.sol";
 
 /// @title Configuration manager for AMM
 library AmmConfigurationManager {
@@ -39,7 +39,7 @@ library AmmConfigurationManager {
         require(account != address(0), IporErrors.WRONG_ADDRESS);
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
 
-        mapping(address => mapping(address => bool)) storage swapLiquidators = StorageLib
+        mapping(address => mapping(address => bool)) storage swapLiquidators = StorageLibBaseV1
             .getAmmSwapsLiquidatorsStorage()
             .value;
         swapLiquidators[asset][account] = true;
@@ -55,7 +55,7 @@ library AmmConfigurationManager {
         require(account != address(0), IporErrors.WRONG_ADDRESS);
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
 
-        mapping(address => mapping(address => bool)) storage swapLiquidators = StorageLib
+        mapping(address => mapping(address => bool)) storage swapLiquidators = StorageLibBaseV1
             .getAmmSwapsLiquidatorsStorage()
             .value;
         swapLiquidators[asset][account] = false;
@@ -68,7 +68,7 @@ library AmmConfigurationManager {
     /// @param account address of the account
     /// @return true if account is a SwapLiquidator, false otherwise
     function isSwapLiquidator(address asset, address account) internal view returns (bool) {
-        mapping(address => mapping(address => bool)) storage swapLiquidators = StorageLib
+        mapping(address => mapping(address => bool)) storage swapLiquidators = StorageLibBaseV1
             .getAmmSwapsLiquidatorsStorage()
             .value;
         return swapLiquidators[asset][account];
@@ -82,7 +82,7 @@ library AmmConfigurationManager {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(account != address(0), IporErrors.WRONG_ADDRESS);
 
-        mapping(address => mapping(address => bool)) storage appointedToRebalance = StorageLib
+        mapping(address => mapping(address => bool)) storage appointedToRebalance = StorageLibBaseV1
             .getAmmPoolsAppointedToRebalanceStorage()
             .value;
         appointedToRebalance[asset][account] = true;
@@ -98,7 +98,7 @@ library AmmConfigurationManager {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(account != address(0), IporErrors.WRONG_ADDRESS);
 
-        mapping(address => mapping(address => bool)) storage appointedToRebalance = StorageLib
+        mapping(address => mapping(address => bool)) storage appointedToRebalance = StorageLibBaseV1
             .getAmmPoolsAppointedToRebalanceStorage()
             .value;
         appointedToRebalance[asset][account] = false;
@@ -111,7 +111,7 @@ library AmmConfigurationManager {
     /// @param account address of the account
     /// @return true if account is appointed to rebalance, false otherwise
     function isAppointedToRebalanceInAmm(address asset, address account) internal view returns (bool) {
-        mapping(address => mapping(address => bool)) storage appointedToRebalance = StorageLib
+        mapping(address => mapping(address => bool)) storage appointedToRebalance = StorageLibBaseV1
             .getAmmPoolsAppointedToRebalanceStorage()
             .value;
         return appointedToRebalance[asset][account];
@@ -130,11 +130,11 @@ library AmmConfigurationManager {
         uint16 newAmmTreasuryAndAssetManagementRatio
     ) internal {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        /// @dev newAmmTreasuryAndAssetManagementRatio is percentage with 2 decimals, example: 65% = 6500, (see description in StorageLib.AmmPoolsParamsValue)
+        /// @dev newAmmTreasuryAndAssetManagementRatio is percentage with 2 decimals, example: 65% = 6500, (see description in StorageLibBaseV1.AmmPoolsParamsValue)
         /// value cannot be greater than 10000 which is 100%
         require(newAmmTreasuryAndAssetManagementRatio < 1e4, AmmPoolsErrors.AMM_TREASURY_ASSET_MANAGEMENT_RATIO);
 
-        StorageLib.getAmmPoolsParamsStorage().value[asset] = StorageLib.AmmPoolsParamsValue({
+        StorageLibBaseV1.getAmmPoolsParamsStorage().value[asset] = StorageLibBaseV1.AmmPoolsParamsValue({
             maxLiquidityPoolBalance: newMaxLiquidityPoolBalance,
             autoRebalanceThreshold: newAutoRebalanceThreshold,
             ammTreasuryAndAssetManagementRatio: newAmmTreasuryAndAssetManagementRatio
@@ -151,7 +151,7 @@ library AmmConfigurationManager {
     /// @notice Gets AMM Pools Params.
     /// @param asset address of the asset (pool)
     /// @return AMM Pools Params struct
-    function getAmmPoolsParams(address asset) internal view returns (StorageLib.AmmPoolsParamsValue memory) {
-        return StorageLib.getAmmPoolsParamsStorage().value[asset];
+    function getAmmPoolsParams(address asset) internal view returns (StorageLibBaseV1.AmmPoolsParamsValue memory) {
+        return StorageLibBaseV1.getAmmPoolsParamsStorage().value[asset];
     }
 }

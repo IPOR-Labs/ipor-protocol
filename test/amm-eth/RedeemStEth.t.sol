@@ -4,6 +4,7 @@ pragma solidity 0.8.26;
 import "forge-std/Test.sol";
 import "./TestEthMarketCommons.sol";
 import "../../contracts/libraries/errors/AmmErrors.sol";
+import {IAmmPoolsLensBaseV1} from "../../contracts/base/interfaces/IAmmPoolsLensBaseV1.sol";
 
 contract RedeemStEth is TestEthMarketCommons {
     function setUp() public {
@@ -73,7 +74,7 @@ contract RedeemStEth is TestEthMarketCommons {
         // given
         uint userStEthBalanceBefore = IStETH(stEth).balanceOf(userOne);
         uint userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
-        uint exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensBaseV1(iporProtocolRouter).getIpTokenExchangeRate(stEth);
         uint redeemAmount = 100e18;
 
         // when
@@ -83,7 +84,7 @@ contract RedeemStEth is TestEthMarketCommons {
         // then
         uint userStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
         uint userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
-        uint exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint exchangeRateAfter = IAmmPoolsLensBaseV1(iporProtocolRouter).getIpTokenExchangeRate(stEth);
 
         assertTrue(userStEthBalanceBefore < userStEthBalanceAfter, "user balance of stEth should increase");
         assertTrue(userIpstEthBalanceBefore > userIpstEthBalanceAfter, "user ipstEth balance should decrease");
@@ -95,7 +96,7 @@ contract RedeemStEth is TestEthMarketCommons {
         uint userStEthBalanceBefore = IStETH(stEth).balanceOf(userOne);
         uint userTwoStEthBalanceBefore = IStETH(stEth).balanceOf(userTwo);
         uint userIpstEthBalanceBefore = IERC20(ipstEth).balanceOf(userOne);
-        uint exchangeRateBefore = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLensBaseV1(iporProtocolRouter).getIpTokenExchangeRate(stEth);
         uint redeemAmount = 100e18;
 
         // when
@@ -106,7 +107,7 @@ contract RedeemStEth is TestEthMarketCommons {
         uint userStEthBalanceAfter = IStETH(stEth).balanceOf(userOne);
         uint userTwoStEthBalanceAfter = IStETH(stEth).balanceOf(userTwo);
         uint userIpstEthBalanceAfter = IERC20(ipstEth).balanceOf(userOne);
-        uint exchangeRateAfter = IAmmPoolsLensStEth(iporProtocolRouter).getIpstEthExchangeRate();
+        uint exchangeRateAfter = IAmmPoolsLensBaseV1(iporProtocolRouter).getIpTokenExchangeRate(stEth);
 
         assertEq(userStEthBalanceBefore, userStEthBalanceAfter, "user balance of stEth should not change");
         assertTrue(userTwoStEthBalanceBefore < userTwoStEthBalanceAfter, "user balance of stEth should increase");

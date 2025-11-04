@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.26;
 
-import "../TestCommons.sol";
+import "../../test/TestCommons.sol";
 import "../../contracts/amm/spread/Spread28Days.sol";
 import "../../contracts/amm/spread/Spread60Days.sol";
 import "../../contracts/amm/spread/Spread90Days.sol";

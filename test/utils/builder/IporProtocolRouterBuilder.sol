@@ -4,29 +4,28 @@ pragma solidity 0.8.26;
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "forge-std/Test.sol";
 import "../../mocks/EmptyRouterImplementation.sol";
-import "../../../contracts/chains/ethereum/router/IporProtocolRouter.sol";
+import "../../../contracts/chains/ethereum/router/IporProtocolRouterEthereum.sol";
 
 contract IporProtocolRouterBuilder is Test {
     struct BuilderData {
         address ammSwapsLens;
         address ammPoolsLens;
-        address ammPoolsLensStEth;
+        address ammPoolsLensBaseV1;
         address assetManagementLens;
         address ammOpenSwapService;
-        address ammOpenSwapServiceStEth;
         address ammCloseSwapServiceUsdt;
         address ammCloseSwapServiceUsdc;
         address ammCloseSwapServiceDai;
-        address ammCloseSwapServiceStEth;
         address ammCloseSwapLens;
-        address ammCloseSwapLensStEth;
         address ammPoolsService;
-        address ammPoolsServiceStEth;
         address ammGovernanceService;
         address liquidityMiningLens;
         address powerTokenLens;
         address flowService;
         address stakeService;
+        address stEth;
+        address weEth;
+        address usdm;
     }
 
     BuilderData private builderData;
@@ -54,11 +53,6 @@ contract IporProtocolRouterBuilder is Test {
 
     function withAmmOpenSwapService(address ammOpenSwapService) public returns (IporProtocolRouterBuilder) {
         builderData.ammOpenSwapService = ammOpenSwapService;
-        return this;
-    }
-
-    function withAmmOpenSwapServiceStEth(address ammOpenSwapServiceStEth) public returns (IporProtocolRouterBuilder) {
-        builderData.ammOpenSwapServiceStEth = ammOpenSwapServiceStEth;
         return this;
     }
 
@@ -92,48 +86,50 @@ contract IporProtocolRouterBuilder is Test {
         return this;
     }
 
-    function buildEmptyProxy() public returns (IporProtocolRouter) {
+    function withUsdm(address usdm) public returns (IporProtocolRouterBuilder) {
+        builderData.usdm = usdm;
+        return this;
+    }
+
+    function buildEmptyProxy() public returns (IporProtocolRouterEthereum) {
         vm.startPrank(_owner);
 
         address payable proxy = _constructProxy(new EmptyRouterImplementation());
-        IporProtocolRouter iporProtocolRouter = IporProtocolRouter(proxy);
+        IporProtocolRouterEthereum iporProtocolRouter = IporProtocolRouterEthereum(proxy);
         vm.stopPrank();
         delete builderData;
         return iporProtocolRouter;
     }
 
-    function build() public returns (IporProtocolRouter) {
+    function build() public returns (IporProtocolRouterEthereum) {
         vm.startPrank(_owner);
 
-        IporProtocolRouter.DeployedContracts memory deployedContracts = IporProtocolRouter.DeployedContracts({
-            ammSwapsLens: builderData.ammSwapsLens,
-            ammPoolsLens: builderData.ammPoolsLens,
-            assetManagementLens: builderData.assetManagementLens,
-            ammOpenSwapService: builderData.ammOpenSwapService,
-            ammOpenSwapServiceStEth: builderData.ammOpenSwapServiceStEth,
-            ammCloseSwapServiceUsdt: builderData.ammCloseSwapServiceUsdt,
-            ammCloseSwapServiceUsdc: builderData.ammCloseSwapServiceUsdc,
-            ammCloseSwapServiceDai: builderData.ammCloseSwapServiceDai,
-            ammCloseSwapLens: builderData.ammCloseSwapLens,
-            ammCloseSwapServiceStEth: builderData.ammCloseSwapServiceStEth,
-            ammPoolsService: builderData.ammPoolsService,
-            ammGovernanceService: builderData.ammGovernanceService,
-            liquidityMiningLens: builderData.liquidityMiningLens,
-            powerTokenLens: builderData.powerTokenLens,
-            flowService: builderData.flowService,
-            stakeService: builderData.stakeService,
-            ammPoolsServiceStEth: builderData.ammPoolsServiceStEth,
-            ammPoolsLensStEth: builderData.ammPoolsLensStEth,
-            ammPoolsServiceWeEth: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, // TODO: fix address if needed
-            ammPoolsLensWeEth: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, // TODO: fix address if needed
-            ammPoolsServiceUsdm: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, // TODO: fix address if needed
-            ammPoolsLensUsdm: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 // TODO: fix address if needed
+        IporProtocolRouterEthereum.DeployedContracts memory deployedContracts = IporProtocolRouterEthereum
+            .DeployedContracts({
+                ammSwapsLens: builderData.ammSwapsLens,
+                ammPoolsLens: builderData.ammPoolsLens,
+                ammPoolsLensBaseV1: builderData.ammPoolsLensBaseV1 != address(0)
+                    ? builderData.ammPoolsLensBaseV1
+                    : 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266,
+                assetManagementLens: builderData.assetManagementLens,
+                ammOpenSwapService: builderData.ammOpenSwapService,
+                ammCloseSwapServiceUsdt: builderData.ammCloseSwapServiceUsdt,
+                ammCloseSwapServiceUsdc: builderData.ammCloseSwapServiceUsdc,
+                ammCloseSwapServiceDai: builderData.ammCloseSwapServiceDai,
+                ammCloseSwapLens: builderData.ammCloseSwapLens,
+                ammPoolsService: builderData.ammPoolsService,
+                ammGovernanceService: builderData.ammGovernanceService,
+                liquidityMiningLens: builderData.liquidityMiningLens,
+                powerTokenLens: builderData.powerTokenLens,
+                flowService: builderData.flowService,
+                stakeService: builderData.stakeService,
+                stEth: builderData.stEth != address(0) ? builderData.stEth : 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266,
+                weEth: builderData.weEth != address(0) ? builderData.weEth : 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266,
+                usdm: builderData.usdm != address(0) ? builderData.usdm : 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+            });
 
-
-        });
-
-        address payable proxy = _constructProxy(new IporProtocolRouter(deployedContracts));
-        IporProtocolRouter iporProtocolRouter = IporProtocolRouter(proxy);
+        address payable proxy = _constructProxy(new IporProtocolRouterEthereum(deployedContracts));
+        IporProtocolRouterEthereum iporProtocolRouter = IporProtocolRouterEthereum(proxy);
 
         vm.stopPrank();
         delete builderData;
@@ -143,33 +139,32 @@ contract IporProtocolRouterBuilder is Test {
     function upgrade(address payable routerAddress) public {
         vm.startPrank(_owner);
 
-        IporProtocolRouter.DeployedContracts memory deployedContracts = IporProtocolRouter.DeployedContracts({
-            ammSwapsLens: builderData.ammSwapsLens,
-            ammPoolsLens: builderData.ammPoolsLens,
-            ammPoolsLensStEth: builderData.ammPoolsLensStEth,
-            assetManagementLens: builderData.assetManagementLens,
-            ammOpenSwapService: builderData.ammOpenSwapService,
-            ammOpenSwapServiceStEth: builderData.ammOpenSwapServiceStEth,
-            ammCloseSwapServiceUsdt: builderData.ammCloseSwapServiceUsdt,
-            ammCloseSwapServiceUsdc: builderData.ammCloseSwapServiceUsdc,
-            ammCloseSwapServiceDai: builderData.ammCloseSwapServiceDai,
-            ammCloseSwapLens: builderData.ammCloseSwapLens,
-            ammCloseSwapServiceStEth: builderData.ammCloseSwapServiceStEth,
-            ammPoolsService: builderData.ammPoolsService,
-            ammPoolsServiceStEth: builderData.ammPoolsServiceStEth,
-            ammGovernanceService: builderData.ammGovernanceService,
-            liquidityMiningLens: builderData.liquidityMiningLens,
-            powerTokenLens: builderData.powerTokenLens,
-            flowService: builderData.flowService,
-            stakeService: builderData.stakeService,
-            ammPoolsServiceWeEth: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, // TODO: fix address if needed
-            ammPoolsLensWeEth: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, // TODO: fix address if needed
-            ammPoolsServiceUsdm: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, // TODO: fix address if needed
-            ammPoolsLensUsdm: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 // TODO: fix address if needed
-        });
+        IporProtocolRouterEthereum.DeployedContracts memory deployedContracts = IporProtocolRouterEthereum
+            .DeployedContracts({
+                ammSwapsLens: builderData.ammSwapsLens,
+                ammPoolsLens: builderData.ammPoolsLens,
+                ammPoolsLensBaseV1: builderData.ammPoolsLensBaseV1 != address(0)
+                    ? builderData.ammPoolsLensBaseV1
+                    : 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266,
+                assetManagementLens: builderData.assetManagementLens,
+                ammOpenSwapService: builderData.ammOpenSwapService,
+                ammCloseSwapServiceUsdt: builderData.ammCloseSwapServiceUsdt,
+                ammCloseSwapServiceUsdc: builderData.ammCloseSwapServiceUsdc,
+                ammCloseSwapServiceDai: builderData.ammCloseSwapServiceDai,
+                ammCloseSwapLens: builderData.ammCloseSwapLens,
+                ammPoolsService: builderData.ammPoolsService,
+                ammGovernanceService: builderData.ammGovernanceService,
+                liquidityMiningLens: builderData.liquidityMiningLens,
+                powerTokenLens: builderData.powerTokenLens,
+                flowService: builderData.flowService,
+                stakeService: builderData.stakeService,
+                stEth: builderData.stEth != address(0) ? builderData.stEth : 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266,
+                weEth: builderData.weEth != address(0) ? builderData.weEth : 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266,
+                usdm: builderData.usdm != address(0) ? builderData.usdm : 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+            });
 
-        IporProtocolRouter router = IporProtocolRouter(routerAddress);
-        router.upgradeTo(address(new IporProtocolRouter(deployedContracts)));
+        IporProtocolRouterEthereum router = IporProtocolRouterEthereum(routerAddress);
+        router.upgradeTo(address(new IporProtocolRouterEthereum(deployedContracts)));
 
         vm.stopPrank();
     }
@@ -178,7 +173,7 @@ contract IporProtocolRouterBuilder is Test {
         proxy = payable(address(new ERC1967Proxy(address(impl), abi.encodeWithSignature("initialize(bool)", false))));
     }
 
-    function _constructProxy(IporProtocolRouter impl) internal returns (address payable proxy) {
+    function _constructProxy(IporProtocolRouterEthereum impl) internal returns (address payable proxy) {
         proxy = payable(address(new ERC1967Proxy(address(impl), abi.encodeWithSignature("initialize(bool)", false))));
     }
 }

@@ -2,7 +2,8 @@
 pragma solidity 0.8.26;
 
 import {IporErrors} from "../libraries/errors/IporErrors.sol";
-import {StorageLib} from "../libraries/StorageLib.sol";
+import {StorageLibBaseV1} from "../base/libraries/StorageLibBaseV1.sol";
+
 import {PauseManager} from "../security/PauseManager.sol";
 import {OwnerManager} from "../security/OwnerManager.sol";
 import {IRouterAccessControl} from "../interfaces/IRouterAccessControl.sol";
@@ -29,7 +30,7 @@ contract AccessControl is IRouterAccessControl {
 
     /// @notice Checks if sender is appointed owner
     modifier onlyAppointedOwner() {
-        require(StorageLib.getAppointedOwner().appointedOwner == msg.sender, IporErrors.SENDER_NOT_APPOINTED_OWNER);
+        require(StorageLibBaseV1.getAppointedOwner().appointedOwner == msg.sender, IporErrors.SENDER_NOT_APPOINTED_OWNER);
         _;
     }
 
@@ -72,7 +73,7 @@ contract AccessControl is IRouterAccessControl {
     /// @param functionSig Function signature
     /// @return 1 if function is paused, 0 otherwise
     function paused(bytes4 functionSig) external view override returns (uint256) {
-        return StorageLib.getRouterFunctionPaused().value[functionSig];
+        return StorageLibBaseV1.getRouterFunctionPaused().value[functionSig];
     }
 
     /// @notice Pauses list of functions in IporProtocolRouter
@@ -80,7 +81,7 @@ contract AccessControl is IRouterAccessControl {
     function pause(bytes4[] calldata functionSigs) external override onlyPauseGuardian {
         uint256 len = functionSigs.length;
         for (uint256 i; i < len; ) {
-            StorageLib.getRouterFunctionPaused().value[functionSigs[i]] = 1;
+            StorageLibBaseV1.getRouterFunctionPaused().value[functionSigs[i]] = 1;
             unchecked {
                 ++i;
             }
@@ -92,7 +93,7 @@ contract AccessControl is IRouterAccessControl {
     function unpause(bytes4[] calldata functionSigs) external override onlyOwner {
         uint256 len = functionSigs.length;
         for (uint256 i; i < len; ) {
-            StorageLib.getRouterFunctionPaused().value[functionSigs[i]] = 0;
+            StorageLibBaseV1.getRouterFunctionPaused().value[functionSigs[i]] = 0;
             unchecked {
                 ++i;
             }
@@ -120,29 +121,29 @@ contract AccessControl is IRouterAccessControl {
 
     function _checkFunctionSigAndIsNotPause(bytes4 functionSig, bytes4 expectedSig) internal view returns (bool) {
         if (functionSig == expectedSig) {
-            require(StorageLib.getRouterFunctionPaused().value[functionSig] == 0, IporErrors.METHOD_PAUSED);
+            require(StorageLibBaseV1.getRouterFunctionPaused().value[functionSig] == 0, IporErrors.METHOD_PAUSED);
             return true;
         }
         return false;
     }
 
     function _onlyOwner() internal view {
-        require(StorageLib.getOwner().owner == msg.sender, IporErrors.CALLER_NOT_OWNER);
+        require(StorageLibBaseV1.getOwner().owner == msg.sender, IporErrors.CALLER_NOT_OWNER);
     }
 
     function _nonReentrantBefore() internal {
         // On the first call to nonReentrant, _status will be _NOT_ENTERED
-        require(StorageLib.getReentrancyStatus().value != _ENTERED, IporErrors.REENTRANCY);
+        require(StorageLibBaseV1.getReentrancyStatus().value != _ENTERED, IporErrors.REENTRANCY);
 
         // Any calls to nonReentrant after this point will fail
-        StorageLib.getReentrancyStatus().value = _ENTERED;
+        StorageLibBaseV1.getReentrancyStatus().value = _ENTERED;
     }
 
     function _nonReentrantAfter() internal {
         // By storing the original value once again, a refund is triggered (see
         // https://eips.ethereum.org/EIPS/eip-2200)
-        if (StorageLib.getReentrancyStatus().value == _ENTERED) {
-            StorageLib.getReentrancyStatus().value = _NOT_ENTERED;
+        if (StorageLibBaseV1.getReentrancyStatus().value == _ENTERED) {
+            StorageLibBaseV1.getReentrancyStatus().value = _NOT_ENTERED;
         }
     }
 }

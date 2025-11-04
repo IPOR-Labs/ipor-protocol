@@ -4,7 +4,7 @@ pragma solidity 0.8.26;
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../../contracts/oracles/IporOracle.sol";
-import {TestCommons} from "../TestCommons.sol";
+import {TestCommons} from "../../test/TestCommons.sol";
 
 contract IporOracleStEth is TestCommons {
     address public constant owner = 0xD92E9F039E4189c342b4067CC61f5d063960D248;
@@ -40,7 +40,9 @@ contract IporOracleStEth is TestCommons {
             )
         );
         vm.prank(oracleUpdater);
-        IporOracle(iporOracleProxy).updateIndexesAndQuasiIbtPrice(getIndexToUpdateAndQuasiIbtPrice(stETH, 1e18, block.timestamp - 1, 1e18));
+        IporOracle(iporOracleProxy).updateIndexesAndQuasiIbtPrice(
+            getIndexToUpdateAndQuasiIbtPrice(stETH, 1e18, block.timestamp - 1, 1e18)
+        );
     }
 
     function testShouldRevertWhenCallUpdateIndexAndQuasiIbtPriceWithUpdateTimestampFromFuture() external {
@@ -54,7 +56,9 @@ contract IporOracleStEth is TestCommons {
                 "updateIndexAndQuasiIbtPrice"
             )
         );
-        IporOracle(iporOracleProxy).updateIndexesAndQuasiIbtPrice(getIndexToUpdateAndQuasiIbtPrice(stETH, 1e18, block.timestamp + 1, 1e18));
+        IporOracle(iporOracleProxy).updateIndexesAndQuasiIbtPrice(
+            getIndexToUpdateAndQuasiIbtPrice(stETH, 1e18, block.timestamp + 1, 1e18)
+        );
     }
 
     function testShouldRevertWhenIndexValueToBig() external {
@@ -63,8 +67,10 @@ contract IporOracleStEth is TestCommons {
 
         // when
         vm.prank(oracleUpdater);
-        vm.expectRevert(stdError.arithmeticError);
-        IporOracle(iporOracleProxy).updateIndexes(getIndexToUpdateAndQuasiIbtPrice(stETH, type(uint64).max + 1, block.timestamp - 1, 1e18));
+        vm.expectRevert("SafeCast: value doesn't fit in 64 bits");
+        IporOracle(iporOracleProxy).updateIndexes(
+            getIndexToUpdateAndQuasiIbtPrice(stETH, uint256(type(uint64).max) + 1, block.timestamp - 1, 1e18)
+        );
     }
 
     function testShouldRevertWhenNewQuasiIbtPriceToBig() external {
@@ -73,13 +79,15 @@ contract IporOracleStEth is TestCommons {
 
         // when
         vm.prank(oracleUpdater);
-        vm.expectRevert(stdError.arithmeticError);
-        IporOracle(iporOracleProxy).updateIndexes(getIndexToUpdateAndQuasiIbtPrice(
-            stETH,
-            type(uint64).max,
-            block.timestamp - 1,
-            type(uint128).max + 1
-        ));
+        vm.expectRevert("SafeCast: value doesn't fit in 128 bits");
+        IporOracle(iporOracleProxy).updateIndexesAndQuasiIbtPrice(
+            getIndexToUpdateAndQuasiIbtPrice(
+                stETH,
+                type(uint64).max,
+                block.timestamp - 1,
+                uint256(type(uint128).max) + 1
+            )
+        );
     }
 
     function testShouldUpdateIndex() external {
@@ -92,14 +100,16 @@ contract IporOracleStEth is TestCommons {
 
         //when
         vm.prank(oracleUpdater);
-        IporOracle(iporOracleProxy).updateIndexesAndQuasiIbtPrice(getIndexToUpdateAndQuasiIbtPrice(stETH, 12e16, block.timestamp - 100, 123e16));
+        IporOracle(iporOracleProxy).updateIndexesAndQuasiIbtPrice(
+            getIndexToUpdateAndQuasiIbtPrice(stETH, 12e16, block.timestamp - 100, 123e16)
+        );
 
         //then
         (uint256 indexValueAfter, uint256 ibtPriceAfter, uint256 lastUpdateTimestampAfter) = IporOracle(iporOracleProxy)
             .getIndex(stETH);
-    console2.log("block.timestamp: ", block.timestamp);
+        console2.log("block.timestamp: ", block.timestamp);
         assertEq(indexValueAfter, 12e16);
-//        assertEq(ibtPriceAfter, 1000000039003044901);
+        //        assertEq(ibtPriceAfter, 1000000039003044901);
         assertEq(lastUpdateTimestampAfter, block.timestamp - 100);
         assertEq(indexValueBefore, 0);
         assertEq(ibtPriceBefore, 1e18);
@@ -118,6 +128,8 @@ contract IporOracleStEth is TestCommons {
         vm.prank(oracleUpdater);
         vm.expectEmit(true, true, true, true);
         emit IporIndexUpdate(stETH, 12e16, 123e16, block.timestamp - 100);
-        IporOracle(iporOracleProxy).updateIndexesAndQuasiIbtPrice(getIndexToUpdateAndQuasiIbtPrice(stETH, 12e16, block.timestamp - 100, 123e16));
+        IporOracle(iporOracleProxy).updateIndexesAndQuasiIbtPrice(
+            getIndexToUpdateAndQuasiIbtPrice(stETH, 12e16, block.timestamp - 100, 123e16)
+        );
     }
 }

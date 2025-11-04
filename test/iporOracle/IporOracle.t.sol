@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.26;
 
-import "../TestCommons.sol";
+import "../../test/TestCommons.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../../contracts/oracles/IporOracle.sol";
 import "../mocks/tokens/MockTestnetToken.sol";
