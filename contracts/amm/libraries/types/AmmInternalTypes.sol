@@ -68,7 +68,7 @@ library AmmInternalTypes {
     struct OpenSwapItem {
         /// @notice Swap ID
         uint32 swapId;
-        /// @notcie Next swap ID in linked list
+        /// @notice Next swap ID in linked list
         uint32 nextSwapId;
         /// @notice Previous swap ID in linked list
         uint32 previousSwapId;

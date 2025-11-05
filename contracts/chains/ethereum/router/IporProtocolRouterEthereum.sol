@@ -28,6 +28,7 @@ import "../../../amm-usdm/interfaces/IAmmPoolsServiceUsdm.sol";
 import "../../../base/interfaces/IAmmGovernanceServiceBaseV1.sol";
 
 import "../../../base/libraries/StorageLibBaseV1.sol";
+import {IAmmGovernanceLensBaseV1} from "../../../base/interfaces/IAmmGovernanceLensBaseV1.sol";
 
 /// @title Entry point for IPOR protocol on Ethereum chain
 contract IporProtocolRouterEthereum is IporProtocolRouterAbstract {
@@ -330,7 +331,10 @@ contract IporProtocolRouterEthereum is IporProtocolRouterAbstract {
             sig == IAmmGovernanceLens.isSwapLiquidator.selector ||
             sig == IAmmGovernanceLens.isAppointedToRebalanceInAmm.selector ||
             sig == IAmmGovernanceLens.getAmmPoolsParams.selector ||
-            sig == IAmmGovernanceLens.getAmmGovernancePoolConfiguration.selector
+            sig == IAmmGovernanceLens.getAmmGovernancePoolConfiguration.selector ||
+            sig == IAmmGovernanceLensBaseV1.getMessageSigner.selector ||
+            sig == IAmmGovernanceLensBaseV1.getAssetLensData.selector ||
+            sig == IAmmGovernanceLensBaseV1.getAssetServices.selector
         ) {
             return ammGovernanceService;
         } else if (sig == IAmmOpenSwapLens.getAmmOpenSwapServicePoolConfiguration.selector) {
