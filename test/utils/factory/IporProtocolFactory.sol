@@ -784,8 +784,11 @@ contract IporProtocolFactory is Test {
 
         deployerContracts.ammCloseSwapLens = address(
             new AmmCloseSwapLens({
-                iporOracle_: address(amm.iporOracle),
-                messageSigner_: messageSignerAddress
+                usdt_: address(amm.usdt.asset),
+                usdc_: address(amm.usdc.asset),
+                dai_: address(amm.dai.asset),
+                stETH_: address(amm.stEth.asset),
+                iporOracle_: address(amm.iporOracle)
             })
         );
 
@@ -1017,8 +1020,11 @@ contract IporProtocolFactory is Test {
 
         deployerContracts.ammCloseSwapLens = address(
             new AmmCloseSwapLens({
-                iporOracle_: address(iporProtocol.iporOracle),
-                messageSigner_: messageSignerAddress
+                usdt_: address(iporProtocol.asset),
+                usdc_: address(_fakeAsset),
+                dai_: address(_fakeAsset),
+                stETH_: address(_fakeAsset),
+                iporOracle_: address(iporProtocol.iporOracle)
             })
         );
 
@@ -1212,8 +1218,11 @@ contract IporProtocolFactory is Test {
 
         deployerContracts.ammCloseSwapLens = address(
             new AmmCloseSwapLens({
-                iporOracle_: address(iporProtocol.iporOracle),
-                messageSigner_: messageSignerAddress
+                usdt_: address(_fakeAsset),
+                usdc_: address(iporProtocol.asset),
+                dai_: address(_fakeAsset),
+                stETH_: address(_fakeAsset),
+                iporOracle_: address(iporProtocol.iporOracle)
             })
         );
 
@@ -1409,8 +1418,11 @@ contract IporProtocolFactory is Test {
 
         deployerContracts.ammCloseSwapLens = address(
             new AmmCloseSwapLens({
-                iporOracle_: address(iporProtocol.iporOracle),
-                messageSigner_: messageSignerAddress
+                usdt_: address(_fakeAsset),
+                usdc_: address(_fakeAsset),
+                dai_: address(iporProtocol.asset),
+                stETH_: address(_fakeAsset),
+                iporOracle_: address(iporProtocol.iporOracle)
             })
         );
 
