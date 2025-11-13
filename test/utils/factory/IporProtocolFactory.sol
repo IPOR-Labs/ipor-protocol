@@ -785,8 +785,7 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammCloseSwapLens = address(
             new AmmCloseSwapLens({
                 iporOracle_: address(amm.iporOracle),
-                messageSigner_: messageSignerAddress,
-                spreadRouter_: address(amm.spreadRouter)
+                messageSigner_: messageSignerAddress
             })
         );
 
@@ -1019,8 +1018,7 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammCloseSwapLens = address(
             new AmmCloseSwapLens({
                 iporOracle_: address(iporProtocol.iporOracle),
-                messageSigner_: messageSignerAddress,
-                spreadRouter_: address(iporProtocol.spreadRouter)
+                messageSigner_: messageSignerAddress
             })
         );
 
@@ -1215,8 +1213,7 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammCloseSwapLens = address(
             new AmmCloseSwapLens({
                 iporOracle_: address(iporProtocol.iporOracle),
-                messageSigner_: messageSignerAddress,
-                spreadRouter_: address(iporProtocol.spreadRouter)
+                messageSigner_: messageSignerAddress
             })
         );
 
@@ -1413,8 +1410,7 @@ contract IporProtocolFactory is Test {
         deployerContracts.ammCloseSwapLens = address(
             new AmmCloseSwapLens({
                 iporOracle_: address(iporProtocol.iporOracle),
-                messageSigner_: messageSignerAddress,
-                spreadRouter_: address(iporProtocol.spreadRouter)
+                messageSigner_: messageSignerAddress
             })
         );
 

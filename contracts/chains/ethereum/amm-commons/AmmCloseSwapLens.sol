@@ -24,12 +24,10 @@ contract AmmCloseSwapLens is IAmmCloseSwapLens {
 
     address public immutable iporOracle;
     address public immutable messageSigner;
-    address public immutable spreadRouter;
 
-    constructor(address iporOracle_, address messageSigner_, address spreadRouter_) {
+    constructor(address iporOracle_, address messageSigner_) {
         iporOracle = iporOracle_.checkAddress();
         messageSigner = messageSigner_.checkAddress();
-        spreadRouter = spreadRouter_.checkAddress();
     }
 
     function getAmmCloseSwapServicePoolConfiguration(
@@ -134,7 +132,7 @@ contract AmmCloseSwapLens is IAmmCloseSwapLens {
             ) = SwapCloseLogicLib.calculateSwapUnwindWhenUnwindRequired(
                 AmmTypes.UnwindParams({
                     messageSigner: messageSigner,
-                    spreadRouter: spreadRouter,
+                    spreadRouter: poolCfg.spread,
                     ammStorage: poolCfg.ammStorage,
                     ammTreasury: poolCfg.ammTreasury,
                     direction: direction,
