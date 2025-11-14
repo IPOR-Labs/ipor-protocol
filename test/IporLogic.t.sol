@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.26;
 
-import "./TestCommons.sol";
+import "../test/TestCommons.sol";
 import "../contracts/oracles/libraries/IporLogic.sol";
 import "./utils/TestConstants.sol";
 import "../contracts/interfaces/types/IporOracleTypes.sol";

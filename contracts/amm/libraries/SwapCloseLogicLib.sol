@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.26;
 import "../../interfaces/types/AmmTypes.sol";
-import "../../libraries/math/InterestRates.sol";
 import "../../libraries/RiskManagementLogic.sol";
 import "../../libraries/RiskIndicatorsValidatorLib.sol";
 import "../../base/amm/libraries/SwapLogicBaseV1.sol";
@@ -9,9 +8,6 @@ import "../../base/amm/libraries/SwapCloseLogicLibBaseV1.sol";
 
 library SwapCloseLogicLib {
     using SafeCast for uint256;
-    using SafeCast for int256;
-    using InterestRates for uint256;
-    using InterestRates for int256;
     using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
 
     /// @notice Calculate swap unwind when unwind is required.

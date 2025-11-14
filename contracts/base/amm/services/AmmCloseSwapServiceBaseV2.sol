@@ -7,16 +7,13 @@ import {SafeERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ER
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 import {IAmmTreasuryBaseV2} from "../../interfaces/IAmmTreasuryBaseV2.sol";
 import {AmmCloseSwapServiceBaseV1} from "./AmmCloseSwapServiceBaseV1.sol";
-import "../../../interfaces/types/IporTypes.sol";
 import "../../../interfaces/types/AmmTypes.sol";
-import "../../../interfaces/IIporOracle.sol";
 import "../../../interfaces/IAmmCloseSwapService.sol";
 import "../../../libraries/math/IporMath.sol";
 import "../../../libraries/IporContractValidator.sol";
 import "../../../libraries/AmmLib.sol";
 import "../../interfaces/IAmmStorageBaseV1.sol";
 import "../../types/AmmTypesBaseV1.sol";
-import "../../events/AmmEventsBaseV1.sol";
 import "../../../amm/libraries/types/AmmInternalTypes.sol";
 import "../../../base/spread/SpreadBaseV1.sol";
 import "../libraries/SwapLogicBaseV1.sol";
@@ -27,7 +24,6 @@ import {AssetManagementLogic} from "../../../libraries/AssetManagementLogic.sol"
 /// @title Abstract contract for closing swap, generation one,
 /// characterized by: with additional asset management logic and rebalance between AmmTreasury and Asset Management (PlasmaVault from Ipor Fusion)
 abstract contract AmmCloseSwapServiceBaseV2 is AmmCloseSwapServiceBaseV1 {
-    using Address for address;
     using IporContractValidator for address;
     using SafeCast for int256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -82,7 +78,7 @@ abstract contract AmmCloseSwapServiceBaseV2 is AmmCloseSwapServiceBaseV1 {
             uint256 ammTreasuryErc20BalanceBeforeRedeem = IERC20Upgradeable(asset).balanceOf(ammTreasury);
 
             if (ammTreasuryErc20BalanceBeforeRedeem <= totalTransferAmountAssetDecimals) {
-                StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
+                StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
                     asset
                 );
 

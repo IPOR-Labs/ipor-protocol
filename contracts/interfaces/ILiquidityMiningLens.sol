@@ -41,7 +41,7 @@ interface ILiquidityMiningLens {
         uint128 compositeMultiplierCumulativePrevBlock;
         /// @notice lpToken account's balance
         uint128 lpTokenBalance;
-        /// @notive PowerUp is a result of logarithmic equastion,
+        /// @notice PowerUp is a result of logarithmic equastion,
         /// @dev  powerUp < 100 *10^18
         uint72 powerUp;
         /// @notice balance of Power Tokens delegated to LiquidityMining

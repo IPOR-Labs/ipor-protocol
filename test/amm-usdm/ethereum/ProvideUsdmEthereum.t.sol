@@ -8,9 +8,9 @@ import "../../../contracts/libraries/ProvideLiquidityEvents.sol";
 import "../../../contracts/libraries/errors/AmmErrors.sol";
 import "../../../contracts/libraries/errors/AmmPoolsErrors.sol";
 import {IAmmPoolsServiceUsdm} from "../../../contracts/amm-usdm/interfaces/IAmmPoolsServiceUsdm.sol";
-import {IAmmPoolsLensUsdm} from "../../../contracts/amm-usdm/interfaces/IAmmPoolsLensUsdm.sol";
 import {IAmmGovernanceService} from "../../../contracts/interfaces/IAmmGovernanceService.sol";
 import {UsdmTestForkCommonEthereum} from "./UsdmTestForkCommonEthereum.sol";
+import {IAmmPoolsLens} from "../../../contracts/interfaces/IAmmPoolsLens.sol";
 
 contract ProvideUsdmEthereumTest is UsdmTestForkCommonEthereum {
 
@@ -26,7 +26,7 @@ contract ProvideUsdmEthereumTest is UsdmTestForkCommonEthereum {
         //given
 
         //when
-        uint exchangeRate = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint exchangeRate = IAmmPoolsLens(IporProtocolRouterProxy).getIpTokenExchangeRate(USDM);
         //then
         assertEq(exchangeRate, 1e18, "exchangeRate should be 1");
     }
@@ -74,7 +74,7 @@ contract ProvideUsdmEthereumTest is UsdmTestForkCommonEthereum {
         uint userIpUsdmBalanceBefore = IERC20(ipUsdm).balanceOf(userOne);
         uint ammTreasuryUsdmBalanceBefore = IERC20(USDM).balanceOf(ammTreasuryUsdmProxy);
         uint provideAmount = 100e18;
-        uint exchangeRateBefore = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLens(IporProtocolRouterProxy).getIpTokenExchangeRate(USDM);
 
         // when
         vm.prank(userOne);
@@ -85,7 +85,7 @@ contract ProvideUsdmEthereumTest is UsdmTestForkCommonEthereum {
         uint userIpUsdmBalanceAfter = IERC20(ipUsdm).balanceOf(userOne);
         uint ammTreasuryUsdmBalanceAfter = IERC20(USDM).balanceOf(ammTreasuryUsdmProxy);
 
-        uint exchangeRateAfter = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint exchangeRateAfter = IAmmPoolsLens(IporProtocolRouterProxy).getIpTokenExchangeRate(USDM);
 
         assertEq(userUsdmBalanceBefore - provideAmount, userUsdmBalanceAfter, "user balance of usdm should decrease");
         assertEq(
@@ -119,7 +119,7 @@ contract ProvideUsdmEthereumTest is UsdmTestForkCommonEthereum {
         uint ammTreasuryUsdmBalanceBefore = IERC20(USDM).balanceOf(ammTreasuryUsdmProxy);
 
         uint provideAmount = 100e18;
-        uint exchangeRateBefore = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLens(IporProtocolRouterProxy).getIpTokenExchangeRate(USDM);
 
         // when
         vm.prank(userOne);
@@ -131,7 +131,7 @@ contract ProvideUsdmEthereumTest is UsdmTestForkCommonEthereum {
         uint userTwoUsdmBalanceAfter = IERC20(USDM).balanceOf(userTwo);
         uint userTwoIpUsdmBalanceAfter = IERC20(ipUsdm).balanceOf(userTwo);
         uint ammTreasuryUsdmBalanceAfter = IERC20(USDM).balanceOf(ammTreasuryUsdmProxy);
-        uint exchangeRateAfter = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint exchangeRateAfter = IAmmPoolsLens(IporProtocolRouterProxy).getIpTokenExchangeRate(USDM);
 
         assertEq(
             userOneUsdmBalanceBefore - provideAmount,
@@ -172,7 +172,7 @@ contract ProvideUsdmEthereumTest is UsdmTestForkCommonEthereum {
         uint ammTreasuryUsdmBalanceBefore = IERC20(USDM).balanceOf(ammTreasuryUsdmProxy);
 
         uint provideAmount = 10e18;
-        uint exchangeRateBefore = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLens(IporProtocolRouterProxy).getIpTokenExchangeRate(USDM);
 
         // when
         for (uint i; i < 10; ++i) {
@@ -188,7 +188,7 @@ contract ProvideUsdmEthereumTest is UsdmTestForkCommonEthereum {
         uint userTwoUsdmBalanceAfter = IERC20(USDM).balanceOf(userTwo);
         uint userTwoIpUsdmBalanceAfter = IERC20(ipUsdm).balanceOf(userTwo);
         uint ammTreasuryUsdmBalanceAfter = IERC20(USDM).balanceOf(ammTreasuryUsdmProxy);
-        uint exchangeRateAfter = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint exchangeRateAfter = IAmmPoolsLens(IporProtocolRouterProxy).getIpTokenExchangeRate(USDM);
 
         assertEq(
             userOneUsdmBalanceBefore,
@@ -251,7 +251,7 @@ contract ProvideUsdmEthereumTest is UsdmTestForkCommonEthereum {
         address userTwo = _getUserAddress(33);
 
         uint provideAmount = 100e18;
-        uint exchangeRateBefore = IAmmPoolsLensUsdm(IporProtocolRouterProxy).getIpUsdmExchangeRate();
+        uint exchangeRateBefore = IAmmPoolsLens(IporProtocolRouterProxy).getIpTokenExchangeRate(USDM);
         uint256 ipTokenAmount = IporMath.division(provideAmount * 1e18, exchangeRateBefore);
 
         vm.prank(userOne);

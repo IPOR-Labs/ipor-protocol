@@ -2,7 +2,7 @@
 pragma solidity 0.8.26;
 
 import "../../contracts/tokens/IporToken.sol";
-import "../TestCommons.sol";
+import "../../test/TestCommons.sol";
 import "../utils/TestConstants.sol";
 
 contract IporTokenTest is TestCommons {

@@ -2,7 +2,7 @@
 pragma solidity 0.8.26;
 
 import "../../contracts/amm/spread/CalculateTimeWeightedNotionalLibs.sol";
-import "../TestCommons.sol";
+import "../../test/TestCommons.sol";
 
 contract CalculateWeightedNotionalLibsTest is TestCommons {
     SpreadStorageLibs.StorageId internal _storageIdIterationItem;

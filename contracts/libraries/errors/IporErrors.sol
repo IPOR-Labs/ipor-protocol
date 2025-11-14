@@ -14,9 +14,6 @@ library IporErrors {
     /// @notice Error when caller is not a pause guardian
     error CallerNotPauseGuardian(string errorCode, address caller);
 
-    /// @notice Error when caller is not a AmmTreasury contract
-    error CallerNotAmmTreasury(string errorCode, address caller);
-
     /// @notice Error when given direction is not supported
     error UnsupportedDirection(string errorCode, uint256 direction);
 

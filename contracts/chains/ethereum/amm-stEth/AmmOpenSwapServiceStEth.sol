@@ -2,12 +2,23 @@
 pragma solidity 0.8.26;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
-import "../interfaces/IAmmOpenSwapServiceStEth.sol";
-import "./interfaces/IStETH.sol";
-import "./interfaces/IWETH9.sol";
-import "./interfaces/IwstEth.sol";
-import "./interfaces/IAmmPoolsServiceStEth.sol";
-import "../base/amm/services/AmmOpenSwapServiceBaseV1.sol";
+import "../../../interfaces/IAmmOpenSwapServiceStEth.sol";
+import "../../../amm-eth/interfaces/IStETH.sol";
+import "../../../amm-eth/interfaces/IWETH9.sol";
+import "../../../amm-eth/interfaces/IwstEth.sol";
+import "../../../amm-eth/interfaces/IAmmPoolsServiceStEth.sol";
+import {AmmOpenSwapServiceBaseV1} from "../../../base/amm/services/AmmOpenSwapServiceBaseV1.sol";
+import {StorageLibBaseV1} from "../../../base/libraries/StorageLibBaseV1.sol";
+
+import {IporContractValidator} from "../../../libraries/IporContractValidator.sol";
+
+import {AmmTypes} from "../../../interfaces/types/AmmTypes.sol";
+import {AmmTypesBaseV1} from "../../../base/types/AmmTypesBaseV1.sol";
+
+import {IporErrors} from "../../../libraries/errors/IporErrors.sol";
+import {AmmErrors} from "../../../libraries/errors/AmmErrors.sol";
+import {IporTypes} from "../../../interfaces/types/IporTypes.sol";
+
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 /// @dev Service can be safely used directly only if you are sure that methods will not touch any storage variables.
@@ -15,7 +26,6 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServic
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using IporContractValidator for address;
 
-    address public immutable messageSigner;
     address public immutable wETH;
     address public immutable wstETH;
 
@@ -30,11 +40,9 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServic
     constructor(
         AmmTypesBaseV1.AmmOpenSwapServicePoolConfiguration memory poolCfg,
         address iporOracleInput,
-        address messageSignerInput,
         address wETHInput,
         address wstETHInput
     ) AmmOpenSwapServiceBaseV1(poolCfg, iporOracleInput) {
-        messageSigner = messageSignerInput.checkAddress();
         wETH = wETHInput.checkAddress();
         wstETH = wstETHInput.checkAddress();
     }
@@ -160,7 +168,7 @@ contract AmmOpenSwapServiceStEth is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServic
     }
 
     function _getMessageSigner() internal view override returns (address) {
-        return messageSigner;
+        return StorageLibBaseV1.getMessageSignerStorage().value;
     }
 
     function _convertToAssetAmount(

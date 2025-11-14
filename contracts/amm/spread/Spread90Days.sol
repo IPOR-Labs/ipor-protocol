@@ -13,8 +13,6 @@ import "../../amm/spread/OfferedRateCalculationLibs.sol";
 /// @dev This contract cannot be used directly, should be used only through SpreadRouter.
 contract Spread90Days is ISpread90Days, ISpread90DaysLens {
     using IporContractValidator for address;
-    using SafeCast for uint256;
-    using SafeCast for int256;
 
     address internal immutable _dai;
     address internal immutable _usdc;

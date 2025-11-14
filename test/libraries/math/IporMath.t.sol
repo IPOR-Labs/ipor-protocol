@@ -4,8 +4,28 @@ pragma solidity 0.8.26;
 import "forge-std/Test.sol";
 import "contracts/libraries/math/IporMath.sol";
 
+/// @dev Wrapper contract to expose IporMath internal functions as external for testing reverts
+contract IporMathWrapper {
+    function division(uint256 x, uint256 y) external pure returns (uint256) {
+        return IporMath.division(x, y);
+    }
+
+    function divisionInt(int256 x, int256 y) external pure returns (int256) {
+        return IporMath.divisionInt(x, y);
+    }
+
+    function divisionWithoutRound(uint256 x, uint256 y) external pure returns (uint256) {
+        return IporMath.divisionWithoutRound(x, y);
+    }
+}
+
 contract IporMathTest is Test {
+    IporMathWrapper private wrapper;
     uint256 public constant N1__0_18DEC = 1e18;
+
+    function setUp() public {
+        wrapper = new IporMathWrapper();
+    }
 
     function testShouldDivide() public {
         assertDivision(0, 1, 0);
@@ -26,7 +46,7 @@ contract IporMathTest is Test {
         assertDivision(20, 10, 2);
 
         vm.expectRevert();
-        assertDivision(1, 0, 0);
+        wrapper.division(1, 0);
     }
 
     function testShouldDivideInt() public {
@@ -51,11 +71,11 @@ contract IporMathTest is Test {
         assertDivisionInt(20, 10, 2);
 
         vm.expectRevert();
-        assertDivisionInt(1, 0, 0);
+        wrapper.divisionInt(1, 0);
         vm.expectRevert();
-        assertDivisionInt(-1, 0, 0);
+        wrapper.divisionInt(-1, 0);
         vm.expectRevert();
-        assertDivisionInt(0, 0, 0);
+        wrapper.divisionInt(0, 0);
     }
 
     function testShouldDivideWithoutRound() public {
@@ -77,7 +97,7 @@ contract IporMathTest is Test {
         assertDivisionWithoutRound(20, 10, 2);
 
         vm.expectRevert();
-        assertDivisionWithoutRound(1, 0, 0);
+        wrapper.divisionWithoutRound(1, 0);
     }
 
     function testShouldConvertWadToAssetDecimalsWithoutRound() public {
@@ -233,11 +253,11 @@ contract IporMathTest is Test {
         assertEq(IporMath.divisionInt(20, -10), -2);
 
         vm.expectRevert();
-        IporMath.divisionInt(1, 0);
+        wrapper.divisionInt(1, 0);
         vm.expectRevert();
-        IporMath.divisionInt(-1, 0);
+        wrapper.divisionInt(-1, 0);
         vm.expectRevert();
-        IporMath.divisionInt(0, 0);
+        wrapper.divisionInt(0, 0);
     }
 
     function assertDivision(uint256 x, uint256 y, uint256 z) internal {

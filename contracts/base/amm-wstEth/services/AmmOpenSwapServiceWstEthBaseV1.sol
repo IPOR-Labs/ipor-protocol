@@ -11,7 +11,6 @@ import {StorageLibBaseV1} from "../../libraries/StorageLibBaseV1.sol";
 /// @dev Open Swap Service for wstETH pool.
 contract AmmOpenSwapServiceWstEthBaseV1 is AmmOpenSwapServiceBaseV1, IAmmOpenSwapServiceWstEth {
     using SafeERC20Upgradeable for IERC20Upgradeable;
-    using IporContractValidator for address;
 
     modifier onlySupportedInputAsset(address inputAsset) {
         if (inputAsset == asset) {

@@ -4,7 +4,7 @@ pragma solidity 0.8.26;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "../../contracts/amm/spread/SpreadTypes.sol";
-import "../TestCommons.sol";
+import "../../test/TestCommons.sol";
 import "./MockSpreadStorage.sol";
 
 

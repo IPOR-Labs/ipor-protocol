@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.26;
-import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../../interfaces/types/AmmStorageTypes.sol";
 import "../../libraries/errors/AmmErrors.sol";
 import "../../libraries/math/IporMath.sol";
@@ -9,7 +8,6 @@ import "../../amm/libraries/SoapIndicatorLogic.sol";
 
 /// @title Basic logic related with SOAP indicators when rebalance
 library SoapIndicatorRebalanceLogic {
-    using SafeCast for uint256;
     using InterestRates for uint256;
 
     /// @notice Update SOAP indicators when open swap

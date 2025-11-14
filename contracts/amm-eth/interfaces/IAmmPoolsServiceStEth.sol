@@ -50,6 +50,12 @@ interface IAmmPoolsServiceStEth {
     /// require The calculated stEth amount to redeem after accounting for the fee should be greater than zero.
     function redeemFromAmmPoolStEth(address beneficiary, uint256 ipTokenAmount) external;
 
+    /// @notice Rebalances stETH assets between the AmmTreasury and the AssetManagement, based on configuration stored
+    /// in the `AmmPoolsParamsValue.ammTreasuryAndAssetManagementRatio` field.
+    /// @dev Emits {Deposit} or {Withdraw} event from AssetManagement depends on current asset balance on AmmTreasury and AssetManagement.
+    /// @dev Emits {Transfer} from ERC20 asset.
+    function rebalanceBetweenAmmTreasuryAndAssetManagementStEth() external;
+
     /// @notice Error appeared when submitted ETH amount to in stETH contract is too high.
     /// @param amount Amount of ETH which was submitted to stETH contract.
     /// @param errorCode IPOR Protocol error code.

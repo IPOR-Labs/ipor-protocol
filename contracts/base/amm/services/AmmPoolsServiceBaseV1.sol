@@ -7,13 +7,9 @@ import {IERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 import {IProvideLiquidityEvents} from "../../../interfaces/IProvideLiquidityEvents.sol";
 import {IAmmTreasuryBaseV2} from "../../../base/interfaces/IAmmTreasuryBaseV2.sol";
-import "../../../interfaces/types/IporTypes.sol";
 import "../../../interfaces/types/AmmTypes.sol";
 import "../../../interfaces/IIpToken.sol";
-import "../../../interfaces/IAmmTreasury.sol";
-import "../../../interfaces/IAmmPoolsService.sol";
 import "../../../interfaces/IAmmStorage.sol";
-import "../../../libraries/Constants.sol";
 import "../../../libraries/errors/IporErrors.sol";
 import "../../../libraries/errors/AmmErrors.sol";
 import "../../../libraries/errors/AmmPoolsErrors.sol";
@@ -25,12 +21,11 @@ import "../../../governance/AmmConfigurationManager.sol";
 
 /// @title Base contract for AMM pools service for Pools with one asset and Asset Management support with one underlying asset same as pool asset.
 /// @notice This contract is used for providing liquidity and redeeming liquidity from AMM pools including configured rebalancing between AMM Treasury and Asset Management (like Plasma Vault from Ipor Fusion).
+/// @notice Support Asset Management (IPOR Fusion Vault)
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
     using IporContractValidator for address;
     using SafeCast for int256;
-    using SafeCast for uint256;
-    using SafeCast for uint32;
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
 
@@ -81,7 +76,9 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
     }
 
     function _provideLiquidity(address beneficiary, uint256 assetAmount) internal virtual {
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(asset);
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
+            asset
+        );
 
         uint256 actualLiquidityPoolBalance = IAmmTreasuryBaseV2(ammTreasury).getLiquidityPoolBalance();
 
@@ -105,7 +102,7 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
         /// @dev Order of the following two functions is important, first safeTransferFrom, then rebalanceIfNeededAfterProvideLiquidity.
         _rebalanceIfNeededAfterProvideLiquidity(ammPoolsParamsCfg, wadAssetAmount);
 
-        emit ProvideLiquidity(asset, msg.sender, beneficiary, ammTreasury, exchangeRate, wadAssetAmount, ipTokenAmount);
+        _emitProvideLiquidityEvent(beneficiary, exchangeRate, wadAssetAmount, ipTokenAmount);
     }
 
     function _redeem(address beneficiary, uint256 ipTokenAmount) internal virtual {
@@ -136,16 +133,7 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
 
         IERC20Upgradeable(asset).safeTransferFrom(ammTreasury, beneficiary, amountToRedeem);
 
-        emit Redeem(
-            asset,
-            ammTreasury,
-            msg.sender,
-            beneficiary,
-            exchangeRate,
-            wadAssetAmount,
-            wadAmountToRedeem,
-            ipTokenAmount
-        );
+        _emitRedeemEvent(beneficiary, exchangeRate, wadAssetAmount, wadAmountToRedeem, ipTokenAmount);
     }
 
     function _rebalanceBetweenAmmTreasuryAndAssetManagement() internal virtual {
@@ -154,7 +142,9 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
             AmmPoolsErrors.CALLER_NOT_APPOINTED_TO_REBALANCE
         );
 
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(asset);
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
+            asset
+        );
 
         uint256 wadAmmTreasuryAssetBalance = IporMath.convertToWad(
             IERC20Upgradeable(asset).balanceOf(ammTreasury),
@@ -170,17 +160,17 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
 
         /// @dev 1e14 explanation: ammTreasuryAndAssetManagementRatio represents percentage in 2 decimals, example 45% = 4500, so to achieve number in 18 decimals we need to multiply by 1e14
         uint256 ammTreasuryAssetManagementBalanceRatio = uint256(ammPoolsParamsCfg.ammTreasuryAndAssetManagementRatio) *
-                    1e14;
+            1e14;
 
         if (ratio > ammTreasuryAssetManagementBalanceRatio) {
             uint256 wadAssetAmount = wadAmmTreasuryAssetBalance -
-                                IporMath.division(ammTreasuryAssetManagementBalanceRatio * wadTotalBalance, 1e18);
+                IporMath.division(ammTreasuryAssetManagementBalanceRatio * wadTotalBalance, 1e18);
             if (wadAssetAmount > 0) {
                 IAmmTreasuryBaseV2(ammTreasury).depositToAssetManagementInternal(wadAssetAmount);
             }
         } else {
             uint256 wadAssetAmount = IporMath.division(ammTreasuryAssetManagementBalanceRatio * wadTotalBalance, 1e18) -
-                        wadAmmTreasuryAssetBalance;
+                wadAmmTreasuryAssetBalance;
             if (wadAssetAmount > 0) {
                 IAmmTreasuryBaseV2(ammTreasury).withdrawFromAssetManagementInternal(wadAssetAmount);
             }
@@ -194,14 +184,14 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
             ipToken: ipToken,
             ammStorage: ammStorage,
             ammTreasury: ammTreasury,
-            assetManagement: address(0),
+            assetManagement: ammAssetManagement,
             iporOracle: iporOracle
         });
         return model.getExchangeRate(actualLiquidityPoolBalance);
     }
 
     function _rebalanceIfNeededAfterProvideLiquidity(
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg,
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg,
         uint256 wadOperationAmount
     ) internal {
         /// @dev 1e18 * autoRebalanceThresholdMultiplier explanation: autoRebalanceThreshold represents value without decimals, selected asset can have different multiplier, for example for stables is 1000x, value in thousands, for ETH, wstETH etc. is 1x
@@ -230,7 +220,9 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
             assetDecimals
         );
 
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(asset);
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
+            asset
+        );
 
         /// @dev 1e18 * autoRebalanceThresholdMultiplier explanation: autoRebalanceThreshold represents value without decimals, selected asset can have different multiplier, for example for stables is 1000x, value in thousands, for ETH, wstETH etc. is 1x
         uint256 autoRebalanceThreshold = uint256(ammPoolsParamsCfg.autoRebalanceThreshold) *
@@ -251,8 +243,49 @@ contract AmmPoolsServiceBaseV1 is IProvideLiquidityEvents {
             );
 
             if (rebalanceAmount < 0) {
-                IAmmTreasuryBaseV2(ammTreasury).withdrawFromAssetManagementInternal((- rebalanceAmount).toUint256());
+                IAmmTreasuryBaseV2(ammTreasury).withdrawFromAssetManagementInternal((-rebalanceAmount).toUint256());
             }
         }
+    }
+
+    /// @notice Virtual function to emit provide liquidity event, can be overridden by derived contracts
+    /// @dev Default implementation emits standard ProvideLiquidity event from IProvideLiquidityEvents
+    /// @param beneficiary Address that received ipTokens
+    /// @param exchangeRate Exchange rate used for minting
+    /// @param wadAssetAmount Amount of asset provided (in 18 decimals)
+    /// @param ipTokenAmount Amount of ipTokens minted
+    function _emitProvideLiquidityEvent(
+        address beneficiary,
+        uint256 exchangeRate,
+        uint256 wadAssetAmount,
+        uint256 ipTokenAmount
+    ) internal virtual {
+        emit ProvideLiquidity(asset, msg.sender, beneficiary, ammTreasury, exchangeRate, wadAssetAmount, ipTokenAmount);
+    }
+
+    /// @notice Virtual function to emit redeem event, can be overridden by derived contracts
+    /// @dev Default implementation emits standard Redeem event from IProvideLiquidityEvents
+    /// @param beneficiary Address that received redeemed assets
+    /// @param exchangeRate Exchange rate used for redemption
+    /// @param wadAssetAmount Total asset amount before fee (in 18 decimals)
+    /// @param wadAmountToRedeem Asset amount after fee (in 18 decimals)
+    /// @param ipTokenAmount Amount of ipTokens burned
+    function _emitRedeemEvent(
+        address beneficiary,
+        uint256 exchangeRate,
+        uint256 wadAssetAmount,
+        uint256 wadAmountToRedeem,
+        uint256 ipTokenAmount
+    ) internal virtual {
+        emit Redeem(
+            asset,
+            ammTreasury,
+            msg.sender,
+            beneficiary,
+            exchangeRate,
+            wadAssetAmount,
+            wadAmountToRedeem,
+            ipTokenAmount
+        );
     }
 }

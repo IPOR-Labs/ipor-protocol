@@ -4,7 +4,6 @@ pragma solidity 0.8.26;
 import {IAmmCloseSwapServiceWstEth} from "../../../interfaces/IAmmCloseSwapServiceWstEth.sol";
 import {AmmCloseSwapServiceBaseV2} from "../../../base/amm/services/AmmCloseSwapServiceBaseV2.sol";
 import {StorageLibBaseV1} from "../../libraries/StorageLibBaseV1.sol";
-import {IporContractValidator} from "../../../libraries/IporContractValidator.sol";
 import {AmmTypes} from "../../../interfaces/types/AmmTypes.sol";
 import {IAmmCloseSwapLens} from "../../../interfaces/IAmmCloseSwapLens.sol";
 
@@ -14,8 +13,6 @@ import {IAmmCloseSwapLens} from "../../../interfaces/IAmmCloseSwapLens.sol";
 /// @dev Close Swap Service for wstEth pool - Asset Management (PlasmaVault from Ipor Fusion) and rebalancing between AMM Treasury 
 /// and Asset Management (PlasmaVault from Ipor Fusion) IS supported in this contract.
 contract AmmCloseSwapServiceWstEthBaseV2 is AmmCloseSwapServiceBaseV2, IAmmCloseSwapServiceWstEth {
-    using IporContractValidator for address;
-
     constructor(
         IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg,
         address iporOracle_

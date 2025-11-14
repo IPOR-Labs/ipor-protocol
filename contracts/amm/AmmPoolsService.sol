@@ -23,8 +23,6 @@ import "../governance/AmmConfigurationManager.sol";
 contract AmmPoolsService is IAmmPoolsService {
     using IporContractValidator for address;
     using SafeCast for int256;
-    using SafeCast for uint256;
-    using SafeCast for uint32;
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
 
@@ -158,7 +156,7 @@ contract AmmPoolsService is IAmmPoolsService {
 
         AmmPoolsServicePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
             poolCfg.asset
         );
 
@@ -208,7 +206,7 @@ contract AmmPoolsService is IAmmPoolsService {
 
     function _provideLiquidity(address asset, address beneficiary, uint256 assetAmount) internal {
         AmmPoolsServicePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
             poolCfg.asset
         );
         AmmTypes.AmmPoolCoreModel memory model;
@@ -401,7 +399,7 @@ contract AmmPoolsService is IAmmPoolsService {
 
     function _rebalanceIfNeededAfterProvideLiquidity(
         AmmPoolsServicePoolConfiguration memory poolCfg,
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg,
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg,
         uint256 vaultBalance,
         uint256 wadOperationAmount
     ) internal {
@@ -436,7 +434,7 @@ contract AmmPoolsService is IAmmPoolsService {
         uint256 vaultBalance,
         uint256 wadOperationAmount
     ) internal {
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
             poolCfg.asset
         );
 

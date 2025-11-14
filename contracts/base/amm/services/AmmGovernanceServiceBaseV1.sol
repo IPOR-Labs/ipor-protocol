@@ -22,7 +22,6 @@ contract AmmGovernanceServiceBaseV1 is
     IAmmGovernanceLens,
     IAmmGovernanceLensBaseV1
 {
-    using IporContractValidator for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     modifier onlySupportedAssetManagement(address asset) {
@@ -222,7 +221,7 @@ contract AmmGovernanceServiceBaseV1 is
     }
 
     function getAmmPoolsParams(address asset) external view override returns (AmmPoolsParamsConfiguration memory cfg) {
-        StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(asset);
+        StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(asset);
         cfg = AmmPoolsParamsConfiguration({
             maxLiquidityPoolBalance: uint256(ammPoolsParamsCfg.maxLiquidityPoolBalance) * 1e18,
             autoRebalanceThreshold: ammPoolsParamsCfg.autoRebalanceThreshold,

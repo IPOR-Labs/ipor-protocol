@@ -15,8 +15,6 @@ import "./SwapLogicBaseV1.sol";
 
 library SwapCloseLogicLibBaseV1 {
     using SafeCast for uint256;
-    using SafeCast for int256;
-    using InterestRates for uint256;
     using InterestRates for int256;
     using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
 

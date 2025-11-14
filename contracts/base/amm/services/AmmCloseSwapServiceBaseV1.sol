@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.26;
 
-import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 import "../../../interfaces/types/IporTypes.sol";
@@ -10,27 +9,20 @@ import "../../../interfaces/IIporOracle.sol";
 import "../../../interfaces/IAmmCloseSwapService.sol";
 import "../../../libraries/math/IporMath.sol";
 import "../../../libraries/IporContractValidator.sol";
-import "../../../libraries/AmmLib.sol";
 import "../../interfaces/IAmmStorageBaseV1.sol";
 import "../../types/AmmTypesBaseV1.sol";
 import "../../events/AmmEventsBaseV1.sol";
 import "../../../amm/libraries/types/AmmInternalTypes.sol";
 import "../../../base/spread/SpreadBaseV1.sol";
-import "../libraries/SwapLogicBaseV1.sol";
 import "../libraries/SwapCloseLogicLibBaseV1.sol";
 import "../../interfaces/ISpreadBaseV1.sol";
 
 /// @title Abstract contract for closing swap, generation one, characterized by:
 /// - no asset management, so also no auto rebalance
 abstract contract AmmCloseSwapServiceBaseV1 is IAmmCloseSwapService {
-    using Address for address;
     using IporContractValidator for address;
     using SafeCast for uint256;
-    using SafeCast for int256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
-    using SwapLogicBaseV1 for AmmTypesBaseV1.Swap;
-    using AmmLib for AmmTypes.AmmPoolCoreModel;
-    using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
 
     address public immutable asset;
     uint256 public immutable decimals;

@@ -28,65 +28,33 @@ contract AmmCloseSwapLens is IAmmCloseSwapLens {
     address public immutable usdc;
     address public immutable dai;
     address public immutable stETH;
-
     address public immutable iporOracle;
-    address public immutable messageSigner;
-    address public immutable spreadRouter;
-
-    /// @dev Notice! Don't use following service to get data from storage, use only to get configuration stored in immutable fields.
-    address public immutable closeSwapServiceUsdt;
-    /// @dev Notice! Don't use following service to get data from storage, use only to get configuration stored in immutable fields.
-    address public immutable closeSwapServiceUsdc;
-    /// @dev Notice! Don't use following service to get data from storage, use only to get configuration stored in immutable fields.
-    address public immutable closeSwapServiceDai;
-    /// @dev Notice! Don't use following service to get data from storage, use only to get configuration stored in immutable fields.
-    address public immutable closeSwapServiceStEth;
 
     constructor(
-        address usdtInput,
-        address usdcInput,
-        address daiInput,
-        address stETHInput,
-        address iporOracleInput,
-        address messageSignerInput,
-        address spreadRouterInput,
-        address closeSwapServiceUsdtInput,
-        address closeSwapServiceUsdcInput,
-        address closeSwapServiceDaiInput,
-        address closeSwapServiceStEthInput
+        address usdt_,
+        address usdc_,
+        address dai_,
+        address stETH_,
+        address iporOracle_
     ) {
-        usdt = usdtInput.checkAddress();
-        usdc = usdcInput.checkAddress();
-        dai = daiInput.checkAddress();
-        stETH = stETHInput.checkAddress();
-
-        iporOracle = iporOracleInput.checkAddress();
-        messageSigner = messageSignerInput.checkAddress();
-        spreadRouter = spreadRouterInput.checkAddress();
-
-        closeSwapServiceUsdt = closeSwapServiceUsdtInput.checkAddress();
-        closeSwapServiceUsdc = closeSwapServiceUsdcInput.checkAddress();
-        closeSwapServiceDai = closeSwapServiceDaiInput.checkAddress();
-        closeSwapServiceStEth = closeSwapServiceStEthInput.checkAddress();
+        usdt = usdt_.checkAddress();
+        usdc = usdc_.checkAddress();
+        dai = dai_.checkAddress();
+        stETH = stETH_.checkAddress();
+        iporOracle = iporOracle_.checkAddress();
     }
 
     function getAmmCloseSwapServicePoolConfiguration(
-        address asset
+        address asset_
     ) external view override returns (AmmCloseSwapServicePoolConfiguration memory) {
-        return _getPoolConfiguration(asset);
-    }
+        StorageLibBaseV1.AssetServicesValue memory servicesCfg = StorageLibBaseV1.getAssetServicesStorage().value[
+            asset_
+        ];
 
-    function _getPoolConfiguration(address asset) internal view returns (AmmCloseSwapServicePoolConfiguration memory) {
-        if (asset == usdt) {
-            return IAmmCloseSwapService(closeSwapServiceUsdt).getPoolConfiguration();
-        } else if (asset == usdc) {
-            return IAmmCloseSwapService(closeSwapServiceUsdc).getPoolConfiguration();
-        } else if (asset == dai) {
-            return IAmmCloseSwapService(closeSwapServiceDai).getPoolConfiguration();
-        } else if (asset == stETH) {
-            return IAmmCloseSwapService(closeSwapServiceStEth).getPoolConfiguration();
+        if (servicesCfg.ammCloseSwapService != address(0)) {
+            return IAmmCloseSwapService(servicesCfg.ammCloseSwapService).getPoolConfiguration();
         } else {
-            revert IporErrors.UnsupportedAsset(IporErrors.ASSET_NOT_SUPPORTED, asset);
+            revert IporErrors.UnsupportedAsset(IporErrors.ASSET_NOT_SUPPORTED, asset_);
         }
     }
 
@@ -128,7 +96,17 @@ contract AmmCloseSwapLens is IAmmCloseSwapLens {
         uint256 closeTimestamp,
         AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     ) internal view returns (AmmTypes.ClosingSwapDetails memory closingSwapDetails) {
-        AmmCloseSwapServicePoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+        StorageLibBaseV1.AssetServicesValue memory servicesCfg = StorageLibBaseV1.getAssetServicesStorage().value[
+            asset
+        ];
+
+        if (servicesCfg.ammCloseSwapService == address(0)) {
+            revert IporErrors.UnsupportedAsset(IporErrors.ASSET_NOT_SUPPORTED, asset);
+        }
+
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg = IAmmCloseSwapService(
+            servicesCfg.ammCloseSwapService
+        ).getPoolConfiguration();
 
         IporTypes.AccruedIpor memory accruedIpor = IIporOracle(iporOracle).getAccruedIndex(
             block.timestamp,
@@ -200,8 +178,8 @@ contract AmmCloseSwapLens is IAmmCloseSwapLens {
                 closingSwapDetails.pnlValue
             ) = SwapCloseLogicLib.calculateSwapUnwindWhenUnwindRequired(
                 AmmTypes.UnwindParams({
-                    messageSigner: messageSigner,
-                    spreadRouter: spreadRouter,
+                    messageSigner: StorageLibBaseV1.getMessageSignerStorage().value,
+                    spreadRouter: poolCfg.spread,
                     ammStorage: poolCfg.ammStorage,
                     ammTreasury: poolCfg.ammTreasury,
                     direction: direction,
@@ -225,8 +203,16 @@ contract AmmCloseSwapLens is IAmmCloseSwapLens {
         uint256 closeTimestamp,
         AmmTypes.CloseSwapRiskIndicatorsInput calldata riskIndicatorsInput
     ) internal view returns (AmmTypes.ClosingSwapDetails memory closingSwapDetails) {
-        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg = AmmCloseSwapServiceBaseV1(
-            closeSwapServiceStEth
+        StorageLibBaseV1.AssetServicesValue memory servicesCfg = StorageLibBaseV1.getAssetServicesStorage().value[
+            stETH
+        ];
+
+        if (servicesCfg.ammCloseSwapService == address(0)) {
+            revert IporErrors.UnsupportedAsset(IporErrors.ASSET_NOT_SUPPORTED, stETH);
+        }
+
+        IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration memory poolCfg = IAmmCloseSwapService(
+            servicesCfg.ammCloseSwapService
         ).getPoolConfiguration();
 
         IporTypes.AccruedIpor memory accruedIpor = IIporOracle(iporOracle).getAccruedIndex(
@@ -276,7 +262,7 @@ contract AmmCloseSwapLens is IAmmCloseSwapLens {
             ) = SwapCloseLogicLibBaseV1.calculateSwapUnwindWhenUnwindRequired(
                 AmmTypesBaseV1.UnwindParams({
                     asset: poolCfg.asset,
-                    messageSigner: messageSigner,
+                    messageSigner: StorageLibBaseV1.getMessageSignerStorage().value,
                     spread: poolCfg.spread,
                     ammStorage: poolCfg.ammStorage,
                     ammTreasury: poolCfg.ammTreasury,

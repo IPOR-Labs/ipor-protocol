@@ -7,7 +7,6 @@ import "../interfaces/types/AmmStorageTypes.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IIporOracle.sol";
 import "../interfaces/IAmmStorage.sol";
-import "../interfaces/IAssetManagement.sol";
 import "./errors/IporErrors.sol";
 import "./errors/AmmErrors.sol";
 import "./math/IporMath.sol";

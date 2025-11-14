@@ -14,7 +14,6 @@ import "../../base/amm/libraries/SwapLogicBaseV1.sol";
 /// @dev It is not recommended to use service contract directly, should be used only through SpreadRouter.
 contract SpreadCloseSwapService is ISpreadCloseSwapService {
     using IporContractValidator for address;
-    using SafeCast for uint256;
 
     address internal immutable _dai;
     address internal immutable _usdc;

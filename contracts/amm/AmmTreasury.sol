@@ -11,7 +11,6 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {IporMath} from "../libraries/math/IporMath.sol";
 import "../interfaces/IAmmTreasury.sol";
 import "../interfaces/IAmmStorage.sol";
-import "../interfaces/IAssetManagement.sol";
 import "../interfaces/IProxyImplementation.sol";
 import "../interfaces/IIporContractCommonGov.sol";
 import "../libraries/Constants.sol";

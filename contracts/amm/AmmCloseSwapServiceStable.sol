@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.26;
 
-import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 import "../interfaces/types/IporTypes.sol";
@@ -15,7 +14,6 @@ import "../libraries/math/IporMath.sol";
 import "../libraries/IporContractValidator.sol";
 import "../libraries/AmmLib.sol";
 import "../libraries/AssetManagementLogic.sol";
-import "../libraries/RiskIndicatorsValidatorLib.sol";
 import "../libraries/AmmCloseSwapServicePoolConfigurationLib.sol";
 import "../governance/AmmConfigurationManager.sol";
 import "../base/amm/libraries/SwapLogicBaseV1.sol";
@@ -27,13 +25,11 @@ import "./libraries/SwapCloseLogicLib.sol";
 
 /// @dev It is not recommended to use service contract directly, should be used only through IporProtocolRouter.
 abstract contract AmmCloseSwapServiceStable is IAmmCloseSwapService {
-    using Address for address;
     using IporContractValidator for address;
     using SafeCast for uint256;
     using SafeCast for int256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using AmmLib for AmmTypes.AmmPoolCoreModel;
-    using RiskIndicatorsValidatorLib for AmmTypes.RiskIndicatorsInputs;
     using AmmCloseSwapServicePoolConfigurationLib for IAmmCloseSwapLens.AmmCloseSwapServicePoolConfiguration;
 
     address internal immutable _asset;
@@ -571,7 +567,7 @@ abstract contract AmmCloseSwapServiceStable is IAmmCloseSwapService {
 
                 IporTypes.AmmBalancesMemory memory balance = model.getAccruedBalance();
 
-                StorageLib.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
+                StorageLibBaseV1.AmmPoolsParamsValue memory ammPoolsParamsCfg = AmmConfigurationManager.getAmmPoolsParams(
                     poolCfg.asset
                 );
 
